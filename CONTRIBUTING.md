@@ -49,6 +49,7 @@ This project adheres to a code of conduct that promotes a welcoming and inclusiv
 ### Branch Naming
 
 Use descriptive branch names with prefixes:
+
 - `feature/` - New features
 - `bugfix/` - Bug fixes
 - `docs/` - Documentation updates
@@ -58,6 +59,7 @@ Use descriptive branch names with prefixes:
 ### Commit Messages
 
 Follow conventional commit format:
+
 ```
 type(scope): description
 
@@ -71,6 +73,7 @@ type(scope): description
 ```
 
 Examples:
+
 ```
 feat(agent): add personality configuration system
 fix(chat): resolve message ordering issue
@@ -80,7 +83,7 @@ docs(readme): update installation instructions
 ### Development Process
 
 1. **Before Starting**: Check existing issues and PRs to avoid duplicates
-2. **Development**: 
+2. **Development**:
    - Write code following our [coding standards](#coding-standards)
    - Add tests for new functionality
    - Update documentation as needed
@@ -161,20 +164,24 @@ npm run dist           # Package application
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests pass
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Documentation updated
@@ -186,6 +193,7 @@ Brief description of changes
 ### Bug Reports
 
 Include:
+
 - Clear description of the issue
 - Steps to reproduce
 - Expected vs actual behavior
@@ -195,6 +203,7 @@ Include:
 ### Feature Requests
 
 Include:
+
 - Clear description of the proposed feature
 - Use cases and benefits
 - Possible implementation approach
@@ -225,7 +234,7 @@ describe('ComponentName', () => {
   it('should render correctly', () => {
     // Test implementation
   });
-  
+
   it('should handle user interaction', () => {
     // Test implementation
   });
@@ -261,6 +270,7 @@ npm run test:coverage # With coverage report
 ### Code Review
 
 All contributions go through code review:
+
 1. **Automated Checks**: CI/CD pipeline runs tests and quality checks
 2. **Peer Review**: Other contributors review code for quality and adherence to standards
 3. **Maintainer Review**: Project maintainers provide final approval
@@ -278,6 +288,7 @@ All contributions go through code review:
 ### Versioning
 
 We follow semantic versioning (SemVer):
+
 - **MAJOR**: Breaking changes
 - **MINOR**: New features (backward compatible)
 - **PATCH**: Bug fixes (backward compatible)
@@ -305,6 +316,7 @@ We follow semantic versioning (SemVer):
 ## Recognition
 
 Contributors are recognized through:
+
 - GitHub contributor statistics
 - Mention in release notes
 - Contributor list in documentation

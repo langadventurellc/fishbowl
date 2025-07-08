@@ -13,19 +13,19 @@ files:
   - dist/preload/**/*
   - dist/renderer/**/*
   - package.json
-  - "!**/*.ts"
-  - "!**/*.map"
-  - "!**/.DS_Store"
-  - "!src/**/*"
-  - "!tsconfig*.json"
-  - "!vite.config.ts"
-  - "!electron-builder.yml"
+  - '!**/*.ts'
+  - '!**/*.map'
+  - '!**/.DS_Store'
+  - '!src/**/*'
+  - '!tsconfig*.json'
+  - '!vite.config.ts'
+  - '!electron-builder.yml'
 
 # Extra files to include
 extraFiles:
   - from: assets
     to: resources
-    filter: "**/*"
+    filter: '**/*'
 
 # Compression level
 compression: normal
@@ -105,7 +105,7 @@ appImage:
 # Debian package configuration
 deb:
   priority: optional
-  depends: ["glibc"]
+  depends: ['glibc']
 
 # RPM package configuration
 rpm:

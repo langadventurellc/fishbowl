@@ -51,6 +51,7 @@ Initialize Electron project with React, TypeScript, and Vite build system for th
 - CA-4: Development workflow should support concurrent main/renderer development
 
 ## See Also
+
 - docs/specifications/core-architecture-spec.md
 - docs/specifications/implementation-plan.md
 - docs/technical/coding-standards.md

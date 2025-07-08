@@ -51,6 +51,7 @@ Set up Zustand state management with persistence middleware for application stat
 - CA-4: State structure must match planned architecture interfaces
 
 ## See Also
+
 - docs/specifications/core-architecture-spec.md
 - src/renderer/store/index.ts
 - src/renderer/store/slices/

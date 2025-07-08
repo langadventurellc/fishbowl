@@ -46,7 +46,7 @@ Where should this documentation be located?
 - [ ] docs/technical/
 - [ ] docs/specifications/
 - [ ] Inline code comments
-- [ ] Other: _______________
+- [ ] Other: **\*\***\_\_\_**\*\***
 
 ## Priority
 

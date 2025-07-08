@@ -30,7 +30,7 @@ Fishbowl allows you to create and manage multiple AI agents with distinct person
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Git
 
@@ -58,7 +58,7 @@ npm run dev
 ```bash
 # Development (hot reload)
 npm run dev               # Start both processes
-npm run dev:main         # Main process only  
+npm run dev:main         # Main process only
 npm run dev:renderer     # Renderer process only
 
 # Testing

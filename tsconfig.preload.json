@@ -4,15 +4,13 @@
     "target": "ES2020",
     "module": "commonjs",
     "lib": ["ES2020", "DOM"],
+    "jsx": "react-jsx",
     "noEmit": false,
     "outDir": "./dist/preload",
-    "types": ["node"],
+    "types": ["node", "electron"],
     "skipLibCheck": true
   },
-  "include": [
-    "src/preload/**/*",
-    "src/shared/**/*"
-  ],
+  "include": ["src/preload/**/*", "src/shared/**/*"],
   "exclude": [
     "src/main/**/*",
     "src/renderer/**/*",

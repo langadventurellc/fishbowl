@@ -51,6 +51,7 @@ Set up SQLite database with better-sqlite3 for persistent storage of conversatio
 - CA-4: Schema changes must be handled through migration system
 
 ## See Also
+
 - docs/specifications/core-architecture-spec.md
 - src/main/database/connection.ts
 - src/main/database/migrations.ts

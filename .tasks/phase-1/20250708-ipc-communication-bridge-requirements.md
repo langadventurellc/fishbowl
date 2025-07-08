@@ -51,6 +51,7 @@ Implement type-safe IPC communication bridge between Electron main and renderer 
 - CA-4: Performance must support real-time messaging without blocking UI
 
 ## See Also
+
 - docs/specifications/core-architecture-spec.md
 - src/shared/types/ipc.ts
 - src/preload/index.ts

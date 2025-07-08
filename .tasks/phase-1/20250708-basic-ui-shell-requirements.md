@@ -51,6 +51,7 @@ Create basic UI shell with main window, menu bar, sidebar, and main content area
 - CA-4: Window management must work across all target platforms
 
 ## See Also
+
 - docs/specifications/ux-specification.md
 - docs/specifications/core-architecture-spec.md
 - src/renderer/components/Layout/

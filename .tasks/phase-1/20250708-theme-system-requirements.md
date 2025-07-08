@@ -51,6 +51,7 @@ Implement theme system with light/dark mode support using CSS variables for cons
 - CA-4: System theme detection must work on all target platforms
 
 ## See Also
+
 - docs/specifications/ux-specification.md
 - src/renderer/styles/themes/
 - src/renderer/styles/variables.css

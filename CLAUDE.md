@@ -9,11 +9,13 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 ## Key Architecture
 
 ### Process Separation
+
 - **Main Process**: Handles system operations, database (SQLite), secure storage (keytar), file system access
 - **Renderer Process**: React 18+ UI with TypeScript, Zustand state management, AI provider integration
 - **IPC Bridge**: Type-safe communication between processes using defined channel interfaces
 
 ### Technology Stack
+
 - **Framework**: Electron with Vite build system
 - **Frontend**: React 18+, TypeScript (strict mode), Zustand
 - **Database**: SQLite via better-sqlite3
@@ -30,7 +32,7 @@ npm rebuild better-sqlite3  # If SQLite issues
 
 # Development (hot reload)
 npm run dev               # Start both processes
-npm run dev:main         # Main process only  
+npm run dev:main         # Main process only
 npm run dev:renderer     # Renderer process only
 
 # Testing
@@ -101,6 +103,7 @@ docs/
 ```
 
 Key documentation files:
+
 - `CONTRIBUTING.md`: Contribution guidelines and workflow
 - `docs/blackboard.md`: Shared knowledge base for agent collaboration
 - `docs/specifications/`: Complete technical specifications
@@ -109,7 +112,9 @@ Key documentation files:
 ## Key Implementation Patterns
 
 ### Feature-Based Components
+
 Components are organized by feature:
+
 ```
 components/ChatRoom/
 ├── ChatRoom.tsx
@@ -119,16 +124,21 @@ components/ChatRoom/
 ```
 
 ### Type-Safe IPC
+
 All IPC communication uses typed channels defined in `shared/types/ipc.ts`.
 
 ### State Management
+
 Zustand stores with persistence middleware handle application state. Access via hooks:
+
 ```typescript
 const { agents, addAgent } = useAgentStore();
 ```
 
 ### AI Provider Integration
+
 Providers implement a common interface and are registered in the provider factory. New providers require:
+
 1. Service implementation in `services/ai/providers/`
 2. Configuration in `config/models.json`
 3. Registration in provider factory
@@ -138,6 +148,7 @@ Providers implement a common interface and are registered in the provider factor
 The project follows established contribution guidelines and coding standards:
 
 ### Code Standards
+
 - **TypeScript**: Strict mode enabled, no implicit any types
 - **ESLint**: Configured with strict rules for code quality
 - **Prettier**: Automated code formatting
@@ -145,6 +156,7 @@ The project follows established contribution guidelines and coding standards:
 - **Documentation**: JSDoc comments for public APIs
 
 ### Contribution Workflow
+
 1. Fork the repository and create a feature branch
 2. Follow coding standards in `docs/technical/coding-standards.md`
 3. Write tests for new functionality
@@ -167,8 +179,9 @@ See `CONTRIBUTING.md` for detailed guidelines.
 **Phase 0 Complete**: Project foundation has been established with comprehensive documentation, contribution guidelines, coding standards, and CI/CD pipeline setup.
 
 **Completed**:
+
 - ✅ Project documentation structure (`docs/` with specifications, guides, technical docs)
-- ✅ Contribution guidelines (`CONTRIBUTING.md`)  
+- ✅ Contribution guidelines (`CONTRIBUTING.md`)
 - ✅ Coding standards and conventions (`docs/technical/coding-standards.md`)
 - ✅ Initial README with project overview and setup instructions
 - ✅ GitHub Actions CI/CD pipeline configuration
@@ -176,6 +189,7 @@ See `CONTRIBUTING.md` for detailed guidelines.
 - ✅ Agent collaboration blackboard (`docs/blackboard.md`)
 
 **Next Steps (Phase 1)**:
+
 1. Setting up the basic Electron + React + TypeScript structure
 2. Implementing the IPC bridge with type safety
 3. Creating the database schema and migrations

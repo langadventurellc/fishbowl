@@ -1,32 +1,38 @@
 # Development Setup Specification
 
 ## Overview
+
 This document provides step-by-step instructions for setting up the Fishbowl development environment, including prerequisites, initial setup, and development workflow.
 
 ## Prerequisites
 
 ### Required Software
+
 - **Node.js**: v18.0.0 or higher (LTS recommended)
 - **npm**: v9.0.0 or higher (comes with Node.js)
 - **Git**: Latest version
 - **SQLite**: v3.35.0 or higher (usually pre-installed)
 
 ### Recommended Development Tools
+
 - **VS Code**: Latest version
 - **Chrome/Edge**: For DevTools debugging
 
 ### Platform-Specific Requirements
 
 #### macOS
+
 - Xcode Command Line Tools: `xcode-select --install`
 - Python 3 (for node-gyp)
 
 #### Windows
+
 - Windows Build Tools: `npm install -g windows-build-tools`
 - Python 3 (for node-gyp)
 - Visual Studio 2019+ with "Desktop development with C++" workload
 
 #### Linux
+
 - Build essentials: `sudo apt-get install build-essential`
 - libsecret (for keytar): `sudo apt-get install libsecret-1-dev`
 - Additional Electron dependencies:
@@ -39,12 +45,14 @@ This document provides step-by-step instructions for setting up the Fishbowl dev
 ## Initial Setup
 
 ### 1. Clone Repository
+
 ```bash
 git clone https://github.com/langadventurellc/fishbowl.git
 cd fishbowl
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 # Install all dependencies
 npm install
@@ -59,6 +67,7 @@ npm rebuild better-sqlite3
 ### 3. Environment Configuration
 
 Create a `.env.development` file in the root:
+
 ```env
 # Development settings
 NODE_ENV=development
@@ -72,6 +81,7 @@ VITE_DEV_SERVER_PORT=5173
 ### 4. Configuration Files Setup
 
 Copy default configuration files:
+
 ```bash
 # Create config directory if it doesn't exist
 mkdir -p config
@@ -85,6 +95,7 @@ cp config.example/roles.json config/roles.json
 ### 5. Database Setup
 
 The database is created automatically on first run, but you can initialize it manually:
+
 ```bash
 # Create data directory
 mkdir -p app-data/data
@@ -98,6 +109,7 @@ npm run db:migrate
 ### Running the Application
 
 #### Development Mode (Hot Reload)
+
 ```bash
 # Start both main and renderer processes with hot reload
 npm run dev
@@ -108,6 +120,7 @@ npm run dev:renderer # Renderer process only
 ```
 
 #### Production Preview
+
 ```bash
 # Build and run production version locally
 npm run build
@@ -117,12 +130,14 @@ npm run preview
 ### Code Structure Guidelines
 
 #### File Naming
+
 - Components: PascalCase (e.g., `ChatRoom.tsx`)
 - Utilities: camelCase (e.g., `formatMessage.ts`)
 - Types: PascalCase with `.ts` extension (e.g., `Agent.ts`)
 - Styles: Same as component with `.module.css` (e.g., `ChatRoom.module.css`)
 
 #### Import Order
+
 ```typescript
 // 1. External imports
 import React, { useState, useEffect } from 'react';
@@ -162,6 +177,7 @@ The project uses strict TypeScript settings. Key configurations:
 #### Main Process Debugging
 
 **VS Code Configuration** (`.vscode/launch.json`):
+
 ```json
 {
   "version": "0.2.0",
@@ -183,6 +199,7 @@ The project uses strict TypeScript settings. Key configurations:
 ```
 
 #### Renderer Process Debugging
+
 1. Open DevTools: `Cmd/Ctrl + Shift + I`
 2. Use Chrome DevTools features:
    - React Developer Tools
@@ -191,10 +208,11 @@ The project uses strict TypeScript settings. Key configurations:
    - Performance profiling
 
 #### Common Debugging Commands
+
 ```typescript
 // In renderer console
-window.api // Check IPC bridge
-store.getState() // Inspect Zustand store
+window.api; // Check IPC bridge
+store.getState(); // Inspect Zustand store
 
 // Enable verbose logging
 localStorage.setItem('DEBUG', 'true');
@@ -203,6 +221,7 @@ localStorage.setItem('DEBUG', 'true');
 ### Testing
 
 #### Unit Tests
+
 ```bash
 # Run all tests
 npm test
@@ -215,6 +234,7 @@ npm run test:coverage
 ```
 
 #### Test Structure
+
 ```typescript
 // Example test file: MessageList.test.tsx
 import { render, screen } from '@testing-library/react';
@@ -225,7 +245,7 @@ describe('MessageList', () => {
     const messages = [
       { id: '1', content: 'Hello', role: 'user' },
     ];
-    
+
     render(<MessageList messages={messages} />);
     expect(screen.getByText('Hello')).toBeInTheDocument();
   });
@@ -235,6 +255,7 @@ describe('MessageList', () => {
 ### Linting and Formatting
 
 #### ESLint Configuration
+
 ```bash
 # Run linter
 npm run lint
@@ -244,6 +265,7 @@ npm run lint:fix
 ```
 
 #### Prettier Configuration
+
 ```json
 // .prettierrc
 {
@@ -256,6 +278,7 @@ npm run lint:fix
 ```
 
 #### Pre-commit Hooks (using Husky)
+
 ```json
 // package.json
 {
@@ -270,6 +293,7 @@ npm run lint:fix
 ## Recommended VS Code Extensions
 
 ### Essential Extensions
+
 ```json
 // .vscode/extensions.json
 {
@@ -286,6 +310,7 @@ npm run lint:fix
 ```
 
 ### VS Code Settings
+
 ```json
 // .vscode/settings.json
 {
@@ -308,6 +333,7 @@ npm run lint:fix
 ### Adding a New AI Provider
 
 1. Create provider service:
+
 ```typescript
 // services/ai/providers/newprovider.ts
 export class NewProviderService implements AIProvider {
@@ -318,6 +344,7 @@ export class NewProviderService implements AIProvider {
 ```
 
 2. Update models.json:
+
 ```json
 {
   "providers": {
@@ -331,6 +358,7 @@ export class NewProviderService implements AIProvider {
 ```
 
 3. Register in provider factory:
+
 ```typescript
 // services/ai/provider-factory.ts
 providers.set('newprovider', new NewProviderService());
@@ -339,6 +367,7 @@ providers.set('newprovider', new NewProviderService());
 ### Adding a New Component
 
 1. Create component file:
+
 ```bash
 mkdir -p src/renderer/components/NewFeature
 touch src/renderer/components/NewFeature/NewFeature.tsx
@@ -347,6 +376,7 @@ touch src/renderer/components/NewFeature/index.ts
 ```
 
 2. Basic component structure:
+
 ```typescript
 // NewFeature.tsx
 import React from 'react';
@@ -367,6 +397,7 @@ export { NewFeature } from './NewFeature';
 ### Database Schema Changes
 
 1. Create migration file:
+
 ```sql
 -- migrations/002_add_new_table.sql
 CREATE TABLE new_table (
@@ -376,6 +407,7 @@ CREATE TABLE new_table (
 ```
 
 2. Update TypeScript types:
+
 ```typescript
 // shared/types/database.ts
 export interface NewTable {
@@ -389,6 +421,7 @@ export interface NewTable {
 ### Common Issues
 
 #### Native Module Errors
+
 ```bash
 # Rebuild native modules for Electron
 npm run electron:rebuild
@@ -398,6 +431,7 @@ npx electron-rebuild
 ```
 
 #### SQLite Issues
+
 ```bash
 # Clear and rebuild
 rm -rf node_modules/better-sqlite3
@@ -406,6 +440,7 @@ npm rebuild better-sqlite3
 ```
 
 #### Port Already in Use
+
 ```bash
 # Find process using port
 lsof -i :5173  # macOS/Linux
@@ -415,6 +450,7 @@ netstat -ano | findstr :5173  # Windows
 ```
 
 #### Electron White Screen
+
 1. Check console for errors: `Cmd/Ctrl + Shift + I`
 2. Verify main process is running
 3. Check IPC communication
@@ -423,6 +459,7 @@ netstat -ano | findstr :5173  # Windows
 ### Performance Profiling
 
 #### React Profiler
+
 ```typescript
 // Wrap components to profile
 import { Profiler } from 'react';
@@ -433,6 +470,7 @@ import { Profiler } from 'react';
 ```
 
 #### Memory Leaks
+
 ```typescript
 // Use Chrome DevTools Memory Profiler
 // Take heap snapshots and compare
@@ -442,6 +480,7 @@ import { Profiler } from 'react';
 ## Build and Package
 
 ### Local Build Testing
+
 ```bash
 # Build for current platform
 npm run dist
@@ -455,6 +494,7 @@ npm run dist:linux
 ```
 
 ### Build Optimization
+
 ```bash
 # Analyze bundle size
 npm run analyze
@@ -466,17 +506,20 @@ npm run build:prod
 ## Additional Resources
 
 ### Documentation
+
 - [Electron Documentation](https://www.electronjs.org/docs)
 - [React Documentation](https://react.dev)
 - [Zustand Documentation](https://github.com/pmndrs/zustand)
 - [Vite Documentation](https://vitejs.dev)
 
 ### Project-Specific Docs
+
 - `docs/API.md` - Internal API documentation
 - `docs/ARCHITECTURE.md` - Detailed architecture decisions
 - `docs/CONTRIBUTING.md` - Contribution guidelines
 
 ### Debugging Tools
+
 - [Electron DevTools Extension](https://github.com/MarshallOfSound/electron-devtools-installer)
 - [React Developer Tools](https://react.dev/learn/react-developer-tools)
 - [Electron Fiddle](https://www.electronjs.org/fiddle) - For testing Electron features
@@ -484,11 +527,13 @@ npm run build:prod
 ## Getting Help
 
 ### Project Resources
+
 - GitHub Issues: Report bugs and request features
 - GitHub Discussions: Ask questions and share ideas
 - Project Wiki: Additional guides and tips
 
 ### Community Resources
+
 - Electron Discord Server
 - React Community Discord
 - Stack Overflow tags: `electron`, `react`, `typescript`

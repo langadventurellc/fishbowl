@@ -5,6 +5,7 @@
 ### Core Features
 
 #### Multi-Agent Chat System
+
 - **Multiple AI agents** in a single conversation
 - **Different models** per agent (OpenAI, Anthropic, Google)
 - **Unique personalities** using Big Five model + behavior sliders
@@ -12,6 +13,7 @@
 - **Real-time collaboration** between agents
 
 #### Conversation Modes
+
 - **Manual Mode**: User reviews and selects agent responses before adding to chat
 - **Auto Mode**: Agents take turns responding automatically with:
   - Configurable delay between responses (1-30 seconds)
@@ -20,6 +22,7 @@
   - Stop conditions (all skip, message limit, errors)
 
 #### Agent Configuration
+
 - **Personality System**:
   - Big Five personality dimensions (OCEAN)
   - 14 behavior sliders (formality, humor, empathy, etc.)
@@ -35,6 +38,7 @@
   - Temperature and parameter controls
 
 #### Conversation Management
+
 - Create new conversations
 - Continue existing conversations
 - Rename conversations
@@ -43,6 +47,7 @@
 - Persistent message history
 
 #### User Interface
+
 - **Chat Interface**:
   - Color-coded agents with labels
   - Collapsible long messages
@@ -58,6 +63,7 @@
   - System theme following
 
 #### Settings & Configuration
+
 - API key management (secure storage)
 - Model configuration (via JSON)
 - General settings:
@@ -71,6 +77,7 @@
 ### Technical Implementation
 
 #### Architecture
+
 - **Electron** desktop application
 - **React** + **TypeScript** frontend
 - **Zustand** state management
@@ -79,12 +86,14 @@
 - **Vite** build system
 
 #### Security
+
 - API keys in system keychain
 - No keys in renderer process
 - Secure IPC communication
 - Content Security Policy
 
 #### Performance
+
 - Streaming responses
 - Virtual scrolling for long chats
 - Efficient token counting
@@ -93,11 +102,13 @@
 ### Platform Support
 
 #### Operating Systems
+
 - **macOS**: 10.15+ (Intel & Apple Silicon)
 - **Windows**: Windows 10+ (x64, ARM64 if supported)
 - **Linux**: Ubuntu 20.04+, Fedora 35+, Debian 11+
 
 #### System Requirements
+
 - 4GB RAM minimum
 - 500MB disk space
 - Internet connection required
@@ -105,6 +116,7 @@
 ### Limitations & Constraints
 
 #### V1 Limitations
+
 - **Maximum agents per conversation**: 4 (configurable via JSON up to 8)
 - **Context window**: Depends on model, manual management required
 - **Language**: English only (i18n architecture for future)
@@ -114,6 +126,7 @@
 - **Images**: No image generation/analysis
 
 #### Model Limitations
+
 - Text-only interactions
 - Standard model context windows
 - No fine-tuned models
@@ -122,6 +135,7 @@
 ### Excluded Features (Planned for Future)
 
 #### V2 Features
+
 - MCP tool integration
 - Document collaboration
 - Basic context summarization
@@ -130,6 +144,7 @@
 - Usage analytics (tokens, costs)
 
 #### V3 Features
+
 - Software project collaboration
 - Advanced memory systems
 - Conversation branching
@@ -142,6 +157,7 @@
 ## User Workflows
 
 ### First-Time Setup
+
 1. Download and install application
 2. Open settings → API configuration
 3. Enter API keys for desired providers
@@ -149,6 +165,7 @@
 5. Ready to use
 
 ### Creating First Conversation
+
 1. Click "New Conversation"
 2. Click [+] to add first agent
 3. Select personality, role, and model
@@ -157,6 +174,7 @@
 6. Add more agents as needed
 
 ### Typical Multi-Agent Session
+
 1. Start conversation with a question/topic
 2. Add 2-3 agents with different roles
 3. Use manual mode to curate responses
@@ -166,6 +184,7 @@
 7. Continue until reaching conclusion
 
 ### Managing Long Conversations
+
 1. Monitor context window warnings
 2. Start new conversation when needed
 3. Reference previous conversation manually
@@ -176,6 +195,7 @@
 ### Included Templates
 
 #### Personalities (Big Five Presets)
+
 1. The Innovator
 2. The Architect
 3. The Diplomat
@@ -184,6 +204,7 @@
 6. Custom (all sliders at 50)
 
 #### Roles (System Prompts)
+
 1. Project Manager
 2. Technical Advisor
 3. Creative Director
@@ -196,6 +217,7 @@
 10. Financial Advisor
 
 ### Default Settings
+
 - **Theme**: System
 - **Auto Mode**: Disabled
 - **Response Delay**: 5 seconds
@@ -205,6 +227,7 @@
 - **Max Agents**: 4
 
 ### Model Configuration
+
 - Provided via `models.json`
 - User-editable for custom models
 - Includes major models from each provider
@@ -213,12 +236,14 @@
 ## Success Metrics
 
 ### Performance Targets
+
 - Agent response time: < 2s to start streaming
 - UI responsiveness: < 100ms for interactions
 - Memory usage: < 500MB for typical session
 - Startup time: < 3 seconds
 
 ### Quality Indicators
+
 - Smooth agent turn-taking
 - Clear conversation flow
 - Reliable API integration
@@ -228,6 +253,7 @@
 ## Development Priorities
 
 ### Must Have (V1 Launch)
+
 1. ✓ Core chat functionality
 2. ✓ Manual/Auto modes
 3. ✓ Agent configuration
@@ -236,6 +262,7 @@
 6. ✓ Theme support
 
 ### Nice to Have (V1.x Updates)
+
 1. Conversation templates
 2. Better error recovery
 3. Performance optimizations
@@ -244,6 +271,7 @@
 6. Basic analytics
 
 ### Future Considerations
+
 1. Plugin architecture
 2. API for extensions
 3. Cloud sync option

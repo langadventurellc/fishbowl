@@ -17,7 +17,7 @@ graph TB
         MM[Menu Manager<br/>menu.ts]
         IPC[IPC Handlers<br/>ipc/]
     end
-    
+
     subgraph "Renderer Process"
         R[React App<br/>App.tsx]
         C[Components<br/>components/]
@@ -25,23 +25,23 @@ graph TB
         S[Services<br/>services/]
         ST[Store<br/>store/]
     end
-    
+
     subgraph "Shared"
         T[Types<br/>types/]
         U[Utils<br/>utils/]
         CON[Constants<br/>constants/]
     end
-    
+
     subgraph "Preload"
         P[Preload Script<br/>preload/index.ts]
     end
-    
+
     subgraph "Build System"
         V[Vite Config<br/>vite.config.ts]
         TS[TypeScript Config<br/>tsconfig.json]
         EB[Electron Builder<br/>electron-builder.yml]
     end
-    
+
     M --> P
     P --> R
     M <--> IPC
@@ -52,7 +52,7 @@ graph TB
     U --> R
     CON --> M
     CON --> R
-    
+
     V --> R
     TS --> M
     TS --> R
@@ -68,19 +68,19 @@ sequenceDiagram
     participant Vite as Vite Dev Server
     participant Electron as Electron Process
     participant TS as TypeScript Compiler
-    
+
     Dev->>NPM: npm run dev
     NPM->>TS: Compile main process
     NPM->>Vite: Start renderer dev server
     NPM->>Electron: Start Electron app
-    
+
     loop Development
         Dev->>Vite: Edit renderer code
         Vite->>Electron: Hot reload renderer
         Dev->>TS: Edit main process code
         TS->>Electron: Restart main process
     end
-    
+
     Dev->>NPM: npm run build
     NPM->>TS: Build main process
     NPM->>Vite: Build renderer
@@ -90,24 +90,28 @@ sequenceDiagram
 ## Technology Stack
 
 ### Core Technologies
+
 - **Language/Runtime:** TypeScript 5.x with Node.js 18+
 - **Framework:** Electron (latest stable) with React 18+
 - **Build Tool:** Vite with React plugin
 - **State Management:** Zustand (future implementation)
 
 ### Libraries & Dependencies
+
 - **UI/Frontend:** React 18+, React DOM, CSS Modules
 - **Build/Development:** Vite, TypeScript, Electron Builder
 - **Code Quality:** ESLint, Prettier, Concurrently
 - **Testing:** Not included in this phase (separate specification)
 
 ### Patterns & Approaches
+
 - **Architectural Patterns:** Process separation, IPC bridge pattern
 - **Security Patterns:** Context isolation, sandboxed renderer
 - **Development Practices:** Strict TypeScript, feature-based organization
 - **Build Patterns:** Separate main/renderer builds, path aliases
 
 ### External Integrations
+
 - **Build Tools:** Electron Builder for packaging
 - **Development Tools:** Concurrently for process management
 - **IDE Integration:** VS Code configuration files
@@ -147,7 +151,6 @@ sequenceDiagram
 ## Implementation Tasks
 
 - [x] 1.0 Project Foundation and Configuration
-
   - [x] 1.1 Initialize npm project and install core dependencies (Electron, React, TypeScript, Vite)
   - [x] 1.2 Configure package.json with proper scripts and metadata
   - [x] 1.3 Set up TypeScript configurations for main, renderer, and shared code
@@ -156,7 +159,6 @@ sequenceDiagram
   - [x] 1.6 Set up Electron Builder configuration for cross-platform packaging
 
   ### Files modified with description of changes
-
   - `package.json` - Initialized npm project with proper metadata, scripts, and dependencies including Electron, React, TypeScript, Vite, and development tooling
   - `tsconfig.json` - Root TypeScript configuration with strict mode, path aliases, and shared compiler options
   - `tsconfig.main.json` - Main process TypeScript configuration targeting Node.js/CommonJS
@@ -178,20 +180,25 @@ sequenceDiagram
   - `src/shared/utils/index.ts` - Shared utility functions
   - `assets/icon.png` - Application icon placeholder
 
-- [ ] 2.0 Code Quality and Development Tooling
-
-  - [ ] 2.1 Configure ESLint with TypeScript and React rules according to coding standards
-  - [ ] 2.2 Set up Prettier configuration matching project formatting standards
-  - [ ] 2.3 Create VS Code workspace configuration with recommended extensions
-  - [ ] 2.4 Configure development scripts for concurrent main/renderer development
-  - [ ] 2.5 Set up pre-commit hooks for code quality enforcement
+- [x] 2.0 Code Quality and Development Tooling
+  - [x] 2.1 Configure ESLint with TypeScript and React rules according to coding standards (see `/Users/zach/code/vault-ui-web/` for reference of rules used by LangAdventure)
+  - [x] 2.2 Add `"@langadventurellc/tsla-linter": "^2.0.0"` to package.json for custom linting rules
+  - [x] 2.3 Set up Prettier configuration matching project formatting standards
+  - [x] 2.4 Create VS Code workspace configuration with recommended extensions
+  - [x] 2.5 Configure development scripts for concurrent main/renderer development
+  - [x] 2.6 Set up pre-commit hooks for code quality enforcement
 
   ### Files modified with description of changes
-
-  - (to be filled in after task completion)
+  - `package.json` - Added ESLint, Prettier, TypeScript linting dependencies and custom tsla-linter package. Updated scripts for linting, formatting, and enhanced dev workflow with wait-on and concurrent electron process management
+  - `.npmrc` - Added GitHub Package Registry configuration for @langadventurellc scoped packages
+  - `eslint.config.mjs` - Comprehensive ESLint configuration with TypeScript, React, and custom plugins. Includes separate configurations for main/preload/renderer processes, test files, and proper ignore patterns
+  - `.prettierrc` - Prettier configuration matching project formatting standards with consistent code style settings
+  - `.vscode/settings.json` - VS Code workspace settings for proper TypeScript/ESLint integration, formatting on save, and project-specific configurations
+  - `.vscode/extensions.json` - Recommended VS Code extensions for TypeScript, ESLint, Prettier, and Electron development
+  - `.husky/pre-commit` - Pre-commit hook configuration to run lint-staged for code quality enforcement
+  - `package.json` (lint-staged) - Added lint-staged configuration to run ESLint and Prettier on staged files before commit
 
 - [ ] 3.0 Electron Main Process Implementation
-
   - [ ] 3.1 Create main process entry point with proper Electron initialization
   - [ ] 3.2 Implement window management with security configurations (contextIsolation, etc.)
   - [ ] 3.3 Create application menu with basic File/Edit/View/Help structure
@@ -199,11 +206,9 @@ sequenceDiagram
   - [ ] 3.5 Configure proper process lifecycle management and cleanup
 
   ### Files modified with description of changes
-
   - (to be filled in after task completion)
 
 - [ ] 4.0 React Renderer Process Setup
-
   - [ ] 4.1 Create HTML template and renderer entry point
   - [ ] 4.2 Set up React 18+ with proper root mounting and error boundaries
   - [ ] 4.3 Create basic App component with routing structure
@@ -212,11 +217,9 @@ sequenceDiagram
   - [ ] 4.6 Configure React development tools integration
 
   ### Files modified with description of changes
-
   - (to be filled in after task completion)
 
 - [ ] 5.0 Secure IPC Bridge Implementation
-
   - [ ] 5.1 Create preload script with secure IPC bridge
   - [ ] 5.2 Define shared types for IPC communication
   - [ ] 5.3 Implement type-safe IPC wrapper utilities
@@ -225,11 +228,9 @@ sequenceDiagram
   - [ ] 5.6 Test IPC communication security and functionality
 
   ### Files modified with description of changes
-
   - (to be filled in after task completion)
 
 - [ ] 6.0 Build System Integration and Testing
-
   - [ ] 6.1 Configure development build pipeline with hot reloading
   - [ ] 6.2 Set up production build process with optimization
   - [ ] 6.3 Configure Electron Builder for current platform packaging
@@ -238,5 +239,4 @@ sequenceDiagram
   - [ ] 6.6 Validate security configurations and performance metrics
 
   ### Files modified with description of changes
-
   - (to be filled in after task completion)

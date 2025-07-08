@@ -1,5 +1,4 @@
-import { Menu, MenuItemConstructorOptions } from 'electron'
-import { isDev } from '@shared/utils'
+import { Menu, MenuItemConstructorOptions } from 'electron';
 
 export const createApplicationMenu = (): void => {
   const template: MenuItemConstructorOptions[] = [
@@ -11,19 +10,19 @@ export const createApplicationMenu = (): void => {
           accelerator: 'CmdOrCtrl+N',
           click: () => {
             // TODO: Implement new chat room creation
-          }
+          },
         },
         {
-          type: 'separator'
+          type: 'separator',
         },
         {
           label: 'Quit',
           accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
           click: () => {
             // TODO: Implement quit logic
-          }
-        }
-      ]
+          },
+        },
+      ],
     },
     {
       label: 'Edit',
@@ -34,8 +33,8 @@ export const createApplicationMenu = (): void => {
         { role: 'cut' },
         { role: 'copy' },
         { role: 'paste' },
-        { role: 'selectAll' }
-      ]
+        { role: 'selectAll' },
+      ],
     },
     {
       label: 'View',
@@ -48,8 +47,8 @@ export const createApplicationMenu = (): void => {
         { role: 'zoomIn' },
         { role: 'zoomOut' },
         { type: 'separator' },
-        { role: 'togglefullscreen' }
-      ]
+        { role: 'togglefullscreen' },
+      ],
     },
     {
       label: 'Help',
@@ -58,11 +57,11 @@ export const createApplicationMenu = (): void => {
           label: 'About Fishbowl',
           click: () => {
             // TODO: Implement about dialog
-          }
-        }
-      ]
-    }
-  ]
+          },
+        },
+      ],
+    },
+  ];
 
   // macOS specific adjustments
   if (process.platform === 'darwin') {
@@ -77,11 +76,11 @@ export const createApplicationMenu = (): void => {
         { role: 'hideOthers' },
         { role: 'unhide' },
         { type: 'separator' },
-        { role: 'quit' }
-      ]
-    })
+        { role: 'quit' },
+      ],
+    });
   }
 
-  const menu = Menu.buildFromTemplate(template)
-  Menu.setApplicationMenu(menu)
-}
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+};

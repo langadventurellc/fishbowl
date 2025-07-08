@@ -1,11 +1,13 @@
 # Core Application Architecture Specification
 
 ## Overview
+
 The application is built using Electron with a clear separation between main and renderer processes. It uses React with TypeScript for the UI, Zustand for state management, and follows a feature-based folder structure for maintainability.
 
 ## Technology Stack
 
 ### Core Technologies
+
 - **Framework**: Electron (latest stable)
 - **UI Library**: React 18+ with TypeScript
 - **State Management**: Zustand
@@ -16,6 +18,7 @@ The application is built using Electron with a clear separation between main and
 - **Styling**: CSS Modules + CSS Variables for theming
 
 ### Additional Libraries
+
 - **IPC**: Electron's built-in IPC with type-safe wrappers
 - **Secure Storage**: keytar (for API keys)
 - **Icons**: Lucide React
@@ -24,9 +27,11 @@ The application is built using Electron with a clear separation between main and
 ## Process Architecture
 
 ### Main Process
+
 Responsible for system-level operations and secure data handling.
 
 **Core Responsibilities:**
+
 - Window lifecycle management
 - Database operations (SQLite)
 - File system access (config files)
@@ -36,9 +41,11 @@ Responsible for system-level operations and secure data handling.
 - Auto-updater (future)
 
 ### Renderer Process
+
 Handles all UI rendering and user interactions.
 
 **Core Responsibilities:**
+
 - React application rendering
 - State management via Zustand
 - AI provider API calls
@@ -55,22 +62,22 @@ interface IPCChannels {
   // Database
   'db:query': (query: DBQuery) => DBResult;
   'db:execute': (operation: DBOperation) => void;
-  
+
   // Configuration
   'config:get': (key: string) => any;
   'config:set': (key: string, value: any) => void;
   'config:load-models': () => ModelConfig;
-  
+
   // Secure Storage
   'keys:get': (provider: string) => string | null;
   'keys:set': (provider: string, key: string) => void;
   'keys:delete': (provider: string) => void;
-  
+
   // Window
   'window:minimize': () => void;
   'window:maximize': () => void;
   'window:close': () => void;
-  
+
   // Application
   'app:get-version': () => string;
 }
@@ -216,6 +223,7 @@ ai-collaborators/
 ## State Management (Zustand)
 
 ### Store Structure
+
 ```typescript
 interface AppState {
   // Conversation State
@@ -223,34 +231,34 @@ interface AppState {
   activeConversationId: string | null;
   messages: Message[];
   pendingResponses: PendingResponse[];
-  
+
   // Agent State
   agents: Agent[];
   agentStates: Map<string, AgentState>;
   turnQueue: TurnQueue;
-  
+
   // UI State
   theme: 'light' | 'dark' | 'system';
   sidebarCollapsed: boolean;
   settingsOpen: boolean;
   autoMode: boolean;
-  
+
   // Settings
   apiKeys: Record<string, boolean>; // Just track if set
   generalSettings: GeneralSettings;
-  
+
   // Actions
   actions: {
     // Conversation actions
     createConversation: () => void;
     selectConversation: (id: string) => void;
     addMessage: (message: Message) => void;
-    
+
     // Agent actions
     addAgent: (agent: Agent) => void;
     removeAgent: (agentId: string) => void;
     toggleAgentParticipation: (agentId: string) => void;
-    
+
     // UI actions
     toggleSidebar: () => void;
     toggleAutoMode: () => void;
@@ -260,6 +268,7 @@ interface AppState {
 ```
 
 ### Store Implementation
+
 ```typescript
 // store/index.ts
 import { create } from 'zustand';
@@ -269,15 +278,15 @@ import { immer } from 'zustand/middleware/immer';
 export const useStore = create<AppState>()(
   devtools(
     persist(
-      immer((set) => ({
+      immer(set => ({
         // Initial state
         conversations: [],
         activeConversationId: null,
         // ... other state
-        
+
         actions: {
           createConversation: () =>
-            set((state) => {
+            set(state => {
               const newConversation = createNewConversation();
               state.conversations.push(newConversation);
               state.activeConversationId = newConversation.id;
@@ -287,31 +296,38 @@ export const useStore = create<AppState>()(
       })),
       {
         name: 'ai-collaborators-storage',
-        partialize: (state) => ({
+        partialize: state => ({
           // Only persist UI preferences
           theme: state.theme,
           sidebarCollapsed: state.sidebarCollapsed,
           generalSettings: state.generalSettings,
         }),
-      }
-    )
-  )
+      },
+    ),
+  ),
 );
 ```
 
 ## Event System
 
 ### Agent Event Bus
+
 ```typescript
 class AgentEventBus extends EventEmitter {
   // Event types
   emit(event: 'agent:thinking', data: { agentId: string }): void;
-  emit(event: 'agent:responded', data: { agentId: string; message: string }): void;
+  emit(
+    event: 'agent:responded',
+    data: { agentId: string; message: string },
+  ): void;
   emit(event: 'agent:skipped', data: { agentId: string }): void;
   emit(event: 'agent:error', data: { agentId: string; error: Error }): void;
   emit(event: 'conversation:updated', data: { conversationId: string }): void;
   emit(event: 'mode:changed', data: { autoMode: boolean }): void;
-  emit(event: 'mention:detected', data: { agentName: string; messageId: string }): void;
+  emit(
+    event: 'mention:detected',
+    data: { agentName: string; messageId: string },
+  ): void;
 }
 
 // Global instance
@@ -319,14 +335,15 @@ export const agentEvents = new AgentEventBus();
 ```
 
 ### React Integration
+
 ```typescript
 // hooks/useAgentEvents.ts
 export function useAgentEvents() {
   useEffect(() => {
-    const handleThinking = (data) => {
+    const handleThinking = data => {
       useStore.getState().actions.setAgentThinking(data.agentId, true);
     };
-    
+
     agentEvents.on('agent:thinking', handleThinking);
     return () => agentEvents.off('agent:thinking', handleThinking);
   }, []);
@@ -336,6 +353,7 @@ export function useAgentEvents() {
 ## Build Configuration
 
 ### Vite Configuration
+
 ```typescript
 // vite.config.ts
 export default defineConfig({
@@ -356,6 +374,7 @@ export default defineConfig({
 ```
 
 ### TypeScript Configuration
+
 ```json
 {
   "compilerOptions": {
@@ -379,6 +398,7 @@ export default defineConfig({
 ## Security Considerations
 
 ### Content Security Policy
+
 ```typescript
 // main/window.ts
 const mainWindow = new BrowserWindow({
@@ -392,6 +412,7 @@ const mainWindow = new BrowserWindow({
 ```
 
 ### API Key Handling
+
 - Never store API keys in renderer process
 - Use IPC to request AI operations
 - Keys stored in system keychain via keytar
@@ -400,12 +421,14 @@ const mainWindow = new BrowserWindow({
 ## Performance Optimizations
 
 ### React Optimizations
+
 - Virtual scrolling for long message lists
 - Memoized message components
 - Debounced search and filter operations
 - Lazy loading for settings panels
 
 ### Database Optimizations
+
 - Indexed columns for quick queries
 - Prepared statements for common operations
 - Connection pooling (if needed)
@@ -414,6 +437,7 @@ const mainWindow = new BrowserWindow({
 ## Development Workflow
 
 ### Scripts
+
 ```json
 {
   "scripts": {
@@ -430,6 +454,7 @@ const mainWindow = new BrowserWindow({
 ```
 
 ### Hot Reload
+
 - Renderer: Vite HMR
 - Main: Electron-reload for development
 - State persistence during development

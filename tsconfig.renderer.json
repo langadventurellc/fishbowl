@@ -25,10 +25,7 @@
       "@renderer/*": ["renderer/*"]
     }
   },
-  "include": [
-    "src/renderer/**/*",
-    "src/shared/**/*"
-  ],
+  "include": ["src/renderer/**/*", "src/shared/**/*"],
   "exclude": [
     "src/main/**/*",
     "src/preload/**/*",

@@ -1,8 +1,8 @@
-import { BrowserWindow } from 'electron'
-import path from 'path'
-import { isDev } from '@shared/utils'
+import { BrowserWindow } from 'electron';
+import path from 'path';
+import { isDev } from '@shared/utils';
 
-export const createMainWindow = async (): Promise<BrowserWindow> => {
+export const createMainWindow = (): BrowserWindow => {
   // Create the browser window
   const mainWindow = new BrowserWindow({
     width: 1200,
@@ -12,21 +12,21 @@ export const createMainWindow = async (): Promise<BrowserWindow> => {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, '../preload/index.js')
+      preload: path.join(__dirname, '../preload/index.js'),
     },
     show: false, // Don't show until ready-to-show
-    titleBarStyle: 'default'
-  })
+    titleBarStyle: 'default',
+  });
 
   // Show window when ready to prevent visual flash
   mainWindow.once('ready-to-show', () => {
-    mainWindow.show()
-    
+    mainWindow.show();
+
     // Focus on the window in development
     if (isDev) {
-      mainWindow.focus()
+      mainWindow.focus();
     }
-  })
+  });
 
-  return mainWindow
-}
+  return mainWindow;
+};

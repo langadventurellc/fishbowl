@@ -33,8 +33,14 @@ export declare const generateId: () => string;
 /**
  * Debounce function
  */
-export declare const debounce: <T extends (...args: any[]) => void>(func: T, delay: number) => ((...args: Parameters<T>) => void);
+export declare const debounce: <T extends (...args: unknown[]) => void>(
+  func: T,
+  delay: number,
+) => (...args: Parameters<T>) => void;
 /**
  * Throttle function
  */
-export declare const throttle: <T extends (...args: any[]) => void>(func: T, limit: number) => ((...args: Parameters<T>) => void);
+export declare const throttle: <T extends (...args: unknown[]) => void>(
+  func: T,
+  limit: number,
+) => (...args: Parameters<T>) => void;

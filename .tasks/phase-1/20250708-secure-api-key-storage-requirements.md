@@ -51,6 +51,7 @@ Implement secure API key storage using keytar for AI provider authentication cre
 - CA-4: System keychain must be available on target platforms
 
 ## See Also
+
 - docs/specifications/core-architecture-spec.md
 - src/main/security/keystore.ts
 - src/shared/types/ipc.ts

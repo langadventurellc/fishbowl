@@ -38,6 +38,7 @@ Include screenshots for UI changes or visual improvements.
 ## Performance Impact
 
 Describe any performance implications:
+
 - [ ] No performance impact
 - [ ] Improves performance
 - [ ] May impact performance (explain)
