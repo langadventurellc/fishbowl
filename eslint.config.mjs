@@ -146,7 +146,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ['src/components/**', 'src/shared/**'],
+    files: ['src/components/**', 'src/shared/**', 'src/renderer/hooks/useTheme.index.ts'],
     rules: {
       'multiple-exports/no-multiple-exports': 'off',
     },
