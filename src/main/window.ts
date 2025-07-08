@@ -1,6 +1,6 @@
 import { BrowserWindow } from 'electron';
 import path from 'path';
-import { isDev } from '@shared/utils';
+import { isDev } from '../shared/utils';
 
 export const createMainWindow = (): BrowserWindow => {
   // Create the browser window
@@ -12,6 +12,10 @@ export const createMainWindow = (): BrowserWindow => {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
       preload: path.join(__dirname, '../preload/index.js'),
     },
     show: false, // Don't show until ready-to-show

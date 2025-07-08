@@ -1,6 +1,6 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
-import { isDev } from '@shared/utils';
+import { isDev } from '../shared/utils';
 import { createMainWindow } from './window';
 import { createApplicationMenu } from './menu';
 import { setupIpcHandlers, setupWindowEvents } from './ipc';
@@ -19,7 +19,7 @@ const createWindow = (): void => {
   if (isDev) {
     void mainWindow.loadURL('http://localhost:5173');
   } else {
-    void mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+    void mainWindow.loadFile(path.join(__dirname, '../../renderer/src/renderer/index.html'));
   }
 
   // Open the DevTools in development

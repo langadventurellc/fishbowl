@@ -22,21 +22,69 @@ export default defineConfig({
     outDir: 'dist/renderer',
     emptyOutDir: true,
     sourcemap: process.env.NODE_ENV === 'development',
+    minify: process.env.NODE_ENV === 'production' ? 'esbuild' : false,
+    target: ['chrome120'], // Target latest Electron Chrome version
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'src/renderer/index.html'),
       },
+      output: {
+        manualChunks: id => {
+          // Vendor chunks
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('react-router')) {
+              return 'vendor-router';
+            }
+            return 'vendor';
+          }
+          // Feature chunks
+          if (id.includes('/components/')) {
+            return 'components';
+          }
+          if (id.includes('/hooks/')) {
+            return 'hooks';
+          }
+        },
+        // Production optimizations
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
+      },
+    },
+    // Performance optimizations
+    chunkSizeWarningLimit: 500,
+    reportCompressedSize: process.env.ANALYZE === 'true',
+    // Tree shaking
+    treeshake: {
+      preset: 'recommended',
+      moduleSideEffects: false,
     },
   },
 
   // Development server configuration
   server: {
     port: 5173,
-    host: 'localhost',
+    host: '0.0.0.0', // Allow external connections for better Electron integration
     hmr: {
       overlay: true,
+      clientPort: 5173,
+      port: 24678, // Use different port for HMR to avoid conflicts
     },
     open: false, // Don't open browser in Electron app
+    strictPort: true, // Fail if port is occupied
+    watch: {
+      ignored: ['**/node_modules/**', '**/dist/**', '**/.git/**'],
+      // Use polling for better file watching in Electron
+      usePolling: process.env.NODE_ENV === 'development',
+      interval: 100,
+    },
+    cors: true, // Enable CORS for Electron integration
+    fs: {
+      strict: false, // Allow serving files outside of root
+    },
   },
 
   // Path aliases

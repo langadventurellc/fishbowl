@@ -1,0 +1,5 @@
+{
+  "sizes": [16, 32, 64, 128, 256, 512, 1024],
+  "description": "macOS icon file - use icon.png and resize as needed",
+  "note": "For production, convert PNG to ICNS using iconutil or online tools"
+}

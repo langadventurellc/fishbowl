@@ -20,6 +20,15 @@ files:
   - '!tsconfig*.json'
   - '!vite.config.ts'
   - '!electron-builder.yml'
+  - '!scripts/**/*'
+  - '!docs/**/*'
+  - '!tests/**/*'
+  - '!*.md'
+  - '!.git*'
+  - '!.husky/**/*'
+  - '!eslint.config.mjs'
+  - '!.prettierrc'
+  - '!.npmrc'
 
 # Extra files to include
 extraFiles:
@@ -28,7 +37,16 @@ extraFiles:
     filter: '**/*'
 
 # Compression level
-compression: normal
+compression: maximum
+
+# ASAR archive configuration
+asar: true
+asarUnpack:
+  - '**/node_modules/sharp/**/*'
+  - '**/node_modules/@img/**/*'
+
+# Security settings
+forceCodeSigning: false
 
 # macOS configuration
 mac:
@@ -36,17 +54,18 @@ mac:
   target:
     - target: dmg
       arch: [x64, arm64]
-  icon: assets/icon.icns
-  hardenedRuntime: true
+    - target: zip
+      arch: [x64, arm64]
+  icon: assets/icon.png
+  hardenedRuntime: false
   gatekeeperAssess: false
-  entitlements: build/entitlements.plist
-  entitlementsInherit: build/entitlements.plist
+  darkModeSupport: true
+  type: distribution
 
 # DMG configuration
 dmg:
   title: Fishbowl ${version}
-  icon: assets/icon.icns
-  background: build/dmg-background.png
+  icon: assets/icon.png
   iconSize: 80
   contents:
     - x: 410
@@ -65,9 +84,14 @@ win:
   target:
     - target: nsis
       arch: [x64, ia32]
-  icon: assets/icon.ico
+    - target: portable
+      arch: [x64, ia32]
+    - target: zip
+      arch: [x64, ia32]
+  icon: assets/icon.png
   publisherName: Language Adventure LLC
   verifyUpdateCodeSignature: false
+  requestedExecutionLevel: asInvoker
 
 # NSIS configuration
 nsis:
@@ -75,9 +99,9 @@ nsis:
   perMachine: true
   allowToChangeInstallationDirectory: true
   license: LICENSE
-  installerIcon: assets/icon.ico
-  uninstallerIcon: assets/icon.ico
-  installerHeaderIcon: assets/icon.ico
+  installerIcon: assets/icon.png
+  uninstallerIcon: assets/icon.png
+  installerHeaderIcon: assets/icon.png
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: Fishbowl

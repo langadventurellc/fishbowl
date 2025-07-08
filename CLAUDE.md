@@ -38,37 +38,37 @@ npm install
 npm rebuild better-sqlite3  # If SQLite issues
 
 # Development (hot reload)
-npm run dev               # Start both processes
+npm run dev               # Start both processes with nodemon
 npm run dev:main         # Main process only
 npm run dev:renderer     # Renderer process only
-
-# Testing
-npm test                 # Run all tests
-npm run test:watch      # Watch mode
-npm run test:coverage   # With coverage
+npm run dev:concurrent   # Concurrent development mode
 
 # Code quality
 npm run lint            # Run ESLint
 npm run lint:fix       # Auto-fix issues
 npm run type-check     # TypeScript check
-npm audit              # Security audit
-npx audit-ci --moderate # Dependency vulnerability check
+npm run format          # Run Prettier
+npm run format:check    # Check Prettier formatting
 
 # Building
 npm run build          # Production build
+npm run build:verify   # Build with verification
 npm run dist           # Package for current platform
+npm run dist:all       # Package for all platforms
 npm run preview        # Preview production build
 
 # Database
 npm run db:migrate     # Run migrations
 
-# CI/CD
-# GitHub Actions automatically runs:
-# - Linting and type checking
-# - Unit tests with coverage
-# - Cross-platform builds (Ubuntu, Windows, macOS)
-# - Security audits
-# - Dependency vulnerability scans
+# Security and analysis
+npm run security:audit # Comprehensive security audit
+npm audit              # Basic security audit
+
+# Icon generation
+npm run generate:icon  # Generate app icon from base64
+npm run generate:icons # Generate all platform icons
+
+# Note: Testing framework not yet implemented (Phase 2)
 ```
 
 ## Project Structure
@@ -76,17 +76,39 @@ npm run db:migrate     # Run migrations
 ```
 src/
 ├── main/                    # Electron main process
-│   ├── database/           # SQLite operations
-│   ├── config/            # Config file management
-│   ├── security/          # Keytar integration
-│   └── ipc/              # IPC handlers
+│   ├── index.ts            # Main process entry point
+│   ├── window.ts           # Window management with security
+│   ├── menu.ts             # Application menu
+│   └── ipc/               # IPC handlers and events
 ├── renderer/               # React application
 │   ├── components/        # Feature-based components
-│   ├── store/            # Zustand stores
-│   ├── hooks/            # Custom React hooks
-│   └── services/         # AI provider services
+│   │   ├── Home/          # Landing page
+│   │   ├── Settings/      # Settings interface
+│   │   ├── Chat/          # Chat interface
+│   │   ├── UI/            # Reusable UI components
+│   │   ├── DevTools/      # Development tools
+│   │   ├── ErrorBoundary/ # Error handling
+│   │   └── IpcTest/       # IPC testing component
+│   ├── hooks/             # Custom React hooks
+│   │   ├── useTheme.*     # Theme management
+│   │   └── useIpc.*       # IPC communication
+│   └── styles/            # CSS themes and globals
+├── preload/               # Secure IPC bridge
+│   └── index.ts           # Preload script
 └── shared/                # Shared types/utils
-    └── types/            # TypeScript interfaces
+    ├── types/             # TypeScript interfaces
+    └── utils/             # Utility functions
+
+assets/                    # Application assets
+├── icon.png              # Main application icon
+├── icon.svg              # Scalable vector icon
+└── icon-*.svg            # Platform-specific icons
+
+scripts/                   # Build and utility scripts
+├── build-verify.js       # Build verification
+├── security-audit.js     # Security auditing
+├── generate-icon.js      # Icon generation
+└── generate-all-icons.js # Multi-platform icons
 ```
 
 ## Documentation Structure
@@ -132,23 +154,32 @@ components/ChatRoom/
 
 ### Type-Safe IPC
 
-All IPC communication uses typed channels defined in `shared/types/ipc.ts`.
+Secure IPC communication with comprehensive type safety:
+
+- Preload script with context isolation
+- Input sanitization and validation
+- Comprehensive API surface (window controls, system info, configuration)
+- React hooks for IPC integration (`useIpc.*`)
+- Performance monitoring and error handling
 
 ### State Management
 
-Zustand stores with persistence middleware handle application state. Access via hooks:
+Current implementation uses React Context for theme management:
 
-```typescript
-const { agents, addAgent } = useAgentStore();
-```
+- `ThemeProvider` with localStorage persistence
+- `useTheme` hook for theme access
+- CSS custom properties for theming
+- Light/dark mode toggle functionality
+
+Zustand integration planned for Phase 2.
 
 ### AI Provider Integration
 
-Providers implement a common interface and are registered in the provider factory. New providers require:
+AI provider integration planned for Phase 2. Current foundation includes:
 
-1. Service implementation in `services/ai/providers/`
-2. Configuration in `config/models.json`
-3. Registration in provider factory
+- Configuration management through IPC
+- Secure API key storage preparation
+- Provider service architecture planning
 
 ## Contributing
 
@@ -157,10 +188,11 @@ The project follows established contribution guidelines and coding standards:
 ### Code Standards
 
 - **TypeScript**: Strict mode enabled, no implicit any types
-- **ESLint**: Configured with strict rules for code quality
-- **Prettier**: Automated code formatting
-- **Testing**: Unit tests required for all new features
-- **Documentation**: JSDoc comments for public APIs
+- **ESLint**: Custom @langadventurellc/tsla-linter with comprehensive rules
+- **Prettier**: Automated code formatting with project standards
+- **Pre-commit Hooks**: Husky + lint-staged for quality enforcement
+- **Security**: Comprehensive security audit scripts
+- **Build Verification**: Automated build quality checks
 
 ### Contribution Workflow
 

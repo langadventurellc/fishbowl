@@ -1,0 +1,173 @@
+{
+  "appId": "com.langadventure.fishbowl",
+  "productName": "Fishbowl",
+  "copyright": "Copyright © 2024 Language Adventure LLC",
+  "directories": {
+    "output": "dist/packages",
+    "buildResources": "build"
+  },
+  "files": [
+    "dist/main/**/*",
+    "dist/preload/**/*",
+    "dist/renderer/**/*",
+    "package.json",
+    "!**/*.ts",
+    "!**/*.map",
+    "!**/.DS_Store",
+    "!src/**/*",
+    "!tsconfig*.json",
+    "!vite.config.ts",
+    "!electron-builder.yml",
+    "!electron-builder.json",
+    "!scripts/**/*",
+    "!docs/**/*",
+    "!tests/**/*",
+    "!*.md",
+    "!.git*",
+    "!.husky/**/*",
+    "!eslint.config.mjs",
+    "!.prettierrc",
+    "!.npmrc"
+  ],
+  "extraFiles": [
+    {
+      "from": "assets",
+      "to": "resources",
+      "filter": "**/*"
+    }
+  ],
+  "compression": "maximum",
+  "asar": true,
+  "asarUnpack": ["**/node_modules/sharp/**/*", "**/node_modules/@img/**/*"],
+  "forceCodeSigning": false,
+  "mac": {
+    "category": "public.app-category.productivity",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["x64", "arm64"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "arm64"]
+      }
+    ],
+    "icon": "assets/icon.png",
+    "hardenedRuntime": false,
+    "gatekeeperAssess": false,
+    "darkModeSupport": true,
+    "type": "distribution"
+  },
+  "dmg": {
+    "title": "Fishbowl ${version}",
+    "icon": "assets/icon.png",
+    "iconSize": 80,
+    "contents": [
+      {
+        "x": 410,
+        "y": 150,
+        "type": "link",
+        "path": "/Applications"
+      },
+      {
+        "x": 130,
+        "y": 150,
+        "type": "file"
+      }
+    ],
+    "window": {
+      "width": 540,
+      "height": 380
+    }
+  },
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64", "ia32"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64", "ia32"]
+      },
+      {
+        "target": "zip",
+        "arch": ["x64", "ia32"]
+      }
+    ],
+    "icon": "assets/icon.png",
+    "publisherName": "Language Adventure LLC",
+    "verifyUpdateCodeSignature": false,
+    "requestedExecutionLevel": "asInvoker"
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": true,
+    "allowToChangeInstallationDirectory": true,
+    "license": "LICENSE",
+    "installerIcon": "assets/icon.png",
+    "uninstallerIcon": "assets/icon.png",
+    "installerHeaderIcon": "assets/icon.png",
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "Fishbowl"
+  },
+  "linux": {
+    "target": [
+      {
+        "target": "AppImage",
+        "arch": ["x64"]
+      },
+      {
+        "target": "deb",
+        "arch": ["x64"]
+      },
+      {
+        "target": "rpm",
+        "arch": ["x64"]
+      }
+    ],
+    "category": "Office",
+    "icon": "assets/icon.png",
+    "synopsis": "Multi-Agent AI Conversations",
+    "description": "Fishbowl is an Electron-based desktop application for multi-agent AI conversations, enabling natural collaboration between multiple AI personalities in a shared conversation space."
+  },
+  "appImage": {
+    "license": "LICENSE"
+  },
+  "deb": {
+    "priority": "optional",
+    "depends": ["glibc"]
+  },
+  "rpm": {
+    "license": "MIT",
+    "vendor": "Language Adventure LLC"
+  },
+  "snap": {
+    "title": "Fishbowl",
+    "summary": "Multi-Agent AI Conversations",
+    "description": "Fishbowl is an Electron-based desktop application for multi-agent AI conversations, enabling natural collaboration between multiple AI personalities in a shared conversation space.",
+    "grade": "stable",
+    "confinement": "strict"
+  },
+  "publish": {
+    "provider": "github",
+    "owner": "langadventurellc",
+    "repo": "fishbowl",
+    "private": false
+  },
+  "buildVersion": "${env.BUILD_NUMBER}",
+  "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+  "electronVersion": "37.2.0",
+  "nodeVersion": "18.20.4",
+  "electronFuses": {
+    "runAsNode": false,
+    "enableCookieEncryption": true,
+    "enableNodeOptionsEnvironmentVariable": false,
+    "enableNodeCliInspectArguments": false,
+    "enableEmbeddedAsarIntegrityValidation": true,
+    "onlyLoadAppFromAsar": true,
+    "loadBrowserProcessSpecificV8Snapshot": false,
+    "grantFileProtocolExtraPrivileges": false
+  }
+}
