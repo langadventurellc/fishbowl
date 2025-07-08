@@ -9,13 +9,13 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 **Goal**: Set up project structure and CI/CD pipeline
 
 #### 0.1 Preparation Tasks
-- [ ] Set up project documentation structure
-- [ ] Define coding standards and conventions
-- [ ] Create initial README with project overview
-- [ ] Create agent "blackboard" (`docs/blackboard.md`) for coding agents to share knowledge
-- [ ] Set up initial project CI/CD pipeline (GitHub Actions)
-- [ ] Create initial project license file (e.g., MIT License)
-- [ ] Create initial project contribution guidelines
+- [X] Set up project documentation structure
+- [X] Define coding standards and conventions
+- [X] Create initial README with project overview
+- [X] Create agent "blackboard" (`docs/blackboard.md`) for coding agents to share knowledge
+- [X] Set up initial project CI/CD pipeline (GitHub Actions)
+- [X] Create initial project license file (e.g., MIT License)
+- [X] Create initial project contribution guidelines
 
 ### Phase 1: Foundation (Weeks 1-2)
 **Goal**: Establish core infrastructure and basic UI shell
