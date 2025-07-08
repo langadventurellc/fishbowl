@@ -11,11 +11,5 @@
     "skipLibCheck": true
   },
   "include": ["src/preload/**/*", "src/shared/**/*"],
-  "exclude": [
-    "src/main/**/*",
-    "src/renderer/**/*",
-    "node_modules",
-    "dist",
-    "out"
-  ]
+  "exclude": ["src/main/**/*", "src/renderer/**/*", "node_modules", "dist", "out"]
 }

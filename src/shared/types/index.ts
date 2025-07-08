@@ -2,17 +2,60 @@
  * Shared type definitions for the Fishbowl application
  */
 
-// IPC Channel definitions
+// System information
+export interface SystemInfo {
+  platform: NodeJS.Platform;
+  arch: string;
+  version: string;
+  appVersion: string;
+  electronVersion: string;
+  chromeVersion: string;
+  nodeVersion: string;
+  memory: {
+    used: number;
+    total: number;
+  };
+}
+
+// Configuration types
+export interface ConfigValue {
+  theme: 'light' | 'dark' | 'system';
+  windowState: WindowState;
+  devTools: boolean;
+  autoUpdater: boolean;
+  telemetry: boolean;
+}
+
+export type ConfigKey = keyof ConfigValue;
+
+// IPC Channel definitions with proper typing
 export interface IpcChannels {
   // Window controls
-  'window:minimize': () => void;
-  'window:maximize': () => void;
-  'window:close': () => void;
-  'window:focus': () => void;
-  'window:blur': () => void;
+  'window:minimize': () => Promise<void>;
+  'window:maximize': () => Promise<void>;
+  'window:close': () => Promise<void>;
 
   // Application
   'app:getVersion': () => Promise<string>;
+
+  // System
+  'system:getInfo': () => Promise<SystemInfo>;
+  'system:platform': () => Promise<NodeJS.Platform>;
+  'system:arch': () => Promise<string>;
+  'system:version': () => Promise<string>;
+
+  // Configuration
+  'config:get': <K extends ConfigKey>(key: K) => Promise<ConfigValue[K]>;
+  'config:set': <K extends ConfigKey>(key: K, value: ConfigValue[K]) => Promise<void>;
+
+  // Theme
+  'theme:get': () => Promise<'light' | 'dark' | 'system'>;
+  'theme:set': (theme: 'light' | 'dark' | 'system') => Promise<void>;
+
+  // Development
+  'dev:isDev': () => Promise<boolean>;
+  'dev:openDevTools': () => Promise<void>;
+  'dev:closeDevTools': () => Promise<void>;
 }
 
 // Window state

@@ -9,9 +9,7 @@ export default defineConfig({
       fastRefresh: process.env.NODE_ENV === 'development',
       // Enable React DevTools in development
       babel: {
-        plugins: [
-          ...(process.env.NODE_ENV === 'development' ? ['react-devtools'] : []),
-        ],
+        plugins: [...(process.env.NODE_ENV === 'development' ? ['react-devtools'] : [])],
       },
     }),
   ],
@@ -57,9 +55,7 @@ export default defineConfig({
 
   // Environment variables
   define: {
-    'process.env.NODE_ENV': JSON.stringify(
-      process.env.NODE_ENV || 'development',
-    ),
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
     // Enable React DevTools in development
     __REACT_DEVTOOLS_GLOBAL_HOOK__: process.env.NODE_ENV === 'development',
   },

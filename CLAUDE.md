@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+<rules>
+  <critical>NEVER bypass git pre-commit hooks, unit tests or quality checks.</critical>
+  <critical>NEVER finish a task with failing unit tests or quality checks.</critical>
+  <critical>NEVER, NEVER commit code with failing unit tests or quality checks.</critical>
+  <critical>Execute only the next single incomplete task from $ARGUMENTS. Complete the task, update the task list, then STOP immediately for user review.</critical>
+</rules>
+
 ## Project Overview
 
 Fishbowl is an Electron-based desktop application for multi-agent AI conversations. The project is currently in the specification phase with comprehensive documentation in `docs/specifications/`.
@@ -174,24 +181,42 @@ See `CONTRIBUTING.md` for detailed guidelines.
 - CSS Modules handle component styling with theme support via CSS Variables
 - The application supports multiple AI providers (OpenAI, Anthropic, Google, Groq, Ollama)
 
-## Current Status
+## Third-Party Library Documentation
 
-**Phase 0 Complete**: Project foundation has been established with comprehensive documentation, contribution guidelines, coding standards, and CI/CD pipeline setup.
+When working with third-party libraries, use the context7 MCP tool to get up-to-date documentation and examples. This ensures you have access to the latest API changes and best practices for libraries like FastAPI, Pydantic, LangChain, Firebase, Google Cloud services, and others used in this project.
 
-**Completed**:
+## Asking Questions
 
-- ✅ Project documentation structure (`docs/` with specifications, guides, technical docs)
-- ✅ Contribution guidelines (`CONTRIBUTING.md`)
-- ✅ Coding standards and conventions (`docs/technical/coding-standards.md`)
-- ✅ Initial README with project overview and setup instructions
-- ✅ GitHub Actions CI/CD pipeline configuration
-- ✅ License file (MIT)
-- ✅ Agent collaboration blackboard (`docs/blackboard.md`)
+- **Ask one question at a time**
+- **Provide options for each question**
 
-**Next Steps (Phase 1)**:
+_Example question_
 
-1. Setting up the basic Electron + React + TypeScript structure
-2. Implementing the IPC bridge with type safety
-3. Creating the database schema and migrations
-4. Building the core UI components
-5. Integrating AI providers via Vercel AI SDK
+```
+In case of multiple variations, should metadata be generated for all variations or only the first one?
+- **Options:**
+  - A) Generate metadata for all variations
+  - B) Generate metadata only for the first variation
+  - C) Do not generate metadata at all
+```
+
+**Remember to ask one question at a time and provide options for each question.**
+
+## Prohibited Actions
+
+- ❌ Shared "kitchen-sink" modules
+- ❌ Hardcoded secrets (including file paths outside project root)
+- ❌ Scope expansion without approval
+
+<rules>
+  <critical>NEVER bypass git pre-commit hooks, unit tests or quality checks.</critical>
+  <critical>NEVER finish a task with failing unit tests or quality checks.</critical>
+  <critical>NEVER, NEVER commit code with failing unit tests or quality checks.</critical>
+  <critical>Write tests for new or modified functionality. Do not write tests for style or formatting.</critical>
+  <critical>Never hardcode secrets or environment values, including file paths outside project root.</critical>
+  <critical>Ensure all quality checks pass before marking a task complete. Do not proceed if any checks or tests fail.</critical>
+  <important>Each "public" class or function should be in its own file, unless otherwise approved.</important>
+  <important>Use context7 MCP tool to get up-to-date documentation and best practices for all third-party libraries.</important>
+  <important>Ask questions for implementation details, clarifications, or when requirements are ambiguous.</important>
+  <rule>Do not write comments for obvious code. Use meaningful variable and function names instead.</rule>
+</rules>

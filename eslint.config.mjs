@@ -1,9 +1,6 @@
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
-import {
-  multipleExportsPlugin,
-  statementCountPlugin,
-} from '@langadventurellc/tsla-linter';
+import { multipleExportsPlugin, statementCountPlugin } from '@langadventurellc/tsla-linter';
 import prettierConfig from 'eslint-config-prettier';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
@@ -61,10 +58,7 @@ const eslintConfig = [
     },
     rules: {
       // TypeScript specific rules
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_' },
-      ],
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/prefer-nullish-coalescing': 'error',
@@ -126,27 +120,22 @@ const eslintConfig = [
       'multiple-exports': multipleExportsPlugin,
     },
     rules: {
-      'statement-count/function-statement-count-warn': [
-        'warn',
-        { threshold: 50 },
-      ],
-      'statement-count/function-statement-count-error': [
-        'error',
-        { threshold: 80 },
-      ],
-      'statement-count/class-statement-count-warn': [
-        'warn',
-        { threshold: 150 },
-      ],
-      'statement-count/class-statement-count-error': [
-        'error',
-        { threshold: 200 },
-      ],
+      'statement-count/function-statement-count-warn': ['warn', { threshold: 50 }],
+      'statement-count/function-statement-count-error': ['error', { threshold: 80 }],
+      'statement-count/class-statement-count-warn': ['warn', { threshold: 150 }],
+      'statement-count/class-statement-count-error': ['error', { threshold: 200 }],
       'multiple-exports/no-multiple-exports': 'error',
     },
   },
   {
-    files: ['src/components/**', 'src/shared/**', 'src/renderer/hooks/useTheme.index.ts'],
+    files: [
+      'src/components/**',
+      'src/shared/**',
+      'src/renderer/hooks/useTheme.index.ts',
+      'src/renderer/hooks/useIpc.hook.ts',
+      'src/renderer/hooks/useIpc.index.ts',
+      'src/renderer/components/IpcTest/IpcTest.tsx',
+    ],
     rules: {
       'multiple-exports/no-multiple-exports': 'off',
     },

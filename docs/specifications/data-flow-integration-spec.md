@@ -13,9 +13,7 @@ Components connect to the store using hooks for clear data dependencies:
 ```typescript
 // Direct store access for reading state
 const messages = useStore(state => state.messages);
-const activeAgents = useStore(state =>
-  state.agents.filter(a => a.participating),
-);
+const activeAgents = useStore(state => state.agents.filter(a => a.participating));
 
 // Actions access pattern
 const { addMessage, toggleAutoMode } = useStore(state => state.actions);
@@ -68,11 +66,7 @@ class AgentService {
 
     try {
       // 2. Format messages for provider
-      const formatted = formatMessagesForProvider(
-        agent.provider,
-        agent.systemPrompt,
-        messages,
-      );
+      const formatted = formatMessagesForProvider(agent.provider, agent.systemPrompt, messages);
 
       // 3. Call AI provider with streaming
       const stream = await providers[agent.provider].generateStream({
@@ -185,9 +179,7 @@ class TurnManager {
   }
 
   insertAgent(agentId: AgentId, afterCurrent = true) {
-    const insertIndex = afterCurrent
-      ? this.currentIndex + 1
-      : this.queue.length;
+    const insertIndex = afterCurrent ? this.currentIndex + 1 : this.queue.length;
     this.queue.splice(insertIndex, 0, agentId);
     useStore.getState().actions.updateTurnQueue(this.queue, this.currentIndex);
   }
@@ -203,18 +195,15 @@ class TurnManager {
 contextBridge.exposeInMainWorld('api', {
   db: {
     getConversations: () => ipcRenderer.invoke('db:getConversations'),
-    saveMessage: (message: Message) =>
-      ipcRenderer.invoke('db:saveMessage', message),
+    saveMessage: (message: Message) => ipcRenderer.invoke('db:saveMessage', message),
   },
   config: {
     getModels: () => ipcRenderer.invoke('config:getModels'),
-    saveSettings: (settings: Settings) =>
-      ipcRenderer.invoke('config:saveSettings', settings),
+    saveSettings: (settings: Settings) => ipcRenderer.invoke('config:saveSettings', settings),
   },
   keys: {
     hasKey: (provider: string) => ipcRenderer.invoke('keys:hasKey', provider),
-    setKey: (provider: string, key: string) =>
-      ipcRenderer.invoke('keys:setKey', provider, key),
+    setKey: (provider: string, key: string) => ipcRenderer.invoke('keys:setKey', provider, key),
   },
 });
 
@@ -418,11 +407,7 @@ class MemoryManager {
     const inactiveThreshold = Date.now() - 7 * 24 * 60 * 60 * 1000; // 7 days
 
     store.conversations
-      .filter(
-        c =>
-          c.id !== store.activeConversationId &&
-          c.updatedAt < inactiveThreshold,
-      )
+      .filter(c => c.id !== store.activeConversationId && c.updatedAt < inactiveThreshold)
       .forEach(c => this.unloadConversation(c.id));
   }
 }

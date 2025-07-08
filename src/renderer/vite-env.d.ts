@@ -41,15 +41,10 @@ declare module '*.webp' {
 }
 
 // Electron API types
+import type { ElectronAPI } from '../preload';
+
 declare global {
   interface Window {
-    electronAPI: {
-      minimize: () => Promise<void>;
-      maximize: () => Promise<void>;
-      close: () => Promise<void>;
-      getVersion: () => Promise<string>;
-      onWindowFocus: (callback: () => void) => () => void;
-      onWindowBlur: (callback: () => void) => () => void;
-    };
+    electronAPI: ElectronAPI;
   }
 }

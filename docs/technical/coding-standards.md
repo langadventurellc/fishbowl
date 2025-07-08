@@ -45,10 +45,7 @@ This document defines the coding standards and conventions for the Fishbowl proj
 
 ```typescript
 // ✅ Good: Explicit types for function parameters and return values
-function processMessage(
-  message: string,
-  userId: number,
-): Promise<ProcessedMessage> {
+function processMessage(message: string, userId: number): Promise<ProcessedMessage> {
   // Implementation
 }
 

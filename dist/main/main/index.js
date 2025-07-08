@@ -22,9 +22,7 @@ const createWindow = () => {
   if (utils_1.isDev) {
     void mainWindow.loadURL('http://localhost:5173');
   } else {
-    void mainWindow.loadFile(
-      path_1.default.join(__dirname, '../renderer/index.html'),
-    );
+    void mainWindow.loadFile(path_1.default.join(__dirname, '../renderer/index.html'));
   }
   // Open the DevTools in development
   if (utils_1.isDev) {

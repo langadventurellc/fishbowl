@@ -42,9 +42,7 @@ export const Settings: React.FC = () => {
             <h2>Privacy & Security</h2>
             <div className={styles.settingGroup}>
               <h3>Data Storage</h3>
-              <p>
-                Manage your conversation data and privacy settings (coming soon)
-              </p>
+              <p>Manage your conversation data and privacy settings (coming soon)</p>
               <div className={styles.placeholder}>
                 Privacy settings will be implemented in future phases
               </div>

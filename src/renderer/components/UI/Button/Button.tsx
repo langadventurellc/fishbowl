@@ -22,12 +22,7 @@ export const Button: React.FC<ButtonProps> = ({
     .join(' ');
 
   return (
-    <button
-      type={type}
-      className={buttonClasses}
-      onClick={onClick}
-      disabled={disabled}
-    >
+    <button type={type} className={buttonClasses} onClick={onClick} disabled={disabled}>
       {children}
     </button>
   );

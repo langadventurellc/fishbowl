@@ -63,13 +63,7 @@ export const AGENT_CONFIG = {
   MAX_AGENTS_PER_ROOM: 10,
   MAX_NAME_LENGTH: 50,
   MAX_PERSONALITY_LENGTH: 500,
-  DEFAULT_ROLES: [
-    'assistant',
-    'analyst',
-    'creative',
-    'critic',
-    'facilitator',
-  ] as const,
+  DEFAULT_ROLES: ['assistant', 'analyst', 'creative', 'critic', 'facilitator'] as const,
 };
 
 // Message configuration (placeholder for future implementation)

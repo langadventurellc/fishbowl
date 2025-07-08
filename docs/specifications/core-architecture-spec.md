@@ -316,18 +316,12 @@ export const useStore = create<AppState>()(
 class AgentEventBus extends EventEmitter {
   // Event types
   emit(event: 'agent:thinking', data: { agentId: string }): void;
-  emit(
-    event: 'agent:responded',
-    data: { agentId: string; message: string },
-  ): void;
+  emit(event: 'agent:responded', data: { agentId: string; message: string }): void;
   emit(event: 'agent:skipped', data: { agentId: string }): void;
   emit(event: 'agent:error', data: { agentId: string; error: Error }): void;
   emit(event: 'conversation:updated', data: { conversationId: string }): void;
   emit(event: 'mode:changed', data: { autoMode: boolean }): void;
-  emit(
-    event: 'mention:detected',
-    data: { agentName: string; messageId: string },
-  ): void;
+  emit(event: 'mention:detected', data: { agentName: string; messageId: string }): void;
 }
 
 // Global instance

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTheme } from '../../hooks';
 import styles from './DevTools.module.css';
 
@@ -19,7 +19,15 @@ export const DevTools: React.FC<DevToolsProps> = ({ isVisible = false }) => {
     width: window.innerWidth,
     height: window.innerHeight,
     userAgent: navigator.userAgent,
-    platform: navigator.platform,
+    platform:
+      (navigator as { userAgentData?: { platform?: string } }).userAgentData?.platform ??
+      (navigator.userAgent.includes('Win')
+        ? 'Windows'
+        : navigator.userAgent.includes('Mac')
+          ? 'macOS'
+          : navigator.userAgent.includes('Linux')
+            ? 'Linux'
+            : 'Unknown'),
   });
   const { theme } = useTheme();
 
@@ -140,9 +148,7 @@ export const DevTools: React.FC<DevToolsProps> = ({ isVisible = false }) => {
             </div>
             <div className={styles.infoItem}>
               <span className={styles.label}>Page Load Time:</span>
-              <span className={styles.value}>
-                {Math.round(performance.now())}ms
-              </span>
+              <span className={styles.value}>{Math.round(performance.now())}ms</span>
             </div>
           </div>
         </section>

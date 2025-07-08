@@ -74,3 +74,6 @@ export const throttle = <T extends (...args: unknown[]) => void>(
     }
   };
 };
+
+// Export IPC utilities
+export * from './ipc';

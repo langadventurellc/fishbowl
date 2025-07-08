@@ -40,15 +40,11 @@ export class ErrorBoundary extends Component<Props, State> {
           <div className={styles.errorContent}>
             <h1 className={styles.errorTitle}>Something went wrong</h1>
             <p className={styles.errorDescription}>
-              The application encountered an unexpected error. Please try
-              reloading the page.
+              The application encountered an unexpected error. Please try reloading the page.
             </p>
 
             <div className={styles.errorActions}>
-              <button
-                onClick={this.handleReload}
-                className={styles.reloadButton}
-              >
+              <button onClick={this.handleReload} className={styles.reloadButton}>
                 Reload Application
               </button>
             </div>

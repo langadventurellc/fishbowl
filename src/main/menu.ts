@@ -1,10 +1,4 @@
-import {
-  Menu,
-  MenuItemConstructorOptions,
-  app,
-  dialog,
-  BrowserWindow,
-} from 'electron';
+import { Menu, MenuItemConstructorOptions, app, dialog, BrowserWindow } from 'electron';
 
 export const createApplicationMenu = (): void => {
   const template: MenuItemConstructorOptions[] = [

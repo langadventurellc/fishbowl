@@ -212,10 +212,7 @@ function formatMessages(
     case 'user_prefix':
       return messages.map(msg => ({
         ...msg,
-        content:
-          msg.role === 'user'
-            ? `${systemPrompt}\n\n${msg.content}`
-            : msg.content,
+        content: msg.role === 'user' ? `${systemPrompt}\n\n${msg.content}` : msg.content,
       }));
   }
 }

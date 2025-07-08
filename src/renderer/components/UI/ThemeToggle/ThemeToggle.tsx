@@ -13,9 +13,7 @@ export const ThemeToggle: React.FC = () => {
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
     >
       <span className={styles.icon}>{theme === 'light' ? '🌙' : '☀️'}</span>
-      <span className={styles.label}>
-        {theme === 'light' ? 'Dark' : 'Light'}
-      </span>
+      <span className={styles.label}>{theme === 'light' ? 'Dark' : 'Light'}</span>
     </button>
   );
 };

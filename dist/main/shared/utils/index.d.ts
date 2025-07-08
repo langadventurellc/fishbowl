@@ -44,3 +44,4 @@ export declare const throttle: <T extends (...args: unknown[]) => void>(
   func: T,
   limit: number,
 ) => (...args: Parameters<T>) => void;
+export * from './ipc';

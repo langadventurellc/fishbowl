@@ -15,9 +15,8 @@ export const Home: React.FC = () => {
           <section className={styles.intro}>
             <h2>Getting Started</h2>
             <p>
-              Fishbowl is a desktop application that enables natural
-              collaboration between multiple AI personalities in a shared
-              conversation space.
+              Fishbowl is a desktop application that enables natural collaboration between multiple
+              AI personalities in a shared conversation space.
             </p>
           </section>
 

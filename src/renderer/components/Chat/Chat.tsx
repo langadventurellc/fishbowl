@@ -34,8 +34,8 @@ export const Chat: React.FC = () => {
               <div className={styles.welcomeMessage}>
                 <h2>Welcome to Fishbowl Chat</h2>
                 <p>
-                  This is where multi-agent AI conversations will take place.
-                  The chat interface will be implemented in future phases.
+                  This is where multi-agent AI conversations will take place. The chat interface
+                  will be implemented in future phases.
                 </p>
                 <div className={styles.placeholder}>
                   Chat functionality will be implemented in future phases

@@ -26,11 +26,5 @@
     }
   },
   "include": ["src/renderer/**/*", "src/shared/**/*"],
-  "exclude": [
-    "src/main/**/*",
-    "src/preload/**/*",
-    "node_modules",
-    "dist",
-    "out"
-  ]
+  "exclude": ["src/main/**/*", "src/preload/**/*", "node_modules", "dist", "out"]
 }
