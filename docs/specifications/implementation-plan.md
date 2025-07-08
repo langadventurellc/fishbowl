@@ -1,7 +1,7 @@
 # High-Level Implementation Plan
 
 ## Overview
-This implementation plan outlines the development phases for AI Collaborators v1.0, organized to build functionality incrementally while maintaining a working application at each milestone.
+This implementation plan outlines the development phases for Fishbowl v1.0, organized to build functionality incrementally while maintaining a working application at each milestone.
 
 ## Development Phases
 

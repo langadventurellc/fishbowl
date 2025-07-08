@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Fishbowl (AI Collaborators) is an Electron-based desktop application for multi-agent AI conversations. The project is currently in the specification phase with comprehensive documentation in `docs/specifications/`.
+Fishbowl is an Electron-based desktop application for multi-agent AI conversations. The project is currently in the specification phase with comprehensive documentation in `docs/specifications/`.
 
 ## Key Architecture
 
@@ -42,6 +42,8 @@ npm run test:coverage   # With coverage
 npm run lint            # Run ESLint
 npm run lint:fix       # Auto-fix issues
 npm run type-check     # TypeScript check
+npm audit              # Security audit
+npx audit-ci --moderate # Dependency vulnerability check
 
 # Building
 npm run build          # Production build
@@ -50,6 +52,14 @@ npm run preview        # Preview production build
 
 # Database
 npm run db:migrate     # Run migrations
+
+# CI/CD
+# GitHub Actions automatically runs:
+# - Linting and type checking
+# - Unit tests with coverage
+# - Cross-platform builds (Ubuntu, Windows, macOS)
+# - Security audits
+# - Dependency vulnerability scans
 ```
 
 ## Project Structure
@@ -69,6 +79,32 @@ src/
 └── shared/                # Shared types/utils
     └── types/            # TypeScript interfaces
 ```
+
+## Documentation Structure
+
+The project follows a comprehensive documentation structure:
+
+```
+docs/
+├── README.md              # Documentation overview
+├── blackboard.md          # Agent collaboration knowledge base
+├── specifications/        # Technical specifications
+│   ├── core-architecture-spec.md
+│   ├── agent-model-spec.md
+│   ├── ux-specification.md
+│   └── implementation-plan.md
+├── guides/                # User and developer guides
+│   └── README.md
+└── technical/             # Technical documentation
+    ├── coding-standards.md
+    └── README.md
+```
+
+Key documentation files:
+- `CONTRIBUTING.md`: Contribution guidelines and workflow
+- `docs/blackboard.md`: Shared knowledge base for agent collaboration
+- `docs/specifications/`: Complete technical specifications
+- `docs/technical/coding-standards.md`: Code quality and style guidelines
 
 ## Key Implementation Patterns
 
@@ -97,6 +133,26 @@ Providers implement a common interface and are registered in the provider factor
 2. Configuration in `config/models.json`
 3. Registration in provider factory
 
+## Contributing
+
+The project follows established contribution guidelines and coding standards:
+
+### Code Standards
+- **TypeScript**: Strict mode enabled, no implicit any types
+- **ESLint**: Configured with strict rules for code quality
+- **Prettier**: Automated code formatting
+- **Testing**: Unit tests required for all new features
+- **Documentation**: JSDoc comments for public APIs
+
+### Contribution Workflow
+1. Fork the repository and create a feature branch
+2. Follow coding standards in `docs/technical/coding-standards.md`
+3. Write tests for new functionality
+4. Run `npm run lint` and `npm run type-check` before committing
+5. Submit a pull request with clear description
+
+See `CONTRIBUTING.md` for detailed guidelines.
+
 ## Important Notes
 
 - The project uses strict TypeScript - no implicit any types
@@ -108,7 +164,18 @@ Providers implement a common interface and are registered in the provider factor
 
 ## Current Status
 
-The project has comprehensive specifications but no implementation yet. Start by:
+**Phase 0 Complete**: Project foundation has been established with comprehensive documentation, contribution guidelines, coding standards, and CI/CD pipeline setup.
+
+**Completed**:
+- ✅ Project documentation structure (`docs/` with specifications, guides, technical docs)
+- ✅ Contribution guidelines (`CONTRIBUTING.md`)  
+- ✅ Coding standards and conventions (`docs/technical/coding-standards.md`)
+- ✅ Initial README with project overview and setup instructions
+- ✅ GitHub Actions CI/CD pipeline configuration
+- ✅ License file (MIT)
+- ✅ Agent collaboration blackboard (`docs/blackboard.md`)
+
+**Next Steps (Phase 1)**:
 1. Setting up the basic Electron + React + TypeScript structure
 2. Implementing the IPC bridge with type safety
 3. Creating the database schema and migrations

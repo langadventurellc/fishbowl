@@ -15,7 +15,7 @@ From `docs/specifications/implementation-plan.md`, break down the phase "$ARGUME
 
 ### Output:
 
-Create new files at `.tasks/{YYYYMMDD}/{YYYYMMDD}-{feature-slug}-requirements.md`  (use `bash` to get the correct date) in the project with the following structure:
+Create new files at `.tasks/{phase-x}/{YYYYMMDD}-{feature-slug}-requirements.md`  (use `bash` to get the correct date) in the project with the following structure:
 
 ```markdown
 # Feature
@@ -49,8 +49,9 @@ Create new files at `.tasks/{YYYYMMDD}/{YYYYMMDD}-{feature-slug}-requirements.md
 
 ### Examples:
 
+**Phase Input:** `phase 0`
 **Feature:** `user authentication system`
-**Output file:** `/.tasks/20251220/20251220-user-authentication-system-requirements.md`
+**Output file:** `/.tasks/phase-0/20251220-user-authentication-system-requirements.md`
 ```markdown
 # Feature
 
@@ -71,8 +72,9 @@ Add user authentication system with login and registration capabilities.
 - Follow security best practices for authentication
 ```
 
+**Phase Input:** `phase 2`
 **Feature:** `search functionality for products`
-**Output file:** `/.tasks/20251220/20251220-search-products-requirements.md`
+**Output file:** `/.tasks/phase-2/20251220-search-products-requirements.md`
 ```markdown
 # Feature
 

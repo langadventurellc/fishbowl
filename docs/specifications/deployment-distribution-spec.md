@@ -1,7 +1,7 @@
 # Deployment & Distribution Specification
 
 ## Overview
-This document outlines the build, packaging, and distribution strategy for the AI Collaborators desktop application v1.0, focusing on a simple but professional deployment process using GitHub releases.
+This document outlines the build, packaging, and distribution strategy for the Fishbowl desktop application v1.0, focusing on a simple but professional deployment process using GitHub releases.
 
 ## Distribution Strategy
 
@@ -24,7 +24,7 @@ Each release includes:
 ```javascript
 // electron-builder.yml
 appId: com.aiCollaborators.app
-productName: AI Collaborators
+productName: Fishbowl
 directories:
   output: dist
   buildResources: build
@@ -98,7 +98,7 @@ nsis:
   differentialPackage: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
-  shortcutName: AI Collaborators
+  shortcutName: Fishbowl
 ```
 
 #### Linux Configuration
@@ -137,7 +137,7 @@ For the initial release, distribute unsigned builds with clear instructions:
 
 1. Download the .dmg file
 2. Double-click to mount
-3. Drag AI Collaborators to Applications
+3. Drag Fishbowl to Applications
 4. First time opening:
    - Right-click the app in Applications
    - Select "Open" from the context menu
@@ -421,7 +421,7 @@ const defaultSettings = {
 
 ### Download Page Template
 ```markdown
-## Download AI Collaborators v1.0.0
+## Download Fishbowl v1.0.0
 
 ### System Requirements
 - macOS 10.15+ / Windows 10+ / Linux (Ubuntu 20.04+)

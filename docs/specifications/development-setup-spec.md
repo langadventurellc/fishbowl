@@ -1,7 +1,7 @@
 # Development Setup Specification
 
 ## Overview
-This document provides step-by-step instructions for setting up the AI Collaborators development environment, including prerequisites, initial setup, and development workflow.
+This document provides step-by-step instructions for setting up the Fishbowl development environment, including prerequisites, initial setup, and development workflow.
 
 ## Prerequisites
 
@@ -418,7 +418,7 @@ netstat -ano | findstr :5173  # Windows
 1. Check console for errors: `Cmd/Ctrl + Shift + I`
 2. Verify main process is running
 3. Check IPC communication
-4. Clear application data: `~/Library/Application Support/AI Collaborators` (macOS)
+4. Clear application data: `~/Library/Application Support/Fishbowl` (macOS)
 
 ### Performance Profiling
 
