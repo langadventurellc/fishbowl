@@ -5,21 +5,17 @@ import { resolve } from 'path';
 export default defineConfig({
   plugins: [
     react({
-      // Enable Fast Refresh for better development experience
-      fastRefresh: process.env.NODE_ENV === 'development',
-      // Enable React DevTools in development
-      babel: {
-        plugins: [...(process.env.NODE_ENV === 'development' ? ['react-devtools'] : [])],
-      },
+      // React plugin automatically handles Fast Refresh in development
     }),
   ],
 
   // Configure for Electron renderer process
   base: './',
+  root: 'src/renderer',
 
   // Build configuration
   build: {
-    outDir: 'dist/renderer',
+    outDir: '../../dist/renderer',
     emptyOutDir: true,
     sourcemap: process.env.NODE_ENV === 'development',
     minify: process.env.NODE_ENV === 'production' ? 'esbuild' : false,
@@ -67,11 +63,10 @@ export default defineConfig({
   // Development server configuration
   server: {
     port: 5173,
-    host: '0.0.0.0', // Allow external connections for better Electron integration
+    host: 'localhost', // Use localhost for Electron integration
     hmr: {
       overlay: true,
-      clientPort: 5173,
-      port: 24678, // Use different port for HMR to avoid conflicts
+      port: 5173, // Use same port for Electron compatibility
     },
     open: false, // Don't open browser in Electron app
     strictPort: true, // Fail if port is occupied
@@ -104,8 +99,6 @@ export default defineConfig({
   // Environment variables
   define: {
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-    // Enable React DevTools in development
-    __REACT_DEVTOOLS_GLOBAL_HOOK__: process.env.NODE_ENV === 'development',
   },
 
   // CSS configuration
