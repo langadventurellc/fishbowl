@@ -1,0 +1,63 @@
+{
+  "name": "fishbowl",
+  "version": "1.0.0",
+  "description": "An Electron-based desktop application for multi-agent AI conversations, enabling natural collaboration between multiple AI personalities in a shared conversation space.",
+  "main": "dist/main/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev:main\" \"npm run dev:preload\" \"npm run dev:renderer\"",
+    "dev:main": "tsc -p tsconfig.main.json -w",
+    "dev:preload": "tsc -p tsconfig.preload.json -w",
+    "dev:renderer": "vite",
+    "build": "npm run build:main && npm run build:preload && npm run build:renderer",
+    "build:main": "tsc -p tsconfig.main.json",
+    "build:preload": "tsc -p tsconfig.preload.json",
+    "build:renderer": "vite build",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder",
+    "dist:dir": "npm run build && electron-builder --dir",
+    "preview": "npm run build && electron .",
+    "lint": "echo \"Linting not configured yet\"",
+    "type-check": "tsc --noEmit && tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.preload.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langadventurellc/fishbowl.git"
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "typescript",
+    "ai",
+    "multi-agent",
+    "conversation",
+    "desktop",
+    "chat"
+  ],
+  "author": "Language Adventure LLC",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/langadventurellc/fishbowl/issues"
+  },
+  "homepage": "https://github.com/langadventurellc/fishbowl#readme",
+  "devDependencies": {
+    "@types/node": "^24.0.11",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^9.2.0",
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.3",
+    "vite-plugin-electron": "^0.29.0"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  }
+}
