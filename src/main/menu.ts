@@ -1,4 +1,10 @@
-import { Menu, MenuItemConstructorOptions } from 'electron';
+import {
+  Menu,
+  MenuItemConstructorOptions,
+  app,
+  dialog,
+  BrowserWindow,
+} from 'electron';
 
 export const createApplicationMenu = (): void => {
   const template: MenuItemConstructorOptions[] = [
@@ -9,7 +15,11 @@ export const createApplicationMenu = (): void => {
           label: 'New Chat Room',
           accelerator: 'CmdOrCtrl+N',
           click: () => {
-            // TODO: Implement new chat room creation
+            // Future implementation: Create new chat room
+            const window = BrowserWindow.getFocusedWindow();
+            if (window) {
+              window.webContents.send('menu:new-chat-room');
+            }
           },
         },
         {
@@ -19,7 +29,7 @@ export const createApplicationMenu = (): void => {
           label: 'Quit',
           accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
           click: () => {
-            // TODO: Implement quit logic
+            app.quit();
           },
         },
       ],
@@ -56,7 +66,16 @@ export const createApplicationMenu = (): void => {
         {
           label: 'About Fishbowl',
           click: () => {
-            // TODO: Implement about dialog
+            const window = BrowserWindow.getFocusedWindow();
+            if (window) {
+              void dialog.showMessageBox(window, {
+                type: 'info',
+                title: 'About Fishbowl',
+                message: 'Fishbowl',
+                detail: `Version: ${app.getVersion()}\n\nAn Electron-based desktop application for multi-agent AI conversations, enabling natural collaboration between multiple AI personalities in a shared conversation space.`,
+                buttons: ['OK'],
+              });
+            }
           },
         },
       ],

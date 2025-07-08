@@ -129,6 +129,9 @@ sequenceDiagram
 - `src/main/index.ts` - Main process entry point
 - `src/main/window.ts` - Window management
 - `src/main/menu.ts` - Application menu
+- `src/main/ipc/handlers.ts` - IPC handlers for window controls and app info
+- `src/main/ipc/windowEvents.ts` - Window event listeners
+- `src/main/ipc/index.ts` - IPC barrel export
 - `src/renderer/index.tsx` - Renderer entry point
 - `src/renderer/App.tsx` - Root React component
 - `src/renderer/index.html` - HTML template
@@ -198,19 +201,23 @@ sequenceDiagram
   - `.husky/pre-commit` - Pre-commit hook configuration to run lint-staged for code quality enforcement
   - `package.json` (lint-staged) - Added lint-staged configuration to run ESLint and Prettier on staged files before commit
 
-- [ ] 3.0 Electron Main Process Implementation
-  - [ ] 3.1 Create main process entry point with proper Electron initialization
-  - [ ] 3.2 Implement window management with security configurations (contextIsolation, etc.)
-  - [ ] 3.3 Create application menu with basic File/Edit/View/Help structure
-  - [ ] 3.4 Set up IPC handler structure for future inter-process communication
-  - [ ] 3.5 Configure proper process lifecycle management and cleanup
+- [x] 3.0 Electron Main Process Implementation
+  - [x] 3.1 Create main process entry point with proper Electron initialization
+  - [x] 3.2 Implement window management with security configurations (contextIsolation, etc.)
+  - [x] 3.3 Create application menu with basic File/Edit/View/Help structure
+  - [x] 3.4 Set up IPC handler structure for future inter-process communication
+  - [x] 3.5 Configure proper process lifecycle management and cleanup
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/main/index.ts` - Enhanced main process entry point with IPC handlers setup, application menu integration, and window event management
+  - `src/main/menu.ts` - Completed application menu implementation with functional File/Edit/View/Help structure, including About dialog and proper quit functionality
+  - `src/main/ipc/handlers.ts` - Created IPC handlers for window controls (minimize, maximize, close) and application info (getVersion)
+  - `src/main/ipc/windowEvents.ts` - Created window event listeners to emit focus, blur, and resize events to renderer process
+  - `src/main/ipc/index.ts` - Barrel export file for IPC functionality to satisfy linting requirements for single-export-per-file
 
 - [ ] 4.0 React Renderer Process Setup
   - [ ] 4.1 Create HTML template and renderer entry point
-  - [ ] 4.2 Set up React 18+ with proper root mounting and error boundaries
+  - [ ] 4.2 Set up React 19+ with proper root mounting and error boundaries
   - [ ] 4.3 Create basic App component with routing structure
   - [ ] 4.4 Implement basic component structure following feature-based organization
   - [ ] 4.5 Set up CSS Modules configuration with theming support

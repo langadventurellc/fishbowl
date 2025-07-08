@@ -9,11 +9,15 @@ const electron_1 = require('electron');
 const path_1 = __importDefault(require('path'));
 const utils_1 = require('@shared/utils');
 const window_1 = require('./window');
+const menu_1 = require('./menu');
+const ipc_1 = require('./ipc');
 // Keep a global reference of the window object
 let mainWindow = null;
 const createWindow = () => {
   // Create the browser window
   mainWindow = (0, window_1.createMainWindow)();
+  // Set up window events
+  (0, ipc_1.setupWindowEvents)(mainWindow);
   // Load the app
   if (utils_1.isDev) {
     void mainWindow.loadURL('http://localhost:5173');
@@ -33,7 +37,14 @@ const createWindow = () => {
   });
 };
 // This method will be called when Electron has finished initialization
-void electron_1.app.whenReady().then(createWindow);
+void electron_1.app.whenReady().then(() => {
+  // Set up IPC handlers
+  (0, ipc_1.setupIpcHandlers)();
+  // Create application menu
+  (0, menu_1.createApplicationMenu)();
+  // Create the main window
+  createWindow();
+});
 // Quit when all windows are closed
 electron_1.app.on('window-all-closed', () => {
   // On macOS, keep the app running even when all windows are closed

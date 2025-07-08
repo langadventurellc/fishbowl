@@ -11,7 +11,11 @@ const createApplicationMenu = () => {
           label: 'New Chat Room',
           accelerator: 'CmdOrCtrl+N',
           click: () => {
-            // TODO: Implement new chat room creation
+            // Future implementation: Create new chat room
+            const window = electron_1.BrowserWindow.getFocusedWindow();
+            if (window) {
+              window.webContents.send('menu:new-chat-room');
+            }
           },
         },
         {
@@ -21,7 +25,7 @@ const createApplicationMenu = () => {
           label: 'Quit',
           accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
           click: () => {
-            // TODO: Implement quit logic
+            electron_1.app.quit();
           },
         },
       ],
@@ -58,7 +62,16 @@ const createApplicationMenu = () => {
         {
           label: 'About Fishbowl',
           click: () => {
-            // TODO: Implement about dialog
+            const window = electron_1.BrowserWindow.getFocusedWindow();
+            if (window) {
+              void electron_1.dialog.showMessageBox(window, {
+                type: 'info',
+                title: 'About Fishbowl',
+                message: 'Fishbowl',
+                detail: `Version: ${electron_1.app.getVersion()}\n\nAn Electron-based desktop application for multi-agent AI conversations, enabling natural collaboration between multiple AI personalities in a shared conversation space.`,
+                buttons: ['OK'],
+              });
+            }
           },
         },
       ],

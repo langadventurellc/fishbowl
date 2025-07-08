@@ -2,6 +2,8 @@ import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { isDev } from '@shared/utils';
 import { createMainWindow } from './window';
+import { createApplicationMenu } from './menu';
+import { setupIpcHandlers, setupWindowEvents } from './ipc';
 
 // Keep a global reference of the window object
 let mainWindow: BrowserWindow | null = null;
@@ -9,6 +11,9 @@ let mainWindow: BrowserWindow | null = null;
 const createWindow = (): void => {
   // Create the browser window
   mainWindow = createMainWindow();
+
+  // Set up window events
+  setupWindowEvents(mainWindow);
 
   // Load the app
   if (isDev) {
@@ -30,7 +35,16 @@ const createWindow = (): void => {
 };
 
 // This method will be called when Electron has finished initialization
-void app.whenReady().then(createWindow);
+void app.whenReady().then(() => {
+  // Set up IPC handlers
+  setupIpcHandlers();
+
+  // Create application menu
+  createApplicationMenu();
+
+  // Create the main window
+  createWindow();
+});
 
 // Quit when all windows are closed
 app.on('window-all-closed', () => {
