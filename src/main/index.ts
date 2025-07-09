@@ -9,6 +9,7 @@ import {
   runMigrations,
   closeDatabase,
   validateDatabaseSchema,
+  checkpointManagerInstance,
 } from './database';
 
 // Keep a global reference of the window object
@@ -55,6 +56,10 @@ void app.whenReady().then(() => {
     console.log('Validating database schema...');
     validateDatabaseSchema();
 
+    // Start checkpoint manager
+    console.log('Starting checkpoint manager...');
+    checkpointManagerInstance.start();
+
     console.log('Database initialization completed');
   } catch (error) {
     console.error('Database initialization failed:', error);
@@ -84,6 +89,9 @@ app.on('window-all-closed', () => {
 // App is quitting
 app.on('before-quit', () => {
   try {
+    console.log('Stopping checkpoint manager...');
+    checkpointManagerInstance.stop();
+
     console.log('Closing database connection...');
     closeDatabase();
     console.log('Database connection closed');

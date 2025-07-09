@@ -5,6 +5,8 @@ import Database from 'better-sqlite3';
 import { app } from 'electron';
 import path from 'path';
 import { databaseState } from './state';
+import { enableWalMode } from '../checkpoint/enableWalMode';
+import { configureAutoCheckpoint } from '../checkpoint/configureAutoCheckpoint';
 
 export function initializeDatabase(): Database.Database {
   const existingDb = databaseState.getInstance();
@@ -17,12 +19,17 @@ export function initializeDatabase(): Database.Database {
 
   const db = new Database(dbPath);
 
-  // Enable WAL mode for better performance
-  db.pragma('journal_mode = WAL');
+  // Set instance first so checkpoint utilities can access it
+  databaseState.setInstance(db);
+
+  // Enable WAL mode with optimized settings
+  enableWalMode();
+
+  // Configure auto-checkpoint threshold
+  configureAutoCheckpoint(1000);
 
   // Enable foreign key constraints
   db.pragma('foreign_keys = ON');
 
-  databaseState.setInstance(db);
   return db;
 }

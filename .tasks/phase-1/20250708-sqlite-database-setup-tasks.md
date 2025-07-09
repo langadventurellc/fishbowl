@@ -273,11 +273,30 @@ erDiagram
   - All database operations now support pagination, caching, comprehensive error handling, and state management integration
 
 - [ ] 5.0 Performance Optimization and Testing
-  - [ ] 5.1 Enable WAL mode and implement checkpoint management
+  - [x] 5.1 Enable WAL mode and implement checkpoint management
   - [ ] 5.2 Optimize database queries with proper indexing
   - [ ] 5.3 Implement database backup and recovery functionality
   - [ ] 5.4 Create comprehensive database tests (unit and integration)
   - [ ] 5.5 Add performance monitoring and optimization
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/main/database/checkpoint/CheckpointManager.ts` - Created comprehensive checkpoint management system with WAL monitoring, automatic checkpoints, and manual checkpoint operations
+  - `src/main/database/checkpoint/CheckpointMode.ts` - Defined checkpoint mode type (PASSIVE, FULL, RESTART, TRUNCATE)
+  - `src/main/database/checkpoint/CheckpointResult.ts` - Defined checkpoint operation result interface
+  - `src/main/database/checkpoint/CheckpointOptions.ts` - Defined checkpoint manager configuration options
+  - `src/main/database/checkpoint/CheckpointConfig.ts` - Defined comprehensive checkpoint configuration interface
+  - `src/main/database/checkpoint/DEFAULT_CHECKPOINT_CONFIG.ts` - Default checkpoint configuration with sensible defaults
+  - `src/main/database/checkpoint/checkpointManagerInstance.ts` - Global checkpoint manager instance with default configuration
+  - `src/main/database/checkpoint/enableWalMode.ts` - Function to enable WAL mode with optimal settings (synchronous=NORMAL, 16MB cache, memory temp store, 256MB mmap)
+  - `src/main/database/checkpoint/configureAutoCheckpoint.ts` - Function to configure WAL auto-checkpoint threshold
+  - `src/main/database/checkpoint/getWalInfo.ts` - Function to retrieve WAL mode information and statistics
+  - `src/main/database/checkpoint/performManualCheckpoint.ts` - Function to perform manual checkpoint operations
+  - `src/main/database/checkpoint/isWalMode.ts` - Function to check if database is in WAL mode
+  - `src/main/database/checkpoint/index.ts` - Barrel export file for checkpoint management system
+  - `src/main/database/connection/initializeDatabase.ts` - Updated to use new checkpoint utilities for WAL mode configuration
+  - `src/main/database/index.ts` - Updated to export checkpoint module
+  - `src/main/index.ts` - Updated to start checkpoint manager on app startup and stop on shutdown
+  - All checkpoint modules follow the one-export-per-file pattern with appropriate barrel files for organization
+  - WAL mode is now enabled with optimal performance settings: synchronous=NORMAL, 16MB cache, memory temp store, 256MB mmap
+  - Checkpoint manager monitors WAL file size every 30 seconds and triggers checkpoints when file exceeds 64MB
+  - Supports all checkpoint modes (PASSIVE, FULL, RESTART, TRUNCATE) with configurable behavior

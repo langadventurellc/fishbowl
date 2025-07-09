@@ -8,3 +8,4 @@ export * from './queries';
 export * from './validation';
 export * from './transactions';
 export * from './performance';
+export * from './checkpoint';
