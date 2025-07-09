@@ -2,7 +2,7 @@
  * React hooks for IPC communication with the main process
  */
 
-import { useEffect, useCallback, useState } from 'react';
+import { useEffect, useCallback, useState, useMemo } from 'react';
 import type { SystemInfo, ConfigKey, ConfigValue } from '../../shared/types';
 
 // Type guard to check if electronAPI is available
@@ -30,7 +30,7 @@ const useWindowControls = () => {
     }
   }, []);
 
-  return { minimize, maximize, close };
+  return useMemo(() => ({ minimize, maximize, close }), [minimize, maximize, close]);
 };
 
 // Custom hook for system information
