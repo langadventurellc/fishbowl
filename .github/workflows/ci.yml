@@ -97,13 +97,6 @@ jobs:
           npm audit --audit-level=moderate
           echo "::endgroup::"
 
-      - name: Run Snyk Security Scan
-        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-        continue-on-error: true
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-
       - name: Upload security results
         if: always()
         uses: actions/upload-artifact@v4
@@ -151,17 +144,6 @@ jobs:
           echo "::group::Test Results"
           npm test -- --coverage
           echo "::endgroup::"
-
-      - name: Upload coverage to Codecov
-        if: steps.check-tests.outputs.has-tests == 'true'
-        uses: codecov/codecov-action@v5
-        with:
-          files: ./coverage/lcov.info
-          flags: unittests
-          name: codecov-umbrella
-          token: ${{ secrets.CODECOV_TOKEN }}
-          fail_ci_if_error: false
-          verbose: true
 
   # Build across platforms
   build:
