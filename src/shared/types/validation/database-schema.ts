@@ -107,3 +107,136 @@ export const DatabaseFilterSchema = z.object({
   sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
   where: z.record(z.any()).optional(),
 });
+
+/**
+ * Zod schema for UUID validation
+ */
+export const UuidSchema = z.string().uuid('Invalid UUID format');
+
+/**
+ * Zod schema for array of UUIDs
+ */
+export const UuidArraySchema = z.array(UuidSchema).min(1, 'At least one UUID is required');
+
+/**
+ * Zod schema for transaction operations
+ */
+export const TransactionCreateConversationWithAgentsSchema = z.object({
+  conversationData: CreateConversationSchema,
+  agentIds: UuidArraySchema,
+});
+
+export const TransactionCreateMessagesBatchSchema = z.object({
+  messages: z.array(CreateMessageSchema).min(1, 'At least one message is required'),
+});
+
+export const TransactionDeleteConversationCascadeSchema = z.object({
+  conversationId: UuidSchema,
+});
+
+export const TransactionTransferMessagesSchema = z.object({
+  fromConversationId: UuidSchema,
+  toConversationId: UuidSchema,
+  messageIds: UuidArraySchema,
+});
+
+/**
+ * Zod schema for sanitizing content strings
+ */
+export const SanitizedContentSchema = z
+  .string()
+  .min(1, 'Content cannot be empty')
+  .max(10000, 'Content too long')
+  .transform(val => val.trim())
+  .refine(val => val.length > 0, 'Content cannot be empty after trimming');
+
+/**
+ * Zod schema for sanitizing name strings
+ */
+export const SanitizedNameSchema = z
+  .string()
+  .min(1, 'Name cannot be empty')
+  .max(255, 'Name too long')
+  .transform(val => val.trim())
+  .refine(val => val.length > 0, 'Name cannot be empty after trimming')
+  .refine(val => !val.includes('\n'), 'Name cannot contain newlines');
+
+/**
+ * Enhanced agent schemas with sanitization
+ */
+export const SanitizedCreateAgentSchema = z.object({
+  name: SanitizedNameSchema,
+  role: SanitizedNameSchema,
+  personality: SanitizedContentSchema,
+  isActive: z.boolean().default(true),
+});
+
+export const SanitizedUpdateAgentSchema = z.object({
+  id: UuidSchema,
+  name: SanitizedNameSchema.optional(),
+  role: SanitizedNameSchema.optional(),
+  personality: SanitizedContentSchema.optional(),
+  isActive: z.boolean().optional(),
+});
+
+/**
+ * Enhanced conversation schemas with sanitization
+ */
+export const SanitizedCreateConversationSchema = z.object({
+  name: SanitizedNameSchema,
+  description: z
+    .string()
+    .optional()
+    .default('')
+    .transform(val => val.trim()),
+  isActive: z.boolean().default(true),
+});
+
+export const SanitizedUpdateConversationSchema = z.object({
+  id: UuidSchema,
+  name: SanitizedNameSchema.optional(),
+  description: z
+    .string()
+    .optional()
+    .transform(val => val?.trim()),
+  isActive: z.boolean().optional(),
+});
+
+/**
+ * Enhanced message schemas with sanitization
+ */
+export const SanitizedCreateMessageSchema = z.object({
+  conversationId: UuidSchema,
+  agentId: UuidSchema,
+  content: SanitizedContentSchema,
+  type: z.string().min(1, 'Message type cannot be empty'),
+  metadata: z
+    .string()
+    .optional()
+    .default('{}')
+    .refine(val => {
+      try {
+        JSON.parse(val);
+        return true;
+      } catch {
+        return false;
+      }
+    }, 'Metadata must be valid JSON'),
+});
+
+/**
+ * Error recovery and validation schemas
+ */
+export const DatabaseOperationContextSchema = z.object({
+  operation: z.string(),
+  table: z.string(),
+  timestamp: z.number(),
+  userId: z.string().optional(),
+  sessionId: z.string().optional(),
+});
+
+export const ErrorRecoveryOptionsSchema = z.object({
+  retryCount: z.number().min(0).max(5).default(0),
+  timeout: z.number().min(100).max(30000).default(5000),
+  fallbackMode: z.boolean().default(false),
+});
