@@ -29,6 +29,8 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 - **AI Integration**: Vercel AI SDK
 - **Styling**: CSS Modules with CSS Variables for theming
 - **Security**: keytar for API key storage
+- **Validation**: Zod schemas for all IPC operations
+- **IPC**: Type-safe communication with comprehensive error handling
 
 ## Development Commands
 
@@ -73,7 +75,7 @@ npm audit              # Basic security audit
 npm run generate:icon  # Generate app icon from base64
 npm run generate:icons # Generate all platform icons
 
-# Note: Testing framework not yet implemented (Phase 2)
+# Note: Full testing framework implemented with 272+ tests
 ```
 
 ## Project Structure
@@ -145,6 +147,35 @@ Key documentation files:
 
 ## Key Implementation Patterns
 
+### IPC Communication Architecture
+
+The project implements a comprehensive IPC system with:
+
+- **Validation Layer**: All IPC operations validated with Zod schemas
+- **Error Handling**: Custom error classes with categorization (validation, database, security)
+- **Performance Monitoring**: Built-in metrics collection and slow operation detection
+- **Security Auditing**: Comprehensive logging and threat detection
+- **Error Recovery**: Circuit breaker pattern with retry logic and fallback mechanisms
+
+### Database Operations
+
+Database operations are handled through the IPC layer:
+
+- **Agents**: Full CRUD operations with validation
+- **Conversations**: Management with agent relationships
+- **Messages**: Conversation-scoped message handling
+- **Transactions**: Complex operations like conversation creation with agents
+- **Performance**: Query optimization and slow query detection
+
+### Secure Storage
+
+API key management using keytar:
+
+- **Credential Manager**: Multi-provider API key storage
+- **Encryption**: System keychain integration
+- **Metadata**: Provider-specific configuration storage
+- **Validation**: Secure credential validation and sanitization
+
 ### Feature-Based Components
 
 Components are organized by feature:
@@ -162,10 +193,14 @@ components/ChatRoom/
 Secure IPC communication with comprehensive type safety:
 
 - Preload script with context isolation
-- Input sanitization and validation
-- Comprehensive API surface (window controls, system info, configuration)
-- React hooks for IPC integration (`useIpc.*`)
+- Input sanitization and validation with Zod schemas
+- Comprehensive API surface (window controls, system info, configuration, database, secure storage)
+- React hooks for IPC integration (`useIpc.*`, `useAgents`, `useConversations`, `useMessages`, `useSecureStorage`)
 - Performance monitoring and error handling
+- Circuit breaker pattern for error recovery
+- Security auditing and validation
+- Database operations with transaction support
+- Secure storage for API keys using keytar
 
 ### State Management
 

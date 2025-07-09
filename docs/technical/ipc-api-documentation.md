@@ -392,6 +392,50 @@ interface ErrorInfo {
   message: string;
   details?: Record<string, unknown>;
 }
+
+interface IpcPerformanceMetrics {
+  channel: string;
+  startTime: number;
+  endTime?: number;
+  duration?: number;
+  success: boolean;
+  error?: string;
+  payloadSize?: number;
+}
+
+interface IpcPerformanceStats {
+  totalCalls: number;
+  successfulCalls: number;
+  failedCalls: number;
+  averageDuration: number;
+  minDuration: number;
+  maxDuration: number;
+  lastCallTime: number;
+}
+
+interface SecurityAuditEntry {
+  timestamp: number;
+  channel: string;
+  action: 'allowed' | 'blocked' | 'error';
+  reason?: string;
+  context: SecurityContext;
+}
+
+interface SecurityContext {
+  channel: string;
+  timestamp: number;
+  origin: string;
+  userAgent: string;
+  sessionId: string;
+}
+
+interface SecurityStats {
+  totalOperations: number;
+  allowedOperations: number;
+  blockedOperations: number;
+  errorOperations: number;
+  topBlockedChannels: Array<{ channel: string; count: number }>;
+}
 ```
 
 ### Error Recovery
@@ -683,6 +727,115 @@ None in current version.
 
 None in current version.
 
+## Type Definitions
+
+### Core Types
+
+```typescript
+interface Agent {
+  id: string;
+  name: string;
+  role: string;
+  personality: string;
+  isActive: boolean;
+  createdAt: number;
+  updatedAt: number;
+}
+
+interface Conversation {
+  id: string;
+  name: string;
+  description: string;
+  createdAt: number;
+  updatedAt: number;
+  isActive: boolean;
+}
+
+interface Message {
+  id: string;
+  conversationId: string;
+  agentId: string;
+  content: string;
+  type: string;
+  metadata: string;
+  timestamp: number;
+}
+
+interface ConversationAgent {
+  conversationId: string;
+  agentId: string;
+}
+
+interface CredentialInfo {
+  provider: AiProvider;
+  hasApiKey: boolean;
+  lastUpdated: number;
+  metadata?: Record<string, unknown>;
+}
+
+interface DatabaseFilter {
+  limit?: number;
+  offset?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  where?: Record<string, unknown>;
+}
+
+interface SystemInfo {
+  platform: NodeJS.Platform;
+  arch: string;
+  version: string;
+  appVersion: string;
+  electronVersion: string;
+  chromeVersion: string;
+  nodeVersion: string;
+  memory: {
+    used: number;
+    total: number;
+  };
+}
+
+type AiProvider = 'openai' | 'anthropic' | 'google' | 'groq' | 'ollama';
+```
+
+### Database Create/Update Types
+
+```typescript
+interface CreateAgentData {
+  name: string;
+  role: string;
+  personality: string;
+  isActive?: boolean;
+}
+
+interface UpdateAgentData {
+  name?: string;
+  role?: string;
+  personality?: string;
+  isActive?: boolean;
+}
+
+interface CreateConversationData {
+  name: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+interface UpdateConversationData {
+  name?: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+interface CreateMessageData {
+  conversationId: string;
+  agentId: string;
+  content: string;
+  type: string;
+  metadata?: string;
+}
+```
+
 ## Support
 
 For issues or questions about the IPC API:
@@ -694,4 +847,4 @@ For issues or questions about the IPC API:
 
 ---
 
-_This documentation is automatically generated from the IPC system implementation. Last updated: $(date)_
+_This documentation is automatically generated from the IPC system implementation. Last updated: July 9, 2025_
