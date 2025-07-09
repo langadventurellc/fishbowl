@@ -1,0 +1,39 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    name: Claude Code Review
+    steps:
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@beta
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          trigger_phrase: '@claude'
+          custom_instructions: |
+            Focus on:
+            - Code quality and TypeScript best practices
+            - Security vulnerabilities and potential issues
+            - Performance considerations
+            - Adherence to the project's coding standards in docs/technical/coding-standards.md
+            - Electron-specific security best practices
+            - React and modern JavaScript patterns
+
+            Consider the project context:
+            - This is an Electron desktop application for multi-agent AI conversations
+            - Uses React 18+, TypeScript (strict mode), and Zustand for state management
+            - Follows feature-based component organization
+            - Emphasizes type-safe IPC communication between main and renderer processes
+
+            Avoid reviewing files in: node_modules/, build/, dist/, **/*.min.js, **/*.bundle.js, **/*.generated.*
