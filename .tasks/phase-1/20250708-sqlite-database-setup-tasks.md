@@ -207,15 +207,38 @@ erDiagram
   - `src/main/database/index.ts` - Updated to export validation module
   - `src/main/index.ts` - Added complete database initialization sequence to main process startup with proper error handling, including database initialization, migration execution, and schema validation
 
-- [ ] 3.0 Implement Database Query Layer
-  - [ ] 3.1 Create conversation CRUD operations with prepared statements
-  - [ ] 3.2 Create message CRUD operations with batch insert support
-  - [ ] 3.3 Create agent CRUD operations with soft delete functionality
-  - [ ] 3.4 Implement transaction management for complex operations
-  - [ ] 3.5 Add query optimization and performance monitoring
+- [x] 3.0 Implement Database Query Layer
+  - [x] 3.1 Create conversation CRUD operations with prepared statements
+  - [x] 3.2 Create message CRUD operations with batch insert support
+  - [x] 3.3 Create agent CRUD operations with soft delete functionality
+  - [x] 3.4 Implement transaction management for complex operations
+  - [x] 3.5 Add query optimization and performance monitoring
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/main/database/transactions/TransactionOptions.ts` - Created transaction options interface with readOnly, immediate, and exclusive options
+  - `src/main/database/transactions/TransactionManager.ts` - Created transaction manager class with methods for executing transactions with different isolation levels
+  - `src/main/database/transactions/transactionManagerInstance.ts` - Global transaction manager instance
+  - `src/main/database/transactions/createConversationWithAgents.ts` - Function to create conversation with associated agents in a single transaction
+  - `src/main/database/transactions/deleteConversationAndRelatedData.ts` - Function to delete conversation and all related data atomically
+  - `src/main/database/transactions/createMessagesAndUpdateConversation.ts` - Function to create multiple messages and update conversation timestamp atomically
+  - `src/main/database/transactions/transferMessages.ts` - Function to transfer messages between conversations
+  - `src/main/database/transactions/archiveConversation.ts` - Function to archive conversation (soft delete)
+  - `src/main/database/transactions/restoreConversation.ts` - Function to restore archived conversation
+  - `src/main/database/performance/QueryMetrics.ts` - Interface for query performance metrics
+  - `src/main/database/performance/QueryStats.ts` - Interface for query statistics
+  - `src/main/database/performance/QueryPlan.ts` - Interface for query execution plans
+  - `src/main/database/performance/IndexInfo.ts` - Interface for database index information
+  - `src/main/database/performance/TableInfo.ts` - Interface for table statistics
+  - `src/main/database/performance/QueryMonitor.ts` - Class for monitoring query performance and execution metrics
+  - `src/main/database/performance/queryMonitorInstance.ts` - Global query monitor instance
+  - `src/main/database/performance/QueryOptimizer.ts` - Class for query optimization utilities and recommendations
+  - `src/main/database/performance/queryOptimizerInstance.ts` - Global query optimizer instance
+  - `src/main/database/performance/PerformanceReport.ts` - Interface for comprehensive performance reports
+  - `src/main/database/performance/PerformanceManager.ts` - Class for managing database performance, optimization, and reporting
+  - `src/main/database/performance/performanceManagerInstance.ts` - Global performance manager instance
+  - `src/main/database/transactions/index.ts` - Updated barrel file to export all transaction management functionality
+  - `src/main/database/performance/index.ts` - Updated barrel file to export all performance monitoring functionality
+  - `src/main/database/index.ts` - Updated to export transactions and performance modules
 
 - [ ] 4.0 Extend IPC System for Database Operations
   - [ ] 4.1 Add database IPC channel definitions to shared types
