@@ -15,13 +15,19 @@ jobs:
     runs-on: ubuntu-latest
     name: Claude Code Review
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Claude Code Review
         uses: anthropics/claude-code-action@beta
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          allowed_tools: 'View,GlobTool,GrepTool,BatchTool'
           direct_prompt: |
-            Please review the code changes in this pull request and provide feedback.
+            Please review only the code changes in this pull request and provide feedback.
 
             Focus on:
             - Code quality and TypeScript best practices
