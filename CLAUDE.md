@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+<rules>
+  <critical>NEVER bypass git pre-commit hooks, unit tests or quality checks.</critical>
+  <critical>NEVER finish a task with failing unit tests or quality checks.</critical>
+  <critical>NEVER, NEVER commit code with failing unit tests or quality checks.</critical>
+  <critical>Execute only the next single incomplete task from $ARGUMENTS. Complete the task, update the task list, then STOP immediately for user review.</critical>
+</rules>
+
 ## Project Overview
 
 Fishbowl is an Electron-based desktop application for multi-agent AI conversations. The project is currently in the specification phase with comprehensive documentation in `docs/specifications/`.
@@ -9,11 +16,13 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 ## Key Architecture
 
 ### Process Separation
+
 - **Main Process**: Handles system operations, database (SQLite), secure storage (keytar), file system access
 - **Renderer Process**: React 18+ UI with TypeScript, Zustand state management, AI provider integration
 - **IPC Bridge**: Type-safe communication between processes using defined channel interfaces
 
 ### Technology Stack
+
 - **Framework**: Electron with Vite build system
 - **Frontend**: React 18+, TypeScript (strict mode), Zustand
 - **Database**: SQLite via better-sqlite3
@@ -29,37 +38,37 @@ npm install
 npm rebuild better-sqlite3  # If SQLite issues
 
 # Development (hot reload)
-npm run dev               # Start both processes
-npm run dev:main         # Main process only  
+npm run dev               # Start both processes with nodemon
+npm run dev:main         # Main process only
 npm run dev:renderer     # Renderer process only
-
-# Testing
-npm test                 # Run all tests
-npm run test:watch      # Watch mode
-npm run test:coverage   # With coverage
+npm run dev:concurrent   # Concurrent development mode
 
 # Code quality
 npm run lint            # Run ESLint
 npm run lint:fix       # Auto-fix issues
 npm run type-check     # TypeScript check
-npm audit              # Security audit
-npx audit-ci --moderate # Dependency vulnerability check
+npm run format          # Run Prettier
+npm run format:check    # Check Prettier formatting
 
 # Building
 npm run build          # Production build
+npm run build:verify   # Build with verification
 npm run dist           # Package for current platform
+npm run dist:all       # Package for all platforms
 npm run preview        # Preview production build
 
 # Database
 npm run db:migrate     # Run migrations
 
-# CI/CD
-# GitHub Actions automatically runs:
-# - Linting and type checking
-# - Unit tests with coverage
-# - Cross-platform builds (Ubuntu, Windows, macOS)
-# - Security audits
-# - Dependency vulnerability scans
+# Security and analysis
+npm run security:audit # Comprehensive security audit
+npm audit              # Basic security audit
+
+# Icon generation
+npm run generate:icon  # Generate app icon from base64
+npm run generate:icons # Generate all platform icons
+
+# Note: Testing framework not yet implemented (Phase 2)
 ```
 
 ## Project Structure
@@ -67,17 +76,39 @@ npm run db:migrate     # Run migrations
 ```
 src/
 ├── main/                    # Electron main process
-│   ├── database/           # SQLite operations
-│   ├── config/            # Config file management
-│   ├── security/          # Keytar integration
-│   └── ipc/              # IPC handlers
+│   ├── index.ts            # Main process entry point
+│   ├── window.ts           # Window management with security
+│   ├── menu.ts             # Application menu
+│   └── ipc/               # IPC handlers and events
 ├── renderer/               # React application
 │   ├── components/        # Feature-based components
-│   ├── store/            # Zustand stores
-│   ├── hooks/            # Custom React hooks
-│   └── services/         # AI provider services
+│   │   ├── Home/          # Landing page
+│   │   ├── Settings/      # Settings interface
+│   │   ├── Chat/          # Chat interface
+│   │   ├── UI/            # Reusable UI components
+│   │   ├── DevTools/      # Development tools
+│   │   ├── ErrorBoundary/ # Error handling
+│   │   └── IpcTest/       # IPC testing component
+│   ├── hooks/             # Custom React hooks
+│   │   ├── useTheme.*     # Theme management
+│   │   └── useIpc.*       # IPC communication
+│   └── styles/            # CSS themes and globals
+├── preload/               # Secure IPC bridge
+│   └── index.ts           # Preload script
 └── shared/                # Shared types/utils
-    └── types/            # TypeScript interfaces
+    ├── types/             # TypeScript interfaces
+    └── utils/             # Utility functions
+
+assets/                    # Application assets
+├── icon.png              # Main application icon
+├── icon.svg              # Scalable vector icon
+└── icon-*.svg            # Platform-specific icons
+
+scripts/                   # Build and utility scripts
+├── build-verify.js       # Build verification
+├── security-audit.js     # Security auditing
+├── generate-icon.js      # Icon generation
+└── generate-all-icons.js # Multi-platform icons
 ```
 
 ## Documentation Structure
@@ -101,6 +132,7 @@ docs/
 ```
 
 Key documentation files:
+
 - `CONTRIBUTING.md`: Contribution guidelines and workflow
 - `docs/blackboard.md`: Shared knowledge base for agent collaboration
 - `docs/specifications/`: Complete technical specifications
@@ -109,7 +141,9 @@ Key documentation files:
 ## Key Implementation Patterns
 
 ### Feature-Based Components
+
 Components are organized by feature:
+
 ```
 components/ChatRoom/
 ├── ChatRoom.tsx
@@ -119,32 +153,49 @@ components/ChatRoom/
 ```
 
 ### Type-Safe IPC
-All IPC communication uses typed channels defined in `shared/types/ipc.ts`.
+
+Secure IPC communication with comprehensive type safety:
+
+- Preload script with context isolation
+- Input sanitization and validation
+- Comprehensive API surface (window controls, system info, configuration)
+- React hooks for IPC integration (`useIpc.*`)
+- Performance monitoring and error handling
 
 ### State Management
-Zustand stores with persistence middleware handle application state. Access via hooks:
-```typescript
-const { agents, addAgent } = useAgentStore();
-```
+
+Current implementation uses React Context for theme management:
+
+- `ThemeProvider` with localStorage persistence
+- `useTheme` hook for theme access
+- CSS custom properties for theming
+- Light/dark mode toggle functionality
+
+Zustand integration planned for Phase 2.
 
 ### AI Provider Integration
-Providers implement a common interface and are registered in the provider factory. New providers require:
-1. Service implementation in `services/ai/providers/`
-2. Configuration in `config/models.json`
-3. Registration in provider factory
+
+AI provider integration planned for Phase 2. Current foundation includes:
+
+- Configuration management through IPC
+- Secure API key storage preparation
+- Provider service architecture planning
 
 ## Contributing
 
 The project follows established contribution guidelines and coding standards:
 
 ### Code Standards
+
 - **TypeScript**: Strict mode enabled, no implicit any types
-- **ESLint**: Configured with strict rules for code quality
-- **Prettier**: Automated code formatting
-- **Testing**: Unit tests required for all new features
-- **Documentation**: JSDoc comments for public APIs
+- **ESLint**: Custom @langadventurellc/tsla-linter with comprehensive rules
+- **Prettier**: Automated code formatting with project standards
+- **Pre-commit Hooks**: Husky + lint-staged for quality enforcement
+- **Security**: Comprehensive security audit scripts
+- **Build Verification**: Automated build quality checks
 
 ### Contribution Workflow
+
 1. Fork the repository and create a feature branch
 2. Follow coding standards in `docs/technical/coding-standards.md`
 3. Write tests for new functionality
@@ -162,22 +213,42 @@ See `CONTRIBUTING.md` for detailed guidelines.
 - CSS Modules handle component styling with theme support via CSS Variables
 - The application supports multiple AI providers (OpenAI, Anthropic, Google, Groq, Ollama)
 
-## Current Status
+## Third-Party Library Documentation
 
-**Phase 0 Complete**: Project foundation has been established with comprehensive documentation, contribution guidelines, coding standards, and CI/CD pipeline setup.
+When working with third-party libraries, use the context7 MCP tool to get up-to-date documentation and examples. This ensures you have access to the latest API changes and best practices for libraries like FastAPI, Pydantic, LangChain, Firebase, Google Cloud services, and others used in this project.
 
-**Completed**:
-- ✅ Project documentation structure (`docs/` with specifications, guides, technical docs)
-- ✅ Contribution guidelines (`CONTRIBUTING.md`)  
-- ✅ Coding standards and conventions (`docs/technical/coding-standards.md`)
-- ✅ Initial README with project overview and setup instructions
-- ✅ GitHub Actions CI/CD pipeline configuration
-- ✅ License file (MIT)
-- ✅ Agent collaboration blackboard (`docs/blackboard.md`)
+## Asking Questions
 
-**Next Steps (Phase 1)**:
-1. Setting up the basic Electron + React + TypeScript structure
-2. Implementing the IPC bridge with type safety
-3. Creating the database schema and migrations
-4. Building the core UI components
-5. Integrating AI providers via Vercel AI SDK
+- **Ask one question at a time**
+- **Provide options for each question**
+
+_Example question_
+
+```
+In case of multiple variations, should metadata be generated for all variations or only the first one?
+- **Options:**
+  - A) Generate metadata for all variations
+  - B) Generate metadata only for the first variation
+  - C) Do not generate metadata at all
+```
+
+**Remember to ask one question at a time and provide options for each question.**
+
+## Prohibited Actions
+
+- ❌ Shared "kitchen-sink" modules
+- ❌ Hardcoded secrets (including file paths outside project root)
+- ❌ Scope expansion without approval
+
+<rules>
+  <critical>NEVER bypass git pre-commit hooks, unit tests or quality checks.</critical>
+  <critical>NEVER finish a task with failing unit tests or quality checks.</critical>
+  <critical>NEVER, NEVER commit code with failing unit tests or quality checks.</critical>
+  <critical>Write tests for new or modified functionality. Do not write tests for style or formatting.</critical>
+  <critical>Never hardcode secrets or environment values, including file paths outside project root.</critical>
+  <critical>Ensure all quality checks pass before marking a task complete. Do not proceed if any checks or tests fail.</critical>
+  <important>Each "public" class or function should be in its own file, unless otherwise approved.</important>
+  <important>Use context7 MCP tool to get up-to-date documentation and best practices for all third-party libraries.</important>
+  <important>Ask questions for implementation details, clarifications, or when requirements are ambiguous.</important>
+  <rule>Do not write comments for obvious code. Use meaningful variable and function names instead.</rule>
+</rules>

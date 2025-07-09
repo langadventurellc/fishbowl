@@ -1,14 +1,17 @@
 # Agent Model Configuration Specification
 
 ## Overview
+
 The Model Configuration system enables agents to use different AI models from various providers. It provides a unified interface for managing different model APIs while maintaining provider-specific requirements through configuration.
 
 ## Architecture
 
 ### Model Provider Configuration
+
 Models and providers are configured via JSON files to allow easy updates without code changes.
 
 #### models.json Structure
+
 ```json
 {
   "providers": {
@@ -64,21 +67,23 @@ Models and providers are configured via JSON files to allow easy updates without
 ```
 
 ### System Prompt Strategies
+
 - **`system_role`**: Provider supports system role in messages
 - **`first_user_message`**: System prompt must be included as first user message
 - **`user_prefix`**: System prompt prefixed to each user message
 
 ### Agent Model Configuration
+
 Each agent stores its model selection and parameters:
 
 ```typescript
 interface AgentModelConfig {
-  provider: string;           // "openai", "anthropic", etc.
-  modelId: string;           // "gpt-4-turbo-preview"
+  provider: string; // "openai", "anthropic", etc.
+  modelId: string; // "gpt-4-turbo-preview"
   parameters: {
-    temperature?: number;    // 0.0-2.0, default: 0.7
-    maxTokens?: number;      // Maximum response length
-    topP?: number;          // Nucleus sampling
+    temperature?: number; // 0.0-2.0, default: 0.7
+    maxTokens?: number; // Maximum response length
+    topP?: number; // Nucleus sampling
     frequencyPenalty?: number;
     presencePenalty?: number;
   };
@@ -123,6 +128,7 @@ CREATE TABLE messages (
 ```
 
 ### File Storage Structure
+
 ```
 app-data/
 ├── config/
@@ -138,6 +144,7 @@ app-data/
 ## API Configuration
 
 ### Secure Storage
+
 API keys are stored using Electron's secure storage (keytar):
 
 ```typescript
@@ -145,11 +152,12 @@ interface APIConfiguration {
   openai?: { apiKey: string };
   anthropic?: { apiKey: string };
   google?: { apiKey: string };
-  ollama?: { baseUrl: string };  // No API key needed
+  ollama?: { baseUrl: string }; // No API key needed
 }
 ```
 
 ### Provider Integration
+
 Uses Vercel AI SDK for unified interface across providers:
 
 ```typescript
@@ -161,13 +169,14 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 const providers = {
   openai: createOpenAI({ apiKey: getSecureApiKey('openai') }),
   anthropic: createAnthropic({ apiKey: getSecureApiKey('anthropic') }),
-  google: createGoogleGenerativeAI({ apiKey: getSecureApiKey('google') })
+  google: createGoogleGenerativeAI({ apiKey: getSecureApiKey('google') }),
 };
 ```
 
 ## Message Formatting
 
 ### Conversation Context Format
+
 Messages in multi-agent conversations are prefixed with agent identification:
 
 ```
@@ -177,37 +186,33 @@ Messages in multi-agent conversations are prefixed with agent identification:
 ```
 
 ### Provider Message Formatting
+
 Based on the `systemPromptStrategy` in models.json:
 
 ```typescript
 function formatMessages(
   provider: ProviderConfig,
   systemPrompt: string,
-  messages: Message[]
+  messages: Message[],
 ): FormattedMessage[] {
   switch (provider.systemPromptStrategy) {
     case 'system_role':
-      return [
-        { role: 'system', content: systemPrompt },
-        ...messages
-      ];
-    
+      return [{ role: 'system', content: systemPrompt }, ...messages];
+
     case 'first_user_message':
       const [first, ...rest] = messages;
       return [
-        { 
-          role: 'user', 
-          content: `${systemPrompt}\n\n${first.content}` 
+        {
+          role: 'user',
+          content: `${systemPrompt}\n\n${first.content}`,
         },
-        ...rest
+        ...rest,
       ];
-    
+
     case 'user_prefix':
       return messages.map(msg => ({
         ...msg,
-        content: msg.role === 'user' 
-          ? `${systemPrompt}\n\n${msg.content}`
-          : msg.content
+        content: msg.role === 'user' ? `${systemPrompt}\n\n${msg.content}` : msg.content,
       }));
   }
 }
@@ -216,20 +221,23 @@ function formatMessages(
 ## Context Window Management
 
 ### Token Counting
+
 - Use tiktoken or similar library for token estimation
 - Track conversation token count in memory
 - Display warning when approaching model limits
 
 ### Basic Implementation (V1)
+
 ```typescript
 interface ContextStatus {
   currentTokens: number;
   maxTokens: number;
-  warningThreshold: 0.8;  // Warn at 80% capacity
+  warningThreshold: 0.8; // Warn at 80% capacity
 }
 ```
 
 ### Future Enhancement (V1.x)
+
 - Automatic conversation summarization
 - System LLM for utility tasks (summarization, context compression)
 - Configurable context management strategies
@@ -237,13 +245,16 @@ interface ContextStatus {
 ## Error Handling
 
 ### API Errors
+
 Display simple error messages to users:
+
 - Rate limit exceeded
 - Invalid API key
 - Model not available
 - Network connection issues
 
 ### Error Message Format
+
 ```typescript
 interface APIError {
   provider: string;
@@ -256,17 +267,20 @@ interface APIError {
 ## Implementation Notes
 
 ### Model Selection
+
 - Agents select model at creation time
 - No mid-conversation model switching
 - Model availability validated against models.json
 
 ### Settings Management
+
 - **API Keys**: Stored in system keychain via keytar
 - **Model Configs**: Stored in user-editable JSON
 - **Agent Templates**: Stored in JSON for reuse
 - **User Preferences**: Stored in preferences.json
 
 ### Future Enhancements
+
 - Local model support (Ollama) - V1.5
 - OpenRouter integration
 - Advanced token management

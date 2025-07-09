@@ -23,5 +23,6 @@ Create comprehensive initial README file providing project overview, setup instr
 - Include license information and contact details
 
 ## See Also:
+
 - `CLAUDE.md` - Detailed project configuration and development guidelines
 - `docs/specifications/` - Technical specifications and architecture

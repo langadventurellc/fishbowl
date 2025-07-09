@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Run formatting on staged files
+echo "Running npm run format..."
+npm run format
+
+# Add any formatting changes back to staging
+git add .
+
+# Run linting
+echo "Running npm run lint..."
+npm run lint
+
+# Run type checking
+echo "Running npm run type-check..."
+npm run type-check
+
+# Run tests
+# echo "Running tests..."
+# npm test

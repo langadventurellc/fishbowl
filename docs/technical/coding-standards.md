@@ -132,11 +132,11 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({
 function useAgent(agentId: string) {
   const [agent, setAgent] = useState<Agent | null>(null);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     // Fetch agent logic
   }, [agentId]);
-  
+
   return { agent, loading };
 }
 ```
@@ -152,13 +152,14 @@ interface AgentStore {
   setActiveAgent: (agent: Agent) => void;
 }
 
-const useAgentStore = create<AgentStore>((set) => ({
+const useAgentStore = create<AgentStore>(set => ({
   agents: [],
   activeAgent: null,
-  addAgent: (agent) => set((state) => ({ 
-    agents: [...state.agents, agent] 
-  })),
-  setActiveAgent: (agent) => set({ activeAgent: agent })
+  addAgent: agent =>
+    set(state => ({
+      agents: [...state.agents, agent],
+    })),
+  setActiveAgent: agent => set({ activeAgent: agent }),
 }));
 ```
 
@@ -208,7 +209,7 @@ const ChatMessage = () => (
   --spacing-unit: 0.5rem;
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   --color-background: #1f2937;
   --color-text: #f9fafb;
 }
@@ -306,7 +307,7 @@ export interface ChatRoomProps {
   // Props definition
 }
 
-export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
+export const ChatRoom: React.FC<ChatRoomProps> = props => {
   // Component implementation
 };
 ```
@@ -338,15 +339,23 @@ export const ChatRoom: React.FC<ChatRoomProps> = (props) => {
 const activeAgentId = 'agent-123';
 const messageHistory = [];
 
-const handleMessageSubmit = () => { /* */ };
-const fetchAgentConfiguration = () => { /* */ };
+const handleMessageSubmit = () => {
+  /* */
+};
+const fetchAgentConfiguration = () => {
+  /* */
+};
 
 // ❌ Bad: Unclear or inconsistent names
 const id = 'agent-123';
 const msgs = [];
 
-const handleSubmit = () => { /* */ };
-const getConfig = () => { /* */ };
+const handleSubmit = () => {
+  /* */
+};
+const getConfig = () => {
+  /* */
+};
 ```
 
 ### Constants
@@ -359,14 +368,14 @@ const DEFAULT_PERSONALITY_CONFIG = {
   conscientiousness: 0.7,
   extraversion: 0.6,
   agreeableness: 0.8,
-  neuroticism: 0.3
+  neuroticism: 0.3,
 };
 
 // ✅ Good: Enums for related constants
 enum MessageStatus {
   PENDING = 'pending',
   SENT = 'sent',
-  FAILED = 'failed'
+  FAILED = 'failed',
 }
 ```
 
@@ -385,7 +394,7 @@ enum MessageStatus {
 async function generateAgentResponse(
   agent: Agent,
   messages: Message[],
-  options: ResponseOptions = {}
+  options: ResponseOptions = {},
 ): Promise<AgentResponse> {
   // Implementation
 }
@@ -410,14 +419,20 @@ const name = agent.name; // Get the agent name
 ```typescript
 // ✅ Good: Custom error types
 class AgentConfigurationError extends Error {
-  constructor(message: string, public agentId: string) {
+  constructor(
+    message: string,
+    public agentId: string,
+  ) {
     super(message);
     this.name = 'AgentConfigurationError';
   }
 }
 
 class APIConnectionError extends Error {
-  constructor(message: string, public provider: string) {
+  constructor(
+    message: string,
+    public provider: string,
+  ) {
     super(message);
     this.name = 'APIConnectionError';
   }
@@ -556,4 +571,4 @@ jest.mock('../services/ai/providers/openai', () => ({
 
 ---
 
-*This document should be updated as the project evolves and new patterns are established.*
+_This document should be updated as the project evolves and new patterns are established._

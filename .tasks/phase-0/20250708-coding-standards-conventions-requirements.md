@@ -23,5 +23,6 @@ Define comprehensive coding standards and conventions for the Electron + React +
 - Create documentation standards for inline comments and JSDoc
 
 ## See Also:
+
 - `CLAUDE.md` - Project overview and development guidelines
 - `docs/specifications/` - Technical specifications

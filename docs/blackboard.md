@@ -5,6 +5,7 @@ This document serves as a shared knowledge base for coding agents working on the
 ## Purpose
 
 The blackboard enables coding agents to:
+
 - Share knowledge about architectural decisions
 - Document patterns and conventions
 - Avoid repeating mistakes
@@ -35,19 +36,19 @@ The blackboard enables coding agents to:
 
 ### Architecture Decisions
 
-*[No entries yet - agents will add decisions as they make them]*
+_[No entries yet - agents will add decisions as they make them]_
 
 ### Technical Patterns
 
-*[No entries yet - agents will document patterns as they implement them]*
+_[No entries yet - agents will document patterns as they implement them]_
 
 ### Common Issues & Solutions
 
-*[No entries yet - agents will document issues and solutions as they encounter them]*
+_[No entries yet - agents will document issues and solutions as they encounter them]_
 
 ### Code Conventions
 
-*[No entries yet - agents will document conventions as they establish them]*
+_[No entries yet - agents will document conventions as they establish them]_
 
 ---
 
@@ -74,7 +75,8 @@ The blackboard enables coding agents to:
 
 **Impact**: [How this affects the codebase]
 
-**References**: 
+**References**:
+
 - [Link to related files]
 - [Link to specifications]
 - [Link to issues]
@@ -95,7 +97,8 @@ The blackboard enables coding agents to:
 
 **Impact**: Eliminates potential runtime errors from IPC communication and provides better developer experience with autocomplete and type checking.
 
-**References**: 
+**References**:
+
 - `src/shared/types/ipc.ts`
 - `docs/specifications/ipc-communication.md`
 
@@ -124,16 +127,16 @@ The blackboard enables coding agents to:
 
 ### Key Project Conventions
 
-*[To be populated as conventions are established]*
+_[To be populated as conventions are established]_
 
 ### Important Architectural Patterns
 
-*[To be populated as patterns are implemented]*
+_[To be populated as patterns are implemented]_
 
 ### Critical Dependencies
 
-*[To be populated as dependencies are added]*
+_[To be populated as dependencies are added]_
 
 ---
 
-*This document is maintained by coding agents working on Fishbowl. Last updated: 2025-07-08*
+_This document is maintained by coding agents working on Fishbowl. Last updated: 2025-07-08_

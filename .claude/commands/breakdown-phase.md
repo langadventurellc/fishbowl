@@ -62,6 +62,7 @@ Create new files at `.tasks/{phase-x}/{YYYYMMDD}-{feature-slug}-requirements.md`
 - [CA-3: Assumptions about user behavior or system state]
 
 ## See Also
+
 - [Link to related specification files]
 - [Link to architectural documentation]
 - [Link to existing similar features or patterns]
@@ -85,6 +86,7 @@ Create new files at `.tasks/{phase-x}/{YYYYMMDD}-{feature-slug}-requirements.md`
 **Phase Input:** `phase 1`
 **Feature:** `electron-main-process-setup`
 **Output file:** `/.tasks/phase-1/20250708-electron-main-process-setup-requirements.md`
+
 ```markdown
 # Feature
 
@@ -130,6 +132,7 @@ Set up the Electron main process with database, security, and IPC infrastructure
 - CA-3: IPC channels follow interfaces defined in shared/types/ipc.ts
 
 ## See Also
+
 - docs/specifications/core-architecture-spec.md
 - docs/specifications/implementation-plan.md
 - docs/technical/coding-standards.md
@@ -138,6 +141,7 @@ Set up the Electron main process with database, security, and IPC infrastructure
 **Phase Input:** `phase 2`
 **Feature:** `ai-provider-integration`
 **Output file:** `/.tasks/phase-2/20250708-ai-provider-integration-requirements.md`
+
 ```markdown
 # Feature
 
@@ -183,6 +187,7 @@ Integrate multiple AI providers (OpenAI, Anthropic, Google, Groq, Ollama) using 
 - CA-3: Streaming capabilities vary by provider
 
 ## See Also
+
 - docs/specifications/agent-model-spec.md
 - config/models.json
 - src/services/ai/providers/

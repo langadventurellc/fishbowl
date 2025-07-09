@@ -24,5 +24,6 @@ Create initial project license file to establish legal framework for the open-so
 - Add license scanning to CI/CD pipeline
 
 ## See Also:
+
 - `README.md` - Should reference license information
 - `package.json` - Should include license field

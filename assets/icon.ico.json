@@ -1,0 +1,5 @@
+{
+  "sizes": [16, 32, 48, 64, 128, 256],
+  "description": "Windows icon file - use icon.png and resize as needed",
+  "note": "For production, convert PNG to ICO using online tools or ImageMagick"
+}

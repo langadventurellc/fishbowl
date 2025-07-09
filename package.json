@@ -1,0 +1,105 @@
+{
+  "name": "fishbowl",
+  "version": "1.0.0",
+  "description": "An Electron-based desktop application for multi-agent AI conversations, enabling natural collaboration between multiple AI personalities in a shared conversation space.",
+  "main": "dist/main/main/index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "dev": "concurrently --kill-others --names \"main,preload,renderer,electron\" --prefix-colors \"blue,magenta,green,yellow\" \"npm run dev:main\" \"npm run dev:preload\" \"npm run dev:renderer\" \"npm run dev:electron\"",
+    "dev:main": "cross-env NODE_ENV=development tsc -p tsconfig.main.json -w --preserveWatchOutput",
+    "dev:preload": "cross-env NODE_ENV=development tsc -p tsconfig.preload.json -w --preserveWatchOutput",
+    "dev:renderer": "cross-env NODE_ENV=development vite --port 5173",
+    "dev:electron": "wait-on dist/main/main/index.js dist/preload/preload/index.js && sleep 2 && cross-env NODE_ENV=development nodemon --exec \"electron . --enable-logging --inspect=9229\" --watch dist/main --watch dist/preload --ext js",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && npm run build:main && npm run build:preload && npm run build:renderer && npm run build:verify",
+    "build:main": "tsc -p tsconfig.main.json --sourceMap false",
+    "build:preload": "tsc -p tsconfig.preload.json --sourceMap false",
+    "build:renderer": "cross-env NODE_ENV=production vite build",
+    "build:verify": "node scripts/build-verify.js",
+    "build:analyze": "cross-env NODE_ENV=production ANALYZE=true vite build",
+    "start": "electron .",
+    "dist": "npm run build && electron-builder --config electron-builder.json",
+    "dist:dir": "npm run build && electron-builder --dir --config electron-builder.json",
+    "dist:current": "npm run build && electron-builder --publish=never --config electron-builder.json",
+    "dist:mac": "npm run build && electron-builder --mac --config electron-builder.json",
+    "dist:win": "npm run build && electron-builder --win --config electron-builder.json",
+    "dist:linux": "npm run build && electron-builder --linux --config electron-builder.json",
+    "dist:all": "npm run build && electron-builder --mac --win --linux --config electron-builder.json",
+    "preview": "npm run build && electron .",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
+    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit && tsc -p tsconfig.main.json --noEmit && tsc -p tsconfig.preload.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/langadventurellc/fishbowl.git"
+  },
+  "keywords": [
+    "electron",
+    "react",
+    "typescript",
+    "ai",
+    "multi-agent",
+    "conversation",
+    "desktop",
+    "chat"
+  ],
+  "author": "Language Adventure LLC",
+  "license": "MIT",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/langadventurellc/fishbowl/issues"
+  },
+  "homepage": "https://github.com/langadventurellc/fishbowl#readme",
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.30.1",
+    "@langadventurellc/tsla-linter": "^2.0.0",
+    "@types/node": "^24.0.11",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@types/react-router-dom": "^5.3.3",
+    "@typescript-eslint/eslint-plugin": "^8.36.0",
+    "@typescript-eslint/parser": "^8.36.0",
+    "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^9.2.0",
+    "cross-env": "^7.0.3",
+    "electron": "^37.2.0",
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.30.1",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.5.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-sonarjs": "^3.0.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.36.0",
+    "vite": "^7.0.3",
+    "vite-plugin-electron": "^0.29.0",
+    "wait-on": "^8.0.3"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.3"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
+}

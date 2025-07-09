@@ -23,5 +23,6 @@ Create agent "blackboard" system for coding agents to share knowledge, decisions
 - Define knowledge retention policies and archival system
 
 ## See Also:
+
 - `docs/specifications/` - Technical specifications that inform agent decisions
 - `CLAUDE.md` - Project guidelines that agents should follow

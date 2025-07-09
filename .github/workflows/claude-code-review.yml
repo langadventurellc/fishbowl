@@ -1,0 +1,62 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    name: Claude Code Review
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Configure npm for GitHub Package Registry
+        run: |
+          echo "@langadventurellc:registry=https://npm.pkg.github.com" >> ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> ~/.npmrc
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@beta
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_tools: 'View,GlobTool,GrepTool,BatchTool'
+          direct_prompt: |
+            Please review only the code changes in this pull request and provide feedback.
+
+            IMPORTANT: Check the current CI status first. If all CI checks are passing (SUCCESS), ignore any historical comments about code quality failures. Only address current, real issues.
+
+            Focus on:
+            - Code quality and TypeScript best practices
+            - Security vulnerabilities and potential issues
+            - Performance considerations
+            - Adherence to the project's coding standards in docs/technical/coding-standards.md
+            - Electron-specific security best practices
+            - React and modern JavaScript patterns
+
+            Consider the project context:
+            - This is an Electron desktop application for multi-agent AI conversations
+            - Uses React 18+, TypeScript (strict mode), and Zustand for state management
+            - Follows feature-based component organization
+            - Emphasizes type-safe IPC communication between main and renderer processes
+
+            Avoid reviewing files in: node_modules/, build/, dist/, **/*.min.js, **/*.bundle.js, **/*.generated.*

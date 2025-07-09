@@ -19,5 +19,6 @@ Set up comprehensive project documentation structure to organize specifications,
 - Add README files for each documentation section explaining its purpose
 
 ## See Also:
+
 - `docs/specifications/` - Technical specifications directory
 - `docs/blackboard.md` - Agent collaboration knowledge base

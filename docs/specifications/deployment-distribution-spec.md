@@ -1,17 +1,21 @@
 # Deployment & Distribution Specification
 
 ## Overview
+
 This document outlines the build, packaging, and distribution strategy for the Fishbowl desktop application v1.0, focusing on a simple but professional deployment process using GitHub releases.
 
 ## Distribution Strategy
 
 ### Primary Distribution Channel
+
 - **GitHub Releases**: Public releases with downloadable binaries
 - **Release Page**: Clear download instructions and system requirements
 - **Version Naming**: Semantic versioning (1.0.0, 1.0.1, etc.)
 
 ### Release Artifacts
+
 Each release includes:
+
 - macOS: Universal `.dmg` (Intel + Apple Silicon)
 - Windows: `.exe` installer + `.zip` portable
 - Linux: `.AppImage` (universal) + `.deb` (Ubuntu/Debian)
@@ -21,6 +25,7 @@ Each release includes:
 ## Electron Builder Configuration
 
 ### Basic Configuration
+
 ```javascript
 // electron-builder.yml
 appId: com.aiCollaborators.app
@@ -51,6 +56,7 @@ extraMetadata:
 ### Platform-Specific Configuration
 
 #### macOS Configuration
+
 ```yaml
 mac:
   category: public.app-category.productivity
@@ -82,6 +88,7 @@ dmg:
 ```
 
 #### Windows Configuration
+
 ```yaml
 win:
   target:
@@ -102,6 +109,7 @@ nsis:
 ```
 
 #### Linux Configuration
+
 ```yaml
 linux:
   target:
@@ -129,9 +137,11 @@ deb:
 ## Code Signing
 
 ### V1 Approach: Unsigned Builds
+
 For the initial release, distribute unsigned builds with clear instructions:
 
 #### macOS Instructions
+
 ```markdown
 ## macOS Installation
 
@@ -146,6 +156,7 @@ For the initial release, distribute unsigned builds with clear instructions:
 ```
 
 #### Windows Instructions
+
 ```markdown
 ## Windows Installation
 
@@ -158,10 +169,11 @@ For the initial release, distribute unsigned builds with clear instructions:
 ```
 
 ### Future Signing Strategy (V1.x)
+
 ```yaml
 # When ready to sign
 mac:
-  identity: "Developer ID Application: Your Name (XXXXXXXXXX)"
+  identity: 'Developer ID Application: Your Name (XXXXXXXXXX)'
   notarize:
     teamId: XXXXXXXXXX
 
@@ -174,6 +186,7 @@ win:
 ## Auto-Update Implementation
 
 ### Configuration
+
 ```typescript
 // main/updater.ts
 import { autoUpdater } from 'electron-updater';
@@ -189,61 +202,71 @@ export function setupAutoUpdater() {
   // Check for updates every 4 hours
   autoUpdater.autoDownload = false;
   autoUpdater.autoInstallOnAppQuit = true;
-  
+
   // Check on startup after 30 seconds
   setTimeout(() => {
     autoUpdater.checkForUpdates();
   }, 30000);
-  
+
   // Periodic checks
-  setInterval(() => {
-    autoUpdater.checkForUpdates();
-  }, 4 * 60 * 60 * 1000);
+  setInterval(
+    () => {
+      autoUpdater.checkForUpdates();
+    },
+    4 * 60 * 60 * 1000,
+  );
 }
 
 // Event handlers
-autoUpdater.on('update-available', (info) => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Update Available',
-    message: `Version ${info.version} is available. Would you like to download it?`,
-    buttons: ['Download', 'Later'],
-  }).then((result) => {
-    if (result.response === 0) {
-      autoUpdater.downloadUpdate();
-    }
-  });
+autoUpdater.on('update-available', info => {
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title: 'Update Available',
+      message: `Version ${info.version} is available. Would you like to download it?`,
+      buttons: ['Download', 'Later'],
+    })
+    .then(result => {
+      if (result.response === 0) {
+        autoUpdater.downloadUpdate();
+      }
+    });
 });
 
-autoUpdater.on('update-downloaded', (info) => {
-  dialog.showMessageBox({
-    type: 'info',
-    title: 'Update Ready',
-    message: 'Update downloaded. It will be installed on restart.',
-    buttons: ['Restart Now', 'Later'],
-  }).then((result) => {
-    if (result.response === 0) {
-      autoUpdater.quitAndInstall();
-    }
-  });
+autoUpdater.on('update-downloaded', info => {
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title: 'Update Ready',
+      message: 'Update downloaded. It will be installed on restart.',
+      buttons: ['Restart Now', 'Later'],
+    })
+    .then(result => {
+      if (result.response === 0) {
+        autoUpdater.quitAndInstall();
+      }
+    });
 });
 ```
 
 ## First-Run Experience
 
 ### Initial State
+
 The app opens directly to the main interface with:
+
 - Empty conversation list
 - "No agents selected" message in chat area
 - No blocking wizards or dialogs
 
 ### Gentle Onboarding
+
 ```typescript
 // renderer/hooks/useFirstRun.ts
 export function useFirstRun() {
   useEffect(() => {
     const hasSeenWelcome = localStorage.getItem('hasSeenWelcome');
-    
+
     if (!hasSeenWelcome) {
       // Show non-blocking tooltip
       setTimeout(() => {
@@ -253,7 +276,7 @@ export function useFirstRun() {
           position: 'bottom',
         });
       }, 1000);
-      
+
       localStorage.setItem('hasSeenWelcome', 'true');
     }
   }, []);
@@ -261,7 +284,9 @@ export function useFirstRun() {
 ```
 
 ### API Key Prompt
+
 When user first tries to add an agent:
+
 ```typescript
 // If no API keys configured
 if (!hasAnyApiKeys()) {
@@ -279,11 +304,12 @@ if (!hasAnyApiKeys()) {
 ## Platform-Specific Considerations
 
 ### macOS
+
 - **Entitlements**: Required for hardened runtime
   ```xml
   <!-- build/entitlements.mac.plist -->
   <?xml version="1.0" encoding="UTF-8"?>
-  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" 
+  <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
     "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
   <plist version="1.0">
     <dict>
@@ -300,12 +326,14 @@ if (!hasAnyApiKeys()) {
 - **Minimum Version**: macOS 10.15 (Catalina)
 
 ### Windows
+
 - **Visual C++ Redistributables**: Bundled with installer
 - **Firewall**: May prompt on first run for network access
 - **Portable Version**: No admin rights required
 - **Minimum Version**: Windows 10 version 1903
 
 ### Linux
+
 - **AppImage**: Works on most distributions without installation
 - **Desktop Integration**: Automatic with AppImageLauncher
 - **Dependencies**: Minimal, bundled in AppImage
@@ -314,6 +342,7 @@ if (!hasAnyApiKeys()) {
 ## Build Scripts
 
 ### Package.json Scripts
+
 ```json
 {
   "scripts": {
@@ -332,6 +361,7 @@ if (!hasAnyApiKeys()) {
 ```
 
 ### CI/CD Workflow (GitHub Actions)
+
 ```yaml
 # .github/workflows/release.yml
 name: Build and Release
@@ -352,23 +382,23 @@ jobs:
             build: dist:win
           - os: ubuntu-latest
             build: dist:linux
-    
+
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build and package
         run: npm run ${{ matrix.build }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
@@ -379,6 +409,7 @@ jobs:
 ## Default Configuration
 
 ### Pre-packaged Files
+
 ```
 config/
 ├── models.json          # Default model configurations
@@ -387,6 +418,7 @@ config/
 ```
 
 ### Initial Settings
+
 ```typescript
 // Default preferences
 const defaultSettings = {
@@ -404,6 +436,7 @@ const defaultSettings = {
 ## Release Process
 
 ### Version Bumping
+
 1. Update version in `package.json`
 2. Update `CHANGELOG.md`
 3. Commit with message: `chore: bump version to X.Y.Z`
@@ -411,6 +444,7 @@ const defaultSettings = {
 5. Push: `git push origin main --tags`
 
 ### GitHub Release
+
 1. CI/CD builds and uploads artifacts
 2. Create release notes highlighting:
    - New features
@@ -420,30 +454,36 @@ const defaultSettings = {
 3. Mark as pre-release for beta versions
 
 ### Download Page Template
+
 ```markdown
 ## Download Fishbowl v1.0.0
 
 ### System Requirements
+
 - macOS 10.15+ / Windows 10+ / Linux (Ubuntu 20.04+)
 - 4GB RAM minimum
 - 500MB disk space
 - Internet connection required
 
 ### Downloads
+
 - 🍎 **macOS**: [AI-Collaborators-1.0.0-mac-universal.dmg](link)
 - 🪟 **Windows**: [AI-Collaborators-1.0.0-win-x64.exe](link)
 - 🐧 **Linux**: [AI-Collaborators-1.0.0.AppImage](link)
 
 ### Installation Instructions
+
 [Platform-specific instructions here]
 
 ### Checksums
+
 [SHA256 checksums for verification]
 ```
 
 ## Future Enhancements (V2+)
 
 ### Advanced Distribution
+
 - Mac App Store submission
 - Microsoft Store submission
 - Homebrew cask formula
@@ -451,12 +491,14 @@ const defaultSettings = {
 - Snap package for Linux
 
 ### Enhanced Security
+
 - Code signing certificates
 - Notarization for macOS
 - EV certificate for Windows
 - Reproducible builds
 
 ### Professional Features
+
 - Silent installation options
 - Enterprise deployment tools
 - Custom update channels
