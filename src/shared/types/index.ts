@@ -181,6 +181,34 @@ export interface DatabaseFilter {
   where?: Record<string, unknown>;
 }
 
+// Pagination types
+export interface PaginationMetadata {
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface PaginatedResult<T> {
+  data: T[];
+  pagination: PaginationMetadata;
+}
+
+export interface PaginationRequest {
+  page?: number;
+  pageSize?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+}
+
+export interface PaginationOptions {
+  defaultPageSize?: number;
+  maxPageSize?: number;
+  enableTotalCount?: boolean;
+}
+
 export interface CreateAgentData {
   name: string;
   role: string;

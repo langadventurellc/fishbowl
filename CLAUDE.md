@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   <critical>NEVER finish a task with failing unit tests or quality checks.</critical>
   <critical>NEVER, NEVER commit code with failing unit tests or quality checks.</critical>
   <critical>Execute only the next single incomplete task from $ARGUMENTS. Complete the task, update the task list, then STOP immediately for user review.</critical>
+  <critical>ALWAYS run quality checks (npm run lint, npm run format, npm run type-check) after making ANY code changes. Fix all issues before proceeding.</critical>
 </rules>
 
 ## Project Overview
@@ -287,6 +288,7 @@ In case of multiple variations, should metadata be generated for all variations 
   <critical>Write tests for new or modified functionality. Do not write tests for style or formatting.</critical>
   <critical>Never hardcode secrets or environment values, including file paths outside project root.</critical>
   <critical>Ensure all quality checks pass before marking a task complete. Do not proceed if any checks or tests fail.</critical>
+  <critical>ALWAYS run quality checks (npm run lint, npm run format, npm run type-check) after making ANY code changes. Fix all issues before proceeding.</critical>
   <important>Each "public" class or function should be in its own file, unless otherwise approved.</important>
   <important>Use context7 MCP tool to get up-to-date documentation and best practices for all third-party libraries.</important>
   <important>Ask questions for implementation details, clarifications, or when requirements are ambiguous.</important>
