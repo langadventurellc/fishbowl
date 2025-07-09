@@ -163,8 +163,9 @@ erDiagram
 
 ## Implementation Notes
 
-- Tests should be placed in `src/main/database/__tests__/` following the project's conventions
+- Tests should be placed in `tests/` directory following project conventions
 - Use `npm run type-check` to verify TypeScript compilation
+- Run `npm run test:run` to execute all tests
 - Run `npm run lint` and `npm run format` after each task
 - Database initialization occurs in main process startup sequence
 - Migration system uses PRAGMA user_version for simplicity and control

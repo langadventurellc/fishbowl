@@ -56,6 +56,38 @@ export interface IpcChannels {
   'dev:isDev': () => Promise<boolean>;
   'dev:openDevTools': () => Promise<void>;
   'dev:closeDevTools': () => Promise<void>;
+
+  // Database operations
+  'db:agents:list': (filter?: DatabaseFilter) => Promise<Agent[]>;
+  'db:agents:get': (id: string) => Promise<Agent | null>;
+  'db:agents:create': (agent: CreateAgentData) => Promise<Agent>;
+  'db:agents:update': (id: string, updates: UpdateAgentData) => Promise<Agent>;
+  'db:agents:delete': (id: string) => Promise<void>;
+  'db:conversations:list': (filter?: DatabaseFilter) => Promise<Conversation[]>;
+  'db:conversations:get': (id: string) => Promise<Conversation | null>;
+  'db:conversations:create': (conversation: CreateConversationData) => Promise<Conversation>;
+  'db:conversations:update': (id: string, updates: UpdateConversationData) => Promise<Conversation>;
+  'db:conversations:delete': (id: string) => Promise<void>;
+  'db:messages:list': (conversationId: string, filter?: DatabaseFilter) => Promise<Message[]>;
+  'db:messages:get': (id: string) => Promise<Message | null>;
+  'db:messages:create': (message: CreateMessageData) => Promise<Message>;
+  'db:messages:delete': (id: string) => Promise<void>;
+  'db:conversation-agents:list': (conversationId: string) => Promise<ConversationAgent[]>;
+  'db:conversation-agents:add': (conversationId: string, agentId: string) => Promise<void>;
+  'db:conversation-agents:remove': (conversationId: string, agentId: string) => Promise<void>;
+
+  // Secure storage operations
+  'secure:credentials:get': (provider: AiProvider) => Promise<CredentialInfo | null>;
+  'secure:credentials:set': (
+    provider: AiProvider,
+    apiKey: string,
+    metadata?: Record<string, unknown>,
+  ) => Promise<void>;
+  'secure:credentials:delete': (provider: AiProvider) => Promise<void>;
+  'secure:credentials:list': () => Promise<CredentialInfo[]>;
+  'secure:keytar:get': (service: string, account: string) => Promise<string | null>;
+  'secure:keytar:set': (service: string, account: string, password: string) => Promise<void>;
+  'secure:keytar:delete': (service: string, account: string) => Promise<void>;
 }
 
 // Window state
@@ -139,3 +171,62 @@ export type AppEvent =
   | { type: 'MESSAGE_SENT'; payload: Message }
   | { type: 'MESSAGE_RECEIVED'; payload: Message }
   | { type: 'ERROR_OCCURRED'; payload: AppError };
+
+// Database operation types
+export interface DatabaseFilter {
+  limit?: number;
+  offset?: number;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  where?: Record<string, unknown>;
+}
+
+export interface CreateAgentData {
+  name: string;
+  role: string;
+  personality: string;
+  isActive?: boolean;
+}
+
+export interface UpdateAgentData {
+  name?: string;
+  role?: string;
+  personality?: string;
+  isActive?: boolean;
+}
+
+export interface CreateConversationData {
+  name: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface UpdateConversationData {
+  name?: string;
+  description?: string;
+  isActive?: boolean;
+}
+
+export interface CreateMessageData {
+  conversationId: string;
+  agentId: string;
+  content: string;
+  type: string;
+  metadata?: string;
+}
+
+// Secure storage types
+export type AiProvider = 'openai' | 'anthropic' | 'google' | 'groq' | 'ollama';
+
+export interface CredentialInfo {
+  provider: AiProvider;
+  hasApiKey: boolean;
+  lastUpdated: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface SecureStorageCredential {
+  provider: AiProvider;
+  apiKey: string;
+  metadata?: Record<string, unknown>;
+}

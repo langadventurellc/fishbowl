@@ -50,6 +50,11 @@ npm run type-check     # TypeScript check
 npm run format          # Run Prettier
 npm run format:check    # Check Prettier formatting
 
+# Testing
+npm run test            # Run tests in watch mode
+npm run test:run        # Run tests once
+npm run test:ui         # Run tests with UI
+
 # Building
 npm run build          # Production build
 npm run build:verify   # Build with verification

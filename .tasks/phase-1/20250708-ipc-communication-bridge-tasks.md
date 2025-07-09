@@ -124,8 +124,9 @@ sequenceDiagram
 
 ## Implementation Notes
 
-- Tests should be placed in `src/main/__tests__/` and `src/renderer/__tests__/` following project conventions
+- Tests should be placed in `tests/` directory following project conventions
 - Use `npm run type-check` to verify TypeScript compilation
+- Run `npm run test:run` to execute all tests
 - Run `npm run lint` and `npm run format` after each task
 - All IPC operations must be validated with Zod schemas
 - Sensitive data (API keys) must never be logged or exposed in error messages
@@ -136,15 +137,23 @@ sequenceDiagram
 
 ## Implementation Tasks
 
-- [ ] 1.0 Setup Dependencies and Validation Foundation
-  - [ ] 1.1 Add zod and keytar dependencies to package.json
-  - [ ] 1.2 Create custom error classes in shared/types/errors/ directory with separate files
-  - [ ] 1.3 Create Zod validation schemas for existing and new IPC channels in separate files
-  - [ ] 1.4 Update shared types with database and secure storage IPC channels
-  - [ ] 1.5 Write tests for validation schemas and error classes
+- [x] 1.0 Setup Dependencies and Validation Foundation
+  - [x] 1.1 Add zod and keytar dependencies to package.json
+  - [x] 1.2 Create custom error classes in shared/types/errors/ directory with separate files
+  - [x] 1.3 Create Zod validation schemas for existing and new IPC channels in separate files
+  - [x] 1.4 Update shared types with database and secure storage IPC channels
+  - [x] 1.5 Write tests for validation schemas and error classes
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `package.json` - Added zod, keytar, and @types/keytar dependencies; added vitest testing framework and test scripts
+  - `src/shared/types/errors/` - Created comprehensive error class hierarchy with BaseError, IpcError, IpcValidationError, DatabaseError, and SecureStorageError
+  - `src/shared/types/validation/` - Created Zod validation schemas for system info, config, database operations, secure storage, and IPC channels
+  - `src/shared/types/index.ts` - Extended IPC channel interfaces with database and secure storage operations; added supporting types
+  - `tests/unit/shared/types/error-classes.test.ts` - Created comprehensive tests for all error classes with 16 test cases
+  - `tests/unit/shared/types/validation-schemas.test.ts` - Created comprehensive tests for all validation schemas with 27 test cases
+  - `vitest.config.ts` - Created Vitest configuration with proper aliases and test setup
+  - `tsconfig.json` - Updated to include tests directory and vitest config in compilation
+  - `CLAUDE.md` - Updated development commands to include test scripts
 
 - [ ] 2.0 Implement Secure Storage Module
   - [ ] 2.1 Create secure storage module with keytar wrapper
