@@ -43,6 +43,8 @@ jobs:
           direct_prompt: |
             Please review only the code changes in this pull request and provide feedback.
 
+            IMPORTANT: Check the current CI status first. If all CI checks are passing (SUCCESS), ignore any historical comments about code quality failures. Only address current, real issues.
+
             Focus on:
             - Code quality and TypeScript best practices
             - Security vulnerabilities and potential issues
