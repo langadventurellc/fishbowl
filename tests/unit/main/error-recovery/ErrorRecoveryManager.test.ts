@@ -2,6 +2,44 @@ import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { ErrorRecoveryManager } from '@main/error-recovery/ErrorRecoveryManager';
 import type { ErrorRecoveryConfig } from '@main/error-recovery/ErrorRecoveryConfig';
 
+// Mock dependencies
+vi.mock('@main/database/connection/initializeDatabase', () => ({
+  initializeDatabase: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('@main/database/connection/getDatabase', () => ({
+  getDatabase: vi.fn().mockReturnValue({
+    prepare: vi.fn().mockReturnValue({
+      get: vi.fn().mockReturnValue({}),
+    }),
+  }),
+}));
+
+vi.mock('@main/performance/ipcPerformanceManagerInstance', () => ({
+  ipcPerformanceManager: {
+    clearCache: vi.fn(),
+  },
+}));
+
+vi.mock('keytar', () => ({
+  findCredentials: vi.fn().mockResolvedValue([]),
+}));
+
+vi.mock('electron', () => ({
+  app: {
+    getPath: vi.fn().mockReturnValue('/mock/path'),
+  },
+}));
+
+vi.mock('fs', () => ({
+  existsSync: vi.fn().mockReturnValue(true),
+  mkdirSync: vi.fn(),
+}));
+
+vi.mock('path', () => ({
+  dirname: vi.fn().mockReturnValue('/mock/dir'),
+}));
+
 describe('ErrorRecoveryManager', () => {
   let manager: ErrorRecoveryManager;
   let config: ErrorRecoveryConfig;
@@ -107,31 +145,47 @@ describe('ErrorRecoveryManager', () => {
     });
 
     it('should respect max retry limits', async () => {
+      // Create a manager with circuit breaker disabled for this test
+      const testConfig = {
+        ...config,
+        circuitBreakerEnabled: false,
+      };
+      const testManager = new ErrorRecoveryManager(testConfig);
+
       const persistentError = new Error('database connection failed');
 
+      // Override the database strategy to fail consistently
+      testManager.addStrategy('database-connection', {
+        name: 'database-connection',
+        canRecover: error => error.message?.includes('database'),
+        recover: () => Promise.resolve({ success: false, message: 'recovery failed' }),
+        maxRetries: 3,
+        retryDelay: 10,
+      });
+
       // First recovery attempt
-      const result1 = await manager.recoverFromError(persistentError, {
+      const result1 = await testManager.recoverFromError(persistentError, {
         channel: 'db:test:operation',
       });
-      expect(result1.success).toBe(true);
+      expect(result1.success).toBe(false);
       expect(result1.retryAttempts).toBe(1);
 
       // Second recovery attempt
-      const result2 = await manager.recoverFromError(persistentError, {
+      const result2 = await testManager.recoverFromError(persistentError, {
         channel: 'db:test:operation',
       });
-      expect(result2.success).toBe(true);
+      expect(result2.success).toBe(false);
       expect(result2.retryAttempts).toBe(2);
 
       // Third recovery attempt
-      const result3 = await manager.recoverFromError(persistentError, {
+      const result3 = await testManager.recoverFromError(persistentError, {
         channel: 'db:test:operation',
       });
-      expect(result3.success).toBe(true);
+      expect(result3.success).toBe(false);
       expect(result3.retryAttempts).toBe(3);
 
-      // Fourth attempt should fail (max 3 retries for database-connection)
-      const result4 = await manager.recoverFromError(persistentError, {
+      // Fourth attempt should fail with max retry message
+      const result4 = await testManager.recoverFromError(persistentError, {
         channel: 'db:test:operation',
       });
       expect(result4.success).toBe(false);
@@ -169,7 +223,7 @@ describe('ErrorRecoveryManager', () => {
       const error = new Error('test error');
       const channel = 'test:circuit:reset';
 
-      // Add a test strategy
+      // Add a test strategy that initially fails, then succeeds
       let shouldFail = true;
       manager.addStrategy('conditional-fail', {
         name: 'conditional-fail',
@@ -179,19 +233,24 @@ describe('ErrorRecoveryManager', () => {
             success: !shouldFail,
             message: shouldFail ? 'failing' : 'success',
           }),
-        maxRetries: 1,
+        maxRetries: 5,
         retryDelay: 10,
       });
 
-      // Trigger circuit breaker
+      // Trigger circuit breaker by causing enough failures
       for (let i = 0; i < config.circuitBreakerFailureThreshold; i++) {
         await manager.recoverFromError(error, { channel });
       }
 
+      // Verify circuit breaker is open
+      const blockedResult = await manager.recoverFromError(error, { channel });
+      expect(blockedResult.success).toBe(false);
+      expect(blockedResult.strategy).toBe('circuit-breaker');
+
       // Wait for circuit breaker timeout
       await new Promise(resolve => setTimeout(resolve, config.circuitBreakerTimeout + 100));
 
-      // Strategy should now succeed
+      // Strategy should now succeed after circuit breaker timeout
       shouldFail = false;
       const result = await manager.recoverFromError(error, { channel });
       expect(result.success).toBe(true);

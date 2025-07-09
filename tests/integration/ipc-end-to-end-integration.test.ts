@@ -1,64 +1,49 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import { useAgents } from '../../src/renderer/hooks/useAgents';
+import { useMessages } from '../../src/renderer/hooks/useMessages';
+import { useSecureStorage } from '../../src/renderer/hooks/useSecureStorage';
+import { useDatabase } from '../../src/renderer/hooks/useDatabase';
 
 // Mock the electronAPI that would be exposed by preload
 const mockElectronAPI = {
-  database: {
-    agents: {
-      create: vi.fn(),
-      get: vi.fn(),
-      list: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-    },
-    conversations: {
-      create: vi.fn(),
-      get: vi.fn(),
-      list: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-    },
-    messages: {
-      create: vi.fn(),
-      get: vi.fn(),
-      list: vi.fn(),
-      update: vi.fn(),
-      delete: vi.fn(),
-    },
-    conversationAgents: {
-      add: vi.fn(),
-      remove: vi.fn(),
-      list: vi.fn(),
-    },
-    transactions: {
-      createConversationWithAgents: vi.fn(),
-      createMessagesBatch: vi.fn(),
-      deleteConversationCascade: vi.fn(),
-      transferMessages: vi.fn(),
-    },
-  },
-  secure: {
-    keytar: {
-      get: vi.fn(),
-      set: vi.fn(),
-      delete: vi.fn(),
-    },
-    credentials: {
-      get: vi.fn(),
-      set: vi.fn(),
-      list: vi.fn(),
-      delete: vi.fn(),
-    },
-  },
-  performance: {
-    getStats: vi.fn(),
-    getMetrics: vi.fn(),
-    getSlowCalls: vi.fn(),
-  },
-  security: {
-    getAuditLog: vi.fn(),
-    getSecurityStats: vi.fn(),
-  },
+  // Database operations
+  dbAgentsList: vi.fn(),
+  dbAgentsGet: vi.fn(),
+  dbAgentsCreate: vi.fn(),
+  dbAgentsUpdate: vi.fn(),
+  dbAgentsDelete: vi.fn(),
+  dbConversationsList: vi.fn(),
+  dbConversationsGet: vi.fn(),
+  dbConversationsCreate: vi.fn(),
+  dbConversationsUpdate: vi.fn(),
+  dbConversationsDelete: vi.fn(),
+  dbMessagesList: vi.fn(),
+  dbMessagesGet: vi.fn(),
+  dbMessagesCreate: vi.fn(),
+  dbMessagesDelete: vi.fn(),
+  dbConversationAgentsList: vi.fn(),
+  dbConversationAgentsAdd: vi.fn(),
+  dbConversationAgentsRemove: vi.fn(),
+
+  // Secure storage operations
+  secureKeytarGet: vi.fn(),
+  secureKeytarSet: vi.fn(),
+  secureKeytarDelete: vi.fn(),
+  secureCredentialsGet: vi.fn(),
+  secureCredentialsSet: vi.fn(),
+  secureCredentialsDelete: vi.fn(),
+  secureCredentialsList: vi.fn(),
+
+  // Performance monitoring
+  getPerformanceStats: vi.fn(),
+  clearPerformanceStats: vi.fn(),
+  getRecentMetrics: vi.fn(),
+
+  // Security
+  getSecurityStats: vi.fn(),
+  getSecurityAuditLog: vi.fn(),
+  clearSecurityAuditLog: vi.fn(),
 };
 
 // Mock the global electronAPI
@@ -68,40 +53,11 @@ Object.defineProperty(global, 'electronAPI', {
   configurable: true,
 });
 
-// Mock hooks instead of importing to avoid cross-module type resolution issues
-const useAgents = () => ({
-  agents: [],
-  loading: false,
-  error: null as { message: string } | null,
-  createAgent: vi.fn(),
-  getAgent: vi.fn(),
-  updateAgent: vi.fn(),
-  deleteAgent: vi.fn(),
-});
-
-const useMessages = () => ({
-  messages: [],
-  loading: false,
-  error: null as { message: string } | null,
-  createMessage: vi.fn(),
-});
-
-const useSecureStorage = () => ({
-  loading: false,
-  error: null as { message: string } | null,
-  setCredentials: vi.fn(),
-  getCredentials: vi.fn(),
-  listCredentials: vi.fn(),
-});
-
-const useDatabase = () => ({
-  loading: false,
-  error: null as { message: string } | null,
-  transactions: {
-    createConversationWithAgents: vi.fn(),
-    createMessagesBatch: vi.fn(),
-    deleteConversationCascade: vi.fn(),
-  },
+// Mock window.electronAPI for the hooks
+Object.defineProperty(window, 'electronAPI', {
+  value: mockElectronAPI,
+  writable: true,
+  configurable: true,
 });
 
 describe('IPC End-to-End Integration Tests', () => {
@@ -117,51 +73,35 @@ describe('IPC End-to-End Integration Tests', () => {
       const mockAgent = {
         id: 'agent-123',
         name: 'Test Agent',
-        systemPrompt: 'You are a helpful assistant',
-        description: 'Test agent description',
+        role: 'assistant',
+        personality: 'You are a helpful assistant',
         isActive: true,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       };
 
-      mockElectronAPI.database.agents.create.mockResolvedValue({
-        success: true,
-        data: mockAgent,
+      mockElectronAPI.dbAgentsCreate.mockResolvedValue(mockAgent);
+      mockElectronAPI.dbAgentsList.mockResolvedValue([mockAgent]);
+      mockElectronAPI.dbAgentsGet.mockResolvedValue(mockAgent);
+      mockElectronAPI.dbAgentsUpdate.mockResolvedValue({
+        ...mockAgent,
+        name: 'Updated Agent',
       });
-
-      mockElectronAPI.database.agents.list.mockResolvedValue({
-        success: true,
-        data: [mockAgent],
-      });
-
-      mockElectronAPI.database.agents.get.mockResolvedValue({
-        success: true,
-        data: mockAgent,
-      });
-
-      mockElectronAPI.database.agents.update.mockResolvedValue({
-        success: true,
-        data: { ...mockAgent, name: 'Updated Agent' },
-      });
-
-      mockElectronAPI.database.agents.delete.mockResolvedValue({
-        success: true,
-        data: true,
-      });
+      mockElectronAPI.dbAgentsDelete.mockResolvedValue(true);
 
       // Test creating an agent
       await act(async () => {
         await result.current.createAgent({
           name: 'Test Agent',
-          systemPrompt: 'You are a helpful assistant',
-          description: 'Test agent description',
+          role: 'assistant',
+          personality: 'You are a helpful assistant',
         });
       });
 
-      expect(mockElectronAPI.database.agents.create).toHaveBeenCalledWith({
+      expect(mockElectronAPI.dbAgentsCreate).toHaveBeenCalledWith({
         name: 'Test Agent',
-        systemPrompt: 'You are a helpful assistant',
-        description: 'Test agent description',
+        role: 'assistant',
+        personality: 'You are a helpful assistant',
       });
 
       expect(result.current.agents).toContain(mockAgent);
@@ -173,9 +113,7 @@ describe('IPC End-to-End Integration Tests', () => {
         await result.current.getAgent('agent-123');
       });
 
-      expect(mockElectronAPI.database.agents.get).toHaveBeenCalledWith({
-        id: 'agent-123',
-      });
+      expect(mockElectronAPI.dbAgentsGet).toHaveBeenCalledWith('agent-123');
 
       // Test updating an agent
       await act(async () => {
@@ -184,8 +122,7 @@ describe('IPC End-to-End Integration Tests', () => {
         });
       });
 
-      expect(mockElectronAPI.database.agents.update).toHaveBeenCalledWith({
-        id: 'agent-123',
+      expect(mockElectronAPI.dbAgentsUpdate).toHaveBeenCalledWith('agent-123', {
         name: 'Updated Agent',
       });
 
@@ -194,32 +131,25 @@ describe('IPC End-to-End Integration Tests', () => {
         await result.current.deleteAgent('agent-123');
       });
 
-      expect(mockElectronAPI.database.agents.delete).toHaveBeenCalledWith({
-        id: 'agent-123',
-      });
+      expect(mockElectronAPI.dbAgentsDelete).toHaveBeenCalledWith('agent-123');
     });
 
     it('should handle agent operation errors', async () => {
       const { result } = renderHook(() => useAgents());
 
       // Mock error response
-      mockElectronAPI.database.agents.create.mockResolvedValue({
-        success: false,
-        error: {
-          type: 'VALIDATION',
-          message: 'Agent name is required',
-        },
-      });
+      mockElectronAPI.dbAgentsCreate.mockRejectedValue(new Error('Agent name is required'));
 
       await act(async () => {
         await result.current.createAgent({
           name: '',
-          systemPrompt: 'Test prompt',
+          role: 'assistant',
+          personality: 'Test prompt',
         });
       });
 
       expect(result.current.error).not.toBeNull();
-      expect(result.current.error?.message).toContain('Agent name is required');
+      expect(result.current.error).toContain('Agent name is required');
       expect(result.current.loading).toBe(false);
     });
   });
@@ -233,68 +163,68 @@ describe('IPC End-to-End Integration Tests', () => {
       const mockAgent = {
         id: 'agent-123',
         name: 'Chat Assistant',
-        systemPrompt: 'You are helpful',
+        role: 'assistant',
+        personality: 'You are helpful',
         isActive: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       };
 
-      // Mock conversation with agents response
-      const mockConversationResult = {
-        conversation: {
-          id: 'conv-123',
-          title: 'Test Conversation',
-          description: 'A test conversation',
-          isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        agentCount: 1,
+      // Mock conversation data
+      const mockConversation = {
+        id: 'conv-123',
+        name: 'Test Conversation',
+        description: 'A test conversation',
+        isActive: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       };
 
-      mockElectronAPI.database.agents.create.mockResolvedValue({
-        success: true,
-        data: mockAgent,
-      });
-
-      mockElectronAPI.database.transactions.createConversationWithAgents.mockResolvedValue({
-        success: true,
-        data: mockConversationResult,
-      });
+      mockElectronAPI.dbAgentsCreate.mockResolvedValue(mockAgent);
+      mockElectronAPI.dbConversationsCreate.mockResolvedValue(mockConversation);
+      mockElectronAPI.dbConversationAgentsAdd.mockResolvedValue(true);
 
       // Create an agent first
       await act(async () => {
         await agentsResult.current.createAgent({
           name: 'Chat Assistant',
-          systemPrompt: 'You are helpful',
+          role: 'assistant',
+          personality: 'You are helpful',
         });
       });
 
-      // Create conversation with the agent
+      // Create conversation
       await act(async () => {
-        await databaseResult.current.transactions.createConversationWithAgents({
-          conversation: {
-            title: 'Test Conversation',
-            description: 'A test conversation',
-          },
-          agentIds: ['agent-123'],
+        await databaseResult.current.conversations.createConversation({
+          name: 'Test Conversation',
+          description: 'A test conversation',
         });
       });
 
-      expect(
-        mockElectronAPI.database.transactions.createConversationWithAgents,
-      ).toHaveBeenCalledWith({
-        conversation: {
-          title: 'Test Conversation',
-          description: 'A test conversation',
-        },
-        agentIds: ['agent-123'],
+      // Add agent to conversation
+      await act(async () => {
+        await databaseResult.current.conversationAgents.addConversationAgent(
+          'conv-123',
+          'agent-123',
+        );
       });
+
+      expect(mockElectronAPI.dbAgentsCreate).toHaveBeenCalledWith({
+        name: 'Chat Assistant',
+        role: 'assistant',
+        personality: 'You are helpful',
+      });
+      expect(mockElectronAPI.dbConversationsCreate).toHaveBeenCalledWith({
+        name: 'Test Conversation',
+        description: 'A test conversation',
+      });
+      expect(mockElectronAPI.dbConversationAgentsAdd).toHaveBeenCalledWith('conv-123', 'agent-123');
     });
   });
 
   describe('Message Workflow Integration', () => {
-    it('should handle message creation and batch operations', async () => {
+    it('should handle message creation operations', async () => {
       const { result } = renderHook(() => useMessages());
-      const { result: databaseResult } = renderHook(() => useDatabase());
 
       const conversationId = 'conv-123';
       const agentId = 'agent-123';
@@ -305,29 +235,12 @@ describe('IPC End-to-End Integration Tests', () => {
         conversationId,
         agentId,
         content: 'Hello, world!',
-        role: 'user' as const,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        type: 'user' as const,
+        metadata: '',
+        timestamp: Date.now(),
       };
 
-      mockElectronAPI.database.messages.create.mockResolvedValue({
-        success: true,
-        data: mockMessage,
-      });
-
-      // Mock batch message creation
-      const mockBatchResult = {
-        messages: [
-          { ...mockMessage, id: 'msg-124', content: 'Batch message 1' },
-          { ...mockMessage, id: 'msg-125', content: 'Batch message 2' },
-        ],
-        conversationUpdated: true,
-      };
-
-      mockElectronAPI.database.transactions.createMessagesBatch.mockResolvedValue({
-        success: true,
-        data: mockBatchResult,
-      });
+      mockElectronAPI.dbMessagesCreate.mockResolvedValue(mockMessage);
 
       // Create single message
       await act(async () => {
@@ -335,35 +248,20 @@ describe('IPC End-to-End Integration Tests', () => {
           conversationId,
           agentId,
           content: 'Hello, world!',
-          role: 'user',
+          type: 'user',
         });
       });
 
-      expect(mockElectronAPI.database.messages.create).toHaveBeenCalledWith({
+      expect(mockElectronAPI.dbMessagesCreate).toHaveBeenCalledWith({
         conversationId,
         agentId,
         content: 'Hello, world!',
-        role: 'user',
+        type: 'user',
       });
 
-      // Create batch messages
-      await act(async () => {
-        await databaseResult.current.transactions.createMessagesBatch({
-          conversationId,
-          messages: [
-            { agentId, content: 'Batch message 1', role: 'assistant' },
-            { agentId, content: 'Batch message 2', role: 'assistant' },
-          ],
-        });
-      });
-
-      expect(mockElectronAPI.database.transactions.createMessagesBatch).toHaveBeenCalledWith({
-        conversationId,
-        messages: [
-          { agentId, content: 'Batch message 1', role: 'assistant' },
-          { agentId, content: 'Batch message 2', role: 'assistant' },
-        ],
-      });
+      expect(result.current.messages).toContain(mockMessage);
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeNull();
     });
   });
 
@@ -372,77 +270,54 @@ describe('IPC End-to-End Integration Tests', () => {
       const { result } = renderHook(() => useSecureStorage());
 
       const mockCredential = {
-        credentials: {
-          apiKey: 'sk-test-key-123',
-          organizationId: 'org-test',
-        },
+        apiKey: 'sk-test-key-123',
+        organizationId: 'org-test',
+      };
+
+      const mockCredentialInfo = {
+        provider: 'openai' as const,
+        hasApiKey: true,
+        lastUpdated: Date.now(),
         metadata: {
-          provider: 'openai' as const,
           displayName: 'OpenAI Test Account',
-          createdAt: new Date().toISOString(),
-          lastUsed: new Date().toISOString(),
           environment: 'test',
         },
       };
 
-      mockElectronAPI.secure.credentials.set.mockResolvedValue({
-        success: true,
-        data: true,
-      });
-
-      mockElectronAPI.secure.credentials.get.mockResolvedValue({
-        success: true,
-        data: mockCredential,
-      });
-
-      mockElectronAPI.secure.credentials.list.mockResolvedValue({
-        success: true,
-        data: [mockCredential.metadata],
-      });
+      mockElectronAPI.secureCredentialsSet.mockResolvedValue(true);
+      mockElectronAPI.secureCredentialsGet.mockResolvedValue(mockCredential);
+      mockElectronAPI.secureCredentialsList.mockResolvedValue([mockCredentialInfo]);
 
       // Set credentials
       await act(async () => {
-        await result.current.setCredentials(
-          'openai',
-          {
-            apiKey: 'sk-test-key-123',
-            organizationId: 'org-test',
-          },
-          {
-            displayName: 'OpenAI Test Account',
-            environment: 'test',
-          },
-        );
-      });
-
-      expect(mockElectronAPI.secure.credentials.set).toHaveBeenCalledWith({
-        provider: 'openai',
-        credentials: {
-          apiKey: 'sk-test-key-123',
-          organizationId: 'org-test',
-        },
-        metadata: expect.objectContaining({
-          provider: 'openai',
+        await result.current.setCredential('openai', 'sk-test-key-123', {
           displayName: 'OpenAI Test Account',
           environment: 'test',
-        }),
+        });
       });
+
+      expect(mockElectronAPI.secureCredentialsSet).toHaveBeenCalledWith(
+        'openai',
+        'sk-test-key-123',
+        {
+          displayName: 'OpenAI Test Account',
+          environment: 'test',
+        },
+      );
 
       // Get credentials
       await act(async () => {
-        await result.current.getCredentials('openai');
+        await result.current.getCredential('openai');
       });
 
-      expect(mockElectronAPI.secure.credentials.get).toHaveBeenCalledWith({
-        provider: 'openai',
-      });
+      expect(mockElectronAPI.secureCredentialsGet).toHaveBeenCalledWith('openai');
 
       // List all credentials
       await act(async () => {
         await result.current.listCredentials();
       });
 
-      expect(mockElectronAPI.secure.credentials.list).toHaveBeenCalled();
+      expect(mockElectronAPI.secureCredentialsList).toHaveBeenCalled();
     });
   });
 
@@ -454,69 +329,78 @@ describe('IPC End-to-End Integration Tests', () => {
       const { result: secureResult } = renderHook(() => useSecureStorage());
 
       // Step 1: Set up AI provider credentials
-      mockElectronAPI.secure.credentials.set.mockResolvedValue({
-        success: true,
-        data: true,
-      });
+      mockElectronAPI.secureCredentialsSet.mockResolvedValue(true);
 
       await act(async () => {
-        await secureResult.current.setCredentials(
-          'openai',
-          {
-            apiKey: 'sk-test-key',
-          },
-          {
-            displayName: 'OpenAI Account',
-          },
-        );
+        await secureResult.current.setCredential('openai', 'sk-test-key', {
+          displayName: 'OpenAI Account',
+        });
       });
 
       // Step 2: Create agents
-      const mockAgent1 = { id: 'agent-1', name: 'Assistant 1' };
-      const mockAgent2 = { id: 'agent-2', name: 'Assistant 2' };
+      const mockAgent1 = {
+        id: 'agent-1',
+        name: 'Assistant 1',
+        role: 'assistant',
+        personality: 'You are assistant 1',
+        isActive: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
+      const mockAgent2 = {
+        id: 'agent-2',
+        name: 'Assistant 2',
+        role: 'assistant',
+        personality: 'You are assistant 2',
+        isActive: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      };
 
-      mockElectronAPI.database.agents.create
-        .mockResolvedValueOnce({ success: true, data: mockAgent1 })
-        .mockResolvedValueOnce({ success: true, data: mockAgent2 });
+      mockElectronAPI.dbAgentsCreate
+        .mockResolvedValueOnce(mockAgent1)
+        .mockResolvedValueOnce(mockAgent2);
 
       await act(async () => {
         await agentsResult.current.createAgent({
           name: 'Assistant 1',
-          systemPrompt: 'You are assistant 1',
+          role: 'assistant',
+          personality: 'You are assistant 1',
         });
         await agentsResult.current.createAgent({
           name: 'Assistant 2',
-          systemPrompt: 'You are assistant 2',
+          role: 'assistant',
+          personality: 'You are assistant 2',
         });
       });
 
-      // Step 3: Create conversation with agents
+      // Step 3: Create conversation
       const mockConversation = {
-        conversation: {
-          id: 'conv-1',
-          title: 'Multi-Agent Chat',
-        },
-        agentCount: 2,
+        id: 'conv-1',
+        name: 'Multi-Agent Chat',
+        description: '',
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        isActive: true,
       };
 
-      mockElectronAPI.database.transactions.createConversationWithAgents.mockResolvedValue({
-        success: true,
-        data: mockConversation,
-      });
+      mockElectronAPI.dbConversationsCreate.mockResolvedValue(mockConversation);
 
       await act(async () => {
-        await databaseResult.current.transactions.createConversationWithAgents({
-          conversation: {
-            title: 'Multi-Agent Chat',
-          },
-          agentIds: ['agent-1', 'agent-2'],
+        await databaseResult.current.conversations.createConversation({
+          name: 'Multi-Agent Chat',
         });
       });
 
       // Step 4: Create messages
-      mockElectronAPI.database.messages.create.mockResolvedValue({
-        success: true,
-        data: { id: 'msg-1', content: 'Hello!', role: 'user' },
+      mockElectronAPI.dbMessagesCreate.mockResolvedValue({
+        id: 'msg-1',
+        conversationId: 'conv-1',
+        agentId: 'agent-1',
+        content: 'Hello!',
+        type: 'user',
+        metadata: '',
+        timestamp: Date.now(),
       });
 
       await act(async () => {
@@ -524,15 +408,15 @@ describe('IPC End-to-End Integration Tests', () => {
           conversationId: 'conv-1',
           agentId: 'agent-1',
           content: 'Hello!',
-          role: 'user',
+          type: 'user',
         });
       });
 
       // Verify all operations were called
-      expect(mockElectronAPI.secure.credentials.set).toHaveBeenCalled();
-      expect(mockElectronAPI.database.agents.create).toHaveBeenCalledTimes(2);
-      expect(mockElectronAPI.database.transactions.createConversationWithAgents).toHaveBeenCalled();
-      expect(mockElectronAPI.database.messages.create).toHaveBeenCalled();
+      expect(mockElectronAPI.secureCredentialsSet).toHaveBeenCalled();
+      expect(mockElectronAPI.dbAgentsCreate).toHaveBeenCalledTimes(2);
+      expect(mockElectronAPI.dbConversationsCreate).toHaveBeenCalled();
+      expect(mockElectronAPI.dbMessagesCreate).toHaveBeenCalled();
     });
 
     it('should handle error recovery across multiple operations', async () => {
@@ -540,22 +424,25 @@ describe('IPC End-to-End Integration Tests', () => {
       const { result: databaseResult } = renderHook(() => useDatabase());
 
       // First operation succeeds
-      mockElectronAPI.database.agents.create.mockResolvedValueOnce({
-        success: true,
-        data: { id: 'agent-1', name: 'Agent 1' },
+      mockElectronAPI.dbAgentsCreate.mockResolvedValueOnce({
+        id: 'agent-1',
+        name: 'Agent 1',
+        role: 'assistant',
+        personality: 'Test prompt',
+        isActive: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       });
 
       // Second operation fails
-      mockElectronAPI.database.transactions.createConversationWithAgents.mockResolvedValueOnce({
-        success: false,
-        error: { type: 'DATABASE', message: 'Connection failed' },
-      });
+      mockElectronAPI.dbConversationsCreate.mockRejectedValueOnce(new Error('Connection failed'));
 
       // Create agent (should succeed)
       await act(async () => {
         await agentsResult.current.createAgent({
           name: 'Agent 1',
-          systemPrompt: 'Test prompt',
+          role: 'assistant',
+          personality: 'Test prompt',
         });
       });
 
@@ -563,14 +450,13 @@ describe('IPC End-to-End Integration Tests', () => {
 
       // Try to create conversation (should fail)
       await act(async () => {
-        await databaseResult.current.transactions.createConversationWithAgents({
-          conversation: { title: 'Test Conversation' },
-          agentIds: ['agent-1'],
+        await databaseResult.current.conversations.createConversation({
+          name: 'Test Conversation',
         });
       });
 
-      expect(databaseResult.current.error).not.toBeNull();
-      expect(databaseResult.current.error?.message).toContain('Connection failed');
+      expect(databaseResult.current.conversations.error).not.toBeNull();
+      expect(databaseResult.current.conversations.error).toContain('Connection failed');
     });
   });
 
@@ -579,28 +465,34 @@ describe('IPC End-to-End Integration Tests', () => {
       const { result } = renderHook(() => useAgents());
 
       // Mock performance data
-      mockElectronAPI.performance.getStats.mockResolvedValue({
+      mockElectronAPI.getPerformanceStats.mockResolvedValue({
         totalCalls: 5,
         averageTime: 45.2,
         slowCallThreshold: 100,
       });
 
-      mockElectronAPI.database.agents.create.mockResolvedValue({
-        success: true,
-        data: { id: 'agent-1', name: 'Test Agent' },
+      mockElectronAPI.dbAgentsCreate.mockResolvedValue({
+        id: 'agent-1',
+        name: 'Test Agent',
+        role: 'assistant',
+        personality: 'Test prompt',
+        isActive: true,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       });
 
       // Perform operation
       await act(async () => {
         await result.current.createAgent({
           name: 'Test Agent',
-          systemPrompt: 'Test prompt',
+          role: 'assistant',
+          personality: 'Test prompt',
         });
       });
 
       // The performance monitoring should be tracking this operation
       // (exact implementation depends on how performance monitoring is integrated)
-      expect(mockElectronAPI.database.agents.create).toHaveBeenCalled();
+      expect(mockElectronAPI.dbAgentsCreate).toHaveBeenCalled();
     });
   });
 });
