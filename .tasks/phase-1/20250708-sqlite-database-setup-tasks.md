@@ -275,11 +275,34 @@ erDiagram
 - [ ] 5.0 Performance Optimization and Testing
   - [x] 5.1 Enable WAL mode and implement checkpoint management
   - [x] 5.2 Optimize database queries with proper indexing
-  - [ ] 5.3 Implement database backup and recovery functionality
-  - [ ] 5.4 Create comprehensive database tests (unit and integration)
-  - [ ] 5.5 Add performance monitoring and optimization
+  - [x] 5.3 Implement database backup and recovery functionality
+  - [ ] 5.4 Create comprehensive database tests (unit)
+  - [ ] 5.5 Create comprehensive database tests (integration)
+  - [ ] 5.6 Add performance monitoring and optimization
 
   ### Files modified with description of changes
+  - `src/main/database/backup/` - Created comprehensive backup and recovery system with modular architecture including BackupManager, BackupOptions, RestoreOptions, BackupResult, RestoreResult, BackupMetadata, and utility functions for file operations, validation, and cleanup
+  - `src/main/database/backup/BackupManager.ts` - Core backup manager class with full backup creation, restoration, validation, cleanup, and statistics functionality
+  - `src/main/database/backup/validateBackupIntegrity.ts` - SQLite integrity validation using PRAGMA integrity_check and table existence verification
+  - `src/main/database/backup/listBackups.ts` - Backup listing with metadata extraction and sorting by timestamp
+  - `src/main/database/backup/cleanupOldBackups.ts` - Automated cleanup of old backups based on retention policy
+  - `src/main/database/backup/createBackupFile.ts` - Database file copying with WAL and SHM file support
+  - `src/main/database/backup/backupManagerInstance.ts` - Global backup manager instance with default configuration
+  - `src/main/database/index.ts` - Updated to export backup module
+  - `src/shared/types/index.ts` - Added backup-related types (BackupOptions, RestoreOptions, BackupResult, RestoreResult, BackupMetadata, BackupStats) and IPC channel definitions
+  - `src/main/ipc/handlers/database/backup/` - Created IPC handlers for all backup operations (create, restore, list, delete, validate, cleanup, stats)
+  - `src/main/ipc/handlers.ts` - Added backup IPC handlers with performance monitoring integration
+  - `src/main/ipc/handlers/index.ts` - Updated to export backup handlers
+  - `src/preload/index.ts` - Exposed backup IPC methods to renderer process with security validation
+  - `src/renderer/hooks/useBackup/` - Created modular backup hook with separate files for UseBackupState, UseBackupActions, UseBackupReturn, and main useBackup implementation
+  - `src/renderer/hooks/useBackup/useBackup.ts` - Comprehensive React hook for backup operations with state management, error handling, and automatic refresh
+  - `src/renderer/hooks/index.ts` - Updated to export backup hook and types
+  - All backup modules follow the one-export-per-file pattern with appropriate barrel files for organization
+  - Created comprehensive backup and recovery system with full database file copying, WAL/SHM file support, integrity validation, retention policies, and automated cleanup
+  - Backup system includes checksum calculation, file size tracking, metadata storage, and error recovery mechanisms
+  - Integrated with existing database checkpoint system for optimal backup timing
+  - Added React hooks for frontend integration with loading states, error handling, and real-time updates
+  - System supports custom backup directories, retention policies, and validation before restore operations
   - `src/main/database/migrations/003-query-optimization.sql` - Created comprehensive query optimization migration with advanced composite indexes, partial indexes, and covering indexes for optimal query performance
   - `src/main/database/optimization/QueryAnalysisResult.ts` - Created interface for query analysis results with performance metrics, execution plans, and recommendations
   - `src/main/database/optimization/OptimizationReport.ts` - Created interface for comprehensive optimization reports with metrics and suggestions

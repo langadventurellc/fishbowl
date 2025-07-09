@@ -165,6 +165,15 @@ const electronAPI = {
   dbConversationAgentsAdd: createSecureIpcWrapper('db:conversation-agents:add'),
   dbConversationAgentsRemove: createSecureIpcWrapper('db:conversation-agents:remove'),
 
+  // Database operations - Backup and recovery
+  dbBackupCreate: createSecureIpcWrapper('db:backup:create'),
+  dbBackupRestore: createSecureIpcWrapper('db:backup:restore'),
+  dbBackupList: createSecureIpcWrapper('db:backup:list'),
+  dbBackupDelete: createSecureIpcWrapper('db:backup:delete'),
+  dbBackupValidate: createSecureIpcWrapper('db:backup:validate'),
+  dbBackupCleanup: createSecureIpcWrapper('db:backup:cleanup'),
+  dbBackupStats: createSecureIpcWrapper('db:backup:stats'),
+
   // Secure storage operations - Credentials
   secureCredentialsGet: createSecureIpcWrapper('secure:credentials:get'),
   secureCredentialsSet: createSecureIpcWrapper('secure:credentials:set'),

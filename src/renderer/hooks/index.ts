@@ -7,6 +7,8 @@ export * from './useIpc.index';
 
 // Database hooks
 export { useAgents } from './useAgents';
+export { useBackup } from './useBackup/useBackup';
+export type { UseBackupState, UseBackupActions, UseBackupReturn } from './useBackup';
 export { useConversationAgents } from './useConversationAgents';
 export { useConversations } from './useConversations';
 export { useDatabase } from './useDatabase';

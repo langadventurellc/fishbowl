@@ -76,6 +76,15 @@ export interface IpcChannels {
   'db:conversation-agents:add': (conversationId: string, agentId: string) => Promise<void>;
   'db:conversation-agents:remove': (conversationId: string, agentId: string) => Promise<void>;
 
+  // Database backup operations
+  'db:backup:create': (options?: BackupOptions) => Promise<BackupResult>;
+  'db:backup:restore': (backupPath: string, options?: RestoreOptions) => Promise<RestoreResult>;
+  'db:backup:list': () => Promise<BackupMetadata[]>;
+  'db:backup:delete': (backupId: string) => Promise<boolean>;
+  'db:backup:validate': (backupPath: string) => Promise<boolean>;
+  'db:backup:cleanup': () => Promise<string[]>;
+  'db:backup:stats': () => Promise<BackupStats>;
+
   // Secure storage operations
   'secure:credentials:get': (provider: AiProvider) => Promise<CredentialInfo | null>;
   'secure:credentials:set': (
@@ -257,4 +266,61 @@ export interface SecureStorageCredential {
   provider: AiProvider;
   apiKey: string;
   metadata?: Record<string, unknown>;
+}
+
+// Database backup types
+export interface BackupOptions {
+  directory?: string;
+  compression?: boolean;
+  includeWal?: boolean;
+  includeShm?: boolean;
+  maxBackups?: number;
+  autoCleanup?: boolean;
+  customFileName?: string;
+}
+
+export interface RestoreOptions {
+  backupPath?: string;
+  createBackupBeforeRestore?: boolean;
+  validateIntegrity?: boolean;
+  overwriteExisting?: boolean;
+  restoreWal?: boolean;
+  restoreShm?: boolean;
+}
+
+export interface BackupResult {
+  success: boolean;
+  filePath?: string;
+  size?: number;
+  timestamp?: number;
+  error?: string;
+}
+
+export interface RestoreResult {
+  success: boolean;
+  restoredFile?: string;
+  backupCreated?: string;
+  dbVersion?: number;
+  timestamp?: number;
+  error?: string;
+}
+
+export interface BackupMetadata {
+  id: string;
+  timestamp: number;
+  filePath: string;
+  size: number;
+  compressed: boolean;
+  dbVersion: number;
+  appVersion: string;
+  checksum: string;
+  walIncluded: boolean;
+  shmIncluded: boolean;
+}
+
+export interface BackupStats {
+  totalBackups: number;
+  totalSize: number;
+  oldestBackup?: number;
+  newestBackup?: number;
 }

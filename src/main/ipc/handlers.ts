@@ -17,6 +17,14 @@ import {
   // Database agent handlers
   dbAgentsListHandler,
   dbAgentsUpdateHandler,
+  // Database backup handlers
+  dbBackupCleanupHandler,
+  dbBackupCreateHandler,
+  dbBackupDeleteHandler,
+  dbBackupListHandler,
+  dbBackupRestoreHandler,
+  dbBackupStatsHandler,
+  dbBackupValidateHandler,
   dbConversationAgentsAddHandler,
   // Database conversation-agent relationship handlers
   dbConversationAgentsListHandler,
@@ -252,6 +260,36 @@ export const setupIpcHandlers = (): void => {
     dbTransactionsDeleteConversationCascadeHandler,
   );
   ipcMain.handle('db:transactions:transfer-messages', dbTransactionsTransferMessagesHandler);
+
+  // Database backup operations
+  ipcMain.handle(
+    'db:backup:create',
+    withPerformanceMonitoring('db:backup:create', dbBackupCreateHandler),
+  );
+  ipcMain.handle(
+    'db:backup:restore',
+    withPerformanceMonitoring('db:backup:restore', dbBackupRestoreHandler),
+  );
+  ipcMain.handle(
+    'db:backup:list',
+    withPerformanceMonitoring('db:backup:list', dbBackupListHandler),
+  );
+  ipcMain.handle(
+    'db:backup:delete',
+    withPerformanceMonitoring('db:backup:delete', dbBackupDeleteHandler),
+  );
+  ipcMain.handle(
+    'db:backup:validate',
+    withPerformanceMonitoring('db:backup:validate', dbBackupValidateHandler),
+  );
+  ipcMain.handle(
+    'db:backup:cleanup',
+    withPerformanceMonitoring('db:backup:cleanup', dbBackupCleanupHandler),
+  );
+  ipcMain.handle(
+    'db:backup:stats',
+    withPerformanceMonitoring('db:backup:stats', dbBackupStatsHandler),
+  );
 
   // Performance monitoring handlers
   ipcMain.handle('performance:getReport', () => {

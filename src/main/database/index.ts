@@ -10,3 +10,4 @@ export * from './transactions';
 export * from './performance';
 export * from './checkpoint';
 export * from './optimization';
+export * from './backup';

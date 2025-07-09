@@ -64,3 +64,6 @@ export { dbTransactionsCreateConversationWithAgentsHandler } from './dbTransacti
 export { dbTransactionsCreateMessagesBatchHandler } from './dbTransactionsCreateMessagesBatchHandler';
 export { dbTransactionsDeleteConversationCascadeHandler } from './dbTransactionsDeleteConversationCascadeHandler';
 export { dbTransactionsTransferMessagesHandler } from './dbTransactionsTransferMessagesHandler';
+
+// Database backup handlers
+export * from './database/backup';
