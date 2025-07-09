@@ -2,7 +2,15 @@ import { app, ipcMain, BrowserWindow } from 'electron';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { arch, platform, version } from 'os';
-import type { SystemInfo, ConfigKey, ConfigValue } from '../../shared/types';
+import type {
+  SystemInfo,
+  ConfigKey,
+  ConfigValue,
+  AiProvider,
+  CredentialInfo,
+} from '../../shared/types';
+import { credentialManager } from '../secure-storage';
+import { SecureStorageError } from '../../shared/types/errors';
 
 // Configuration file path
 const CONFIG_FILE = join(app.getPath('userData'), 'config.json');
@@ -162,6 +170,121 @@ export const setupIpcHandlers = (): void => {
       window.webContents.closeDevTools();
     }
   });
+
+  // Secure storage handlers
+  ipcMain.handle(
+    'secure:credentials:get',
+    async (_event, provider: AiProvider): Promise<CredentialInfo | null> => {
+      try {
+        return await credentialManager.getCredential(provider);
+      } catch (error) {
+        throw new SecureStorageError(
+          `Failed to get credentials for provider ${provider}`,
+          'getCredentials',
+          'secure:credentials',
+          error,
+        );
+      }
+    },
+  );
+
+  ipcMain.handle(
+    'secure:credentials:set',
+    async (
+      _event,
+      provider: AiProvider,
+      apiKey: string,
+      metadata?: Record<string, unknown>,
+    ): Promise<void> => {
+      try {
+        await credentialManager.setCredential(provider, apiKey, metadata);
+      } catch (error) {
+        throw new SecureStorageError(
+          `Failed to set credentials for provider ${provider}`,
+          'setCredentials',
+          'secure:credentials',
+          error,
+        );
+      }
+    },
+  );
+
+  ipcMain.handle(
+    'secure:credentials:delete',
+    async (_event, provider: AiProvider): Promise<void> => {
+      try {
+        await credentialManager.deleteCredential(provider);
+      } catch (error) {
+        throw new SecureStorageError(
+          `Failed to delete credentials for provider ${provider}`,
+          'deleteCredentials',
+          'secure:credentials',
+          error,
+        );
+      }
+    },
+  );
+
+  ipcMain.handle('secure:credentials:list', async (): Promise<CredentialInfo[]> => {
+    try {
+      return await credentialManager.listCredentials();
+    } catch (error) {
+      throw new SecureStorageError(
+        'Failed to list credentials',
+        'listCredentials',
+        'secure:credentials',
+        error,
+      );
+    }
+  });
+
+  ipcMain.handle(
+    'secure:keytar:get',
+    async (_event, service: string, account: string): Promise<string | null> => {
+      try {
+        return await credentialManager.storage.get(service, account);
+      } catch (error) {
+        throw new SecureStorageError(
+          `Failed to get keytar value for ${service}:${account}`,
+          'get',
+          service,
+          error,
+        );
+      }
+    },
+  );
+
+  ipcMain.handle(
+    'secure:keytar:set',
+    async (_event, service: string, account: string, password: string): Promise<void> => {
+      try {
+        await credentialManager.storage.set(service, account, password);
+      } catch (error) {
+        throw new SecureStorageError(
+          `Failed to set keytar value for ${service}:${account}`,
+          'set',
+          service,
+          error,
+        );
+      }
+    },
+  );
+
+  ipcMain.handle(
+    'secure:keytar:delete',
+    async (_event, service: string, account: string): Promise<void> => {
+      try {
+        await credentialManager.storage.delete(service, account);
+      } catch (error) {
+        throw new SecureStorageError(
+          `Failed to delete keytar value for ${service}:${account}`,
+          'delete',
+          service,
+          error,
+        );
+      }
+    },
+  );
 
   // Error handling is already built into individual handlers
 };
