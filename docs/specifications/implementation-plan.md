@@ -229,7 +229,7 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 #### 8.1 Testing
 
 - [ ] Write unit tests for core logic
-- [ ] Create integration tests
+- [ ] Create integration tests (consider using Playwright)
 - [ ] Perform cross-platform testing
 - [ ] Conduct performance testing
 - [ ] Execute security audit

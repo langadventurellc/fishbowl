@@ -79,7 +79,7 @@ export interface AppConfig {
   };
 }
 
-// Agent types (placeholder for future implementation)
+// Agent types - matches database schema
 export interface Agent {
   id: string;
   name: string;
@@ -90,26 +90,31 @@ export interface Agent {
   updatedAt: number;
 }
 
-// Message types (placeholder for future implementation)
+// Message types - matches database schema
 export interface Message {
   id: string;
+  conversationId: string;
   agentId: string;
   content: string;
+  type: string;
+  metadata: string;
   timestamp: number;
-  type: 'text' | 'image' | 'file';
-  metadata?: Record<string, unknown>;
 }
 
-// Chat room types (placeholder for future implementation)
-export interface ChatRoom {
+// Conversation types - matches database schema
+export interface Conversation {
   id: string;
   name: string;
-  description?: string;
-  agents: Agent[];
-  messages: Message[];
+  description: string;
   createdAt: number;
   updatedAt: number;
   isActive: boolean;
+}
+
+// Conversation-Agent relationship type
+export interface ConversationAgent {
+  conversationId: string;
+  agentId: string;
 }
 
 // Error types
@@ -128,6 +133,9 @@ export type AppEvent =
   | { type: 'AGENT_CREATED'; payload: Agent }
   | { type: 'AGENT_UPDATED'; payload: Agent }
   | { type: 'AGENT_DELETED'; payload: { id: string } }
+  | { type: 'CONVERSATION_CREATED'; payload: Conversation }
+  | { type: 'CONVERSATION_UPDATED'; payload: Conversation }
+  | { type: 'CONVERSATION_DELETED'; payload: { id: string } }
   | { type: 'MESSAGE_SENT'; payload: Message }
   | { type: 'MESSAGE_RECEIVED'; payload: Message }
   | { type: 'ERROR_OCCURRED'; payload: AppError };
