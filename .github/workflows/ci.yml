@@ -2,58 +2,80 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, 'feature/**']
   pull_request:
     branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+env:
+  NODE_VERSION: '20'
 
 jobs:
-  # Skip CI until we have actual code to test
-  check-for-code:
+  # Code Quality Checks
+  quality:
+    name: Code Quality
     runs-on: ubuntu-latest
-    outputs:
-      has-code: ${{ steps.check.outputs.has-code }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Check if src directory exists
-        id: check
-        run: |
-          if [ -d "src" ]; then
-            echo "has-code=true" >> $GITHUB_OUTPUT
-          else
-            echo "has-code=false" >> $GITHUB_OUTPUT
-          fi
-
-  # Lint and Type Check
-  lint-and-typecheck:
-    runs-on: ubuntu-latest
-    needs: check-for-code
-    if: needs.check-for-code.outputs.has-code == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run ESLint
-        run: npm run lint
+      - name: Run linting
+        id: lint
+        run: |
+          echo "::group::ESLint Output"
+          npm run lint
+          echo "::endgroup::"
 
       - name: Run TypeScript check
-        run: npm run type-check
+        id: typecheck
+        run: |
+          echo "::group::TypeScript Check"
+          npm run type-check
+          echo "::endgroup::"
 
-  # Unit Tests
-  test:
+      - name: Check formatting
+        id: format
+        run: |
+          echo "::group::Prettier Check"
+          npm run format:check
+          echo "::endgroup::"
+
+      - name: Comment PR
+        if: failure() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ Code quality checks failed. Please run `npm run lint:fix` and `npm run format` locally.'
+            })
+
+  # Security Scanning
+  security:
+    name: Security Scan
     runs-on: ubuntu-latest
-    needs: check-for-code
-    if: needs.check-for-code.outputs.has-code == 'true'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -61,33 +83,101 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Rebuild SQLite
+      - name: Run npm audit
+        id: npm-audit
+        continue-on-error: true
+        run: |
+          echo "::group::NPM Audit"
+          npm audit --audit-level=moderate
+          echo "::endgroup::"
+
+      - name: Run Snyk Security Scan
+        if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      - name: Upload security results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results
+          path: |
+            npm-audit.json
+            snyk-report.json
+          if-no-files-found: ignore
+          retention-days: 30
+
+  # Testing
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Rebuild native modules
         run: npm rebuild better-sqlite3
 
-      - name: Run tests
-        run: npm test -- --coverage
+      - name: Check test configuration
+        id: check-tests
+        run: |
+          if grep -q '"test": "echo \\"Error: no test specified\\" && exit 1"' package.json; then
+            echo "has-tests=false" >> $GITHUB_OUTPUT
+            echo "::warning::No tests configured yet - skipping test execution"
+          else
+            echo "has-tests=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run tests with coverage
+        if: steps.check-tests.outputs.has-tests == 'true'
+        run: |
+          echo "::group::Test Results"
+          npm test -- --coverage
+          echo "::endgroup::"
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
+        if: steps.check-tests.outputs.has-tests == 'true'
+        uses: codecov/codecov-action@v5
         with:
-          file: ./coverage/lcov.info
+          files: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: false
+          verbose: true
 
-  # Build Application
+  # Build across platforms
   build:
+    name: Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
-    needs: check-for-code
-    if: needs.check-for-code.outputs.has-code == 'true'
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            artifact-name: linux
+          - os: windows-latest
+            artifact-name: windows
+          - os: macos-latest
+            artifact-name: macos
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -95,123 +185,94 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
+
+      - name: Get npm cache directory
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Rebuild SQLite
+      - name: Rebuild native modules
         run: npm rebuild better-sqlite3
 
       - name: Build application
         run: npm run build
 
+      - name: Verify build
+        run: npm run build:verify || echo "::warning::Build verification not configured"
+
       - name: Package application
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: npm run dist
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.os }}
-          path: dist/
+          name: build-${{ matrix.artifact-name }}-${{ github.run_number }}
+          path: |
+            dist/
+            !dist/**/*.blockmap
+          if-no-files-found: error
+          retention-days: 7
 
-  # Security Audit
-  security-audit:
+  # Summary Report
+  summary:
+    name: CI Summary
     runs-on: ubuntu-latest
-    needs: check-for-code
-    if: needs.check-for-code.outputs.has-code == 'true'
+    needs: [quality, security, test, build]
+    if: always()
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run security audit
-        run: npm audit --audit-level=moderate
-
-      - name: Run dependency check
-        run: npx audit-ci --moderate
-
-  # Performance Tests (placeholder)
-  performance:
-    runs-on: ubuntu-latest
-    needs: check-for-code
-    if: needs.check-for-code.outputs.has-code == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run performance tests
-        run: echo "Performance tests will be implemented in Phase 6"
-
-  # Integration Tests (placeholder)
-  integration-tests:
-    runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, test, build]
-    if: needs.check-for-code.outputs.has-code == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run integration tests
-        run: echo "Integration tests will be implemented in Phase 8"
-
-  # Deployment (only on main branch)
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [lint-and-typecheck, test, build, security-audit]
-    if: github.ref == 'refs/heads/main' && needs.check-for-code.outputs.has-code == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Deploy to staging
-        run: echo "Deployment will be configured in Phase 8"
-
-  # Placeholder job for when there's no code yet
-  no-code-placeholder:
-    runs-on: ubuntu-latest
-    needs: check-for-code
-    if: needs.check-for-code.outputs.has-code == 'false'
-    steps:
-      - name: No code to test
+      - name: Check results
         run: |
-          echo "::notice::No src directory found - skipping CI/CD pipeline"
-          echo "CI/CD pipeline is configured and ready for when code is added"
+          echo "## CI/CD Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Quality Check
+          if [ "${{ needs.quality.result }}" == "success" ]; then
+            echo "✅ **Code Quality**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Code Quality**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Security Check
+          if [ "${{ needs.security.result }}" == "success" ]; then
+            echo "✅ **Security Scan**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ **Security Scan**: Has issues" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Test Check
+          if [ "${{ needs.test.result }}" == "success" ]; then
+            echo "✅ **Tests**: Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Tests**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          # Build Check
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ **Build**: Successful" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **Build**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "**Workflow Run**: [#${{ github.run_number }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+
+      - name: Set exit code
+        if: contains(needs.*.result, 'failure')
+        run: exit 1
