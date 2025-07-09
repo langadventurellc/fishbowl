@@ -104,7 +104,6 @@ jobs:
           name: security-scan-results
           path: |
             npm-audit.json
-            snyk-report.json
           if-no-files-found: ignore
           retention-days: 30
 
