@@ -2,7 +2,7 @@
   "name": "fishbowl",
   "version": "1.0.0",
   "description": "An Electron-based desktop application for multi-agent AI conversations, enabling natural collaboration between multiple AI personalities in a shared conversation space.",
-  "main": "dist/main/main/index.js",
+  "main": "dist/main/src/main/index.js",
   "directories": {
     "doc": "docs"
   },
@@ -11,7 +11,7 @@
     "dev:main": "cross-env NODE_ENV=development tsc -p tsconfig.main.json -w --preserveWatchOutput",
     "dev:preload": "cross-env NODE_ENV=development tsc -p tsconfig.preload.json -w --preserveWatchOutput",
     "dev:renderer": "cross-env NODE_ENV=development vite --port 5173",
-    "dev:electron": "wait-on dist/main/main/index.js dist/preload/preload/index.js && sleep 2 && cross-env NODE_ENV=development nodemon --exec \"electron . --enable-logging --inspect=9229\" --watch dist/main --watch dist/preload --ext js",
+    "dev:electron": "wait-on dist/main/src/main/index.js dist/preload/src/preload/index.js && sleep 2 && cross-env NODE_ENV=development nodemon --exec \"electron . --enable-logging --inspect=9229\" --watch dist/main --watch dist/preload --ext js",
     "clean": "rm -rf dist",
     "build": "npm run clean && npm run build:main && npm run build:preload && npm run build:renderer && npm run build:verify",
     "build:main": "tsc -p tsconfig.main.json --sourceMap false",
