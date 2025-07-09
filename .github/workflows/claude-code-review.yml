@@ -24,7 +24,7 @@ jobs:
         uses: anthropics/claude-code-action@beta
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           allowed_tools: 'View,GlobTool,GrepTool,BatchTool'
           direct_prompt: |
             Please review only the code changes in this pull request and provide feedback.
