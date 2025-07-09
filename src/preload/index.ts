@@ -1,10 +1,40 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { IpcChannels } from '../shared/types';
+import { ipcPerformanceMonitor } from './performance-monitor';
+import { validateIpcArguments } from './validation';
+import { preloadSecurityManager } from './security';
 
-// Helper function to create secure IPC wrapper
+// Helper function to create secure IPC wrapper with validation, performance monitoring, and security
 const createSecureIpcWrapper = <T extends keyof IpcChannels>(channel: T): IpcChannels[T] => {
   return ((...args: Parameters<IpcChannels[T]>) => {
-    return ipcRenderer.invoke(channel, ...args);
+    // Security check
+    const securityCheck = preloadSecurityManager.checkIpcSecurity(channel, args);
+    if (!securityCheck.allowed) {
+      return Promise.reject(new Error(`Security: ${securityCheck.reason}`));
+    }
+
+    // Validate and sanitize arguments
+    const validation = validateIpcArguments(channel, args);
+    if (!validation.valid) {
+      return Promise.reject(new Error(`Validation: ${validation.error}`));
+    }
+
+    // Use sanitized arguments
+    const sanitizedArgs = validation.sanitizedArgs ?? args;
+
+    // Start performance monitoring
+    const callId = ipcPerformanceMonitor.startCall(channel, sanitizedArgs);
+
+    return ipcRenderer
+      .invoke(channel, ...sanitizedArgs)
+      .then((result: unknown) => {
+        ipcPerformanceMonitor.endCall(callId, true);
+        return result;
+      })
+      .catch((error: Error) => {
+        ipcPerformanceMonitor.endCall(callId, false, error.message);
+        throw error;
+      });
   }) as IpcChannels[T];
 };
 
@@ -14,14 +44,19 @@ const createSecureEventListener = (
   callback: (...args: unknown[]) => void,
 ): (() => void) => {
   const wrappedCallback = (...args: unknown[]) => {
-    // Validate incoming data to prevent XSS attacks
-    const sanitizedArgs = args.map(arg => {
-      if (typeof arg === 'string') {
-        // Basic sanitization - in production, use a proper sanitization library
-        return arg.replace(/<script[^>]*>.*?<\/script>/gi, '');
-      }
-      return arg;
-    });
+    // Security check for event listeners
+    const securityCheck = preloadSecurityManager.checkIpcSecurity(channel, args);
+    if (!securityCheck.allowed) {
+      console.warn(
+        `Security: Event listener blocked for channel ${channel}: ${securityCheck.reason}`,
+      );
+      return;
+    }
+
+    // Validate and sanitize incoming data
+    const validation = validateIpcArguments(channel as keyof IpcChannels, args);
+    const sanitizedArgs = validation.sanitizedArgs ?? args;
+
     callback(...sanitizedArgs);
   };
 
@@ -104,6 +139,52 @@ const electronAPI = {
   platform: createSecureIpcWrapper('system:platform'),
   arch: createSecureIpcWrapper('system:arch'),
   version: createSecureIpcWrapper('system:version'),
+
+  // Database operations - Agents
+  dbAgentsList: createSecureIpcWrapper('db:agents:list'),
+  dbAgentsGet: createSecureIpcWrapper('db:agents:get'),
+  dbAgentsCreate: createSecureIpcWrapper('db:agents:create'),
+  dbAgentsUpdate: createSecureIpcWrapper('db:agents:update'),
+  dbAgentsDelete: createSecureIpcWrapper('db:agents:delete'),
+
+  // Database operations - Conversations
+  dbConversationsList: createSecureIpcWrapper('db:conversations:list'),
+  dbConversationsGet: createSecureIpcWrapper('db:conversations:get'),
+  dbConversationsCreate: createSecureIpcWrapper('db:conversations:create'),
+  dbConversationsUpdate: createSecureIpcWrapper('db:conversations:update'),
+  dbConversationsDelete: createSecureIpcWrapper('db:conversations:delete'),
+
+  // Database operations - Messages
+  dbMessagesList: createSecureIpcWrapper('db:messages:list'),
+  dbMessagesGet: createSecureIpcWrapper('db:messages:get'),
+  dbMessagesCreate: createSecureIpcWrapper('db:messages:create'),
+  dbMessagesDelete: createSecureIpcWrapper('db:messages:delete'),
+
+  // Database operations - Conversation-Agent relationships
+  dbConversationAgentsList: createSecureIpcWrapper('db:conversation-agents:list'),
+  dbConversationAgentsAdd: createSecureIpcWrapper('db:conversation-agents:add'),
+  dbConversationAgentsRemove: createSecureIpcWrapper('db:conversation-agents:remove'),
+
+  // Secure storage operations - Credentials
+  secureCredentialsGet: createSecureIpcWrapper('secure:credentials:get'),
+  secureCredentialsSet: createSecureIpcWrapper('secure:credentials:set'),
+  secureCredentialsDelete: createSecureIpcWrapper('secure:credentials:delete'),
+  secureCredentialsList: createSecureIpcWrapper('secure:credentials:list'),
+
+  // Secure storage operations - Direct keytar access
+  secureKeytarGet: createSecureIpcWrapper('secure:keytar:get'),
+  secureKeytarSet: createSecureIpcWrapper('secure:keytar:set'),
+  secureKeytarDelete: createSecureIpcWrapper('secure:keytar:delete'),
+
+  // Performance monitoring utilities
+  getPerformanceStats: () => ipcPerformanceMonitor.getAllStats(),
+  clearPerformanceStats: () => ipcPerformanceMonitor.clearStats(),
+  getRecentMetrics: (limit?: number) => ipcPerformanceMonitor.getRecentMetrics(limit),
+
+  // Security utilities
+  getSecurityStats: () => preloadSecurityManager.getSecurityStats(),
+  getSecurityAuditLog: () => preloadSecurityManager.getAuditLog(),
+  clearSecurityAuditLog: () => preloadSecurityManager.clearAuditLog(),
 } as const;
 
 // Type assertion to ensure type safety
@@ -119,6 +200,7 @@ delete (global as unknown as { require?: unknown }).require;
 
 // Clean up listeners on window unload
 const cleanupListeners = () => {
+  // Clean up existing event listeners
   ipcRenderer.removeAllListeners('window:focus');
   ipcRenderer.removeAllListeners('window:blur');
   ipcRenderer.removeAllListeners('window:resize');
@@ -127,13 +209,21 @@ const cleanupListeners = () => {
   ipcRenderer.removeAllListeners('window:minimize');
   ipcRenderer.removeAllListeners('window:restore');
   ipcRenderer.removeAllListeners('theme:change');
+
+  // Clean up performance monitoring
+  ipcPerformanceMonitor.clearStats();
+
+  // Clean up security audit log
+  preloadSecurityManager.clearAuditLog();
 };
 
 // Handle cleanup on beforeunload
 globalThis.addEventListener('beforeunload', cleanupListeners);
 
-// Handle cleanup on exit
-process.on('exit', cleanupListeners);
+// Handle cleanup on exit (only if process.on is available)
+if (typeof process?.on === 'function') {
+  process.on('exit', cleanupListeners);
+}
 
 // Export type for use in renderer
 export type ElectronAPI = typeof electronAPI;
