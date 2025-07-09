@@ -240,32 +240,22 @@ erDiagram
   - `src/main/database/performance/index.ts` - Updated barrel file to export all performance monitoring functionality
   - `src/main/database/index.ts` - Updated to export transactions and performance modules
 
-- [ ] 4.0 Extend IPC System for Database Operations
-  - [ ] 4.1 Add database IPC channel definitions to shared types
-  - [ ] 4.2 Implement database IPC handlers in main process
-  - [ ] 4.3 Add database methods to preload script
-  - [ ] 4.4 Create input validation and sanitization for database operations
-  - [ ] 4.5 Implement error handling and response formatting
+- [ ] 4.0 Create Renderer Database Integration
+  - [ ] 4.1 Create React hooks for database operations
+  - [ ] 4.2 Implement pagination support for large result sets
+  - [ ] 4.3 Add database error handling in renderer process
+  - [ ] 4.4 Create database operation utilities and helpers
+  - [ ] 4.5 Add database state management integration
 
   ### Files modified with description of changes
   - (to be filled in after task completion)
 
-- [ ] 5.0 Create Renderer Database Integration
-  - [ ] 5.1 Create React hooks for database operations
-  - [ ] 5.2 Implement pagination support for large result sets
-  - [ ] 5.3 Add database error handling in renderer process
-  - [ ] 5.4 Create database operation utilities and helpers
-  - [ ] 5.5 Add database state management integration
-
-  ### Files modified with description of changes
-  - (to be filled in after task completion)
-
-- [ ] 6.0 Performance Optimization and Testing
-  - [ ] 6.1 Enable WAL mode and implement checkpoint management
-  - [ ] 6.2 Optimize database queries with proper indexing
-  - [ ] 6.3 Implement database backup and recovery functionality
-  - [ ] 6.4 Create comprehensive database tests (unit and integration)
-  - [ ] 6.5 Add performance monitoring and optimization
+- [ ] 5.0 Performance Optimization and Testing
+  - [ ] 5.1 Enable WAL mode and implement checkpoint management
+  - [ ] 5.2 Optimize database queries with proper indexing
+  - [ ] 5.3 Implement database backup and recovery functionality
+  - [ ] 5.4 Create comprehensive database tests (unit and integration)
+  - [ ] 5.5 Add performance monitoring and optimization
 
   ### Files modified with description of changes
   - (to be filled in after task completion)
