@@ -10,7 +10,7 @@ const path = require('path');
 const REQUIRED_FILES = [
   'dist/main/main/index.js',
   'dist/preload/preload/index.js',
-  'dist/renderer/src/renderer/index.html',
+  'dist/renderer/index.html',
   'dist/renderer/assets',
 ];
 
