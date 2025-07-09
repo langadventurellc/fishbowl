@@ -274,10 +274,29 @@ erDiagram
 
 - [ ] 5.0 Performance Optimization and Testing
   - [x] 5.1 Enable WAL mode and implement checkpoint management
-  - [ ] 5.2 Optimize database queries with proper indexing
+  - [x] 5.2 Optimize database queries with proper indexing
   - [ ] 5.3 Implement database backup and recovery functionality
   - [ ] 5.4 Create comprehensive database tests (unit and integration)
   - [ ] 5.5 Add performance monitoring and optimization
+
+  ### Files modified with description of changes
+  - `src/main/database/migrations/003-query-optimization.sql` - Created comprehensive query optimization migration with advanced composite indexes, partial indexes, and covering indexes for optimal query performance
+  - `src/main/database/optimization/QueryAnalysisResult.ts` - Created interface for query analysis results with performance metrics, execution plans, and recommendations
+  - `src/main/database/optimization/OptimizationReport.ts` - Created interface for comprehensive optimization reports with metrics and suggestions
+  - `src/main/database/optimization/QueryAnalyzer.ts` - Created advanced query analysis system with performance monitoring, inefficiency scoring, and optimization recommendations
+  - `src/main/database/optimization/QueryOptimizationService.ts` - Created query optimization service with database analysis, performance optimization, and reporting capabilities
+  - `src/main/database/optimization/queryOptimizationServiceInstance.ts` - Global query optimization service instance
+  - `src/main/database/optimization/QueryHelper.ts` - Created query helper utilities with performance monitoring, optimized query patterns, and pagination support
+  - `src/main/database/optimization/index.ts` - Barrel export file for optimization module
+  - `src/main/database/index.ts` - Updated to export optimization module
+  - `src/main/database/queries/conversations/getActiveConversations.ts` - Enhanced with pagination support and optimized query patterns
+  - `src/main/database/queries/agents/getActiveAgents.ts` - Enhanced with pagination support and optimized query patterns
+  - `src/main/database/queries/agents/getAgentsByConversationId.ts` - Optimized JOIN query from LEFT JOIN to INNER JOIN for better performance
+  - All optimization modules follow the one-export-per-file pattern with appropriate barrel files for organization
+  - Created comprehensive query optimization system with analysis, monitoring, and reporting capabilities
+  - Added 10+ advanced database indexes including composite indexes, partial indexes, and covering indexes
+  - Implemented query performance monitoring with slow query detection and optimization recommendations
+  - Enhanced existing query functions with pagination support and optimized query patterns
 
   ### Files modified with description of changes
   - `src/main/database/checkpoint/CheckpointManager.ts` - Created comprehensive checkpoint management system with WAL monitoring, automatic checkpoints, and manual checkpoint operations
