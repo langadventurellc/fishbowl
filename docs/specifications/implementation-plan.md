@@ -229,7 +229,7 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 #### 8.1 Testing
 
 - [ ] Write unit tests for core logic
-- [ ] Create integration tests (consider using Playwright)
+- [ ] Create integration tests (consider using Playwright - https://www.electronjs.org/docs/latest/tutorial/automated-testing#using-playwright and https://playwright.dev/docs/api/class-electron/)
 - [ ] Perform cross-platform testing
 - [ ] Conduct performance testing
 - [ ] Execute security audit

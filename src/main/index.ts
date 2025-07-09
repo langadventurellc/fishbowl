@@ -4,6 +4,12 @@ import { isDev } from '../shared/utils';
 import { createMainWindow } from './window';
 import { createApplicationMenu } from './menu';
 import { setupIpcHandlers, setupWindowEvents } from './ipc';
+import {
+  initializeDatabase,
+  runMigrations,
+  closeDatabase,
+  validateDatabaseSchema,
+} from './database';
 
 // Keep a global reference of the window object
 let mainWindow: BrowserWindow | null = null;
@@ -36,6 +42,27 @@ const createWindow = (): void => {
 
 // This method will be called when Electron has finished initialization
 void app.whenReady().then(() => {
+  try {
+    // Initialize database
+    console.log('Initializing database...');
+    initializeDatabase();
+
+    // Run migrations
+    console.log('Running database migrations...');
+    runMigrations();
+
+    // Validate database schema
+    console.log('Validating database schema...');
+    validateDatabaseSchema();
+
+    console.log('Database initialization completed');
+  } catch (error) {
+    console.error('Database initialization failed:', error);
+    // Exit if database initialization fails
+    app.quit();
+    return;
+  }
+
   // Set up IPC handlers
   setupIpcHandlers();
 
@@ -51,6 +78,17 @@ app.on('window-all-closed', () => {
   // On macOS, keep the app running even when all windows are closed
   if (process.platform !== 'darwin') {
     app.quit();
+  }
+});
+
+// App is quitting
+app.on('before-quit', () => {
+  try {
+    console.log('Closing database connection...');
+    closeDatabase();
+    console.log('Database connection closed');
+  } catch (error) {
+    console.error('Error closing database:', error);
   }
 });
 
