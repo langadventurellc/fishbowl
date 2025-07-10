@@ -5,9 +5,7 @@
  * between tests to ensure proper test isolation.
  */
 
-import { act } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import { StateCreator } from 'zustand/vanilla';
+import { describe, expect, it } from 'vitest';
 import { useStore } from '../../../../../src/renderer/store';
 import {
   selectActiveAgentCount,
@@ -30,45 +28,6 @@ import {
   selectSetAgents,
 } from '../../../../../src/renderer/store/selectors';
 import type { Agent, AgentMetadata, AgentStatus } from '../../../../../src/renderer/store/types';
-
-// Mock Zustand with proper reset functionality
-vi.mock('zustand', async () => {
-  const actual = await vi.importActual<typeof import('zustand')>('zustand');
-
-  // Set to hold reset functions for all stores
-  const storeResetFns = new Set<() => void>();
-
-  const createUncurried = (stateCreator: StateCreator<unknown, [], []>) => {
-    const store = actual.create(stateCreator);
-    const initialState = store.getInitialState();
-
-    storeResetFns.add(() => {
-      store.setState(initialState, true);
-    });
-
-    return store;
-  };
-
-  const create = (stateCreator: StateCreator<unknown, [], []>) => {
-    return typeof stateCreator === 'function' ? createUncurried(stateCreator) : createUncurried;
-  };
-
-  // Reset all stores after each test
-  afterEach(() => {
-    act(() => {
-      storeResetFns.forEach(resetFn => {
-        resetFn();
-      });
-    });
-  });
-
-  return {
-    ...actual,
-    create,
-  };
-});
-
-// Note: Store reset is handled automatically by the Zustand mock in __mocks__/zustand.ts
 
 /**
  * Create mock agent for testing
