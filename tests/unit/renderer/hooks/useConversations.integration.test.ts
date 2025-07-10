@@ -123,13 +123,12 @@ describe('useConversations Hook Integration', () => {
     });
 
     it('should handle Electron API unavailability', async () => {
-      // Temporarily remove electronAPI using defineProperty
+      // Temporarily remove electronAPI using safe property manipulation
       const originalAPI = (window as any).electronAPI;
-      Object.defineProperty(window, 'electronAPI', {
-        value: undefined,
-        configurable: true,
-        writable: true,
-      });
+
+      // Safe property removal - delete first, then redefine
+      delete (window as any).electronAPI;
+      (window as any).electronAPI = undefined;
 
       const { result } = renderHook(() => useConversations());
 
@@ -140,12 +139,8 @@ describe('useConversations Hook Integration', () => {
 
       expect(mockStoreActions.setError).toHaveBeenCalledWith('Electron API not available');
 
-      // Restore API
-      Object.defineProperty(window, 'electronAPI', {
-        value: originalAPI,
-        configurable: true,
-        writable: true,
-      });
+      // Restore API using safe assignment
+      (window as any).electronAPI = originalAPI;
     });
   });
 
