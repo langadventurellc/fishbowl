@@ -324,17 +324,61 @@ When executing tasks, remember to:
 
   The store is fully functional and ready for slice implementation and theme migration.
 
-- [ ] 3.0 Theme State Slice Implementation
-  - [ ] 3.1 Create theme slice with light/dark/system support
-  - [ ] 3.2 Implement theme persistence matching current localStorage pattern
-  - [ ] 3.3 Add theme actions for toggle and direct setting
-  - [ ] 3.4 Implement document attribute application for theme changes
-  - [ ] 3.5 Add theme selector functions for component consumption
-  - [ ] 3.6 Write comprehensive tests for theme slice functionality
-  - [ ] 3.7 Add system theme detection and preference following
+- [x] 3.0 Theme State Slice Implementation
+  - [x] 3.1 Create theme slice with light/dark/system support
+  - [x] 3.2 Implement theme persistence matching current localStorage pattern
+  - [x] 3.3 Add theme actions for toggle and direct setting
+  - [x] 3.4 Implement document attribute application for theme changes
+  - [x] 3.5 Add theme selector functions for component consumption
+  - [x] 3.6 Write comprehensive tests for theme slice functionality
+  - [x] 3.7 Add system theme detection and preference following
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/renderer/store/selectors/` - Created theme selector functions split into individual files following one-export-per-file rule:
+    - `selectTheme.ts` - Selects current theme setting
+    - `selectSystemTheme.ts` - Selects current system theme
+    - `selectEffectiveTheme.ts` - Selects resolved theme for display
+    - `selectIsSystemTheme.ts` - Checks if theme is system-managed
+    - `selectIsDarkTheme.ts` - Checks if effective theme is dark
+    - `selectIsLightTheme.ts` - Checks if effective theme is light
+    - `selectToggleTheme.ts` - Selects theme toggle action
+    - `selectSetTheme.ts` - Selects theme setter action
+    - `selectThemeState.ts` - Selects comprehensive theme state and actions
+    - `index.ts` - Barrel exports for all theme selectors
+  - `src/renderer/store/utils/` - Enhanced system theme detection utilities split into individual files:
+    - `SystemThemeDetector.ts` - Robust system theme detection class with error handling
+    - `systemThemeDetectorInstance.ts` - Singleton instance of system theme detector
+    - `getCurrentSystemTheme.ts` - Convenience function to get current system theme
+    - `isSystemThemeSupported.ts` - Function to check system theme detection support
+    - `index.ts` - Barrel exports for all store utilities
+  - `src/renderer/store/index.ts` - Updated store initialization to use enhanced system theme detection with fallback handling and cleanup functionality
+  - `tests/unit/renderer/store/slices/theme.test.ts` - Comprehensive theme slice tests covering:
+    - Theme state management (setting light/dark/system themes)
+    - Theme toggle functionality (all combinations)
+    - System theme detection and following
+    - Document attribute application
+    - Theme selector functions
+    - Theme persistence to localStorage
+    - Edge cases and error scenarios
+    - 27 tests total, all passing
+
+  ### Quality checks completed
+  - ✅ Format: All files formatted correctly with Prettier
+  - ✅ Lint: No ESLint errors, follows one-export-per-file rule strictly
+  - ✅ Type Check: All TypeScript checks passed across all tsconfig files
+  - ✅ Test: Theme slice tests pass (27/27 tests passed)
+
+  ### Summary
+
+  Successfully completed Theme State Slice Implementation with enhanced functionality beyond the existing theme slice:
+  - **Enhanced System Theme Detection**: Robust system theme detection with proper error handling, fallback support, and cleanup capabilities
+  - **Comprehensive Selector Functions**: Nine individual selector functions for efficient component consumption following one-export-per-file rule
+  - **Extensive Test Coverage**: 27 comprehensive tests covering all theme functionality including edge cases and error scenarios
+  - **Improved Architecture**: Better separation of concerns with utilities split into focused modules
+  - **Full Compatibility**: Maintains backward compatibility with existing theme API while adding enhanced features
+  - **Error Resilience**: Graceful degradation when system theme detection is not supported
+
+  The theme slice is now production-ready with comprehensive testing, enhanced system theme support, optimized selectors, and robust error handling. Ready for integration with existing components and migration from React Context.
 
 - [ ] 4.0 UI State Slice Implementation
   - [ ] 4.1 Create UI slice with sidebar collapse state management

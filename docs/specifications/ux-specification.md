@@ -10,7 +10,7 @@ The application provides a desktop chat interface for multi-agent AI collaborati
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ [≡] Fishbowl                                      [─][□][×]│
+│ [≡] AI Collaborators                              [─][□][×]│
 ├─────────────┬───────────────────────────────────────────┤
 │             │  [Agent Labels Bar]                        │
 │ Conversations│  ┌─────────────────────────────────────┐  │
@@ -48,7 +48,13 @@ Message content goes here...
   - Messages over 3 lines show "Show more..." link
   - Click to expand/collapse
   - First line preview when collapsed
+- **Active/Inactive state**:
+  - Active messages (checked): Full opacity, included in conversation history
+  - Inactive messages (unchecked): 50% opacity, excluded from conversation history
+  - Checkbox appears on hover for any message
+  - Clicking checkbox toggles message inclusion in future API calls
 - **Hover actions**:
+  - Toggle active/inactive (checkbox)
   - Copy message
   - Regenerate (manual mode only)
   - Delete message
@@ -103,7 +109,8 @@ When agents have responses ready:
 - Shows first 2 lines of each response
 - Click card to expand/collapse full message
 - "Select All" / "Clear" buttons
-- Selected messages added when user hits submit
+- Selected messages added to conversation history
+- Unselected messages remain visible but faded
 
 ## Conversation Sidebar
 

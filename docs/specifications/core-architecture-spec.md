@@ -253,6 +253,7 @@ interface AppState {
     createConversation: () => void;
     selectConversation: (id: string) => void;
     addMessage: (message: Message) => void;
+    toggleMessageActive: (messageId: string) => void;
 
     // Agent actions
     addAgent: (agent: Agent) => void;
@@ -264,6 +265,16 @@ interface AppState {
     toggleAutoMode: () => void;
     setTheme: (theme: Theme) => void;
   };
+}
+
+// Message type update
+interface Message {
+  id: string;
+  conversationId: string;
+  agentId: string | null;
+  content: string;
+  isActive: boolean; // Whether included in conversation history
+  timestamp: Date;
 }
 ```
 

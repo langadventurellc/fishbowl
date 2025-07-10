@@ -19,6 +19,7 @@ import { createUISlice } from './slices/ui';
 import { createSettingsSlice } from './slices/settings';
 import { createAgentSlice } from './slices/agents';
 import { createConversationSlice } from './slices/conversation';
+import { systemThemeDetector, getCurrentSystemTheme } from './utils';
 
 /**
  * Default values for store initialization
@@ -151,6 +152,20 @@ export const resetStore = () => {
 };
 
 /**
+ * Cleanup store resources (call on app shutdown)
+ */
+export const cleanupStore = (): void => {
+  try {
+    // Stop system theme detection
+    systemThemeDetector.stopListening();
+
+    console.warn('Store cleanup completed');
+  } catch (error) {
+    console.error('Store cleanup error:', error);
+  }
+};
+
+/**
  * Utility function to validate store state
  */
 export const validateStoreState = (): boolean => {
@@ -199,15 +214,18 @@ export const initializeStore = (): boolean => {
 
     // Set up system theme detection
     const state = useStore.getState();
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
-    // Initial system theme detection
-    state.updateSystemTheme(mediaQuery.matches ? 'dark' : 'light');
-
-    // Listen for system theme changes
-    mediaQuery.addEventListener('change', e => {
-      state.updateSystemTheme(e.matches ? 'dark' : 'light');
+    // Start system theme detection
+    const success = systemThemeDetector.startListening((isDark: boolean) => {
+      state.updateSystemTheme(isDark ? 'dark' : 'light');
     });
+
+    if (!success) {
+      // Fallback: try to detect current system theme once
+      const fallbackTheme = getCurrentSystemTheme();
+      state.updateSystemTheme(fallbackTheme);
+      console.warn('System theme listener setup failed, using fallback detection');
+    }
 
     console.warn('Store initialized successfully');
     return true;
