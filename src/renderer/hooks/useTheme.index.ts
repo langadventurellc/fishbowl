@@ -1,2 +1,3 @@
+// Theme system - migrated to Zustand store
 export { useTheme } from './useTheme.hook';
-export { ThemeProvider } from './ThemeProvider';
+// ThemeProvider removed - theme state now managed by Zustand store

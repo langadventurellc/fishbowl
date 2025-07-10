@@ -1,5 +1,4 @@
-export type { Theme } from './Theme.types';
-export { ThemeProvider } from './ThemeProvider';
+// Theme system - migrated to Zustand store
 export { useTheme } from './useTheme.hook';
 
 // IPC hooks

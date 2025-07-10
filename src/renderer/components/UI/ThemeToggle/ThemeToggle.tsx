@@ -3,17 +3,17 @@ import { useTheme } from '../../../hooks';
 import styles from './ThemeToggle.module.css';
 
 export const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { effectiveTheme, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
       className={styles.toggleButton}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+      aria-label={`Switch to ${effectiveTheme === 'light' ? 'dark' : 'light'} theme`}
+      title={`Switch to ${effectiveTheme === 'light' ? 'dark' : 'light'} theme`}
     >
-      <span className={styles.icon}>{theme === 'light' ? '🌙' : '☀️'}</span>
-      <span className={styles.label}>{theme === 'light' ? 'Dark' : 'Light'}</span>
+      <span className={styles.icon}>{effectiveTheme === 'light' ? '🌙' : '☀️'}</span>
+      <span className={styles.label}>{effectiveTheme === 'light' ? 'Dark' : 'Light'}</span>
     </button>
   );
 };

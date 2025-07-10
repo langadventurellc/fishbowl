@@ -1,4 +1,6 @@
-import { createContext } from 'react';
-import type { ThemeContextType } from './ThemeContext.types';
+// This file has been removed as part of the migration to Zustand state management.
+// ThemeContext is no longer needed as theme state is now managed by Zustand store.
+// Use the useTheme hook directly, which now connects to the store.
 
-export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+// Removed: ThemeContext export
+// Migration: Use useStore with selectThemeState selector instead

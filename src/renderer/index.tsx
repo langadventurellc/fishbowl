@@ -2,7 +2,6 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { ThemeProvider } from './hooks';
 import './styles/globals.css';
 
 // Get the root element
@@ -12,13 +11,12 @@ if (!container) {
 }
 
 // Create the root and render the app
+// Note: ThemeProvider removed - theme state now managed by Zustand store
 const root = createRoot(container);
 root.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <ThemeProvider>
-        <App />
-      </ThemeProvider>
+      <App />
     </ErrorBoundary>
   </React.StrictMode>,
 );

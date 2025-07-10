@@ -29,7 +29,7 @@ export const DevTools: React.FC<DevToolsProps> = ({ isVisible = false }) => {
             ? 'Linux'
             : 'Unknown'),
   });
-  const { theme } = useTheme();
+  const { theme, effectiveTheme } = useTheme();
 
   useEffect(() => {
     const handleResize = () => {
@@ -91,8 +91,12 @@ export const DevTools: React.FC<DevToolsProps> = ({ isVisible = false }) => {
           <h4>Theme</h4>
           <div className={styles.infoGrid}>
             <div className={styles.infoItem}>
-              <span className={styles.label}>Current Theme:</span>
+              <span className={styles.label}>Theme Setting:</span>
               <span className={styles.value}>{theme}</span>
+            </div>
+            <div className={styles.infoItem}>
+              <span className={styles.label}>Effective Theme:</span>
+              <span className={styles.value}>{effectiveTheme}</span>
             </div>
           </div>
         </section>

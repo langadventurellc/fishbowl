@@ -23,7 +23,7 @@ describe('useTheme Hook Integration', () => {
   });
 
   describe('Basic Integration', () => {
-    it('should return effective theme when theme is light', () => {
+    it('should return complete theme state when theme is light', () => {
       mockUseStore.mockReturnValue({
         theme: 'light',
         effectiveTheme: 'light',
@@ -34,11 +34,12 @@ describe('useTheme Hook Integration', () => {
       const { result } = renderHook(() => useTheme());
 
       expect(result.current.theme).toBe('light');
+      expect(result.current.effectiveTheme).toBe('light');
       expect(result.current.setTheme).toBe(mockSetTheme);
       expect(result.current.toggleTheme).toBe(mockToggleTheme);
     });
 
-    it('should return effective theme when theme is dark', () => {
+    it('should return complete theme state when theme is dark', () => {
       mockUseStore.mockReturnValue({
         theme: 'dark',
         effectiveTheme: 'dark',
@@ -49,9 +50,10 @@ describe('useTheme Hook Integration', () => {
       const { result } = renderHook(() => useTheme());
 
       expect(result.current.theme).toBe('dark');
+      expect(result.current.effectiveTheme).toBe('dark');
     });
 
-    it('should return effective theme when theme is system', () => {
+    it('should return complete theme state when theme is system', () => {
       mockUseStore.mockReturnValue({
         theme: 'system',
         effectiveTheme: 'dark', // System resolved to dark
@@ -61,8 +63,9 @@ describe('useTheme Hook Integration', () => {
 
       const { result } = renderHook(() => useTheme());
 
-      // Should return effective theme for backward compatibility
-      expect(result.current.theme).toBe('dark');
+      // Should return both theme setting and effective theme
+      expect(result.current.theme).toBe('system');
+      expect(result.current.effectiveTheme).toBe('dark');
     });
   });
 
@@ -107,47 +110,58 @@ describe('useTheme Hook Integration', () => {
       mockUseStore.mockReturnValue({
         theme: 'system',
         effectiveTheme: 'light',
+        systemTheme: 'light',
         setTheme: mockSetTheme,
         toggleTheme: mockToggleTheme,
       });
 
       const { result } = renderHook(() => useTheme());
 
-      expect(result.current.theme).toBe('light');
+      expect(result.current.theme).toBe('system');
+      expect(result.current.effectiveTheme).toBe('light');
+      expect(result.current.systemTheme).toBe('light');
     });
 
     it('should handle system theme with dark effective theme', () => {
       mockUseStore.mockReturnValue({
         theme: 'system',
         effectiveTheme: 'dark',
+        systemTheme: 'dark',
         setTheme: mockSetTheme,
         toggleTheme: mockToggleTheme,
       });
 
       const { result } = renderHook(() => useTheme());
 
-      expect(result.current.theme).toBe('dark');
+      expect(result.current.theme).toBe('system');
+      expect(result.current.effectiveTheme).toBe('dark');
+      expect(result.current.systemTheme).toBe('dark');
     });
   });
 
   describe('Type Safety', () => {
-    it('should maintain ThemeContextType interface compatibility', () => {
+    it('should provide complete theme state interface', () => {
       mockUseStore.mockReturnValue({
         theme: 'light',
         effectiveTheme: 'light',
+        systemTheme: 'light',
         setTheme: mockSetTheme,
         toggleTheme: mockToggleTheme,
+        updateSystemTheme: vi.fn(),
       });
 
       const { result } = renderHook(() => useTheme());
 
-      // Verify the return type matches ThemeContextType
+      // Verify the return type includes all theme properties
       expect(typeof result.current.theme).toBe('string');
+      expect(typeof result.current.effectiveTheme).toBe('string');
+      expect(typeof result.current.systemTheme).toBe('string');
       expect(typeof result.current.setTheme).toBe('function');
       expect(typeof result.current.toggleTheme).toBe('function');
 
-      // Verify only expected properties are present
-      expect(Object.keys(result.current)).toEqual(['theme', 'setTheme', 'toggleTheme']);
+      // Verify theme supports system option
+      expect(['light', 'dark', 'system']).toContain(result.current.theme);
+      expect(['light', 'dark']).toContain(result.current.effectiveTheme);
     });
   });
 });
