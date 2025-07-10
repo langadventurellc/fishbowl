@@ -1,6 +1,6 @@
+import type { ErrorRecoveryConfig } from './ErrorRecoveryConfig';
 import { ErrorRecoveryManager } from './ErrorRecoveryManager';
 import { GracefulDegradationManager } from './GracefulDegradationManager';
-import type { ErrorRecoveryConfig } from './ErrorRecoveryConfig';
 
 class IntegratedErrorRecoveryManager {
   private recoveryManager: ErrorRecoveryManager;
@@ -22,8 +22,8 @@ class IntegratedErrorRecoveryManager {
     this.recoveryManager = new ErrorRecoveryManager(config);
     this.degradationManager = new GracefulDegradationManager();
 
-    // Start health monitoring
-    this.startHealthMonitoring();
+    // Don't start health monitoring immediately
+    // Will be started after database initialization
   }
 
   async handleError(
@@ -171,12 +171,19 @@ class IntegratedErrorRecoveryManager {
   }
 
   // Health monitoring
-  private startHealthMonitoring(): void {
-    this.healthCheckTimer = setInterval(() => {
-      this.degradationManager.performHealthCheck().catch(error => {
-        console.error('Health check failed:', error);
-      });
-    }, 30000); // Every 30 seconds
+  startHealthMonitoring(): void {
+    if (this.healthCheckTimer) {
+      return; // Already started
+    }
+
+    // Add initial delay to ensure all systems are ready
+    setTimeout(() => {
+      this.healthCheckTimer = setInterval(() => {
+        this.degradationManager.performHealthCheck().catch(error => {
+          console.error('Health check failed:', error);
+        });
+      }, 30000); // Every 30 seconds
+    }, 5000); // 5 second initial delay
   }
 
   stopHealthMonitoring(): void {

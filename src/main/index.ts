@@ -1,16 +1,17 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { isDev } from '../shared/utils';
-import { createMainWindow } from './window';
-import { createApplicationMenu } from './menu';
-import { setupIpcHandlers, setupWindowEvents } from './ipc';
 import {
+  checkpointManagerInstance,
+  closeDatabase,
   initializeDatabase,
   runMigrations,
-  closeDatabase,
   validateDatabaseSchema,
-  checkpointManagerInstance,
 } from './database';
+import { errorRecoveryManager } from './error-recovery';
+import { setupIpcHandlers, setupWindowEvents } from './ipc';
+import { createApplicationMenu } from './menu';
+import { createMainWindow } from './window';
 
 // Keep a global reference of the window object
 let mainWindow: BrowserWindow | null = null;
@@ -61,6 +62,10 @@ void app.whenReady().then(() => {
     checkpointManagerInstance.start();
 
     console.log('Database initialization completed');
+
+    // Start health monitoring after database is ready
+    console.log('Starting health monitoring...');
+    errorRecoveryManager.startHealthMonitoring();
   } catch (error) {
     console.error('Database initialization failed:', error);
     // Exit if database initialization fails
