@@ -30,6 +30,7 @@ const eslintConfig = [
       '**/.vscode/**',
       '**/assets/**',
       '**/scripts/**',
+      '**/__mocks__/**',
       'eslint.config.mjs',
       'vite.config.ts',
     ],

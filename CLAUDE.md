@@ -8,7 +8,106 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   <critical>NEVER, NEVER commit code with failing unit tests or quality checks.</critical>
   <critical>Execute only the next single incomplete task from $ARGUMENTS. Complete the task, update the task list, then STOP immediately for user review.</critical>
   <critical>ALWAYS run quality checks (npm run lint, npm run format, npm run type-check) after making ANY code changes. Fix all issues before proceeding.</critical>
+  <critical>ALWAYS follow Research → Plan → Implement workflow. NEVER jump straight to coding!</critical>
 </rules>
+
+# Development Partnership
+
+We're building production-quality code together. Your role is to create maintainable, efficient solutions while catching potential issues early.
+
+When you seem stuck or overly complex, I'll redirect you - my guidance helps you stay on track.
+
+## 🚨 AUTOMATED CHECKS ARE MANDATORY
+
+**ALL quality check failures are BLOCKING - EVERYTHING must be ✅ GREEN!**
+No errors. No formatting issues. No linting problems. Zero tolerance.
+These are not suggestions. Fix ALL issues before continuing.
+
+## CRITICAL WORKFLOW - ALWAYS FOLLOW THIS!
+
+### Research → Plan → Implement
+
+**NEVER JUMP STRAIGHT TO CODING!** Always follow this sequence:
+
+1. **Research**: Explore the codebase, understand existing patterns
+2. **Plan**: Create a detailed implementation plan and verify it with me
+3. **Implement**: Execute the plan with validation checkpoints
+
+When asked to implement any feature, you'll first say: "Let me research the codebase and create a plan before implementing."
+
+For complex architectural decisions or challenging problems, use **"ultrathink"** to engage maximum reasoning capacity. Say: "Let me ultrathink about this architecture before proposing a solution."
+
+### USE MULTIPLE AGENTS!
+
+_Leverage subagents aggressively_ for better results:
+
+- Spawn agents to explore different parts of the codebase in parallel
+- Use one agent to write tests while another implements features
+- Delegate research tasks: "I'll have an agent investigate the database schema while I analyze the API structure"
+- For complex refactors: One agent identifies changes, another implements them
+
+Say: "I'll spawn agents to tackle different aspects of this problem" whenever a task has multiple independent parts.
+
+### Reality Checkpoints
+
+**Stop and validate** at these moments:
+
+- After implementing a complete feature
+- Before starting a new major component
+- When something feels wrong
+- Before declaring "done"
+- **WHEN QUALITY CHECKS FAIL** ❌
+
+Run: `npm run lint && npm run format && npm run type-check && npm test`
+
+> Why: You can lose track of what's actually working. These checkpoints prevent cascading failures.
+
+### 🚨 CRITICAL: Quality Check Failures Are BLOCKING
+
+**When quality checks report ANY issues, you MUST:**
+
+1. **STOP IMMEDIATELY** - Do not continue with other tasks
+2. **FIX ALL ISSUES** - Address every ❌ issue until everything is ✅ GREEN
+3. **VERIFY THE FIX** - Re-run the failed command to confirm it's fixed
+4. **CONTINUE ORIGINAL TASK** - Return to what you were doing before the interrupt
+5. **NEVER IGNORE** - There are NO warnings, only requirements
+
+This includes:
+
+- ESLint violations
+- Prettier formatting issues
+- TypeScript type errors
+- Failing tests
+- Build errors
+
+Your code must be 100% clean. No exceptions.
+
+**Recovery Protocol:**
+
+- When interrupted by a quality check failure, maintain awareness of your original task
+- After fixing all issues and verifying the fix, continue where you left off
+- Use the TODO.md to track both the fix and your original task
+
+## Working Memory Management
+
+### When context gets long:
+
+- Re-read this CLAUDE.md file
+- Summarize progress in a PROGRESS.md file
+- Document current state before major changes
+
+### Maintain TODO.md:
+
+```
+## Current Task
+- [ ] What we're doing RIGHT NOW
+
+## Completed
+- [x] What's actually done and tested
+
+## Next Steps
+- [ ] What comes next
+```
 
 ## Project Overview
 
@@ -33,6 +132,121 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 - **Validation**: Zod schemas for all IPC operations
 - **IPC**: Type-safe communication with comprehensive error handling
 
+## TypeScript/JavaScript-Specific Rules
+
+### FORBIDDEN - NEVER DO THESE:
+
+- **NO any types** - Use specific, concrete types always
+- **NO unhandled promises** - Always use try/catch or .catch()
+- **NO console.log in production code** - Use proper logging
+- **NO magic numbers/strings** - Use named constants
+- **NO keeping old and new code together** - Delete replaced code immediately
+- **NO migration functions or compatibility layers**
+- **NO versioned function names** (processV2, handleNew)
+- **NO TODOs in final code**
+- **NO shared "kitchen-sink" modules** - One export per file!
+- **NO hardcoded secrets or environment values**
+- **NO direct DOM manipulation in React** - Use React patterns
+
+> **AUTOMATED ENFORCEMENT**: ESLint will BLOCK commits that violate these rules.
+> When you see `❌ ESLint error`, you MUST fix it immediately!
+
+### Required Standards:
+
+- **Delete** old code when replacing it
+- **Meaningful names**: `userId` not `id`, `emailAddress` not `email`
+- **Early returns** to reduce nesting
+- **Concrete types** everywhere - no implicit any
+- **Simple errors**: Use Error classes appropriately
+- **Comprehensive tests** for complex logic
+- **Async/await** over callbacks
+- **Functional components** with hooks (no class components)
+- **One export per file** (except barrel/index files)
+
+## Implementation Standards
+
+### Our code is complete when:
+
+- ✅ All linters pass with zero issues
+- ✅ All tests pass
+- ✅ Feature works end-to-end
+- ✅ Old code is deleted
+- ✅ JSDoc/TSDoc on all exported symbols
+- ✅ TypeScript strict mode satisfied
+
+### Testing Strategy
+
+- Complex business logic → Write tests first
+- Simple CRUD → Write tests after
+- React components → Test user interactions
+- IPC handlers → Test with mocks
+- Skip tests for simple config and type definitions
+
+### Project Structure
+
+```
+src/
+├── main/       # Electron main process
+├── renderer/   # React application
+├── preload/    # Secure IPC bridge
+└── shared/     # Shared types/utils
+```
+
+## Problem-Solving Together
+
+When you're stuck or confused:
+
+1. **Stop** - Don't spiral into complex solutions
+2. **Delegate** - Consider spawning agents for parallel investigation
+3. **Ultrathink** - For complex problems, say "I need to ultrathink through this challenge" to engage deeper reasoning
+4. **Step back** - Re-read the requirements
+5. **Simplify** - The simple solution is usually correct
+6. **Ask** - "I see two approaches: [A] vs [B]. Which do you prefer?"
+
+My insights on better approaches are valued - please ask for them!
+
+## Performance & Security
+
+### **Measure First**:
+
+- No premature optimization
+- Use Chrome DevTools profiler for React
+- Use performance.mark/measure for critical paths
+- Benchmark before claiming something is faster
+
+### **Security Always**:
+
+- Validate all IPC inputs with Zod
+- Use contextIsolation and sandbox
+- Never expose Node APIs to renderer
+- Use secure storage (keytar) for secrets
+- Content Security Policy enforced
+- Sanitize all user inputs
+
+## Communication Protocol
+
+### Progress Updates:
+
+```
+✓ Researched existing IPC patterns
+✓ Implemented secure message handler (all tests passing)
+✓ Added Zod validation schemas
+✗ Found TypeScript error in IPC types - investigating
+```
+
+### Suggesting Improvements:
+
+"The current approach works, but I notice [observation].
+Would you like me to [specific improvement]?"
+
+## Working Together
+
+- This is always a feature branch - no backwards compatibility needed
+- When in doubt, we choose clarity over cleverness
+- **REMINDER**: If this file hasn't been referenced in 30+ minutes, RE-READ IT!
+
+Avoid complex abstractions or "clever" code. The simple, obvious solution is probably better, and my guidance helps you stay focused on what matters.
+
 ## Development Commands
 
 ```bash
@@ -46,7 +260,7 @@ npm run dev:main         # Main process only
 npm run dev:renderer     # Renderer process only
 npm run dev:concurrent   # Concurrent development mode
 
-# Code quality
+# Code quality (RUN AFTER EVERY CHANGE!)
 npm run lint            # Run ESLint
 npm run lint:fix       # Auto-fix issues
 npm run type-check     # TypeScript check
@@ -78,73 +292,6 @@ npm run generate:icons # Generate all platform icons
 
 # Note: Full testing framework implemented with 272+ tests
 ```
-
-## Project Structure
-
-```
-src/
-├── main/                    # Electron main process
-│   ├── index.ts            # Main process entry point
-│   ├── window.ts           # Window management with security
-│   ├── menu.ts             # Application menu
-│   └── ipc/               # IPC handlers and events
-├── renderer/               # React application
-│   ├── components/        # Feature-based components
-│   │   ├── Home/          # Landing page
-│   │   ├── Settings/      # Settings interface
-│   │   ├── Chat/          # Chat interface
-│   │   ├── UI/            # Reusable UI components
-│   │   ├── DevTools/      # Development tools
-│   │   ├── ErrorBoundary/ # Error handling
-│   │   └── IpcTest/       # IPC testing component
-│   ├── hooks/             # Custom React hooks
-│   │   ├── useTheme.*     # Theme management
-│   │   └── useIpc.*       # IPC communication
-│   └── styles/            # CSS themes and globals
-├── preload/               # Secure IPC bridge
-│   └── index.ts           # Preload script
-└── shared/                # Shared types/utils
-    ├── types/             # TypeScript interfaces
-    └── utils/             # Utility functions
-
-assets/                    # Application assets
-├── icon.png              # Main application icon
-├── icon.svg              # Scalable vector icon
-└── icon-*.svg            # Platform-specific icons
-
-scripts/                   # Build and utility scripts
-├── build-verify.js       # Build verification
-├── security-audit.js     # Security auditing
-├── generate-icon.js      # Icon generation
-└── generate-all-icons.js # Multi-platform icons
-```
-
-## Documentation Structure
-
-The project follows a comprehensive documentation structure:
-
-```
-docs/
-├── README.md              # Documentation overview
-├── blackboard.md          # Agent collaboration knowledge base
-├── specifications/        # Technical specifications
-│   ├── core-architecture-spec.md
-│   ├── agent-model-spec.md
-│   ├── ux-specification.md
-│   └── implementation-plan.md
-├── guides/                # User and developer guides
-│   └── README.md
-└── technical/             # Technical documentation
-    ├── coding-standards.md
-    └── README.md
-```
-
-Key documentation files:
-
-- `CONTRIBUTING.md`: Contribution guidelines and workflow
-- `docs/blackboard.md`: Shared knowledge base for agent collaboration
-- `docs/specifications/`: Complete technical specifications
-- `docs/technical/coding-standards.md`: Code quality and style guidelines
 
 ## Key Implementation Patterns
 
@@ -179,14 +326,15 @@ API key management using keytar:
 
 ### Feature-Based Components
 
-Components are organized by feature:
+Components are organized by feature with one export per file:
 
 ```
 components/ChatRoom/
-├── ChatRoom.tsx
-├── ChatRoom.module.css
-├── MessageList.tsx
-└── index.ts
+├── ChatRoom.tsx         # Main component
+├── ChatRoom.module.css  # Styles
+├── MessageList.tsx      # Sub-component (separate file!)
+├── MessageInput.tsx     # Sub-component (separate file!)
+└── index.ts            # Barrel export
 ```
 
 ### Type-Safe IPC
@@ -245,6 +393,33 @@ The project follows established contribution guidelines and coding standards:
 
 See `CONTRIBUTING.md` for detailed guidelines.
 
+## Documentation Structure
+
+The project follows a comprehensive documentation structure:
+
+```
+docs/
+├── README.md              # Documentation overview
+├── blackboard.md          # Agent collaboration knowledge base
+├── specifications/        # Technical specifications
+│   ├── core-architecture-spec.md
+│   ├── agent-model-spec.md
+│   ├── ux-specification.md
+│   └── implementation-plan.md
+├── guides/                # User and developer guides
+│   └── README.md
+└── technical/             # Technical documentation
+    ├── coding-standards.md
+    └── README.md
+```
+
+Key documentation files:
+
+- `CONTRIBUTING.md`: Contribution guidelines and workflow
+- `docs/blackboard.md`: Shared knowledge base for agent collaboration
+- `docs/specifications/`: Complete technical specifications
+- `docs/technical/coding-standards.md`: Code quality and style guidelines
+
 ## Important Notes
 
 - The project uses strict TypeScript - no implicit any types
@@ -253,38 +428,46 @@ See `CONTRIBUTING.md` for detailed guidelines.
 - Configuration files in `/config` are JSON-based and user-editable
 - CSS Modules handle component styling with theme support via CSS Variables
 - The application supports multiple AI providers (OpenAI, Anthropic, Google, Groq, Ollama)
+- **ONE EXPORT PER FILE** - This is enforced by linting (except barrel files)
 
 ## Third-Party Library Documentation
 
-When working with third-party libraries, use the context7 MCP tool to get up-to-date documentation and examples. This ensures you have access to the latest API changes and best practices for libraries like FastAPI, Pydantic, LangChain, Firebase, Google Cloud services, and others used in this project.
+When working with third-party libraries, use the context7 MCP tool to get up-to-date documentation and examples. This ensures you have access to the latest API changes and best practices for libraries like Electron, React, Zod, Zustand, and others used in this project.
 
 ## Asking Questions
 
+- **Iterate:** Continue asking questions until you have a complete understanding
+- **Clarify:** If any requirement is ambiguous, ask for clarification
 - **Ask one question at a time**
 - **Provide options for each question**
 
 _Example question_
 
 ```
-In case of multiple variations, should metadata be generated for all variations or only the first one?
+Should the IPC validation use strict or loose schema validation?
 - **Options:**
-  - A) Generate metadata for all variations
-  - B) Generate metadata only for the first variation
-  - C) Do not generate metadata at all
+  - A) Strict validation - reject unknown properties
+  - B) Loose validation - allow and pass through unknown properties
+  - C) Configurable per endpoint
 ```
 
 **Remember to ask one question at a time and provide options for each question.**
 
 ## Prohibited Actions
 
-- ❌ Shared "kitchen-sink" modules
+- ❌ Shared "kitchen-sink" modules with multiple exports
 - ❌ Hardcoded secrets (including file paths outside project root)
 - ❌ Scope expansion without approval
+- ❌ Direct DOM manipulation in React
+- ❌ Class components (use functional components)
+- ❌ Untyped or `any` typed code
+- ❌ Console.log in production code
 
 <rules>
   <critical>NEVER bypass git pre-commit hooks, unit tests or quality checks.</critical>
   <critical>NEVER finish a task with failing unit tests or quality checks.</critical>
   <critical>NEVER, NEVER commit code with failing unit tests or quality checks.</critical>
+  <critical>ALWAYS follow Research → Plan → Implement workflow. NEVER jump straight to coding!</critical>
   <critical>Write tests for new or modified functionality. Do not write tests for style or formatting.</critical>
   <critical>Never hardcode secrets or environment values, including file paths outside project root.</critical>
   <critical>Ensure all quality checks pass before marking a task complete. Do not proceed if any checks or tests fail.</critical>
@@ -292,5 +475,6 @@ In case of multiple variations, should metadata be generated for all variations 
   <important>Each "public" class or function should be in its own file, unless otherwise approved.</important>
   <important>Use context7 MCP tool to get up-to-date documentation and best practices for all third-party libraries.</important>
   <important>Ask questions for implementation details, clarifications, or when requirements are ambiguous.</important>
+  <important>Consider spawning multiple agents for complex tasks with independent parts.</important>
   <rule>Do not write comments for obvious code. Use meaningful variable and function names instead.</rule>
 </rules>
