@@ -380,17 +380,55 @@ When executing tasks, remember to:
 
   The theme slice is now production-ready with comprehensive testing, enhanced system theme support, optimized selectors, and robust error handling. Ready for integration with existing components and migration from React Context.
 
-- [ ] 4.0 UI State Slice Implementation
-  - [ ] 4.1 Create UI slice with sidebar collapse state management
-  - [ ] 4.2 Implement modal and dialog visibility state management
-  - [ ] 4.3 Add window dimensions and layout preference storage
-  - [ ] 4.4 Create UI actions for state updates and toggles
-  - [ ] 4.5 Add UI selector functions for component consumption
-  - [ ] 4.6 Write tests for UI slice functionality and persistence
-  - [ ] 4.7 Add general UI preferences and customization support
+- [x] 4.0 UI State Slice Implementation
+  - [x] 4.1 Create UI slice with sidebar collapse state management
+  - [x] 4.2 Implement modal and dialog visibility state management
+  - [x] 4.3 Add window dimensions and layout preference storage
+  - [x] 4.4 Create UI actions for state updates and toggles
+  - [x] 4.5 Add UI selector functions for component consumption
+  - [x] 4.6 Write tests for UI slice functionality and persistence
+  - [x] 4.7 Add general UI preferences and customization support
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/renderer/store/selectors/` - Created comprehensive UI selector functions split into individual files following one-export-per-file rule:
+    - `selectSidebarCollapsed.ts` - Selects sidebar collapse state
+    - `selectActiveModal.ts` - Selects current active modal
+    - `selectWindowDimensions.ts` - Selects window dimensions
+    - `selectLayoutPreferences.ts` - Selects layout preferences
+    - `selectSetSidebarCollapsed.ts` - Selects sidebar collapsed setter action
+    - `selectToggleSidebar.ts` - Selects sidebar toggle action
+    - `selectSetActiveModal.ts` - Selects active modal setter action
+    - `selectSetWindowDimensions.ts` - Selects window dimensions setter
+    - `selectSetLayoutPreferences.ts` - Selects layout preferences setter
+    - `selectUIState.ts` - Selects comprehensive UI state and actions
+  - `src/renderer/store/selectors/index.ts` - Updated barrel exports to include all new UI selectors with organized sections
+  - `tests/unit/renderer/store/slices/ui.test.ts` - Comprehensive UI slice tests covering:
+    - UI state initialization with proper defaults
+    - Sidebar state management (collapse/expand/toggle functionality)
+    - Modal state management (setting active modal, clearing, switching)
+    - Window dimensions management with input validation
+    - Layout preferences management with partial updates and merging
+    - UI selector functions testing
+    - UI state persistence functionality
+    - Edge cases and error scenarios (rapid toggles, invalid inputs, floating point values)
+    - 31 tests total, all passing
+
+  ### Quality checks completed
+  - ✅ Format: All files formatted correctly with Prettier
+  - ✅ Lint: No ESLint errors, follows one-export-per-file rule strictly
+  - ✅ Type Check: All TypeScript checks passed across all tsconfig files
+  - ✅ Test: All tests pass (578/578 tests passed including 31 new UI slice tests)
+
+  ### Summary
+
+  Successfully completed UI State Slice Implementation by adding the missing components to the already-implemented UI slice:
+  - **Enhanced Selector Functions**: Ten individual selector functions for efficient component consumption following established theme selector patterns
+  - **Comprehensive Test Coverage**: 31 comprehensive tests covering all UI functionality including edge cases, error scenarios, input validation, and persistence
+  - **Full API Coverage**: Complete testing of sidebar management, modal state, window dimensions, layout preferences, and all selector functions
+  - **Quality Assurance**: All quality checks pass, maintaining project standards for code formatting, linting, type safety, and testing
+  - **Architecture Consistency**: Follows established patterns from theme slice implementation, maintaining consistency across the store architecture
+
+  The UI slice is now production-ready with comprehensive testing, complete selector API, robust input validation, and full integration with the existing Zustand store infrastructure. Ready for component integration and usage throughout the application.
 
 - [ ] 5.0 Settings State Slice Implementation
   - [ ] 5.1 Create settings slice with application configuration management
