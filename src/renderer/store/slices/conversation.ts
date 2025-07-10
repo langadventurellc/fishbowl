@@ -59,7 +59,7 @@ export const createConversationSlice: StoreSlice<ConversationSlice> = (set, _get
         state.conversations[conversationIndex] = {
           ...state.conversations[conversationIndex],
           ...updates,
-          updatedAt: new Date().toISOString(),
+          updatedAt: Date.now(),
         };
         state.error = null;
       } else {

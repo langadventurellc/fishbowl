@@ -32,3 +32,16 @@ export * from './selectSetPreferences';
 export * from './selectSetConfiguration';
 export * from './selectResetSettings';
 export * from './selectSettingsState';
+
+// Conversation selectors
+export * from './selectConversations';
+export * from './selectActiveConversationId';
+export * from './selectActiveConversation';
+export * from './selectConversationLoading';
+export * from './selectConversationError';
+export * from './selectSetConversations';
+export * from './selectAddConversation';
+export * from './selectUpdateConversation';
+export * from './selectRemoveConversation';
+export * from './selectSetActiveConversation';
+export * from './selectConversationState';
