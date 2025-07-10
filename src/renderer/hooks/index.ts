@@ -13,12 +13,7 @@ export { useConversations } from './useConversations';
 export { useDatabase } from './useDatabase';
 export { useMessages } from './useMessages';
 
-// Database context and provider
-export { DatabaseContext } from './DatabaseContext';
-export type { DatabaseContextActions } from './DatabaseContextActions';
-export type { DatabaseContextState } from './DatabaseContextState';
-export type { DatabaseContextValue } from './DatabaseContextValue';
-export { DatabaseProvider } from './DatabaseProvider';
+// Database context and provider - removed (migrated to Zustand store)
 
 // Secure storage hooks
 export { useKeytar } from './useKeytar';
