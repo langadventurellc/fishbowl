@@ -710,7 +710,7 @@ When executing tasks, remember to:
 - [x] 10.0 Component Integration and Testing
   - [x] 10.1 Update components to use Zustand store instead of Context - Already Complete (Architecture follows correct pattern)
   - [x] 10.2 Test theme changes persist correctly across app restarts
-  - [ ] 10.3 Validate UI state persistence functionality
+  - [x] 10.3 Validate UI state persistence functionality
   - [ ] 10.4 Test settings state management and persistence
   - [ ] 10.5 Verify conversation and agent state caching
   - [ ] 10.6 Write end-to-end integration tests for full store functionality
@@ -755,16 +755,21 @@ When executing tasks, remember to:
   - ✅ Type Check: All TypeScript checks passed across all tsconfig files
   - ✅ Test: All 753 tests pass (including the 6 previously failing theme persistence tests)
 
-  ### Summary
-
-  **Task 10.2 is now 100% COMPLETE** with comprehensive theme persistence functionality:
-  - **Enhanced Test Coverage**: All 13 theme persistence tests now pass, covering basic persistence, system theme handling, multiple changes, error recovery, and comprehensive restart scenarios
-  - **Robust Hydration Logic**: Store now properly handles incomplete localStorage data and derives consistent effective themes
-  - **Improved Architecture**: Added helper functions and validation logic for better theme state management
-  - **Zero Regressions**: All existing tests continue to pass, maintaining full backward compatibility
-  - **Production Ready**: Theme persistence works correctly across app restarts with proper error handling and data recovery
-
   Theme changes now persist correctly across application restarts with comprehensive error handling for corrupted or incomplete localStorage data.
+
+  ### Task 10.3 Completion Summary
+
+  **Successfully validated UI state persistence functionality with comprehensive integration tests:**
+
+  ### Files modified with description of changes
+  - `tests/integration/ui-state-persistence.test.ts` - **NEW** - Created comprehensive UI state persistence validation tests (8 test cases covering all core functionality):
+    - **Persistent UI State Tests**: Validates that `sidebarCollapsed`, `windowDimensions`, and `layoutPreferences` persist correctly across app restarts using new store instances to simulate real restart scenarios
+    - **Non-Persistent State Tests**: Confirms that `activeModal` is intentionally NOT persisted (ephemeral state) and resets to `null` after restart
+    - **localStorage Integration Tests**: Validates correct localStorage data structure, proper JSON serialization, and selective persistence of only UI-related state
+    - **Edge Cases and Error Handling**: Tests graceful handling of corrupted localStorage data and missing fields with proper fallback to defaults
+    - **Cross-Slice Integration**: Validates UI state persistence works correctly alongside theme and settings data without conflicts
+
+  UI state persistence functionality is now fully validated with comprehensive test coverage, robust error handling, and confirmed integration with the existing Zustand store infrastructure. The validation confirms that sidebar state, window dimensions, and layout preferences persist correctly across app restarts while activeModal state appropriately resets.
 
 - [ ] 11.0 Security Hardening and Validation
   - [ ] 11.1 Validate state persistence excludes sensitive data
