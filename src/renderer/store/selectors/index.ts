@@ -24,3 +24,11 @@ export * from './selectSetActiveModal';
 export * from './selectSetWindowDimensions';
 export * from './selectSetLayoutPreferences';
 export * from './selectUIState';
+
+// Settings selectors
+export * from './selectPreferences';
+export * from './selectConfiguration';
+export * from './selectSetPreferences';
+export * from './selectSetConfiguration';
+export * from './selectResetSettings';
+export * from './selectSettingsState';
