@@ -45,3 +45,23 @@ export * from './selectUpdateConversation';
 export * from './selectRemoveConversation';
 export * from './selectSetActiveConversation';
 export * from './selectConversationState';
+
+// Agent selectors
+export * from './selectAgents';
+export * from './selectActiveAgents';
+export * from './selectActiveAgentObjects';
+export * from './selectAgentLoading';
+export * from './selectAgentError';
+export * from './selectAgentById';
+export * from './selectAgentStatuses';
+export * from './selectAgentMetadata';
+export * from './selectOnlineAgents';
+export * from './selectAgentsInConversation';
+export * from './selectCacheValid';
+export * from './selectLastFetch';
+export * from './selectAgentCount';
+export * from './selectActiveAgentCount';
+export * from './selectOnlineAgentCount';
+export * from './selectSetAgents';
+export * from './selectAddAgent';
+export * from './selectAgentState';
