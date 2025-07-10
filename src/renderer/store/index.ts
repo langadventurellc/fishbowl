@@ -92,6 +92,18 @@ export const useStore = create<AppState>()(
               return;
             }
             if (state) {
+              // Fix inconsistent theme state after hydration
+              if (state.theme && state.theme !== 'system') {
+                // If theme is not 'system', effectiveTheme should match theme
+                if (!state.effectiveTheme || state.effectiveTheme !== state.theme) {
+                  state.effectiveTheme = state.theme;
+                }
+              } else if (state.theme === 'system') {
+                // If theme is 'system', effectiveTheme should match systemTheme
+                if (!state.effectiveTheme || !state.systemTheme) {
+                  state.effectiveTheme = state.systemTheme || 'light';
+                }
+              }
               console.warn('Store rehydrated successfully');
             }
           };
