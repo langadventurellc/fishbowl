@@ -88,6 +88,7 @@ export default defineConfig({
       '@components': resolve(__dirname, 'src/renderer/components'),
       '@hooks': resolve(__dirname, 'src/renderer/hooks'),
       '@styles': resolve(__dirname, 'src/renderer/styles'),
+      '@store': resolve(__dirname, 'src/renderer/store'),
     },
   },
 

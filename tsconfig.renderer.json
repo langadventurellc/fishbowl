@@ -22,7 +22,8 @@
     "paths": {
       "@/*": ["*"],
       "@shared/*": ["shared/*"],
-      "@renderer/*": ["renderer/*"]
+      "@renderer/*": ["renderer/*"],
+      "@store/*": ["renderer/store/*"]
     }
   },
   "include": ["src/renderer/**/*", "src/shared/**/*"],
