@@ -269,17 +269,60 @@ When executing tasks, remember to:
 
   Successfully set up Zustand project foundation with dependency installation, directory structure, TypeScript configuration, comprehensive documentation, and initial test setup. All quality checks pass and the project is ready for core store implementation.
 
-- [ ] 2.0 Core Store Infrastructure
-  - [ ] 2.1 Create store type definitions with AppState interface
-  - [ ] 2.2 Set up core store with immer middleware configuration
-  - [ ] 2.3 Configure persistence middleware with selective partializing
-  - [ ] 2.4 Add environment-based devtools middleware integration
-  - [ ] 2.5 Create store barrel export with proper TypeScript typing
-  - [ ] 2.6 Write tests for store middleware configuration
-  - [ ] 2.7 Add store initialization validation and error handling
+- [x] 2.0 Core Store Infrastructure
+  - [x] 2.1 Create store type definitions with AppState interface
+  - [x] 2.2 Set up core store with immer middleware configuration
+  - [x] 2.3 Configure persistence middleware with selective partializing
+  - [x] 2.4 Add environment-based devtools middleware integration
+  - [x] 2.5 Create store barrel export with proper TypeScript typing
+  - [x] 2.6 Write tests for store middleware configuration
+  - [x] 2.7 Add store initialization validation and error handling
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/renderer/store/index.ts` - Main store configuration with immer, persistence, and devtools middleware
+  - `src/renderer/store/types/` - Comprehensive type system split into individual files following one-export-per-file rule:
+    - `Theme.ts` - Theme type definition
+    - `ThemeSlice.ts` - Theme slice interface
+    - `UISlice.ts` - UI state slice interface
+    - `SettingsSlice.ts` - Settings slice interface
+    - `Agent.ts` - Agent data structure
+    - `AgentSlice.ts` - Agent slice interface
+    - `Conversation.ts` - Conversation data structure
+    - `ConversationSlice.ts` - Conversation slice interface
+    - `app-state.ts` - Combined AppState interface
+    - `store-slice.ts` - Store slice creator type
+    - `PersistConfig.ts` - Persistence configuration
+    - `DevToolsConfig.ts` - DevTools configuration
+    - `StoreConfig.ts` - Store configuration options
+    - `index.ts` - Barrel exports for all types
+  - `src/renderer/store/types.ts` - Re-export compatibility layer
+  - `src/renderer/store/slices/` - All store slices with proper typing:
+    - `theme.ts` - Theme slice implementation
+    - `ui.ts` - UI slice implementation
+    - `settings.ts` - Settings slice implementation
+    - `agents.ts` - Agent slice implementation
+    - `conversation.ts` - Conversation slice implementation
+    - `index.ts` - Slice barrel exports
+  - `tests/unit/renderer/store/store-middleware.test.ts` - Comprehensive middleware tests (15 tests)
+  - `package.json` - Added immer and @redux-devtools/extension dependencies
+
+  ### Quality checks completed
+  - ✅ Format: All files formatted correctly with Prettier
+  - ✅ Lint: No ESLint errors, only acceptable warnings for `any` types in PersistConfig
+  - ✅ Type Check: All TypeScript checks passed across all tsconfig files
+  - ✅ Test: Store middleware tests pass (15/15 tests passed)
+
+  ### Summary
+
+  Successfully implemented complete Core Store Infrastructure with Zustand, including:
+  - **Middleware Stack**: Immer for immutable updates, persistence for selective localStorage, devtools for debugging
+  - **Type Safety**: Comprehensive TypeScript interfaces following one-export-per-file rule
+  - **Security**: Only UI state persisted to localStorage, sensitive data excluded
+  - **Error Handling**: Store initialization validation and corruption recovery
+  - **Testing**: 15 comprehensive tests covering all middleware functionality
+  - **Performance**: Environment-based devtools, optimized persistence, memoized selectors
+
+  The store is fully functional and ready for slice implementation and theme migration.
 
 - [ ] 3.0 Theme State Slice Implementation
   - [ ] 3.1 Create theme slice with light/dark/system support
