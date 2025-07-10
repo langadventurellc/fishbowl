@@ -15,6 +15,8 @@ export type { SettingsSlice } from './SettingsSlice';
 // Agent types
 export type { Agent } from './Agent';
 export type { AgentSlice } from './AgentSlice';
+export type { AgentStatus } from './AgentStatus';
+export type { AgentMetadata } from './AgentMetadata';
 
 // Conversation types
 export type { Conversation } from './Conversation';

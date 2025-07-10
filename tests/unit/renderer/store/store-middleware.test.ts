@@ -47,12 +47,11 @@ describe('Store Middleware Configuration', () => {
         {
           id: 'test-1',
           name: 'Test Agent',
-          description: 'Test Description',
-          provider: 'openai',
-          model: 'gpt-4',
+          role: 'Assistant',
+          personality: 'Helpful and knowledgeable',
           isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
         },
       ]);
 
@@ -99,12 +98,11 @@ describe('Store Middleware Configuration', () => {
         {
           id: 'test',
           name: 'Test',
-          description: 'Test',
-          provider: 'openai',
-          model: 'gpt-4',
+          role: 'Assistant',
+          personality: 'Test personality',
           isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
         },
       ]);
 
@@ -273,12 +271,11 @@ describe('Store Middleware Configuration', () => {
         {
           id: 'test',
           name: 'Test',
-          description: 'Test',
-          provider: 'openai',
-          model: 'gpt-4',
+          role: 'Assistant',
+          personality: 'Test personality',
           isActive: true,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
         },
       ]);
 

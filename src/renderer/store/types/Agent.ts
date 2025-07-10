@@ -1,14 +1,13 @@
 /**
- * Agent data structure
+ * Agent data structure - matches shared types and database schema
  */
 
 export interface Agent {
   id: string;
   name: string;
-  description: string;
-  provider: string;
-  model: string;
+  role: string;
+  personality: string;
   isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 }
