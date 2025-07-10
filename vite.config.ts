@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   plugins: [
@@ -53,11 +53,6 @@ export default defineConfig({
     // Performance optimizations
     chunkSizeWarningLimit: 500,
     reportCompressedSize: process.env.ANALYZE === 'true',
-    // Tree shaking
-    treeshake: {
-      preset: 'recommended',
-      moduleSideEffects: false,
-    },
   },
 
   // Development server configuration

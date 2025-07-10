@@ -16,5 +16,5 @@ echo "Running npm run type-check..."
 npm run type-check
 
 # Run tests
-# echo "Running tests..."
-# npm test
+echo "Running tests..."
+npm run test:run

@@ -1,206 +1,344 @@
 # Instructions
 
-You are a requirements analyst that creates initial requirement documents for software features. Given the following `Phase Input`, you will create comprehensive requirement documents that will be refined by subsequent commands (`write-feature.md`, `plan-feature.md`, and `next-task.md`). Your output must provide sufficient detail and context for the downstream workflow.
+ULTRATHINK - You are a requirements analyst that creates initial requirement documents for software features. Given the following `Phase Input`, you will create comprehensive requirement documents that will be refined by subsequent commands (`write-feature.md`, `plan-feature.md`, and `next-task.md`). Your output must provide sufficient detail and context for the downstream workflow to create 20-50 small, implementable tasks per feature.
 
-## Phase Input
+## Goal
 
-From `docs/specifications/implementation-plan.md`, break down the phase "$ARGUMENTS" into multiple requirements documents. Each document should focus on a specific atomic feature or aspect of the phase. Refer to the preliminary specifications in `docs/specifications/*.md` for architectural context, design patterns, and technical constraints.
+Transform high-level phase descriptions into multiple atomic, well-scoped requirement documents that enable systematic feature development with small, focused tasks. Each requirement should represent a feature that can be broken down into 20-50 subtasks of 1-2 hours each.
 
-### Process:
+## Process
 
-1. **Parse the Input**: Extract the main feature concepts from `$ARGUMENTS` phase in `docs/specifications/implementation-plan.md`
-2. **Analyze Context**: Review existing project structure, architecture patterns, and technology stack from `docs/specifications/` and `CLAUDE.md`
-3. **Generate Feature Slug**: For each requirement, create a URL-safe slug from the feature name (lowercase, hyphens instead of spaces, no special characters)
-4. **Determine Date**: Use the current date in YYYYMMDD format (use `bash` to get the correct date)
-5. **Create Comprehensive Requirements**: Based on the feature descriptions, preliminary specifications, and project context, create detailed requirements with technical considerations
+### 1. Research Phase (MANDATORY)
 
-### Output:
+**NEVER SKIP THIS STEP - Understand the project before creating requirements:**
 
-Create new files at `.tasks/{phase-x}/{YYYYMMDD}-{feature-slug}-requirements.md` (use `bash` to get the correct date) in the project with the following structure:
+1. **Parse the Input**: Extract the phase from `$ARGUMENTS` in `docs/specifications/implementation-plan.md`
+2. **Analyze Project Context**:
+   - Review `CLAUDE.md` for technology stack and development standards
+   - Study `docs/specifications/` for architecture patterns and constraints
+   - Understand existing project structure and conventions
+   - Use context7 to research any unfamiliar technologies mentioned
+
+3. **Identify Feature Boundaries**:
+   - Break down the phase into atomic, independent features
+   - Each feature should be implementable in 1-2 weeks
+   - Look for natural component boundaries
+   - Consider both technical and functional decomposition
+
+Say: "Let me analyze the phase and project context before creating requirement documents."
+
+### 2. Feature Decomposition
+
+**Break down the phase into atomic features:**
+
+1. **Feature Sizing Guidelines**:
+   - Each feature should generate 20-50 implementation tasks
+   - Features should have clear boundaries and minimal dependencies
+   - Prefer smaller, focused features over large, complex ones
+   - Consider vertical slices (full stack) where appropriate
+
+2. **Common Decomposition Patterns**:
+   - By architectural layer (UI, business logic, data)
+   - By user journey or workflow
+   - By technical component
+   - By data entity or domain object
+   - By integration point
+
+3. **Dependency Analysis**:
+   - Identify features that must be completed first
+   - Note optional dependencies
+   - Flag potential circular dependencies
+
+### 3. Output Generation
+
+Create new files at `.tasks/{phase-x}/{YYYYMMDD}-{feature-slug}-requirements.md` (use `bash` to get the correct date) with enhanced structure:
 
 ```markdown
-# Feature
+# Feature: [Clear, Specific Feature Name]
 
-[Brief description of the feature based on $ARGUMENTS and project context]
+[2-3 sentence description providing context from the phase and how this feature contributes to the overall system]
+
+## Feature Components
+
+Break down the feature into logical components that can guide task creation:
+
+- **Component 1**: [Description and responsibilities]
+- **Component 2**: [Description and responsibilities]
+- **Component 3**: [Description and responsibilities]
 
 ## User Stories
 
-- [User Story 1: As a [user type], I want [goal] so that [benefit]]
-- [User Story 2: As a [user type], I want [goal] so that [benefit]]
-- [User Story 3: As a [user type], I want [goal] so that [benefit]]
+- As a [user type], I want [specific goal] so that [business value]
+- As a [user type], I want [specific goal] so that [business value]
+- As a [user type], I want [specific goal] so that [business value]
+- [Add more stories to cover all aspects of the feature]
 
 ## Functional Requirements
 
-- [FR-1: Core functionality requirement with specific behavior]
-- [FR-2: Input/output requirements and validation]
-- [FR-3: User interaction requirements]
-- [FR-4: Data handling and persistence requirements]
+### Core Functionality
+
+- FR-1: [Specific, measurable requirement]
+- FR-2: [Input validation and data handling requirement]
+- FR-3: [User interaction requirement]
+
+### Data Management
+
+- FR-4: [Data persistence requirement]
+- FR-5: [Data validation requirement]
+- FR-6: [Data relationship requirement]
+
+### Integration Points
+
+- FR-7: [Integration with other features/systems]
+- FR-8: [API or interface requirement]
 
 ## Technical Requirements
 
-- [TR-1: Technology stack compatibility (reference existing stack)]
-- [TR-2: Performance and scalability considerations]
-- [TR-3: Security and data protection requirements]
-- [TR-4: Integration requirements with existing systems]
+### Technology Stack
+
+- TR-1: [Reference specific technologies from CLAUDE.md]
+- TR-2: [Framework or library requirements]
+- TR-3: [Build or deployment requirements]
+
+### Performance & Scalability
+
+- TR-4: [Response time requirements]
+- TR-5: [Resource usage constraints]
+- TR-6: [Concurrent user/operation requirements]
+
+### Security & Compliance
+
+- TR-7: [Authentication/authorization requirements]
+- TR-8: [Data protection requirements]
+- TR-9: [Input validation and sanitization]
 
 ## Architecture Context
 
-- [AC-1: How this feature fits into the existing system architecture]
-- [AC-2: Dependencies on other components or services]
-- [AC-3: Data flow and communication patterns]
+### System Integration
+
+- AC-1: How this feature fits into [specific architecture pattern]
+- AC-2: Dependencies on [specific services/components]
+- AC-3: Data flow from [source] to [destination]
+
+### Technical Patterns
+
+- AC-4: Use of [specific design pattern] for [purpose]
+- AC-5: Integration with existing [subsystem/service]
+- AC-6: Event/message handling requirements
+
+### File Structure Implications
+
+- AC-7: New directories/files needed in [location]
+- AC-8: Modifications to existing [files/modules]
 
 ## Acceptance Criteria
 
-- [AC-1: Measurable success condition]
-- [AC-2: Testable behavior specification]
-- [AC-3: Performance or quality metric]
+### Functional Acceptance
+
+- [ ] AC-1: [Specific, testable behavior]
+- [ ] AC-2: [Measurable performance metric]
+- [ ] AC-3: [User-visible success condition]
+
+### Technical Acceptance
+
+- [ ] AC-4: All unit tests passing
+- [ ] AC-5: Integration tests covering [scenarios]
+- [ ] AC-6: No linting or type errors
+- [ ] AC-7: Security requirements validated
+
+### Quality Gates
+
+- [ ] AC-8: Code coverage > X%
+- [ ] AC-9: Performance benchmarks met
+- [ ] AC-10: Accessibility standards met
+
+## Implementation Hints
+
+Guidance for the planning phase to create appropriate tasks:
+
+### Suggested Task Groupings
+
+1. **Setup and Configuration** (3-5 tasks)
+2. **Data Models and Schema** (4-6 tasks)
+3. **Business Logic** (6-10 tasks)
+4. **API/Interface Layer** (4-8 tasks)
+5. **UI Components** (6-10 tasks)
+6. **Testing and Validation** (4-6 tasks)
+7. **Documentation** (2-3 tasks)
+
+### Critical Implementation Notes
+
+- Start with [specific component] as it's a dependency for others
+- [Specific technology] requires initial setup before use
+- Consider [pattern] for handling [complexity]
 
 ## Constraints & Assumptions
 
-- [CA-1: Technical constraints from existing system]
-- [CA-2: Business or timeline constraints]
-- [CA-3: Assumptions about user behavior or system state]
+### Technical Constraints
+
+- CA-1: Must work within existing [technical limitation]
+- CA-2: Cannot modify [existing system component]
+- CA-3: Must maintain compatibility with [version/standard]
+
+### Business Constraints
+
+- CA-4: Feature must be completed within [timeframe]
+- CA-5: Cannot exceed [resource limitation]
+
+### Assumptions
+
+- CA-6: Users will [behavioral assumption]
+- CA-7: System will have [technical assumption]
+- CA-8: [Third-party service] will remain available
+
+## Risks & Mitigation
+
+### Technical Risks
+
+- Risk 1: [Specific risk] - Mitigation: [approach]
+- Risk 2: [Integration risk] - Mitigation: [fallback plan]
+
+### Schedule Risks
+
+- Risk 3: [Dependency risk] - Mitigation: [parallel work option]
+
+## Dependencies
+
+### Upstream Dependencies
+
+- Requires completion of: [previous feature/phase]
+- Needs output from: [other team/component]
+
+### Downstream Impact
+
+- Blocks: [future feature]
+- Enables: [follow-on work]
 
 ## See Also
 
-- [Link to related specification files]
-- [Link to architectural documentation]
-- [Link to existing similar features or patterns]
+### Specifications
+
+- `docs/specifications/[relevant-spec].md`
+- `docs/specifications/implementation-plan.md`
+
+### Technical Documentation
+
+- `CLAUDE.md` - Development standards and setup
+- `docs/technical/coding-standards.md`
+- `docs/blackboard.md` - Shared agent knowledge
+
+### Related Features
+
+- `.tasks/[phase]/[related-feature]-requirements.md`
 ```
 
-### Guidelines:
+## Feature Identification Guidelines
 
-- **Feature Section**: Keep concise (1-2 sentences) but include context from project architecture
-- **User Stories**: Write in standard format "As a [user type], I want [goal] so that [benefit]"
-- **Functional Requirements**: Be specific and actionable, focus on what the system must do
-- **Technical Requirements**: Reference existing technology stack from `CLAUDE.md` and project specifications
-- **Architecture Context**: Connect to existing system architecture and patterns
-- **Acceptance Criteria**: Make measurable and testable
-- **Constraints & Assumptions**: Include technical constraints from existing system and reasonable assumptions
-- **Cross-References**: Link to relevant specification files and documentation
-- **Completeness**: Provide sufficient detail for `write-feature.md` to create comprehensive feature specifications
-- **Consistency**: Use terminology and patterns consistent with existing project documentation
+### How to Break Down Phases
 
-### Examples:
+1. **Look for Natural Boundaries**:
+   - Separate UI from business logic
+   - Split by data entities
+   - Divide by user workflows
+   - Separate integrations from core features
 
-**Phase Input:** `phase 1`
-**Feature:** `electron-main-process-setup`
-**Output file:** `/.tasks/phase-1/20250708-electron-main-process-setup-requirements.md`
+2. **Consider Implementation Order**:
+   - Infrastructure before features
+   - Data models before business logic
+   - Core features before enhancements
+   - Manual features before automation
 
-```markdown
-# Feature
+3. **Size Features Appropriately**:
+   - Too large: "User Management System" ❌
+   - Just right: "User Registration Flow" ✅
+   - Too small: "Add Submit Button" ❌
 
-Set up the Electron main process with database, security, and IPC infrastructure for the Fishbowl multi-agent AI conversation application.
+### Example Phase Breakdown
 
-## User Stories
+For **Phase 1: Foundation**, create separate requirements for:
 
-- As a developer, I want the main process to handle system operations so that the renderer process can focus on UI
-- As a user, I want secure API key storage so that my credentials are protected
-- As a developer, I want type-safe IPC communication so that data exchange is reliable
+1. `electron-main-process-setup` - Core Electron infrastructure
+2. `ipc-communication-bridge` - Type-safe IPC implementation
+3. `sqlite-database-setup` - Database and migration system
+4. `secure-storage-implementation` - Keytar integration
+5. `react-ui-shell` - Basic UI framework
+6. `theme-system` - Light/dark mode support
+7. `zustand-state-management` - State management setup
 
-## Functional Requirements
+Each of these can generate 20-50 specific tasks.
 
-- FR-1: Initialize Electron main process with proper lifecycle management
-- FR-2: Set up SQLite database with better-sqlite3 for conversation storage
-- FR-3: Implement secure API key storage using keytar
-- FR-4: Create type-safe IPC bridge for renderer communication
+## Quality Checklist
 
-## Technical Requirements
+Before creating each requirement document, ensure:
 
-- TR-1: Use Electron with Vite build system as specified in project architecture
-- TR-2: Implement SQLite via better-sqlite3 for data persistence
-- TR-3: Use keytar for secure credential storage
-- TR-4: Follow TypeScript strict mode requirements from coding standards
+- [ ] Feature is atomic and well-scoped
+- [ ] Feature can be broken into 20-50 tasks
+- [ ] Dependencies are clearly identified
+- [ ] Technical stack is referenced correctly
+- [ ] Security considerations are included
+- [ ] Testing approach is considered
+- [ ] Implementation hints guide task creation
+- [ ] Acceptance criteria are measurable
 
-## Architecture Context
+## Integration with Workflow
 
-- AC-1: Main process handles system operations, database, and secure storage per process separation architecture
-- AC-2: Integrates with renderer process via IPC bridge defined in shared types
-- AC-3: Supports database migrations and configuration management
+Remember this feeds into a specific workflow:
 
-## Acceptance Criteria
+1. **breakdown-phase.md** (this command) → Creates detailed requirements
+2. **write-feature.md** → Expands into comprehensive specifications
+3. **plan-feature.md** → Creates 20-50 implementation tasks
+4. **next-task.md** → Executes tasks with Research → Plan → Implement
 
-- AC-1: Main process starts and initializes without errors
-- AC-2: Database connections are established and migrations run successfully
-- AC-3: IPC channels are properly registered and type-safe
-- AC-4: API keys can be securely stored and retrieved
+Your requirements must provide sufficient context for this entire chain to function smoothly.
 
-## Constraints & Assumptions
+## Common Patterns by Phase Type
 
-- CA-1: Must work with existing Vite build configuration
-- CA-2: Database schema will be defined in subsequent phases
-- CA-3: IPC channels follow interfaces defined in shared/types/ipc.ts
+### Infrastructure Phases
 
-## See Also
+- Focus on technical setup and configuration
+- Include security and performance requirements
+- Emphasize integration points
+- Consider deployment and operations
 
-- docs/specifications/core-architecture-spec.md
-- docs/specifications/implementation-plan.md
-- docs/technical/coding-standards.md
-```
+### Feature Development Phases
 
-**Phase Input:** `phase 2`
-**Feature:** `ai-provider-integration`
-**Output file:** `/.tasks/phase-2/20250708-ai-provider-integration-requirements.md`
+- Focus on user stories and workflows
+- Include UI/UX requirements
+- Emphasize data flow and state management
+- Consider error handling and edge cases
 
-```markdown
-# Feature
+### Integration Phases
 
-Integrate multiple AI providers (OpenAI, Anthropic, Google, Groq, Ollama) using Vercel AI SDK for multi-agent conversations.
+- Focus on API contracts and interfaces
+- Include authentication/authorization
+- Emphasize error handling and retries
+- Consider rate limiting and quotas
 
-## User Stories
+### Polish/Optimization Phases
 
-- As a user, I want to use different AI providers so that I can leverage various AI capabilities
-- As a user, I want providers to be easily configurable so that I can switch between them
-- As a developer, I want a common interface for all providers so that new providers can be easily added
+- Focus on performance metrics
+- Include user experience improvements
+- Emphasize testing and quality
+- Consider monitoring and observability
 
-## Functional Requirements
+## Remember
 
-- FR-1: Implement provider factory pattern for AI service instantiation
-- FR-2: Create configuration system for provider settings and models
-- FR-3: Handle provider-specific authentication and API key management
-- FR-4: Implement streaming responses for real-time conversation updates
+Your goal is to create requirement documents that are:
 
-## Technical Requirements
+- **Specific enough** to prevent ambiguity in feature specifications
+- **Detailed enough** to enable 20-50 task generation
+- **Flexible enough** to allow implementation decisions
+- **Complete enough** to minimize back-and-forth clarification
 
-- TR-1: Use Vercel AI SDK for consistent provider integration
-- TR-2: Store configurations in JSON format as specified in architecture
-- TR-3: Integrate with keytar for secure API key storage
-- TR-4: Support both streaming and non-streaming response modes
+Each requirement document should stand alone while fitting into the larger system context.
 
-## Architecture Context
-
-- AC-1: Providers implement common interface defined in services/ai/providers/
-- AC-2: Configuration managed through main process and stored in /config
-- AC-3: Integrates with existing IPC bridge for renderer communication
-
-## Acceptance Criteria
-
-- AC-1: All five providers can be configured and used successfully
-- AC-2: Streaming responses work correctly for real-time updates
-- AC-3: API keys are stored securely and not exposed in logs
-- AC-4: Provider switching works without application restart
-
-## Constraints & Assumptions
-
-- CA-1: Must use existing security patterns for API key storage
-- CA-2: Provider configurations are user-editable JSON files
-- CA-3: Streaming capabilities vary by provider
-
-## See Also
-
-- docs/specifications/agent-model-spec.md
-- config/models.json
-- src/services/ai/providers/
-```
-
-### Important Notes:
-
-- Always use the current date (`bash` to get the correct date) for the folder and filename
-- Ensure the feature slug is filesystem-safe (lowercase, hyphens, no spaces or special characters)
-- Reference existing project documentation and architecture patterns from `docs/specifications/`
-- Include sufficient technical context for `write-feature.md` to create comprehensive specifications
-- Requirements should be detailed enough to inform architectural decisions but flexible enough for refinement
-- Connect features to existing system architecture and technology stack
-- Use consistent terminology and patterns from project documentation
-- The output feeds into a workflow: breakdown-phase.md → write-feature.md → plan-feature.md → next-task.md
-- Each requirements document should be self-contained but reference related components and dependencies
+<rules>
+  <critical>ALWAYS follow Research → Analyze → Decompose workflow before creating requirements</critical>
+  <critical>Each feature must be sized to generate 20-50 implementation tasks</critical>
+  <critical>Include implementation hints to guide task creation</critical>
+  <critical>Reference CLAUDE.md and project specifications for technical context</critical>
+  <important>Break phases into atomic, well-scoped features</important>
+  <important>Include security, testing, and performance considerations</important>
+  <important>Provide clear dependencies and integration points</important>
+  <important>Use consistent format and terminology across all requirements</important>
+</rules>

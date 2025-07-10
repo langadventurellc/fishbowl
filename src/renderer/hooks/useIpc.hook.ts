@@ -393,6 +393,159 @@ const useIpcErrorHandler = () => {
   return { errors, addError, removeError, clearErrors };
 };
 
+// Custom hook for performance monitoring
+const usePerformanceMonitor = () => {
+  const [performanceStats, setPerformanceStats] = useState<unknown>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const getPerformanceStats = useCallback(() => {
+    if (!isElectronAPIAvailable()) {
+      setError('Electron API not available');
+      return null;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const stats = window.electronAPI.getPerformanceStats();
+      setPerformanceStats(stats);
+      return stats;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get performance stats';
+      setError(errorMessage);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const clearPerformanceStats = useCallback(() => {
+    if (!isElectronAPIAvailable()) {
+      setError('Electron API not available');
+      return false;
+    }
+
+    try {
+      setError(null);
+      window.electronAPI.clearPerformanceStats();
+      setPerformanceStats(null);
+      return true;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to clear performance stats';
+      setError(errorMessage);
+      return false;
+    }
+  }, []);
+
+  const getRecentMetrics = useCallback((limit?: number) => {
+    if (!isElectronAPIAvailable()) {
+      setError('Electron API not available');
+      return null;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      return window.electronAPI.getRecentMetrics(limit);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get recent metrics';
+      setError(errorMessage);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    performanceStats,
+    loading,
+    error,
+    getPerformanceStats,
+    clearPerformanceStats,
+    getRecentMetrics,
+  };
+};
+
+// Custom hook for security monitoring
+const useSecurityMonitor = () => {
+  const [securityStats, setSecurityStats] = useState<unknown>(null);
+  const [auditLog, setAuditLog] = useState<unknown>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const getSecurityStats = useCallback(() => {
+    if (!isElectronAPIAvailable()) {
+      setError('Electron API not available');
+      return null;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const stats = window.electronAPI.getSecurityStats();
+      setSecurityStats(stats);
+      return stats;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get security stats';
+      setError(errorMessage);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const getSecurityAuditLog = useCallback(() => {
+    if (!isElectronAPIAvailable()) {
+      setError('Electron API not available');
+      return null;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      const log = window.electronAPI.getSecurityAuditLog();
+      setAuditLog(log);
+      return log;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get security audit log';
+      setError(errorMessage);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const clearSecurityAuditLog = useCallback(() => {
+    if (!isElectronAPIAvailable()) {
+      setError('Electron API not available');
+      return false;
+    }
+
+    try {
+      setError(null);
+      window.electronAPI.clearSecurityAuditLog();
+      setAuditLog(null);
+      return true;
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to clear security audit log';
+      setError(errorMessage);
+      return false;
+    }
+  }, []);
+
+  return {
+    securityStats,
+    auditLog,
+    loading,
+    error,
+    getSecurityStats,
+    getSecurityAuditLog,
+    clearSecurityAuditLog,
+  };
+};
+
 export {
   useWindowControls,
   useSystemInfo,
@@ -404,4 +557,6 @@ export {
   useDevTools,
   usePlatformInfo,
   useIpcErrorHandler,
+  usePerformanceMonitor,
+  useSecurityMonitor,
 };

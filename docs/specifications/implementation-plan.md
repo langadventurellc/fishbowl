@@ -26,11 +26,11 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 
 #### 1.1 Project Setup
 
-- [ ] Initialize Electron + React + TypeScript project with Vite
-- [ ] Configure build system and development environment
-- [ ] Set up ESLint, Prettier, and TypeScript configs
-- [ ] Create folder structure as specified
-- [ ] Configure Electron Builder for all platforms
+- [x] Initialize Electron + React + TypeScript project with Vite
+- [x] Configure build system and development environment
+- [x] Set up ESLint, Prettier, and TypeScript configs
+- [x] Create folder structure as specified
+- [x] Configure Electron Builder for all platforms
 
 #### 1.2 Core Infrastructure
 
@@ -229,7 +229,7 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 #### 8.1 Testing
 
 - [ ] Write unit tests for core logic
-- [ ] Create integration tests
+- [ ] Create integration tests (consider using Playwright - https://www.electronjs.org/docs/latest/tutorial/automated-testing#using-playwright and https://playwright.dev/docs/api/class-electron/)
 - [ ] Perform cross-platform testing
 - [ ] Conduct performance testing
 - [ ] Execute security audit
