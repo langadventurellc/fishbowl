@@ -124,9 +124,13 @@ describe('useAgents Hook Integration', () => {
     });
 
     it('should handle Electron API unavailability', async () => {
-      // Temporarily remove electronAPI
+      // Temporarily remove electronAPI using defineProperty
       const originalAPI = (window as any).electronAPI;
-      delete (window as any).electronAPI;
+      Object.defineProperty(window, 'electronAPI', {
+        value: undefined,
+        configurable: true,
+        writable: true,
+      });
 
       const { result } = renderHook(() => useAgents());
 
@@ -138,7 +142,11 @@ describe('useAgents Hook Integration', () => {
       expect(mockStoreActions.setError).toHaveBeenCalledWith('Electron API not available');
 
       // Restore API
-      (window as any).electronAPI = originalAPI;
+      Object.defineProperty(window, 'electronAPI', {
+        value: originalAPI,
+        configurable: true,
+        writable: true,
+      });
     });
   });
 
