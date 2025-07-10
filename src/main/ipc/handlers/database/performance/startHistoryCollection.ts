@@ -1,6 +1,6 @@
 import type { PerformanceHistoryPoint } from '@shared/types';
-import { performanceManager } from '@main/database/performance';
-import { ipcPerformanceManager } from '@main/performance';
+import { performanceManager } from '../../../..//database/performance';
+import { ipcPerformanceManager } from '../../../..//performance';
 import { performanceHistoryStorage } from './performanceHistoryStorage';
 
 /**

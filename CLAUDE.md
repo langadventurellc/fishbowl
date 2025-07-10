@@ -82,33 +82,6 @@ This includes:
 
 Your code must be 100% clean. No exceptions.
 
-**Recovery Protocol:**
-
-- When interrupted by a quality check failure, maintain awareness of your original task
-- After fixing all issues and verifying the fix, continue where you left off
-- Use the TODO.md to track both the fix and your original task
-
-## Working Memory Management
-
-### When context gets long:
-
-- Re-read this CLAUDE.md file
-- Summarize progress in a PROGRESS.md file
-- Document current state before major changes
-
-### Maintain TODO.md:
-
-```
-## Current Task
-- [ ] What we're doing RIGHT NOW
-
-## Completed
-- [x] What's actually done and tested
-
-## Next Steps
-- [ ] What comes next
-```
-
 ## Project Overview
 
 Fishbowl is an Electron-based desktop application for multi-agent AI conversations. The project is currently in the specification phase with comprehensive documentation in `docs/specifications/`.
@@ -147,6 +120,7 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 - **NO shared "kitchen-sink" modules** - One export per file!
 - **NO hardcoded secrets or environment values**
 - **NO direct DOM manipulation in React** - Use React patterns
+- **NO import aliases** - Use relative paths only - import aliases do not compile correctly in Electron scripts
 
 > **AUTOMATED ENFORCEMENT**: ESLint will BLOCK commits that violate these rules.
 > When you see `❌ ESLint error`, you MUST fix it immediately!

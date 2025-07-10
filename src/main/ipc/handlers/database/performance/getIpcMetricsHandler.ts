@@ -1,7 +1,7 @@
-import { ipcMain } from 'electron';
 import type { IpcPerformanceMetrics } from '@shared/types';
-import { ipcPerformanceManager } from '@main/performance';
-import { withErrorRecovery } from '@main/error-recovery';
+import { ipcMain } from 'electron';
+import { withErrorRecovery } from '../../../../error-recovery';
+import { ipcPerformanceManager } from '../../../../performance';
 
 /**
  * Handler for getting IPC performance metrics

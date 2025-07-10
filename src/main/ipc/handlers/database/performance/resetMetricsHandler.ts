@@ -1,7 +1,7 @@
 import { ipcMain } from 'electron';
-import { queryMonitor } from '@main/database/performance';
-import { ipcPerformanceManager } from '@main/performance';
-import { withErrorRecovery } from '@main/error-recovery';
+import { queryMonitor } from '../../../..//database/performance';
+import { withErrorRecovery } from '../../../..//error-recovery';
+import { ipcPerformanceManager } from '../../../..//performance';
 
 /**
  * Handler for resetting performance metrics

@@ -1,6 +1,6 @@
-import { ipcMain } from 'electron';
 import type { PerformanceThresholds } from '@shared/types';
-import { withErrorRecovery } from '@main/error-recovery';
+import { ipcMain } from 'electron';
+import { withErrorRecovery } from '../../../..//error-recovery';
 import { setThresholds } from './setThresholds';
 
 /**

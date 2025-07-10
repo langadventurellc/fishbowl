@@ -1,7 +1,7 @@
-import { ipcMain } from 'electron';
 import type { DatabasePerformanceMetrics } from '@shared/types';
-import { performanceManager } from '@main/database/performance';
-import { withErrorRecovery } from '@main/error-recovery';
+import { ipcMain } from 'electron';
+import { performanceManager } from '../../../../database/performance';
+import { withErrorRecovery } from '../../../../error-recovery';
 
 /**
  * Handler for getting database performance metrics

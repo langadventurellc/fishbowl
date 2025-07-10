@@ -1,7 +1,7 @@
-import { ipcMain } from 'electron';
 import type { SystemPerformanceMetrics } from '@shared/types';
-import { withErrorRecovery } from '@main/error-recovery';
+import { ipcMain } from 'electron';
 import os from 'os';
+import { withErrorRecovery } from '../../../..//error-recovery';
 
 /**
  * Handler for getting system performance metrics

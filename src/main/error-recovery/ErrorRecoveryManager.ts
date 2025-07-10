@@ -33,7 +33,7 @@ export class ErrorRecoveryManager {
       },
       recover: async () => {
         // Try to reconnect to database
-        const { initializeDatabase } = await import('@main/database/connection/initializeDatabase');
+        const { initializeDatabase } = await import('../database/connection/initializeDatabase');
         initializeDatabase();
         return { success: true, message: 'Database connection restored' };
       },
@@ -130,7 +130,7 @@ export class ErrorRecoveryManager {
 
         // Clear caches
         const { ipcPerformanceManager } = await import(
-          '@main/performance/ipcPerformanceManagerInstance'
+          '../performance/ipcPerformanceManagerInstance'
         );
         ipcPerformanceManager.clearCache();
 
@@ -371,7 +371,7 @@ export class ErrorRecoveryManager {
 
     try {
       // Check database
-      const { getDatabase } = await import('@main/database/connection/getDatabase');
+      const { getDatabase } = await import('../database/connection/getDatabase');
       const db = getDatabase();
       db.prepare('SELECT 1').get();
       results.database = true;

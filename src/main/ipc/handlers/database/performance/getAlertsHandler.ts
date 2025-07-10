@@ -1,5 +1,5 @@
 import { ipcMain } from 'electron';
-import { withErrorRecovery } from '@main/error-recovery';
+import { withErrorRecovery } from '../../../../error-recovery';
 import { getPerformanceAlerts } from './getPerformanceAlerts';
 
 /**

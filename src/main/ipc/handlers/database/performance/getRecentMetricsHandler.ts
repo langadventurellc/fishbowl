@@ -1,10 +1,10 @@
-import { ipcMain } from 'electron';
 import type { PerformanceMetric } from '@shared/types';
-import type { QueryStats } from '@main/database/performance';
-import type { IpcPerformanceMetrics } from '@main/performance';
-import { performanceManager } from '@main/database/performance';
-import { ipcPerformanceManager } from '@main/performance';
-import { withErrorRecovery } from '@main/error-recovery';
+import { ipcMain } from 'electron';
+import type { QueryStats } from '../../../../database/performance';
+import { performanceManager } from '../../../../database/performance';
+import { withErrorRecovery } from '../../../../error-recovery';
+import type { IpcPerformanceMetrics } from '../../../../performance';
+import { ipcPerformanceManager } from '../../../../performance';
 
 /**
  * Handler for getting recent performance metrics

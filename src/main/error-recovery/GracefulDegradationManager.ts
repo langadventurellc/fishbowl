@@ -268,7 +268,7 @@ export class GracefulDegradationManager {
 
     // Check database health
     try {
-      const { getDatabase } = await import('@main/database/connection/getDatabase');
+      const { getDatabase } = await import('../database/connection/getDatabase');
       const db = getDatabase();
       db.prepare('SELECT 1').get();
 

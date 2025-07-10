@@ -1,8 +1,8 @@
-import { ipcMain } from 'electron';
 import type { PerformanceOptimizationRequest, PerformanceOptimizationResult } from '@shared/types';
-import { performanceManager } from '@main/database/performance';
-import { ipcPerformanceManager } from '@main/performance';
-import { withErrorRecovery } from '@main/error-recovery';
+import { ipcMain } from 'electron';
+import { performanceManager } from '../../../..//database/performance';
+import { withErrorRecovery } from '../../../..//error-recovery';
+import { ipcPerformanceManager } from '../../../..//performance';
 
 /**
  * Handler for performance optimization
