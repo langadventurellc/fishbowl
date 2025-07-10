@@ -521,9 +521,9 @@ describe('AgentStore', () => {
 
 ```typescript
 // ✅ Good: Proper mocking
-jest.mock('../services/ai/providers/openai', () => ({
-  OpenAIProvider: jest.fn().mockImplementation(() => ({
-    generateResponse: jest.fn().mockResolvedValue({
+vi.mock('../services/ai/providers/openai', () => ({
+  OpenAIProvider: vi.fn().mockImplementation(() => ({
+    generateResponse: vi.fn().mockResolvedValue({
       content: 'Mock response',
       usage: { tokens: 100 }
     }))

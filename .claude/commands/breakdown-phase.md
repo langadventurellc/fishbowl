@@ -44,17 +44,22 @@ Say: "Let me analyze the phase and project context before creating requirement d
    - By data entity or domain object
    - By integration point
 
-3. **Dependency Analysis**:
+3. **Dependency Analysis & Ordering**:
    - Identify features that must be completed first
-   - Note optional dependencies
+   - Order features by implementation sequence (1, 2, 3, etc.)
+   - Infrastructure and setup features get lowest numbers
+   - Dependent features come after their dependencies
+   - Optional features get higher numbers
    - Flag potential circular dependencies
 
 ### 3. Output Generation
 
-Create new files at `.tasks/{phase-x}/{YYYYMMDD}-{feature-slug}-requirements.md` (use `bash` to get the correct date) with enhanced structure:
+Create new files at `.tasks/{phase-x}/{order}-{feature-slug}-requirements.md` where `{order}` is a 2-digit implementation order number (01, 02, 03, etc.) based on dependencies and logical build sequence:
 
 ```markdown
 # Feature: [Clear, Specific Feature Name]
+
+**Implementation Order: {order}**
 
 [2-3 sentence description providing context from the phase and how this feature contributes to the overall system]
 

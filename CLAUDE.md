@@ -97,6 +97,7 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 ### Technology Stack
 
 - **Framework**: Electron with Vite build system
+- **Testing**: Vitest for unit tests, Playwright for end-to-end tests
 - **Frontend**: React 18+, TypeScript (strict mode), Zustand
 - **Database**: SQLite via better-sqlite3
 - **AI Integration**: Vercel AI SDK
