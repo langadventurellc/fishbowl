@@ -2,8 +2,8 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import { multipleExportsPlugin, statementCountPlugin } from '@langadventurellc/tsla-linter';
 import prettierConfig from 'eslint-config-prettier';
-import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import reactPlugin from 'eslint-plugin-react';
+import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import sonarjs from 'eslint-plugin-sonarjs';
 import { dirname } from 'path';
 import tseslint from 'typescript-eslint';
@@ -32,6 +32,7 @@ const eslintConfig = [
       '**/scripts/**',
       '**/__mocks__/**',
       'eslint.config.mjs',
+      'esbuild.preload.mjs',
       'vite.config.ts',
     ],
   },
