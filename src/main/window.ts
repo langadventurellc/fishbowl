@@ -16,7 +16,10 @@ export const createMainWindow = (): BrowserWindow => {
       webSecurity: true,
       allowRunningInsecureContent: false,
       experimentalFeatures: false,
-      preload: path.join(__dirname, '../../preload/preload/index.js'),
+      // Fixed preload path
+      preload: isDev
+        ? path.join(__dirname, '../../../preload/src/preload/index.js')
+        : path.join(__dirname, '../preload/preload/index.js'),
     },
     show: false, // Don't show until ready-to-show
     titleBarStyle: 'default',

@@ -1,17 +1,18 @@
 /**
  * Query optimization utilities
  */
-import Database from 'better-sqlite3';
+import { Database } from 'better-sqlite3';
 import { getDatabase } from '../connection';
-import { QueryPlan } from './QueryPlan';
 import { IndexInfo } from './IndexInfo';
+import { QueryPlan } from './QueryPlan';
 import { TableInfo } from './TableInfo';
 
 export class QueryOptimizer {
-  private db: Database.Database;
+  private database: Database | null = null;
 
-  constructor() {
-    this.db = getDatabase();
+  private getDb(): Database {
+    this.database ??= getDatabase();
+    return this.database;
   }
 
   /**
@@ -19,7 +20,7 @@ export class QueryOptimizer {
    */
   analyzeQueryPlan(sql: string, parameters?: unknown[]): QueryPlan[] {
     const explainQuery = `EXPLAIN QUERY PLAN ${sql}`;
-    const stmt = this.db.prepare(explainQuery);
+    const stmt = this.getDb().prepare(explainQuery);
 
     if (parameters) {
       return stmt.all(...parameters) as QueryPlan[];
@@ -33,7 +34,7 @@ export class QueryOptimizer {
    */
   getDetailedQueryPlan(sql: string, parameters?: unknown[]): string[] {
     const explainQuery = `EXPLAIN ${sql}`;
-    const stmt = this.db.prepare(explainQuery);
+    const stmt = this.getDb().prepare(explainQuery);
 
     const result = parameters ? stmt.all(...parameters) : stmt.all();
     return (result as Record<string, unknown>[]).map(row => Object.values(row).join(' | '));
@@ -43,7 +44,7 @@ export class QueryOptimizer {
    * Get index information for a table
    */
   getTableIndexes(tableName: string): IndexInfo[] {
-    const stmt = this.db.prepare(`PRAGMA index_list(${tableName})`);
+    const stmt = this.getDb().prepare(`PRAGMA index_list(${tableName})`);
     return stmt.all() as IndexInfo[];
   }
 
@@ -52,7 +53,7 @@ export class QueryOptimizer {
    */
   getTableStats(tableName: string): TableInfo {
     // Get row count
-    const countStmt = this.db.prepare(`SELECT COUNT(*) as count FROM ${tableName}`);
+    const countStmt = this.getDb().prepare(`SELECT COUNT(*) as count FROM ${tableName}`);
     const countResult = countStmt.get() as { count: number };
 
     // Get indexes
@@ -69,8 +70,8 @@ export class QueryOptimizer {
    * Get all table statistics
    */
   getAllTableStats(): TableInfo[] {
-    const tablesStmt = this.db.prepare(`
-      SELECT name FROM sqlite_master 
+    const tablesStmt = this.getDb().prepare(`
+      SELECT name FROM sqlite_master
       WHERE type='table' AND name NOT LIKE 'sqlite_%'
     `);
 
@@ -83,10 +84,10 @@ export class QueryOptimizer {
    */
   optimizeDatabase(): void {
     // Analyze all tables to update statistics
-    this.db.exec('ANALYZE');
+    this.getDb().exec('ANALYZE');
 
     // Rebuild indexes if needed
-    this.db.exec('REINDEX');
+    this.getDb().exec('REINDEX');
   }
 
   /**
@@ -98,9 +99,9 @@ export class QueryOptimizer {
     pageCount: number;
     freePages: number;
   } {
-    const pageSizeStmt = this.db.prepare('PRAGMA page_size');
-    const pageCountStmt = this.db.prepare('PRAGMA page_count');
-    const freePagesStmt = this.db.prepare('PRAGMA freelist_count');
+    const pageSizeStmt = this.getDb().prepare('PRAGMA page_size');
+    const pageCountStmt = this.getDb().prepare('PRAGMA page_count');
+    const freePagesStmt = this.getDb().prepare('PRAGMA freelist_count');
 
     const pageSize = (pageSizeStmt.get() as { page_size: number }).page_size;
     const pageCount = (pageCountStmt.get() as { page_count: number }).page_count;
@@ -118,7 +119,7 @@ export class QueryOptimizer {
    * Vacuum database to reclaim space
    */
   vacuumDatabase(): void {
-    this.db.exec('VACUUM');
+    this.getDb().exec('VACUUM');
   }
 
   /**
@@ -185,7 +186,7 @@ export class QueryOptimizer {
    * Check if WAL mode is enabled
    */
   isWALMode(): boolean {
-    const stmt = this.db.prepare('PRAGMA journal_mode');
+    const stmt = this.getDb().prepare('PRAGMA journal_mode');
     const result = stmt.get() as { journal_mode: string };
     return result.journal_mode.toLowerCase() === 'wal';
   }
@@ -194,13 +195,13 @@ export class QueryOptimizer {
    * Enable WAL mode for better performance
    */
   enableWALMode(): void {
-    this.db.exec('PRAGMA journal_mode = WAL');
+    this.getDb().exec('PRAGMA journal_mode = WAL');
   }
 
   /**
    * Checkpoint WAL file
    */
   checkpointWAL(): void {
-    this.db.exec('PRAGMA wal_checkpoint(TRUNCATE)');
+    this.getDb().exec('PRAGMA wal_checkpoint(TRUNCATE)');
   }
 }

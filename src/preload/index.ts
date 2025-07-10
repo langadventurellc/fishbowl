@@ -1,8 +1,8 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { IpcChannels } from '../shared/types';
 import { ipcPerformanceMonitor } from './performance-monitor';
-import { validateIpcArguments } from './validation';
 import { preloadSecurityManager } from './security';
+import { validateIpcArguments } from './validation';
 
 // Helper function to create secure IPC wrapper with validation, performance monitoring, and security
 const createSecureIpcWrapper = <T extends keyof IpcChannels>(channel: T): IpcChannels[T] => {

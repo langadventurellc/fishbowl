@@ -1,15 +1,16 @@
 /**
  * Transaction manager for complex database operations
  */
-import Database from 'better-sqlite3';
+import { Database } from 'better-sqlite3';
 import { getDatabase } from '../connection';
 import { TransactionOptions } from './TransactionOptions';
 
 export class TransactionManager {
-  private db: Database.Database;
+  private database: Database | null = null;
 
-  constructor() {
-    this.db = getDatabase();
+  private getDb(): Database {
+    this.database ??= getDatabase();
+    return this.database;
   }
 
   /**
@@ -18,15 +19,12 @@ export class TransactionManager {
    * @param options - Transaction options
    * @returns The result of the operation
    */
-  executeTransaction<T>(
-    operation: (db: Database.Database) => T,
-    _options: TransactionOptions = {},
-  ): T {
-    const transaction = this.db.transaction((db: Database.Database) => {
+  executeTransaction<T>(operation: (db: Database) => T, _options: TransactionOptions = {}): T {
+    const transaction = this.getDb().transaction((db: Database) => {
       return operation(db);
     });
 
-    return transaction(this.db);
+    return transaction(this.getDb());
   }
 
   /**
@@ -36,7 +34,7 @@ export class TransactionManager {
    * @returns Array of results from each operation
    */
   executeBatchTransaction<T>(
-    operations: Array<(db: Database.Database) => T>,
+    operations: Array<(db: Database) => T>,
     options: TransactionOptions = {},
   ): T[] {
     return this.executeTransaction(db => {
@@ -49,7 +47,7 @@ export class TransactionManager {
    * @param operation - Function to execute within read-only transaction
    * @returns The result of the operation
    */
-  executeReadOnlyTransaction<T>(operation: (db: Database.Database) => T): T {
+  executeReadOnlyTransaction<T>(operation: (db: Database) => T): T {
     return this.executeTransaction(operation, { readOnly: true });
   }
 
@@ -58,7 +56,7 @@ export class TransactionManager {
    * @param operation - Function to execute within immediate transaction
    * @returns The result of the operation
    */
-  executeImmediateTransaction<T>(operation: (db: Database.Database) => T): T {
+  executeImmediateTransaction<T>(operation: (db: Database) => T): T {
     return this.executeTransaction(operation, { immediate: true });
   }
 
@@ -67,7 +65,7 @@ export class TransactionManager {
    * @param operation - Function to execute within exclusive transaction
    * @returns The result of the operation
    */
-  executeExclusiveTransaction<T>(operation: (db: Database.Database) => T): T {
+  executeExclusiveTransaction<T>(operation: (db: Database) => T): T {
     return this.executeTransaction(operation, { exclusive: true });
   }
 }

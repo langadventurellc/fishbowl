@@ -19,9 +19,8 @@ CREATE INDEX IF NOT EXISTS idx_conversation_agents_conversation_agent ON convers
 -- Covering index for messages metadata queries
 CREATE INDEX IF NOT EXISTS idx_messages_type_timestamp ON messages(type, timestamp DESC);
 
--- Partial index for active conversation agents (optimization for joins)
-CREATE INDEX IF NOT EXISTS idx_conversation_agents_active ON conversation_agents(conversation_id, agent_id) 
-WHERE EXISTS (SELECT 1 FROM agents WHERE agents.id = conversation_agents.agent_id AND agents.is_active = 1);
+-- Simple index for conversation_agents (removed subquery - not supported in SQLite partial indexes)
+CREATE INDEX IF NOT EXISTS idx_conversation_agents_active ON conversation_agents(conversation_id, agent_id);
 
 -- Index for message search by content (if full-text search is needed in future)
 -- Note: This is prepared for future full-text search capabilities

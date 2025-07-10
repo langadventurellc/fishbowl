@@ -1,16 +1,17 @@
 /**
  * Advanced query analysis and optimization
  */
-import Database from 'better-sqlite3';
+import { Database } from 'better-sqlite3';
 import { getDatabase } from '../connection';
 import { QueryPlan } from '../performance/QueryPlan';
 import { QueryAnalysisResult } from './QueryAnalysisResult';
 
 export class QueryAnalyzer {
-  private db: Database.Database;
+  private database: Database | null = null;
 
-  constructor() {
-    this.db = getDatabase();
+  private getDb(): Database {
+    this.database ??= getDatabase();
+    return this.database;
   }
 
   /**
@@ -20,7 +21,7 @@ export class QueryAnalyzer {
     const startTime = performance.now();
 
     // Execute query to get timing
-    const stmt = this.db.prepare(sql);
+    const stmt = this.getDb().prepare(sql);
     const result = parameters ? stmt.all(...parameters) : stmt.all();
     const executionTime = performance.now() - startTime;
 
@@ -49,7 +50,7 @@ export class QueryAnalyzer {
    */
   private getQueryPlan(sql: string, parameters?: unknown[]): QueryPlan[] {
     const explainQuery = `EXPLAIN QUERY PLAN ${sql}`;
-    const stmt = this.db.prepare(explainQuery);
+    const stmt = this.getDb().prepare(explainQuery);
 
     if (parameters) {
       return stmt.all(...parameters) as QueryPlan[];

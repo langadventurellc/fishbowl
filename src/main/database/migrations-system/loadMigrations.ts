@@ -6,7 +6,11 @@ import path from 'path';
 import { Migration } from './Migration';
 
 export function loadMigrations(): Migration[] {
-  const migrationsDir = path.join(__dirname, '../migrations');
+  // Try development path first, then production path
+  const devPath = path.join(__dirname, '..', 'migrations');
+  const prodPath = () => path.join(process.cwd(), 'src', 'main', 'database', 'migrations');
+
+  const migrationsDir = fs.existsSync(devPath) ? devPath : prodPath();
   const migrations: Migration[] = [];
 
   if (!fs.existsSync(migrationsDir)) {
