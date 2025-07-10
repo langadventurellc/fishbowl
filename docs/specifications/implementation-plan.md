@@ -34,10 +34,10 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 
 #### 1.2 Core Infrastructure
 
-- [ ] Implement IPC communication bridge with type safety
-- [ ] Set up SQLite database with initial schema
-- [ ] Create database migration system
-- [ ] Implement secure storage for API keys (keytar)
+- [x] Implement IPC communication bridge with type safety
+- [x] Set up SQLite database with initial schema
+- [x] Create database migration system
+- [x] Implement secure storage for API keys (keytar)
 - [ ] Set up Zustand store with basic slices
 
 #### 1.3 Basic UI Shell
