@@ -185,7 +185,23 @@ const electronAPI = {
   secureKeytarSet: createSecureIpcWrapper('secure:keytar:set'),
   secureKeytarDelete: createSecureIpcWrapper('secure:keytar:delete'),
 
-  // Performance monitoring utilities
+  // Performance monitoring operations
+  performanceGetUnifiedReport: createSecureIpcWrapper('performance:getUnifiedReport'),
+  performanceGetDatabaseMetrics: createSecureIpcWrapper('performance:getDatabaseMetrics'),
+  performanceGetIpcMetrics: createSecureIpcWrapper('performance:getIpcMetrics'),
+  performanceGetSystemMetrics: createSecureIpcWrapper('performance:getSystemMetrics'),
+  performanceGetRecentMetrics: createSecureIpcWrapper('performance:getRecentMetrics'),
+  performanceGetHistory: createSecureIpcWrapper('performance:getHistory'),
+  performanceGetAlerts: createSecureIpcWrapper('performance:getAlerts'),
+  performanceResolveAlert: createSecureIpcWrapper('performance:resolveAlert'),
+  performanceOptimize: createSecureIpcWrapper('performance:optimize'),
+  performanceSetThresholds: createSecureIpcWrapper('performance:setThresholds'),
+  performanceGetThresholds: createSecureIpcWrapper('performance:getThresholds'),
+  performanceEnableMonitoring: createSecureIpcWrapper('performance:enableMonitoring'),
+  performanceDisableMonitoring: createSecureIpcWrapper('performance:disableMonitoring'),
+  performanceResetMetrics: createSecureIpcWrapper('performance:resetMetrics'),
+
+  // Legacy performance monitoring utilities (for backwards compatibility)
   getPerformanceStats: () => ipcPerformanceMonitor.getAllStats(),
   clearPerformanceStats: () => ipcPerformanceMonitor.clearStats(),
   getRecentMetrics: (limit?: number) => ipcPerformanceMonitor.getRecentMetrics(limit),

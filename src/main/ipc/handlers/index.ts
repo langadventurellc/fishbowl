@@ -67,3 +67,6 @@ export { dbTransactionsTransferMessagesHandler } from './dbTransactionsTransferM
 
 // Database backup handlers
 export * from './database/backup';
+
+// Database performance handlers
+export * from './database/performance';

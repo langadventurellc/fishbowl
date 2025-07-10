@@ -97,6 +97,28 @@ export interface IpcChannels {
   'secure:keytar:get': (service: string, account: string) => Promise<string | null>;
   'secure:keytar:set': (service: string, account: string, password: string) => Promise<void>;
   'secure:keytar:delete': (service: string, account: string) => Promise<void>;
+
+  // Performance monitoring operations
+  'performance:getUnifiedReport': () => Promise<UnifiedPerformanceReport>;
+  'performance:getDatabaseMetrics': () => Promise<DatabasePerformanceMetrics>;
+  'performance:getIpcMetrics': () => Promise<IpcPerformanceMetrics>;
+  'performance:getSystemMetrics': () => Promise<SystemPerformanceMetrics>;
+  'performance:getRecentMetrics': (count?: number) => Promise<PerformanceMetric[]>;
+  'performance:getHistory': (duration?: number) => Promise<PerformanceHistoryPoint[]>;
+  'performance:getAlerts': (unresolved?: boolean) => Promise<PerformanceAlert[]>;
+  'performance:resolveAlert': (alertId: string) => Promise<void>;
+  'performance:optimize': (
+    request?: PerformanceOptimizationRequest,
+  ) => Promise<PerformanceOptimizationResult>;
+  'performance:setThresholds': (thresholds: Partial<PerformanceThresholds>) => Promise<void>;
+  'performance:getThresholds': () => Promise<PerformanceThresholds>;
+  'performance:enableMonitoring': (
+    category?: 'database' | 'ipc' | 'system' | 'all',
+  ) => Promise<void>;
+  'performance:disableMonitoring': (
+    category?: 'database' | 'ipc' | 'system' | 'all',
+  ) => Promise<void>;
+  'performance:resetMetrics': (category?: 'database' | 'ipc' | 'system' | 'all') => Promise<void>;
 }
 
 // Window state
@@ -323,4 +345,127 @@ export interface BackupStats {
   totalSize: number;
   oldestBackup?: number;
   newestBackup?: number;
+}
+
+// Performance monitoring types
+export interface PerformanceMetric {
+  id: string;
+  type: 'database' | 'ipc' | 'system';
+  operation: string;
+  duration: number;
+  timestamp: number;
+  success: boolean;
+  error?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface DatabasePerformanceMetrics {
+  totalQueries: number;
+  averageQueryTime: number;
+  slowQueries: number;
+  failedQueries: number;
+  queryDistribution: Record<string, number>;
+  cacheHitRate: number;
+  walSize: number;
+  lastCheckpoint: number;
+  databaseSize: number;
+  connectionCount: number;
+}
+
+export interface IpcPerformanceMetrics {
+  totalCalls: number;
+  averageCallDuration: number;
+  slowCalls: number;
+  failedCalls: number;
+  channelDistribution: Record<string, number>;
+  memoryUsage: number;
+  activeHandlers: number;
+}
+
+export interface SystemPerformanceMetrics {
+  cpuUsage: number;
+  memoryUsage: {
+    used: number;
+    total: number;
+    percentage: number;
+  };
+  diskUsage: {
+    used: number;
+    total: number;
+    percentage: number;
+  };
+  uptime: number;
+}
+
+export interface UnifiedPerformanceReport {
+  timestamp: number;
+  duration: number;
+  database: DatabasePerformanceMetrics;
+  ipc: IpcPerformanceMetrics;
+  system: SystemPerformanceMetrics;
+  alerts: PerformanceAlert[];
+  recommendations: string[];
+}
+
+export interface PerformanceAlert {
+  id: string;
+  type: 'warning' | 'error' | 'info';
+  category: 'database' | 'ipc' | 'system';
+  message: string;
+  timestamp: number;
+  threshold?: number;
+  actualValue?: number;
+  resolved: boolean;
+}
+
+export interface PerformanceThresholds {
+  database: {
+    maxQueryTime: number;
+    maxWalSize: number;
+    minCacheHitRate: number;
+    maxFailureRate: number;
+  };
+  ipc: {
+    maxCallDuration: number;
+    maxMemoryUsage: number;
+    maxFailureRate: number;
+  };
+  system: {
+    maxCpuUsage: number;
+    maxMemoryUsage: number;
+    maxDiskUsage: number;
+  };
+}
+
+export interface PerformanceHistoryPoint {
+  timestamp: number;
+  database: {
+    queryTime: number;
+    queryCount: number;
+    cacheHitRate: number;
+  };
+  ipc: {
+    callDuration: number;
+    callCount: number;
+    memoryUsage: number;
+  };
+  system: {
+    cpuUsage: number;
+    memoryUsage: number;
+  };
+}
+
+export interface PerformanceOptimizationRequest {
+  targetAreas?: ('database' | 'ipc' | 'all')[];
+  aggressive?: boolean;
+  autoFix?: boolean;
+  dryRun?: boolean;
+}
+
+export interface PerformanceOptimizationResult {
+  success: boolean;
+  optimizationsApplied: string[];
+  performanceGain?: number;
+  warnings?: string[];
+  error?: string;
 }

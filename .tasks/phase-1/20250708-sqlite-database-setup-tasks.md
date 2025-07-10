@@ -278,7 +278,7 @@ erDiagram
   - [x] 5.3 Implement database backup and recovery functionality
   - [x] 5.4 Create comprehensive database tests (unit)
   - [x] 5.5 Create comprehensive database tests (integration)
-  - [ ] 5.6 Add performance monitoring and optimization
+  - [x] 5.6 Add performance monitoring and optimization
 
   ### Files modified with description of changes
   - `src/main/database/backup/` - Created comprehensive backup and recovery system with modular architecture including BackupManager, BackupOptions, RestoreOptions, BackupResult, RestoreResult, BackupMetadata, and utility functions for file operations, validation, and cleanup
@@ -360,3 +360,20 @@ erDiagram
   - WAL mode is now enabled with optimal performance settings: synchronous=NORMAL, 16MB cache, memory temp store, 256MB mmap
   - Checkpoint manager monitors WAL file size every 30 seconds and triggers checkpoints when file exceeds 64MB
   - Supports all checkpoint modes (PASSIVE, FULL, RESTART, TRUNCATE) with configurable behavior
+  - `src/shared/types/index.ts` - Added comprehensive performance monitoring types including UnifiedPerformanceReport, DatabasePerformanceMetrics, IpcPerformanceMetrics, SystemPerformanceMetrics, PerformanceAlert, PerformanceThresholds, PerformanceHistoryPoint, and optimization request/result types
+  - `src/main/ipc/handlers/database/performance/` - Created modular performance monitoring IPC handlers with separate files for each operation (getUnifiedReport, getDatabaseMetrics, getIpcMetrics, getSystemMetrics, getRecentMetrics, getHistory, getAlerts, resolveAlert, optimize, thresholds management, monitoring controls)
+  - `src/main/ipc/handlers.ts` - Updated to register new performance monitoring handlers replacing legacy performance handlers
+  - `src/preload/index.ts` - Added comprehensive performance monitoring API exposure to renderer process with security validation
+  - `src/renderer/hooks/usePerformanceMonitor.ts` - Created comprehensive React hook for performance monitoring with unified reporting, real-time metrics, alerts management, optimization controls, auto-refresh capabilities, and state management
+  - `src/renderer/hooks/UsePerformanceMonitorReturn.ts` - Created separate interface file for performance monitor return types to follow one-export-per-file pattern
+  - `src/renderer/hooks/index.ts` - Updated to export performance monitoring hook and types
+  - All performance monitoring modules follow the one-export-per-file pattern with appropriate barrel files for organization
+  - Created unified performance monitoring system that combines database, IPC, and system metrics into comprehensive reports
+  - Added real-time performance alerts with configurable thresholds for database query times, IPC call durations, and system resource usage
+  - Implemented performance history collection with automatic data retention (24-hour rolling window)
+  - Added performance optimization engine with dry-run capabilities, aggressive optimization modes, and automatic optimization recommendations
+  - Created comprehensive threshold management system for performance alerts and monitoring
+  - Integrated with existing database performance manager and IPC performance monitor for unified reporting
+  - Added React hooks for frontend integration with auto-refresh, loading states, error handling, and real-time updates
+  - System supports enabling/disabling monitoring by category (database, IPC, system) and resetting metrics for performance analysis
+  - Performance monitoring includes query distribution analysis, cache hit rates, WAL size monitoring, memory usage tracking, and system resource utilization

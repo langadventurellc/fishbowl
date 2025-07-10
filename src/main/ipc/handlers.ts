@@ -49,6 +49,8 @@ import {
   // Development handlers
   devIsDevHandler,
   devOpenDevToolsHandler,
+  // Database performance handlers
+  registerDatabasePerformanceHandlers,
   secureCredentialsDeleteHandler,
   // Secure storage handlers
   secureCredentialsGetHandler,
@@ -291,43 +293,8 @@ export const setupIpcHandlers = (): void => {
     withPerformanceMonitoring('db:backup:stats', dbBackupStatsHandler),
   );
 
-  // Performance monitoring handlers
-  ipcMain.handle('performance:getReport', () => {
-    return ipcPerformanceManager.generateReport();
-  });
-
-  ipcMain.handle('performance:getMetrics', (_, channel?: string) => {
-    const metrics = ipcPerformanceManager.getMetrics(channel);
-    // Convert Map to object for serialization
-    if (metrics instanceof Map) {
-      return Object.fromEntries(metrics);
-    }
-    return metrics;
-  });
-
-  ipcMain.handle('performance:getSlowCalls', () => {
-    return ipcPerformanceManager.getSlowCalls();
-  });
-
-  ipcMain.handle('performance:resetMetrics', (_, channel?: string) => {
-    ipcPerformanceManager.resetMetrics(channel);
-    return { success: true };
-  });
-
-  ipcMain.handle('performance:optimize', async () => {
-    await ipcPerformanceManager.optimizePerformance();
-    return { success: true };
-  });
-
-  ipcMain.handle('performance:enableAutoOptimization', () => {
-    ipcPerformanceManager.enableAutoOptimization();
-    return { success: true };
-  });
-
-  ipcMain.handle('performance:disableAutoOptimization', () => {
-    ipcPerformanceManager.disableAutoOptimization();
-    return { success: true };
-  });
+  // Register all performance monitoring handlers (database, IPC, system)
+  registerDatabasePerformanceHandlers();
 
   // Error recovery and graceful degradation handlers
   ipcMain.handle('errorRecovery:getSystemStatus', () => {

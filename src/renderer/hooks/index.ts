@@ -24,3 +24,7 @@ export { DatabaseProvider } from './DatabaseProvider';
 // Secure storage hooks
 export { useKeytar } from './useKeytar';
 export { useSecureStorage } from './useSecureStorage';
+
+// Performance monitoring hooks
+export { usePerformanceMonitor } from './usePerformanceMonitor';
+export type { UsePerformanceMonitorReturn } from './UsePerformanceMonitorReturn';
