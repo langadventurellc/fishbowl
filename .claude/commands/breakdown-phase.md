@@ -223,6 +223,8 @@ Guidance for the planning phase to create appropriate tasks:
 
 ### Specifications
 
+Important information can be found in the specification documents here:
+
 - `docs/specifications/[relevant-spec].md`
 - `docs/specifications/implementation-plan.md`
 
@@ -230,7 +232,6 @@ Guidance for the planning phase to create appropriate tasks:
 
 - `CLAUDE.md` - Development standards and setup
 - `docs/technical/coding-standards.md`
-- `docs/blackboard.md` - Shared agent knowledge
 
 ### Related Features
 

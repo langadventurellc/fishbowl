@@ -2,7 +2,7 @@
 
 **Implementation Order: 01**
 
-This feature implements the database schema migration to add the `is_active` field to the messages table, enabling the selective inclusion/exclusion of messages in conversation context for AI agent API calls.
+This feature implements the database schema migration to add the `is_active` field to the messages table, enabling the selective inclusion/exclusion of messages in conversation context for AI agent API calls. Be sure to look at `data-flow-integration-spec.md` and `core-architecture.md` for context on how this fits into the overall system.
 
 ## Feature Components
 
