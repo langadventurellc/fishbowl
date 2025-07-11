@@ -15,9 +15,7 @@ import type {
 const getHookResult = (result: any) => result.current;
 
 // Mock the createOptimisticUpdate utility
-vi.mock('../../../../src/renderer/store/utils', () => ({
-  createOptimisticUpdate: vi.fn(),
-}));
+vi.mock('../../../../src/renderer/store/utils');
 
 // Mock the MessageErrorType enum
 vi.mock('../../../../src/renderer/hooks/MessageErrorType', () => ({
@@ -45,52 +43,124 @@ global.window = {
   electronAPI: mockElectronAPI,
 } as any;
 
-describe('useMessages', () => {
-  const mockMessage: Message = {
-    id: 'test-message-id',
+// Test fixtures
+const mockMessage: Message = {
+  id: 'test-message-id',
+  conversationId: 'conv-1',
+  agentId: 'agent-1',
+  isActive: true,
+  content: 'Test message content',
+  type: 'text',
+  metadata: '{}',
+  timestamp: Date.now(),
+};
+
+const mockMessages: Message[] = [
+  {
+    id: '1',
     conversationId: 'conv-1',
     agentId: 'agent-1',
     isActive: true,
-    content: 'Test message content',
+    content: 'Hello world',
     type: 'text',
     metadata: '{}',
     timestamp: Date.now(),
-  };
+  },
+];
 
+const createData: CreateMessageData = {
+  conversationId: 'conv-1',
+  agentId: 'agent-1',
+  content: 'Hello world',
+  type: 'text',
+};
+
+// Simplified mock implementation
+const createOptimisticMock = () => {
+  return (
+    optimisticUpdater: any,
+    ipcOperation: any,
+    confirmedUpdater: any,
+    revertUpdater: any,
+    errorHandler: any,
+  ) => {
+    return async (...args: unknown[]) => {
+      try {
+        optimisticUpdater(...args);
+        const result = await ipcOperation(...args);
+        confirmedUpdater(result);
+        return result;
+      } catch (error) {
+        revertUpdater(...args);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        errorHandler(errorMessage);
+        return null;
+      }
+    };
+  };
+};
+
+// Test data for error scenarios
+const errorScenarios = [
+  {
+    name: 'database error',
+    error: new Error('Database connection failed'),
+    expectedType: 'unknown',
+    expectedMessage: 'Database connection failed',
+    retryable: true,
+  },
+  {
+    name: 'validation error',
+    error: new Error('Invalid message ID format'),
+    expectedType: 'unknown',
+    expectedMessage: 'Invalid message ID format',
+    retryable: true,
+  },
+  {
+    name: 'network error',
+    error: new Error('Network timeout during fetch'),
+    expectedType: 'network',
+    expectedMessage:
+      'Network error during {{operation}}. Please check your connection and try again.',
+    retryable: true,
+  },
+];
+
+const notFoundScenarios = [
+  {
+    name: 'not found error',
+    error: new Error('Message not found in database'),
+    expectedType: 'not_found',
+    expectedMessage: 'Message not found during {{operation}}. The message may have been deleted.',
+    retryable: false,
+  },
+  {
+    name: 'does not exist error',
+    error: new Error('Message does not exist'),
+    expectedType: 'not_found',
+    expectedMessage: 'Message not found during {{operation}}. The message may have been deleted.',
+    retryable: false,
+  },
+];
+
+describe('useMessages', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
+    global.window = { electronAPI: mockElectronAPI } as any;
 
-    // Restore the window.electronAPI mock
-    global.window = {
-      electronAPI: mockElectronAPI,
-    } as any;
+    // Mock console.warn to avoid noise in tests
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-    // Get the mocked createOptimisticUpdate function
+    // Mock setTimeout to eliminate delays
+    vi.spyOn(global, 'setTimeout').mockImplementation((callback: any) => {
+      callback(); // Execute immediately
+      return 0 as any;
+    });
+
+    // Get the mocked function and set up implementation
     const { createOptimisticUpdate } = await import('../../../../src/renderer/store/utils');
     const mockCreateOptimisticUpdate = vi.mocked(createOptimisticUpdate);
-
-    // Reset the createOptimisticUpdate mock to return a simple async function
-    mockCreateOptimisticUpdate.mockImplementation(
-      (optimisticUpdater, ipcOperation, confirmedUpdater, revertUpdater, errorHandler) => {
-        return async (...args: unknown[]) => {
-          try {
-            // Apply optimistic update
-            optimisticUpdater(...(args as [id: string, updates?: any]));
-            // Call IPC operation
-            const result = await ipcOperation(...(args as [id: string, updates?: any]));
-            // Confirm with result
-            confirmedUpdater(result);
-            return result;
-          } catch (error) {
-            // Revert on error
-            revertUpdater(...(args as [id: string, updates?: any]));
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            errorHandler(errorMessage);
-            return null;
-          }
-        };
-      },
-    );
+    mockCreateOptimisticUpdate.mockImplementation(createOptimisticMock());
   });
 
   it('should initialize with empty messages array', () => {
@@ -102,19 +172,6 @@ describe('useMessages', () => {
   });
 
   it('should list messages successfully', async () => {
-    const mockMessages: Message[] = [
-      {
-        id: '1',
-        conversationId: 'conv-1',
-        agentId: 'agent-1',
-        isActive: true,
-        content: 'Hello world',
-        type: 'text',
-        metadata: '{}',
-        timestamp: Date.now(),
-      },
-    ];
-
     mockElectronAPI.dbMessagesList.mockResolvedValue(mockMessages);
 
     const { result } = renderHook(() => useMessages());
@@ -144,17 +201,6 @@ describe('useMessages', () => {
   });
 
   it('should get message successfully', async () => {
-    const mockMessage: Message = {
-      id: '1',
-      conversationId: 'conv-1',
-      agentId: 'agent-1',
-      isActive: true,
-      content: 'Hello world',
-      type: 'text',
-      metadata: '{}',
-      timestamp: Date.now(),
-    };
-
     mockElectronAPI.dbMessagesGet.mockResolvedValue(mockMessage);
 
     const { result } = renderHook(() => useMessages());
@@ -168,14 +214,7 @@ describe('useMessages', () => {
   });
 
   it('should create message successfully', async () => {
-    const createData: CreateMessageData = {
-      conversationId: 'conv-1',
-      agentId: 'agent-1',
-      content: 'Hello world',
-      type: 'text',
-    };
-
-    const mockMessage: Message = {
+    const createdMessage: Message = {
       id: '1',
       ...createData,
       isActive: true,
@@ -183,16 +222,16 @@ describe('useMessages', () => {
       timestamp: Date.now(),
     };
 
-    mockElectronAPI.dbMessagesCreate.mockResolvedValue(mockMessage);
+    mockElectronAPI.dbMessagesCreate.mockResolvedValue(createdMessage);
 
     const { result } = renderHook(() => useMessages());
 
     await act(async () => {
       const message = await result.current.createMessage(createData);
-      expect(message).toEqual(mockMessage);
+      expect(message).toEqual(createdMessage);
     });
 
-    expect(result.current.messages).toContain(mockMessage);
+    expect(result.current.messages).toContain(createdMessage);
     expect(result.current.error).toBeNull();
   });
 
@@ -264,97 +303,70 @@ describe('useMessages', () => {
       );
     });
 
-    it('should handle update active state database error', async () => {
-      const updateData: UpdateMessageActiveStateData = { isActive: false };
-      const dbError = new Error('Database connection failed');
+    it.each(errorScenarios)(
+      'should handle update active state $name',
+      async ({ error, expectedType, expectedMessage, retryable }) => {
+        const updateData: UpdateMessageActiveStateData = { isActive: false };
+        mockElectronAPI.dbMessagesUpdateActiveState.mockRejectedValue(error);
 
-      mockElectronAPI.dbMessagesUpdateActiveState.mockRejectedValue(dbError);
+        const { result } = renderHook(() => useMessages());
 
-      const { result } = renderHook(() => useMessages());
+        await act(async () => {
+          const response = await result.current.updateMessageActiveState(
+            mockMessage.id,
+            updateData,
+          );
+          expect(response).toBeNull();
+        });
 
-      await act(async () => {
-        const response = await result.current.updateMessageActiveState(mockMessage.id, updateData);
-        expect(response).toBeNull();
-      });
+        if (expectedType === 'network') {
+          expect(result.current.error).toBe(
+            expectedMessage.replace('{{operation}}', 'update message active state'),
+          );
+          expect(getHookResult(result).structuredError).toEqual({
+            type: expectedType,
+            message: expectedMessage.replace('{{operation}}', 'update message active state'),
+            operation: 'update message active state',
+            retryable,
+          });
+        } else {
+          expect(result.current.error).toBe(
+            `Error during update message active state: ${error.message}`,
+          );
+          expect(getHookResult(result).structuredError).toEqual({
+            type: expectedType,
+            message: `Error during update message active state: ${error.message}`,
+            operation: 'update message active state',
+            retryable,
+          });
+        }
+      },
+    );
 
-      expect(result.current.error).toBe(
-        'Error during update message active state: Database connection failed',
-      );
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'unknown',
-        message: 'Error during update message active state: Database connection failed',
-        operation: 'update message active state',
-        retryable: true,
-      });
-    });
+    it.each(notFoundScenarios)(
+      'should handle update active state $name',
+      async ({ error, expectedType, expectedMessage, retryable }) => {
+        const updateData: UpdateMessageActiveStateData = { isActive: false };
+        mockElectronAPI.dbMessagesUpdateActiveState.mockRejectedValue(error);
 
-    it('should handle update active state validation error', async () => {
-      const updateData: UpdateMessageActiveStateData = { isActive: false };
-      const validationError = new Error('Invalid message ID format');
+        const { result } = renderHook(() => useMessages());
 
-      mockElectronAPI.dbMessagesUpdateActiveState.mockRejectedValue(validationError);
+        await act(async () => {
+          const response = await result.current.updateMessageActiveState(
+            mockMessage.id,
+            updateData,
+          );
+          expect(response).toBeNull();
+        });
 
-      const { result } = renderHook(() => useMessages());
-
-      await act(async () => {
-        const response = await result.current.updateMessageActiveState(mockMessage.id, updateData);
-        expect(response).toBeNull();
-      });
-
-      expect(result.current.error).toBe(
-        'Error during update message active state: Invalid message ID format',
-      );
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'unknown',
-        message: 'Error during update message active state: Invalid message ID format',
-        operation: 'update message active state',
-        retryable: true,
-      });
-    });
-
-    it('should handle update active state not found error', async () => {
-      const updateData: UpdateMessageActiveStateData = { isActive: false };
-      const notFoundError = new Error('Message not found in database');
-
-      mockElectronAPI.dbMessagesUpdateActiveState.mockRejectedValue(notFoundError);
-
-      const { result } = renderHook(() => useMessages());
-
-      await act(async () => {
-        const response = await result.current.updateMessageActiveState(mockMessage.id, updateData);
-        expect(response).toBeNull();
-      });
-
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'not_found',
-        message:
-          'Message not found during update message active state. The message may have been deleted.',
-        operation: 'update message active state',
-        retryable: false,
-      });
-    });
-
-    it('should handle update active state network error', async () => {
-      const updateData: UpdateMessageActiveStateData = { isActive: false };
-      const networkError = new Error('Network timeout during fetch');
-
-      mockElectronAPI.dbMessagesUpdateActiveState.mockRejectedValue(networkError);
-
-      const { result } = renderHook(() => useMessages());
-
-      await act(async () => {
-        const response = await result.current.updateMessageActiveState(mockMessage.id, updateData);
-        expect(response).toBeNull();
-      });
-
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'network',
-        message:
-          'Network error during update message active state. Please check your connection and try again.',
-        operation: 'update message active state',
-        retryable: true,
-      });
-    });
+        expect(getHookResult(result).structuredError).toEqual({
+          type: expectedType,
+          message: expectedMessage.replace('{{operation}}', 'update message active state'),
+          operation: 'update message active state',
+          retryable,
+        });
+      },
+    );
 
     it('should handle update active state when electronAPI is not available', async () => {
       global.window = {} as any;
@@ -385,15 +397,13 @@ describe('useMessages', () => {
       const { result } = renderHook(() => useMessages());
 
       await act(async () => {
-        // Set initial message in state
         result.current.messages.push(mockMessage);
         const response = await result.current.updateMessageActiveState(mockMessage.id, updateData);
         expect(response).toBeNull();
       });
 
-      // Verify optimistic update was called
       const { createOptimisticUpdate } = await import('../../../../src/renderer/store/utils');
-      expect(createOptimisticUpdate).toHaveBeenCalled();
+      expect(vi.mocked(createOptimisticUpdate)).toHaveBeenCalled();
       expect(result.current.error).toBe('Error during update message active state: Database error');
     });
 
@@ -406,19 +416,17 @@ describe('useMessages', () => {
       const { result } = renderHook(() => useMessages());
 
       await act(async () => {
-        // Set initial message in state
         result.current.messages.push(mockMessage);
         await result.current.updateMessageActiveState(mockMessage.id, updateData);
       });
 
-      // Verify the createOptimisticUpdate was called with correct parameters
       const { createOptimisticUpdate } = await import('../../../../src/renderer/store/utils');
-      expect(createOptimisticUpdate).toHaveBeenCalledWith(
-        expect.any(Function), // optimisticUpdater
-        expect.any(Function), // ipcOperation
-        expect.any(Function), // confirmedUpdater
-        expect.any(Function), // revertUpdater
-        expect.any(Function), // errorHandler
+      expect(vi.mocked(createOptimisticUpdate)).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.any(Function),
+        expect.any(Function),
+        expect.any(Function),
+        expect.any(Function),
       );
     });
 
@@ -471,92 +479,78 @@ describe('useMessages', () => {
       expect(mockElectronAPI.dbMessagesToggleActiveState).toHaveBeenCalledWith(inactiveMessage.id);
     });
 
-    it('should handle toggle active state database error', async () => {
-      const dbError = new Error('Database connection failed');
-
-      mockElectronAPI.dbMessagesToggleActiveState.mockRejectedValue(dbError);
-
-      const { result } = renderHook(() => useMessages());
-
-      await act(async () => {
-        const response = await getHookResult(result).toggleMessageActiveState(mockMessage.id);
-        expect(response).toBeNull();
-      });
-
-      expect(result.current.error).toBe(
-        'Error during toggle message active state: Database connection failed',
-      );
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'unknown',
-        message: 'Error during toggle message active state: Database connection failed',
-        operation: 'toggle message active state',
+    it.each([
+      ...errorScenarios,
+      {
+        name: 'validation error',
+        error: new Error('Invalid UUID format'),
+        expectedType: 'unknown',
+        expectedMessage: 'Invalid UUID format',
         retryable: true,
-      });
-    });
-
-    it('should handle toggle active state validation error', async () => {
-      const validationError = new Error('Invalid UUID format');
-
-      mockElectronAPI.dbMessagesToggleActiveState.mockRejectedValue(validationError);
-
-      const { result } = renderHook(() => useMessages());
-
-      await act(async () => {
-        const response = await getHookResult(result).toggleMessageActiveState(mockMessage.id);
-        expect(response).toBeNull();
-      });
-
-      expect(result.current.error).toBe(
-        'Error during toggle message active state: Invalid UUID format',
-      );
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'unknown',
-        message: 'Error during toggle message active state: Invalid UUID format',
-        operation: 'toggle message active state',
+      },
+      {
+        name: 'network connection error',
+        error: new Error('Network connection timeout'),
+        expectedType: 'unknown',
+        expectedMessage: 'Network connection timeout',
         retryable: true,
-      });
-    });
+      },
+    ])(
+      'should handle toggle active state $name',
+      async ({ error, expectedType, expectedMessage, retryable }) => {
+        mockElectronAPI.dbMessagesToggleActiveState.mockRejectedValue(error);
 
-    it('should handle toggle active state not found error', async () => {
-      const notFoundError = new Error('Message does not exist');
+        const { result } = renderHook(() => useMessages());
 
-      mockElectronAPI.dbMessagesToggleActiveState.mockRejectedValue(notFoundError);
+        await act(async () => {
+          const response = await getHookResult(result).toggleMessageActiveState(mockMessage.id);
+          expect(response).toBeNull();
+        });
 
-      const { result } = renderHook(() => useMessages());
+        if (expectedType === 'network') {
+          expect(result.current.error).toBe(
+            expectedMessage.replace('{{operation}}', 'toggle message active state'),
+          );
+          expect(getHookResult(result).structuredError).toEqual({
+            type: expectedType,
+            message: expectedMessage.replace('{{operation}}', 'toggle message active state'),
+            operation: 'toggle message active state',
+            retryable,
+          });
+        } else {
+          expect(result.current.error).toBe(
+            `Error during toggle message active state: ${error.message}`,
+          );
+          expect(getHookResult(result).structuredError).toEqual({
+            type: expectedType,
+            message: `Error during toggle message active state: ${error.message}`,
+            operation: 'toggle message active state',
+            retryable,
+          });
+        }
+      },
+    );
 
-      await act(async () => {
-        const response = await getHookResult(result).toggleMessageActiveState(mockMessage.id);
-        expect(response).toBeNull();
-      });
+    it.each(notFoundScenarios)(
+      'should handle toggle active state $name',
+      async ({ error, expectedType, expectedMessage, retryable }) => {
+        mockElectronAPI.dbMessagesToggleActiveState.mockRejectedValue(error);
 
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'not_found',
-        message:
-          'Message not found during toggle message active state. The message may have been deleted.',
-        operation: 'toggle message active state',
-        retryable: false,
-      });
-    });
+        const { result } = renderHook(() => useMessages());
 
-    it('should handle toggle active state network error', async () => {
-      const networkError = new Error('Network connection timeout');
+        await act(async () => {
+          const response = await getHookResult(result).toggleMessageActiveState(mockMessage.id);
+          expect(response).toBeNull();
+        });
 
-      mockElectronAPI.dbMessagesToggleActiveState.mockRejectedValue(networkError);
-
-      const { result } = renderHook(() => useMessages());
-
-      await act(async () => {
-        const response = await getHookResult(result).toggleMessageActiveState(mockMessage.id);
-        expect(response).toBeNull();
-      });
-
-      expect(getHookResult(result).structuredError).toEqual({
-        type: 'unknown',
-        message: 'Error during toggle message active state: Network connection timeout',
-        operation: 'toggle message active state',
-        retryable: true,
-      });
-    });
+        expect(getHookResult(result).structuredError).toEqual({
+          type: expectedType,
+          message: expectedMessage.replace('{{operation}}', 'toggle message active state'),
+          operation: 'toggle message active state',
+          retryable,
+        });
+      },
+    );
 
     it('should handle toggle active state when electronAPI is not available', async () => {
       global.window = {} as any;
@@ -585,15 +579,13 @@ describe('useMessages', () => {
       const { result } = renderHook(() => useMessages());
 
       await act(async () => {
-        // Set initial message in state
         result.current.messages.push(mockMessage);
         const response = await getHookResult(result).toggleMessageActiveState(mockMessage.id);
         expect(response).toBeNull();
       });
 
-      // Verify optimistic update was called
       const { createOptimisticUpdate } = await import('../../../../src/renderer/store/utils');
-      expect(createOptimisticUpdate).toHaveBeenCalled();
+      expect(vi.mocked(createOptimisticUpdate)).toHaveBeenCalled();
       expect(result.current.error).toBe('Error during toggle message active state: Database error');
     });
 
@@ -605,19 +597,17 @@ describe('useMessages', () => {
       const { result } = renderHook(() => useMessages());
 
       await act(async () => {
-        // Set initial message in state
         result.current.messages.push(mockMessage);
         await getHookResult(result).toggleMessageActiveState(mockMessage.id);
       });
 
-      // Verify the createOptimisticUpdate was called with correct parameters
       const { createOptimisticUpdate } = await import('../../../../src/renderer/store/utils');
-      expect(createOptimisticUpdate).toHaveBeenCalledWith(
-        expect.any(Function), // optimisticUpdater
-        expect.any(Function), // ipcOperation
-        expect.any(Function), // confirmedUpdater
-        expect.any(Function), // revertUpdater
-        expect.any(Function), // errorHandler
+      expect(vi.mocked(createOptimisticUpdate)).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.any(Function),
+        expect.any(Function),
+        expect.any(Function),
+        expect.any(Function),
       );
     });
 

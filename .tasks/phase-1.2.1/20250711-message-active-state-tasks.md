@@ -438,9 +438,7 @@ When executing tasks, remember to:
   - [x] 7.2 Implement message filtering at application layer
     - [x] 7.2.1 Implement code review improvements for AI services (see .tasks/todo/20250711-ai-services-code-review-improvements.md)
   - [x] 7.3 Ensure inactive messages are excluded from AI conversation context
-  - [ ] 7.4 Add configuration option to bypass active state filtering if needed
-  - [ ] 7.5 Optimize filtering performance for large message volumes
-  - [ ] 7.6 Write unit tests for AI context filtering functions
+  - [ ] 7.4 Write unit tests for AI context filtering functions
 
   ### Files modified with description of changes
   - `src/shared/utils/ai/getActiveMessagesForAI.ts` - Created utility function that filters messages to only include active messages (isActive: true) and sorts them by timestamp in ascending order for AI context consumption. Function accepts an array of Message objects, validates input (throws error for non-array), filters active messages, and returns sorted array optimized for AI providers. Includes comprehensive JSDoc documentation and proper error handling for invalid inputs.
