@@ -39,6 +39,7 @@ describe('useMessages', () => {
         id: '1',
         conversationId: 'conv-1',
         agentId: 'agent-1',
+        isActive: true,
         content: 'Hello world',
         type: 'text',
         metadata: '{}',
@@ -79,6 +80,7 @@ describe('useMessages', () => {
       id: '1',
       conversationId: 'conv-1',
       agentId: 'agent-1',
+      isActive: true,
       content: 'Hello world',
       type: 'text',
       metadata: '{}',
@@ -108,6 +110,7 @@ describe('useMessages', () => {
     const mockMessage: Message = {
       id: '1',
       ...createData,
+      isActive: true,
       metadata: '{}',
       timestamp: Date.now(),
     };

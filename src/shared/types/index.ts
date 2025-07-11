@@ -158,6 +158,7 @@ export interface Message {
   id: string;
   conversationId: string;
   agentId: string;
+  isActive: boolean;
   content: string;
   type: string;
   metadata: string;

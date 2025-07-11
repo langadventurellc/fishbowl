@@ -224,15 +224,24 @@ When executing tasks, remember to:
   - Database schema version automatically updated to v4 by migration system during execution.
 
 - 2.0 TypeScript Type System Updates
-  - [ ] 2.1 Update DatabaseMessage interface with is_active boolean field
-  - [ ] 2.2 Update Message interface with isActive boolean field for application layer
+  - [x] 2.1 Update DatabaseMessage interface with is_active boolean field
+  - [x] 2.2 Update Message interface with isActive boolean field for application layer
   - [ ] 2.3 Update CreateMessageData interface with optional isActive field (default true)
   - [ ] 2.4 Create UpdateMessageActiveStateData interface for IPC operations
   - [ ] 2.5 Add Zod validation schemas for message active state operations
   - [ ] 2.6 Write unit tests for type validation and schema compilation
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/main/database/schema/DatabaseMessage.ts` - Added `is_active: boolean` field to DatabaseMessage interface following the established pattern from DatabaseAgent and DatabaseConversation interfaces. The field is positioned after the core identifying fields (id, conversation_id, agent_id) and before content fields.
+  - `src/main/ipc/handlers/dbMessagesCreateHandler.ts` - Added `is_active: true` default value when creating new messages to match the interface requirement and ensure new messages are active by default.
+  - `tests/unit/main/ipc/database-handlers.test.ts` - Updated mockMessage object and createMessage test call to include `is_active: true` field, ensuring test compatibility with the updated interface.
+  - `src/shared/types/index.ts` - Added `isActive: boolean` field to Message interface at line 161, positioned after agentId and before content fields to maintain consistency with the database schema structure. This ensures the application layer Message interface matches the database layer DatabaseMessage interface.
+  - `src/main/ipc/handlers/dbMessagesCreateHandler.ts` - Added `isActive: message.is_active` field transformation in the return object to properly convert from database snake_case to application camelCase format.
+  - `src/main/ipc/handlers/dbMessagesGetHandler.ts` - Added `isActive: message.is_active` field transformation in the return object to ensure the retrieved message includes the active state.
+  - `src/main/ipc/handlers/dbMessagesListHandler.ts` - Added `isActive: message.is_active` field transformation in the map function to ensure all listed messages include the active state.
+  - `src/main/ipc/handlers/dbTransactionsCreateMessagesBatchHandler.ts` - Added `is_active: true` to messageRecord object and updated insertMessage.run call to include the active state parameter. Also added `isActive: messageRecord.is_active` to the return object transformation.
+  - `tests/integration/ipc-database-integration.test.ts` - Updated all mockMessage objects to include `isActive: true` field for test compatibility with the updated interface.
+  - `tests/unit/renderer/hooks/useMessages.test.ts` - Updated all mockMessage objects to include `isActive: true` field for test compatibility with the updated interface.
 
 - 3.0 Database Query Operations
   - [ ] 3.1 Implement updateMessageActiveState query function with prepared statements
