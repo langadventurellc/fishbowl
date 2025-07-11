@@ -281,7 +281,7 @@ When executing tasks, remember to:
   - `tests/unit/main/database/queries/messages/getMessagesByConversationId.test.ts` - Created comprehensive unit tests (14 test cases) for the getMessagesByConversationId query function following established testing patterns. Tests cover successful operations (returning all messages both active and inactive), empty results handling, parameter validation (default vs custom limit/offset), SQL query verification (ensuring no is_active filtering), database error handling, type checking and structure validation, pagination handling, large result sets, mixed active/inactive message scenarios, and different conversation ID handling. All tests pass with proper mocking patterns and comprehensive coverage of the query operation that was modified in task 3.3 to include the is_active field.
 
 - 4.0 IPC Handler Implementation
-  - [ ] 4.1 Create dbMessagesUpdateActiveStateHandler with input validation
+  - [x] 4.1 Create dbMessagesUpdateActiveStateHandler with input validation
   - [ ] 4.2 Create dbMessagesToggleActiveStateHandler with error handling
   - [ ] 4.3 Update existing message handlers to include isActive field in responses
   - [ ] 4.4 Add camelCase to snake_case field mapping for isActive ↔ is_active
@@ -289,7 +289,11 @@ When executing tasks, remember to:
   - [ ] 4.6 Write unit tests for IPC handlers with mock database operations
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/main/ipc/handlers/dbMessagesUpdateActiveStateHandler.ts` - Created new IPC handler for updating message active state following established patterns. Handler validates input with SanitizedUpdateMessageActiveStateSchema, calls updateMessageActiveState database function, handles not found errors, and transforms database format to API format (snake_case to camelCase). All quality checks passing.
+  - `src/main/ipc/handlers/index.ts` - Added export for dbMessagesUpdateActiveStateHandler in the Database message handlers section after dbMessagesCreateHandler for proper grouping.
+  - `src/main/ipc/handlers.ts` - Added import for dbMessagesUpdateActiveStateHandler and registered the IPC channel 'db:messages:update-active-state' with performance monitoring wrapper in the Message operations section.
+  - `src/shared/types/index.ts` - Added IPC channel type definition for 'db:messages:update-active-state' accepting id (string) and updates (UpdateMessageActiveStateData) returning Promise<Message | null>.
+  - `tests/unit/main/ipc/handlers/dbMessagesUpdateActiveStateHandler.test.ts` - Created comprehensive unit tests (11 test cases) covering successful operations (true/false states), error handling (validation errors, message not found, database errors), data transformation (database to API format), and function behavior patterns. All tests pass with proper mocking and error scenarios covered.
 
 - 5.0 Preload API Bridge Extension
   - [ ] 5.1 Add dbMessagesUpdateActiveState method to preload API

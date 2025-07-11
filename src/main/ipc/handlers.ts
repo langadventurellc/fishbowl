@@ -40,6 +40,7 @@ import {
   dbMessagesGetHandler,
   // Database message handlers
   dbMessagesListHandler,
+  dbMessagesUpdateActiveStateHandler,
   // Database transaction handlers
   dbTransactionsCreateConversationWithAgentsHandler,
   dbTransactionsCreateMessagesBatchHandler,
@@ -244,6 +245,13 @@ export const setupIpcHandlers = (): void => {
   ipcMain.handle(
     'db:messages:delete',
     withPerformanceMonitoring('db:messages:delete', dbMessagesDeleteHandler),
+  );
+  ipcMain.handle(
+    'db:messages:update-active-state',
+    withPerformanceMonitoring(
+      'db:messages:update-active-state',
+      dbMessagesUpdateActiveStateHandler,
+    ),
   );
 
   // Conversation-Agent relationship operations
