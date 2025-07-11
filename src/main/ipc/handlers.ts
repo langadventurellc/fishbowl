@@ -41,6 +41,7 @@ import {
   // Database message handlers
   dbMessagesListHandler,
   dbMessagesUpdateActiveStateHandler,
+  dbMessagesToggleActiveStateHandler,
   // Database transaction handlers
   dbTransactionsCreateConversationWithAgentsHandler,
   dbTransactionsCreateMessagesBatchHandler,
@@ -251,6 +252,13 @@ export const setupIpcHandlers = (): void => {
     withPerformanceMonitoring(
       'db:messages:update-active-state',
       dbMessagesUpdateActiveStateHandler,
+    ),
+  );
+  ipcMain.handle(
+    'db:messages:toggle-active-state',
+    withPerformanceMonitoring(
+      'db:messages:toggle-active-state',
+      dbMessagesToggleActiveStateHandler,
     ),
   );
 

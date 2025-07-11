@@ -282,7 +282,7 @@ When executing tasks, remember to:
 
 - 4.0 IPC Handler Implementation
   - [x] 4.1 Create dbMessagesUpdateActiveStateHandler with input validation
-  - [ ] 4.2 Create dbMessagesToggleActiveStateHandler with error handling
+  - [x] 4.2 Create dbMessagesToggleActiveStateHandler with error handling
   - [ ] 4.3 Update existing message handlers to include isActive field in responses
   - [ ] 4.4 Add camelCase to snake_case field mapping for isActive ↔ is_active
   - [ ] 4.5 Register new IPC handlers in handler index file
@@ -294,6 +294,11 @@ When executing tasks, remember to:
   - `src/main/ipc/handlers.ts` - Added import for dbMessagesUpdateActiveStateHandler and registered the IPC channel 'db:messages:update-active-state' with performance monitoring wrapper in the Message operations section.
   - `src/shared/types/index.ts` - Added IPC channel type definition for 'db:messages:update-active-state' accepting id (string) and updates (UpdateMessageActiveStateData) returning Promise<Message | null>.
   - `tests/unit/main/ipc/handlers/dbMessagesUpdateActiveStateHandler.test.ts` - Created comprehensive unit tests (11 test cases) covering successful operations (true/false states), error handling (validation errors, message not found, database errors), data transformation (database to API format), and function behavior patterns. All tests pass with proper mocking and error scenarios covered.
+  - `src/main/ipc/handlers/dbMessagesToggleActiveStateHandler.ts` - Created new IPC handler for toggling message active state following established patterns. Handler validates input with UuidSchema directly (ID-only validation), calls toggleMessageActiveState database function, handles not found errors, and transforms database format to API format (snake_case to camelCase). Includes comprehensive error handling with DatabaseError wrapping for both validation and database operation failures.
+  - `src/main/ipc/handlers/index.ts` - Added export for dbMessagesToggleActiveStateHandler in the Database message handlers section after dbMessagesUpdateActiveStateHandler for proper grouping.
+  - `src/main/ipc/handlers.ts` - Added import for dbMessagesToggleActiveStateHandler and registered the IPC channel 'db:messages:toggle-active-state' with performance monitoring wrapper in the Message operations section.
+  - `src/shared/types/index.ts` - Added IPC channel type definition for 'db:messages:toggle-active-state' accepting id (string) returning Promise<Message | null>.
+  - `tests/unit/main/ipc/handlers/dbMessagesToggleActiveStateHandler.test.ts` - Created comprehensive unit tests (10 test cases) covering successful operations (toggle both directions), error handling (validation errors, message not found, database errors), data transformation (database to API format), and input validation patterns. All tests pass with proper mocking using the established vitest pattern for imports within each test function.
 
 - 5.0 Preload API Bridge Extension
   - [ ] 5.1 Add dbMessagesUpdateActiveState method to preload API

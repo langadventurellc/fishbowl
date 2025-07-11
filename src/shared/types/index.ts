@@ -75,6 +75,7 @@ export interface IpcChannels {
     id: string,
     updates: UpdateMessageActiveStateData,
   ) => Promise<Message | null>;
+  'db:messages:toggle-active-state': (id: string) => Promise<Message | null>;
   'db:messages:delete': (id: string) => Promise<void>;
   'db:conversation-agents:list': (conversationId: string) => Promise<ConversationAgent[]>;
   'db:conversation-agents:add': (conversationId: string, agentId: string) => Promise<void>;
