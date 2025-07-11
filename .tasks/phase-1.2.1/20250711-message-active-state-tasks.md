@@ -254,7 +254,21 @@ When executing tasks, remember to:
 
 - 3.0 Database Query Operations
   - [x] 3.1 Implement updateMessageActiveState query function with prepared statements
-  - [ ] 3.2 Implement toggleMessageActiveState convenience function
+  - [x] 3.2 Implement toggleMessageActiveState convenience function
+
+    **Implementation Summary**: Created `toggleMessageActiveState` function that gets current message state and toggles the `is_active` boolean value. Function leverages existing `getMessageById` and `updateMessageActiveState` functions for consistency and code reuse. Returns updated message object or null if not found.
+
+    **Files Modified**:
+    - `src/main/database/queries/messages/toggleMessageActiveState.ts` - Main implementation with proper error handling
+    - `src/main/database/queries/messages/index.ts` - Added barrel export
+    - `tests/unit/main/database/queries/messages/toggleMessageActiveState.test.ts` - Comprehensive unit tests (13 test cases)
+
+    **Quality Checks Completed**:
+    - ✅ **Format**: Prettier formatting applied
+    - ✅ **Lint**: ESLint passed with zero errors
+    - ✅ **Type Check**: TypeScript compilation successful
+    - ✅ **Tests**: All 13 unit tests passing (toggle operations, edge cases, integration, error handling)
+
   - [ ] 3.3 Update getMessagesByConversationId to include is_active field in results
   - [ ] 3.4 Create getActiveMessagesByConversationId filtered query function
   - [ ] 3.5 Add proper error handling and transaction support for state operations
