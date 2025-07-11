@@ -2,21 +2,65 @@
  * Unit tests for toggleMessageActiveState query function
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import Database from 'better-sqlite3';
 import { toggleMessageActiveState } from '../../../../../../src/main/database/queries/messages/toggleMessageActiveState';
 import type { DatabaseMessage } from '../../../../../../src/main/database/schema/DatabaseMessage';
 
 // Mock dependencies
-vi.mock('../../../../../../src/main/database/queries/messages/getMessageById', () => ({
-  getMessageById: vi.fn(),
+vi.mock('../../../../../../src/main/database/transactions/transactionManagerInstance', () => ({
+  transactionManager: {
+    executeTransaction: vi.fn(),
+  },
 }));
 
-vi.mock('../../../../../../src/main/database/queries/messages/updateMessageActiveState', () => ({
-  updateMessageActiveState: vi.fn(),
+vi.mock('../../../../../../src/main/ipc/error-handler', () => ({
+  DatabaseErrorHandler: {
+    executeWithRetry: vi.fn(),
+  },
+}));
+
+vi.mock('../../../../../../src/shared/types/errors', () => ({
+  DatabaseError: class {
+    message: string;
+    operation: string;
+    table: string;
+    query: string | undefined;
+    details: any;
+
+    constructor(
+      message: string,
+      operation: string,
+      table: string,
+      query: string | undefined,
+      details: any,
+    ) {
+      this.message = message;
+      this.operation = operation;
+      this.table = table;
+      this.query = query;
+      this.details = details;
+    }
+  },
+}));
+
+vi.mock('../../../../../../src/shared/types/validation', () => ({
+  UuidSchema: {
+    parse: vi.fn((value: string) => value),
+  },
 }));
 
 describe('toggleMessageActiveState', () => {
-  let mockGetMessageById: ReturnType<typeof vi.fn>;
-  let mockUpdateMessageActiveState: ReturnType<typeof vi.fn>;
+  let mockDb: {
+    prepare: ReturnType<typeof vi.fn>;
+  };
+  let mockSelectStatement: {
+    get: ReturnType<typeof vi.fn>;
+  };
+  let mockUpdateStatement: {
+    run: ReturnType<typeof vi.fn>;
+  };
+  let mockTransactionManager: ReturnType<typeof vi.fn>;
+  let mockExecuteWithRetry: ReturnType<typeof vi.fn>;
 
   const mockActiveMessage: DatabaseMessage = {
     id: 'test-message-id',
@@ -37,200 +81,230 @@ describe('toggleMessageActiveState', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
 
-    const { getMessageById } = vi.mocked(
-      await import('../../../../../../src/main/database/queries/messages/getMessageById'),
-    );
-    mockGetMessageById = getMessageById;
+    mockSelectStatement = {
+      get: vi.fn(),
+    };
 
-    const { updateMessageActiveState } = vi.mocked(
-      await import('../../../../../../src/main/database/queries/messages/updateMessageActiveState'),
+    mockUpdateStatement = {
+      run: vi.fn(),
+    };
+
+    mockDb = {
+      prepare: vi.fn((sql: string) => {
+        if (sql.includes('SELECT')) {
+          return mockSelectStatement;
+        } else if (sql.includes('UPDATE')) {
+          return mockUpdateStatement;
+        }
+        return mockSelectStatement;
+      }),
+    };
+
+    const { transactionManager } = vi.mocked(
+      await import('../../../../../../src/main/database/transactions/transactionManagerInstance'),
     );
-    mockUpdateMessageActiveState = updateMessageActiveState;
+    mockTransactionManager = transactionManager.executeTransaction as any;
+    // Mock executeTransaction to call the operation function with the mock db
+    mockTransactionManager.mockImplementation(operation => {
+      return operation(mockDb as unknown as Database.Database);
+    });
+
+    const { DatabaseErrorHandler } = vi.mocked(
+      await import('../../../../../../src/main/ipc/error-handler'),
+    );
+    mockExecuteWithRetry = DatabaseErrorHandler.executeWithRetry as any;
+    // Mock executeWithRetry to call the operation function directly
+    mockExecuteWithRetry.mockImplementation(operation => {
+      return Promise.resolve(operation());
+    });
   });
 
   describe('successful toggle operations', () => {
-    it('should toggle active message to inactive (true -> false)', () => {
+    it('should toggle active message to inactive (true -> false)', async () => {
       // Arrange
-      mockGetMessageById.mockReturnValue(mockActiveMessage);
-      mockUpdateMessageActiveState.mockReturnValue(mockInactiveMessage);
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockActiveMessage) // First call: get current state
+        .mockReturnValueOnce(mockInactiveMessage); // Second call: get updated state
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
 
       // Act
-      const result = toggleMessageActiveState('test-message-id');
+      const result = await toggleMessageActiveState('test-message-id');
 
       // Assert
-      expect(mockGetMessageById).toHaveBeenCalledWith('test-message-id');
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledWith('test-message-id', false);
+      expect(mockDb.prepare).toHaveBeenCalledWith('SELECT * FROM messages WHERE id = ?');
+      expect(mockSelectStatement.get).toHaveBeenCalledWith('test-message-id');
+      expect(mockUpdateStatement.run).toHaveBeenCalledWith(0, 'test-message-id'); // false -> 0
       expect(result).toEqual(mockInactiveMessage);
     });
 
-    it('should toggle inactive message to active (false -> true)', () => {
+    it('should toggle inactive message to active (false -> true)', async () => {
       // Arrange
-      mockGetMessageById.mockReturnValue(mockInactiveMessage);
-      mockUpdateMessageActiveState.mockReturnValue(mockActiveMessage);
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockInactiveMessage) // First call: get current state
+        .mockReturnValueOnce(mockActiveMessage); // Second call: get updated state
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
 
       // Act
-      const result = toggleMessageActiveState('test-message-id');
+      const result = await toggleMessageActiveState('test-message-id');
 
       // Assert
-      expect(mockGetMessageById).toHaveBeenCalledWith('test-message-id');
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledWith('test-message-id', true);
+      expect(mockSelectStatement.get).toHaveBeenCalledWith('test-message-id');
+      expect(mockUpdateStatement.run).toHaveBeenCalledWith(1, 'test-message-id'); // true -> 1
       expect(result).toEqual(mockActiveMessage);
     });
   });
 
   describe('edge cases', () => {
-    it('should return null when message is not found', () => {
+    it('should return null when message is not found', async () => {
       // Arrange
-      mockGetMessageById.mockReturnValue(null);
+      mockSelectStatement.get.mockReturnValue(undefined);
 
       // Act
-      const result = toggleMessageActiveState('nonexistent-id');
+      const result = await toggleMessageActiveState('nonexistent-id');
 
       // Assert
-      expect(mockGetMessageById).toHaveBeenCalledWith('nonexistent-id');
-      expect(mockUpdateMessageActiveState).not.toHaveBeenCalled();
+      expect(mockSelectStatement.get).toHaveBeenCalledWith('nonexistent-id');
+      expect(mockUpdateStatement.run).not.toHaveBeenCalled();
       expect(result).toBeNull();
     });
 
-    it('should handle update failure gracefully', () => {
-      // Arrange
-      mockGetMessageById.mockReturnValue(mockActiveMessage);
-      mockUpdateMessageActiveState.mockReturnValue(null);
-
-      // Act
-      const result = toggleMessageActiveState('test-message-id');
-
-      // Assert
-      expect(mockGetMessageById).toHaveBeenCalledWith('test-message-id');
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledWith('test-message-id', false);
-      expect(result).toBeNull();
-    });
-
-    it('should handle database errors from getMessageById', () => {
+    it('should handle database errors gracefully', async () => {
       // Arrange
       const databaseError = new Error('Database connection failed');
-      mockGetMessageById.mockImplementation(() => {
-        throw databaseError;
-      });
+      mockExecuteWithRetry.mockRejectedValue(databaseError);
 
       // Act & Assert
-      expect(() => toggleMessageActiveState('test-message-id')).toThrow(
-        'Database connection failed',
+      await expect(toggleMessageActiveState('test-message-id')).rejects.toThrow(
+        'Failed to toggle message active state',
       );
-      expect(mockUpdateMessageActiveState).not.toHaveBeenCalled();
     });
 
-    it('should handle database errors from updateMessageActiveState', () => {
+    it('should handle update failure (no changes)', async () => {
       // Arrange
-      mockGetMessageById.mockReturnValue(mockActiveMessage);
-      const databaseError = new Error('Update operation failed');
-      mockUpdateMessageActiveState.mockImplementation(() => {
-        throw databaseError;
-      });
+      mockSelectStatement.get.mockReturnValue(mockActiveMessage);
+      mockUpdateStatement.run.mockReturnValue({ changes: 0 });
 
       // Act & Assert
-      expect(() => toggleMessageActiveState('test-message-id')).toThrow('Update operation failed');
-      expect(mockGetMessageById).toHaveBeenCalledWith('test-message-id');
+      await expect(toggleMessageActiveState('test-message-id')).rejects.toThrow(
+        'Failed to toggle message active state - no changes made',
+      );
+    });
+
+    it('should handle retrieval failure after successful update', async () => {
+      // Arrange
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockActiveMessage) // First call: get current state
+        .mockReturnValueOnce(undefined); // Second call: retrieval fails
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
+
+      // Act & Assert
+      await expect(toggleMessageActiveState('test-message-id')).rejects.toThrow(
+        'Message toggle succeeded but message retrieval failed',
+      );
     });
   });
 
-  describe('boolean logic verification', () => {
-    it('should correctly toggle true to false', () => {
+  describe('transaction verification', () => {
+    it('should use transaction for atomic operations', async () => {
       // Arrange
-      mockGetMessageById.mockReturnValue(mockActiveMessage);
-      mockUpdateMessageActiveState.mockReturnValue(mockInactiveMessage);
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockActiveMessage)
+        .mockReturnValueOnce(mockInactiveMessage);
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
 
       // Act
-      toggleMessageActiveState('test-message-id');
+      await toggleMessageActiveState('test-message-id');
 
       // Assert
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledWith('test-message-id', false);
+      expect(mockTransactionManager).toHaveBeenCalledTimes(1);
+      expect(mockTransactionManager).toHaveBeenCalledWith(expect.any(Function));
     });
 
-    it('should correctly toggle false to true', () => {
+    it('should use same db instance throughout transaction', async () => {
       // Arrange
-      mockGetMessageById.mockReturnValue(mockInactiveMessage);
-      mockUpdateMessageActiveState.mockReturnValue(mockActiveMessage);
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockActiveMessage)
+        .mockReturnValueOnce(mockInactiveMessage);
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
 
       // Act
-      toggleMessageActiveState('test-message-id');
+      await toggleMessageActiveState('test-message-id');
 
       // Assert
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledWith('test-message-id', true);
-    });
-  });
-
-  describe('integration with existing functions', () => {
-    it('should call getMessageById before updateMessageActiveState', () => {
-      // Arrange
-      const callOrder: string[] = [];
-      mockGetMessageById.mockImplementation(() => {
-        callOrder.push('getMessageById');
-        return mockActiveMessage;
-      });
-      mockUpdateMessageActiveState.mockImplementation(() => {
-        callOrder.push('updateMessageActiveState');
-        return mockInactiveMessage;
-      });
-
-      // Act
-      toggleMessageActiveState('test-message-id');
-
-      // Assert
-      expect(callOrder).toEqual(['getMessageById', 'updateMessageActiveState']);
-    });
-
-    it('should use the exact boolean opposite from current state', () => {
-      // Arrange
-      const customMessage = { ...mockActiveMessage, is_active: true };
-      mockGetMessageById.mockReturnValue(customMessage);
-      mockUpdateMessageActiveState.mockReturnValue(mockInactiveMessage);
-
-      // Act
-      toggleMessageActiveState('test-message-id');
-
-      // Assert
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledWith('test-message-id', false);
-    });
-
-    it('should return the result from updateMessageActiveState', () => {
-      // Arrange
-      const updatedMessage = { ...mockActiveMessage, is_active: false };
-      mockGetMessageById.mockReturnValue(mockActiveMessage);
-      mockUpdateMessageActiveState.mockReturnValue(updatedMessage);
-
-      // Act
-      const result = toggleMessageActiveState('test-message-id');
-
-      // Assert
-      expect(result).toBe(updatedMessage);
+      // Both SELECT and UPDATE operations should use the same db.prepare calls
+      expect(mockDb.prepare).toHaveBeenCalledTimes(2);
+      expect(mockDb.prepare).toHaveBeenNthCalledWith(1, 'SELECT * FROM messages WHERE id = ?');
+      expect(mockDb.prepare).toHaveBeenNthCalledWith(2, expect.stringMatching(/UPDATE messages/));
     });
   });
 
-  describe('function call verification', () => {
-    it('should call each function exactly once for successful toggle', () => {
+  describe('SQL query verification', () => {
+    it('should generate correct UPDATE SQL query', async () => {
       // Arrange
-      mockGetMessageById.mockReturnValue(mockActiveMessage);
-      mockUpdateMessageActiveState.mockReturnValue(mockInactiveMessage);
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockActiveMessage)
+        .mockReturnValueOnce(mockInactiveMessage);
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
 
       // Act
-      toggleMessageActiveState('test-message-id');
+      await toggleMessageActiveState('test-message-id');
 
       // Assert
-      expect(mockGetMessageById).toHaveBeenCalledTimes(1);
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledTimes(1);
+      expect(mockDb.prepare).toHaveBeenCalledWith(
+        expect.stringMatching(/UPDATE messages\s+SET is_active = \?\s+WHERE id = \?/),
+      );
     });
 
-    it('should not call updateMessageActiveState when message not found', () => {
-      // Arrange
-      mockGetMessageById.mockReturnValue(null);
+    it('should convert boolean true to integer 0 when toggling from active', async () => {
+      // Arrange - message is currently active (true)
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockActiveMessage)
+        .mockReturnValueOnce(mockInactiveMessage);
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
 
       // Act
-      toggleMessageActiveState('nonexistent-id');
+      await toggleMessageActiveState('test-message-id');
+
+      // Assert - should set to false (0)
+      expect(mockUpdateStatement.run).toHaveBeenCalledWith(0, 'test-message-id');
+    });
+
+    it('should convert boolean false to integer 1 when toggling from inactive', async () => {
+      // Arrange - message is currently inactive (false)
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockInactiveMessage)
+        .mockReturnValueOnce(mockActiveMessage);
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
+
+      // Act
+      await toggleMessageActiveState('test-message-id');
+
+      // Assert - should set to true (1)
+      expect(mockUpdateStatement.run).toHaveBeenCalledWith(1, 'test-message-id');
+    });
+  });
+
+  describe('error handling integration', () => {
+    it('should use DatabaseErrorHandler.executeWithRetry', async () => {
+      // Arrange
+      mockSelectStatement.get
+        .mockReturnValueOnce(mockActiveMessage)
+        .mockReturnValueOnce(mockInactiveMessage);
+      mockUpdateStatement.run.mockReturnValue({ changes: 1 });
+
+      // Act
+      await toggleMessageActiveState('test-message-id');
 
       // Assert
-      expect(mockGetMessageById).toHaveBeenCalledTimes(1);
-      expect(mockUpdateMessageActiveState).toHaveBeenCalledTimes(0);
+      expect(mockExecuteWithRetry).toHaveBeenCalledTimes(1);
+      expect(mockExecuteWithRetry).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.objectContaining({
+          operation: 'toggle-active-state',
+          table: 'messages',
+          timestamp: expect.any(Number),
+        }),
+      );
     });
   });
 });
