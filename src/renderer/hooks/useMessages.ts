@@ -5,7 +5,12 @@
  */
 
 import { useCallback, useState } from 'react';
-import type { Message, DatabaseFilter, CreateMessageData } from '../../shared/types';
+import type {
+  Message,
+  DatabaseFilter,
+  CreateMessageData,
+  UpdateMessageActiveStateData,
+} from '../../shared/types';
 
 // Type guard to check if electronAPI is available
 const isElectronAPIAvailable = (): boolean => {
@@ -100,6 +105,35 @@ export const useMessages = () => {
     }
   }, []);
 
+  const updateMessageActiveState = useCallback(
+    async (id: string, updates: UpdateMessageActiveStateData) => {
+      if (!isElectronAPIAvailable()) {
+        setError('Electron API not available');
+        return null;
+      }
+
+      try {
+        setLoading(true);
+        setError(null);
+        const result = await window.electronAPI.dbMessagesUpdateActiveState(id, updates);
+
+        if (result) {
+          setMessages(prev => prev.map(msg => (msg.id === id ? result : msg)));
+        }
+
+        return result;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Failed to update message active state';
+        setError(errorMessage);
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [],
+  );
+
   return {
     messages,
     loading,
@@ -108,5 +142,6 @@ export const useMessages = () => {
     getMessage,
     createMessage,
     deleteMessage,
+    updateMessageActiveState,
   };
 };

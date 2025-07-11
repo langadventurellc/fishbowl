@@ -384,7 +384,7 @@ When executing tasks, remember to:
     - **Pattern Consistency**: Test file follows the same structure as existing preload API tests with proper TypeScript types and comprehensive coverage of all functionality ✅
 
 - 6.0 State Management Hook Integration
-  - [ ] 6.1 Add updateMessageActiveState function to useMessages hook
+  - [x] 6.1 Add updateMessageActiveState function to useMessages hook
   - [ ] 6.2 Add toggleMessageActiveState function to useMessages hook
   - [ ] 6.3 Implement optimistic updates for immediate UI feedback
   - [ ] 6.4 Add error handling and recovery for failed state updates
@@ -392,7 +392,7 @@ When executing tasks, remember to:
   - [ ] 6.6 Write unit tests for hook functions with mock IPC operations
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/renderer/hooks/useMessages.ts` - Added `updateMessageActiveState` function to useMessages hook following established patterns. Function accepts `id: string` and `updates: UpdateMessageActiveStateData` parameters, implements proper error handling with loading states, calls the preload API method `dbMessagesUpdateActiveState`, updates local state array by mapping and replacing the updated message, and returns the updated message or null on failure. Added required import for `UpdateMessageActiveStateData` type and exported the function in the hook's return object. All quality checks pass: ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1043/1043 passing)
 
 - 7.0 AI Context Integration
   - [ ] 7.1 Create getActiveMessagesForAI utility function
