@@ -253,7 +253,7 @@ When executing tasks, remember to:
   - `tests/unit/shared/types/validation-schemas.test.ts` - Added comprehensive unit tests for both `UpdateMessageActiveStateSchema` and `SanitizedUpdateMessageActiveStateSchema`. Tests cover valid data scenarios (true/false states), invalid data scenarios (malformed UUIDs, missing fields, wrong data types), and edge cases (empty strings, null values). Added import for uuid v4 for proper test UUID generation. Total of 12 new test cases added following the established testing patterns in the codebase.
 
 - 3.0 Database Query Operations
-  - [ ] 3.1 Implement updateMessageActiveState query function with prepared statements
+  - [x] 3.1 Implement updateMessageActiveState query function with prepared statements
   - [ ] 3.2 Implement toggleMessageActiveState convenience function
   - [ ] 3.3 Update getMessagesByConversationId to include is_active field in results
   - [ ] 3.4 Create getActiveMessagesByConversationId filtered query function
@@ -261,7 +261,17 @@ When executing tasks, remember to:
   - [ ] 3.6 Write comprehensive unit tests for all query operations
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/main/database/queries/messages/updateMessageActiveState.ts` - Implemented updateMessageActiveState query function with prepared statements following established patterns. Function accepts messageId (string) and isActive (boolean), converts boolean to SQLite integer (0/1), uses prepared statement for security, handles result.changes for error detection, and returns fresh data via getMessageById call.
+  - `src/main/database/queries/messages/index.ts` - Added barrel export for updateMessageActiveState function positioned after updateMessage for logical grouping of update operations.
+  - `tests/unit/main/database/queries/messages/updateMessageActiveState.test.ts` - Created comprehensive unit tests (9 test cases) covering successful updates (true/false states), edge cases (message not found, database errors), SQL query verification, boolean-to-integer conversion for SQLite, and integration with getMessageById. All tests pass with proper mocking patterns following established codebase conventions.
+
+  **Quality Checks Completed:**
+  - ✅ **Format**: Prettier formatting applied successfully
+  - ✅ **Tests**: All 9 unit tests pass (successful updates, edge cases, SQL verification, integration)
+  - ✅ **Implementation**: Follows established patterns from existing message query functions
+  - ✅ **Security**: Uses prepared statements to prevent SQL injection
+  - ✅ **Error Handling**: Proper null return when no rows affected
+  - ✅ **Types**: Full TypeScript type safety with DatabaseMessage interface
 
 - 4.0 IPC Handler Implementation
   - [ ] 4.1 Create dbMessagesUpdateActiveStateHandler with input validation
