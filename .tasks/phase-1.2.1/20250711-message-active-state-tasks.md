@@ -436,7 +436,7 @@ When executing tasks, remember to:
 - 7.0 AI Context Integration
   - [x] 7.1 Create getActiveMessagesForAI utility function
   - [x] 7.2 Implement message filtering at application layer
-    - [ ] 7.2.1 Implement code review improvements for AI services (see .tasks/todo/20250711-ai-services-code-review-improvements.md)
+    - [x] 7.2.1 Implement code review improvements for AI services (see .tasks/todo/20250711-ai-services-code-review-improvements.md)
   - [ ] 7.3 Ensure inactive messages are excluded from AI conversation context
   - [ ] 7.4 Add configuration option to bypass active state filtering if needed
   - [ ] 7.5 Optimize filtering performance for large message volumes
@@ -460,14 +460,13 @@ When executing tasks, remember to:
     - `tests/unit/renderer/services/ai/MessageFormatterService.test.ts` - Comprehensive unit tests (14 test cases) for message formatter service
     - `tests/unit/renderer/services/ai/AgentService.test.ts` - Unit tests for agent service (test framework setup completed)
   - **Architecture Features**: Application layer provides complete message filtering integration with AI context preparation, supporting filtered message validation, context statistics, system prompt generation from agent properties, and full Vercel AI SDK compatibility. Services follow one-export-per-file pattern and integrate seamlessly with existing message filtering utilities. ✅ Format ✅ Lint ✅ Type Check passing for implementation files.
-  - **Task 7.2.1 Requirements**: Implement code review improvements identified by Gemini expert review. This task addresses production-hardening recommendations to elevate the AI services from good implementation to enterprise-quality code. Key improvements include:
-    - **Dependency Injection**: Refactor AgentService to use constructor injection instead of direct instantiation, improving testability and flexibility
-    - **Security Hardening**: Implement prompt injection protection in system prompt generation by properly quoting and structuring user-provided content
-    - **Error Handling**: Add comprehensive try/catch blocks for async operations with specific error types and meaningful messages
-    - **Code Quality**: Replace Date.now() with crypto.randomUUID() for unique ID generation, improve type safety with union types, and remove service accessor methods that break encapsulation
-    - **Testing Updates**: Update all unit tests to work with dependency injection patterns and add tests for security improvements
-    - **Backward Compatibility**: Maintain existing API surface while improving internal implementation
-    - **Reference Implementation**: See `.tasks/todo/20250711-ai-services-code-review-improvements.md` for detailed requirements, specific code changes, and implementation guidance
+  - **Files Modified**:
+    - `src/renderer/services/ai/AgentService.ts` - Dependency injection, security hardening, error handling
+    - `src/renderer/services/ai/MessageFormatterService.ts` - UUID generation, removed stateful variables
+    - `src/renderer/services/ai/ServiceFactory.ts` - New factory for dependency injection
+    - `src/renderer/services/ai/index.ts` - Updated exports
+    - `tests/unit/renderer/services/ai/AgentService.test.ts` - Updated for dependency injection and security
+    - `tests/unit/renderer/services/ai/ServiceFactory.test.ts` - New comprehensive tests
 
 - 8.0 Security Validation and Error Handling
   - [ ] 8.1 Implement message ID validation as UUID in all operations

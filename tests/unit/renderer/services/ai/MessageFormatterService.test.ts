@@ -130,7 +130,9 @@ describe('MessageFormatterService', () => {
 
       expect(result.role).toBe('system');
       expect(result.content).toBe(content);
-      expect(result.id).toMatch(/^system-\d+-\d+$/);
+      expect(result.id).toMatch(
+        /^system-[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
+      );
     });
 
     it('should create unique IDs for system messages', () => {

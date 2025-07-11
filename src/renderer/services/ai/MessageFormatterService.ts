@@ -6,7 +6,6 @@ import { AIMessage } from './AIMessage';
  * Converts internal Message format to standardized AI SDK format.
  */
 export class MessageFormatterService {
-  private systemMessageCounter = 0;
   /**
    * Formats a single message for AI provider consumption.
    * @param message - Application message to format
@@ -42,7 +41,7 @@ export class MessageFormatterService {
     return {
       role: 'system',
       content,
-      id: `system-${Date.now()}-${++this.systemMessageCounter}`,
+      id: `system-${crypto.randomUUID()}`,
     };
   }
 

@@ -12,9 +12,12 @@ export class AgentService {
   private conversationContextService: ConversationContextService;
   private messageFormatterService: MessageFormatterService;
 
-  constructor() {
-    this.conversationContextService = new ConversationContextService();
-    this.messageFormatterService = new MessageFormatterService();
+  constructor(
+    contextService: ConversationContextService,
+    formatterService: MessageFormatterService,
+  ) {
+    this.conversationContextService = contextService;
+    this.messageFormatterService = formatterService;
   }
 
   /**
@@ -60,6 +63,7 @@ export class AgentService {
    * @param getAllMessages - Function to retrieve all messages
    * @param config - AI configuration
    * @returns Prepared AI context
+   * @throws {Error} When message retrieval fails or context preparation fails
    */
   public async prepareAIContextForConversation(
     conversationId: string,
@@ -67,8 +71,15 @@ export class AgentService {
     getAllMessages: (conversationId: string) => Promise<Message[]>,
     config?: AgentConfig,
   ): Promise<AIContextResult> {
-    const messages = await getAllMessages(conversationId);
-    return this.prepareAIContext(messages, agent, config);
+    try {
+      const messages = await getAllMessages(conversationId);
+      return this.prepareAIContext(messages, agent, config);
+    } catch (error) {
+      console.error(`Failed to prepare AI context for conversation ${conversationId}:`, error);
+      throw new Error(
+        `ContextPreparationError: Could not retrieve messages for conversation ${conversationId}. ${error instanceof Error ? error.message : 'Unknown error occurred'}`,
+      );
+    }
   }
 
   /**
@@ -95,37 +106,47 @@ export class AgentService {
   }
 
   /**
-   * Gets the conversation context service for direct access.
-   * @returns ConversationContextService instance
-   */
-  public getConversationContextService(): ConversationContextService {
-    return this.conversationContextService;
-  }
-
-  /**
-   * Gets the message formatter service for direct access.
-   * @returns MessageFormatterService instance
-   */
-  public getMessageFormatterService(): MessageFormatterService {
-    return this.messageFormatterService;
-  }
-
-  /**
    * Builds a system prompt from agent personality and configuration.
+   * Uses proper quoting and structure to prevent prompt injection attacks.
    * @param agent - Agent to build prompt from
-   * @returns System prompt string
+   * @returns System prompt string with injection protection
    */
   private buildSystemPromptFromAgent(agent: Agent): string {
-    let prompt = `You are ${agent.name}`;
+    // Sanitize input values to prevent injection
+    const sanitizedName = this.sanitizePromptInput(agent.name);
+    const sanitizedRole = agent.role ? this.sanitizePromptInput(agent.role) : null;
+    const sanitizedPersonality = agent.personality
+      ? this.sanitizePromptInput(agent.personality)
+      : null;
 
-    if (agent.role) {
-      prompt += `, a ${agent.role}`;
+    let prompt = `You are an AI assistant. Your assigned name is "${sanitizedName}".`;
+
+    if (sanitizedRole) {
+      prompt += ` Your role is: "${sanitizedRole}".`;
     }
 
-    if (agent.personality) {
-      prompt += `. ${agent.personality}`;
+    if (sanitizedPersonality) {
+      prompt += ` Adhere to the following personality guidelines: "${sanitizedPersonality}".`;
     }
 
     return prompt;
+  }
+
+  /**
+   * Sanitizes user input to prevent prompt injection attacks.
+   * @param input - User input to sanitize
+   * @returns Sanitized input safe for prompt inclusion
+   */
+  private sanitizePromptInput(input: string): string {
+    if (!input || typeof input !== 'string') {
+      return '';
+    }
+
+    // Remove or escape potentially dangerous characters
+    return input
+      .replace(/["\r\n\t]/g, ' ') // Remove quotes, newlines, and tabs
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim()
+      .slice(0, 200); // Limit length to prevent excessively long inputs
   }
 }
