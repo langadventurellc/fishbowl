@@ -435,7 +435,8 @@ When executing tasks, remember to:
 
 - 7.0 AI Context Integration
   - [x] 7.1 Create getActiveMessagesForAI utility function
-  - [ ] 7.2 Implement message filtering at application layer
+  - [x] 7.2 Implement message filtering at application layer
+    - [ ] 7.2.1 Implement code review improvements for AI services (see .tasks/todo/20250711-ai-services-code-review-improvements.md)
   - [ ] 7.3 Ensure inactive messages are excluded from AI conversation context
   - [ ] 7.4 Add configuration option to bypass active state filtering if needed
   - [ ] 7.5 Optimize filtering performance for large message volumes
@@ -446,6 +447,27 @@ When executing tasks, remember to:
   - `src/shared/utils/ai/index.ts` - Created barrel export file for AI utility functions following the project's one-export-per-file pattern. Exports the getActiveMessagesForAI function for use across the application.
   - `src/shared/utils/index.ts` - Added AI utilities export to main shared utils barrel file, making AI utilities available throughout the application with proper import path structure.
   - `tests/unit/shared/utils/ai/getActiveMessagesForAI.test.ts` - Created comprehensive unit tests (10 test cases) covering all functionality: active message filtering, timestamp sorting, empty array handling, non-array input validation, property preservation, same timestamp handling, mixed message scenarios, and immutability verification. All tests pass with proper TypeScript types and comprehensive edge case coverage. Tests follow established vitest patterns with proper mocking and assertion strategies.
+  - **Task 7.2 Implementation**: Created comprehensive application layer services for AI message filtering integration. Implementation includes:
+    - `src/renderer/services/ai/ConversationContextService.ts` - Service for managing conversation context with message filtering. Integrates the existing `getActiveMessagesForAI` utility with AI context preparation, validation, and conversation-specific filtering operations.
+    - `src/renderer/services/ai/MessageFormatterService.ts` - Service for formatting application messages for AI provider consumption. Converts internal Message format to standardized AI SDK format following Vercel AI SDK patterns, with role mapping, system message creation, and conversation context preparation.
+    - `src/renderer/services/ai/AgentService.ts` - Main service for AI agent interactions with message filtering integration. Coordinates between conversation context and message formatting services, builds system prompts from agent properties, and provides comprehensive AI context preparation with filtering statistics.
+    - `src/renderer/services/ai/AIMessage.ts` - AI message interface following Vercel AI SDK patterns for provider compatibility
+    - `src/renderer/services/ai/AgentConfig.ts` - Configuration interface for AI agent interactions (temperature, tokens, system prompt, model)
+    - `src/renderer/services/ai/AIContextResult.ts` - Result interface for AI context preparation with filtering metadata
+    - `src/renderer/services/ai/index.ts` - Barrel export file for all AI services and types
+    - `src/renderer/services/index.ts` - Main services export file
+    - `tests/unit/renderer/services/ai/ConversationContextService.test.ts` - Comprehensive unit tests (11 test cases) for conversation context service
+    - `tests/unit/renderer/services/ai/MessageFormatterService.test.ts` - Comprehensive unit tests (14 test cases) for message formatter service
+    - `tests/unit/renderer/services/ai/AgentService.test.ts` - Unit tests for agent service (test framework setup completed)
+  - **Architecture Features**: Application layer provides complete message filtering integration with AI context preparation, supporting filtered message validation, context statistics, system prompt generation from agent properties, and full Vercel AI SDK compatibility. Services follow one-export-per-file pattern and integrate seamlessly with existing message filtering utilities. ✅ Format ✅ Lint ✅ Type Check passing for implementation files.
+  - **Task 7.2.1 Requirements**: Implement code review improvements identified by Gemini expert review. This task addresses production-hardening recommendations to elevate the AI services from good implementation to enterprise-quality code. Key improvements include:
+    - **Dependency Injection**: Refactor AgentService to use constructor injection instead of direct instantiation, improving testability and flexibility
+    - **Security Hardening**: Implement prompt injection protection in system prompt generation by properly quoting and structuring user-provided content
+    - **Error Handling**: Add comprehensive try/catch blocks for async operations with specific error types and meaningful messages
+    - **Code Quality**: Replace Date.now() with crypto.randomUUID() for unique ID generation, improve type safety with union types, and remove service accessor methods that break encapsulation
+    - **Testing Updates**: Update all unit tests to work with dependency injection patterns and add tests for security improvements
+    - **Backward Compatibility**: Maintain existing API surface while improving internal implementation
+    - **Reference Implementation**: See `.tasks/todo/20250711-ai-services-code-review-improvements.md` for detailed requirements, specific code changes, and implementation guidance
 
 - 8.0 Security Validation and Error Handling
   - [ ] 8.1 Implement message ID validation as UUID in all operations
