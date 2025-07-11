@@ -349,7 +349,7 @@ When executing tasks, remember to:
   - [x] 5.3 Update IPC channel definitions for new message operations
   - [x] 5.4 Add type definitions for new preload API methods
   - [x] 5.5 Ensure proper error handling in preload bridge
-  - [ ] 5.6 Write unit tests for preload API methods
+  - [x] 5.6 Write unit tests for preload API methods
 
   ### Files modified with description of changes
   - `src/preload/index.ts` - Added `dbMessagesUpdateActiveState: createSecureIpcWrapper('db:messages:update-active-state')` method to the Database operations - Messages section (line 161). Method follows the established pattern using `createSecureIpcWrapper` and is positioned after `dbMessagesCreate` for logical grouping with other message operations.
@@ -377,6 +377,11 @@ When executing tasks, remember to:
     - **Files Modified**:
       - `src/preload/validation/validateIpcArguments.ts` - Added comprehensive validation for both new message active state channels with proper error handling and type checking
       - `tests/unit/preload/validation.test.ts` - Added 14 comprehensive unit tests covering all validation scenarios for the new channels
+  - **Task 5.6 Completion**: Created comprehensive unit tests for the `dbMessagesToggleActiveState` preload API method following established testing patterns. Test implementation:
+    - `tests/unit/preload/dbMessagesToggleActiveState.test.ts` - Created 16 comprehensive unit tests covering API method existence, function signature validation, successful toggle operations (active ↔ inactive), error handling (message not found, database errors, validation errors), return value validation (Promise<Message | null>), parameter validation (UUID format checking), and integration with other message operations ✅
+    - **Testing Strategy**: Tests use proper mocking patterns with `window.electronAPI` mock setup, comprehensive error scenario coverage, and proper Message interface structure validation ✅
+    - **Quality Verification**: All tests pass with complete quality verification - ✅ Format ✅ Lint ✅ Type Check ✅ Tests (16/16 passing) ✅
+    - **Pattern Consistency**: Test file follows the same structure as existing preload API tests with proper TypeScript types and comprehensive coverage of all functionality ✅
 
 - 6.0 State Management Hook Integration
   - [ ] 6.1 Add updateMessageActiveState function to useMessages hook
