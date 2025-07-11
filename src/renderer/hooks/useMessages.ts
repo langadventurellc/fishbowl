@@ -159,7 +159,7 @@ export const useMessages = () => {
     }
   }, [handleError, clearError]);
 
-  // State consistency validation
+  // Enhanced state consistency validation
   const validateMessageConsistency = useCallback(
     async (messageId: string) => {
       if (!isElectronAPIAvailable()) {
@@ -174,8 +174,13 @@ export const useMessages = () => {
           return false;
         }
 
-        // Check if active state matches
-        return remoteMessage.isActive === localMessage.isActive;
+        // Check if all relevant fields match
+        return (
+          remoteMessage.isActive === localMessage.isActive &&
+          remoteMessage.content === localMessage.content &&
+          remoteMessage.type === localMessage.type &&
+          remoteMessage.metadata === localMessage.metadata
+        );
       } catch {
         return false;
       }
@@ -183,7 +188,41 @@ export const useMessages = () => {
     [messages],
   );
 
-  // Sync message state with remote
+  // Batch consistency validation for multiple messages
+  const validateBatchConsistency = useCallback(
+    async (messageIds: string[]) => {
+      if (!isElectronAPIAvailable()) {
+        return { consistent: [], inconsistent: [] };
+      }
+
+      const results = await Promise.allSettled(
+        messageIds.map(async id => {
+          const isConsistent = await validateMessageConsistency(id);
+          return { id, isConsistent };
+        }),
+      );
+
+      const consistent: string[] = [];
+      const inconsistent: string[] = [];
+
+      results.forEach(result => {
+        if (result.status === 'fulfilled') {
+          if (result.value.isConsistent) {
+            consistent.push(result.value.id);
+          } else {
+            inconsistent.push(result.value.id);
+          }
+        } else {
+          inconsistent.push('unknown');
+        }
+      });
+
+      return { consistent, inconsistent };
+    },
+    [validateMessageConsistency],
+  );
+
+  // Enhanced sync message state with better error handling
   const syncMessageState = useCallback(
     async (messageId: string) => {
       if (!isElectronAPIAvailable()) {
@@ -195,15 +234,80 @@ export const useMessages = () => {
 
         if (remoteMessage) {
           setMessages(prev => prev.map(msg => (msg.id === messageId ? remoteMessage : msg)));
+          return remoteMessage;
+        } else {
+          // Message not found in remote, remove from local state
+          setMessages(prev => prev.filter(msg => msg.id !== messageId));
+          return null;
         }
-
-        return remoteMessage;
       } catch (error) {
         handleError(error, 'sync message state');
         return null;
       }
     },
     [handleError],
+  );
+
+  // Batch sync multiple messages
+  const syncBatchMessageState = useCallback(
+    async (messageIds: string[]) => {
+      if (!isElectronAPIAvailable()) {
+        return { synced: [], failed: [] };
+      }
+
+      const results = await Promise.allSettled(
+        messageIds.map(async id => {
+          const syncedMessage = await syncMessageState(id);
+          return { id, message: syncedMessage };
+        }),
+      );
+
+      const synced: string[] = [];
+      const failed: string[] = [];
+
+      results.forEach(result => {
+        if (result.status === 'fulfilled' && result.value.message) {
+          synced.push(result.value.id);
+        } else {
+          failed.push(result.status === 'fulfilled' ? result.value.id : 'unknown');
+        }
+      });
+
+      return { synced, failed };
+    },
+    [syncMessageState],
+  );
+
+  // Automatic consistency validation and recovery
+  const ensureConsistency = useCallback(
+    async (messageId: string) => {
+      if (!isElectronAPIAvailable()) {
+        return false;
+      }
+
+      try {
+        // First validate consistency
+        const isConsistent = await validateMessageConsistency(messageId);
+
+        if (!isConsistent) {
+          // If inconsistent, attempt to sync from remote
+          const syncedMessage = await syncMessageState(messageId);
+
+          if (syncedMessage) {
+            // Revalidate after sync
+            return await validateMessageConsistency(messageId);
+          }
+
+          return false;
+        }
+
+        return true;
+      } catch (error) {
+        handleError(error, 'ensure consistency');
+        return false;
+      }
+    },
+    [validateMessageConsistency, syncMessageState, handleError],
   );
 
   const listMessages = useCallback(async (conversationId: string, filter?: DatabaseFilter) => {
@@ -329,6 +433,19 @@ export const useMessages = () => {
       const confirmedUpdater = (result: Message | null) => {
         if (result) {
           setMessages(prev => prev.map(msg => (msg.id === id ? result : msg)));
+
+          // Validate consistency after successful update (non-blocking)
+          setTimeout(() => {
+            ensureConsistency(id)
+              .then(isConsistent => {
+                if (!isConsistent) {
+                  console.warn(`Consistency validation failed for message ${id} after update`);
+                }
+              })
+              .catch(error => {
+                console.warn(`Consistency validation error for message ${id}:`, error);
+              });
+          }, 100); // Small delay to ensure UI updates complete
         }
         setLoading(false);
       };
@@ -370,7 +487,7 @@ export const useMessages = () => {
 
       return await optimisticOperation();
     },
-    [handleError, clearError],
+    [handleError, clearError, ensureConsistency],
   );
 
   const toggleMessageActiveState = useCallback(
@@ -414,6 +531,19 @@ export const useMessages = () => {
       const confirmedUpdater = (result: Message | null) => {
         if (result) {
           setMessages(prev => prev.map(msg => (msg.id === id ? result : msg)));
+
+          // Validate consistency after successful update (non-blocking)
+          setTimeout(() => {
+            ensureConsistency(id)
+              .then(isConsistent => {
+                if (!isConsistent) {
+                  console.warn(`Consistency validation failed for message ${id} after update`);
+                }
+              })
+              .catch(error => {
+                console.warn(`Consistency validation error for message ${id}:`, error);
+              });
+          }, 100); // Small delay to ensure UI updates complete
         }
         setLoading(false);
       };
@@ -455,7 +585,7 @@ export const useMessages = () => {
 
       return await optimisticOperation();
     },
-    [handleError, clearError],
+    [handleError, clearError, ensureConsistency],
   );
 
   return {
@@ -472,6 +602,9 @@ export const useMessages = () => {
     clearError,
     retryLastOperation,
     validateMessageConsistency,
+    validateBatchConsistency,
     syncMessageState,
+    syncBatchMessageState,
+    ensureConsistency,
   };
 };

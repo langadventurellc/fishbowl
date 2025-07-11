@@ -388,7 +388,7 @@ When executing tasks, remember to:
   - [x] 6.2 Add toggleMessageActiveState function to useMessages hook
   - [x] 6.3 Implement optimistic updates for immediate UI feedback
   - [x] 6.4 Add error handling and recovery for failed state updates
-  - [ ] 6.5 Ensure consistency between local state and database state
+  - [x] 6.5 Ensure consistency between local state and database state
   - [ ] 6.6 Write unit tests for hook functions with mock IPC operations
 
   ### Files modified with description of changes
@@ -402,6 +402,17 @@ When executing tasks, remember to:
     - **TypeScript Safety**: Added proper null assertion operators (`!`) to handle the rollback scenario where originalMessage is guaranteed to exist
     - **Pattern Consistency**: Implementation follows established patterns with proper error handling, loading states, and return values
     - **Quality Verification**: All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1043/1043 passing)
+  - **Task 6.5 Implementation**: Enhanced state consistency mechanisms in useMessages hook with comprehensive consistency validation, automatic recovery, and batch operations. Implementation includes:
+    - **Enhanced Consistency Validation**: Expanded `validateMessageConsistency` function to validate all relevant message fields (isActive, content, type, metadata), not just the active state field, ensuring complete data integrity
+    - **Batch Consistency Operations**: Added `validateBatchConsistency` function for validating multiple messages simultaneously, returning categorized results (consistent/inconsistent arrays) for efficient bulk operations
+    - **Improved Sync Mechanism**: Enhanced `syncMessageState` function with better error handling, automatic cleanup of locally-cached messages that no longer exist in the remote database, and more robust return value handling
+    - **Batch Sync Operations**: Added `syncBatchMessageState` function for syncing multiple messages with detailed success/failure reporting, improving efficiency for bulk consistency operations
+    - **Automatic Consistency Recovery**: Implemented `ensureConsistency` function that automatically validates and recovers message consistency by syncing from remote when inconsistencies are detected
+    - **Integrated Validation**: Modified both `updateMessageActiveState` and `toggleMessageActiveState` functions to automatically validate consistency after successful operations using non-blocking setTimeout pattern
+    - **Enhanced Error Handling**: Added comprehensive error handling with proper categorization, logging, and user feedback for consistency validation failures
+    - **Export Integration**: Added all new consistency functions to the hook's return object for external use by components
+    - **Quality Verification**: All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1043/1043 passing)
+    - **Pattern Consistency**: Implementation follows established patterns with proper dependency management, error handling, and async operation patterns
   - **Task 6.4 Implementation**: Enhanced error handling and recovery for failed state updates with comprehensive error management system. Implementation includes:
     - **Error Categorization**: Added `MessageErrorType` enum (NETWORK, VALIDATION, NOT_FOUND, DATABASE, UNKNOWN) with `MessageError` interface for structured error handling
     - **Retry Logic**: Implemented `retryOperation` function with exponential backoff (3 attempts, 1s base delay, 2x multiplier) for transient failures
