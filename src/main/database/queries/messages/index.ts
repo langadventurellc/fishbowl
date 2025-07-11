@@ -3,6 +3,7 @@
  */
 export { createMessage } from './createMessage';
 export { getMessagesByConversationId } from './getMessagesByConversationId';
+export { getActiveMessagesByConversationId } from './getActiveMessagesByConversationId';
 export { getMessageById } from './getMessageById';
 export { updateMessage } from './updateMessage';
 export { updateMessageActiveState } from './updateMessageActiveState';

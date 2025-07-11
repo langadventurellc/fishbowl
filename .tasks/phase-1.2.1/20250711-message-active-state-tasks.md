@@ -255,22 +255,8 @@ When executing tasks, remember to:
 - 3.0 Database Query Operations
   - [x] 3.1 Implement updateMessageActiveState query function with prepared statements
   - [x] 3.2 Implement toggleMessageActiveState convenience function
-
-    **Implementation Summary**: Created `toggleMessageActiveState` function that gets current message state and toggles the `is_active` boolean value. Function leverages existing `getMessageById` and `updateMessageActiveState` functions for consistency and code reuse. Returns updated message object or null if not found.
-
-    **Files Modified**:
-    - `src/main/database/queries/messages/toggleMessageActiveState.ts` - Main implementation with proper error handling
-    - `src/main/database/queries/messages/index.ts` - Added barrel export
-    - `tests/unit/main/database/queries/messages/toggleMessageActiveState.test.ts` - Comprehensive unit tests (13 test cases)
-
-    **Quality Checks Completed**:
-    - ✅ **Format**: Prettier formatting applied
-    - ✅ **Lint**: ESLint passed with zero errors
-    - ✅ **Type Check**: TypeScript compilation successful
-    - ✅ **Tests**: All 13 unit tests passing (toggle operations, edge cases, integration, error handling)
-
-  - [ ] 3.3 Update getMessagesByConversationId to include is_active field in results
-  - [ ] 3.4 Create getActiveMessagesByConversationId filtered query function
+  - [x] 3.3 Update getMessagesByConversationId to include is_active field in results
+  - [x] 3.4 Create getActiveMessagesByConversationId filtered query function
   - [ ] 3.5 Add proper error handling and transaction support for state operations
   - [ ] 3.6 Write comprehensive unit tests for all query operations
 
@@ -278,14 +264,16 @@ When executing tasks, remember to:
   - `src/main/database/queries/messages/updateMessageActiveState.ts` - Implemented updateMessageActiveState query function with prepared statements following established patterns. Function accepts messageId (string) and isActive (boolean), converts boolean to SQLite integer (0/1), uses prepared statement for security, handles result.changes for error detection, and returns fresh data via getMessageById call.
   - `src/main/database/queries/messages/index.ts` - Added barrel export for updateMessageActiveState function positioned after updateMessage for logical grouping of update operations.
   - `tests/unit/main/database/queries/messages/updateMessageActiveState.test.ts` - Created comprehensive unit tests (9 test cases) covering successful updates (true/false states), edge cases (message not found, database errors), SQL query verification, boolean-to-integer conversion for SQLite, and integration with getMessageById. All tests pass with proper mocking patterns following established codebase conventions.
-
-  **Quality Checks Completed:**
-  - ✅ **Format**: Prettier formatting applied successfully
-  - ✅ **Tests**: All 9 unit tests pass (successful updates, edge cases, SQL verification, integration)
-  - ✅ **Implementation**: Follows established patterns from existing message query functions
-  - ✅ **Security**: Uses prepared statements to prevent SQL injection
-  - ✅ **Error Handling**: Proper null return when no rows affected
-  - ✅ **Types**: Full TypeScript type safety with DatabaseMessage interface
+  - `src/main/database/queries/messages/toggleMessageActiveState.ts` - Main implementation with proper error handling
+  - `src/main/database/queries/messages/index.ts` - Added barrel export
+  - `tests/unit/main/database/queries/messages/toggleMessageActiveState.test.ts` - Comprehensive unit tests (13 test cases)
+  - `src/main/database/queries/messages/getMessagesByConversationId.ts` - Already includes is_active field via SELECT \*
+  - `src/main/ipc/handlers/dbMessagesListHandler.ts` - Already transforms is_active to isActive (line 19)
+  - `src/main/database/schema/DatabaseMessage.ts` - Already includes is_active: boolean (line 8)
+  - `tests/unit/main/ipc/database-handlers.test.ts` - Already includes is_active in mock data (line 87)
+  - `src/main/database/queries/messages/getActiveMessagesByConversationId.ts` - Main implementation with prepared statements
+  - `src/main/database/queries/messages/index.ts` - Added barrel export after existing get functions
+  - `tests/unit/main/database/queries/messages/getActiveMessagesByConversationId.test.ts` - Comprehensive unit tests (11 test cases)
 
 - 4.0 IPC Handler Implementation
   - [ ] 4.1 Create dbMessagesUpdateActiveStateHandler with input validation
