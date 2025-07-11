@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { v4 as uuidv4 } from 'uuid';
 import {
   SystemInfoSchema,
   PlatformSchema,
@@ -23,6 +24,8 @@ import {
   IpcChannelSchema,
   IpcRequestSchema,
   IpcResponseSchema,
+  UpdateMessageActiveStateSchema,
+  SanitizedUpdateMessageActiveStateSchema,
 } from '../../../../src/shared/types/validation';
 
 describe('Validation Schemas', () => {
@@ -173,6 +176,113 @@ describe('Validation Schemas', () => {
         isActive: true,
         metadata: '{}',
       });
+    });
+
+    it('should validate UpdateMessageActiveState correctly', () => {
+      const validData = {
+        id: uuidv4(),
+        isActive: true,
+      };
+
+      expect(UpdateMessageActiveStateSchema.parse(validData)).toEqual(validData);
+    });
+
+    it('should validate UpdateMessageActiveState with false state', () => {
+      const validData = {
+        id: uuidv4(),
+        isActive: false,
+      };
+
+      expect(UpdateMessageActiveStateSchema.parse(validData)).toEqual(validData);
+    });
+
+    it('should reject UpdateMessageActiveState with invalid UUID', () => {
+      const invalidData = {
+        id: 'invalid-uuid',
+        isActive: true,
+      };
+
+      expect(() => UpdateMessageActiveStateSchema.parse(invalidData)).toThrow();
+    });
+
+    it('should reject UpdateMessageActiveState with missing fields', () => {
+      expect(() => UpdateMessageActiveStateSchema.parse({})).toThrow();
+      expect(() => UpdateMessageActiveStateSchema.parse({ id: uuidv4() })).toThrow();
+      expect(() => UpdateMessageActiveStateSchema.parse({ isActive: true })).toThrow();
+    });
+
+    it('should reject UpdateMessageActiveState with wrong data types', () => {
+      expect(() =>
+        UpdateMessageActiveStateSchema.parse({
+          id: uuidv4(),
+          isActive: 'true',
+        }),
+      ).toThrow();
+
+      expect(() =>
+        UpdateMessageActiveStateSchema.parse({
+          id: 123,
+          isActive: true,
+        }),
+      ).toThrow();
+    });
+
+    it('should validate SanitizedUpdateMessageActiveState correctly', () => {
+      const validData = {
+        id: uuidv4(),
+        isActive: true,
+      };
+
+      expect(SanitizedUpdateMessageActiveStateSchema.parse(validData)).toEqual(validData);
+    });
+
+    it('should validate SanitizedUpdateMessageActiveState with false state', () => {
+      const validData = {
+        id: uuidv4(),
+        isActive: false,
+      };
+
+      expect(SanitizedUpdateMessageActiveStateSchema.parse(validData)).toEqual(validData);
+    });
+
+    it('should reject SanitizedUpdateMessageActiveState with invalid UUID', () => {
+      const invalidData = {
+        id: 'invalid-uuid',
+        isActive: true,
+      };
+
+      expect(() => SanitizedUpdateMessageActiveStateSchema.parse(invalidData)).toThrow();
+    });
+
+    it('should reject SanitizedUpdateMessageActiveState with empty UUID', () => {
+      const invalidData = {
+        id: '',
+        isActive: true,
+      };
+
+      expect(() => SanitizedUpdateMessageActiveStateSchema.parse(invalidData)).toThrow();
+    });
+
+    it('should reject SanitizedUpdateMessageActiveState with missing fields', () => {
+      expect(() => SanitizedUpdateMessageActiveStateSchema.parse({})).toThrow();
+      expect(() => SanitizedUpdateMessageActiveStateSchema.parse({ id: uuidv4() })).toThrow();
+      expect(() => SanitizedUpdateMessageActiveStateSchema.parse({ isActive: true })).toThrow();
+    });
+
+    it('should reject SanitizedUpdateMessageActiveState with wrong data types', () => {
+      expect(() =>
+        SanitizedUpdateMessageActiveStateSchema.parse({
+          id: uuidv4(),
+          isActive: 'true',
+        }),
+      ).toThrow();
+
+      expect(() =>
+        SanitizedUpdateMessageActiveStateSchema.parse({
+          id: 123,
+          isActive: true,
+        }),
+      ).toThrow();
     });
 
     it('should validate Conversation correctly', () => {

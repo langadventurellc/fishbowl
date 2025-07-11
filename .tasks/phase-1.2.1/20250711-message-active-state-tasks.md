@@ -228,8 +228,8 @@ When executing tasks, remember to:
   - [x] 2.2 Update Message interface with isActive boolean field for application layer
   - [x] 2.3 Update CreateMessageData interface with optional isActive field (default true)
   - [x] 2.4 Create UpdateMessageActiveStateData interface for IPC operations
-  - [ ] 2.5 Add Zod validation schemas for message active state operations
-  - [ ] 2.6 Write unit tests for type validation and schema compilation
+  - [x] 2.5 Add Zod validation schemas for message active state operations
+  - [x] 2.6 Write unit tests for type validation and schema compilation
 
   ### Files modified with description of changes
   - `src/main/database/schema/DatabaseMessage.ts` - Added `is_active: boolean` field to DatabaseMessage interface following the established pattern from DatabaseAgent and DatabaseConversation interfaces. The field is positioned after the core identifying fields (id, conversation_id, agent_id) and before content fields.
@@ -250,6 +250,7 @@ When executing tasks, remember to:
   - `src/shared/types/index.ts` - Added `UpdateMessageActiveStateData` interface at line 279-281, positioned after CreateMessageData interface to maintain logical grouping of message-related types. The interface contains only the `isActive: boolean` field, following the pattern of other update interfaces but specific to the active state operation.
   - `src/shared/types/validation/database-schema.ts` - Added `UpdateMessageActiveStateSchema` at line 65-68 with id (UUID) and isActive (boolean) validation, following the same pattern as other update schemas like UpdateAgentSchema and UpdateConversationSchema.
   - `src/shared/types/validation/database-schema.ts` - Added `SanitizedUpdateMessageActiveStateSchema` at line 240-243 with enhanced validation using UuidSchema for the id field, ensuring proper input sanitization for IPC operations.
+  - `tests/unit/shared/types/validation-schemas.test.ts` - Added comprehensive unit tests for both `UpdateMessageActiveStateSchema` and `SanitizedUpdateMessageActiveStateSchema`. Tests cover valid data scenarios (true/false states), invalid data scenarios (malformed UUIDs, missing fields, wrong data types), and edge cases (empty strings, null values). Added import for uuid v4 for proper test UUID generation. Total of 12 new test cases added following the established testing patterns in the codebase.
 
 - 3.0 Database Query Operations
   - [ ] 3.1 Implement updateMessageActiveState query function with prepared statements
