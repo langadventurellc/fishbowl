@@ -389,7 +389,7 @@ When executing tasks, remember to:
   - [x] 6.3 Implement optimistic updates for immediate UI feedback
   - [x] 6.4 Add error handling and recovery for failed state updates
   - [x] 6.5 Ensure consistency between local state and database state
-  - [ ] 6.6 Write unit tests for hook functions with mock IPC operations
+  - [x] 6.6 Write unit tests for hook functions with mock IPC operations
 
   ### Files modified with description of changes
   - `src/renderer/hooks/useMessages.ts` - Added `updateMessageActiveState` function to useMessages hook following established patterns. Function accepts `id: string` and `updates: UpdateMessageActiveStateData` parameters, implements proper error handling with loading states, calls the preload API method `dbMessagesUpdateActiveState`, updates local state array by mapping and replacing the updated message, and returns the updated message or null on failure. Added required import for `UpdateMessageActiveStateData` type and exported the function in the hook's return object. All quality checks pass: ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1043/1043 passing)
@@ -413,6 +413,15 @@ When executing tasks, remember to:
     - **Export Integration**: Added all new consistency functions to the hook's return object for external use by components
     - **Quality Verification**: All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1043/1043 passing)
     - **Pattern Consistency**: Implementation follows established patterns with proper dependency management, error handling, and async operation patterns
+  - **Task 6.6 Implementation**: Created comprehensive unit tests for `updateMessageActiveState` and `toggleMessageActiveState` hook functions with complete mock IPC operations. Test implementation includes:
+    - **Test Coverage**: Added 26 new test cases covering all aspects of the active state functions - success scenarios (true/false state changes), error handling (database, validation, not found, network, API unavailable), optimistic updates with rollback behavior, state consistency validation, error recovery mechanisms, and function availability verification
+    - **Mock Infrastructure**: Implemented proper mocking for `createOptimisticUpdate` utility, `MessageErrorType` enum, and `window.electronAPI` with `dbMessagesUpdateActiveState` and `dbMessagesToggleActiveState` methods using vitest patterns
+    - **React Testing**: Used `@testing-library/react` with `renderHook` and `act()` for proper React hook testing with async operations and state updates
+    - **Error Scenario Testing**: Comprehensive error testing with proper error categorization, structured error objects, and retry mechanisms matching the actual hook implementation
+    - **Test Setup**: Implemented beforeEach setup to restore mocks between tests, preventing test interference and ensuring clean test isolation
+    - **Pattern Compliance**: Tests follow established patterns from existing useMessages tests with proper TypeScript types, comprehensive assertions, and established vitest testing conventions
+    - **Quality Verification**: All 33 tests pass (7 original + 26 new) with complete quality verification - ✅ Format ✅ Lint ✅ Type Check ✅ Tests
+    - **Files Modified**: `tests/unit/renderer/hooks/useMessages.test.ts` - Comprehensive unit test coverage for all hook active state functionality
   - **Task 6.4 Implementation**: Enhanced error handling and recovery for failed state updates with comprehensive error management system. Implementation includes:
     - **Error Categorization**: Added `MessageErrorType` enum (NETWORK, VALIDATION, NOT_FOUND, DATABASE, UNKNOWN) with `MessageError` interface for structured error handling
     - **Retry Logic**: Implemented `retryOperation` function with exponential backoff (3 attempts, 1s base delay, 2x multiplier) for transient failures

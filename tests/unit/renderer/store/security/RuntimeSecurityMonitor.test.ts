@@ -12,6 +12,20 @@ describe('RuntimeSecurityMonitor', () => {
   let getStateMock: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
+    // Mock window.setInterval and window.clearInterval
+    const mockSetInterval = vi.fn((callback: () => void, delay: number) => {
+      return setTimeout(callback, delay);
+    });
+    const mockClearInterval = vi.fn((id: NodeJS.Timeout) => {
+      clearTimeout(id);
+    });
+
+    // Mock window object with setInterval
+    vi.stubGlobal('window', {
+      setInterval: mockSetInterval,
+      clearInterval: mockClearInterval,
+    });
+
     monitor = RuntimeSecurityMonitor.getInstance();
     monitor.clearEventHistory();
 
@@ -135,6 +149,7 @@ describe('RuntimeSecurityMonitor', () => {
     monitor.clearEventHistory();
     localStorage.clear();
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
 
     // Reset singleton instance to prevent state leakage between tests
     (RuntimeSecurityMonitor as any).instance = undefined;
