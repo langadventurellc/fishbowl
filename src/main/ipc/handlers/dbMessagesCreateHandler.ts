@@ -15,7 +15,7 @@ export const dbMessagesCreateHandler = (
       id: uuidv4(),
       conversation_id: validatedData.conversationId,
       agent_id: validatedData.agentId,
-      is_active: true,
+      is_active: validatedData.isActive,
       content: validatedData.content,
       type: validatedData.type,
       metadata: validatedData.metadata,

@@ -272,7 +272,12 @@ export interface CreateMessageData {
   agentId: string;
   content: string;
   type: string;
+  isActive?: boolean;
   metadata?: string;
+}
+
+export interface UpdateMessageActiveStateData {
+  isActive: boolean;
 }
 
 // Secure storage types

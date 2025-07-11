@@ -226,8 +226,8 @@ When executing tasks, remember to:
 - 2.0 TypeScript Type System Updates
   - [x] 2.1 Update DatabaseMessage interface with is_active boolean field
   - [x] 2.2 Update Message interface with isActive boolean field for application layer
-  - [ ] 2.3 Update CreateMessageData interface with optional isActive field (default true)
-  - [ ] 2.4 Create UpdateMessageActiveStateData interface for IPC operations
+  - [x] 2.3 Update CreateMessageData interface with optional isActive field (default true)
+  - [x] 2.4 Create UpdateMessageActiveStateData interface for IPC operations
   - [ ] 2.5 Add Zod validation schemas for message active state operations
   - [ ] 2.6 Write unit tests for type validation and schema compilation
 
@@ -242,6 +242,14 @@ When executing tasks, remember to:
   - `src/main/ipc/handlers/dbTransactionsCreateMessagesBatchHandler.ts` - Added `is_active: true` to messageRecord object and updated insertMessage.run call to include the active state parameter. Also added `isActive: messageRecord.is_active` to the return object transformation.
   - `tests/integration/ipc-database-integration.test.ts` - Updated all mockMessage objects to include `isActive: true` field for test compatibility with the updated interface.
   - `tests/unit/renderer/hooks/useMessages.test.ts` - Updated all mockMessage objects to include `isActive: true` field for test compatibility with the updated interface.
+  - `src/shared/types/index.ts` - Added `isActive?: boolean` field to CreateMessageData interface at line 275, positioned after the type field and before metadata field to maintain logical grouping. This makes the field optional with the default value provided by Zod validation.
+  - `src/shared/types/validation/database-schema.ts` - Added `isActive: z.boolean().default(true)` to both CreateMessageSchema (line 58) and SanitizedCreateMessageSchema (line 214) following the same pattern used in CreateConversationSchema. This ensures consistent validation and default behavior across all message creation operations.
+  - `src/main/ipc/handlers/dbMessagesCreateHandler.ts` - Updated line 18 to use `validatedData.isActive` instead of hardcoded `true` value, allowing the validated data (with proper default) to be used throughout the message creation process.
+  - `src/main/ipc/handlers/dbTransactionsCreateMessagesBatchHandler.ts` - Updated SQL INSERT statement to include `is_active` field (line 17), changed line 29 to use `msgData.isActive` instead of hardcoded `true`, ensuring the batch handler properly uses validated data for all message operations.
+  - `tests/unit/shared/types/validation-schemas.test.ts` - Updated the CreateMessage validation test (line 173) to expect `isActive: true` in the result, matching the new schema behavior with default value.
+  - `src/shared/types/index.ts` - Added `UpdateMessageActiveStateData` interface at line 279-281, positioned after CreateMessageData interface to maintain logical grouping of message-related types. The interface contains only the `isActive: boolean` field, following the pattern of other update interfaces but specific to the active state operation.
+  - `src/shared/types/validation/database-schema.ts` - Added `UpdateMessageActiveStateSchema` at line 65-68 with id (UUID) and isActive (boolean) validation, following the same pattern as other update schemas like UpdateAgentSchema and UpdateConversationSchema.
+  - `src/shared/types/validation/database-schema.ts` - Added `SanitizedUpdateMessageActiveStateSchema` at line 240-243 with enhanced validation using UuidSchema for the id field, ensuring proper input sanitization for IPC operations.
 
 - 3.0 Database Query Operations
   - [ ] 3.1 Implement updateMessageActiveState query function with prepared statements

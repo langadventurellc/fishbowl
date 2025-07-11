@@ -14,8 +14,8 @@ export const dbTransactionsCreateMessagesBatchHandler = (
 
     return transactionManager.executeTransaction(db => {
       const insertMessage = db.prepare(`
-        INSERT INTO messages (id, conversation_id, agent_id, content, type, metadata, timestamp)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO messages (id, conversation_id, agent_id, is_active, content, type, metadata, timestamp)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       const createdMessages: Message[] = [];
@@ -26,7 +26,7 @@ export const dbTransactionsCreateMessagesBatchHandler = (
           id: uuidv4(),
           conversation_id: msgData.conversationId,
           agent_id: msgData.agentId,
-          is_active: true,
+          is_active: msgData.isActive,
           content: msgData.content,
           type: msgData.type,
           metadata: msgData.metadata ?? '{}',

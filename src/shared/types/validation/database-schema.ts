@@ -55,7 +55,16 @@ export const CreateMessageSchema = z.object({
   agentId: z.string().uuid(),
   content: z.string().min(1),
   type: z.string().min(1),
+  isActive: z.boolean().default(true),
   metadata: z.string().optional().default('{}'),
+});
+
+/**
+ * Zod schema for updating a Message active state
+ */
+export const UpdateMessageActiveStateSchema = z.object({
+  id: z.string().uuid(),
+  isActive: z.boolean(),
 });
 
 /**
@@ -210,6 +219,7 @@ export const SanitizedCreateMessageSchema = z.object({
   agentId: UuidSchema,
   content: SanitizedContentSchema,
   type: z.string().min(1, 'Message type cannot be empty'),
+  isActive: z.boolean().default(true),
   metadata: z
     .string()
     .optional()
@@ -222,6 +232,14 @@ export const SanitizedCreateMessageSchema = z.object({
         return false;
       }
     }, 'Metadata must be valid JSON'),
+});
+
+/**
+ * Enhanced update message active state schema with sanitization
+ */
+export const SanitizedUpdateMessageActiveStateSchema = z.object({
+  id: UuidSchema,
+  isActive: z.boolean(),
 });
 
 /**

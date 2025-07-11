@@ -170,6 +170,7 @@ describe('Validation Schemas', () => {
 
       expect(CreateMessageSchema.parse(validData)).toEqual({
         ...validData,
+        isActive: true,
         metadata: '{}',
       });
     });
