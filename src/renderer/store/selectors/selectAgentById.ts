@@ -1,10 +1,18 @@
 import type { AppState } from '../types';
+import { createFindByIdSelector, registerSelectorForMonitoring } from '../utils/memoization';
 
 /**
- * Creates a selector to find an agent by ID.
+ * Creates a memoized selector to find an agent by ID.
+ * Uses parameterized memoization to cache results for different agent IDs.
  * @param id - The agent ID to find
- * @returns A selector function that returns the agent or null if not found
+ * @returns A memoized selector function that returns the agent or undefined
  */
-export const selectAgentById = (id: string) => (state: AppState) => {
-  return state.agents.find(agent => agent.id === id) ?? null;
-};
+const selectAgentByIdImpl = createFindByIdSelector((state: AppState) => state.agents, {
+  enablePerformanceMonitoring: process.env.NODE_ENV === 'development',
+  maxCacheSize: 50, // Cache results for up to 50 different agent IDs
+});
+
+// Register for performance monitoring in development
+void registerSelectorForMonitoring('selectAgentById', selectAgentByIdImpl);
+
+export const selectAgentById = selectAgentByIdImpl;

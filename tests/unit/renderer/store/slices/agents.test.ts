@@ -277,14 +277,14 @@ describe('Agent Slice Tests', () => {
       const state = useStore.getState();
       const agent = selectAgentById('999')(state);
 
-      expect(agent).toBeNull();
+      expect(agent).toBeUndefined();
     });
 
     it('should return null when searching empty agents array', () => {
       const state = useStore.getState();
       const agent = selectAgentById('1')(state);
 
-      expect(agent).toBeNull();
+      expect(agent).toBeUndefined();
     });
 
     it('should select agents in conversation correctly', () => {
@@ -489,7 +489,7 @@ describe('Agent Slice Tests', () => {
       const state = useStore.getState();
       const agent = selectAgentById('')(state);
 
-      expect(agent).toBeNull();
+      expect(agent).toBeUndefined();
     });
 
     it('should handle null conversation IDs in agent status', () => {

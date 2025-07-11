@@ -20,6 +20,7 @@ import { createSettingsSlice } from './slices/settings';
 import { createAgentSlice } from './slices/agents';
 import { createConversationSlice } from './slices/conversation';
 import { systemThemeDetector, getCurrentSystemTheme } from './utils';
+import { conditionallyEnablePerformanceMonitoring } from './utils/memoization';
 
 /**
  * Default values for store initialization
@@ -238,6 +239,9 @@ export const initializeStore = (): boolean => {
       state.updateSystemTheme(fallbackTheme);
       console.warn('System theme listener setup failed, using fallback detection');
     }
+
+    // Initialize performance monitoring in development
+    void conditionallyEnablePerformanceMonitoring();
 
     console.warn('Store initialized successfully');
     return true;

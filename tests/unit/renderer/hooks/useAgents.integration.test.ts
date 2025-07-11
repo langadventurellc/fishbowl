@@ -127,8 +127,7 @@ describe('useAgents Hook Integration', () => {
       // Temporarily remove electronAPI using safe property manipulation
       const originalAPI = (window as any).electronAPI;
 
-      // Safe property removal - delete first, then redefine
-      delete (window as any).electronAPI;
+      // Safe property removal - set to undefined without deletion
       (window as any).electronAPI = undefined;
 
       const { result } = renderHook(() => useAgents());

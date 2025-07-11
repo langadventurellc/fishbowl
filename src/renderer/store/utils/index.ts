@@ -9,3 +9,4 @@ export * from './isSystemThemeSupported';
 export * from './createIPCStoreBridge';
 export * from './createOptimisticUpdate';
 export * from './validateStoreUpdate';
+export * from './memoization';
