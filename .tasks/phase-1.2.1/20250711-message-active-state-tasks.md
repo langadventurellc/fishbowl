@@ -283,12 +283,17 @@ When executing tasks, remember to:
 - 4.0 IPC Handler Implementation
   - [x] 4.1 Create dbMessagesUpdateActiveStateHandler with input validation
   - [x] 4.2 Create dbMessagesToggleActiveStateHandler with error handling
-  - [ ] 4.3 Update existing message handlers to include isActive field in responses
-  - [ ] 4.4 Add camelCase to snake_case field mapping for isActive ↔ is_active
-  - [ ] 4.5 Register new IPC handlers in handler index file
-  - [ ] 4.6 Write unit tests for IPC handlers with mock database operations
+  - [x] 4.3 Update existing message handlers to include isActive field in responses
+  - [x] 4.4 Add camelCase to snake_case field mapping for isActive ↔ is_active
+  - [x] 4.5 Register new IPC handlers in handler index file
+  - [x] 4.6 Write unit tests for IPC handlers with mock database operations
 
   ### Files modified with description of changes
+  - **Task 4.6 Completion Verification**: Comprehensive unit tests for both IPC handlers are already complete with excellent coverage and quality:
+    - `tests/unit/main/ipc/handlers/dbMessagesUpdateActiveStateHandler.test.ts` - 11 test cases covering success cases (true/false states, UUID formats), error handling (validation errors, message not found, database errors, DatabaseError preservation), data transformation (database to API format, empty metadata), and function behavior (validation order, null handling). All tests pass with proper mocking patterns.
+    - `tests/unit/main/ipc/handlers/dbMessagesToggleActiveStateHandler.test.ts` - 10 test cases covering successful operations (toggle both directions, message not found), error handling (invalid UUID, DatabaseError re-throw, generic error wrapping), data transformation (DatabaseMessage to Message format, different message types), and input validation (ID parameter validation, validation failure). All tests pass with established vitest patterns.
+    - **Quality Verification**: All 999 tests passing, including the 21 IPC handler tests. All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests
+    - **Pattern Compliance**: Tests follow established patterns with proper mocking using `vi.mock()`, dynamic imports within test functions, comprehensive error scenario testing, and data transformation validation (snake_case ↔ camelCase)
   - `src/main/ipc/handlers/dbMessagesUpdateActiveStateHandler.ts` - Created new IPC handler for updating message active state following established patterns. Handler validates input with SanitizedUpdateMessageActiveStateSchema, calls updateMessageActiveState database function, handles not found errors, and transforms database format to API format (snake_case to camelCase). All quality checks passing.
   - `src/main/ipc/handlers/index.ts` - Added export for dbMessagesUpdateActiveStateHandler in the Database message handlers section after dbMessagesCreateHandler for proper grouping.
   - `src/main/ipc/handlers.ts` - Added import for dbMessagesUpdateActiveStateHandler and registered the IPC channel 'db:messages:update-active-state' with performance monitoring wrapper in the Message operations section.
@@ -299,6 +304,44 @@ When executing tasks, remember to:
   - `src/main/ipc/handlers.ts` - Added import for dbMessagesToggleActiveStateHandler and registered the IPC channel 'db:messages:toggle-active-state' with performance monitoring wrapper in the Message operations section.
   - `src/shared/types/index.ts` - Added IPC channel type definition for 'db:messages:toggle-active-state' accepting id (string) returning Promise<Message | null>.
   - `tests/unit/main/ipc/handlers/dbMessagesToggleActiveStateHandler.test.ts` - Created comprehensive unit tests (10 test cases) covering successful operations (toggle both directions), error handling (validation errors, message not found, database errors), data transformation (database to API format), and input validation patterns. All tests pass with proper mocking using the established vitest pattern for imports within each test function.
+  - **Task 4.3 Research Results**: All existing message handlers already correctly include the isActive field transformation. Research confirmed that:
+    - `dbMessagesCreateHandler.ts` (line 27): `isActive: message.is_active,` ✅
+    - `dbMessagesGetHandler.ts` (line 16): `isActive: message.is_active,` ✅
+    - `dbMessagesListHandler.ts` (line 19): `isActive: message.is_active,` ✅
+    - `dbTransactionsCreateMessagesBatchHandler.ts` (line 51): `isActive: messageRecord.is_active,` ✅
+    - All handlers follow consistent field transformation pattern (snake_case to camelCase)
+    - All handlers properly handle database-to-API format conversion
+    - All handlers include comprehensive error handling and validation
+    - All quality checks passed: ✅ Format ✅ Lint ✅ Type Check ✅ Tests (999/999 passing)
+  - **Task 4.4 Verification Results**: Comprehensive research and verification confirmed that camelCase ↔ snake_case field mapping for `isActive` ↔ `is_active` is already correctly implemented across all message handlers. Verified implementations include:
+    - **Input Mapping (camelCase → snake_case)**: `dbMessagesUpdateActiveStateHandler.ts` (line 18): `validatedData.isActive` properly passed to database layer
+    - **Output Mapping (snake_case → camelCase)**: All handlers correctly transform database response:
+      - `dbMessagesCreateHandler.ts` (line 27): `isActive: message.is_active,` ✅
+      - `dbMessagesGetHandler.ts` (line 16): `isActive: message.is_active,` ✅
+      - `dbMessagesListHandler.ts` (line 19): `isActive: message.is_active,` ✅
+      - `dbMessagesUpdateActiveStateHandler.ts` (line 35): `isActive: result.is_active,` ✅
+      - `dbMessagesToggleActiveStateHandler.ts` (line 28): `isActive: result.is_active,` ✅
+      - `dbTransactionsCreateMessagesBatchHandler.ts` (line 51): `isActive: messageRecord.is_active,` ✅
+    - **Quality Verification**: All 999 tests passing, including specific tests for active state handlers and field mapping
+    - **Pattern Consistency**: All handlers follow the established bidirectional mapping pattern used throughout the codebase
+  - **Task 4.5 Completion Verification**: Confirmed that all IPC handlers are properly registered and functional. Verification results:
+    - **Handler Exports**: Both `dbMessagesUpdateActiveStateHandler` and `dbMessagesToggleActiveStateHandler` are properly exported from `src/main/ipc/handlers/index.ts` (lines 55-56) ✅
+    - **Handler Registration**: Both handlers are imported and registered with performance monitoring in `src/main/ipc/handlers.ts` (lines 43-44 and 250-263) ✅
+    - **IPC Channel Registration**: Both channels `'db:messages:update-active-state'` and `'db:messages:toggle-active-state'` are properly registered with ipcMain.handle() ✅
+    - **Type Definitions**: Both IPC channels are properly typed in `src/shared/types/index.ts` (lines 74-78) ✅
+    - **Performance Monitoring**: Both handlers are wrapped with `withPerformanceMonitoring` for database operations ✅
+    - **Quality Checks**: All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests
+    - **Pattern Consistency**: Both handlers follow the established registration patterns used throughout the codebase
+  - **Task 4.6 Completion Results**: Comprehensive unit tests for IPC handlers are already complete and fully functional. Research and verification confirmed:
+    - **Handler Tests Coverage**: Both `dbMessagesUpdateActiveStateHandler` and `dbMessagesToggleActiveStateHandler` have comprehensive unit tests with 21 total test cases (11 + 10) covering all scenarios ✅
+    - **Test Coverage Areas**: Success cases, error handling, data transformation, input validation, function behavior, and edge cases are all covered ✅
+    - **Testing Patterns**: Tests follow established patterns with proper mocking using `vi.mock()`, dynamic imports for module mocking, comprehensive error scenario testing, and TypeScript type safety ✅
+    - **Mock Database Operations**: Both handlers mock database operations (`updateMessageActiveState` and `toggleMessageActiveState`) and validation schemas (`SanitizedUpdateMessageActiveStateSchema` and `UuidSchema`) ✅
+    - **Quality Verification**: All tests passing (999/999), all quality checks passing (Format ✅ Lint ✅ Type Check ✅), and comprehensive test coverage for all implemented functionality ✅
+    - **Test Files**:
+      - `/tests/unit/main/ipc/handlers/dbMessagesUpdateActiveStateHandler.test.ts` - 11 test cases
+      - `/tests/unit/main/ipc/handlers/dbMessagesToggleActiveStateHandler.test.ts` - 10 test cases
+    - **Test Quality**: Tests follow established patterns, use proper mocking strategies, cover error scenarios, and validate data transformation between database and API formats ✅
 
 - 5.0 Preload API Bridge Extension
   - [ ] 5.1 Add dbMessagesUpdateActiveState method to preload API
