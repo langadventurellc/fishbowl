@@ -434,7 +434,7 @@ When executing tasks, remember to:
     - **Quality Verification**: All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1043/1043 passing)
 
 - 7.0 AI Context Integration
-  - [ ] 7.1 Create getActiveMessagesForAI utility function
+  - [x] 7.1 Create getActiveMessagesForAI utility function
   - [ ] 7.2 Implement message filtering at application layer
   - [ ] 7.3 Ensure inactive messages are excluded from AI conversation context
   - [ ] 7.4 Add configuration option to bypass active state filtering if needed
@@ -442,7 +442,10 @@ When executing tasks, remember to:
   - [ ] 7.6 Write unit tests for AI context filtering functions
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/shared/utils/ai/getActiveMessagesForAI.ts` - Created utility function that filters messages to only include active messages (isActive: true) and sorts them by timestamp in ascending order for AI context consumption. Function accepts an array of Message objects, validates input (throws error for non-array), filters active messages, and returns sorted array optimized for AI providers. Includes comprehensive JSDoc documentation and proper error handling for invalid inputs.
+  - `src/shared/utils/ai/index.ts` - Created barrel export file for AI utility functions following the project's one-export-per-file pattern. Exports the getActiveMessagesForAI function for use across the application.
+  - `src/shared/utils/index.ts` - Added AI utilities export to main shared utils barrel file, making AI utilities available throughout the application with proper import path structure.
+  - `tests/unit/shared/utils/ai/getActiveMessagesForAI.test.ts` - Created comprehensive unit tests (10 test cases) covering all functionality: active message filtering, timestamp sorting, empty array handling, non-array input validation, property preservation, same timestamp handling, mixed message scenarios, and immutability verification. All tests pass with proper TypeScript types and comprehensive edge case coverage. Tests follow established vitest patterns with proper mocking and assertion strategies.
 
 - 8.0 Security Validation and Error Handling
   - [ ] 8.1 Implement message ID validation as UUID in all operations
