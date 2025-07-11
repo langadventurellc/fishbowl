@@ -8,18 +8,18 @@
  * - Comprehensive TypeScript typing
  */
 
+import type {} from '@redux-devtools/extension';
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import type {} from '@redux-devtools/extension';
 
-import type { AppState, StoreConfig } from './types';
-import { createThemeSlice } from './slices/theme';
-import { createUISlice } from './slices/ui';
-import { createSettingsSlice } from './slices/settings';
 import { createAgentSlice } from './slices/agents';
 import { createConversationSlice } from './slices/conversation';
-import { systemThemeDetector, getCurrentSystemTheme } from './utils';
+import { createSettingsSlice } from './slices/settings';
+import { createThemeSlice } from './slices/theme';
+import { createUISlice } from './slices/ui';
+import type { AppState, StoreConfig } from './types';
+import { getCurrentSystemTheme, systemThemeDetector } from './utils';
 import { conditionallyEnablePerformanceMonitoring } from './utils/memoization';
 import { performance as performanceMiddleware } from './utils/performance';
 
@@ -29,6 +29,8 @@ import { performance as performanceMiddleware } from './utils/performance';
 const defaultTheme = 'system' as const;
 const defaultSidebarCollapsed = false;
 const defaultWindowDimensions = { width: 1200, height: 800 };
+
+// The OptimizedLocalStorage already provides performance improvements with caching and compression
 
 /**
  * Store configuration
@@ -48,6 +50,8 @@ const storeConfig: StoreConfig = {
       preferences: state.preferences,
       configuration: state.configuration,
     }),
+    // OptimizedLocalStorage available for future enhancement
+    // storage: optimizedStorage,
   },
   devtools: {
     name: 'Fishbowl Store',
@@ -81,6 +85,8 @@ export const useStore = create<AppState>()(
         name: storeConfig.persist.name,
         version: storeConfig.persist.version,
         partialize: storeConfig.persist.partialize,
+        // Use default localStorage for now - OptimizedLocalStorage available for future enhancement
+        // storage: optimizedStorage,
         // Validate and migrate persisted state
         migrate: (persistedState: unknown, version: number) => {
           if (version === 0) {
@@ -109,7 +115,7 @@ export const useStore = create<AppState>()(
               } else if (state.theme === 'system') {
                 // If theme is 'system', effectiveTheme should match systemTheme
                 if (!state.effectiveTheme || !state.systemTheme) {
-                  state.effectiveTheme = state.systemTheme || 'light';
+                  state.effectiveTheme = state.systemTheme ?? 'light';
                 }
               }
               console.warn('Store rehydrated successfully');

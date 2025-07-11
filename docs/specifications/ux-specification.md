@@ -277,6 +277,46 @@ Start a new conversation
 Add agents and type a message to begin
 ```
 
+## Component Implementation
+
+### UI Component Library
+
+The application uses **shadcn/ui** components for consistent, accessible UI elements:
+
+#### Core Components Used
+
+- **Layout**: `Card`, `Separator`, `ScrollArea`
+- **Forms**: `Input`, `Label`, `Select`, `Slider`, `Switch`, `Textarea`
+- **Buttons**: `Button` with variants (default, secondary, outline, ghost, destructive)
+- **Overlays**: `Dialog`, `Sheet`, `Popover`, `Tooltip`
+- **Feedback**: `Toast`, `Alert`, `Progress`
+- **Navigation**: `Tabs`, `DropdownMenu`
+- **Data Display**: `Avatar`, `Badge`, `Table`
+
+#### Component Customization
+
+- All components are copied into `src/components/ui/`
+- Customized for desktop-first with mobile considerations
+- Touch targets ensured to be minimum 44x44px
+- Hover states have touch alternatives
+
+### Responsive Design Patterns
+
+Using Tailwind's responsive utilities:
+
+- `sm:` - Mobile devices (640px+)
+- `md:` - Tablets (768px+)
+- `lg:` - Small desktops (1024px+)
+- `xl:` - Large desktops (1280px+)
+
+Example responsive pattern:
+
+```tsx
+<div className='p-6 md:p-4 sm:p-2'>
+  <Button className='w-full sm:w-auto'>Save</Button>
+</div>
+```
+
 ## Implementation Notes
 
 ### State Management

@@ -9,4 +9,5 @@ export interface PersistConfig {
   partialize?: (state: AppState) => Partial<AppState>;
   version?: number;
   migrate?: (persistedState: unknown, version: number) => AppState;
+  storage?: Storage;
 }

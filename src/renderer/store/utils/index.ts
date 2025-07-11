@@ -10,6 +10,7 @@ export * from './createIPCStoreBridge';
 export * from './createOptimisticUpdate';
 export * from './validateStoreUpdate';
 export * from './memoization';
+export * from './persistence';
 
 // Performance monitoring exports (avoid conflicts with memoization)
 export {

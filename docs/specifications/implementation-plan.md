@@ -91,11 +91,68 @@ This implementation plan outlines the development phases for AI Collaborators v1
 
 #### 1.3 Basic UI Shell
 
-- [ ] Create main window with menu bar
-- [ ] Implement theme system (light/dark mode)
-- [ ] Build basic layout (sidebar + main content area)
-- [ ] Add settings modal with navigation
-- [ ] Create reusable UI components (Button, Modal, Toast)
+- [ ] Set up TailwindCSS
+  - [ ] Install TailwindCSS and dependencies (`tailwindcss`, `postcss`, `autoprefixer`)
+  - [ ] Create `tailwind.config.js` with content paths
+  - [ ] Set up PostCSS configuration
+  - [ ] Create `src/styles/globals.css` with Tailwind directives
+  - [ ] Import globals.css in renderer entry point
+
+- [ ] Set up shadcn/ui
+  - [ ] Install required dependencies (`tailwind-merge`, `clsx`, `class-variance-authority`)
+  - [ ] Create `lib/utils.ts` with `cn` helper function
+  - [ ] Set up `components.json` for shadcn CLI
+  - [ ] Configure CSS variables for theming in globals.css
+  - [ ] Create `src/components/ui/` directory structure
+
+- [ ] Implement theme system
+  - [ ] Create ThemeProvider component using next-themes or custom implementation
+  - [ ] Set up CSS variables for light/dark themes (if not using existing theme provider)
+  - [ ] Add theme toggle component using shadcn/ui Switch
+  - [ ] Ensure theme persists to localStorage
+  - [ ] Apply theme class to document root
+
+- [ ] Create main window layout
+  - [ ] Implement window frame with native controls
+  - [ ] Add custom menu bar (if not using native)
+  - [ ] Set up main layout grid/flex structure
+  - [ ] Install and configure lucide-react for icons
+
+- [ ] Build core layout components
+  - [ ] Create responsive sidebar using shadcn/ui Sheet for mobile
+  - [ ] Implement main content area with proper padding
+  - [ ] Add resizable panels (using react-resizable-panels)
+  - [ ] Set up layout state management in Zustand
+
+- [ ] Create reusable base components
+  - [ ] Install initial shadcn/ui components:
+    - [ ] `npx shadcn-ui@latest add button`
+    - [ ] `npx shadcn-ui@latest add dialog`
+    - [ ] `npx shadcn-ui@latest add card`
+    - [ ] `npx shadcn-ui@latest add input`
+    - [ ] `npx shadcn-ui@latest add label`
+    - [ ] `npx shadcn-ui@latest add select`
+    - [ ] `npx shadcn-ui@latest add separator`
+    - [ ] `npx shadcn-ui@latest add sheet`
+    - [ ] `npx shadcn-ui@latest add switch`
+    - [ ] `npx shadcn-ui@latest add tabs`
+    - [ ] `npx shadcn-ui@latest add toast`
+  - [ ] Create custom Modal wrapper using Dialog
+  - [ ] Implement Toast notifications with Toaster
+  - [ ] Add loading states and skeletons
+
+- [ ] Build settings modal structure
+  - [ ] Create SettingsModal using shadcn/ui Dialog
+  - [ ] Implement sidebar navigation using Tabs or custom nav
+  - [ ] Create placeholder sections for each settings category
+  - [ ] Add responsive behavior (Sheet on mobile, Dialog on desktop)
+  - [ ] Connect to settings state in Zustand
+
+- [ ] Verify responsive design
+  - [ ] Test layouts at mobile viewport sizes (375px minimum)
+  - [ ] Ensure all interactive elements are touch-friendly (44px targets)
+  - [ ] Check theme consistency across all components
+  - [ ] Verify CSS variables are working correctly
 
 **Deliverable**: Runnable Electron app with empty UI and working settings
 
