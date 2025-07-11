@@ -22,3 +22,7 @@ export { useSecureStorage } from './useSecureStorage';
 // Performance monitoring hooks
 export { usePerformanceMonitor } from './usePerformanceMonitor';
 export type { UsePerformanceMonitorReturn } from './UsePerformanceMonitorReturn';
+
+// Message error handling types
+export { MessageErrorType } from './MessageErrorType';
+export type { MessageError } from './MessageError';
