@@ -211,6 +211,120 @@ describe('Validation Utilities', () => {
       expect(result.valid).toBe(false);
       expect(result.error).toBe('Unsafe object detected');
     });
+
+    describe('Message Active State Operations', () => {
+      it('should validate db:messages:toggle-active-state with valid UUID', () => {
+        const result = validateIpcArguments('db:messages:toggle-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+        ]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject db:messages:toggle-active-state with invalid UUID', () => {
+        const result = validateIpcArguments('db:messages:toggle-active-state', ['not-a-uuid']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid UUID required');
+      });
+
+      it('should reject db:messages:toggle-active-state with no arguments', () => {
+        const result = validateIpcArguments('db:messages:toggle-active-state', []);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid UUID required');
+      });
+
+      it('should validate db:messages:update-active-state with valid UUID and updates object', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: true },
+        ]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate db:messages:update-active-state with false isActive', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: false },
+        ]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject db:messages:update-active-state with invalid UUID', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          'not-a-uuid',
+          { isActive: true },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid UUID and updates object required');
+      });
+
+      it('should reject db:messages:update-active-state with no arguments', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', []);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid UUID and updates object required');
+      });
+
+      it('should reject db:messages:update-active-state with only UUID', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid UUID and updates object required');
+      });
+
+      it('should reject db:messages:update-active-state with null updates object', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          null,
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+      });
+
+      it('should reject db:messages:update-active-state with string updates object', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          'not-an-object',
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+      });
+
+      it('should reject db:messages:update-active-state with updates object missing isActive', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { otherField: 'value' },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+      });
+
+      it('should reject db:messages:update-active-state with non-boolean isActive', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: 'true' },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+      });
+
+      it('should reject db:messages:update-active-state with numeric isActive', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: 1 },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+      });
+
+      it('should sanitize updates object while preserving isActive boolean', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: true, maliciousField: '<script>alert("xss")</script>' },
+        ]);
+        expect(result.valid).toBe(true);
+        expect(result.sanitizedArgs?.[1]).toEqual({ isActive: true, maliciousField: '' });
+      });
+    });
   });
 
   describe('IpcRateLimiter', () => {

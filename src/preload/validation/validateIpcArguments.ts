@@ -37,8 +37,23 @@ export const validateIpcArguments = (
       case 'db:conversations:delete':
       case 'db:messages:get':
       case 'db:messages:delete':
+      case 'db:messages:toggle-active-state':
         if (args.length === 0 || !validateUuid(args[0] as string)) {
           return { valid: false, error: 'Valid UUID required' };
+        }
+        break;
+
+      case 'db:messages:update-active-state':
+        if (args.length < 2 || !validateUuid(args[0] as string)) {
+          return { valid: false, error: 'Valid UUID and updates object required' };
+        }
+        if (
+          !args[1] ||
+          typeof args[1] !== 'object' ||
+          !('isActive' in args[1]) ||
+          typeof (args[1] as { isActive: unknown }).isActive !== 'boolean'
+        ) {
+          return { valid: false, error: 'Valid isActive boolean field required in updates object' };
         }
         break;
 
