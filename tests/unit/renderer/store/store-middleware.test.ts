@@ -231,8 +231,8 @@ describe('Store Middleware Configuration', () => {
   });
 
   describe('Store Initialization', () => {
-    it('should initialize store successfully', () => {
-      const initialized = initializeStore();
+    it('should initialize store successfully', async () => {
+      const initialized = await initializeStore();
       expect(initialized).toBe(true);
     });
 

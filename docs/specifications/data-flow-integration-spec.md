@@ -19,6 +19,19 @@ const activeAgents = useStore(state => state.agents.filter(a => a.participating)
 const { addMessage, toggleAutoMode } = useStore(state => state.actions);
 ```
 
+### Service Layer Integration
+
+Components should always use abstracted services instead of direct platform APIs:
+
+```typescript
+// ❌ Bad: Direct platform API usage
+const messages = await window.api.db.getMessages();
+
+// ✅ Good: Service abstraction
+const database = ServiceFactory.getDatabaseService();
+const messages = await database.query<Message>('SELECT * FROM messages');
+```
+
 ### State Management Rules
 
 1. **Global State** (in Zustand):
@@ -55,7 +68,11 @@ Store Update ← UI Update ← Process Response ← Stream/Result ←
 
 ```typescript
 // services/ai/agent-service.ts
+import { ServiceFactory } from '@/services/ServiceFactory';
+
 class AgentService {
+  private bridge = ServiceFactory.getBridgeService();
+
   async generateResponse(
     agent: Agent,
     messages: Message[],
@@ -65,17 +82,10 @@ class AgentService {
     agentEvents.emit('agent:thinking', { agentId: agent.id });
 
     try {
-      // 2. Filter to only active messages
-      const activeMessages = messages.filter(m => m.isActive);
+      // 2. Format messages for provider
+      const formatted = formatMessagesForProvider(agent.provider, agent.systemPrompt, messages);
 
-      // 3. Format messages for provider
-      const formatted = formatMessagesForProvider(
-        agent.provider,
-        agent.systemPrompt,
-        activeMessages, // Only pass active messages
-      );
-
-      // 4. Call AI provider with streaming
+      // 3. Call AI provider with streaming
       const stream = await providers[agent.provider].generateStream({
         model: agent.modelId,
         messages: formatted,
@@ -83,7 +93,7 @@ class AgentService {
         signal, // For cancellation
       });
 
-      // 5. Return stream for UI consumption
+      // 4. Return stream for UI consumption
       return stream;
     } catch (error) {
       agentEvents.emit('agent:error', { agentId: agent.id, error });
@@ -144,27 +154,19 @@ function AgentResponse({ agent, messages }) {
 ```typescript
 // Manual Mode
 1. User types message → Input component
-2. Submit → addMessage() action (marked as active)
+2. Submit → addMessage() action
 3. All participating agents start generating
 4. Responses stream to PendingResponses component
 5. User selects responses → addMultipleMessages() action
-   - Selected: added as active (checked)
-   - Unselected: added as inactive (unchecked, faded)
-6. Store updates → UI rerenders with all messages
+6. Store updates → UI rerenders with new messages
 
 // Auto Mode
 1. User types message → Input component
-2. Submit → addMessage() action (marked as active)
+2. Submit → addMessage() action
 3. First agent in queue generates response
-4. Response completes → addMessage() action (marked as active)
+4. Response completes → addMessage() action
 5. Next agent triggered automatically
 6. Repeat until stop condition
-
-// Message State Toggle
-1. User hovers over any message → checkbox appears
-2. User clicks checkbox → toggleMessageActive() action
-3. Message state updates → UI rerenders (opacity change)
-4. Next API call uses only active messages in history
 ```
 
 ### Agent State Transitions
@@ -203,27 +205,65 @@ class TurnManager {
 
 ## IPC Communication Flow
 
-### Type-Safe IPC Pattern
+### Platform-Agnostic Bridge Pattern
+
+All IPC communication goes through the abstracted BridgeService:
 
 ```typescript
-// preload/index.ts
-contextBridge.exposeInMainWorld('api', {
-  db: {
-    getConversations: () => ipcRenderer.invoke('db:getConversations'),
-    saveMessage: (message: Message) => ipcRenderer.invoke('db:saveMessage', message),
-  },
-  config: {
-    getModels: () => ipcRenderer.invoke('config:getModels'),
-    saveSettings: (settings: Settings) => ipcRenderer.invoke('config:saveSettings', settings),
-  },
-  keys: {
-    hasKey: (provider: string) => ipcRenderer.invoke('keys:hasKey', provider),
-    setKey: (provider: string, key: string) => ipcRenderer.invoke('keys:setKey', provider, key),
-  },
-});
+// services/conversation/ConversationManager.ts
+import { ServiceFactory } from '@/services/ServiceFactory';
 
-// renderer/utils/ipc.ts
-export const api = window.api; // Type-safe API object
+export class ConversationManager {
+  private bridge = ServiceFactory.getBridgeService();
+  private database = ServiceFactory.getDatabaseService();
+
+  async loadConversations(): Promise<Conversation[]> {
+    // Uses abstracted database service
+    return this.database.query<Conversation>(
+      'SELECT * FROM conversations ORDER BY updated_at DESC',
+    );
+  }
+
+  async saveMessage(message: Message): Promise<void> {
+    // Save to database through service
+    await this.database.execute(
+      'INSERT INTO messages (id, content, conversation_id) VALUES (?, ?, ?)',
+      [message.id, message.content, message.conversationId],
+    );
+
+    // Notify other parts of the app
+    this.bridge.invoke('conversation:updated', message.conversationId);
+  }
+}
+```
+
+### Type-Safe Bridge Usage
+
+```typescript
+// hooks/useBridge.ts
+import { useEffect, useCallback } from 'react';
+import { ServiceFactory } from '@/services/ServiceFactory';
+
+export function useBridge() {
+  const bridge = ServiceFactory.getBridgeService();
+
+  const invoke = useCallback(
+    async <T>(channel: string, ...args: any[]): Promise<T> => {
+      return bridge.invoke<T>(channel, ...args);
+    },
+    [bridge],
+  );
+
+  const on = useCallback(
+    (channel: string, handler: Function) => {
+      bridge.on(channel, handler);
+      return () => bridge.off(channel, handler);
+    },
+    [bridge],
+  );
+
+  return { invoke, on };
+}
 ```
 
 ### Database Operation Flow

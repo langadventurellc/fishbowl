@@ -21,6 +21,7 @@ import { createAgentSlice } from './slices/agents';
 import { createConversationSlice } from './slices/conversation';
 import { systemThemeDetector, getCurrentSystemTheme } from './utils';
 import { conditionallyEnablePerformanceMonitoring } from './utils/memoization';
+import { performance as performanceMiddleware } from './utils/performance';
 
 /**
  * Default values for store initialization
@@ -62,14 +63,20 @@ const storeConfig: StoreConfig = {
 export const useStore = create<AppState>()(
   devtools(
     persist(
-      immer((set, get, store) => ({
-        // Combine all slices into a single store
-        ...createThemeSlice(set, get, store),
-        ...createUISlice(set, get, store),
-        ...createSettingsSlice(set, get, store),
-        ...createAgentSlice(set, get, store),
-        ...createConversationSlice(set, get, store),
-      })),
+      performanceMiddleware(
+        immer((set, get, store) => ({
+          // Combine all slices into a single store
+          ...createThemeSlice(set, get, store),
+          ...createUISlice(set, get, store),
+          ...createSettingsSlice(set, get, store),
+          ...createAgentSlice(set, get, store),
+          ...createConversationSlice(set, get, store),
+        })),
+        {
+          enabled: process.env.NODE_ENV === 'development',
+          operationPrefix: 'fishbowl',
+        },
+      ),
       {
         name: storeConfig.persist.name,
         version: storeConfig.persist.version,
@@ -217,7 +224,7 @@ export const validateStoreState = (): boolean => {
 /**
  * Initialize store with validation
  */
-export const initializeStore = (): boolean => {
+export const initializeStore = async (): Promise<boolean> => {
   try {
     // Validate initial state
     if (!validateStoreState()) {
@@ -242,6 +249,12 @@ export const initializeStore = (): boolean => {
 
     // Initialize performance monitoring in development
     void conditionallyEnablePerformanceMonitoring();
+
+    // Initialize store operation performance monitoring
+    if (process.env.NODE_ENV === 'development') {
+      const { enablePerformanceMonitoring } = await import('./utils/performance');
+      enablePerformanceMonitoring(10000); // 10 second intervals
+    }
 
     console.warn('Store initialized successfully');
     return true;

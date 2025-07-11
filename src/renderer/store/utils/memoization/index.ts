@@ -71,9 +71,9 @@ export const conditionallyEnablePerformanceMonitoring = async () => {
  * @param name - Name of the selector for monitoring
  * @param selector - The selector function with metrics
  */
-export const registerSelectorForMonitoring = async (
+export const registerSelectorForMonitoring = async <T extends unknown[], R>(
   name: string,
-  selector: import('./SelectorWithMetrics').SelectorWithMetrics | ((...args: any[]) => any),
+  selector: import('./SelectorWithMetrics').SelectorWithMetrics | ((...args: T) => R),
 ) => {
   if (process.env.NODE_ENV === 'development') {
     const { SelectorPerformanceMonitor } = await import('./SelectorPerformanceMonitor');

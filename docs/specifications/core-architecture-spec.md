@@ -113,7 +113,7 @@ ai-collaborators/
 │   ├── renderer/                      # Renderer process code
 │   │   ├── index.tsx                  # Renderer entry point
 │   │   ├── App.tsx                    # Root component
-│   │   ├── components/
+│   │   ├── components/                # UI components (shared)
 │   │   │   ├── Chat/
 │   │   │   │   ├── ChatRoom.tsx
 │   │   │   │   ├── MessageList.tsx
@@ -146,8 +146,16 @@ ai-collaborators/
 │   │   │   ├── useAgent.ts
 │   │   │   ├── useConversation.ts
 │   │   │   ├── useAutoMode.ts
-│   │   │   └── useIPC.ts
-│   │   ├── services/
+│   │   │   └── useBridge.ts          # Platform-agnostic bridge hook
+│   │   ├── services/                  # Abstract service interfaces
+│   │   │   ├── interfaces/           # Service contracts
+│   │   │   │   ├── BridgeService.ts
+│   │   │   │   ├── DatabaseService.ts
+│   │   │   │   ├── StorageService.ts
+│   │   │   │   ├── PlatformService.ts
+│   │   │   │   ├── FileService.ts
+│   │   │   │   └── ConfigService.ts
+│   │   │   ├── ServiceFactory.ts     # Service instance factory
 │   │   │   ├── ai/
 │   │   │   │   ├── provider.ts       # AI provider abstraction
 │   │   │   │   ├── openai.ts
@@ -163,6 +171,16 @@ ai-collaborators/
 │   │   │       ├── manager.ts        # Conversation state
 │   │   │       ├── context.ts        # Context window mgmt
 │   │   │       └── mentions.ts       # @ mention parsing
+│   │   ├── platforms/                # Platform-specific implementations
+│   │   │   ├── electron/
+│   │   │   │   ├── ElectronBridge.ts
+│   │   │   │   ├── ElectronDatabase.ts
+│   │   │   │   ├── ElectronStorage.ts
+│   │   │   │   ├── ElectronPlatform.ts
+│   │   │   │   ├── ElectronFile.ts
+│   │   │   │   └── ElectronConfig.ts
+│   │   │   └── capacitor/           # Future mobile implementations
+│   │   │       └── .gitkeep
 │   │   ├── store/
 │   │   │   ├── index.ts              # Zustand store setup
 │   │   │   ├── slices/
@@ -172,7 +190,7 @@ ai-collaborators/
 │   │   │   │   └── settings.ts       # Settings state
 │   │   │   └── types.ts
 │   │   ├── utils/
-│   │   │   ├── ipc.ts                # Type-safe IPC wrapper
+│   │   │   ├── platform.ts           # Platform detection
 │   │   │   ├── format.ts             # Text formatting
 │   │   │   ├── tokens.ts             # Token counting
 │   │   │   └── errors.ts             # Error handling
@@ -183,7 +201,7 @@ ai-collaborators/
 │   │           ├── light.css
 │   │           └── dark.css
 │   │
-│   ├── shared/                        # Shared between processes
+│   ├── shared/                        # Shared between platforms
 │   │   ├── types/
 │   │   │   ├── agent.ts
 │   │   │   ├── conversation.ts
@@ -194,6 +212,9 @@ ai-collaborators/
 │   │   │   ├── models.ts
 │   │   │   ├── defaults.ts
 │   │   │   └── limits.ts
+│   │   ├── database/
+│   │   │   ├── schema.sql            # Shared schema definition
+│   │   │   └── migrations/           # Platform-agnostic migrations
 │   │   └── utils/
 │   │       └── validation.ts
 │   │
@@ -253,7 +274,6 @@ interface AppState {
     createConversation: () => void;
     selectConversation: (id: string) => void;
     addMessage: (message: Message) => void;
-    toggleMessageActive: (messageId: string) => void;
 
     // Agent actions
     addAgent: (agent: Agent) => void;
@@ -265,16 +285,6 @@ interface AppState {
     toggleAutoMode: () => void;
     setTheme: (theme: Theme) => void;
   };
-}
-
-// Message type update
-interface Message {
-  id: string;
-  conversationId: string;
-  agentId: string | null;
-  content: string;
-  isActive: boolean; // Whether included in conversation history
-  timestamp: Date;
 }
 ```
 
@@ -354,6 +364,344 @@ export function useAgentEvents() {
   }, []);
 }
 ```
+
+## Mobile-Ready Architecture Patterns
+
+### Service Abstraction Layer
+
+All platform-specific functionality is abstracted behind interfaces to enable future mobile support:
+
+#### Service Factory Pattern
+
+```typescript
+// services/ServiceFactory.ts
+import { Platform } from '@/utils/platform';
+import type {
+  BridgeService,
+  DatabaseService,
+  StorageService,
+  PlatformService,
+  FileService,
+  ConfigService,
+} from './interfaces';
+
+export class ServiceFactory {
+  private static instances = new Map<string, any>();
+
+  static getBridgeService(): BridgeService {
+    return this.getInstance('bridge', () => {
+      if (Platform.isElectron()) {
+        return new ElectronBridge();
+      }
+      // Future: return new CapacitorBridge();
+      throw new Error('Platform not supported');
+    });
+  }
+
+  static getDatabaseService(): DatabaseService {
+    return this.getInstance('database', () => {
+      if (Platform.isElectron()) {
+        return new ElectronDatabase();
+      }
+      // Future: return new CapacitorDatabase();
+      throw new Error('Platform not supported');
+    });
+  }
+
+  static getStorageService(): StorageService {
+    return this.getInstance('storage', () => {
+      if (Platform.isElectron()) {
+        return new ElectronStorage();
+      }
+      // Future: return new CapacitorStorage();
+      throw new Error('Platform not supported');
+    });
+  }
+
+  private static getInstance<T>(key: string, factory: () => T): T {
+    if (!this.instances.has(key)) {
+      this.instances.set(key, factory());
+    }
+    return this.instances.get(key);
+  }
+}
+```
+
+#### Platform Detection
+
+```typescript
+// utils/platform.ts
+export const Platform = {
+  isElectron: (): boolean => {
+    return !!(window as any).electron;
+  },
+
+  isCapacitor: (): boolean => {
+    return !!(window as any).Capacitor;
+  },
+
+  isMobile: (): boolean => {
+    if ((window as any).Capacitor) {
+      const platform = (window as any).Capacitor.getPlatform();
+      return platform === 'ios' || platform === 'android';
+    }
+    return false;
+  },
+
+  isWeb: (): boolean => {
+    return !Platform.isElectron() && !Platform.isCapacitor();
+  },
+
+  getPlatform: (): 'electron' | 'capacitor' | 'web' | 'unknown' => {
+    if (Platform.isElectron()) return 'electron';
+    if (Platform.isCapacitor()) return 'capacitor';
+    if (Platform.isWeb()) return 'web';
+    return 'unknown';
+  },
+};
+```
+
+### Service Interfaces
+
+#### Bridge Service (IPC Abstraction)
+
+```typescript
+// services/interfaces/BridgeService.ts
+export interface BridgeService {
+  // Invoke a command on the native side
+  invoke<T = any>(channel: string, ...args: any[]): Promise<T>;
+
+  // Listen for events from native side
+  on(channel: string, callback: (...args: any[]) => void): void;
+
+  // Remove event listener
+  off(channel: string, callback: (...args: any[]) => void): void;
+
+  // One-time event listener
+  once(channel: string, callback: (...args: any[]) => void): void;
+}
+```
+
+#### Database Service
+
+```typescript
+// services/interfaces/DatabaseService.ts
+export interface DatabaseService {
+  // Execute a query that returns results
+  query<T = any>(sql: string, params?: any[]): Promise<T[]>;
+
+  // Execute a command (INSERT, UPDATE, DELETE)
+  execute(sql: string, params?: any[]): Promise<void>;
+
+  // Run multiple commands in a transaction
+  transaction<T>(callback: (db: DatabaseService) => Promise<T>): Promise<T>;
+
+  // Get the last inserted row ID
+  getLastInsertId(): Promise<number>;
+
+  // Run migrations
+  migrate(migrations: Migration[]): Promise<void>;
+}
+
+export interface Migration {
+  version: number;
+  sql: string;
+}
+```
+
+#### Storage Service (Secure Storage)
+
+```typescript
+// services/interfaces/StorageService.ts
+export interface StorageService {
+  // Store a secure value
+  setSecure(key: string, value: string): Promise<void>;
+
+  // Retrieve a secure value
+  getSecure(key: string): Promise<string | null>;
+
+  // Delete a secure value
+  deleteSecure(key: string): Promise<void>;
+
+  // Store a regular value
+  set(key: string, value: any): Promise<void>;
+
+  // Retrieve a regular value
+  get<T = any>(key: string): Promise<T | null>;
+
+  // Delete a regular value
+  delete(key: string): Promise<void>;
+
+  // Clear all storage
+  clear(): Promise<void>;
+}
+```
+
+#### Platform Service
+
+```typescript
+// services/interfaces/PlatformService.ts
+export interface PlatformService {
+  // App lifecycle
+  minimizeApp(): void;
+  maximizeApp(): void;
+  closeApp(): void;
+  restartApp(): void;
+
+  // System info
+  getVersion(): Promise<string>;
+  getPlatform(): string;
+  getSystemInfo(): Promise<SystemInfo>;
+
+  // Notifications
+  showNotification(title: string, body: string, options?: NotificationOptions): void;
+
+  // Platform capabilities
+  canMinimizeToTray(): boolean;
+  canShowBadge(): boolean;
+  canUseNativeMenus(): boolean;
+
+  // Open external links
+  openExternal(url: string): Promise<void>;
+}
+
+export interface SystemInfo {
+  os: string;
+  version: string;
+  arch: string;
+  memory: number;
+}
+```
+
+#### File Service
+
+```typescript
+// services/interfaces/FileService.ts
+export interface FileService {
+  // Read a file
+  readFile(path: string): Promise<string>;
+  readFileBuffer(path: string): Promise<Uint8Array>;
+
+  // Write a file
+  writeFile(path: string, data: string | Uint8Array): Promise<void>;
+
+  // File operations
+  exists(path: string): Promise<boolean>;
+  delete(path: string): Promise<void>;
+  rename(oldPath: string, newPath: string): Promise<void>;
+
+  // Directory operations
+  createDir(path: string): Promise<void>;
+  readDir(path: string): Promise<FileInfo[]>;
+
+  // Get special directories
+  getUserDataPath(): Promise<string>;
+  getTempPath(): Promise<string>;
+  getDownloadsPath(): Promise<string>;
+}
+
+export interface FileInfo {
+  name: string;
+  path: string;
+  size: number;
+  isDirectory: boolean;
+  modified: Date;
+}
+```
+
+#### Config Service
+
+```typescript
+// services/interfaces/ConfigService.ts
+export interface ConfigService {
+  // Load configuration files
+  loadModels(): Promise<ModelConfig>;
+  loadPersonalities(): Promise<PersonalityConfig[]>;
+  loadRoles(): Promise<RoleConfig[]>;
+
+  // Save configuration
+  saveUserPreferences(prefs: UserPreferences): Promise<void>;
+  loadUserPreferences(): Promise<UserPreferences>;
+
+  // Get configuration paths
+  getConfigPath(): Promise<string>;
+}
+```
+
+### Platform Implementation Example
+
+#### Electron Bridge Implementation
+
+```typescript
+// platforms/electron/ElectronBridge.ts
+import type { BridgeService } from '@/services/interfaces/BridgeService';
+
+export class ElectronBridge implements BridgeService {
+  async invoke<T>(channel: string, ...args: any[]): Promise<T> {
+    // Use Electron's IPC
+    return window.api[channel](...args);
+  }
+
+  on(channel: string, callback: (...args: any[]) => void): void {
+    window.api.on(channel, callback);
+  }
+
+  off(channel: string, callback: (...args: any[]) => void): void {
+    window.api.off(channel, callback);
+  }
+
+  once(channel: string, callback: (...args: any[]) => void): void {
+    window.api.once(channel, callback);
+  }
+}
+```
+
+### Usage in Components
+
+Components should never directly access platform APIs:
+
+```typescript
+// components/Chat/ChatRoom.tsx
+import { useEffect } from 'react';
+import { ServiceFactory } from '@/services/ServiceFactory';
+
+export function ChatRoom() {
+  const bridge = ServiceFactory.getBridgeService();
+  const database = ServiceFactory.getDatabaseService();
+
+  useEffect(() => {
+    // Load messages using abstracted service
+    const loadMessages = async () => {
+      const messages = await database.query<Message>(
+        'SELECT * FROM messages WHERE conversation_id = ?',
+        [conversationId],
+      );
+      setMessages(messages);
+    };
+
+    loadMessages();
+  }, [conversationId]);
+
+  const saveMessage = async (content: string) => {
+    // Save through abstracted service
+    await database.execute('INSERT INTO messages (content, conversation_id) VALUES (?, ?)', [
+      content,
+      conversationId,
+    ]);
+  };
+
+  // Component logic using only abstracted services
+}
+```
+
+### Mobile-Ready Guidelines
+
+1. **Always use async APIs** - Even if Electron implementation is synchronous
+2. **Abstract all native features** - No direct window.api or electron references in components
+3. **Use responsive design** - Components should work on all screen sizes
+4. **Touch-friendly targets** - Minimum 44x44px for interactive elements
+5. **Platform-aware UI** - Use Platform utility to conditionally render platform-specific UI
+6. **Bundle configurations** - JSON configs should be bundleable for mobile
 
 ## Build Configuration
 

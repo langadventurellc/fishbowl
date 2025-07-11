@@ -50,6 +50,45 @@ This implementation plan outlines the development phases for AI Collaborators v1
 - [ ] Update database queries to handle active/inactive state
 - [ ] Ensure default value (true) for existing messages
 
+#### 1.2.2 Mobile-Ready Architecture
+
+**Goal**: Structure code to minimize future mobile migration effort (see `core-architecture-spec.md` for details)
+
+- [ ] Create platform abstraction layer
+  - [ ] Define service interfaces for platform-specific features
+  - [ ] Create `PlatformService` interface for window/app management
+  - [ ] Create `StorageService` interface for secure storage
+  - [ ] Create `FileService` interface for file operations
+  - [ ] Create `DatabaseService` interface wrapping SQLite
+
+- [ ] Implement platform detection utility
+  - [ ] Create `Platform` utility for runtime detection
+  - [ ] Add TypeScript types for platform-specific APIs
+  - [ ] Set up conditional imports for platform services
+
+- [ ] Structure project for multi-platform
+  - [ ] Move all Electron-specific code to `platforms/electron/`
+  - [ ] Keep React components in `shared/components/`
+  - [ ] Keep business logic in `shared/services/`
+  - [ ] Ensure Zustand stores are platform-agnostic
+
+- [ ] Abstract IPC communication
+  - [ ] Create `BridgeService` interface for renderer-main communication
+  - [ ] Wrap all `window.api` calls in service methods
+  - [ ] Ensure all IPC calls return Promises (even if sync in Electron)
+
+- [ ] Prepare UI for mobile
+  - [ ] Use responsive units (rem, %, vh/vw) instead of fixed pixels
+  - [ ] Ensure touch targets are at least 44x44px
+  - [ ] Avoid hover-only interactions (provide alternatives)
+  - [ ] Test UI at mobile viewport sizes (375px width minimum)
+
+- [ ] Configuration and asset handling
+  - [ ] Create `ConfigService` for loading JSON configs
+  - [ ] Plan for bundled vs. remote config loading
+  - [ ] Use relative paths for all assets
+  - [ ] Prepare icons in multiple sizes (for future app stores)
+
 #### 1.3 Basic UI Shell
 
 - [ ] Create main window with menu bar

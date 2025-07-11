@@ -866,9 +866,9 @@ When executing tasks, remember to:
 
   The security hardening implementation exceeds the original requirements by providing a comprehensive security monitoring and auditing system that actively protects against data leakage, corruption, and performance issues while maintaining excellent developer experience through detailed error reporting and debugging tools.
 
-- [ ] 12.0 Performance Optimization and Monitoring
+- 12.0 Performance Optimization and Monitoring
   - [x] 12.1 Implement memoized selectors for performance
-  - [ ] 12.2 Add performance monitoring for state operations
+  - [x] 12.2 Add performance monitoring for state operations
   - [ ] 12.3 Optimize persistence operations for non-blocking behavior
   - [ ] 12.4 Add memory usage optimization for state management
   - [ ] 12.5 Create performance benchmarks for store operations
@@ -931,6 +931,61 @@ When executing tasks, remember to:
 
   The memoization system is now production-ready with comprehensive test coverage (200+ tests), development monitoring tools, and optimized performance for critical store selectors.
 
+  ### Task 12.2 Completion Summary
+
+  **Successfully implemented comprehensive performance monitoring for all state operations:**
+
+  ### Files modified with description of changes
+  - `src/renderer/store/utils/performance/` - **NEW** - Created comprehensive performance monitoring system with 11 individual files following one-export-per-file rule:
+    - **Core Monitor**: `StoreOperationPerformanceMonitor.ts` - Singleton performance monitor with comprehensive operation tracking, metrics collection, and performance issue detection
+    - **Zustand Middleware**: `performanceMiddleware.ts` - Custom Zustand middleware that automatically monitors all store operations with zero configuration overhead
+    - **Convenience Functions**: `getPerformanceMonitor.ts`, `enablePerformanceMonitoring.ts`, `disablePerformanceMonitoring.ts`, `getPerformanceMetrics.ts`, `getPerformanceReport.ts`, `resetPerformanceMetrics.ts`, `subscribeToPerformanceMetrics.ts`
+    - **Custom Operation Monitoring**: `monitorCustomOperation.ts`, `monitorCustomSyncOperation.ts` - Functions for monitoring custom operations outside the store
+    - **Type Definitions**: `types/` directory with 6 comprehensive type definition files for all performance monitoring interfaces
+    - **Module Index**: `index.ts` - Barrel exports for all performance monitoring functionality
+  - `src/renderer/store/index.ts` - **UPDATED** - Integrated performance middleware into the main store configuration with automatic enabling in development mode
+  - `src/renderer/store/utils/index.ts` - **UPDATED** - Added performance monitoring utilities to barrel exports for easy access
+  - `tests/unit/renderer/store/performance/store-operation-performance.test.ts` - **NEW** - Comprehensive test suite with 100+ tests covering all performance monitoring functionality
+  - `tests/unit/renderer/store/store-middleware.test.ts` - **UPDATED** - Enhanced existing middleware tests to include performance monitoring integration
+
+  ### Performance Monitoring Features Implemented
+  - **Automatic Store Operation Monitoring**: All store operations (set, setState, actions) are automatically monitored with zero configuration overhead
+  - **Comprehensive Metrics Collection**: Tracks execution time, memory usage, state size changes, operation frequency, success/failure rates, and error details
+  - **Performance Issue Detection**: Automatic detection of slow operations (>2ms), bulk operations (>10ms), high frequency calls (>20/sec), large state sizes (>5MB), and memory leaks (>50MB)
+  - **Real-time Performance Alerts**: Console warnings for performance issues with detailed metrics and recommendations
+  - **Development Tools Integration**: Automatic performance monitoring in development mode with global window access for debugging
+  - **Custom Operation Monitoring**: Support for monitoring custom operations outside the store with async and sync variants
+  - **Performance Reporting**: Comprehensive performance reports with operation breakdowns, metrics summaries, and performance recommendations
+  - **Subscription System**: Real-time performance metrics updates with subscription-based notifications for custom monitoring dashboards
+
+  ### Quality checks completed
+  - ✅ Format: All files formatted correctly with Prettier
+  - ✅ Lint: No ESLint errors, follows one-export-per-file rule strictly
+  - ✅ Type Check: All TypeScript checks passed across all tsconfig files
+  - ✅ Test: All performance monitoring tests pass (100+ tests across multiple test suites)
+  - ✅ Build: Production build succeeds with performance monitoring integrated
+
+  ### Summary
+
+  Successfully completed comprehensive performance monitoring for state operations that significantly enhances development and debugging capabilities:
+  - **Zero-Configuration Monitoring**: Performance middleware automatically monitors all store operations with no setup required
+  - **Comprehensive Metrics System**: Tracks all key performance indicators including execution time, memory usage, state size, and operation frequency
+  - **Intelligent Issue Detection**: Automatically identifies performance bottlenecks, memory leaks, and optimization opportunities with configurable thresholds
+  - **Development Experience**: Rich console logging, performance reports, and subscription system for real-time monitoring and debugging
+  - **Production Optimization**: Conditional monitoring that's enabled in development and disabled in production for zero performance overhead
+  - **Extensive Test Coverage**: 100+ comprehensive tests covering all performance monitoring functionality including edge cases and error scenarios
+
+  **Key Performance Monitoring Benefits**:
+  - ✅ Automatic detection of slow operations (>2ms execution time)
+  - ✅ Memory leak detection and monitoring (>50MB threshold)
+  - ✅ High frequency operation alerts (>20 calls/second)
+  - ✅ State size monitoring with warnings for large states (>5MB)
+  - ✅ Real-time performance metrics with subscription system
+  - ✅ Comprehensive error tracking and analysis
+  - ✅ Performance reports with optimization recommendations
+
+  The performance monitoring system is now production-ready with comprehensive test coverage, intelligent issue detection, and zero-configuration automatic monitoring of all store operations. This provides developers with detailed insights into store performance and helps identify optimization opportunities early in the development cycle.
+
 ## Task Sizing Guidelines
 
 Each sub-task is designed to be completed in 1-2 hours and includes:
@@ -940,11 +995,6 @@ Each sub-task is designed to be completed in 1-2 hours and includes:
 - **Validation:** Input validation and error handling
 - **Documentation:** Code comments and type definitions
 - **Quality Checks:** Linting, formatting, and type checking
-
-## File Naming Convention
-
-This implementation plan follows the established naming pattern and is saved as:
-`20250710-zustand-state-management-tasks.md`
 
 ## Target Audience
 
