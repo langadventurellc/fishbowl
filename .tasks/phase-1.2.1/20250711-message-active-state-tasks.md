@@ -344,7 +344,7 @@ When executing tasks, remember to:
     - **Test Quality**: Tests follow established patterns, use proper mocking strategies, cover error scenarios, and validate data transformation between database and API formats ✅
 
 - 5.0 Preload API Bridge Extension
-  - [ ] 5.1 Add dbMessagesUpdateActiveState method to preload API
+  - [x] 5.1 Add dbMessagesUpdateActiveState method to preload API
   - [ ] 5.2 Add dbMessagesToggleActiveState method to preload API
   - [ ] 5.3 Update IPC channel definitions for new message operations
   - [ ] 5.4 Add type definitions for new preload API methods
@@ -352,7 +352,8 @@ When executing tasks, remember to:
   - [ ] 5.6 Write unit tests for preload API methods
 
   ### Files modified with description of changes
-  - (to be filled in after task completion)
+  - `src/preload/index.ts` - Added `dbMessagesUpdateActiveState: createSecureIpcWrapper('db:messages:update-active-state')` method to the Database operations - Messages section (line 161). Method follows the established pattern using `createSecureIpcWrapper` and is positioned after `dbMessagesCreate` for logical grouping with other message operations.
+  - `tests/unit/preload/dbMessagesUpdateActiveState.test.ts` - Created comprehensive unit tests (14 test cases) for the new preload API method covering API method existence, function signature validation, error handling (message not found, validation errors, database errors), return values, parameter validation (UUID format, boolean values), and integration with other message operations. Tests use proper mocking patterns and verify method behavior, type safety, and consistency with other preload API methods. All quality checks pass: ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1013/1013 passing)
 
 - 6.0 State Management Hook Integration
   - [ ] 6.1 Add updateMessageActiveState function to useMessages hook
