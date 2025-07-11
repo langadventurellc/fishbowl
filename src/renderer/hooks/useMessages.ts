@@ -11,6 +11,7 @@ import type {
   CreateMessageData,
   UpdateMessageActiveStateData,
 } from '../../shared/types';
+import { createOptimisticUpdate } from '../store/utils';
 
 // Type guard to check if electronAPI is available
 const isElectronAPIAvailable = (): boolean => {
@@ -112,27 +113,111 @@ export const useMessages = () => {
         return null;
       }
 
-      try {
-        setLoading(true);
-        setError(null);
-        const result = await window.electronAPI.dbMessagesUpdateActiveState(id, updates);
+      setLoading(true);
+      setError(null);
 
+      // Store original state for potential rollback
+      let originalMessage: Message | null = null;
+
+      const optimisticUpdater = () => {
+        setMessages(prev => {
+          const messageIndex = prev.findIndex(msg => msg.id === id);
+          if (messageIndex === -1) return prev;
+
+          originalMessage = prev[messageIndex];
+          return prev.map(msg => (msg.id === id ? { ...msg, isActive: updates.isActive } : msg));
+        });
+      };
+
+      const ipcOperation = async () => {
+        return await window.electronAPI.dbMessagesUpdateActiveState(id, updates);
+      };
+
+      const confirmedUpdater = (result: Message | null) => {
         if (result) {
           setMessages(prev => prev.map(msg => (msg.id === id ? result : msg)));
         }
-
-        return result;
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to update message active state';
-        setError(errorMessage);
-        return null;
-      } finally {
         setLoading(false);
-      }
+      };
+
+      const revertUpdater = () => {
+        if (originalMessage) {
+          setMessages(prev => prev.map(msg => (msg.id === id ? originalMessage! : msg)));
+        }
+        setLoading(false);
+      };
+
+      const errorHandler = (errorMessage: string) => {
+        setError(errorMessage);
+      };
+
+      const optimisticOperation = createOptimisticUpdate(
+        optimisticUpdater,
+        ipcOperation,
+        confirmedUpdater,
+        revertUpdater,
+        errorHandler,
+      );
+
+      return await optimisticOperation();
     },
     [],
   );
+
+  const toggleMessageActiveState = useCallback(async (id: string) => {
+    if (!isElectronAPIAvailable()) {
+      setError('Electron API not available');
+      return null;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    // Store original state for potential rollback
+    let originalMessage: Message | null = null;
+
+    const optimisticUpdater = () => {
+      setMessages(prev => {
+        const messageIndex = prev.findIndex(msg => msg.id === id);
+        if (messageIndex === -1) return prev;
+
+        originalMessage = prev[messageIndex];
+        return prev.map(msg => (msg.id === id ? { ...msg, isActive: !msg.isActive } : msg));
+      });
+    };
+
+    const ipcOperation = async () => {
+      return await window.electronAPI.dbMessagesToggleActiveState(id);
+    };
+
+    const confirmedUpdater = (result: Message | null) => {
+      if (result) {
+        setMessages(prev => prev.map(msg => (msg.id === id ? result : msg)));
+      }
+      setLoading(false);
+    };
+
+    const revertUpdater = () => {
+      if (originalMessage) {
+        setMessages(prev => prev.map(msg => (msg.id === id ? originalMessage! : msg)));
+      }
+      setLoading(false);
+    };
+
+    const errorHandler = (errorMessage: string) => {
+      setError(errorMessage);
+    };
+
+    const optimisticOperation = createOptimisticUpdate(
+      optimisticUpdater,
+      ipcOperation,
+      confirmedUpdater,
+      revertUpdater,
+      errorHandler,
+    );
+
+    return await optimisticOperation();
+  }, []);
 
   return {
     messages,
@@ -143,5 +228,6 @@ export const useMessages = () => {
     createMessage,
     deleteMessage,
     updateMessageActiveState,
+    toggleMessageActiveState,
   };
 };
