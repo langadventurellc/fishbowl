@@ -345,8 +345,8 @@ When executing tasks, remember to:
 
 - 5.0 Preload API Bridge Extension
   - [x] 5.1 Add dbMessagesUpdateActiveState method to preload API
-  - [ ] 5.2 Add dbMessagesToggleActiveState method to preload API
-  - [ ] 5.3 Update IPC channel definitions for new message operations
+  - [x] 5.2 Add dbMessagesToggleActiveState method to preload API
+  - [x] 5.3 Update IPC channel definitions for new message operations
   - [ ] 5.4 Add type definitions for new preload API methods
   - [ ] 5.5 Ensure proper error handling in preload bridge
   - [ ] 5.6 Write unit tests for preload API methods
@@ -354,6 +354,8 @@ When executing tasks, remember to:
   ### Files modified with description of changes
   - `src/preload/index.ts` - Added `dbMessagesUpdateActiveState: createSecureIpcWrapper('db:messages:update-active-state')` method to the Database operations - Messages section (line 161). Method follows the established pattern using `createSecureIpcWrapper` and is positioned after `dbMessagesCreate` for logical grouping with other message operations.
   - `tests/unit/preload/dbMessagesUpdateActiveState.test.ts` - Created comprehensive unit tests (14 test cases) for the new preload API method covering API method existence, function signature validation, error handling (message not found, validation errors, database errors), return values, parameter validation (UUID format, boolean values), and integration with other message operations. Tests use proper mocking patterns and verify method behavior, type safety, and consistency with other preload API methods. All quality checks pass: ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1013/1013 passing)
+  - `src/preload/index.ts` - Added `dbMessagesToggleActiveState: createSecureIpcWrapper('db:messages:toggle-active-state')` method to the Database operations - Messages section (line 162). Method follows the established pattern using `createSecureIpcWrapper` and is positioned after `dbMessagesUpdateActiveState` for logical grouping with other message active state operations. The method leverages the existing IPC infrastructure with proper security validation, performance monitoring, and error handling through the `createSecureIpcWrapper` helper function.
+  - `src/shared/types/validation/ipc-schema.ts` - Added the two new message operation channels to the `IpcChannelSchema` enum: `'db:messages:update-active-state'` and `'db:messages:toggle-active-state'` (lines 43-44). These channels are now properly validated by the IPC schema system, ensuring type safety and validation for all IPC communications using these channels. The additions follow the established naming pattern and are positioned logically after the existing message operations for consistent organization.
 
 - 6.0 State Management Hook Integration
   - [ ] 6.1 Add updateMessageActiveState function to useMessages hook

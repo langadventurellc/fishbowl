@@ -40,6 +40,8 @@ export const IpcChannelSchema = z.enum([
   'db:messages:get',
   'db:messages:create',
   'db:messages:delete',
+  'db:messages:update-active-state',
+  'db:messages:toggle-active-state',
   'db:conversation-agents:list',
   'db:conversation-agents:add',
   'db:conversation-agents:remove',
