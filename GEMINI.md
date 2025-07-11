@@ -1,6 +1,4 @@
-# CLAUDE.md
-
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to AI coding agents when working with code in this repository.
 
 <rules>
   <critical>NEVER bypass git pre-commit hooks, unit tests or quality checks.</critical>
@@ -97,10 +95,11 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 ### Technology Stack
 
 - **Framework**: Electron with Vite build system
+- **Testing**: Vitest for unit tests, Playwright for end-to-end tests
 - **Frontend**: React 18+, TypeScript (strict mode), Zustand
 - **Database**: SQLite via better-sqlite3
 - **AI Integration**: Vercel AI SDK
-- **Styling**: CSS Modules with CSS Variables for theming
+- **Styling**: Tailwind CSS and Shadcn UI
 - **Security**: keytar for API key storage
 - **Validation**: Zod schemas for all IPC operations
 - **IPC**: Type-safe communication with comprehensive error handling
@@ -156,16 +155,6 @@ Fishbowl is an Electron-based desktop application for multi-agent AI conversatio
 - IPC handlers → Test with mocks
 - Skip tests for simple config and type definitions
 
-### Project Structure
-
-```
-src/
-├── main/       # Electron main process
-├── renderer/   # React application
-├── preload/    # Secure IPC bridge
-└── shared/     # Shared types/utils
-```
-
 ## Problem-Solving Together
 
 When you're stuck or confused:
@@ -198,15 +187,6 @@ My insights on better approaches are valued - please ask for them!
 - Sanitize all user inputs
 
 ## Communication Protocol
-
-### Progress Updates:
-
-```
-✓ Researched existing IPC patterns
-✓ Implemented secure message handler (all tests passing)
-✓ Added Zod validation schemas
-✗ Found TypeScript error in IPC types - investigating
-```
 
 ### Suggesting Improvements:
 
@@ -259,12 +239,6 @@ npm run db:migrate     # Run migrations
 # Security and analysis
 npm run security:audit # Comprehensive security audit
 npm audit              # Basic security audit
-
-# Icon generation
-npm run generate:icon  # Generate app icon from base64
-npm run generate:icons # Generate all platform icons
-
-# Note: Full testing framework implemented with 272+ tests
 ```
 
 ## Key Implementation Patterns
@@ -305,7 +279,6 @@ Components are organized by feature with one export per file:
 ```
 components/ChatRoom/
 ├── ChatRoom.tsx         # Main component
-├── ChatRoom.module.css  # Styles
 ├── MessageList.tsx      # Sub-component (separate file!)
 ├── MessageInput.tsx     # Sub-component (separate file!)
 └── index.ts            # Barrel export
@@ -365,34 +338,21 @@ The project follows established contribution guidelines and coding standards:
 4. Run `npm run lint` and `npm run type-check` before committing
 5. Submit a pull request with clear description
 
-See `CONTRIBUTING.md` for detailed guidelines.
-
 ## Documentation Structure
-
-The project follows a comprehensive documentation structure:
-
-```
-docs/
-├── README.md              # Documentation overview
-├── blackboard.md          # Agent collaboration knowledge base
-├── specifications/        # Technical specifications
-│   ├── core-architecture-spec.md
-│   ├── agent-model-spec.md
-│   ├── ux-specification.md
-│   └── implementation-plan.md
-├── guides/                # User and developer guides
-│   └── README.md
-└── technical/             # Technical documentation
-    ├── coding-standards.md
-    └── README.md
-```
 
 Key documentation files:
 
-- `CONTRIBUTING.md`: Contribution guidelines and workflow
-- `docs/blackboard.md`: Shared knowledge base for agent collaboration
-- `docs/specifications/`: Complete technical specifications
+- `docs/specifications/agent-model-spec.md`: Defines agent model structure and behavior
+- `docs/specifications/agent-personality-spec.md`: Details agent personality traits and customization
+- `docs/specifications/agent-role-spec.md`: Outlines agent roles and responsibilities
+- `docs/specifications/chat-room-mechanics-spec.md`: Describes chat room functionality and interactions
+- `docs/specifications/data-flow-integration-spec.md`: Explains data flow between components
+- `docs/specifications/deployment-distribution-spec.md`: Covers deployment strategies and distribution
+- `docs/specifications/mvp-feature-set.md`: Lists minimum viable product features
+- `docs/specifications/ux-specification.md`: User experience design guidelines
+- `docs/specifications/implementation-plan.md`: Implementation roadmap and milestones
 - `docs/technical/coding-standards.md`: Code quality and style guidelines
+- `.tasks/**/*-tasks.md`: Task management files for tracking development progress (useful for understanding completed work)
 
 ## Important Notes
 
@@ -406,7 +366,7 @@ Key documentation files:
 
 ## Third-Party Library Documentation
 
-When working with third-party libraries, use the context7 MCP tool to get up-to-date documentation and examples. This ensures you have access to the latest API changes and best practices for libraries like Electron, React, Zod, Zustand, and others used in this project.
+When working with third-party libraries, use the context7 MCP tool and web searches to get up-to-date documentation and examples. This ensures you have access to the latest API changes and best practices for libraries like Electron, React, Zod, Zustand, and others used in this project.
 
 ## Asking Questions
 
