@@ -183,6 +183,7 @@ graph LR
 - `tests/unit/main/database/migrations/004-message-active-state.test.ts` - Migration tests
 - `tests/unit/main/database/queries/messages/updateMessageActiveState.test.ts` - Update query tests
 - `tests/unit/main/database/queries/messages/toggleMessageActiveState.test.ts` - Toggle query tests
+- `tests/unit/main/database/queries/messages/getMessagesByConversationId.test.ts` - Comprehensive tests for query operations
 - `tests/unit/main/ipc/handlers/dbMessagesUpdateActiveState.test.ts` - IPC handler tests
 - `tests/unit/main/ipc/handlers/dbMessagesToggleActiveState.test.ts` - Toggle handler tests
 - `tests/unit/renderer/hooks/useMessages.test.ts` - Hook tests with active state
@@ -258,7 +259,7 @@ When executing tasks, remember to:
   - [x] 3.3 Update getMessagesByConversationId to include is_active field in results
   - [x] 3.4 Create getActiveMessagesByConversationId filtered query function
   - [x] 3.5 Add proper error handling and transaction support for state operations
-  - [ ] 3.6 Write comprehensive unit tests for all query operations
+  - [x] 3.6 Write comprehensive unit tests for all query operations
 
   ### Files modified with description of changes
   - `src/main/database/queries/messages/updateMessageActiveState.ts` - Implemented updateMessageActiveState query function with prepared statements following established patterns. Function accepts messageId (string) and isActive (boolean), converts boolean to SQLite integer (0/1), uses prepared statement for security, handles result.changes for error detection, and returns fresh data via getMessageById call.
@@ -277,6 +278,7 @@ When executing tasks, remember to:
   - `src/main/database/queries/messages/updateMessageActiveState.ts` - Enhanced with robust error handling using DatabaseErrorHandler.executeWithRetry, comprehensive input validation with UuidSchema and boolean type checking, proper error classification and context tracking, async/await support for retry logic, and detailed error messages for debugging. Function now provides enterprise-grade error handling with retry logic and proper error wrapping.
   - `src/main/database/queries/messages/toggleMessageActiveState.ts` - Enhanced with atomic transaction support using transactionManager.executeTransaction to eliminate race conditions in read-modify-write operations, robust error handling with DatabaseErrorHandler.executeWithRetry, comprehensive input validation, and proper error classification. All database operations now occur within a single transaction using the transaction's database instance for consistency.
   - `tests/unit/main/database/queries/messages/updateMessageActiveState.test.ts` - Updated all test cases to handle async function behavior, added proper mocking for DatabaseErrorHandler.executeWithRetry and new error handling dependencies, verified proper error wrapping and messaging, and ensured all 9 test cases pass with the enhanced implementation.
+  - `tests/unit/main/database/queries/messages/getMessagesByConversationId.test.ts` - Created comprehensive unit tests (14 test cases) for the getMessagesByConversationId query function following established testing patterns. Tests cover successful operations (returning all messages both active and inactive), empty results handling, parameter validation (default vs custom limit/offset), SQL query verification (ensuring no is_active filtering), database error handling, type checking and structure validation, pagination handling, large result sets, mixed active/inactive message scenarios, and different conversation ID handling. All tests pass with proper mocking patterns and comprehensive coverage of the query operation that was modified in task 3.3 to include the is_active field.
 
 - 4.0 IPC Handler Implementation
   - [ ] 4.1 Create dbMessagesUpdateActiveStateHandler with input validation
