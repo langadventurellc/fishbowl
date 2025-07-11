@@ -31,11 +31,11 @@ interface TurnQueue {
 #### Auto Mode Sequence
 
 1. User posts initial message
-2. First agent (index 0) receives full conversation history
+2. First agent (index 0) receives conversation history (only active messages)
 3. Agent evaluates if they should respond using skip logic
 4. If responding:
    - Generate response with configured model parameters
-   - Add to conversation history
+   - Add to conversation history as active (checked)
    - Move to next agent
 5. If skipping:
    - Add system message: "[Agent Name] skipped their turn"
@@ -47,9 +47,17 @@ interface TurnQueue {
 1. User posts message
 2. ALL active agents evaluate and generate responses
 3. Responses shown as pending cards above input
-4. User selects which responses to include
-5. Selected responses added in agent order
-6. Process repeats
+4. User selects which responses to include (checked/unchecked)
+5. Selected responses added to message history as active
+6. Unselected responses added to message history as inactive (faded, unchecked)
+7. Process repeats
+
+#### Message State Management
+
+- **Active Messages**: Included in conversation history for API calls
+- **Inactive Messages**: Visible in UI but excluded from API conversation history
+- Users can toggle any message's active/inactive state at any time
+- Toggling affects all future API calls
 
 ## Skip Turn Logic
 

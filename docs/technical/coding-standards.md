@@ -163,6 +163,32 @@ const useAgentStore = create<AgentStore>(set => ({
 }));
 ```
 
+### Store Import Patterns
+
+```typescript
+// ✅ Good: Relative imports for store modules
+import { useAppStore } from './store';
+import { useThemeStore } from './slices/theme';
+import { useAgentStore } from './slices/agents';
+
+// ✅ Good: Store composition with TypeScript
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
+
+// ✅ Good: Component usage with store
+import { useThemeStore } from '../store/slices/theme';
+
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useThemeStore();
+  return (
+    <button onClick={toggleTheme}>
+      Current theme: {theme}
+    </button>
+  );
+};
+```
+
 ### Event Handling
 
 ```typescript
@@ -495,9 +521,9 @@ describe('AgentStore', () => {
 
 ```typescript
 // ✅ Good: Proper mocking
-jest.mock('../services/ai/providers/openai', () => ({
-  OpenAIProvider: jest.fn().mockImplementation(() => ({
-    generateResponse: jest.fn().mockResolvedValue({
+vi.mock('../services/ai/providers/openai', () => ({
+  OpenAIProvider: vi.fn().mockImplementation(() => ({
+    generateResponse: vi.fn().mockResolvedValue({
       content: 'Mock response',
       usage: { tokens: 100 }
     }))

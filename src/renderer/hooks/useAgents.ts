@@ -1,8 +1,9 @@
 /**
  * React hook for agent database operations
+ * Integrates with Zustand store for state management
  */
 
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import type {
   Agent,
   CreateAgentData,
@@ -13,6 +14,9 @@ import type {
 } from '../../shared/types';
 import { createPaginatedResult, DatabaseCache, paginationToFilter } from '../utils/database/index';
 import { validateAgentData } from '../utils/validation/validateAgentData';
+import { useStore } from '../store';
+import { selectAgentState } from '../store/selectors';
+import { createIPCStoreBridge } from '../store/utils';
 
 // Type guard to check if electronAPI is available
 const isElectronAPIAvailable = (): boolean => {
@@ -24,126 +28,139 @@ const agentsCache = new DatabaseCache<Agent[]>(300000); // 5 minute TTL
 
 // Hook for agents operations
 export const useAgents = () => {
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [totalCount] = useState<number>(0);
+  const {
+    agents,
+    loading,
+    error,
+    setAgents,
+    addAgent,
+    updateAgent: updateAgentInStore,
+    removeAgent,
+    setLoading,
+    setError,
+  } = useStore(selectAgentState);
 
-  const listAgents = useCallback(async (filter?: DatabaseFilter) => {
-    if (!isElectronAPIAvailable()) {
-      setError('Electron API not available');
-      return [];
-    }
+  const totalCount = agents.length;
 
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await window.electronAPI.dbAgentsList(filter);
-      setAgents(result);
-      return result;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to list agents';
-      setError(errorMessage);
-      return [];
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const listAgents = useCallback(
+    async (filter?: DatabaseFilter) => {
+      if (!isElectronAPIAvailable()) {
+        setError('Electron API not available');
+        return [];
+      }
 
-  const getAgent = useCallback(async (id: string) => {
-    if (!isElectronAPIAvailable()) {
-      setError('Electron API not available');
-      return null;
-    }
+      const bridgedOperation = createIPCStoreBridge(
+        () => window.electronAPI.dbAgentsList(filter),
+        setAgents,
+        setError,
+        setLoading,
+      );
 
-    try {
-      setLoading(true);
-      setError(null);
-      return await window.electronAPI.dbAgentsGet(id);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to get agent';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return (await bridgedOperation()) ?? [];
+    },
+    [setAgents, setError, setLoading],
+  );
 
-  const createAgent = useCallback(async (agentData: CreateAgentData) => {
-    if (!isElectronAPIAvailable()) {
-      setError('Electron API not available');
-      return null;
-    }
+  const getAgent = useCallback(
+    async (id: string) => {
+      if (!isElectronAPIAvailable()) {
+        setError('Electron API not available');
+        return null;
+      }
 
-    // Validate data
-    const validationErrors = validateAgentData(agentData);
-    if (validationErrors.length > 0) {
-      setError(`Validation failed: ${validationErrors.join(', ')}`);
-      return null;
-    }
+      const bridgedOperation = createIPCStoreBridge(
+        () => window.electronAPI.dbAgentsGet(id),
+        (agent: Agent | null) => {
+          // Update the agent in store if it exists
+          if (agent) {
+            updateAgentInStore(agent.id, agent);
+          }
+        },
+        setError,
+        setLoading,
+      );
 
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await window.electronAPI.dbAgentsCreate(agentData);
-      setAgents(prev => [...prev, result]);
-      // Clear cache since data has changed
-      agentsCache.clear();
-      return result;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create agent';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return await bridgedOperation();
+    },
+    [setError, setLoading, updateAgentInStore],
+  );
 
-  const updateAgent = useCallback(async (id: string, updates: UpdateAgentData) => {
-    if (!isElectronAPIAvailable()) {
-      setError('Electron API not available');
-      return null;
-    }
+  const createAgent = useCallback(
+    async (agentData: CreateAgentData) => {
+      if (!isElectronAPIAvailable()) {
+        setError('Electron API not available');
+        return null;
+      }
 
-    try {
-      setLoading(true);
-      setError(null);
-      const result = await window.electronAPI.dbAgentsUpdate(id, updates);
-      setAgents(prev => prev.map(agent => (agent.id === id ? result : agent)));
-      // Clear cache since data has changed
-      agentsCache.clear();
-      return result;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to update agent';
-      setError(errorMessage);
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      // Validate data
+      const validationErrors = validateAgentData(agentData);
+      if (validationErrors.length > 0) {
+        setError(`Validation failed: ${validationErrors.join(', ')}`);
+        return null;
+      }
 
-  const deleteAgent = useCallback(async (id: string) => {
-    if (!isElectronAPIAvailable()) {
-      setError('Electron API not available');
-      return false;
-    }
+      const bridgedOperation = createIPCStoreBridge(
+        () => window.electronAPI.dbAgentsCreate(agentData),
+        (newAgent: Agent) => {
+          addAgent(newAgent);
+          // Clear cache since data has changed
+          agentsCache.clear();
+        },
+        setError,
+        setLoading,
+      );
 
-    try {
-      setLoading(true);
-      setError(null);
-      await window.electronAPI.dbAgentsDelete(id);
-      setAgents(prev => prev.filter(agent => agent.id !== id));
-      // Clear cache since data has changed
-      agentsCache.clear();
-      return true;
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to delete agent';
-      setError(errorMessage);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+      return await bridgedOperation();
+    },
+    [addAgent, setError, setLoading],
+  );
+
+  const updateAgent = useCallback(
+    async (id: string, updates: UpdateAgentData) => {
+      if (!isElectronAPIAvailable()) {
+        setError('Electron API not available');
+        return null;
+      }
+
+      const bridgedOperation = createIPCStoreBridge(
+        () => window.electronAPI.dbAgentsUpdate(id, updates),
+        (updatedAgent: Agent) => {
+          updateAgentInStore(id, updatedAgent);
+          // Clear cache since data has changed
+          agentsCache.clear();
+        },
+        setError,
+        setLoading,
+      );
+
+      return await bridgedOperation();
+    },
+    [updateAgentInStore, setError, setLoading],
+  );
+
+  const deleteAgent = useCallback(
+    async (id: string) => {
+      if (!isElectronAPIAvailable()) {
+        setError('Electron API not available');
+        return false;
+      }
+
+      const bridgedOperation = createIPCStoreBridge(
+        () => window.electronAPI.dbAgentsDelete(id),
+        () => {
+          removeAgent(id);
+          // Clear cache since data has changed
+          agentsCache.clear();
+        },
+        setError,
+        setLoading,
+      );
+
+      const result = await bridgedOperation();
+      return result !== null;
+    },
+    [removeAgent, setError, setLoading],
+  );
 
   const listAgentsPaginated = useCallback(
     async (pagination: PaginationRequest): Promise<PaginatedResult<Agent> | null> => {
@@ -159,36 +176,34 @@ export const useAgents = () => {
         return cached as unknown as PaginatedResult<Agent>;
       }
 
-      try {
-        setLoading(true);
-        setError(null);
+      const bridgedOperation = createIPCStoreBridge(
+        async () => {
+          const filter = paginationToFilter(pagination);
+          const agents = await window.electronAPI.dbAgentsList(filter);
 
-        const filter = paginationToFilter(pagination);
-        const agents = await window.electronAPI.dbAgentsList(filter);
+          // For now, we'll simulate total count. In a real implementation,
+          // the backend would return both data and total count
+          const totalItems = totalCount ?? agents.length;
+          const page = pagination.page ?? 1;
+          const pageSize = pagination.pageSize ?? 20;
 
-        // For now, we'll simulate total count. In a real implementation,
-        // the backend would return both data and total count
-        const totalItems = totalCount ?? agents.length;
-        const page = pagination.page ?? 1;
-        const pageSize = pagination.pageSize ?? 20;
+          const result = createPaginatedResult(agents, totalItems, page, pageSize);
 
-        const result = createPaginatedResult(agents, totalItems, page, pageSize);
+          // Cache the result
+          agentsCache.set(cacheKey, result as unknown as Agent[]);
 
-        // Cache the result
-        agentsCache.set(cacheKey, result as unknown as Agent[]);
+          return result;
+        },
+        (result: PaginatedResult<Agent>) => {
+          setAgents(result.data);
+        },
+        setError,
+        setLoading,
+      );
 
-        setAgents(agents);
-        return result;
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : 'Failed to list agents with pagination';
-        setError(errorMessage);
-        return null;
-      } finally {
-        setLoading(false);
-      }
+      return await bridgedOperation();
     },
-    [totalCount],
+    [totalCount, setAgents, setError, setLoading],
   );
 
   return {

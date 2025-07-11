@@ -21,9 +21,91 @@ global.window = {
   electronAPI: mockElectronAPI,
 } as any;
 
+// Mock the store
+vi.mock('../../../../src/renderer/store', () => ({
+  useStore: vi.fn(),
+}));
+
+// Mock the createIPCStoreBridge utility
+vi.mock('../../../../src/renderer/store/utils', () => ({
+  createIPCStoreBridge: vi.fn(),
+}));
+
+// Mock database utilities
+vi.mock('../../../../src/renderer/utils/database/index', () => ({
+  createPaginatedResult: vi.fn(),
+  DatabaseCache: vi.fn().mockImplementation(() => ({
+    get: vi.fn(),
+    set: vi.fn(),
+    clear: vi.fn(),
+  })),
+  paginationToFilter: vi.fn(),
+}));
+
+// Mock validation utility
+vi.mock('../../../../src/renderer/utils/validation/validateAgentData', () => ({
+  validateAgentData: vi.fn(),
+}));
+
+import { useStore } from '../../../../src/renderer/store';
+import { createIPCStoreBridge } from '../../../../src/renderer/store/utils';
+import { validateAgentData } from '../../../../src/renderer/utils/validation/validateAgentData';
+
+const mockUseStore = useStore as unknown as ReturnType<typeof vi.fn>;
+const mockCreateIPCStoreBridge = createIPCStoreBridge as unknown as ReturnType<typeof vi.fn>;
+const mockValidateAgentData = validateAgentData as unknown as ReturnType<typeof vi.fn>;
+
 describe('useAgents', () => {
+  const mockSetAgents = vi.fn();
+  const mockAddAgent = vi.fn();
+  const mockUpdateAgentInStore = vi.fn();
+  const mockRemoveAgent = vi.fn();
+  const mockSetLoading = vi.fn();
+  const mockSetError = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Set up store mock with default state
+    mockUseStore.mockReturnValue({
+      agents: [],
+      loading: false,
+      error: null,
+      setAgents: mockSetAgents,
+      addAgent: mockAddAgent,
+      updateAgent: mockUpdateAgentInStore,
+      removeAgent: mockRemoveAgent,
+      setLoading: mockSetLoading,
+      setError: mockSetError,
+    });
+
+    // Set up createIPCStoreBridge mock to execute operations immediately
+    mockCreateIPCStoreBridge.mockImplementation(
+      (ipcOperation, storeUpdater, errorHandler, loadingSetter) => {
+        return async (...args: any[]) => {
+          loadingSetter(true);
+          try {
+            const result = await ipcOperation(...args);
+            if (result !== undefined) {
+              storeUpdater(result);
+            } else {
+              // For operations that return undefined (like delete), call storeUpdater with no args
+              storeUpdater();
+            }
+            return result;
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            errorHandler(errorMessage);
+            return null;
+          } finally {
+            loadingSetter(false);
+          }
+        };
+      },
+    );
+
+    // Set up validation mock to return no errors by default
+    mockValidateAgentData.mockReturnValue([]);
   });
 
   it('should initialize with empty agents array', () => {
@@ -32,6 +114,14 @@ describe('useAgents', () => {
     expect(result.current.agents).toEqual([]);
     expect(result.current.loading).toBe(false);
     expect(result.current.error).toBeNull();
+    expect(result.current.totalCount).toBe(0);
+    expect(typeof result.current.listAgents).toBe('function');
+    expect(typeof result.current.getAgent).toBe('function');
+    expect(typeof result.current.createAgent).toBe('function');
+    expect(typeof result.current.updateAgent).toBe('function');
+    expect(typeof result.current.deleteAgent).toBe('function');
+    expect(typeof result.current.listAgentsPaginated).toBe('function');
+    expect(typeof result.current.clearCache).toBe('function');
   });
 
   it('should list agents successfully', async () => {
@@ -56,9 +146,10 @@ describe('useAgents', () => {
       expect(agents).toEqual(mockAgents);
     });
 
-    expect(result.current.agents).toEqual(mockAgents);
-    expect(result.current.loading).toBe(false);
-    expect(result.current.error).toBeNull();
+    expect(mockElectronAPI.dbAgentsList).toHaveBeenCalledWith(undefined);
+    expect(mockSetAgents).toHaveBeenCalledWith(mockAgents);
+    expect(mockSetLoading).toHaveBeenCalledWith(true);
+    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 
   it('should handle listAgents error', async () => {
@@ -71,8 +162,10 @@ describe('useAgents', () => {
       expect(agents).toEqual([]);
     });
 
-    expect(result.current.error).toBe('Database error');
-    expect(result.current.loading).toBe(false);
+    expect(mockElectronAPI.dbAgentsList).toHaveBeenCalledWith(undefined);
+    expect(mockSetError).toHaveBeenCalledWith('Database error');
+    expect(mockSetLoading).toHaveBeenCalledWith(true);
+    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 
   it('should get agent successfully', async () => {
@@ -95,7 +188,10 @@ describe('useAgents', () => {
       expect(agent).toEqual(mockAgent);
     });
 
-    expect(result.current.error).toBeNull();
+    expect(mockElectronAPI.dbAgentsGet).toHaveBeenCalledWith('1');
+    expect(mockUpdateAgentInStore).toHaveBeenCalledWith('1', mockAgent);
+    expect(mockSetLoading).toHaveBeenCalledWith(true);
+    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 
   it('should create agent successfully', async () => {
@@ -122,8 +218,11 @@ describe('useAgents', () => {
       expect(agent).toEqual(mockAgent);
     });
 
-    expect(result.current.agents).toContain(mockAgent);
-    expect(result.current.error).toBeNull();
+    expect(mockValidateAgentData).toHaveBeenCalledWith(createData);
+    expect(mockElectronAPI.dbAgentsCreate).toHaveBeenCalledWith(createData);
+    expect(mockAddAgent).toHaveBeenCalledWith(mockAgent);
+    expect(mockSetLoading).toHaveBeenCalledWith(true);
+    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 
   it('should update agent successfully', async () => {
@@ -145,25 +244,15 @@ describe('useAgents', () => {
 
     const { result } = renderHook(() => useAgents());
 
-    // Set initial state
-    act(() => {
-      result.current.agents.push({
-        id: '1',
-        name: 'Original Agent',
-        role: 'assistant',
-        personality: 'helpful',
-        isActive: true,
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-    });
-
     await act(async () => {
       const agent = await result.current.updateAgent('1', updateData);
       expect(agent).toEqual(mockAgent);
     });
 
-    expect(result.current.error).toBeNull();
+    expect(mockElectronAPI.dbAgentsUpdate).toHaveBeenCalledWith('1', updateData);
+    expect(mockUpdateAgentInStore).toHaveBeenCalledWith('1', mockAgent);
+    expect(mockSetLoading).toHaveBeenCalledWith(true);
+    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 
   it('should delete agent successfully', async () => {
@@ -176,10 +265,15 @@ describe('useAgents', () => {
       expect(success).toBe(true);
     });
 
-    expect(result.current.error).toBeNull();
+    expect(mockElectronAPI.dbAgentsDelete).toHaveBeenCalledWith('1');
+    expect(mockRemoveAgent).toHaveBeenCalledWith('1');
+    expect(mockSetLoading).toHaveBeenCalledWith(true);
+    expect(mockSetLoading).toHaveBeenCalledWith(false);
   });
 
   it('should handle error when electronAPI is not available', async () => {
+    // Temporarily remove electronAPI to test error handling
+    const originalWindow = global.window;
     global.window = {} as any;
 
     const { result } = renderHook(() => useAgents());
@@ -189,6 +283,9 @@ describe('useAgents', () => {
       expect(agents).toEqual([]);
     });
 
-    expect(result.current.error).toBe('Electron API not available');
+    expect(mockSetError).toHaveBeenCalledWith('Electron API not available');
+
+    // Restore original window
+    global.window = originalWindow;
   });
 });

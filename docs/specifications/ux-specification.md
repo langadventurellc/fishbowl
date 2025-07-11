@@ -10,7 +10,7 @@ The application provides a desktop chat interface for multi-agent AI collaborati
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│ [≡] Fishbowl                                      [─][□][×]│
+│ [≡] AI Collaborators                              [─][□][×]│
 ├─────────────┬───────────────────────────────────────────┤
 │             │  [Agent Labels Bar]                        │
 │ Conversations│  ┌─────────────────────────────────────┐  │
@@ -48,7 +48,13 @@ Message content goes here...
   - Messages over 3 lines show "Show more..." link
   - Click to expand/collapse
   - First line preview when collapsed
+- **Active/Inactive state**:
+  - Active messages (checked): Full opacity, included in conversation history
+  - Inactive messages (unchecked): 50% opacity, excluded from conversation history
+  - Checkbox appears on hover for any message
+  - Clicking checkbox toggles message inclusion in future API calls
 - **Hover actions**:
+  - Toggle active/inactive (checkbox)
   - Copy message
   - Regenerate (manual mode only)
   - Delete message
@@ -103,7 +109,8 @@ When agents have responses ready:
 - Shows first 2 lines of each response
 - Click card to expand/collapse full message
 - "Select All" / "Clear" buttons
-- Selected messages added when user hits submit
+- Selected messages added to conversation history
+- Unselected messages remain visible but faded
 
 ## Conversation Sidebar
 
@@ -268,6 +275,46 @@ Add agents using the [+] button above to start collaborating
 ```
 Start a new conversation
 Add agents and type a message to begin
+```
+
+## Component Implementation
+
+### UI Component Library
+
+The application uses **shadcn/ui** components for consistent, accessible UI elements:
+
+#### Core Components Used
+
+- **Layout**: `Card`, `Separator`, `ScrollArea`
+- **Forms**: `Input`, `Label`, `Select`, `Slider`, `Switch`, `Textarea`
+- **Buttons**: `Button` with variants (default, secondary, outline, ghost, destructive)
+- **Overlays**: `Dialog`, `Sheet`, `Popover`, `Tooltip`
+- **Feedback**: `Toast`, `Alert`, `Progress`
+- **Navigation**: `Tabs`, `DropdownMenu`
+- **Data Display**: `Avatar`, `Badge`, `Table`
+
+#### Component Customization
+
+- All components are copied into `src/components/ui/`
+- Customized for desktop-first with mobile considerations
+- Touch targets ensured to be minimum 44x44px
+- Hover states have touch alternatives
+
+### Responsive Design Patterns
+
+Using Tailwind's responsive utilities:
+
+- `sm:` - Mobile devices (640px+)
+- `md:` - Tablets (768px+)
+- `lg:` - Small desktops (1024px+)
+- `xl:` - Large desktops (1280px+)
+
+Example responsive pattern:
+
+```tsx
+<div className='p-6 md:p-4 sm:p-2'>
+  <Button className='w-full sm:w-auto'>Save</Button>
+</div>
 ```
 
 ## Implementation Notes

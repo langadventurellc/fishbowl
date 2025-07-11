@@ -2,7 +2,9 @@
 
 ## Overview
 
-This implementation plan outlines the development phases for Fishbowl v1.0, organized to build functionality incrementally while maintaining a working application at each milestone.
+This implementation plan outlines the development phases for AI Collaborators v1.0, organized to build functionality incrementally while maintaining a working application at each milestone.
+
+**Important Note**: The database schema needs to be updated to support message active/inactive states. A new migration is required to add the `is_active` field to the messages table.
 
 ## Development Phases
 
@@ -34,19 +36,123 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 
 #### 1.2 Core Infrastructure
 
-- [ ] Implement IPC communication bridge with type safety
-- [ ] Set up SQLite database with initial schema
-- [ ] Create database migration system
-- [ ] Implement secure storage for API keys (keytar)
+- [x] Implement IPC communication bridge with type safety
+- [x] Set up SQLite database with initial schema
+- [x] Create database migration system
+- [x] Implement secure storage for API keys (keytar)
 - [ ] Set up Zustand store with basic slices
+
+#### 1.2.1 Database Schema Update (NEW)
+
+- [ ] Create migration script to add `is_active` field to messages table
+- [ ] Update TypeScript types to include `isActive` property on Message interface
+- [ ] Test migration on existing database
+- [ ] Update database queries to handle active/inactive state
+- [ ] Ensure default value (true) for existing messages
+
+#### 1.2.2 Mobile-Ready Architecture
+
+**Goal**: Structure code to minimize future mobile migration effort (see `core-architecture-spec.md` for details)
+
+- [ ] Create platform abstraction layer
+  - [ ] Define service interfaces for platform-specific features
+  - [ ] Create `PlatformService` interface for window/app management
+  - [ ] Create `StorageService` interface for secure storage
+  - [ ] Create `FileService` interface for file operations
+  - [ ] Create `DatabaseService` interface wrapping SQLite
+
+- [ ] Implement platform detection utility
+  - [ ] Create `Platform` utility for runtime detection
+  - [ ] Add TypeScript types for platform-specific APIs
+  - [ ] Set up conditional imports for platform services
+
+- [ ] Structure project for multi-platform
+  - [ ] Move all Electron-specific code to `platforms/electron/`
+  - [ ] Keep React components in `shared/components/`
+  - [ ] Keep business logic in `shared/services/`
+  - [ ] Ensure Zustand stores are platform-agnostic
+
+- [ ] Abstract IPC communication
+  - [ ] Create `BridgeService` interface for renderer-main communication
+  - [ ] Wrap all `window.api` calls in service methods
+  - [ ] Ensure all IPC calls return Promises (even if sync in Electron)
+
+- [ ] Prepare UI for mobile
+  - [ ] Use responsive units (rem, %, vh/vw) instead of fixed pixels
+  - [ ] Ensure touch targets are at least 44x44px
+  - [ ] Avoid hover-only interactions (provide alternatives)
+  - [ ] Test UI at mobile viewport sizes (375px width minimum)
+
+- [ ] Configuration and asset handling
+  - [ ] Create `ConfigService` for loading JSON configs
+  - [ ] Plan for bundled vs. remote config loading
+  - [ ] Use relative paths for all assets
+  - [ ] Prepare icons in multiple sizes (for future app stores)
 
 #### 1.3 Basic UI Shell
 
-- [ ] Create main window with menu bar
-- [ ] Implement theme system (light/dark mode)
-- [ ] Build basic layout (sidebar + main content area)
-- [ ] Add settings modal with navigation
-- [ ] Create reusable UI components (Button, Modal, Toast)
+- [ ] Set up TailwindCSS
+  - [ ] Install TailwindCSS and dependencies (`tailwindcss`, `postcss`, `autoprefixer`)
+  - [ ] Create `tailwind.config.js` with content paths
+  - [ ] Set up PostCSS configuration
+  - [ ] Create `src/styles/globals.css` with Tailwind directives
+  - [ ] Import globals.css in renderer entry point
+
+- [ ] Set up shadcn/ui
+  - [ ] Install required dependencies (`tailwind-merge`, `clsx`, `class-variance-authority`)
+  - [ ] Create `lib/utils.ts` with `cn` helper function
+  - [ ] Set up `components.json` for shadcn CLI
+  - [ ] Configure CSS variables for theming in globals.css
+  - [ ] Create `src/components/ui/` directory structure
+
+- [ ] Implement theme system
+  - [ ] Create ThemeProvider component using next-themes or custom implementation
+  - [ ] Set up CSS variables for light/dark themes (if not using existing theme provider)
+  - [ ] Add theme toggle component using shadcn/ui Switch
+  - [ ] Ensure theme persists to localStorage
+  - [ ] Apply theme class to document root
+
+- [ ] Create main window layout
+  - [ ] Implement window frame with native controls
+  - [ ] Add custom menu bar (if not using native)
+  - [ ] Set up main layout grid/flex structure
+  - [ ] Install and configure lucide-react for icons
+
+- [ ] Build core layout components
+  - [ ] Create responsive sidebar using shadcn/ui Sheet for mobile
+  - [ ] Implement main content area with proper padding
+  - [ ] Add resizable panels (using react-resizable-panels)
+  - [ ] Set up layout state management in Zustand
+
+- [ ] Create reusable base components
+  - [ ] Install initial shadcn/ui components:
+    - [ ] `npx shadcn-ui@latest add button`
+    - [ ] `npx shadcn-ui@latest add dialog`
+    - [ ] `npx shadcn-ui@latest add card`
+    - [ ] `npx shadcn-ui@latest add input`
+    - [ ] `npx shadcn-ui@latest add label`
+    - [ ] `npx shadcn-ui@latest add select`
+    - [ ] `npx shadcn-ui@latest add separator`
+    - [ ] `npx shadcn-ui@latest add sheet`
+    - [ ] `npx shadcn-ui@latest add switch`
+    - [ ] `npx shadcn-ui@latest add tabs`
+    - [ ] `npx shadcn-ui@latest add toast`
+  - [ ] Create custom Modal wrapper using Dialog
+  - [ ] Implement Toast notifications with Toaster
+  - [ ] Add loading states and skeletons
+
+- [ ] Build settings modal structure
+  - [ ] Create SettingsModal using shadcn/ui Dialog
+  - [ ] Implement sidebar navigation using Tabs or custom nav
+  - [ ] Create placeholder sections for each settings category
+  - [ ] Add responsive behavior (Sheet on mobile, Dialog on desktop)
+  - [ ] Connect to settings state in Zustand
+
+- [ ] Verify responsive design
+  - [ ] Test layouts at mobile viewport sizes (375px minimum)
+  - [ ] Ensure all interactive elements are touch-friendly (44px targets)
+  - [ ] Check theme consistency across all components
+  - [ ] Verify CSS variables are working correctly
 
 **Deliverable**: Runnable Electron app with empty UI and working settings
 
@@ -99,6 +205,8 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Add agent participation toggling
 - [ ] Build agent label bar component
 - [ ] Implement agent color coding system
+- [ ] **NEW**: Add `toggleMessageActive` action to Zustand store
+- [ ] **NEW**: Update store types to include message active state
 
 #### 3.3 Agent Integration
 
@@ -107,6 +215,8 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Add system prompt assembly
 - [ ] Create agent response generation service
 - [ ] Test with each supported provider
+- [ ] **NEW**: Modify agent service to filter messages by `isActive` status before API calls
+- [ ] **NEW**: Ensure only active messages are included in conversation context
 
 **Deliverable**: Can create and configure agents, but no conversations yet
 
@@ -129,6 +239,10 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Add message persistence to database
 - [ ] Build message formatting system
 - [ ] Implement timestamp handling
+- [ ] **NEW**: Add checkbox UI element for each message (shown on hover)
+- [ ] **NEW**: Implement visual distinction for inactive messages (50% opacity)
+- [ ] **NEW**: Create hover state handler to show/hide message checkbox
+- [ ] **NEW**: Add click handler for checkbox to toggle message active state
 
 #### 4.3 Manual Mode Chat
 
@@ -137,6 +251,11 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Implement response selection mechanism
 - [ ] Add message ordering logic
 - [ ] Create "thinking" indicators
+- [ ] **NEW**: Modify response handling to save ALL agent responses (selected and unselected)
+- [ ] **NEW**: Mark selected responses as active (is_active = true)
+- [ ] **NEW**: Mark unselected responses as inactive (is_active = false)
+- [ ] **NEW**: Update UI to show inactive messages with reduced opacity
+- [ ] **NEW**: Ensure API calls only include active messages in conversation history
 
 **Deliverable**: Working chat with manual mode only
 
@@ -159,6 +278,7 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Add response delay system
 - [ ] Build auto mode controls
 - [ ] Create mode switching logic
+- [ ] **NEW**: Ensure auto mode only considers active messages for context
 
 #### 5.3 @ Mention System
 
@@ -181,6 +301,9 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Create smooth animations
 - [ ] Add keyboard shortcuts
 - [ ] Improve error messaging
+- [ ] **NEW**: Polish message active/inactive toggle interaction with smooth transitions
+- [ ] **NEW**: Add visual feedback when toggling message state (e.g., brief highlight)
+- [ ] **NEW**: Ensure checkbox state persists correctly across conversation switches
 
 #### 6.2 Performance Optimization
 
@@ -211,6 +334,8 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Create token usage display
 - [ ] Build context limit handling
 - [ ] Add conversation overflow management
+- [ ] **NEW**: Show token count for active messages only
+- [ ] **NEW**: Allow users to deactivate old messages to save context space
 
 #### 7.2 Streaming Optimization
 
@@ -229,10 +354,12 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 #### 8.1 Testing
 
 - [ ] Write unit tests for core logic
-- [ ] Create integration tests (consider using Playwright - https://www.electronjs.org/docs/latest/tutorial/automated-testing#using-playwright and https://playwright.dev/docs/api/class-electron/)
+- [ ] Create integration tests (consider using Playwright)
 - [ ] Perform cross-platform testing
 - [ ] Conduct performance testing
 - [ ] Execute security audit
+- [ ] **NEW**: Test message active/inactive state persistence
+- [ ] **NEW**: Test conversation history filtering with various active/inactive combinations
 
 #### 8.2 Documentation
 
@@ -241,6 +368,7 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 - [ ] Build troubleshooting guide
 - [ ] Add inline help/tooltips
 - [ ] Create video tutorials
+- [ ] **NEW**: Document message active/inactive feature for users
 
 #### 8.3 Release Preparation
 
@@ -259,11 +387,12 @@ This implementation plan outlines the development phases for Fishbowl v1.0, orga
 These must be completed in order:
 
 1. Project setup and infrastructure
-2. Basic UI shell
-3. Agent configuration
-4. Message system
-5. Manual mode
-6. Auto mode
+2. **Database migration for is_active field**
+3. Basic UI shell
+4. Agent configuration
+5. Message system with active/inactive states
+6. Manual mode with message selection
+7. Auto mode
 
 ### Parallel Development Opportunities
 
@@ -281,10 +410,11 @@ These can be developed alongside critical path:
 Require early validation:
 
 1. **IPC Performance**: Test with rapid message updates
-2. **Token Counting**: Verify accuracy across providers
+2. **Token Counting**: Verify accuracy across providers (especially with filtered messages)
 3. **Streaming**: Ensure smooth UI updates
 4. **API Rate Limits**: Test with multiple agents
 5. **Memory Usage**: Monitor with long conversations
+6. **NEW**: Message state persistence and performance with many inactive messages
 
 ## Technical Milestones
 
@@ -294,6 +424,7 @@ Require early validation:
 - Can navigate between empty screens
 - Settings modal works
 - Theme switching functional
+- Database migration for is_active field complete
 
 ### Milestone 2: "Configuration Complete" (End of Week 3)
 
@@ -312,8 +443,9 @@ Require early validation:
 ### Milestone 4: "First Conversation" (End of Week 6)
 
 - Can have single-agent conversation
-- Messages persist
-- Manual mode fully working
+- Messages persist with active/inactive states
+- Manual mode fully working with message selection
+- Can toggle any message's active state
 - Can switch conversations
 
 ### Milestone 5: "Multi-Agent Chat" (End of Week 8)
@@ -322,6 +454,7 @@ Require early validation:
 - Multiple agents interact
 - @ mentions functional
 - Turn-taking smooth
+- Only active messages used for context
 
 ### Milestone 6: "Production Ready" (End of Week 12)
 
@@ -406,3 +539,27 @@ Before moving to next phase:
 2. **Cross-Platform Issues**
    - Buffer: Week 12 for fixes
    - Fallback: Delay Linux release
+
+## Next Steps
+
+### Immediate Actions (Week 0)
+
+1. Set up development environment
+2. Create GitHub repository
+3. Initialize project structure
+4. Set up CI/CD pipeline
+5. Create project board for task tracking
+
+### Sprint Planning
+
+- 2-week sprints
+- Daily progress tracking
+- Weekly architecture reviews
+- Bi-weekly stakeholder demos
+
+### Communication
+
+- Daily: Development log
+- Weekly: Progress report
+- Bi-weekly: Demo video
+- Monthly: Public update

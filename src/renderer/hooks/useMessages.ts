@@ -1,5 +1,7 @@
 /**
  * React hook for message database operations
+ * Note: Messages are not currently part of the Zustand store architecture.
+ * This hook maintains local state management for message operations.
  */
 
 import { useCallback, useState } from 'react';

@@ -1,5 +1,8 @@
 import { vi } from 'vitest';
 
+// Mock zustand for proper test isolation
+vi.mock('zustand');
+
 // Polyfill process.listeners for vitest compatibility
 if (!process.listeners) {
   process.listeners = vi.fn(() => []);

@@ -5,6 +5,39 @@ import { useMessages } from '../../src/renderer/hooks/useMessages';
 import { useSecureStorage } from '../../src/renderer/hooks/useSecureStorage';
 import { useDatabase } from '../../src/renderer/hooks/useDatabase';
 
+// Mock Zustand to reset stores between tests and prevent persistence
+vi.mock('zustand', async () => {
+  const actual = await vi.importActual('zustand');
+  const { create: actualCreate } = actual as any;
+
+  // Store reset functions for all stores
+  const storeResetFns = new Set<() => void>();
+
+  // Mock the create function to capture initial state and provide reset
+  const create = () => (createState: any) => {
+    const store = actualCreate(createState);
+    const initialState = store.getState();
+    storeResetFns.add(() => store.setState(initialState, true));
+    return store;
+  };
+
+  // Reset all stores before each test
+  beforeEach(() => {
+    storeResetFns.forEach(resetFn => resetFn());
+  });
+
+  return { ...actual, create };
+});
+
+// Mock persist middleware to disable persistence in tests
+vi.mock('zustand/middleware', async () => {
+  const actual = await vi.importActual('zustand/middleware');
+  return {
+    ...actual,
+    persist: (fn: any) => fn, // Just return the function without persistence
+  };
+});
+
 // Mock the electronAPI that would be exposed by preload
 const mockElectronAPI = {
   // Database operations
