@@ -9,8 +9,23 @@
  * @module Platform
  */
 
-// Core platform detection will be exported here
+// Individual platform detection functions
+export { isElectronPlatform } from './isElectronPlatform';
+export { isCapacitorPlatform } from './isCapacitorPlatform';
+export { isWebPlatform } from './isWebPlatform';
 
+// Main platform detection functions
+export { detectPlatformType } from './detectPlatformType';
+export { getPlatformInfo } from './getPlatformInfo';
+
+// Platform information types
+export { type PlatformInfo } from './PlatformInfo';
+
+// Safe global access utilities
+export { hasWindow } from './hasWindow';
+export { hasWindowProperty } from './hasWindowProperty';
+
+// Other modules (implemented in future tasks)
 export * from './cache';
 export * from './capabilities';
 export * from './detection';

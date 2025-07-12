@@ -5,10 +5,11 @@
  * `isElectronAPIAvailable()` function while extending it to support future
  * Capacitor integration and granular platform detection.
  *
- * Implementation will be added in task 2.2
+ * This is a placeholder file that was part of the original skeleton.
+ * The actual detection functions are implemented in separate files following
+ * the one-export-per-file pattern required by the project.
  */
 
-// Core platform detection implementation will be added in subsequent tasks
-
-// Placeholder export to make this a valid TypeScript module
-export {};
+// This file serves as a placeholder for the detection module
+// All actual exports are handled by the main index.ts barrel file
+export const PLATFORM_DETECTION_MODULE = 'platform-detection' as const;
