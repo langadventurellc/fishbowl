@@ -6,3 +6,8 @@ export { IpcError } from './ipc-error';
 export { IpcValidationError } from './ipc-validation-error';
 export { DatabaseError } from './database-error';
 export { SecureStorageError } from './secure-storage-error';
+export {
+  MessageActiveStateError,
+  MessageActiveStateErrorCode,
+  type MessageActiveStateErrorContext,
+} from './message-active-state-error';

@@ -493,7 +493,7 @@ When executing tasks, remember to:
 - 8.0 Security Validation and Error Handling
   - [x] 8.1 Implement message ID validation as UUID in all operations
   - [x] 8.2 Add active state boolean validation with proper sanitization
-  - [ ] 8.3 Create comprehensive error classes for active state operations
+  - [x] 8.3 Create comprehensive error classes for active state operations
   - [ ] 8.4 Add input validation for all IPC operations with meaningful error messages
   - [ ] 8.5 Implement proper transaction rollback for failed operations
   - [ ] 8.6 Write unit tests for security validation and error scenarios
@@ -548,6 +548,17 @@ When executing tasks, remember to:
       - `tests/unit/shared/utils/validation/booleanValidation.test.ts` - Comprehensive unit tests (35 test cases)
       - `tests/unit/preload/validation.test.ts` - Updated and enhanced IPC validation tests (6 additional test cases)
     - **Security Impact**: Eliminated potential boolean coercion attacks, SQL injection vulnerabilities through unvalidated filter objects, and data integrity issues from malformed boolean values
+  - `src/renderer/utils/database/MessageActiveStateError.ts` - Created comprehensive error class for renderer layer extending DatabaseError with active state specific context, error types, and user-friendly messaging. Includes factory methods for all error scenarios (validation, not found, toggle failed, update failed, consistency errors, permission denied, transaction failed) with proper severity levels and error codes.
+  - `src/renderer/utils/database/MessageActiveStateErrorType.ts` - Created enum defining all active state error types following one-export-per-file pattern.
+  - `src/renderer/utils/database/MessageActiveStateContext.ts` - Created interface for active state error context with operation, message ID, states, and optional conversation/agent IDs.
+  - `src/shared/types/errors/message-active-state-error.ts` - Created lightweight shared error class for IPC communication extending BaseError with error codes and context for main-renderer communication.
+  - `src/shared/types/errors/index.ts` - Added exports for new message active state error classes and types.
+  - `src/renderer/utils/database/index.ts` - Added barrel exports for new error classes following one-export-per-file pattern.
+  - `tests/unit/renderer/utils/database/MessageActiveStateError.test.ts` - Created comprehensive unit tests (29 test cases) covering all error types, factory methods, user-friendly messaging, inheritance, serialization, error codes, and edge cases. Tests verify proper DatabaseError integration, severity levels, context handling, and JSON serialization.
+  - `tests/unit/shared/types/errors/message-active-state-error.test.ts` - Created comprehensive unit tests (20 test cases) for shared error class covering constructor behavior, factory methods, default messaging, inheritance, serialization, and error code generation. Tests verify proper BaseError integration and IPC communication compatibility.
+  - **Quality Verification**: All 49 tests passing, comprehensive coverage for all error scenarios. All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests
+  - **Pattern Compliance**: Follows established error handling patterns with two-layer approach (shared/renderer), proper inheritance hierarchy, factory methods, user-friendly messaging, and one-export-per-file enforcement
+  - **Integration**: Error classes integrate seamlessly with existing DatabaseError system, include proper error mapping to database error types, support retry logic and circuit breaker patterns, and provide comprehensive context for debugging and user feedback
 
 ## Task Sizing Guidelines
 
