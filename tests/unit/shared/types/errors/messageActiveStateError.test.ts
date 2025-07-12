@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { v4 as uuidv4 } from 'uuid';
+import { beforeEach, describe, expect, it } from 'vitest';
 import {
   MessageActiveStateError,
   MessageActiveStateErrorCode,
   type MessageActiveStateErrorContext,
 } from '../../../../../src/shared/types/errors';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('MessageActiveStateError', () => {
   let mockMessageId: string;

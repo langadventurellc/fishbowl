@@ -152,8 +152,7 @@ export const asyncPersist = <T>(
     }
 
     // Override the store's setState to use our persistent version
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (store as any).setState = persistentSetState;
+    store.setState = persistentSetState;
 
     // Return the enhanced state with persistence methods
     return {

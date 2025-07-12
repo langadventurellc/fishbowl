@@ -162,29 +162,14 @@ const eslintConfig = [
   {
     files: ['**/*.test.{ts,tsx,js,jsx}', '**/tests/**/*'],
     rules: {
-      'no-console': 'off',
       'max-lines': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'react/no-multi-comp': 'off',
-    },
-  },
-
-  // Configuration for renderer process files (DOM specific)
-  {
-    files: ['src/renderer/**/*.ts', 'src/renderer/**/*.tsx'],
-    rules: {
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'off',
     },
   },
 

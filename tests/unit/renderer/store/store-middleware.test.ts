@@ -4,13 +4,13 @@
  * Tests for Zustand store with immer, persistence, and devtools middleware
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  useStore,
-  resetStore,
-  validateStoreState,
-  initializeStore,
   getStoreState,
+  initializeStore,
+  resetStore,
+  useStore,
+  validateStoreState,
 } from '../../../../src/renderer/store/index';
 
 // Mock window.matchMedia for system theme detection
@@ -252,7 +252,7 @@ describe('Store Middleware Configuration', () => {
         value: matchMediaMock,
       });
 
-      initializeStore();
+      void initializeStore();
 
       // matchMedia should have been called for system theme detection
       expect(matchMediaMock).toHaveBeenCalledWith('(prefers-color-scheme: dark)');

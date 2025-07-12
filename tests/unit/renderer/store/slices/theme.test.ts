@@ -8,15 +8,15 @@
  * - Theme selectors
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { useStore, resetStore, initializeStore } from '../../../../../src/renderer/store/index';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { initializeStore, resetStore, useStore } from '../../../../../src/renderer/store/index';
 import {
-  selectTheme,
-  selectSystemTheme,
   selectEffectiveTheme,
-  selectIsSystemTheme,
   selectIsDarkTheme,
   selectIsLightTheme,
+  selectIsSystemTheme,
+  selectSystemTheme,
+  selectTheme,
   selectThemeState,
 } from '../../../../../src/renderer/store/selectors';
 
@@ -216,7 +216,7 @@ describe('Theme Slice', () => {
         value: matchMediaMock,
       });
 
-      initializeStore();
+      void initializeStore();
 
       const state = useStore.getState();
       expect(matchMediaMock).toHaveBeenCalledWith('(prefers-color-scheme: dark)');
@@ -230,7 +230,7 @@ describe('Theme Slice', () => {
       // Setup matchMedia mock to capture listeners
       const mediaQueryList = matchMediaMock('(prefers-color-scheme: dark)');
 
-      initializeStore();
+      void initializeStore();
 
       // Simulate system theme change to dark
       if (mediaQueryList._triggerChange) {

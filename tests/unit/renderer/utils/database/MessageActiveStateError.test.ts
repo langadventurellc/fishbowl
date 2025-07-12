@@ -1,10 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { v4 as uuidv4 } from 'uuid';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { DatabaseErrorSeverity } from '../../../../../src/renderer/utils/database/DatabaseErrorSeverity';
+import { DatabaseErrorType } from '../../../../../src/renderer/utils/database/DatabaseErrorType';
+import { type MessageActiveStateContext } from '../../../../../src/renderer/utils/database/MessageActiveStateContext';
 import { MessageActiveStateError } from '../../../../../src/renderer/utils/database/MessageActiveStateError';
 import { MessageActiveStateErrorType } from '../../../../../src/renderer/utils/database/MessageActiveStateErrorType';
-import { type MessageActiveStateContext } from '../../../../../src/renderer/utils/database/MessageActiveStateContext';
-import { DatabaseErrorType } from '../../../../../src/renderer/utils/database/DatabaseErrorType';
-import { DatabaseErrorSeverity } from '../../../../../src/renderer/utils/database/DatabaseErrorSeverity';
-import { v4 as uuidv4 } from 'uuid';
 
 describe('MessageActiveStateError', () => {
   let mockMessageId: string;

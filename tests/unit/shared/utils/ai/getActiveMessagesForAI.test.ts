@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { getActiveMessagesForAI } from '../../../../../src/shared/utils/ai/getActiveMessagesForAI';
+import { describe, expect, it } from 'vitest';
 import type { Message } from '../../../../../src/shared/types';
+import { getActiveMessagesForAI } from '../../../../../src/shared/utils/ai/getActiveMessagesForAI';
 
 describe('getActiveMessagesForAI', () => {
   // Helper function to create test messages
@@ -81,18 +81,15 @@ describe('getActiveMessagesForAI', () => {
 
   it('should throw error for non-array input', () => {
     expect(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      getActiveMessagesForAI(null as any);
+      getActiveMessagesForAI(null as never);
     }).toThrow('Messages must be an array');
 
     expect(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      getActiveMessagesForAI(undefined as any);
+      getActiveMessagesForAI(undefined as never);
     }).toThrow('Messages must be an array');
 
     expect(() => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      getActiveMessagesForAI('not an array' as any);
+      getActiveMessagesForAI('not an array' as never);
     }).toThrow('Messages must be an array');
   });
 
