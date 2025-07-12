@@ -1,5 +1,5 @@
 /**
- * @fileoverview Platform Detection System
+ * Platform Detection System
  *
  * Provides centralized, performant platform identification services that integrate
  * seamlessly with the existing Fishbowl architecture. This system wraps the current
@@ -10,9 +10,8 @@
  */
 
 // Core platform detection will be exported here
-// Implementation will be added in subsequent tasks
 
-export * from './detection';
 export * from './cache';
 export * from './capabilities';
+export * from './detection';
 export * from './types';

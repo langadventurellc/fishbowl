@@ -1,5 +1,5 @@
 /**
- * @fileoverview Core Platform Detection Logic
+ * Core Platform Detection Logic
  *
  * Provides the main platform detection functionality, wrapping the existing
  * `isElectronAPIAvailable()` function while extending it to support future

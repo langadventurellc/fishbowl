@@ -1,5 +1,5 @@
 /**
- * @fileoverview Platform Detection React Hooks
+ * Platform Detection React Hooks
  *
  * Provides React hooks for platform detection and capability checking
  * that integrate seamlessly with the existing IPC hook patterns.

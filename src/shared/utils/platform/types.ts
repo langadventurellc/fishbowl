@@ -1,5 +1,5 @@
 /**
- * @fileoverview Platform-Specific Type Definitions
+ * Platform-Specific Type Definitions
  *
  * Defines TypeScript types and interfaces specific to platform detection
  * functionality within the platform detection module.

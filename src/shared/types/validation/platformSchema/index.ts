@@ -1,5 +1,5 @@
 /**
- * @fileoverview Platform Detection Validation Schemas
+ * Platform Detection Validation Schemas
  *
  * Provides Zod schemas for validating platform detection inputs and outputs.
  * These schemas ensure type safety and security for all platform-related

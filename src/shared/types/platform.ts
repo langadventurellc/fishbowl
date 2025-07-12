@@ -1,5 +1,5 @@
 /**
- * @fileoverview Cross-Process Platform Type Definitions
+ * Cross-Process Platform Type Definitions
  *
  * Defines platform types that are shared across main and renderer processes
  * for consistent platform detection and handling throughout the application.

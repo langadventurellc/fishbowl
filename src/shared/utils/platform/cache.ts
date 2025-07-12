@@ -1,5 +1,5 @@
 /**
- * @fileoverview Platform Detection Result Caching
+ * Platform Detection Result Caching
  *
  * Provides performant caching mechanism for platform detection results
  * to ensure sub-millisecond response times for repeated calls.

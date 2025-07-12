@@ -1,5 +1,5 @@
 /**
- * @fileoverview Platform Feature Capability Detection
+ * Platform Feature Capability Detection
  *
  * Provides extensible framework for detecting platform-specific capabilities
  * such as secure storage, file system access, and other features.
