@@ -252,7 +252,7 @@ When executing tasks, remember to:
   - [x] 2.4 Implement web platform detection with fallback logic
   - [x] 2.5 Create platform caching mechanism for performance optimization
   - [x] 2.6 Add granular platform detection for iOS/Android within Capacitor
-  - [ ] 2.7 Write comprehensive unit tests for all detection scenarios
+  - [x] 2.7 Write comprehensive unit tests for all detection scenarios
   - [ ] 2.8 Add input validation using Zod schemas for platform detection
 
   ### Files created/modified:
@@ -288,6 +288,7 @@ When executing tasks, remember to:
   - `src/shared/utils/platform/getCapacitorOperatingSystem.ts` - Operating system detection function returning OperatingSystem enum values for Capacitor environment (task 2.6)
   - `src/shared/utils/platform/index.ts` - Updated barrel export to include granular Capacitor iOS/Android detection functions (task 2.6)
   - `tests/unit/shared/utils/platform/capacitor-granular-detection.test.ts` - Comprehensive test suite for granular iOS/Android detection within Capacitor with 26 test cases covering all scenarios (task 2.6)
+  - `tests/unit/shared/utils/platform/comprehensive-platform-detection.test.ts` - Advanced comprehensive test suite covering stress testing, error injection, resource management, security boundaries, integration scenarios, edge cases, and performance validation with 24 test cases for platform detection robustness (task 2.7)
 
 - 3.0 Platform Types and Validation System
   - [ ] 3.1 Define comprehensive TypeScript interfaces for platform types
