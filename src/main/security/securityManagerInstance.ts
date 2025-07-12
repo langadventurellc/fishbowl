@@ -1,8 +1,9 @@
-import { SecurityAuditor } from './SecurityAuditor';
-import { SecurityValidator } from './SecurityValidator';
+/* eslint-disable no-console */
 import type { SecurityAuditConfig } from './SecurityAuditConfig';
+import { SecurityAuditor } from './SecurityAuditor';
 import type { SecurityAuditResult } from './SecurityAuditResult';
 import type { SecurityValidationResult } from './SecurityValidationResult';
+import { SecurityValidator } from './SecurityValidator';
 
 class SecurityManager {
   private auditor: SecurityAuditor;

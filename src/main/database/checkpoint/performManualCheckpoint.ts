@@ -15,7 +15,8 @@ export function performManualCheckpoint(mode: CheckpointMode = 'PASSIVE'): Check
     const result = db.pragma(`wal_checkpoint(${mode})`);
 
     // Result format: [busy, log_pages, checkpointed_pages]
-    const [busy, logPages, checkpointedPages] = Array.isArray(result) ? result : [0, 0, 0];
+    const resultArray = Array.isArray(result) ? result : [0, 0, 0];
+    const [busy, logPages, checkpointedPages] = resultArray as [number, number, number];
 
     return {
       totalPages: logPages ?? 0,

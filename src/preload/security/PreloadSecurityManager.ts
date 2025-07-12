@@ -6,7 +6,7 @@ import { ipcRateLimiter } from '../validation/IpcRateLimiter';
  * Security manager for preload operations
  */
 class PreloadSecurityManager {
-  private auditLog: SecurityAuditEntry[] = new Array(1000);
+  private auditLog: SecurityAuditEntry[] = new Array<SecurityAuditEntry>(1000);
   private auditLogIndex = 0;
   private sessionId: string;
   private readonly maxAuditEntries = 1000;

@@ -1,9 +1,9 @@
 /**
  * Unit tests for QueryOptimizationService
  */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { QueryOptimizationService } from '../../../../../src/main/database/optimization/QueryOptimizationService';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { QueryAnalyzer } from '../../../../../src/main/database/optimization/QueryAnalyzer';
+import { QueryOptimizationService } from '../../../../../src/main/database/optimization/QueryOptimizationService';
 import { QueryOptimizer } from '../../../../../src/main/database/performance/QueryOptimizer';
 
 // Mock database connection
@@ -114,16 +114,6 @@ describe('QueryOptimizationService', () => {
     // Since this calls the optimizer, we can't easily test the database effects
     // but we can verify the method doesn't throw
     expect(() => service.applyOptimizations()).not.toThrow();
-
-    consoleSpy.mockRestore();
-  });
-
-  it('should monitor performance', () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
-    service.monitorPerformance();
-
-    expect(consoleSpy).toHaveBeenCalledWith('Query performance monitoring enabled');
 
     consoleSpy.mockRestore();
   });

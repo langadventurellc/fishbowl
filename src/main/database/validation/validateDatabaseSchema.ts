@@ -96,8 +96,6 @@ export function validateDatabaseSchema(): void {
         );
       }
     }
-
-    console.log('Database schema validation completed successfully');
   } catch (error) {
     console.error('Database schema validation failed:', error);
     throw error;

@@ -1,6 +1,7 @@
+/* eslint-disable no-console */
+import type { IpcPerformanceConfig } from './IpcPerformanceConfig';
 import { IpcPerformanceMonitor } from './IpcPerformanceMonitor';
 import { IpcPerformanceOptimizer } from './IpcPerformanceOptimizer';
-import type { IpcPerformanceConfig } from './IpcPerformanceConfig';
 import type { IpcPerformanceReport } from './IpcPerformanceReport';
 
 class IpcPerformanceManager {

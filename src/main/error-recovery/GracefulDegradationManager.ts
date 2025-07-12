@@ -195,13 +195,9 @@ export class GracefulDegradationManager {
     } else {
       this.currentMode = 'limited';
     }
-
-    console.info(`System degradation mode: ${this.currentMode}`);
   }
 
   exitDegradedMode(serviceName: string): void {
-    console.info(`Service restored: ${serviceName}`);
-
     this.serviceHealth.set(serviceName, true);
 
     // Check if we can return to normal mode
@@ -211,7 +207,6 @@ export class GracefulDegradationManager {
 
     if (unhealthyServices === 0) {
       this.currentMode = 'normal';
-      console.info('System returned to normal mode');
     } else {
       // Recalculate degradation mode
       const healthyServices = Array.from(this.serviceHealth.values()).filter(

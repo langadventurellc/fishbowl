@@ -1,10 +1,10 @@
 /**
  * Query optimization service for improving database performance
  */
-import { QueryAnalyzer } from './QueryAnalyzer';
-import { QueryAnalysisResult } from './QueryAnalysisResult';
-import { OptimizationReport } from './OptimizationReport';
 import { QueryOptimizer } from '../performance/QueryOptimizer';
+import { OptimizationReport } from './OptimizationReport';
+import { QueryAnalysisResult } from './QueryAnalysisResult';
+import { QueryAnalyzer } from './QueryAnalyzer';
 
 export class QueryOptimizationService {
   private analyzer: QueryAnalyzer;
@@ -107,24 +107,24 @@ export class QueryOptimizationService {
     return {
       // Optimized active conversations query with covering index
       getActiveConversations: `
-        SELECT * FROM conversations 
-        WHERE is_active = 1 
+        SELECT * FROM conversations
+        WHERE is_active = 1
         ORDER BY updated_at DESC
         LIMIT 100
       `,
 
       // Optimized messages query with proper indexing
       getMessagesByConversation: `
-        SELECT * FROM messages 
-        WHERE conversation_id = ? 
-        ORDER BY timestamp DESC 
+        SELECT * FROM messages
+        WHERE conversation_id = ?
+        ORDER BY timestamp DESC
         LIMIT ? OFFSET ?
       `,
 
       // Optimized agents query with covering index
       getActiveAgents: `
-        SELECT * FROM agents 
-        WHERE is_active = 1 
+        SELECT * FROM agents
+        WHERE is_active = 1
         ORDER BY name ASC
       `,
 
@@ -174,6 +174,5 @@ export class QueryOptimizationService {
     // Enable query logging for performance monitoring
     // This is a simplified version - full monitoring would be implemented
     // in the QueryHelper class which handles query execution
-    console.log('Query performance monitoring enabled');
   }
 }

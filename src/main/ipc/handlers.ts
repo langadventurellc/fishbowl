@@ -101,7 +101,7 @@ const loadConfig = (): ConfigValue => {
   try {
     if (existsSync(CONFIG_FILE)) {
       const configData = readFileSync(CONFIG_FILE, 'utf8');
-      const parsedConfig = JSON.parse(configData);
+      const parsedConfig = JSON.parse(configData) as Partial<ConfigValue>;
       configCache = { ...DEFAULT_CONFIG, ...parsedConfig };
     }
   } catch (error) {
