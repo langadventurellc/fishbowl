@@ -3,7 +3,7 @@ import {
   MessageActiveStateError,
   MessageActiveStateErrorCode,
   type MessageActiveStateErrorContext,
-} from '../../../../../src/shared/types/errors/message-active-state-error';
+} from '../../../../../src/shared/types/errors';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('MessageActiveStateError', () => {

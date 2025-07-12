@@ -5,7 +5,7 @@ import {
   safeValidateBoolean,
   validateFilterBoolean,
   BooleanValidationError,
-} from '../../../../../src/shared/utils/validation/booleanValidation';
+} from '../../../../../src/shared/utils/validation';
 
 describe('booleanValidation', () => {
   describe('BooleanValidationError', () => {

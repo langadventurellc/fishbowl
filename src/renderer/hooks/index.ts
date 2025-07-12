@@ -2,7 +2,7 @@
 export { useTheme } from './useTheme.hook';
 
 // IPC hooks
-export * from './useIpc.index';
+export * from './useIpc';
 
 // Database hooks
 export { useAgents } from './useAgents';

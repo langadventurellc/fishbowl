@@ -130,19 +130,6 @@ const eslintConfig = [
       'multiple-exports/no-multiple-exports': 'error',
     },
   },
-  {
-    files: [
-      'src/components/**',
-      'src/shared/**',
-      'src/renderer/hooks/useTheme.index.ts',
-      'src/renderer/hooks/useIpc.hook.ts',
-      'src/renderer/hooks/useIpc.index.ts',
-      'src/renderer/components/IpcTest/IpcTest.tsx',
-    ],
-    rules: {
-      'multiple-exports/no-multiple-exports': 'off',
-    },
-  },
 
   // Configuration for JavaScript files (disable type-aware linting)
   {

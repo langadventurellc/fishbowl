@@ -314,7 +314,7 @@ The project follows established contribution guidelines and coding standards:
 ### Contribution Workflow
 
 1. Fork the repository and create a feature branch
-2. Follow coding standards in `docs/technical/coding-standards.md`
+2. Follow file naming and coding standards in `docs/technical/coding-standards.md`
 3. Write tests for new functionality
 4. Run `npm run lint` and `npm run type-check` before committing
 5. Submit a pull request with clear description
