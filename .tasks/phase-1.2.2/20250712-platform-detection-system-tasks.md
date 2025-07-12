@@ -309,8 +309,8 @@ When executing tasks, remember to:
   - [x] 3.1 Define comprehensive TypeScript interfaces for platform types
   - [x] 3.2 Create type guards for platform-specific code blocks
   - [x] 3.3 Implement Zod schemas for platform detection validation
-  - [ ] 3.4 Add platform capability type definitions
-  - [ ] 3.5 Create utility types for conditional platform logicc
+  - [x] 3.4 Add platform capability type definitions
+  - [ ] 3.5 Create utility types for conditional platform logicc1
   - [ ] 3.6 Write tests for type guards and validation schemas
   - [ ] 3.7 Ensure TypeScript strict mode compliance across all types
 
@@ -384,6 +384,32 @@ When executing tasks, remember to:
   - `src/shared/types/validation/platformSchema/CapabilityDetectionResultSchema.ts` - Validation schema for capability detection results with status consistency validation, evidence requirements for available capabilities, and error status correlation (task 3.3)
   - `src/shared/types/validation/platformSchema/index.ts` - Updated barrel export to include all new platform detection validation schemas organized by category (task 3.3)
   - `tests/unit/shared/types/validation/platform-detection-validation.test.ts` - Comprehensive test suite for all new platform detection validation schemas with 38 test cases covering schema validation, logical consistency checks, security validation, bounds checking, and error handling scenarios (task 3.3)
+  - `src/shared/constants/platform/CapabilityCategory.ts` - Platform capability category enumeration with 8 categories for organizing capability definitions (task 3.4)
+  - `src/shared/constants/platform/PermissionLevel.ts` - Platform capability permission level enumeration with 5 levels for access control (task 3.4)
+  - `src/shared/constants/platform/DetectionStatus.ts` - Platform capability detection status enumeration with 6 statuses for capability availability tracking (task 3.4)
+  - `src/shared/types/platform/PlatformCapabilityId.ts` - Type-safe platform capability identifier combining category and name (task 3.4)
+  - `src/shared/types/platform/CapabilityCategoryMap.ts` - Type mapping capability categories to their specific capability names (task 3.4)
+  - `src/shared/types/platform/CategoryCapabilityId.ts` - Generic type for category-specific capability identifiers with type safety (task 3.4)
+  - `src/shared/types/platform/DetectionResultMap.ts` - Type mapping detection statuses to their corresponding result structures (task 3.4)
+  - `src/shared/types/platform/TypedDetectionResult.ts` - Type-safe detection result for specific detection statuses (task 3.4)
+  - `src/shared/types/platform/TypedCapabilityState.ts` - Platform capability state interface with type-safe status tracking (task 3.4)
+  - `src/shared/types/platform/CapabilityPermissionRequirement.ts` - Interface for capability permission requirements and validation (task 3.4)
+  - `src/shared/types/platform/PlatformCapabilityDetectionConfig.ts` - Configuration interface for platform capability detection operations (task 3.4)
+  - `src/shared/constants/platform/index.ts` - Updated barrel export to include all new capability enums (task 3.4)
+  - `src/shared/types/platform/index.ts` - Updated barrel export to include all new capability utility types (task 3.4)
+  - `src/shared/constants/index.ts` - Updated to export platform constants for proper access throughout the application (task 3.4)
+  - `tests/unit/shared/types/platform-capability-types.test.ts` - Comprehensive test suite for all new platform capability type definitions with 17 test cases covering enum validation, utility types, and type system integration (task 3.4)
+  - `CapabilityCategory` enum with 8 categories (STORAGE, FILESYSTEM, NETWORKING, SYSTEM, UI, SECURITY, PERFORMANCE, PLATFORM_SPECIFIC)
+  - `PermissionLevel` enum with 5 levels (NONE, READ, WRITE, ADMIN, SYSTEM)
+  - `DetectionStatus` enum with 6 statuses (AVAILABLE, UNAVAILABLE, PERMISSION_DENIED, NOT_SUPPORTED, ERROR, UNKNOWN)
+  - `PlatformCapabilityId` type for type-safe capability identifiers
+  - `CapabilityCategoryMap` type mapping categories to specific capability names
+  - `CategoryCapabilityId<T>` generic type for category-specific capability IDs
+  - `DetectionResultMap` type mapping detection statuses to result structures
+  - `TypedDetectionResult<T>` type-safe detection result for specific statuses
+  - `TypedCapabilityState` interface for capability state with type-safe status
+  - `CapabilityPermissionRequirement` interface for permission requirements
+  - `PlatformCapabilityDetectionConfig` interface for detection configuration
 
 - 4.0 Feature Capability Framework
   - [ ] 4.1 Design extensible capability checking API structure

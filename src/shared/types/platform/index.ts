@@ -45,6 +45,16 @@ export type { PlatformCapabilities } from './PlatformCapabilities';
 export type { CapabilityDetectionResult } from './CapabilityDetectionResult';
 export type { PlatformCapabilityAssessment } from './PlatformCapabilityAssessment';
 
+// Platform Capability Utility Types
+export type { PlatformCapabilityId } from './PlatformCapabilityId';
+export type { CapabilityCategoryMap } from './CapabilityCategoryMap';
+export type { CategoryCapabilityId } from './CategoryCapabilityId';
+export type { DetectionResultMap } from './DetectionResultMap';
+export type { TypedDetectionResult } from './TypedDetectionResult';
+export type { TypedCapabilityState } from './TypedCapabilityState';
+export type { CapabilityPermissionRequirement } from './CapabilityPermissionRequirement';
+export type { PlatformCapabilityDetectionConfig } from './PlatformCapabilityDetectionConfig';
+
 // Error Handling Types
 export { PlatformErrorType } from './PlatformErrorType';
 export type { PlatformError } from './PlatformError';
@@ -68,8 +78,11 @@ export type { PlatformCacheConfig } from '../../utils/platform/PlatformCacheConf
 export type { PlatformCacheEntry } from '../../utils/platform/PlatformCacheEntry';
 
 // Import platform constants for type definitions
-export { PlatformType } from '../../constants/platform/PlatformType';
+export { CapabilityCategory } from '../../constants/platform/CapabilityCategory';
+export { DetectionStatus } from '../../constants/platform/DetectionStatus';
 export { OperatingSystem } from '../../constants/platform/OperatingSystem';
+export { PermissionLevel } from '../../constants/platform/PermissionLevel';
+export { PlatformType } from '../../constants/platform/PlatformType';
 export { RuntimeEnvironment } from '../../constants/platform/RuntimeEnvironment';
 
 // Platform detection and validation schemas

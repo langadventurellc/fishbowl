@@ -2,6 +2,9 @@
  * Shared constants for the Fishbowl application
  */
 
+// Platform detection constants
+export * from './platform';
+
 // Application information
 export const APP_NAME = 'Fishbowl';
 export const APP_DESCRIPTION = 'Multi-Agent AI Conversations';
