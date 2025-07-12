@@ -3,6 +3,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Database from 'better-sqlite3';
+import { v4 as uuidv4 } from 'uuid';
 import { getActiveMessagesByConversationId } from '../../../../../../src/main/database/queries/messages/getActiveMessagesByConversationId';
 import type { DatabaseMessage } from '../../../../../../src/main/database/schema/DatabaseMessage';
 
@@ -19,12 +20,12 @@ describe('getActiveMessagesByConversationId', () => {
     all: ReturnType<typeof vi.fn>;
   };
 
-  const mockConversationId = 'test-conversation-id';
+  const mockConversationId = uuidv4();
   const mockActiveMessages: DatabaseMessage[] = [
     {
-      id: 'active-message-1',
+      id: uuidv4(),
       conversation_id: mockConversationId,
-      agent_id: 'test-agent-id',
+      agent_id: uuidv4(),
       is_active: true,
       content: 'Active message 1',
       type: 'text',
@@ -32,9 +33,9 @@ describe('getActiveMessagesByConversationId', () => {
       timestamp: Date.now(),
     },
     {
-      id: 'active-message-2',
+      id: uuidv4(),
       conversation_id: mockConversationId,
-      agent_id: 'test-agent-id',
+      agent_id: uuidv4(),
       is_active: true,
       content: 'Active message 2',
       type: 'text',
@@ -161,9 +162,9 @@ describe('getActiveMessagesByConversationId', () => {
 
   it('should handle large result sets with proper pagination', () => {
     const largeMessageSet = Array.from({ length: 200 }, (_, i) => ({
-      id: `message-${i}`,
+      id: uuidv4(),
       conversation_id: mockConversationId,
-      agent_id: 'test-agent-id',
+      agent_id: uuidv4(),
       is_active: true,
       content: `Message ${i}`,
       type: 'text',

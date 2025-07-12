@@ -3,6 +3,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import Database from 'better-sqlite3';
+import { v4 as uuidv4 } from 'uuid';
 import { getMessagesByConversationId } from '../../../../../../src/main/database/queries/messages/getMessagesByConversationId';
 import type { DatabaseMessage } from '../../../../../../src/main/database/schema/DatabaseMessage';
 
@@ -19,12 +20,12 @@ describe('getMessagesByConversationId', () => {
     all: ReturnType<typeof vi.fn>;
   };
 
-  const mockConversationId = 'test-conversation-id';
+  const mockConversationId = uuidv4();
   const mockMessages: DatabaseMessage[] = [
     {
-      id: 'message-1',
+      id: uuidv4(),
       conversation_id: mockConversationId,
-      agent_id: 'test-agent-id',
+      agent_id: uuidv4(),
       is_active: true,
       content: 'Active message 1',
       type: 'text',
@@ -32,9 +33,9 @@ describe('getMessagesByConversationId', () => {
       timestamp: Date.now(),
     },
     {
-      id: 'message-2',
+      id: uuidv4(),
       conversation_id: mockConversationId,
-      agent_id: 'test-agent-id',
+      agent_id: uuidv4(),
       is_active: false,
       content: 'Inactive message 2',
       type: 'text',
@@ -42,9 +43,9 @@ describe('getMessagesByConversationId', () => {
       timestamp: Date.now() - 1000,
     },
     {
-      id: 'message-3',
+      id: uuidv4(),
       conversation_id: mockConversationId,
-      agent_id: 'test-agent-id',
+      agent_id: uuidv4(),
       is_active: true,
       content: 'Active message 3',
       type: 'text',
@@ -172,9 +173,9 @@ describe('getMessagesByConversationId', () => {
 
   it('should handle large result sets with proper pagination', () => {
     const largeMessageSet = Array.from({ length: 200 }, (_, i) => ({
-      id: `message-${i}`,
+      id: uuidv4(),
       conversation_id: mockConversationId,
-      agent_id: 'test-agent-id',
+      agent_id: uuidv4(),
       is_active: i % 2 === 0, // Mix of active and inactive
       content: `Message ${i}`,
       type: 'text',
@@ -226,7 +227,7 @@ describe('getMessagesByConversationId', () => {
   });
 
   it('should handle different conversation IDs correctly', () => {
-    const differentConversationId = 'different-conversation-id';
+    const differentConversationId = uuidv4();
     mockStatement.all.mockReturnValue([]);
 
     getMessagesByConversationId(differentConversationId);
