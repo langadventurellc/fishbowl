@@ -12,7 +12,12 @@
 // Individual platform detection functions
 export { isElectronPlatform } from './isElectronPlatform';
 export { isCapacitorPlatform } from './isCapacitorPlatform';
+export { isCapacitorIOS } from './isCapacitorIOS';
+export { isCapacitorAndroid } from './isCapacitorAndroid';
 export { isWebPlatform } from './isWebPlatform';
+
+// Operating system detection functions
+export { getCapacitorOperatingSystem } from './getCapacitorOperatingSystem';
 
 // Main platform detection functions
 export { detectPlatformType } from './detectPlatformType';

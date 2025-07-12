@@ -251,7 +251,7 @@ When executing tasks, remember to:
   - [x] 2.3 Add Capacitor detection with window.Capacitor checking
   - [x] 2.4 Implement web platform detection with fallback logic
   - [x] 2.5 Create platform caching mechanism for performance optimization
-  - [ ] 2.6 Add granular platform detection for iOS/Android within Capacitor
+  - [x] 2.6 Add granular platform detection for iOS/Android within Capacitor
   - [ ] 2.7 Write comprehensive unit tests for all detection scenarios
   - [ ] 2.8 Add input validation using Zod schemas for platform detection
 
@@ -283,6 +283,11 @@ When executing tasks, remember to:
   - `tests/unit/shared/utils/platform/detection.test.ts` - Comprehensive test suite with Capacitor environment testing and mock-environments (task 2.2, 2.3)
   - `tests/unit/shared/utils/platform/web-platform-detection.test.ts` - Comprehensive test suite for enhanced web platform detection with multi-layer fallback logic (task 2.4)
   - `tests/unit/shared/utils/platform/mock-environments.ts` - Capacitor mock environment with window.Capacitor simulation (task 2.3)
+  - `src/shared/utils/platform/isCapacitorIOS.ts` - iOS detection function for Capacitor mobile environment with safe global object access (task 2.6)
+  - `src/shared/utils/platform/isCapacitorAndroid.ts` - Android detection function for Capacitor mobile environment with safe global object access (task 2.6)
+  - `src/shared/utils/platform/getCapacitorOperatingSystem.ts` - Operating system detection function returning OperatingSystem enum values for Capacitor environment (task 2.6)
+  - `src/shared/utils/platform/index.ts` - Updated barrel export to include granular Capacitor iOS/Android detection functions (task 2.6)
+  - `tests/unit/shared/utils/platform/capacitor-granular-detection.test.ts` - Comprehensive test suite for granular iOS/Android detection within Capacitor with 26 test cases covering all scenarios (task 2.6)
 
 - 3.0 Platform Types and Validation System
   - [ ] 3.1 Define comprehensive TypeScript interfaces for platform types
