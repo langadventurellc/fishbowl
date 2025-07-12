@@ -122,17 +122,25 @@ describe('PlatformCache', () => {
     };
 
     it('should respect cache TTL', () => {
+      // Set fake timers before creating cache entries
+      vi.useFakeTimers();
+
       // Use short TTL for testing
       const shortTTLCache = new PlatformCache({
         cacheDurationMs: 100, // 100ms
         enableDebugLogging: false,
       });
 
-      shortTTLCache.setCachedResults(PlatformType.WEB, mockPlatformInfo);
+      // Create mock platform info with fake timestamp
+      const testPlatformInfo: PlatformInfo = {
+        ...mockPlatformInfo,
+        timestamp: Date.now(), // This will use fake time now
+      };
+
+      shortTTLCache.setCachedResults(PlatformType.WEB, testPlatformInfo);
       expect(shortTTLCache.getCachedPlatformType()).toBe(PlatformType.WEB);
 
       // Wait for cache to expire
-      vi.useFakeTimers();
       vi.advanceTimersByTime(150); // 150ms > 100ms TTL
 
       expect(shortTTLCache.getCachedPlatformType()).toBe(null);
@@ -155,14 +163,22 @@ describe('PlatformCache', () => {
     });
 
     it('should handle cache expiration gracefully', () => {
+      // Set fake timers before creating cache entries
+      vi.useFakeTimers();
+
       const shortTTLCache = new PlatformCache({
         cacheDurationMs: 50,
         enableDebugLogging: false,
       });
 
-      shortTTLCache.setCachedResults(PlatformType.WEB, mockPlatformInfo);
+      // Create mock platform info with fake timestamp
+      const testPlatformInfo: PlatformInfo = {
+        ...mockPlatformInfo,
+        timestamp: Date.now(), // This will use fake time now
+      };
 
-      vi.useFakeTimers();
+      shortTTLCache.setCachedResults(PlatformType.WEB, testPlatformInfo);
+
       vi.advanceTimersByTime(100); // Cache should expire
 
       // Should handle gracefully and return null

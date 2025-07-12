@@ -253,7 +253,7 @@ When executing tasks, remember to:
   - [x] 2.5 Create platform caching mechanism for performance optimization
   - [x] 2.6 Add granular platform detection for iOS/Android within Capacitor
   - [x] 2.7 Write comprehensive unit tests for all detection scenarios
-  - [ ] 2.8 Add input validation using Zod schemas for platform detection
+  - [x] 2.8 Add input validation using Zod schemas for platform detection
 
   ### Files created/modified:
   - `src/shared/constants/platform/PlatformType.ts` - Primary platform types enum (task 2.1)
@@ -289,6 +289,19 @@ When executing tasks, remember to:
   - `src/shared/utils/platform/index.ts` - Updated barrel export to include granular Capacitor iOS/Android detection functions (task 2.6)
   - `tests/unit/shared/utils/platform/capacitor-granular-detection.test.ts` - Comprehensive test suite for granular iOS/Android detection within Capacitor with 26 test cases covering all scenarios (task 2.6)
   - `tests/unit/shared/utils/platform/comprehensive-platform-detection.test.ts` - Advanced comprehensive test suite covering stress testing, error injection, resource management, security boundaries, integration scenarios, edge cases, and performance validation with 24 test cases for platform detection robustness (task 2.7)
+  - `src/shared/types/validation/platformSchema/PlatformTypeSchema.ts` - Zod schema for validating PlatformType enum values with custom error messages (task 2.8)
+  - `src/shared/types/validation/platformSchema/OperatingSystemSchema.ts` - Zod schema for validating OperatingSystem enum values with custom error messages (task 2.8)
+  - `src/shared/types/validation/platformSchema/RuntimeEnvironmentSchema.ts` - Zod schema for validating RuntimeEnvironment enum values with custom error messages (task 2.8)
+  - `src/shared/types/validation/platformSchema/WindowPropertyNameSchema.ts` - Secure validation schema for window property names preventing prototype pollution and injection attacks (task 2.8)
+  - `src/shared/types/validation/platformSchema/TimestampSchema.ts` - Timestamp validation schema with security checks and reasonable bounds validation (task 2.8)
+  - `src/shared/types/validation/platformSchema/PlatformCacheConfigSchema.ts` - Cache configuration validation with resource exhaustion protection and bounds checking (task 2.8)
+  - `src/shared/types/validation/platformSchema/PartialPlatformCacheConfigSchema.ts` - Partial cache configuration validation for constructor usage (task 2.8)
+  - `src/shared/types/validation/platformSchema/PlatformInfoSchema.ts` - Comprehensive validation for PlatformInfo objects with logical consistency checks between platform type, detections, and environment (task 2.8)
+  - `src/shared/types/validation/platformSchema/PlatformCacheEntrySchema.ts` - Cache entry validation ensuring data integrity and timestamp consistency (task 2.8)
+  - `src/shared/types/validation/platformSchema/index.ts` - Updated barrel export to include all platform validation schemas (task 2.8)
+  - `src/shared/utils/platform/hasWindowProperty.ts` - Updated to use WindowPropertyNameSchema for secure input validation (task 2.8)
+  - `src/shared/utils/platform/PlatformCache.ts` - Updated constructor and setCachedResults methods to use validation schemas for security and data integrity (task 2.8)
+  - `tests/unit/shared/types/validation/platformSchema.test.ts` - Comprehensive test suite for all platform validation schemas with 29 test cases covering enum validation, configuration bounds checking, data structure consistency, security validation, and edge cases (task 2.8)
 
 - 3.0 Platform Types and Validation System
   - [ ] 3.1 Define comprehensive TypeScript interfaces for platform types

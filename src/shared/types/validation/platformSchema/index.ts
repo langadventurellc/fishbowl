@@ -8,11 +8,23 @@
  * @module PlatformValidationSchemas
  */
 
-// Platform type validation schemas - implementation in task 3.3
-// export * from './PlatformTypeSchema';
+// Enum validation schemas
+export { PlatformTypeSchema } from './PlatformTypeSchema';
+export { OperatingSystemSchema } from './OperatingSystemSchema';
+export { RuntimeEnvironmentSchema } from './RuntimeEnvironmentSchema';
 
-// Platform capability validation schemas - implementation in task 3.3
-// export * from './CapabilitySchema';
+// Configuration validation schemas
+export { PlatformCacheConfigSchema } from './PlatformCacheConfigSchema';
+export { PartialPlatformCacheConfigSchema } from './PartialPlatformCacheConfigSchema';
 
-// Placeholder export to make this a valid TypeScript module
-export {};
+// Data structure validation schemas
+export { PlatformInfoSchema } from './PlatformInfoSchema';
+export { PlatformCacheEntrySchema } from './PlatformCacheEntrySchema';
+
+// Input parameter validation schemas
+export { WindowPropertyNameSchema } from './WindowPropertyNameSchema';
+export { TimestampSchema } from './TimestampSchema';
+
+// Test utilities
+export { isValidationTestEnvironment } from './isValidationTestEnvironment';
+export { isCacheTTLTestEnvironment } from './isCacheTTLTestEnvironment';

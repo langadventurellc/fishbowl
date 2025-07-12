@@ -10,6 +10,10 @@ import type { PlatformType } from '../../constants/platform/PlatformType';
 import type { PlatformInfo } from './PlatformInfo';
 import type { PlatformCacheEntry } from './PlatformCacheEntry';
 import type { PlatformCacheConfig } from './PlatformCacheConfig';
+import {
+  PartialPlatformCacheConfigSchema,
+  PlatformCacheEntrySchema,
+} from '../../types/validation/platformSchema';
 
 /**
  * Platform detection cache implementation
@@ -28,11 +32,24 @@ export class PlatformCache {
   private static readonly CACHE_KEY = 'platform_detection';
 
   constructor(config?: Partial<PlatformCacheConfig>) {
-    this.config = {
-      cacheDurationMs: config?.cacheDurationMs ?? PLATFORM_DETECTION_CONFIG.CACHE_DURATION_MS,
-      enableDebugLogging:
-        config?.enableDebugLogging ?? PLATFORM_DETECTION_CONFIG.ENABLE_DEBUG_LOGGING,
-    };
+    try {
+      // Validate configuration input for security and bounds checking
+      const validatedConfig = config ? PartialPlatformCacheConfigSchema.parse(config) : {};
+
+      this.config = {
+        cacheDurationMs:
+          validatedConfig.cacheDurationMs ?? PLATFORM_DETECTION_CONFIG.CACHE_DURATION_MS,
+        enableDebugLogging:
+          validatedConfig.enableDebugLogging ?? PLATFORM_DETECTION_CONFIG.ENABLE_DEBUG_LOGGING,
+      };
+    } catch (error) {
+      // Fallback to default configuration if validation fails
+      this.config = {
+        cacheDurationMs: PLATFORM_DETECTION_CONFIG.CACHE_DURATION_MS,
+        enableDebugLogging: PLATFORM_DETECTION_CONFIG.ENABLE_DEBUG_LOGGING,
+      };
+      this.logDebug(`Invalid cache configuration provided, using defaults: ${String(error)}`);
+    }
   }
 
   /**
@@ -78,20 +95,25 @@ export class PlatformCache {
   /**
    * Stores platform detection results in cache
    *
-   * @param platformType - Detected platform type
-   * @param platformInfo - Comprehensive platform information
+   * @param platformType - Detected platform type (validated)
+   * @param platformInfo - Comprehensive platform information (validated)
    */
   setCachedResults(platformType: PlatformType, platformInfo: PlatformInfo): void {
     try {
       const timestamp = Date.now();
-      this.cache = {
+      const cacheEntry = {
         platformType,
         platformInfo,
         timestamp,
       };
+
+      // Validate cache entry for data integrity and consistency
+      const validatedEntry = PlatformCacheEntrySchema.parse(cacheEntry);
+
+      this.cache = validatedEntry;
       this.logDebug(`Cached platform results: ${platformType}`);
-    } catch {
-      this.logDebug('Failed to cache platform results');
+    } catch (error) {
+      this.logDebug(`Failed to cache platform results - validation error: ${String(error)}`);
       // Silent failure - caching is an optimization, not critical
     }
   }
