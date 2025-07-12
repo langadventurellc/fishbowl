@@ -494,7 +494,7 @@ When executing tasks, remember to:
   - [x] 8.1 Implement message ID validation as UUID in all operations
   - [x] 8.2 Add active state boolean validation with proper sanitization
   - [x] 8.3 Create comprehensive error classes for active state operations
-  - [ ] 8.4 Add input validation for all IPC operations with meaningful error messages
+  - [x] 8.4 Add input validation for all IPC operations with meaningful error messages
   - [ ] 8.5 Implement proper transaction rollback for failed operations
   - [ ] 8.6 Write unit tests for security validation and error scenarios
     - **Include code review improvements** (in addition to any other necessary tests):
@@ -559,6 +559,30 @@ When executing tasks, remember to:
   - **Quality Verification**: All 49 tests passing, comprehensive coverage for all error scenarios. All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests
   - **Pattern Compliance**: Follows established error handling patterns with two-layer approach (shared/renderer), proper inheritance hierarchy, factory methods, user-friendly messaging, and one-export-per-file enforcement
   - **Integration**: Error classes integrate seamlessly with existing DatabaseError system, include proper error mapping to database error types, support retry logic and circuit breaker patterns, and provide comprehensive context for debugging and user feedback
+
+  ### Files modified with description of changes
+  - `src/shared/types/validation/ipcSchema/ipcChannelSchema.ts` - Added 21 missing IPC channels to IpcChannelSchema enum including all database backup operations (db:backup:create, db:backup:restore, db:backup:list, db:backup:delete, db:backup:validate, db:backup:cleanup, db:backup:stats) and all performance monitoring operations (performance:getUnifiedReport, performance:getDatabaseMetrics, performance:getIpcMetrics, performance:getSystemMetrics, performance:getRecentMetrics, performance:getHistory, performance:getAlerts, performance:resolveAlert, performance:optimize, performance:setThresholds, performance:getThresholds, performance:enableMonitoring, performance:disableMonitoring, performance:resetMetrics). Now includes comprehensive validation for all 65+ IPC channels defined in the IpcChannels interface.
+  - `src/preload/validation/validateIpcArguments.ts` - Added 8 new validation functions for comprehensive input validation across all IPC operations:
+    - `validateDbBackupCreate` - Validates optional BackupOptions object parameter
+    - `validateDbBackupRestore` - Validates required backupPath string and optional RestoreOptions object
+    - `validateDbBackupValidate` - Validates required backupPath string parameter
+    - `validatePerformanceResolveAlert` - Validates required alertId as UUID
+    - `validatePerformanceOptimize` - Validates optional PerformanceOptimizationRequest object
+    - `validatePerformanceSetThresholds` - Validates required PerformanceThresholds object
+    - `validatePerformanceGetRecentMetrics` - Validates optional count number parameter
+    - `validatePerformanceGetHistory` - Validates optional duration number parameter
+    - `validatePerformanceGetAlerts` - Validates optional unresolved boolean parameter
+    - `validatePerformanceMonitoringCategory` - Validates optional category enum ('database', 'ipc', 'system', 'all')
+  - Extended the main switch statement to include validation for all 21 new channels with appropriate error messages and parameter validation
+  - Fixed empty string validation issue in category validation to properly reject invalid category values
+  - **Meaningful Error Messages**: All new validation functions provide clear, actionable error messages including "Backup file path required", "Valid alert ID (UUID) required", "Performance thresholds object required", "Count must be a number if provided", "Duration must be a number if provided", "Category must be one of: database, ipc, system, all if provided"
+  - `tests/unit/preload/validation.test.ts` - Added comprehensive unit tests (41 new test cases) covering all new validation functions:
+    - **Database Backup Operations Tests**: 13 test cases covering success and error scenarios for all backup operations including parameter validation, type checking, and meaningful error messages
+    - **Performance Monitoring Operations Tests**: 28 test cases covering success and error scenarios for all performance operations including UUID validation, object validation, number validation, boolean validation, and category enum validation
+    - **Coverage**: Tests verify proper validation of optional parameters, required parameters, type checking, meaningful error messages, and edge cases (empty strings, invalid types, missing parameters)
+    - **Pattern Consistency**: All tests follow established testing patterns with proper mocking, comprehensive assertions, and TypeScript type safety
+  - **Quality Verification**: All quality checks pass - ✅ Format ✅ Lint ✅ Type Check ✅ Tests (1315/1315 passing including 41 new validation tests)
+  - **Comprehensive Coverage**: Task 8.4 now provides complete input validation for ALL 65+ IPC operations in the Fishbowl application with meaningful error messages, ensuring robust security and user experience across the entire IPC communication layer
 
 ## Task Sizing Guidelines
 

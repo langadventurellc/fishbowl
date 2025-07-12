@@ -1,9 +1,9 @@
 import type { IpcChannels } from '../../shared/types';
-import { validateChannelName } from './validateChannelName';
-import { validateUuid } from './validateUuid';
 import { safeValidateBoolean } from '../../shared/utils/validation';
-import { validateSafeObject } from './validateSafeObject';
 import { sanitizeValue } from './sanitizeValue';
+import { validateChannelName } from './validateChannelName';
+import { validateSafeObject } from './validateSafeObject';
+import { validateUuid } from './validateUuid';
 
 type ValidationResult = { valid: boolean; error?: string };
 
@@ -135,6 +135,220 @@ const validateThemeSet = (args: unknown[]): ValidationResult => {
 };
 
 /**
+ * Validate database backup restore channel arguments
+ */
+const validateDbBackupRestore = (args: unknown[]): ValidationResult => {
+  if (args.length === 0 || typeof args[0] !== 'string') {
+    return { valid: false, error: 'Backup file path required' };
+  }
+  // Second argument (RestoreOptions) is optional, validate if present
+  if (args.length > 1 && args[1] && typeof args[1] !== 'object') {
+    return { valid: false, error: 'Restore options must be an object if provided' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate database backup validate channel arguments
+ */
+const validateDbBackupValidate = (args: unknown[]): ValidationResult => {
+  if (args.length === 0 || typeof args[0] !== 'string') {
+    return { valid: false, error: 'Backup file path required' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate database backup create channel arguments
+ */
+const validateDbBackupCreate = (args: unknown[]): ValidationResult => {
+  // BackupOptions is optional, validate if present
+  if (args.length > 0 && args[0] && typeof args[0] !== 'object') {
+    return { valid: false, error: 'Backup options must be an object if provided' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate performance alert resolution channel arguments
+ */
+const validatePerformanceResolveAlert = (args: unknown[]): ValidationResult => {
+  if (args.length === 0 || !validateUuid(args[0] as string)) {
+    return { valid: false, error: 'Valid alert ID (UUID) required' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate performance optimization channel arguments
+ */
+const validatePerformanceOptimize = (args: unknown[]): ValidationResult => {
+  // PerformanceOptimizationRequest is optional, validate if present
+  if (args.length > 0 && args[0] && typeof args[0] !== 'object') {
+    return {
+      valid: false,
+      error: 'Performance optimization request must be an object if provided',
+    };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate performance set thresholds channel arguments
+ */
+const validatePerformanceSetThresholds = (args: unknown[]): ValidationResult => {
+  if (args.length === 0 || !args[0] || typeof args[0] !== 'object') {
+    return { valid: false, error: 'Performance thresholds object required' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate performance get recent metrics channel arguments
+ */
+const validatePerformanceGetRecentMetrics = (args: unknown[]): ValidationResult => {
+  // Count parameter is optional, validate if present
+  if (args.length > 0 && args[0] && typeof args[0] !== 'number') {
+    return { valid: false, error: 'Count must be a number if provided' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate performance get history channel arguments
+ */
+const validatePerformanceGetHistory = (args: unknown[]): ValidationResult => {
+  // Duration parameter is optional, validate if present
+  if (args.length > 0 && args[0] && typeof args[0] !== 'number') {
+    return { valid: false, error: 'Duration must be a number if provided' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate performance get alerts channel arguments
+ */
+const validatePerformanceGetAlerts = (args: unknown[]): ValidationResult => {
+  // Unresolved parameter is optional, validate if present
+  if (args.length > 0 && args[0] && typeof args[0] !== 'boolean') {
+    return { valid: false, error: 'Unresolved flag must be a boolean if provided' };
+  }
+  return { valid: true };
+};
+
+/**
+ * Validate performance monitoring category channel arguments
+ */
+const validatePerformanceMonitoringCategory = (args: unknown[]): ValidationResult => {
+  // Category parameter is optional, validate if present
+  if (args.length > 0 && args[0] !== undefined && args[0] !== null) {
+    const validCategories = ['database', 'ipc', 'system', 'all'];
+    if (typeof args[0] !== 'string' || !validCategories.includes(args[0])) {
+      return {
+        valid: false,
+        error: 'Category must be one of: database, ipc, system, all if provided',
+      };
+    }
+  }
+  return { valid: true };
+};
+
+/**
+ * Channel validation mapping - associates channel patterns with their validation functions
+ */
+const CHANNEL_VALIDATION_MAP = new Map<string[], (args: unknown[]) => ValidationResult>([
+  [
+    [
+      'db:agents:get',
+      'db:agents:update',
+      'db:agents:delete',
+      'db:conversations:get',
+      'db:conversations:update',
+      'db:conversations:delete',
+      'db:messages:get',
+      'db:messages:delete',
+      'db:messages:toggle-active-state',
+      'db:backup:delete',
+    ],
+    validateUuidChannels,
+  ],
+  [['db:messages:update-active-state'], validateMessageActiveStateUpdate],
+  [
+    [
+      'db:messages:list',
+      'db:conversation-agents:list',
+      'db:conversation-agents:add',
+      'db:conversation-agents:remove',
+    ],
+    validateConversationChannels,
+  ],
+  [['config:get'], validateConfigGet],
+  [['config:set'], validateConfigSet],
+  [['secure:credentials:get', 'secure:credentials:delete'], validateSecureCredentialsGetDelete],
+  [['secure:credentials:set'], validateSecureCredentialsSet],
+  [['secure:keytar:get', 'secure:keytar:delete'], validateSecureKeytarGetDelete],
+  [['secure:keytar:set'], validateSecureKeytarSet],
+  [['theme:set'], validateThemeSet],
+  [['db:backup:create'], validateDbBackupCreate],
+  [['db:backup:restore'], validateDbBackupRestore],
+  [['db:backup:validate'], validateDbBackupValidate],
+  [['performance:resolveAlert'], validatePerformanceResolveAlert],
+  [['performance:optimize'], validatePerformanceOptimize],
+  [['performance:setThresholds'], validatePerformanceSetThresholds],
+  [['performance:getRecentMetrics'], validatePerformanceGetRecentMetrics],
+  [['performance:getHistory'], validatePerformanceGetHistory],
+  [['performance:getAlerts'], validatePerformanceGetAlerts],
+  [
+    ['performance:enableMonitoring', 'performance:disableMonitoring', 'performance:resetMetrics'],
+    validatePerformanceMonitoringCategory,
+  ],
+]);
+
+/**
+ * Default channels that don't require specific validation
+ */
+const DEFAULT_VALIDATION_CHANNELS = [
+  'db:backup:list',
+  'db:backup:cleanup',
+  'db:backup:stats',
+  'performance:getUnifiedReport',
+  'performance:getDatabaseMetrics',
+  'performance:getIpcMetrics',
+  'performance:getSystemMetrics',
+  'performance:getThresholds',
+];
+
+/**
+ * Find the appropriate validation function for a given channel
+ */
+const findValidationFunction = (
+  channel: string,
+): ((args: unknown[]) => ValidationResult) | null => {
+  for (const [channels, validationFn] of CHANNEL_VALIDATION_MAP) {
+    if (channels.includes(channel)) {
+      return validationFn;
+    }
+  }
+
+  if (DEFAULT_VALIDATION_CHANNELS.includes(channel)) {
+    return () => ({ valid: true });
+  }
+
+  return () => ({ valid: true }); // Default fallback
+};
+
+/**
+ * Perform channel-specific validation using the mapping
+ */
+const performChannelValidation = (
+  channel: keyof IpcChannels,
+  args: unknown[],
+): ValidationResult => {
+  const validationFn = findValidationFunction(channel);
+  return validationFn ? validationFn(args) : { valid: true };
+};
+
+/**
  * Validate IPC arguments for specific channels
  */
 export const validateIpcArguments = (
@@ -154,77 +368,14 @@ export const validateIpcArguments = (
       }
     }
 
-    // Sanitize all arguments
-    const sanitizedArgs = args.map(sanitizeValue);
-
-    // Channel-specific validation
-    let validationResult: ValidationResult;
-
-    switch (channel) {
-      case 'db:agents:get':
-      case 'db:agents:update':
-      case 'db:agents:delete':
-      case 'db:conversations:get':
-      case 'db:conversations:update':
-      case 'db:conversations:delete':
-      case 'db:messages:get':
-      case 'db:messages:delete':
-      case 'db:messages:toggle-active-state':
-        validationResult = validateUuidChannels(args);
-        break;
-
-      case 'db:messages:update-active-state':
-        validationResult = validateMessageActiveStateUpdate(args);
-        break;
-
-      case 'db:messages:list':
-      case 'db:conversation-agents:list':
-      case 'db:conversation-agents:add':
-      case 'db:conversation-agents:remove':
-        validationResult = validateConversationChannels(args);
-        break;
-
-      case 'config:get':
-        validationResult = validateConfigGet(args);
-        break;
-
-      case 'config:set':
-        validationResult = validateConfigSet(args);
-        break;
-
-      case 'secure:credentials:get':
-      case 'secure:credentials:delete':
-        validationResult = validateSecureCredentialsGetDelete(args);
-        break;
-
-      case 'secure:credentials:set':
-        validationResult = validateSecureCredentialsSet(args);
-        break;
-
-      case 'secure:keytar:get':
-      case 'secure:keytar:delete':
-        validationResult = validateSecureKeytarGetDelete(args);
-        break;
-
-      case 'secure:keytar:set':
-        validationResult = validateSecureKeytarSet(args);
-        break;
-
-      case 'theme:set':
-        validationResult = validateThemeSet(args);
-        break;
-
-      default:
-        // For channels that don't require specific validation
-        validationResult = { valid: true };
-        break;
-    }
+    // Channel-specific validation using mapping
+    const validationResult = performChannelValidation(channel, args);
 
     if (!validationResult.valid) {
       return validationResult;
     }
 
-    return { valid: true, sanitizedArgs };
+    return { valid: true, sanitizedArgs: args.map(sanitizeValue) };
   } catch (error) {
     return { valid: false, error: `Validation error: ${String(error)}` };
   }

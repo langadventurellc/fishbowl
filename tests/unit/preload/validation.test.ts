@@ -8,6 +8,7 @@ import {
   validateIpcArguments,
   ipcRateLimiter,
 } from '../../../src/preload/validation';
+import type { IpcChannels } from '../../../src/shared/types';
 
 describe('Validation Utilities', () => {
   describe('sanitizeString', () => {
@@ -382,6 +383,267 @@ describe('Validation Utilities', () => {
           { isActive: true },
         ]);
         expect(result.valid).toBe(true);
+      });
+    });
+
+    describe('Database Backup Operations', () => {
+      it('should validate db:backup:create with no arguments', () => {
+        const result = validateIpcArguments('db:backup:create', []);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate db:backup:create with valid BackupOptions object', () => {
+        const backupOptions = {
+          directory: '/path/to/backup',
+          compression: true,
+          includeWal: true,
+        };
+        const result = validateIpcArguments('db:backup:create', [backupOptions]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject db:backup:create with invalid options type', () => {
+        const result = validateIpcArguments('db:backup:create', ['invalid-options']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Backup options must be an object if provided');
+      });
+
+      it('should validate db:backup:restore with backup path', () => {
+        const result = validateIpcArguments('db:backup:restore', ['/path/to/backup.db']);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate db:backup:restore with backup path and restore options', () => {
+        const restoreOptions = { createBackupBeforeRestore: true, validateIntegrity: true };
+        const result = validateIpcArguments('db:backup:restore', [
+          '/path/to/backup.db',
+          restoreOptions,
+        ]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject db:backup:restore with no arguments', () => {
+        const result = validateIpcArguments('db:backup:restore', []);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Backup file path required');
+      });
+
+      it('should reject db:backup:restore with invalid restore options type', () => {
+        const result = validateIpcArguments('db:backup:restore', [
+          '/path/to/backup.db',
+          'invalid-options',
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Restore options must be an object if provided');
+      });
+
+      it('should validate db:backup:validate with backup path', () => {
+        const result = validateIpcArguments('db:backup:validate', ['/path/to/backup.db']);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject db:backup:validate with no arguments', () => {
+        const result = validateIpcArguments('db:backup:validate', []);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Backup file path required');
+      });
+
+      it('should validate db:backup:delete with valid UUID', () => {
+        const result = validateIpcArguments('db:backup:delete', [
+          '123e4567-e89b-12d3-a456-426614174000',
+        ]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject db:backup:delete with invalid UUID', () => {
+        const result = validateIpcArguments('db:backup:delete', ['not-a-uuid']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid UUID required');
+      });
+
+      it('should validate db:backup:list with no arguments', () => {
+        const result = validateIpcArguments('db:backup:list', []);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate db:backup:cleanup with no arguments', () => {
+        const result = validateIpcArguments('db:backup:cleanup', []);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate db:backup:stats with no arguments', () => {
+        const result = validateIpcArguments('db:backup:stats', []);
+        expect(result.valid).toBe(true);
+      });
+    });
+
+    describe('Performance Monitoring Operations', () => {
+      it('should validate performance operations with no arguments', () => {
+        const noArgChannels = [
+          'performance:getUnifiedReport',
+          'performance:getDatabaseMetrics',
+          'performance:getIpcMetrics',
+          'performance:getSystemMetrics',
+          'performance:getThresholds',
+        ];
+
+        noArgChannels.forEach(channel => {
+          const result = validateIpcArguments(channel as keyof IpcChannels, []);
+          expect(result.valid).toBe(true);
+        });
+      });
+
+      it('should validate performance:resolveAlert with valid UUID', () => {
+        const result = validateIpcArguments('performance:resolveAlert', [
+          '123e4567-e89b-12d3-a456-426614174000',
+        ]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject performance:resolveAlert with invalid UUID', () => {
+        const result = validateIpcArguments('performance:resolveAlert', ['not-a-uuid']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Valid alert ID (UUID) required');
+      });
+
+      it('should validate performance:optimize with no arguments', () => {
+        const result = validateIpcArguments('performance:optimize', []);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate performance:optimize with valid optimization request', () => {
+        const optimizationRequest = {
+          targetAreas: ['database', 'ipc'],
+          aggressive: true,
+          autoFix: false,
+          dryRun: true,
+        };
+        const result = validateIpcArguments('performance:optimize', [optimizationRequest]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject performance:optimize with invalid request type', () => {
+        const result = validateIpcArguments('performance:optimize', ['invalid-request']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Performance optimization request must be an object if provided');
+      });
+
+      it('should validate performance:setThresholds with valid thresholds object', () => {
+        const thresholds = {
+          slowQueryThreshold: 1000,
+          memoryUsageThreshold: 512,
+          errorRateThreshold: 0.05,
+        };
+        const result = validateIpcArguments('performance:setThresholds', [thresholds]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject performance:setThresholds with no arguments', () => {
+        const result = validateIpcArguments('performance:setThresholds', []);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Performance thresholds object required');
+      });
+
+      it('should reject performance:setThresholds with invalid type', () => {
+        const result = validateIpcArguments('performance:setThresholds', ['invalid-thresholds']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Performance thresholds object required');
+      });
+
+      it('should validate performance:getRecentMetrics with no arguments', () => {
+        const result = validateIpcArguments('performance:getRecentMetrics', []);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate performance:getRecentMetrics with valid count', () => {
+        const result = validateIpcArguments('performance:getRecentMetrics', [10]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject performance:getRecentMetrics with invalid count type', () => {
+        const result = validateIpcArguments('performance:getRecentMetrics', ['invalid-count']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Count must be a number if provided');
+      });
+
+      it('should validate performance:getHistory with no arguments', () => {
+        const result = validateIpcArguments('performance:getHistory', []);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate performance:getHistory with valid duration', () => {
+        const result = validateIpcArguments('performance:getHistory', [3600]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject performance:getHistory with invalid duration type', () => {
+        const result = validateIpcArguments('performance:getHistory', ['invalid-duration']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Duration must be a number if provided');
+      });
+
+      it('should validate performance:getAlerts with no arguments', () => {
+        const result = validateIpcArguments('performance:getAlerts', []);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should validate performance:getAlerts with valid boolean', () => {
+        const result = validateIpcArguments('performance:getAlerts', [true]);
+        expect(result.valid).toBe(true);
+      });
+
+      it('should reject performance:getAlerts with invalid type', () => {
+        const result = validateIpcArguments('performance:getAlerts', ['invalid-boolean']);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Unresolved flag must be a boolean if provided');
+      });
+
+      it('should validate performance monitoring category operations with no arguments', () => {
+        const categoryChannels = [
+          'performance:enableMonitoring',
+          'performance:disableMonitoring',
+          'performance:resetMetrics',
+        ];
+
+        categoryChannels.forEach(channel => {
+          const result = validateIpcArguments(channel as keyof IpcChannels, []);
+          expect(result.valid).toBe(true);
+        });
+      });
+
+      it('should validate performance monitoring category operations with valid categories', () => {
+        const validCategories = ['database', 'ipc', 'system', 'all'];
+        const categoryChannels = [
+          'performance:enableMonitoring',
+          'performance:disableMonitoring',
+          'performance:resetMetrics',
+        ];
+
+        categoryChannels.forEach(channel => {
+          validCategories.forEach(category => {
+            const result = validateIpcArguments(channel as keyof IpcChannels, [category]);
+            expect(result.valid).toBe(true);
+          });
+        });
+      });
+
+      it('should reject performance monitoring category operations with invalid categories', () => {
+        const invalidCategories = ['invalid-category', 'wrong', ''];
+        const categoryChannels = [
+          'performance:enableMonitoring',
+          'performance:disableMonitoring',
+          'performance:resetMetrics',
+        ];
+
+        categoryChannels.forEach(channel => {
+          invalidCategories.forEach(category => {
+            const result = validateIpcArguments(channel as keyof IpcChannels, [category]);
+            expect(result.valid).toBe(false);
+            expect(result.error).toBe(
+              'Category must be one of: database, ipc, system, all if provided',
+            );
+          });
+        });
       });
     });
   });

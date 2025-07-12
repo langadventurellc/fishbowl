@@ -25,7 +25,7 @@ export const IpcChannelSchema = z.enum([
   'dev:isDev',
   'dev:openDevTools',
   'dev:closeDevTools',
-  // Database operations (new)
+  // Database operations
   'db:agents:list',
   'db:agents:get',
   'db:agents:create',
@@ -45,7 +45,15 @@ export const IpcChannelSchema = z.enum([
   'db:conversation-agents:list',
   'db:conversation-agents:add',
   'db:conversation-agents:remove',
-  // Secure storage operations (new)
+  // Database backup operations
+  'db:backup:create',
+  'db:backup:restore',
+  'db:backup:list',
+  'db:backup:delete',
+  'db:backup:validate',
+  'db:backup:cleanup',
+  'db:backup:stats',
+  // Secure storage operations
   'secure:credentials:get',
   'secure:credentials:set',
   'secure:credentials:delete',
@@ -53,4 +61,19 @@ export const IpcChannelSchema = z.enum([
   'secure:keytar:get',
   'secure:keytar:set',
   'secure:keytar:delete',
+  // Performance monitoring operations
+  'performance:getUnifiedReport',
+  'performance:getDatabaseMetrics',
+  'performance:getIpcMetrics',
+  'performance:getSystemMetrics',
+  'performance:getRecentMetrics',
+  'performance:getHistory',
+  'performance:getAlerts',
+  'performance:resolveAlert',
+  'performance:optimize',
+  'performance:setThresholds',
+  'performance:getThresholds',
+  'performance:enableMonitoring',
+  'performance:disableMonitoring',
+  'performance:resetMetrics',
 ]);
