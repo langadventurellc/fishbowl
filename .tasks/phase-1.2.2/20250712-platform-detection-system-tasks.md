@@ -307,7 +307,7 @@ When executing tasks, remember to:
 
 - 3.0 Platform Types and Validation System
   - [x] 3.1 Define comprehensive TypeScript interfaces for platform types
-  - [ ] 3.2 Create type guards for platform-specific code blocks
+  - [x] 3.2 Create type guards for platform-specific code blocks
   - [ ] 3.3 Implement Zod schemas for platform detection validation
   - [ ] 3.4 Add platform capability type definitions
   - [ ] 3.5 Create utility types for conditional platform logicc
@@ -348,6 +348,25 @@ When executing tasks, remember to:
   - `src/shared/types/platform/index.ts` - Comprehensive barrel export for all platform type interfaces including existing utilities (task 3.1)
   - `src/shared/types/platform.ts` - Updated cross-process platform types entry point with complete exports (task 3.1)
   - `tests/unit/shared/types/platform-interfaces.test.ts` - Interface validation tests ensuring type definitions compile and work correctly with 10 test cases covering constants, interfaces, and type compatibility (task 3.1)
+  - `src/shared/utils/platform/isElectronEnvironment.ts` - Type guard function for Electron environment detection with TypeScript type narrowing (task 3.2)
+  - `src/shared/utils/platform/isCapacitorEnvironment.ts` - Type guard function for Capacitor environment detection with TypeScript type narrowing (task 3.2)
+  - `src/shared/utils/platform/isWebEnvironment.ts` - Type guard function for Web environment detection with TypeScript type narrowing (task 3.2)
+  - `src/shared/utils/platform/isPlatformType.ts` - Generic type guard for platform type checking with input validation and security (task 3.2)
+  - `src/shared/utils/platform/isKnownPlatform.ts` - Type guard to exclude UNKNOWN platform type from conditional blocks (task 3.2)
+  - `src/shared/utils/platform/isPlatformContext.ts` - Type guard for validating platform context objects with comprehensive validation (task 3.2)
+  - `src/shared/types/platform/ElectronEnvironment.ts` - Electron runtime environment type definition for type narrowing (task 3.2)
+  - `src/shared/types/platform/NonElectronEnvironment.ts` - Non-Electron runtime environment type definition (task 3.2)
+  - `src/shared/types/platform/CapacitorEnvironment.ts` - Capacitor runtime environment type definition for type narrowing (task 3.2)
+  - `src/shared/types/platform/NonCapacitorEnvironment.ts` - Non-Capacitor runtime environment type definition (task 3.2)
+  - `src/shared/types/platform/WebEnvironment.ts` - Web browser runtime environment type definition for type narrowing (task 3.2)
+  - `src/shared/types/platform/NonWebEnvironment.ts` - Non-Web runtime environment type definition (task 3.2)
+  - `src/shared/types/platform/RuntimeEnvironment.ts` - Union type for all runtime environment contexts (task 3.2)
+  - `src/shared/types/platform/CapacitorRuntimeEnvironment.ts` - Union type for Capacitor-aware runtime environments (task 3.2)
+  - `src/shared/types/platform/WebRuntimeEnvironment.ts` - Union type for Web-aware runtime environments (task 3.2)
+  - `src/shared/types/platform/KnownPlatformType.ts` - Type excluding UNKNOWN platform for safe type narrowing (task 3.2)
+  - `src/shared/types/platform/PlatformContextType.ts` - Platform context object type definition for validation (task 3.2)
+  - `src/shared/utils/platform/index.ts` - Updated barrel export to include all type guard functions and environment types (task 3.2)
+  - `tests/unit/shared/utils/platform/type-guards.test.ts` - Comprehensive test suite for all type guard functions with 39 test cases covering type narrowing, error handling, and integration scenarios (task 3.2)
 
 - 4.0 Feature Capability Framework
   - [ ] 4.1 Design extensible capability checking API structure

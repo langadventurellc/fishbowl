@@ -18,6 +18,19 @@ export type { CapacitorTypeGuard } from './CapacitorTypeGuard';
 export type { WebTypeGuard } from './WebTypeGuard';
 export type { PlatformTypeGuards } from './PlatformTypeGuards';
 
+// Type Guard Environment Types
+export type { ElectronEnvironment } from './ElectronEnvironment';
+export type { NonElectronEnvironment } from './NonElectronEnvironment';
+export type { RuntimeEnvironment as PlatformRuntimeEnvironment } from './RuntimeEnvironment';
+export type { CapacitorEnvironment } from './CapacitorEnvironment';
+export type { NonCapacitorEnvironment } from './NonCapacitorEnvironment';
+export type { CapacitorRuntimeEnvironment } from './CapacitorRuntimeEnvironment';
+export type { WebEnvironment } from './WebEnvironment';
+export type { NonWebEnvironment } from './NonWebEnvironment';
+export type { WebRuntimeEnvironment } from './WebRuntimeEnvironment';
+export type { KnownPlatformType } from './KnownPlatformType';
+export type { PlatformContextType } from './PlatformContextType';
+
 // React Hook Integration Types
 export type { UsePlatformState } from './UsePlatformState';
 export type { UsePlatformActions } from './UsePlatformActions';
