@@ -132,227 +132,258 @@ const createMockCapacitor = () => ({
 
 /**
  * Store original global values for restoration
+ * Each environment gets its own storage to prevent race conditions
  */
-const originalGlobals = {
+const createOriginalGlobalsStorage = () => ({
   electronAPI: undefined as unknown,
   Capacitor: undefined as unknown,
   window: undefined as unknown,
   navigator: undefined as unknown,
-};
+  windowElectronAPI: undefined as unknown,
+  windowCapacitor: undefined as unknown,
+});
 
 /**
  * Electron environment mock - simulates Electron renderer process
  */
-export const electronEnvironment: MockEnvironment = {
-  type: 'electron' as const,
+export const electronEnvironment: MockEnvironment = (() => {
+  const originalGlobals = createOriginalGlobalsStorage();
 
-  setup() {
-    // Store original values
-    originalGlobals.electronAPI = (globalThis as any).electronAPI;
-    originalGlobals.window = globalThis.window;
+  return {
+    type: 'electron' as const,
 
-    // Mock window object if not present
-    if (!globalThis.window) {
-      Object.defineProperty(globalThis, 'window', {
-        value: {
-          electronAPI: createMockElectronAPI(),
-          location: { origin: 'file://' },
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-        },
+    setup() {
+      // Store original values
+      originalGlobals.electronAPI = (globalThis as any).electronAPI;
+      originalGlobals.window = globalThis.window;
+      originalGlobals.windowElectronAPI = globalThis.window?.electronAPI;
+
+      // Mock window object if not present
+      if (!globalThis.window) {
+        Object.defineProperty(globalThis, 'window', {
+          value: {
+            electronAPI: createMockElectronAPI(),
+            location: { origin: 'file://' },
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+          },
+          writable: true,
+          configurable: true,
+        });
+      } else {
+        // Add electronAPI to existing window
+        Object.defineProperty(globalThis.window, 'electronAPI', {
+          value: createMockElectronAPI(),
+          writable: true,
+          configurable: true,
+        });
+      }
+
+      // Also expose electronAPI at global level for direct access
+      Object.defineProperty(globalThis, 'electronAPI', {
+        value: globalThis.window.electronAPI,
         writable: true,
         configurable: true,
       });
-    } else {
-      // Add electronAPI to existing window
-      Object.defineProperty(globalThis.window, 'electronAPI', {
-        value: createMockElectronAPI(),
-        writable: true,
-        configurable: true,
-      });
-    }
+    },
 
-    // Also expose electronAPI at global level for direct access
-    Object.defineProperty(globalThis, 'electronAPI', {
-      value: globalThis.window.electronAPI,
-      writable: true,
-      configurable: true,
-    });
-  },
+    cleanup() {
+      // Restore original values
+      if (originalGlobals.electronAPI !== undefined) {
+        (globalThis as any).electronAPI = originalGlobals.electronAPI;
+      } else {
+        delete (globalThis as any).electronAPI;
+      }
 
-  cleanup() {
-    // Restore original values
-    if (originalGlobals.electronAPI !== undefined) {
-      (globalThis as any).electronAPI = originalGlobals.electronAPI;
-    } else {
-      delete (globalThis as any).electronAPI;
-    }
+      if (originalGlobals.window !== undefined) {
+        globalThis.window = originalGlobals.window as Window & typeof globalThis;
+      }
 
-    if (originalGlobals.window !== undefined) {
-      globalThis.window = originalGlobals.window as Window & typeof globalThis;
-    } else if (globalThis.window && 'electronAPI' in globalThis.window) {
-      delete (globalThis.window as any).electronAPI;
-    }
-  },
-
-  reset() {
-    if (globalThis.window?.electronAPI) {
-      // Reset all mock functions in electronAPI
-      Object.values(globalThis.window.electronAPI).forEach(fn => {
-        if (typeof fn === 'function' && 'mockReset' in fn) {
-          (fn as ReturnType<typeof vi.fn>).mockReset();
+      // Restore the original window electronAPI state
+      if (globalThis.window) {
+        if (originalGlobals.windowElectronAPI !== undefined) {
+          (globalThis.window as any).electronAPI = originalGlobals.windowElectronAPI;
+        } else if ('electronAPI' in globalThis.window) {
+          delete (globalThis.window as any).electronAPI;
         }
-      });
-    }
-  },
-};
+      }
+    },
+
+    reset() {
+      if (globalThis.window?.electronAPI) {
+        // Reset all mock functions in electronAPI
+        Object.values(globalThis.window.electronAPI).forEach(fn => {
+          if (typeof fn === 'function' && 'mockReset' in fn) {
+            (fn as ReturnType<typeof vi.fn>).mockReset();
+          }
+        });
+      }
+    },
+  };
+})();
 
 /**
  * Capacitor environment mock - simulates Capacitor mobile environment
  */
-export const capacitorEnvironment: MockEnvironment = {
-  type: 'capacitor' as const,
+export const capacitorEnvironment: MockEnvironment = (() => {
+  const originalGlobals = createOriginalGlobalsStorage();
 
-  setup() {
-    // Store original values
-    originalGlobals.Capacitor = (globalThis as any).Capacitor;
-    originalGlobals.window = globalThis.window;
+  return {
+    type: 'capacitor' as const,
 
-    // Mock window object if not present
-    if (!globalThis.window) {
-      Object.defineProperty(globalThis, 'window', {
-        value: {
-          Capacitor: createMockCapacitor(),
-          location: { origin: 'capacitor://localhost' },
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-        },
+    setup() {
+      // Store original values
+      originalGlobals.Capacitor = (globalThis as any).Capacitor;
+      originalGlobals.window = globalThis.window;
+      originalGlobals.windowCapacitor = (globalThis.window as any)?.Capacitor;
+
+      // Mock window object if not present
+      if (!globalThis.window) {
+        Object.defineProperty(globalThis, 'window', {
+          value: {
+            Capacitor: createMockCapacitor(),
+            location: { origin: 'capacitor://localhost' },
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+          },
+          writable: true,
+          configurable: true,
+        });
+      } else {
+        // Add Capacitor to existing window
+        Object.defineProperty(globalThis.window, 'Capacitor', {
+          value: createMockCapacitor(),
+          writable: true,
+          configurable: true,
+        });
+      }
+
+      // Also expose Capacitor at global level for direct access
+      Object.defineProperty(globalThis, 'Capacitor', {
+        value: (globalThis.window as any).Capacitor,
         writable: true,
         configurable: true,
       });
-    } else {
-      // Add Capacitor to existing window
-      Object.defineProperty(globalThis.window, 'Capacitor', {
-        value: createMockCapacitor(),
-        writable: true,
-        configurable: true,
-      });
-    }
+    },
 
-    // Also expose Capacitor at global level for direct access
-    Object.defineProperty(globalThis, 'Capacitor', {
-      value: (globalThis.window as any).Capacitor,
-      writable: true,
-      configurable: true,
-    });
-  },
+    cleanup() {
+      // Restore original values
+      if (originalGlobals.Capacitor !== undefined) {
+        (globalThis as any).Capacitor = originalGlobals.Capacitor;
+      } else {
+        delete (globalThis as any).Capacitor;
+      }
 
-  cleanup() {
-    // Restore original values
-    if (originalGlobals.Capacitor !== undefined) {
-      (globalThis as any).Capacitor = originalGlobals.Capacitor;
-    } else {
-      delete (globalThis as any).Capacitor;
-    }
+      if (originalGlobals.window !== undefined) {
+        globalThis.window = originalGlobals.window as Window & typeof globalThis;
+      }
 
-    if (originalGlobals.window !== undefined) {
-      globalThis.window = originalGlobals.window as Window & typeof globalThis;
-    } else if (globalThis.window && 'Capacitor' in globalThis.window) {
-      delete (globalThis.window as any).Capacitor;
-    }
-  },
-
-  reset() {
-    if ((globalThis.window as any)?.Capacitor) {
-      // Reset all mock functions in Capacitor
-      const capacitor = (globalThis.window as any).Capacitor;
-      const plugins = capacitor.Plugins ?? {};
-      Object.values(plugins as Record<string, unknown>).forEach((plugin: unknown) => {
-        if (plugin && typeof plugin === 'object') {
-          Object.values(plugin as Record<string, unknown>).forEach(fn => {
-            if (typeof fn === 'function' && 'mockReset' in fn) {
-              (fn as ReturnType<typeof vi.fn>).mockReset();
-            }
-          });
+      // Restore the original window Capacitor state
+      if (globalThis.window) {
+        if (originalGlobals.windowCapacitor !== undefined) {
+          (globalThis.window as any).Capacitor = originalGlobals.windowCapacitor;
+        } else if ('Capacitor' in globalThis.window) {
+          delete (globalThis.window as any).Capacitor;
         }
-      });
-    }
-  },
-};
+      }
+    },
+
+    reset() {
+      if ((globalThis.window as any)?.Capacitor) {
+        // Reset all mock functions in Capacitor
+        const capacitor = (globalThis.window as any).Capacitor;
+        const plugins = capacitor.Plugins ?? {};
+        Object.values(plugins as Record<string, unknown>).forEach((plugin: unknown) => {
+          if (plugin && typeof plugin === 'object') {
+            Object.values(plugin as Record<string, unknown>).forEach(fn => {
+              if (typeof fn === 'function' && 'mockReset' in fn) {
+                (fn as ReturnType<typeof vi.fn>).mockReset();
+              }
+            });
+          }
+        });
+      }
+    },
+  };
+})();
 
 /**
  * Web environment mock - simulates standard web browser
  */
-export const webEnvironment: MockEnvironment = {
-  type: 'web' as const,
+export const webEnvironment: MockEnvironment = (() => {
+  const originalGlobals = createOriginalGlobalsStorage();
 
-  setup() {
-    // Store original values
-    originalGlobals.electronAPI = (globalThis as any).electronAPI;
-    originalGlobals.Capacitor = (globalThis as any).Capacitor;
-    originalGlobals.window = globalThis.window;
-    originalGlobals.navigator = globalThis.navigator;
+  return {
+    type: 'web' as const,
 
-    // Remove platform-specific APIs
-    delete (globalThis as any).electronAPI;
-    delete (globalThis as any).Capacitor;
+    setup() {
+      // Store original values
+      originalGlobals.electronAPI = (globalThis as any).electronAPI;
+      originalGlobals.Capacitor = (globalThis as any).Capacitor;
+      originalGlobals.window = globalThis.window;
+      originalGlobals.navigator = globalThis.navigator;
 
-    // Mock basic web window object
-    if (!globalThis.window) {
-      Object.defineProperty(globalThis, 'window', {
-        value: {
-          location: { origin: 'https://localhost:3000' },
-          addEventListener: vi.fn(),
-          removeEventListener: vi.fn(),
-        },
-        writable: true,
-        configurable: true,
-      });
-    } else {
-      // Remove platform APIs from existing window
-      delete (globalThis.window as any).electronAPI;
-      delete (globalThis.window as any).Capacitor;
-    }
+      // Remove platform-specific APIs
+      delete (globalThis as any).electronAPI;
+      delete (globalThis as any).Capacitor;
 
-    // Mock navigator for web environment
-    if (!globalThis.navigator) {
-      Object.defineProperty(globalThis, 'navigator', {
-        value: {
-          userAgent:
-            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
-          platform: 'MacIntel',
-          language: 'en-US',
-          onLine: true,
-        },
-        writable: true,
-        configurable: true,
-      });
-    }
-  },
+      // Mock basic web window object
+      if (!globalThis.window) {
+        Object.defineProperty(globalThis, 'window', {
+          value: {
+            location: { origin: 'https://localhost:3000' },
+            addEventListener: vi.fn(),
+            removeEventListener: vi.fn(),
+          },
+          writable: true,
+          configurable: true,
+        });
+      } else {
+        // Remove platform APIs from existing window
+        delete (globalThis.window as any).electronAPI;
+        delete (globalThis.window as any).Capacitor;
+      }
 
-  cleanup() {
-    // Restore original values
-    if (originalGlobals.electronAPI !== undefined) {
-      (globalThis as any).electronAPI = originalGlobals.electronAPI;
-    }
+      // Mock navigator for web environment
+      if (!globalThis.navigator) {
+        Object.defineProperty(globalThis, 'navigator', {
+          value: {
+            userAgent:
+              'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+            platform: 'MacIntel',
+            language: 'en-US',
+            onLine: true,
+          },
+          writable: true,
+          configurable: true,
+        });
+      }
+    },
 
-    if (originalGlobals.Capacitor !== undefined) {
-      (globalThis as any).Capacitor = originalGlobals.Capacitor;
-    }
+    cleanup() {
+      // Restore original values
+      if (originalGlobals.electronAPI !== undefined) {
+        (globalThis as any).electronAPI = originalGlobals.electronAPI;
+      }
 
-    if (originalGlobals.window !== undefined) {
-      globalThis.window = originalGlobals.window as Window & typeof globalThis;
-    }
+      if (originalGlobals.Capacitor !== undefined) {
+        (globalThis as any).Capacitor = originalGlobals.Capacitor;
+      }
 
-    if (originalGlobals.navigator !== undefined) {
-      globalThis.navigator = originalGlobals.navigator as Navigator;
-    }
-  },
+      if (originalGlobals.window !== undefined) {
+        globalThis.window = originalGlobals.window as Window & typeof globalThis;
+      }
 
-  reset() {
-    // No mock functions to reset in pure web environment
-  },
-};
+      if (originalGlobals.navigator !== undefined) {
+        globalThis.navigator = originalGlobals.navigator as Navigator;
+      }
+    },
+
+    reset() {
+      // No mock functions to reset in pure web environment
+    },
+  };
+})();
 
 /**
  * Mixed environment mock - simulates environment with multiple platform APIs
