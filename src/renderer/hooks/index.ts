@@ -13,6 +13,9 @@ export { useConversations } from './useConversations';
 export { useDatabase } from './useDatabase';
 export { useMessages } from './useMessages';
 
+// Platform detection hooks
+export * from './usePlatform';
+
 // Database context and provider - removed (migrated to Zustand store)
 
 // Secure storage hooks

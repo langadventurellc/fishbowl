@@ -82,7 +82,7 @@ Your code must be 100% clean. No exceptions.
 
 ## Project Overview
 
-Fishbowl is an Electron-based desktop application for multi-agent AI conversations. The project is currently in the specification phase with comprehensive documentation in `docs/specifications/`.
+Fishbowl is an Electron-based (Capacitor in the future) desktop (mobile in future) application for multi-agent AI conversations. The project is currently in the specification phase with comprehensive documentation in `docs/specifications/`.
 
 ## Key Architecture
 
