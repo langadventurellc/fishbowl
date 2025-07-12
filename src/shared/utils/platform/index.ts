@@ -24,6 +24,10 @@ export { type PlatformInfo } from './PlatformInfo';
 // Safe global access utilities
 export { hasWindow } from './hasWindow';
 export { hasWindowProperty } from './hasWindowProperty';
+export { hasDocument } from './hasDocument';
+export { hasWebNavigator } from './hasWebNavigator';
+export { hasWebAPIs } from './hasWebAPIs';
+export { hasWebLocation } from './hasWebLocation';
 
 // Other modules (implemented in future tasks)
 export * from './cache';

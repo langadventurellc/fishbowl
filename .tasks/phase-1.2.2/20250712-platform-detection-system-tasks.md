@@ -248,8 +248,8 @@ When executing tasks, remember to:
 - 2.0 Core Platform Detection Module
   - [x] 2.1 Create platform detection constants and enums
   - [x] 2.2 Implement core detection logic wrapping existing isElectronAPIAvailable()
-  - [ ] 2.3 Add Capacitor detection with window.Capacitor checking
-  - [ ] 2.4 Implement web platform detection with fallback logic
+  - [x] 2.3 Add Capacitor detection with window.Capacitor checking
+  - [x] 2.4 Implement web platform detection with fallback logic
   - [ ] 2.5 Create platform caching mechanism for performance optimization
   - [ ] 2.6 Add granular platform detection for iOS/Android within Capacitor
   - [ ] 2.7 Write comprehensive unit tests for all detection scenarios
@@ -267,16 +267,22 @@ When executing tasks, remember to:
   - `src/shared/constants/platform.ts` - Updated to re-export from modular structure (task 2.1)
   - `tests/unit/shared/constants/platform.test.ts` - Comprehensive test suite for platform constants (task 2.1)
   - `src/shared/utils/platform/isElectronPlatform.ts` - Electron detection function wrapping existing `isElectronAPIAvailable()` (task 2.2)
-  - `src/shared/utils/platform/isCapacitorPlatform.ts` - Capacitor mobile environment detection function (task 2.2)
-  - `src/shared/utils/platform/isWebPlatform.ts` - Web browser environment detection function (task 2.2)
-  - `src/shared/utils/platform/detectPlatformType.ts` - Main platform type detection function returning enum values (task 2.2)
-  - `src/shared/utils/platform/getPlatformInfo.ts` - Enhanced platform information function with detailed environment data (task 2.2)
+  - `src/shared/utils/platform/isCapacitorPlatform.ts` - Capacitor mobile environment detection function with window.Capacitor checking (task 2.2, 2.3)
+  - `src/shared/utils/platform/isWebPlatform.ts` - Enhanced web browser environment detection function with comprehensive fallback logic (task 2.2, 2.4)
+  - `src/shared/utils/platform/detectPlatformType.ts` - Main platform type detection function returning enum values with Capacitor support (task 2.2, 2.3)
+  - `src/shared/utils/platform/getPlatformInfo.ts` - Enhanced platform information function with Capacitor API detection (task 2.2, 2.3)
   - `src/shared/utils/platform/PlatformInfo.ts` - Platform information interface definition (task 2.2)
   - `src/shared/utils/platform/hasWindow.ts` - Safe window object existence check utility (task 2.2)
-  - `src/shared/utils/platform/hasWindowProperty.ts` - Safe window property existence check utility (task 2.2)
+  - `src/shared/utils/platform/hasWindowProperty.ts` - Safe window property existence check utility used for Capacitor detection (task 2.2, 2.3)
+  - `src/shared/utils/platform/hasDocument.ts` - Safe document object existence check with web browser feature validation (task 2.4)
+  - `src/shared/utils/platform/hasWebNavigator.ts` - Web navigator feature detection for browser environment validation (task 2.4)
+  - `src/shared/utils/platform/hasWebAPIs.ts` - Web browser-specific API detection utility with threshold-based validation (task 2.4)
+  - `src/shared/utils/platform/hasWebLocation.ts` - Web location validation with protocol and hostname checking for browser identification (task 2.4)
   - `src/shared/utils/platform/detection.ts` - Updated to placeholder module (task 2.2)
-  - `src/shared/utils/platform/index.ts` - Updated barrel export to include all core detection functions (task 2.2)
-  - `tests/unit/shared/utils/platform/detection.test.ts` - Comprehensive test suite for core detection logic with 34 passing tests (task 2.2)
+  - `src/shared/utils/platform/index.ts` - Updated barrel export to include all core detection functions and new web detection utilities (task 2.2, 2.3, 2.4)
+  - `tests/unit/shared/utils/platform/detection.test.ts` - Comprehensive test suite with Capacitor environment testing and mock-environments (task 2.2, 2.3)
+  - `tests/unit/shared/utils/platform/web-platform-detection.test.ts` - Comprehensive test suite for enhanced web platform detection with multi-layer fallback logic (task 2.4)
+  - `tests/unit/shared/utils/platform/mock-environments.ts` - Capacitor mock environment with window.Capacitor simulation (task 2.3)
 
 - 3.0 Platform Types and Validation System
   - [ ] 3.1 Define comprehensive TypeScript interfaces for platform types
