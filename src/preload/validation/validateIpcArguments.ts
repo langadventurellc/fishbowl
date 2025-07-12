@@ -1,6 +1,7 @@
 import type { IpcChannels } from '../../shared/types';
 import { validateChannelName } from './validateChannelName';
 import { validateUuid } from './validateUuid';
+import { safeValidateBoolean } from '../../shared/utils/validation';
 import { validateSafeObject } from './validateSafeObject';
 import { sanitizeValue } from './sanitizeValue';
 
@@ -47,13 +48,29 @@ export const validateIpcArguments = (
         if (args.length < 2 || !validateUuid(args[0] as string)) {
           return { valid: false, error: 'Valid UUID and updates object required' };
         }
-        if (
-          !args[1] ||
-          typeof args[1] !== 'object' ||
-          !('isActive' in args[1]) ||
-          typeof (args[1] as { isActive: unknown }).isActive !== 'boolean'
-        ) {
-          return { valid: false, error: 'Valid isActive boolean field required in updates object' };
+        if (!args[1] || typeof args[1] !== 'object') {
+          return { valid: false, error: 'Valid updates object required' };
+        }
+
+        if (!('isActive' in args[1])) {
+          return { valid: false, error: 'Missing isActive field in updates object' };
+        }
+
+        if (Object.keys(args[1]).length !== 1) {
+          return { valid: false, error: 'Updates object must only contain the "isActive" field' };
+        }
+
+        {
+          const booleanValidation = safeValidateBoolean(
+            (args[1] as { isActive: unknown }).isActive,
+            'isActive',
+          );
+          if (!booleanValidation.valid) {
+            return {
+              valid: false,
+              error: booleanValidation.error ?? 'Invalid isActive boolean value',
+            };
+          }
         }
         break;
 

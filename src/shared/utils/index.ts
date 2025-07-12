@@ -80,3 +80,6 @@ export * from './ipc';
 
 // Export AI utilities
 export * from './ai';
+
+// Export validation utilities
+export * from './validation';

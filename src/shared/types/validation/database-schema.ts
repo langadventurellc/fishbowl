@@ -114,7 +114,7 @@ export const DatabaseFilterSchema = z.object({
   offset: z.number().min(0).optional(),
   sortBy: z.string().optional(),
   sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
-  where: z.record(z.any()).optional(),
+  where: z.record(z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
 });
 
 /**

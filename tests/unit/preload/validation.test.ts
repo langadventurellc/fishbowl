@@ -277,7 +277,7 @@ describe('Validation Utilities', () => {
           null,
         ]);
         expect(result.valid).toBe(false);
-        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+        expect(result.error).toBe('Valid updates object required');
       });
 
       it('should reject db:messages:update-active-state with string updates object', () => {
@@ -286,7 +286,7 @@ describe('Validation Utilities', () => {
           'not-an-object',
         ]);
         expect(result.valid).toBe(false);
-        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+        expect(result.error).toBe('Valid updates object required');
       });
 
       it('should reject db:messages:update-active-state with updates object missing isActive', () => {
@@ -295,7 +295,7 @@ describe('Validation Utilities', () => {
           { otherField: 'value' },
         ]);
         expect(result.valid).toBe(false);
-        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+        expect(result.error).toBe('Missing isActive field in updates object');
       });
 
       it('should reject db:messages:update-active-state with non-boolean isActive', () => {
@@ -304,7 +304,9 @@ describe('Validation Utilities', () => {
           { isActive: 'true' },
         ]);
         expect(result.valid).toBe(false);
-        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+        expect(result.error).toBe(
+          "isActive cannot be a string representation of boolean ('true'/'false')",
+        );
       });
 
       it('should reject db:messages:update-active-state with numeric isActive', () => {
@@ -313,16 +315,73 @@ describe('Validation Utilities', () => {
           { isActive: 1 },
         ]);
         expect(result.valid).toBe(false);
-        expect(result.error).toBe('Valid isActive boolean field required in updates object');
+        expect(result.error).toBe('isActive cannot be a numeric representation of boolean (1/0)');
       });
 
-      it('should sanitize updates object while preserving isActive boolean', () => {
+      it('should reject db:messages:update-active-state with null isActive', () => {
         const result = validateIpcArguments('db:messages:update-active-state', [
           '123e4567-e89b-12d3-a456-426614174000',
-          { isActive: true, maliciousField: '<script>alert("xss")</script>' },
+          { isActive: null },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('isActive cannot be null or undefined');
+      });
+
+      it('should reject db:messages:update-active-state with undefined isActive', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: undefined },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('isActive cannot be null or undefined');
+      });
+
+      it('should reject db:messages:update-active-state with string "false"', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: 'false' },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe(
+          "isActive cannot be a string representation of boolean ('true'/'false')",
+        );
+      });
+
+      it('should reject db:messages:update-active-state with number 0', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: 0 },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('isActive cannot be a numeric representation of boolean (1/0)');
+      });
+
+      it('should reject db:messages:update-active-state with object isActive', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: {} },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe(
+          'isActive must be a boolean value (true or false), received: object',
+        );
+      });
+
+      it('should reject db:messages:update-active-state with extra fields in updates object', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: true, extraField: 'value' },
+        ]);
+        expect(result.valid).toBe(false);
+        expect(result.error).toBe('Updates object must only contain the "isActive" field');
+      });
+
+      it('should accept db:messages:update-active-state with only isActive field', () => {
+        const result = validateIpcArguments('db:messages:update-active-state', [
+          '123e4567-e89b-12d3-a456-426614174000',
+          { isActive: true },
         ]);
         expect(result.valid).toBe(true);
-        expect(result.sanitizedArgs?.[1]).toEqual({ isActive: true, maliciousField: '' });
       });
     });
   });
