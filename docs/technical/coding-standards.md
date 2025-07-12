@@ -354,7 +354,7 @@ export const ChatRoom: React.FC<ChatRoomProps> = props => {
 - chatroom.tsx
 - UseAgent.ts
 - AgentStore.ts
-- use-ipc.ts
+- use-ipc.ts (do not use kebab-case)
 - types.ts
 - styles.css
 ```
