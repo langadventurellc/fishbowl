@@ -100,7 +100,15 @@ export class RuntimeSecurityMonitor {
       return true;
     } catch (error) {
       console.error('[Security Monitor] Failed to start monitoring:', error);
-      return false;
+
+      // Still set up monitoring even if initial audit fails
+      this.intervalId = window.setInterval(() => {
+        this.performSecurityAudit(getState);
+      }, this.config.auditInterval);
+
+      this.isMonitoring = true;
+      console.warn('[Security Monitor] Started monitoring (with initial audit failure)');
+      return true;
     }
   }
 

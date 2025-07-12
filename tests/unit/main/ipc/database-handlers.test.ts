@@ -84,6 +84,7 @@ const mockMessage = {
   id: uuidv4(),
   conversation_id: mockConversation.id,
   agent_id: mockAgent.id,
+  is_active: true,
   content: 'Hello, this is a test message',
   type: 'text',
   metadata: '{}',
@@ -98,7 +99,7 @@ describe('Database IPC Handlers', () => {
   describe('Validation and Sanitization', () => {
     it('should test SanitizedCreateAgentSchema validation', async () => {
       const { SanitizedCreateAgentSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
+        '../../../../src/shared/types/validation/databaseSchema'
       );
 
       const validData = {
@@ -117,7 +118,7 @@ describe('Database IPC Handlers', () => {
 
     it('should reject invalid agent data', async () => {
       const { SanitizedCreateAgentSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
+        '../../../../src/shared/types/validation/databaseSchema'
       );
 
       expect(() =>
@@ -131,9 +132,7 @@ describe('Database IPC Handlers', () => {
     });
 
     it('should test UuidSchema validation', async () => {
-      const { UuidSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
-      );
+      const { UuidSchema } = await import('../../../../src/shared/types/validation/databaseSchema');
 
       const validUuid = uuidv4();
       expect(() => UuidSchema.parse(validUuid)).not.toThrow();
@@ -142,7 +141,7 @@ describe('Database IPC Handlers', () => {
 
     it('should test message metadata validation', async () => {
       const { SanitizedCreateMessageSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
+        '../../../../src/shared/types/validation/databaseSchema'
       );
 
       const validData = {
@@ -169,7 +168,7 @@ describe('Database IPC Handlers', () => {
       vi.mocked(createAgent).mockReturnValue(mockAgent);
 
       const { SanitizedCreateAgentSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
+        '../../../../src/shared/types/validation/databaseSchema'
       );
 
       const agentData = {
@@ -196,7 +195,7 @@ describe('Database IPC Handlers', () => {
       vi.mocked(createConversation).mockReturnValue(mockConversation);
 
       const { SanitizedCreateConversationSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
+        '../../../../src/shared/types/validation/databaseSchema'
       );
 
       const conversationData = {
@@ -221,7 +220,7 @@ describe('Database IPC Handlers', () => {
       vi.mocked(createMessage).mockReturnValue(mockMessage);
 
       const { SanitizedCreateMessageSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
+        '../../../../src/shared/types/validation/databaseSchema'
       );
 
       const messageData = {
@@ -237,6 +236,7 @@ describe('Database IPC Handlers', () => {
         id: uuidv4(),
         conversation_id: validatedData.conversationId,
         agent_id: validatedData.agentId,
+        is_active: true,
         content: validatedData.content,
         type: validatedData.type,
         metadata: validatedData.metadata,
@@ -284,7 +284,7 @@ describe('Database IPC Handlers', () => {
 
     it('should test validation error handling', async () => {
       const { SanitizedCreateAgentSchema } = await import(
-        '../../../../src/shared/types/validation/database-schema'
+        '../../../../src/shared/types/validation/databaseSchema'
       );
 
       expect(() =>

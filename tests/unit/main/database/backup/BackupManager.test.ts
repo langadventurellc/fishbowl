@@ -1,8 +1,8 @@
 /**
  * Unit tests for BackupManager
  */
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { vol } from 'memfs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { BackupManager } from '../../../../../src/main/database/backup/BackupManager';
 import { BackupOptions } from '../../../../../src/main/database/backup/BackupOptions';
 
@@ -105,10 +105,6 @@ describe('BackupManager', () => {
     const result = await manager.createBackup({
       customFileName: 'test-backup',
     });
-
-    if (!result.success) {
-      console.log('Backup failed:', result.error);
-    }
 
     expect(ensureBackupDirectory).toHaveBeenCalledWith('/backups');
     expect(createBackupFile).toHaveBeenCalled();

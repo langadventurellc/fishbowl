@@ -40,6 +40,8 @@ import {
   dbMessagesGetHandler,
   // Database message handlers
   dbMessagesListHandler,
+  dbMessagesUpdateActiveStateHandler,
+  dbMessagesToggleActiveStateHandler,
   // Database transaction handlers
   dbTransactionsCreateConversationWithAgentsHandler,
   dbTransactionsCreateMessagesBatchHandler,
@@ -99,7 +101,7 @@ const loadConfig = (): ConfigValue => {
   try {
     if (existsSync(CONFIG_FILE)) {
       const configData = readFileSync(CONFIG_FILE, 'utf8');
-      const parsedConfig = JSON.parse(configData);
+      const parsedConfig = JSON.parse(configData) as Partial<ConfigValue>;
       configCache = { ...DEFAULT_CONFIG, ...parsedConfig };
     }
   } catch (error) {
@@ -244,6 +246,20 @@ export const setupIpcHandlers = (): void => {
   ipcMain.handle(
     'db:messages:delete',
     withPerformanceMonitoring('db:messages:delete', dbMessagesDeleteHandler),
+  );
+  ipcMain.handle(
+    'db:messages:update-active-state',
+    withPerformanceMonitoring(
+      'db:messages:update-active-state',
+      dbMessagesUpdateActiveStateHandler,
+    ),
+  );
+  ipcMain.handle(
+    'db:messages:toggle-active-state',
+    withPerformanceMonitoring(
+      'db:messages:toggle-active-state',
+      dbMessagesToggleActiveStateHandler,
+    ),
   );
 
   // Conversation-Agent relationship operations

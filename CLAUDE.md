@@ -319,6 +319,25 @@ The project follows established contribution guidelines and coding standards:
 4. Run `npm run lint` and `npm run type-check` before committing
 5. Submit a pull request with clear description
 
+### Naming Conventions
+
+```
+✅ Good:
+- ChatRoom.tsx (PascalCase for components)
+- useAgent.ts (camelCase for hooks)
+- agentStore.ts (camelCase for stores)
+- agent.types.ts (descriptive names)
+- ChatRoom.module.css (CSS modules)
+
+❌ Bad:
+- chatroom.tsx
+- UseAgent.ts
+- AgentStore.ts
+- use-ipc.ts (do not use kebab-case)
+- types.ts
+- styles.css
+```
+
 ## Documentation Structure
 
 Key documentation files:

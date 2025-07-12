@@ -52,6 +52,8 @@ export { dbConversationsDeleteHandler } from './dbConversationsDeleteHandler';
 export { dbMessagesListHandler } from './dbMessagesListHandler';
 export { dbMessagesGetHandler } from './dbMessagesGetHandler';
 export { dbMessagesCreateHandler } from './dbMessagesCreateHandler';
+export { dbMessagesUpdateActiveStateHandler } from './dbMessagesUpdateActiveStateHandler';
+export { dbMessagesToggleActiveStateHandler } from './dbMessagesToggleActiveStateHandler';
 export { dbMessagesDeleteHandler } from './dbMessagesDeleteHandler';
 
 // Database conversation-agent relationship handlers

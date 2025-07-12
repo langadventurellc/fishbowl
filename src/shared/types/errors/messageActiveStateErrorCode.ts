@@ -1,0 +1,12 @@
+/**
+ * Error codes specific to message active state operations for IPC communication
+ */
+export enum MessageActiveStateErrorCode {
+  INVALID_STATE_VALUE = 'INVALID_STATE_VALUE',
+  MESSAGE_NOT_FOUND = 'MESSAGE_NOT_FOUND',
+  TOGGLE_FAILED = 'TOGGLE_FAILED',
+  UPDATE_FAILED = 'UPDATE_FAILED',
+  CONSISTENCY_ERROR = 'CONSISTENCY_ERROR',
+  PERMISSION_DENIED = 'PERMISSION_DENIED',
+  TRANSACTION_FAILED = 'TRANSACTION_FAILED',
+}

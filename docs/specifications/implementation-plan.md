@@ -40,9 +40,9 @@ This implementation plan outlines the development phases for AI Collaborators v1
 - [x] Set up SQLite database with initial schema
 - [x] Create database migration system
 - [x] Implement secure storage for API keys (keytar)
-- [ ] Set up Zustand store with basic slices
+- [x] Set up Zustand store with basic slices
 
-#### 1.2.1 Database Schema Update (NEW)
+#### 1.2.1 Database Schema Update
 
 - [ ] Create migration script to add `is_active` field to messages table
 - [ ] Update TypeScript types to include `isActive` property on Message interface

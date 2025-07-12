@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 /**
  * Run database migrations
  */
 import { getDatabase } from '../connection';
 import { getCurrentVersion } from './getCurrentVersion';
-import { setVersion } from './setVersion';
 import { loadMigrations } from './loadMigrations';
+import { setVersion } from './setVersion';
 
 export function runMigrations(): void {
   try {

@@ -52,7 +52,7 @@ export class CredentialManager implements CredentialManagerInterface {
         return null;
       }
 
-      const credential: SecureStorageCredential = JSON.parse(storedData);
+      const credential: SecureStorageCredential = JSON.parse(storedData) as SecureStorageCredential;
       return credential;
     } catch (error) {
       if (error instanceof SecureStorageError) {
@@ -126,7 +126,9 @@ export class CredentialManager implements CredentialManagerInterface {
 
       for (const { password } of credentials) {
         try {
-          const credential: SecureStorageCredential = JSON.parse(password);
+          const credential: SecureStorageCredential = JSON.parse(
+            password,
+          ) as SecureStorageCredential;
           credentialInfos.push({
             provider: credential.provider,
             hasApiKey: true,

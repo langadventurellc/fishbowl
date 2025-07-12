@@ -16,6 +16,7 @@ export const dbMessagesListHandler = (
       id: message.id,
       conversationId: message.conversation_id,
       agentId: message.agent_id,
+      isActive: message.is_active,
       content: message.content,
       type: message.type,
       metadata: message.metadata,

@@ -83,16 +83,24 @@ describe('Settings State Persistence Integration Tests', () => {
       }),
     };
 
-    // Replace global localStorage
-    Object.defineProperty(window, 'localStorage', {
-      value: localStorage,
-      writable: true,
-    });
+    // Replace global localStorage (check if writable first)
+    const descriptor = Object.getOwnPropertyDescriptor(window, 'localStorage');
+    if (descriptor?.configurable) {
+      Object.defineProperty(window, 'localStorage', {
+        value: localStorage,
+        writable: true,
+        configurable: true,
+      });
+    } else {
+      // If not configurable, use vi.stubGlobal
+      vi.stubGlobal('localStorage', localStorage);
+    }
   });
 
   afterEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    vi.unstubAllGlobals();
   });
 
   describe('Basic Settings Persistence', () => {

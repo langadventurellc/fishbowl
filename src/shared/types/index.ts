@@ -71,6 +71,11 @@ export interface IpcChannels {
   'db:messages:list': (conversationId: string, filter?: DatabaseFilter) => Promise<Message[]>;
   'db:messages:get': (id: string) => Promise<Message | null>;
   'db:messages:create': (message: CreateMessageData) => Promise<Message>;
+  'db:messages:update-active-state': (
+    id: string,
+    updates: UpdateMessageActiveStateData,
+  ) => Promise<Message | null>;
+  'db:messages:toggle-active-state': (id: string) => Promise<Message | null>;
   'db:messages:delete': (id: string) => Promise<void>;
   'db:conversation-agents:list': (conversationId: string) => Promise<ConversationAgent[]>;
   'db:conversation-agents:add': (conversationId: string, agentId: string) => Promise<void>;
@@ -158,6 +163,7 @@ export interface Message {
   id: string;
   conversationId: string;
   agentId: string;
+  isActive: boolean;
   content: string;
   type: string;
   metadata: string;
@@ -271,7 +277,12 @@ export interface CreateMessageData {
   agentId: string;
   content: string;
   type: string;
+  isActive?: boolean;
   metadata?: string;
+}
+
+export interface UpdateMessageActiveStateData {
+  isActive: boolean;
 }
 
 // Secure storage types

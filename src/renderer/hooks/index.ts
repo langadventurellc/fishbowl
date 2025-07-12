@@ -2,7 +2,7 @@
 export { useTheme } from './useTheme.hook';
 
 // IPC hooks
-export * from './useIpc.index';
+export * from './useIpc';
 
 // Database hooks
 export { useAgents } from './useAgents';
@@ -22,3 +22,7 @@ export { useSecureStorage } from './useSecureStorage';
 // Performance monitoring hooks
 export { usePerformanceMonitor } from './usePerformanceMonitor';
 export type { UsePerformanceMonitorReturn } from './UsePerformanceMonitorReturn';
+
+// Message error handling types
+export { MessageErrorType } from './MessageErrorType';
+export type { MessageError } from './MessageError';

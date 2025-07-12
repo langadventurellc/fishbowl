@@ -158,6 +158,8 @@ const electronAPI = {
   dbMessagesList: createSecureIpcWrapper('db:messages:list'),
   dbMessagesGet: createSecureIpcWrapper('db:messages:get'),
   dbMessagesCreate: createSecureIpcWrapper('db:messages:create'),
+  dbMessagesUpdateActiveState: createSecureIpcWrapper('db:messages:update-active-state'),
+  dbMessagesToggleActiveState: createSecureIpcWrapper('db:messages:toggle-active-state'),
   dbMessagesDelete: createSecureIpcWrapper('db:messages:delete'),
 
   // Database operations - Conversation-Agent relationships

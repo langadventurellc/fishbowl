@@ -130,19 +130,6 @@ const eslintConfig = [
       'multiple-exports/no-multiple-exports': 'error',
     },
   },
-  {
-    files: [
-      'src/components/**',
-      'src/shared/**',
-      'src/renderer/hooks/useTheme.index.ts',
-      'src/renderer/hooks/useIpc.hook.ts',
-      'src/renderer/hooks/useIpc.index.ts',
-      'src/renderer/components/IpcTest/IpcTest.tsx',
-    ],
-    rules: {
-      'multiple-exports/no-multiple-exports': 'off',
-    },
-  },
 
   // Configuration for JavaScript files (disable type-aware linting)
   {
@@ -175,58 +162,14 @@ const eslintConfig = [
   {
     files: ['**/*.test.{ts,tsx,js,jsx}', '**/tests/**/*'],
     rules: {
-      'no-console': 'off',
       'max-lines': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
-      '@typescript-eslint/no-floating-promises': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-require-imports': 'off',
       '@typescript-eslint/unbound-method': 'off',
-      'react/no-multi-comp': 'off',
-    },
-  },
-
-  // Configuration for main process files (Node.js specific)
-  {
-    files: ['src/main/**/*.ts', 'src/preload/**/*.ts'],
-    rules: {
-      'no-console': 'off', // Console is expected in main process
-      'react/react-in-jsx-scope': 'off',
-      'react/jsx-uses-react': 'off',
-      'react/jsx-uses-vars': 'off',
-      'react/jsx-no-undef': 'off',
-      'react/jsx-pascal-case': 'off',
-      'react/jsx-boolean-value': 'off',
-      'react/jsx-curly-brace-presence': 'off',
-      'react/self-closing-comp': 'off',
-      'react/jsx-fragments': 'off',
-      'react/no-array-index-key': 'off',
-      'react/no-danger': 'off',
-      'react/no-deprecated': 'off',
-      'react/no-direct-mutation-state': 'off',
-      'react/no-multi-comp': 'off',
-      'react-hooks/rules-of-hooks': 'off',
-      'react-hooks/exhaustive-deps': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'off',
-      '@typescript-eslint/no-redundant-type-constituents': 'off',
-    },
-  },
-
-  // Configuration for renderer process files (DOM specific)
-  {
-    files: ['src/renderer/**/*.ts', 'src/renderer/**/*.tsx'],
-    rules: {
-      '@typescript-eslint/no-unsafe-call': 'off',
-      '@typescript-eslint/no-unsafe-member-access': 'off',
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-unsafe-argument': 'off',
     },
   },
 

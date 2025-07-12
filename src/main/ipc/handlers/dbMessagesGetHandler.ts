@@ -13,6 +13,7 @@ export const dbMessagesGetHandler = (_event: IpcMainInvokeEvent, id: string): Me
       id: message.id,
       conversationId: message.conversation_id,
       agentId: message.agent_id,
+      isActive: message.is_active,
       content: message.content,
       type: message.type,
       metadata: message.metadata,

@@ -440,7 +440,11 @@ export class SecurityAuditor {
       // Check package.json for known vulnerable dependencies
       const packageJsonPath = path.join(process.cwd(), 'package.json');
       try {
-        const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+        const packageJsonContent = fs.readFileSync(packageJsonPath, 'utf8');
+        const packageJson = JSON.parse(packageJsonContent) as {
+          dependencies?: Record<string, string>;
+          devDependencies?: Record<string, string>;
+        };
 
         // Check for known vulnerable packages (simplified check)
         const knownVulnerablePackages = [
@@ -448,20 +452,20 @@ export class SecurityAuditor {
           'moment@2.19.3',
         ];
 
-        const allDependencies = {
-          ...packageJson.dependencies,
-          ...packageJson.devDependencies,
+        const allDependencies: Record<string, string> = {
+          ...(packageJson.dependencies ?? {}),
+          ...(packageJson.devDependencies ?? {}),
         };
 
         for (const [pkg, version] of Object.entries(allDependencies)) {
-          const pkgVersion = `${pkg}@${String(version)}`;
+          const pkgVersion = `${pkg}@${version}`;
           if (knownVulnerablePackages.includes(pkgVersion)) {
             vulnerabilities.push({
               id: `vulnerable-dependency-${pkg}`,
               type: 'dependency',
               severity: 'high',
               title: 'Known vulnerable dependency',
-              description: `Package ${pkg}@${String(version)} has known vulnerabilities`,
+              description: `Package ${pkg}@${version} has known vulnerabilities`,
               impact: 'Application could be compromised through vulnerable dependency',
               recommendation: `Update ${pkg} to a secure version`,
               cwe: 'CWE-1104',
