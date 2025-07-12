@@ -1,5 +1,6 @@
 import { vi, beforeEach, afterEach } from 'vitest';
 import { webEnvironment } from './mock-environments';
+import { platformCache } from '../../../../../src/shared/utils/platform/cache';
 
 /**
  * Platform detection test setup configuration
@@ -15,6 +16,9 @@ export const setupPlatformTests = (): void => {
   // Store original console methods for restoration
 
   beforeEach(() => {
+    // Clear platform cache to ensure fresh detection in each test
+    platformCache.clearCache();
+
     // Setup default web environment (clean slate)
     webEnvironment.setup();
 

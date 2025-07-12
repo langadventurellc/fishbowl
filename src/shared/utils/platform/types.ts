@@ -1,13 +1,11 @@
 /**
  * Platform-Specific Type Definitions
  *
- * Defines TypeScript types and interfaces specific to platform detection
- * functionality within the platform detection module.
- *
- * Implementation will be added in tasks 3.1-3.7
+ * Placeholder file for platform-specific types.
+ * Individual type definitions are in their dedicated files following
+ * the one-export-per-file pattern.
  */
 
-// Platform-specific type definitions will be added in subsequent tasks
-
-// Placeholder export to make this a valid TypeScript module
+// This file serves as a placeholder since individual types are exported
+// from their respective files: PlatformCacheEntry.ts, PlatformCacheConfig.ts
 export {};

@@ -410,6 +410,65 @@ export const mixedEnvironment: MockEnvironment = {
 };
 
 /**
+ * Unknown environment mock - simulates environment with no platform APIs
+ * Useful for testing fallback behavior when no platform is detected
+ */
+export const unknownEnvironment: MockEnvironment = (() => {
+  let originalGlobals: {
+    window?: any;
+    navigator?: any;
+    electronAPI?: any;
+    Capacitor?: any;
+    document?: any;
+  } = {};
+
+  return {
+    type: 'web' as const, // Still web type but with minimal globals
+
+    setup() {
+      // Store original values
+      originalGlobals = {
+        window: (globalThis as any).window,
+        navigator: (globalThis as any).navigator,
+        electronAPI: (globalThis as any).electronAPI,
+        Capacitor: (globalThis as any).Capacitor,
+        document: (globalThis as any).document,
+      };
+
+      // Clear all platform detection globals
+      delete (globalThis as any).window;
+      delete (globalThis as any).navigator;
+      delete (globalThis as any).electronAPI;
+      delete (globalThis as any).Capacitor;
+      delete (globalThis as any).document;
+    },
+
+    cleanup() {
+      // Restore original values
+      if (originalGlobals.window !== undefined) {
+        (globalThis as any).window = originalGlobals.window;
+      }
+      if (originalGlobals.navigator !== undefined) {
+        (globalThis as any).navigator = originalGlobals.navigator;
+      }
+      if (originalGlobals.electronAPI !== undefined) {
+        (globalThis as any).electronAPI = originalGlobals.electronAPI;
+      }
+      if (originalGlobals.Capacitor !== undefined) {
+        (globalThis as any).Capacitor = originalGlobals.Capacitor;
+      }
+      if (originalGlobals.document !== undefined) {
+        (globalThis as any).document = originalGlobals.document;
+      }
+    },
+
+    reset() {
+      // No mock functions to reset in unknown environment
+    },
+  };
+})();
+
+/**
  * Utility function to safely setup a mock environment with automatic cleanup
  * @param environment - The mock environment to setup
  * @returns Cleanup function that should be called in test teardown
