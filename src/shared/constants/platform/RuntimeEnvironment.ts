@@ -4,8 +4,6 @@
  * @enum {string}
  */
 export enum RuntimeEnvironment {
-  /** Unknown runtime environment */
-  UNKNOWN = 'unknown',
   /** Main Electron process (Node.js) */
   MAIN = 'main',
   /** Electron renderer process (Chromium) */
