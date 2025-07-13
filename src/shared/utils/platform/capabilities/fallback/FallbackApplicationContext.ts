@@ -1,8 +1,5 @@
-import type {
-  CapabilityDetectionResult,
-  PlatformCapabilityId,
-  PlatformType,
-} from '../../../../types/platform';
+import { PlatformType } from '../../../../constants';
+import type { CapabilityDetectionResult, PlatformCapabilityId } from '../../../../types/platform';
 
 /**
  * Context information provided to fallback strategies during execution.
