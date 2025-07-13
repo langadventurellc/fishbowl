@@ -451,7 +451,7 @@ When executing tasks, remember to:
 - 4.0 Feature Capability Framework
   - [x] 4.1 Design extensible capability checking API structure
   - [x] 4.2 Implement secure storage capability detection
-  - [ ] 4.3 Add file system access capability checking
+  - [x] 4.3 Add file system access capability checking
   - [ ] 4.4 Create capability result caching mechanism
   - [ ] 4.5 Add capability validation with appropriate fallbacks
   - [ ] 4.6 Implement framework for adding future capabilities
