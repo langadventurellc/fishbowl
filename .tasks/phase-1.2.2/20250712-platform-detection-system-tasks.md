@@ -450,7 +450,7 @@ When executing tasks, remember to:
 
 - 4.0 Feature Capability Framework
   - [x] 4.1 Design extensible capability checking API structure
-  - [x] 4.2 Implement secure storage capability detection
+  - [ ] 4.2 Implement secure storage capability detection
   - [ ] 4.3 Add file system access capability checking
   - [ ] 4.4 Create capability result caching mechanism
   - [ ] 4.5 Add capability validation with appropriate fallbacks
@@ -480,10 +480,6 @@ When executing tasks, remember to:
   - `src/shared/utils/platform/getRegisteredCapabilities.ts` - Utility function for retrieving all supported capability IDs (task 4.1)
   - `src/shared/utils/platform/capabilities.ts` - Updated main capability detection barrel export with complete API structure (task 4.1)
   - `tests/unit/shared/utils/platform/capability-checking-api.test.ts` - Comprehensive test suite for capability checking API with 47 test cases covering detectors, registry, manager, utilities, error handling, configuration, and performance (task 4.1)
-  - `src/shared/utils/platform/capabilities/SecureStorageCapabilityDetector.ts` - Comprehensive secure storage capability detector extending BaseCapabilityDetector with platform-specific detection logic for Electron (keytar/IPC interface validation), Web (unavailable), Capacitor (future support), and unknown platforms (task 4.2)
-  - `src/shared/utils/platform/capabilities/hasSecureStorageCapability.ts` - Convenient utility function for checking secure storage capability availability with automatic detector registration and error handling (task 4.2)
-  - `src/shared/utils/platform/capabilities/index.ts` - Updated barrel export to include SecureStorageCapabilityDetector and hasSecureStorageCapability utility function (task 4.2)
-  - `tests/unit/shared/utils/platform/secure-storage-capability.test.ts` - Comprehensive test suite with 22 test cases covering detector configuration, platform-specific detection (Electron, Web, Capacitor, Unknown), capability validation, error handling, detection result properties, and utility function behavior with mock environments and type safety validation (task 4.2)
 
 - 5.0 React Integration Utilities
   - [ ] 5.1 Create usePlatform hook following existing IPC hook patterns
