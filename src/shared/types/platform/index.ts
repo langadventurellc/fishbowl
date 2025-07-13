@@ -85,5 +85,17 @@ export { PermissionLevel } from '../../constants/platform/PermissionLevel';
 export { PlatformType } from '../../constants/platform/PlatformType';
 export { RuntimeEnvironment } from '../../constants/platform/RuntimeEnvironment';
 
+// Platform Conditional Utility Types
+export type { ConditionalOnPlatform } from './conditional/ConditionalOnPlatform';
+export type { ExcludeOnPlatform } from './conditional/ExcludeOnPlatform';
+export type { PlatformSpecificConfig } from './conditional/PlatformSpecificConfig';
+export type { CapabilityConditional } from './conditional/CapabilityConditional';
+export type { PlatformApiSurface } from './conditional/PlatformApiSurface';
+export type { PlatformFallback } from './conditional/PlatformFallback';
+export type { RequirePlatform } from './conditional/RequirePlatform';
+export type { PlatformUnion } from './conditional/PlatformUnion';
+export type { CapabilityAwareService } from './conditional/CapabilityAwareService';
+export type { PlatformCompatible } from './conditional/PlatformCompatible';
+
 // Platform detection and validation schemas
 export * from '../validation/platformSchema';

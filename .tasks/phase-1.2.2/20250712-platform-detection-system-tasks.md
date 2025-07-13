@@ -310,7 +310,7 @@ When executing tasks, remember to:
   - [x] 3.2 Create type guards for platform-specific code blocks
   - [x] 3.3 Implement Zod schemas for platform detection validation
   - [x] 3.4 Add platform capability type definitions
-  - [ ] 3.5 Create utility types for conditional platform logicc1
+  - [x] 3.5 Create utility types for conditional platform logic
   - [ ] 3.6 Write tests for type guards and validation schemas
   - [ ] 3.7 Ensure TypeScript strict mode compliance across all types
 
@@ -410,6 +410,19 @@ When executing tasks, remember to:
   - `TypedCapabilityState` interface for capability state with type-safe status
   - `CapabilityPermissionRequirement` interface for permission requirements
   - `PlatformCapabilityDetectionConfig` interface for detection configuration
+  - `src/shared/types/platform/conditional/ConditionalOnPlatform.ts` - Utility type for conditionally including properties based on platform type (task 3.5)
+  - `src/shared/types/platform/conditional/ExcludeOnPlatform.ts` - Utility type for excluding properties on specific platforms (task 3.5)
+  - `src/shared/types/platform/conditional/PlatformSpecificConfig.ts` - Configuration objects with different shapes per platform (task 3.5)
+  - `src/shared/types/platform/conditional/CapabilityConditional.ts` - Conditional types based on capability availability (task 3.5)
+  - `src/shared/types/platform/conditional/PlatformApiSurface.ts` - API interfaces available for specific platforms (task 3.5)
+  - `src/shared/types/platform/conditional/PlatformFallback.ts` - Fallback types for unsupported platforms (task 3.5)
+  - `src/shared/types/platform/conditional/RequirePlatform.ts` - Types requiring specific platforms for usage (task 3.5)
+  - `src/shared/types/platform/conditional/PlatformUnion.ts` - Union types across multiple platforms with discrimination (task 3.5)
+  - `src/shared/types/platform/conditional/CapabilityAwareService.ts` - Services that change interface based on capability availability (task 3.5)
+  - `src/shared/types/platform/conditional/PlatformCompatible.ts` - Types ensuring compatibility across specified platforms (task 3.5)
+  - `src/shared/types/platform/conditional/index.ts` - Barrel export for conditional utility types (task 3.5)
+  - `src/shared/types/platform/index.ts` - Updated to include conditional utility types exports (task 3.5)
+  - `tests/unit/shared/types/platform-conditional-types.test.ts` - Comprehensive test suite for conditional utility types with 19 test cases covering type compilation, runtime behavior, and integration scenarios (task 3.5)
 
 - 4.0 Feature Capability Framework
   - [ ] 4.1 Design extensible capability checking API structure
