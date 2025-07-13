@@ -453,9 +453,53 @@ When executing tasks, remember to:
   - [x] 4.2 Implement secure storage capability detection
   - [x] 4.3 Add file system access capability checking
   - [x] 4.4 Create capability result caching mechanism
-  - [ ] 4.5 Add capability validation with appropriate fallbacks
+  - 4.5 Add capability validation with appropriate fallbacks
+    - [x] 4.5.1 Create comprehensive capability validation pipeline with pre/during/post detection validation
+      - `src/shared/utils/platform/capabilities/validation/CapabilityValidator.ts` - Core validation engine with pre/during/post detection validation stages
+      - `src/shared/utils/platform/capabilities/validation/ValidationStage.ts` - Enumeration of validation stages (PRE_DETECTION, DURING_DETECTION, POST_DETECTION)
+      - `src/shared/utils/platform/capabilities/validation/ValidationRule.ts` - Interface for individual validation rules with priority and error handling
+      - `src/shared/utils/platform/capabilities/validation/ValidationRuleRegistry.ts` - Registry for managing validation rules per capability type
+      - `src/shared/utils/platform/capabilities/validation/ValidationResult.ts` - Comprehensive validation result with warnings, errors, and suggestions
+      - `src/shared/utils/platform/capabilities/validation/index.ts` - Barrel export for validation utilities
+    - [ ] 4.5.2 Implement fallback strategy registry with pluggable fallback approaches for different capability types
+      - `src/shared/utils/platform/capabilities/fallback/FallbackStrategyRegistry.ts` - Registry for managing fallback strategies per capability type
+      - `src/shared/utils/platform/capabilities/fallback/FallbackStrategy.ts` - Interface for capability fallback strategies with priority and conditions
+      - `src/shared/utils/platform/capabilities/fallback/GracefulDegradationStrategy.ts` - Strategy for automatic feature degradation when capabilities unavailable
+      - `src/shared/utils/platform/capabilities/fallback/AlternativeCapabilityStrategy.ts` - Strategy for suggesting equivalent alternative capabilities
+      - `src/shared/utils/platform/capabilities/fallback/CapabilityCompositionStrategy.ts` - Strategy for breaking down complex capabilities into simpler components
+      - `src/shared/utils/platform/capabilities/fallback/FallbackExecutor.ts` - Executes appropriate fallback strategies based on detection results
+      - `src/shared/utils/platform/capabilities/fallback/index.ts` - Barrel export for fallback utilities
+    - [ ] 4.5.3 Add validation-driven fallback recommendations and automatic graceful degradation
+      - `src/shared/utils/platform/capabilities/integration/ValidationFallbackOrchestrator.ts` - Orchestrates validation and fallback pipeline integration
+      - `src/shared/utils/platform/capabilities/integration/CapabilityRequirementAnalyzer.ts` - Analyzes capability requirements and suggests reduced feature sets
+      - `src/shared/utils/platform/capabilities/integration/DependencyValidator.ts` - Validates capability dependencies and provides fallback chains
+      - `src/shared/utils/platform/capabilities/integration/PermissionBasedFallback.ts` - Alternative approaches when permissions are denied
+      - `src/shared/utils/platform/capabilities/integration/index.ts` - Barrel export for integration utilities
+    - [ ] 4.5.4 Extend configuration and result types to support validation settings and fallback tracking
+      - `src/shared/utils/platform/capabilityConfig/CapabilityValidationConfig.ts` - Configuration for validation pipeline settings
+      - `src/shared/utils/platform/capabilityConfig/FallbackConfig.ts` - Configuration for fallback behavior and strategy selection
+      - `src/shared/types/platform/EnhancedCapabilityDetectionResult.ts` - Extended result interface with validation status and applied fallbacks
+      - `src/shared/types/platform/ValidationStatus.ts` - Enumeration of validation statuses (PASSED, FAILED, WARNING, SKIPPED)
+      - `src/shared/types/platform/FallbackApplicationResult.ts` - Result of applying fallback strategies with success/failure tracking
+      - `src/shared/types/validation/platformSchema/CapabilityValidationConfigSchema.ts` - Zod schema for validation configuration
+      - `src/shared/types/validation/platformSchema/FallbackConfigSchema.ts` - Zod schema for fallback configuration
+      - `src/shared/types/validation/platformSchema/EnhancedCapabilityDetectionResultSchema.ts` - Extended result validation schema
+    - [ ] 4.5.5 Add comprehensive tests for validation logic and fallback strategies with error injection
+      - `tests/unit/shared/utils/platform/capability-validation-pipeline.test.ts` - Tests for validation pipeline with 25+ test cases
+      - `tests/unit/shared/utils/platform/fallback-strategy-registry.test.ts` - Tests for fallback strategies with 20+ test cases
+      - `tests/unit/shared/utils/platform/validation-fallback-integration.test.ts` - Integration tests with 15+ test cases
+      - `tests/unit/shared/utils/platform/capability-validation-error-injection.test.ts` - Error injection and recovery tests with 10+ test cases
+      - `tests/integration/platform-capability-validation-integration.test.ts` - End-to-end validation and fallback testing
   - [ ] 4.6 Implement framework for adding future capabilities
   - [ ] 4.7 Write unit tests for all capability detection functions
+
+  ### Key Implementation Requirements for Task 4.5:
+  1. **Validation Pipeline Architecture**: Three-stage validation (pre/during/post detection) with configurable rules
+  2. **Fallback Strategy Pattern**: Pluggable fallback strategies with priority-based selection and automatic execution
+  3. **Integration with Existing System**: Seamless integration with CapabilityManager, BaseCapabilityDetector, and existing configuration
+  4. **Performance Requirements**: Validation must complete in under 2ms, fallback execution under 5ms
+  5. **Error Handling**: Comprehensive error handling with structured recovery suggestions and graceful degradation
+  6. **Testing Coverage**: Minimum 95% test coverage with error injection, boundary testing, and integration scenarios
 
   ### Files created/modified:
   - `src/shared/utils/platform/CapabilityDetector.ts` - Interface for capability detection strategies with unified contract (task 4.1)
