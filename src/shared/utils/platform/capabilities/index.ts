@@ -14,6 +14,9 @@ export { type CapabilityDetector } from './CapabilityDetector';
 export { CapabilityManager } from './CapabilityManager';
 export { CapabilityRegistry } from './CapabilityRegistry';
 
+// Concrete capability detectors
+export { SecureStorageCapabilityDetector } from './SecureStorageCapabilityDetector';
+
 // Configuration and context interfaces
 export {
   DEFAULT_CAPABILITY_DETECTION_CONFIG,
@@ -23,6 +26,7 @@ export { type CapabilityDetectionContext } from './CapabilityDetectionContext';
 
 export { detectCapability } from './detectCapability';
 export { getRegisteredCapabilities } from './getRegisteredCapabilities';
+export { hasSecureStorageCapability } from './hasSecureStorageCapability';
 export { isCapabilitySupported } from './isCapabilitySupported';
 export { registerCapabilityDetector } from './registerCapabilityDetector';
 
