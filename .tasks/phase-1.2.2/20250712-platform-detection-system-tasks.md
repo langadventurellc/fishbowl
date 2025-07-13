@@ -314,7 +314,7 @@ When executing tasks, remember to:
   - [x] 3.6 Write tests for type guards and validation schemas
   - 3.7 Address PR comments and code quality issues
     - [x] 3.7.1 Fix isPlatformType type guard implementation to provide meaningful TypeScript type narrowing
-    - [ ] 3.7.2 Fix ConditionalOnPlatform conditional type logic to work with runtime platform detection
+    - [x] 3.7.2 Fix ConditionalOnPlatform conditional type logic to work with runtime platform detection
     - [ ] 3.7.3 Remove test environment dependencies from validation schemas for consistent behavior
     - [ ] 3.7.4 Add comprehensive JSDoc documentation to complex interfaces and utility types
 
@@ -456,6 +456,10 @@ When executing tasks, remember to:
   - `src/shared/utils/platform/isPlatformType.ts` - Fixed type guard implementation with meaningful type narrowing (task 3.7.1)
   - `tests/unit/shared/utils/platform/type-guards-fixed.test.ts` - Comprehensive test suite for fixed type guard with 16 test cases (task 3.7.1)
   - `tests/unit/shared/utils/platform/type-guards.test.ts` - Updated existing tests for new function signature (task 3.7.1)
+  - `src/shared/types/platform/conditional/ConditionalOnPlatform.ts` - Fixed conditional type logic and enhanced documentation
+  - `src/shared/types/platform/conditional/ExcludeOnPlatform.ts` - Fixed conditional type logic and enhanced documentation
+  - `src/shared/types/platform/conditional/PlatformSpecificConfig.ts` - Enhanced documentation with runtime examples
+  - `tests/unit/shared/types/platform-conditional-types-fixed.test.ts` - New comprehensive test suite with 12 test cases
 
 - 4.0 Feature Capability Framework
   - [ ] 4.1 Design extensible capability checking API structure
