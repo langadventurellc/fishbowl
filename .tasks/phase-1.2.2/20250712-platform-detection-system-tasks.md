@@ -315,7 +315,7 @@ When executing tasks, remember to:
   - 3.7 Address PR comments and code quality issues
     - [x] 3.7.1 Fix isPlatformType type guard implementation to provide meaningful TypeScript type narrowing
     - [x] 3.7.2 Fix ConditionalOnPlatform conditional type logic to work with runtime platform detection
-    - [ ] 3.7.3 Remove test environment dependencies from validation schemas for consistent behavior
+    - [x] 3.7.3 Remove test environment dependencies from validation schemas for consistent behavior
     - [ ] 3.7.4 Add comprehensive JSDoc documentation to complex interfaces and utility types
 
   ### Files to be created/modified (task 3.7):
@@ -460,6 +460,14 @@ When executing tasks, remember to:
   - `src/shared/types/platform/conditional/ExcludeOnPlatform.ts` - Fixed conditional type logic and enhanced documentation
   - `src/shared/types/platform/conditional/PlatformSpecificConfig.ts` - Enhanced documentation with runtime examples
   - `tests/unit/shared/types/platform-conditional-types-fixed.test.ts` - New comprehensive test suite with 12 test cases
+  - `src/shared/types/validation/platformSchema/TimestampSchema.ts` - Removed `isCacheTTLTestEnvironment()` import and conditional logic for consistent validation behavior (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/PlatformCacheConfigSchema.ts` - Removed `isCacheTTLTestEnvironment()` import and replaced conditional refinement with consistent `.min()` validation (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/PlatformCacheEntrySchema.ts` - Removed `isCacheTTLTestEnvironment()` import and conditional logic for timestamp proximity validation (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/isCacheTTLTestEnvironment.ts` - Deleted file (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/isValidationTestEnvironment.ts` - Deleted file (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/index.ts` - Removed exports for deleted test environment detection functions (task 3.7.3)
+  - `tests/unit/shared/types/validation/platform-validation-helpers.test.ts` - Deleted test file for removed functions (task 3.7.3)
+  - `tests/unit/shared/utils/platform/cache.test.ts` - Updated cache TTL test values from 50ms/100ms to 1000ms minimum to comply with production validation requirements (task 3.7.3)
 
 - 4.0 Feature Capability Framework
   - [ ] 4.1 Design extensible capability checking API structure

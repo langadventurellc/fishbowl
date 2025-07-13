@@ -6,7 +6,6 @@
  */
 
 import { z } from 'zod';
-import { isCacheTTLTestEnvironment } from './isCacheTTLTestEnvironment';
 
 /**
  * Reasonable timestamp bounds for platform detection operations
@@ -44,11 +43,6 @@ export const TimestampSchema = z
   .min(MIN_TIMESTAMP, `Timestamp cannot be before year 2000 (${MIN_TIMESTAMP})`)
   .refine(
     timestamp => {
-      // Skip future timestamp check only for cache TTL tests (when fake timers may cause issues)
-      // But still validate in validation schema tests and other scenarios
-      if (isCacheTTLTestEnvironment()) {
-        return true;
-      }
       const now = Date.now();
       return timestamp <= now + MAX_FUTURE_OFFSET;
     },

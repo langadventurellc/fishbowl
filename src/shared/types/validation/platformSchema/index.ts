@@ -47,7 +47,3 @@ export { PermissionLevelSchema } from './PermissionLevelSchema';
 export { PlatformCapabilitySchema } from './PlatformCapabilitySchema';
 export { DetectionStatusSchema } from './DetectionStatusSchema';
 export { CapabilityDetectionResultSchema } from './CapabilityDetectionResultSchema';
-
-// Test utilities
-export { isValidationTestEnvironment } from './isValidationTestEnvironment';
-export { isCacheTTLTestEnvironment } from './isCacheTTLTestEnvironment';
