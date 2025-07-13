@@ -219,7 +219,7 @@ describe('Platform Type Guards', () => {
       );
 
       // Act
-      const result = isPlatformType(PlatformType.ELECTRON);
+      const result = isPlatformType(undefined, PlatformType.ELECTRON);
 
       // Assert
       expect(result).toBe(true);
@@ -231,7 +231,7 @@ describe('Platform Type Guards', () => {
       vi.spyOn(detectPlatformTypeModule, 'detectPlatformType').mockReturnValue(PlatformType.WEB);
 
       // Act
-      const result = isPlatformType(PlatformType.ELECTRON);
+      const result = isPlatformType(undefined, PlatformType.ELECTRON);
 
       // Assert
       expect(result).toBe(false);
@@ -240,7 +240,7 @@ describe('Platform Type Guards', () => {
 
     it('should return false for invalid platform type input', () => {
       // Act
-      const result = isPlatformType('invalid' as PlatformType);
+      const result = isPlatformType(undefined, 'invalid' as PlatformType);
 
       // Assert
       expect(result).toBe(false);
@@ -253,7 +253,7 @@ describe('Platform Type Guards', () => {
       });
 
       // Act
-      const result = isPlatformType(PlatformType.ELECTRON);
+      const result = isPlatformType(undefined, PlatformType.ELECTRON);
 
       // Assert
       expect(result).toBe(false);
@@ -272,7 +272,7 @@ describe('Platform Type Guards', () => {
         vi.spyOn(detectPlatformTypeModule, 'detectPlatformType').mockReturnValue(platform);
 
         // Act
-        const result = isPlatformType(platform);
+        const result = isPlatformType(undefined, platform);
 
         // Assert
         expect(result).toBe(true);
@@ -539,7 +539,7 @@ describe('Platform Type Guards', () => {
       vi.spyOn(isElectronPlatformModule, 'isElectronPlatform').mockReturnValue(true);
 
       // Act & Assert
-      expect(isPlatformType(PlatformType.ELECTRON)).toBe(true);
+      expect(isPlatformType(undefined, PlatformType.ELECTRON)).toBe(true);
       expect(isKnownPlatform()).toBe(true);
       expect(isElectronEnvironment()).toBe(true);
       expect(isCapacitorEnvironment()).toBe(false);
@@ -556,7 +556,7 @@ describe('Platform Type Guards', () => {
       vi.spyOn(isWebPlatformModule, 'isWebPlatform').mockReturnValue(false);
 
       // Act & Assert
-      expect(isPlatformType(PlatformType.CAPACITOR)).toBe(true);
+      expect(isPlatformType(undefined, PlatformType.CAPACITOR)).toBe(true);
       expect(isKnownPlatform()).toBe(true);
       expect(isElectronEnvironment()).toBe(false);
       expect(isCapacitorEnvironment()).toBe(true);

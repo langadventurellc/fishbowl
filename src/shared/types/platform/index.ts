@@ -28,6 +28,9 @@ export type { CapacitorRuntimeEnvironment } from './CapacitorRuntimeEnvironment'
 export type { WebEnvironment } from './WebEnvironment';
 export type { NonWebEnvironment } from './NonWebEnvironment';
 export type { WebRuntimeEnvironment } from './WebRuntimeEnvironment';
+export type { UnknownEnvironment } from './UnknownEnvironment';
+export type { AllPlatformEnvironment } from './AllPlatformEnvironment';
+export type { PlatformEnvironmentMap } from './PlatformEnvironmentMap';
 export type { KnownPlatformType } from './KnownPlatformType';
 export type { PlatformContextType } from './PlatformContextType';
 

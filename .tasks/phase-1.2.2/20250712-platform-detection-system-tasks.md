@@ -312,6 +312,32 @@ When executing tasks, remember to:
   - [x] 3.4 Add platform capability type definitions
   - [x] 3.5 Create utility types for conditional platform logic
   - [x] 3.6 Write tests for type guards and validation schemas
+  - 3.7 Address PR comments and code quality issues
+    - [x] 3.7.1 Fix isPlatformType type guard implementation to provide meaningful TypeScript type narrowing
+    - [ ] 3.7.2 Fix ConditionalOnPlatform conditional type logic to work with runtime platform detection
+    - [ ] 3.7.3 Remove test environment dependencies from validation schemas for consistent behavior
+    - [ ] 3.7.4 Add comprehensive JSDoc documentation to complex interfaces and utility types
+
+  ### Files to be created/modified (task 3.7):
+  - `src/shared/utils/platform/isPlatformType.ts` - Fix type guard signature to provide meaningful type narrowing (task 3.7.1)
+  - `src/shared/types/platform/conditional/ConditionalOnPlatform.ts` - Redesign conditional type logic for runtime platform detection (task 3.7.2)
+  - `src/shared/types/platform/conditional/ExcludeOnPlatform.ts` - Update to work with fixed conditional logic (task 3.7.2)
+  - `src/shared/types/platform/conditional/PlatformSpecificConfig.ts` - Update to work with fixed conditional logic (task 3.7.2)
+  - `src/shared/types/validation/platformSchema/TimestampSchema.ts` - Remove test environment dependencies (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/PlatformCacheConfigSchema.ts` - Remove test environment dependencies (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/PlatformCacheEntrySchema.ts` - Remove test environment dependencies (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/isCacheTTLTestEnvironment.ts` - Remove or refactor to avoid production impact (task 3.7.3)
+  - `src/shared/types/validation/platformSchema/isValidationTestEnvironment.ts` - Remove or refactor to avoid production impact (task 3.7.3)
+  - `src/shared/types/platform/PlatformServiceRegistry.ts` - Add comprehensive JSDoc to properties (task 3.7.4)
+  - `src/shared/types/platform/PlatformCapabilityDetectionConfig.ts` - Add detailed JSDoc to configuration options (task 3.7.4)
+  - `src/shared/types/platform/PlatformServiceFactoryConfig.ts` - Add JSDoc explaining configuration properties (task 3.7.4)
+  - `src/shared/types/platform/UsePlatformCapabilitiesActions.ts` - Add detailed method documentation and return type specifications (task 3.7.4)
+  - `src/shared/types/platform/PlatformPerformanceBenchmark.ts` - Add JSDoc explaining metric calculations (task 3.7.4)
+  - `src/shared/types/platform/conditional/PlatformCompatible.ts` - Add implementation guidance documentation (task 3.7.4)
+  - `src/shared/types/platform/conditional/CapabilityAwareService.ts` - Add examples for capability-based services (task 3.7.4)
+  - `tests/unit/shared/utils/platform/type-guards-fixed.test.ts` - Test suite for fixed type guard implementation (task 3.7.1)
+  - `tests/unit/shared/types/platform-conditional-types-fixed.test.ts` - Test suite for fixed conditional types (task 3.7.2)
+  - `tests/unit/shared/types/validation/platform-validation-consistency.test.ts` - Test suite ensuring consistent validation behavior (task 3.7.3)
 
   ### Files created/modified:
   - `src/shared/types/platform/PlatformDetectionResult.ts` - Platform detection operation result interface with confidence, timing, and metadata (task 3.1)
@@ -423,6 +449,13 @@ When executing tasks, remember to:
   - `src/shared/types/platform/index.ts` - Updated to include conditional utility types exports (task 3.5)
   - `tests/unit/shared/types/platform-conditional-types.test.ts` - Comprehensive test suite for conditional utility types with 19 test cases covering type compilation, runtime behavior, and integration scenarios (task 3.5)
   - `tests/unit/shared/types/validation/platform-validation-helpers.test.ts` - Comprehensive test suite for validation helper functions with 20 test cases covering `isValidationTestEnvironment()` and `isCacheTTLTestEnvironment()` with environment mocking, edge cases, type safety validation, and integration scenarios (task 3.6)
+  - `src/shared/types/platform/UnknownEnvironment.ts` - Unknown environment type definition (task 3.7.1)
+  - `src/shared/types/platform/AllPlatformEnvironment.ts` - Comprehensive environment union type (task 3.7.1)
+  - `src/shared/types/platform/PlatformEnvironmentMap.ts` - Platform type to environment interface mapping (task 3.7.1)
+  - `src/shared/types/platform/index.ts` - Updated exports to include new environment types (task 3.7.1)
+  - `src/shared/utils/platform/isPlatformType.ts` - Fixed type guard implementation with meaningful type narrowing (task 3.7.1)
+  - `tests/unit/shared/utils/platform/type-guards-fixed.test.ts` - Comprehensive test suite for fixed type guard with 16 test cases (task 3.7.1)
+  - `tests/unit/shared/utils/platform/type-guards.test.ts` - Updated existing tests for new function signature (task 3.7.1)
 
 - 4.0 Feature Capability Framework
   - [ ] 4.1 Design extensible capability checking API structure
