@@ -18,8 +18,6 @@ import { CapabilityDetectionConfig, DEFAULT_CAPABILITY_DETECTION_CONFIG } from '
 import { CapabilityDetectionContext } from './CapabilityDetectionContext';
 import { CapabilityDetector } from './CapabilityDetector';
 import { CapabilityRegistry } from './CapabilityRegistry';
-import { CapabilityCacheManager } from './CapabilityCacheManager';
-import { CapabilityCacheStats } from './CapabilityCacheStats';
 
 /**
  * Manager class for capability detection operations
@@ -30,7 +28,7 @@ import { CapabilityCacheStats } from './CapabilityCacheStats';
 export class CapabilityManager {
   private readonly registry: CapabilityRegistry;
   private readonly config: CapabilityDetectionConfig;
-  private readonly cacheManager: CapabilityCacheManager;
+  private readonly cache = new Map<string, CapabilityDetectionResult>();
   private readonly detectionContext: CapabilityDetectionContext;
 
   /**
@@ -41,30 +39,6 @@ export class CapabilityManager {
   constructor(config: Partial<CapabilityDetectionConfig> = {}) {
     this.registry = new CapabilityRegistry();
     this.config = { ...DEFAULT_CAPABILITY_DETECTION_CONFIG, ...config };
-
-    // Initialize enhanced cache manager with performance-optimized settings
-    this.cacheManager = new CapabilityCacheManager({
-      maxEntries: 50,
-      ttlMs: this.config.cacheTtlMs,
-      maxMemoryBytes: 512 * 1024, // 512KB limit for capability cache
-      enableStatistics: true,
-      enableDebugLogging: false,
-      evictionStrategy: 'lru',
-      performanceMonitoring: {
-        hitRateWindowMs: 300000, // 5 minutes
-        trackAccessPatterns: true,
-        trackMemoryUsage: true,
-        lowHitRateThreshold: 0.7,
-        highMemoryThreshold: 0.8,
-      },
-      maintenance: {
-        cleanupIntervalMs: 30000, // 30 seconds
-        enableAutoCleanup: true,
-        enableCompaction: true,
-        compactionThreshold: 0.75,
-      },
-    });
-
     this.detectionContext = this.createDetectionContext();
   }
 
@@ -102,7 +76,7 @@ export class CapabilityManager {
 
       // Check cache first if enabled
       if (this.config.enableCaching) {
-        const cached = this.cacheManager.get(capability.id);
+        const cached = this.getCachedResult(capability.id);
         if (cached) {
           return cached;
         }
@@ -119,7 +93,7 @@ export class CapabilityManager {
 
       // Cache result if enabled
       if (this.config.enableCaching) {
-        this.cacheManager.set(capability.id, result);
+        this.setCachedResult(capability.id, result);
       }
 
       return result;
@@ -169,50 +143,29 @@ export class CapabilityManager {
    * Clears the detection cache
    */
   clearCache(): void {
-    this.cacheManager.clear();
+    this.cache.clear();
   }
 
   /**
-   * Checks if a capability result is cached
+   * Gets cache statistics
    *
-   * @param capabilityId - The capability ID to check
-   * @returns True if cached and valid
+   * @returns Object with cache statistics
    */
-  isCached(capabilityId: string): boolean {
-    return this.cacheManager.has(capabilityId);
-  }
+  getCacheStats(): {
+    totalCached: number;
+    cacheHitRate: number;
+    oldestEntry?: number;
+    newestEntry?: number;
+  } {
+    const entries = Array.from(this.cache.values());
+    const timestamps = entries.map(entry => entry.timestamp);
 
-  /**
-   * Removes a specific capability from cache
-   *
-   * @param capabilityId - The capability ID to remove
-   * @returns True if entry was removed
-   */
-  evictFromCache(capabilityId: string): boolean {
-    return this.cacheManager.delete(capabilityId);
-  }
-
-  /**
-   * Forces cache cleanup and maintenance
-   */
-  performCacheMaintenance(): void {
-    this.cacheManager.cleanup();
-  }
-
-  /**
-   * Resets cache statistics
-   */
-  resetCacheStats(): void {
-    this.cacheManager.resetStats();
-  }
-
-  /**
-   * Gets comprehensive cache statistics
-   *
-   * @returns Enhanced cache performance statistics
-   */
-  getCacheStats(): CapabilityCacheStats {
-    return this.cacheManager.getStats();
+    return {
+      totalCached: this.cache.size,
+      cacheHitRate: 0, // TODO: Implement hit rate tracking
+      oldestEntry: timestamps.length > 0 ? Math.min(...timestamps) : undefined,
+      newestEntry: timestamps.length > 0 ? Math.max(...timestamps) : undefined,
+    };
   }
 
   /**
@@ -222,7 +175,7 @@ export class CapabilityManager {
    */
   getStats(): {
     registry: ReturnType<CapabilityRegistry['getStats']>;
-    cache: CapabilityCacheStats;
+    cache: ReturnType<CapabilityManager['getCacheStats']>;
     config: CapabilityDetectionConfig;
   } {
     return {
@@ -276,6 +229,33 @@ export class CapabilityManager {
     if (!capability.id || typeof capability.id !== 'string') {
       throw new Error('Capability must have a valid ID');
     }
+  }
+
+  /**
+   * Gets cached detection result if available and not expired
+   */
+  private getCachedResult(capabilityId: string): CapabilityDetectionResult | undefined {
+    const cached = this.cache.get(capabilityId);
+    if (!cached) {
+      return undefined;
+    }
+
+    const now = Date.now();
+    const age = now - cached.timestamp;
+
+    if (age > this.config.cacheTtlMs) {
+      this.cache.delete(capabilityId);
+      return undefined;
+    }
+
+    return cached;
+  }
+
+  /**
+   * Caches a detection result
+   */
+  private setCachedResult(capabilityId: string, result: CapabilityDetectionResult): void {
+    this.cache.set(capabilityId, result);
   }
 
   /**

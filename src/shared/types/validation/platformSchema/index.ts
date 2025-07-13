@@ -47,4 +47,3 @@ export { PermissionLevelSchema } from './PermissionLevelSchema';
 export { PlatformCapabilitySchema } from './PlatformCapabilitySchema';
 export { DetectionStatusSchema } from './DetectionStatusSchema';
 export { CapabilityDetectionResultSchema } from './CapabilityDetectionResultSchema';
-export { CapabilityDetectionResultCacheSchema } from './CapabilityDetectionResultCacheSchema';

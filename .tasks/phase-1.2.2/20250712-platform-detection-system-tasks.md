@@ -452,7 +452,7 @@ When executing tasks, remember to:
   - [x] 4.1 Design extensible capability checking API structure
   - [x] 4.2 Implement secure storage capability detection
   - [x] 4.3 Add file system access capability checking
-  - [x] 4.4 Create capability result caching mechanism
+  - [ ] 4.4 Create capability result caching mechanism
   - [ ] 4.5 Add capability validation with appropriate fallbacks
   - [ ] 4.6 Implement framework for adding future capabilities
   - [ ] 4.7 Write unit tests for all capability detection functions
@@ -461,7 +461,7 @@ When executing tasks, remember to:
   - `src/shared/utils/platform/CapabilityDetector.ts` - Interface for capability detection strategies with unified contract (task 4.1)
   - `src/shared/utils/platform/BaseCapabilityDetector.ts` - Abstract base class providing common functionality for capability detectors with validation, timing, and error handling (task 4.1)
   - `src/shared/utils/platform/CapabilityRegistry.ts` - Central registry for managing capability detectors with registration, retrieval, and validation capabilities (task 4.1)
-  - `src/shared/utils/platform/CapabilityManager.ts` - Main manager class orchestrating detector registration, capability checking, result caching, and error handling following the Manager pattern (task 4.1, 4.4)
+  - `src/shared/utils/platform/CapabilityManager.ts` - Main manager class orchestrating detector registration, capability checking, result caching, and error handling following the Manager pattern (task 4.1)
   - `src/shared/utils/platform/CapabilityDetectionContext.ts` - Environmental context interface providing platform and runtime information for accurate detection (task 4.1)
   - `src/shared/utils/platform/capabilityConfig/CapabilityDetectionConfig.ts` - Configuration interface for detection operations with timeout, caching, and retry settings (task 4.1)
   - `src/shared/utils/platform/capabilityConfig/DEFAULT_CAPABILITY_DETECTION_CONFIG.ts` - Default configuration values for capability detection operations (task 4.1)
@@ -479,18 +479,11 @@ When executing tasks, remember to:
   - `src/shared/utils/platform/detectCapability.ts` - Utility function for detecting platform capabilities using global manager (task 4.1)
   - `src/shared/utils/platform/getRegisteredCapabilities.ts` - Utility function for retrieving all supported capability IDs (task 4.1)
   - `src/shared/utils/platform/capabilities.ts` - Updated main capability detection barrel export with complete API structure (task 4.1)
-  - `tests/unit/shared/utils/platform/capability-checking-api.test.ts` - Comprehensive test suite for capability checking API with 47 test cases covering detectors, registry, manager, utilities, error handling, configuration, and performance (task 4.1, 4.4)
+  - `tests/unit/shared/utils/platform/capability-checking-api.test.ts` - Comprehensive test suite for capability checking API with 47 test cases covering detectors, registry, manager, utilities, error handling, configuration, and performance (task 4.1)
   - `src/shared/utils/platform/capabilities/SecureStorageCapabilityDetector.ts` - Comprehensive secure storage capability detector extending BaseCapabilityDetector with platform-specific detection logic for Electron (keytar/IPC interface validation), Web (unavailable), Capacitor (future support), and unknown platforms (task 4.2)
   - `src/shared/utils/platform/capabilities/hasSecureStorageCapability.ts` - Convenient utility function for checking secure storage capability availability with automatic detector registration and error handling (task 4.2)
-  - `src/shared/utils/platform/capabilities/index.ts` - Updated barrel export to include SecureStorageCapabilityDetector and hasSecureStorageCapability utility function (task 4.2, 4.4)
+  - `src/shared/utils/platform/capabilities/index.ts` - Updated barrel export to include SecureStorageCapabilityDetector and hasSecureStorageCapability utility function (task 4.2)
   - `tests/unit/shared/utils/platform/secure-storage-capability.test.ts` - Comprehensive test suite with 22 test cases covering detector configuration, platform-specific detection (Electron, Web, Capacitor, Unknown), capability validation, error handling, detection result properties, and utility function behavior with mock environments and type safety validation (task 4.2)
-  - `src/shared/utils/platform/capabilities/CapabilityCacheManager.ts` - Enhanced cache manager for capability detection results with sophisticated features: hit rate tracking, memory management, LRU eviction, automatic cleanup, and performance monitoring (task 4.4)
-  - `src/shared/utils/platform/capabilities/CapabilityCacheStats.ts` - Statistics interface for cache performance analysis with comprehensive metrics for hit rates, memory usage, and access patterns (task 4.4)
-  - `src/shared/utils/platform/capabilities/CapabilityCacheEntry.ts` - Cache entry interface with metadata tracking for access count, timestamps, memory estimation, and eviction marking (task 4.4)
-  - `src/shared/utils/platform/capabilities/CapabilityCacheConfig.ts` - Cache configuration interface for fine-grained control over cache behavior, memory management, eviction strategies, and performance monitoring (task 4.4)
-  - `src/shared/types/validation/platformSchema/CapabilityDetectionResultCacheSchema.ts` - Zod validation schema for capability detection results used in caching to ensure data integrity and consistent structure (task 4.4)
-  - `src/shared/types/validation/platformSchema/index.ts` - Updated barrel export to include new capability cache validation schema (task 4.4)
-  - `tests/unit/shared/utils/platform/capability-result-caching.test.ts` - Comprehensive test suite for enhanced capability caching with 31 test cases covering cache operations, expiration, statistics tracking, memory management, error handling, and performance requirements including sub-millisecond cache hits (task 4.4)
 
 - 5.0 React Integration Utilities
   - [ ] 5.1 Create usePlatform hook following existing IPC hook patterns
