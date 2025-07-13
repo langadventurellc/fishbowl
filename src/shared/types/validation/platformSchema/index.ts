@@ -16,6 +16,8 @@ export { RuntimeEnvironmentSchema } from './RuntimeEnvironmentSchema';
 // Configuration validation schemas
 export { PlatformCacheConfigSchema } from './PlatformCacheConfigSchema';
 export { PartialPlatformCacheConfigSchema } from './PartialPlatformCacheConfigSchema';
+export { CapabilityValidationConfigSchema } from './CapabilityValidationConfigSchema';
+export { FallbackConfigSchema } from './FallbackConfigSchema';
 
 // Data structure validation schemas
 export { PlatformInfoSchema } from './PlatformInfoSchema';
@@ -46,5 +48,7 @@ export { CapabilityCategorySchema } from './CapabilityCategorySchema';
 export { PermissionLevelSchema } from './PermissionLevelSchema';
 export { PlatformCapabilitySchema } from './PlatformCapabilitySchema';
 export { DetectionStatusSchema } from './DetectionStatusSchema';
+export { PlatformCapabilityIdSchema } from './PlatformCapabilityIdSchema';
 export { CapabilityDetectionResultSchema } from './CapabilityDetectionResultSchema';
+export { EnhancedCapabilityDetectionResultSchema } from './EnhancedCapabilityDetectionResultSchema';
 export { CapabilityDetectionResultCacheSchema } from './CapabilityDetectionResultCacheSchema';

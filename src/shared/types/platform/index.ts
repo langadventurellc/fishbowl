@@ -46,7 +46,10 @@ export type { UsePlatformCapabilitiesReturn } from './UsePlatformCapabilitiesRet
 export type { PlatformCapability } from './PlatformCapability';
 export type { PlatformCapabilities } from './PlatformCapabilities';
 export type { CapabilityDetectionResult } from './CapabilityDetectionResult';
+export type { EnhancedCapabilityDetectionResult } from './EnhancedCapabilityDetectionResult';
 export type { PlatformCapabilityAssessment } from './PlatformCapabilityAssessment';
+export { ValidationStatus } from './ValidationStatus';
+export type { FallbackApplicationResult } from './FallbackApplicationResult';
 
 // Platform Capability Utility Types
 export type { PlatformCapabilityId } from './PlatformCapabilityId';
