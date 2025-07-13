@@ -44,23 +44,3 @@ export { resetGlobalCapabilityManager } from './capabilityManager/resetGlobalCap
 
 // Error handling
 export { CapabilityDetectionError, CapabilityDetectionErrorType } from './capabilityError';
-
-// Fallback Strategy System
-export {
-  type FallbackStrategy,
-  type FallbackApplicationContext,
-  type FallbackApplicationResult,
-  FallbackPriority,
-  type FallbackStrategyRegistryConfig,
-  type FallbackStrategyRegistryStats,
-  FallbackStrategyRegistry,
-  DEFAULT_FALLBACK_STRATEGY_REGISTRY_CONFIG,
-  type FallbackExecutorConfig,
-  type FallbackExecutionMetrics,
-  type FallbackExecutionResult,
-  FallbackExecutor,
-  DEFAULT_FALLBACK_EXECUTOR_CONFIG,
-  GracefulDegradationStrategy,
-  AlternativeCapabilityStrategy,
-  CapabilityCompositionStrategy,
-} from './fallback';
