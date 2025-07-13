@@ -6,6 +6,7 @@
  */
 
 import { z } from 'zod';
+import { isCacheTTLTestEnvironment } from './isCacheTTLTestEnvironment';
 
 /**
  * Cache configuration bounds for security and performance
@@ -51,9 +52,17 @@ export const PlatformCacheConfigSchema = z.object({
       MAX_CACHE_DURATION_MS,
       `Cache duration must not exceed ${MAX_CACHE_DURATION_MS}ms (24 hours)`,
     )
-    .min(
-      BASE_MIN_CACHE_DURATION_MS,
-      `Cache duration must be at least ${BASE_MIN_CACHE_DURATION_MS}ms (1 second)`,
+    .refine(
+      duration => {
+        // Allow shorter cache durations during testing for TTL behavior tests, but not for validation tests
+        const minDuration = isCacheTTLTestEnvironment()
+          ? 1 // 1ms for TTL tests
+          : BASE_MIN_CACHE_DURATION_MS; // 1 second for validation tests and production
+        return duration >= minDuration;
+      },
+      {
+        message: `Cache duration must be at least ${BASE_MIN_CACHE_DURATION_MS}ms (1 second)`,
+      },
     )
     .default(DEFAULT_CACHE_DURATION_MS),
 

@@ -127,7 +127,7 @@ describe('PlatformCache', () => {
 
       // Use short TTL for testing
       const shortTTLCache = new PlatformCache({
-        cacheDurationMs: 1000, // 1 second (minimum allowed)
+        cacheDurationMs: 100, // 100ms
         enableDebugLogging: false,
       });
 
@@ -141,7 +141,7 @@ describe('PlatformCache', () => {
       expect(shortTTLCache.getCachedPlatformType()).toBe(PlatformType.WEB);
 
       // Wait for cache to expire
-      vi.advanceTimersByTime(1100); // 1100ms > 1000ms TTL
+      vi.advanceTimersByTime(150); // 150ms > 100ms TTL
 
       expect(shortTTLCache.getCachedPlatformType()).toBe(null);
       expect(shortTTLCache.hasValidCache()).toBe(false);
@@ -167,7 +167,7 @@ describe('PlatformCache', () => {
       vi.useFakeTimers();
 
       const shortTTLCache = new PlatformCache({
-        cacheDurationMs: 1000, // 1 second (minimum allowed)
+        cacheDurationMs: 50,
         enableDebugLogging: false,
       });
 
@@ -179,7 +179,7 @@ describe('PlatformCache', () => {
 
       shortTTLCache.setCachedResults(PlatformType.WEB, testPlatformInfo);
 
-      vi.advanceTimersByTime(1100); // 1100ms > 1000ms TTL - Cache should expire
+      vi.advanceTimersByTime(100); // Cache should expire
 
       // Should handle gracefully and return null
       expect(shortTTLCache.getCachedPlatformType()).toBe(null);
