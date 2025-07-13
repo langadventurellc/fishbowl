@@ -1,13 +1,13 @@
 /**
  * Cross-Process Platform Type Definitions
  *
- * Defines platform types that are shared across main and renderer processes
- * for consistent platform detection and handling throughout the application.
+ * Comprehensive platform types shared across main and renderer processes.
+ * Provides type safety for platform detection, capability checking, error handling,
+ * performance monitoring, and service creation throughout the application.
  *
- * Implementation will be added in tasks 3.1-3.7
+ * This module serves as the primary entry point for all platform-related types
+ * and ensures consistent typing across the entire platform detection system.
  */
 
-// Cross-process platform type definitions will be added in subsequent tasks
-
-// Placeholder export to make this a valid TypeScript module
-export {};
+// Re-export all platform types for cross-process usage
+export * from './platform';

@@ -25,6 +25,25 @@ export { PlatformCacheEntrySchema } from './PlatformCacheEntrySchema';
 export { WindowPropertyNameSchema } from './WindowPropertyNameSchema';
 export { TimestampSchema } from './TimestampSchema';
 
-// Test utilities
-export { isValidationTestEnvironment } from './isValidationTestEnvironment';
-export { isCacheTTLTestEnvironment } from './isCacheTTLTestEnvironment';
+// Platform detection result validation schemas
+export { PlatformDetectionResultSchema } from './PlatformDetectionResultSchema';
+export { PlatformDetectionContextSchema } from './PlatformDetectionContextSchema';
+export { PlatformMethodResultSchema } from './PlatformMethodResultSchema';
+export { PlatformDetectionSummarySchema } from './PlatformDetectionSummarySchema';
+
+// Error handling validation schemas
+export { PlatformErrorTypeSchema } from './PlatformErrorTypeSchema';
+export { PlatformErrorSchema } from './PlatformErrorSchema';
+export { PlatformErrorContextSchema } from './PlatformErrorContextSchema';
+export { RecoveryActionSchema } from './RecoveryActionSchema';
+export { PlatformErrorResultSchema } from './PlatformErrorResultSchema';
+
+// Performance validation schemas
+export { PlatformPerformanceMetricsSchema } from './PlatformPerformanceMetricsSchema';
+
+// Capability validation schemas
+export { CapabilityCategorySchema } from './CapabilityCategorySchema';
+export { PermissionLevelSchema } from './PermissionLevelSchema';
+export { PlatformCapabilitySchema } from './PlatformCapabilitySchema';
+export { DetectionStatusSchema } from './DetectionStatusSchema';
+export { CapabilityDetectionResultSchema } from './CapabilityDetectionResultSchema';

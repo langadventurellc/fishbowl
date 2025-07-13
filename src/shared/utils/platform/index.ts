@@ -26,6 +26,27 @@ export { getPlatformInfo } from './getPlatformInfo';
 // Platform information types
 export { type PlatformInfo } from './PlatformInfo';
 
+// Platform type guards for TypeScript type narrowing
+export { isElectronEnvironment } from './isElectronEnvironment';
+export { isCapacitorEnvironment } from './isCapacitorEnvironment';
+export { isWebEnvironment } from './isWebEnvironment';
+export { isPlatformType } from './isPlatformType';
+export { isKnownPlatform } from './isKnownPlatform';
+export { isPlatformContext } from './isPlatformContext';
+
+// Export type guard types from shared platform types
+export type { ElectronEnvironment } from '../../types/platform/ElectronEnvironment';
+export type { NonElectronEnvironment } from '../../types/platform/NonElectronEnvironment';
+export type { RuntimeEnvironment as PlatformRuntimeEnvironment } from '../../types/platform/RuntimeEnvironment';
+export type { CapacitorEnvironment } from '../../types/platform/CapacitorEnvironment';
+export type { NonCapacitorEnvironment } from '../../types/platform/NonCapacitorEnvironment';
+export type { CapacitorRuntimeEnvironment } from '../../types/platform/CapacitorRuntimeEnvironment';
+export type { WebEnvironment } from '../../types/platform/WebEnvironment';
+export type { NonWebEnvironment } from '../../types/platform/NonWebEnvironment';
+export type { WebRuntimeEnvironment } from '../../types/platform/WebRuntimeEnvironment';
+export type { KnownPlatformType } from '../../types/platform/KnownPlatformType';
+export type { PlatformContextType } from '../../types/platform/PlatformContextType';
+
 // Safe global access utilities
 export { hasWindow } from './hasWindow';
 export { hasWindowProperty } from './hasWindowProperty';
