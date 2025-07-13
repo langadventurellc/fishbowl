@@ -334,7 +334,7 @@ describe('Capability Checking API', () => {
       const stats = manager.getStats();
 
       expect(stats.registry.totalDetectors).toBe(1);
-      expect(stats.cache.totalCached).toBe(0);
+      expect(stats.cache.totalEntries).toBe(0);
       expect(typeof stats.config).toBe('object');
     });
 
@@ -342,7 +342,7 @@ describe('Capability Checking API', () => {
       expect(() => manager.clearCache()).not.toThrow();
 
       const cacheStats = manager.getCacheStats();
-      expect(typeof cacheStats.totalCached).toBe('number');
+      expect(typeof cacheStats.totalEntries).toBe('number');
     });
   });
 

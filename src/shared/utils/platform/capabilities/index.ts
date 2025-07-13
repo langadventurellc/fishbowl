@@ -14,6 +14,12 @@ export { type CapabilityDetector } from './CapabilityDetector';
 export { CapabilityManager } from './CapabilityManager';
 export { CapabilityRegistry } from './CapabilityRegistry';
 
+// Enhanced caching system
+export { CapabilityCacheManager } from './CapabilityCacheManager';
+export { type CapabilityCacheStats } from './CapabilityCacheStats';
+export { type CapabilityCacheEntry } from './CapabilityCacheEntry';
+export { type CapabilityCacheConfig } from './CapabilityCacheConfig';
+
 // Concrete capability detectors
 export { SecureStorageCapabilityDetector } from './SecureStorageCapabilityDetector';
 export { FileSystemCapabilityDetector } from './FileSystemCapabilityDetector';
