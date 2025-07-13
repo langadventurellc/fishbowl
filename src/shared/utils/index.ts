@@ -83,6 +83,3 @@ export * from './ai';
 
 // Export validation utilities
 export * from './validation';
-
-// Export platform detection utilities
-export * from './platform';

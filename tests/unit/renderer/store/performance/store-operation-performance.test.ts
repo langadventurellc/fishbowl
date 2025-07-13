@@ -184,37 +184,21 @@ describe('Store Operation Performance Monitoring', () => {
     });
 
     it('should detect slow operations', () => {
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
       // Update thresholds to trigger slow operation detection
       performanceMonitor.updateThresholds({
         slowOperationMs: 0.5, // Very low threshold
       });
 
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
       performanceMonitor.monitorSyncOperation('slow-operation', () => 'result', {
         operationType: 'set',
       });
 
-      // Get the metrics to check actual execution time
-      const metrics = performanceMonitor.getCurrentMetrics();
-      const slowOperation = metrics?.operationDetails.find(
-        op => op.operationName === 'slow-operation',
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.stringContaining('Performance issues in store operation'),
+        expect.arrayContaining([expect.stringContaining('Slow operation')]),
       );
-
-      // Debug: Check if the operation was recorded and what its execution time was
-      expect(slowOperation).toBeDefined();
-      const executionTime = slowOperation?.metrics.averageExecutionTime ?? 0;
-
-      // If execution time is > 0.5ms, we should have gotten a warning
-      if (executionTime > 0.5) {
-        expect(consoleSpy).toHaveBeenCalledWith(
-          expect.stringContaining('Performance issues in store operation'),
-          expect.arrayContaining([expect.stringContaining('Slow operation')]),
-        );
-      } else {
-        // If execution time is <= 0.5ms, no warning should be called
-        expect(consoleSpy).not.toHaveBeenCalled();
-      }
 
       consoleSpy.mockRestore();
     });

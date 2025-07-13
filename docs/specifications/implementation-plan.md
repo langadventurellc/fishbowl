@@ -44,11 +44,11 @@ This implementation plan outlines the development phases for AI Collaborators v1
 
 #### 1.2.1 Database Schema Update
 
-- [x] Create migration script to add `is_active` field to messages table
-- [x] Update TypeScript types to include `isActive` property on Message interface
-- [x] Test migration on existing database
-- [x] Update database queries to handle active/inactive state
-- [x] Ensure default value (true) for existing messages
+- [ ] Create migration script to add `is_active` field to messages table
+- [ ] Update TypeScript types to include `isActive` property on Message interface
+- [ ] Test migration on existing database
+- [ ] Update database queries to handle active/inactive state
+- [ ] Ensure default value (true) for existing messages
 
 #### 1.2.2 Mobile-Ready Architecture
 

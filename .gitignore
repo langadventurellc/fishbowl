@@ -77,7 +77,6 @@ pids
 # Temporary files
 *.tmp
 *.temp
-temp/
 
 # ESLint cache
 .eslintcache
