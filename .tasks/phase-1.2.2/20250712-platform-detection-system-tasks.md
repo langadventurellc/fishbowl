@@ -311,7 +311,7 @@ When executing tasks, remember to:
   - [x] 3.3 Implement Zod schemas for platform detection validation
   - [x] 3.4 Add platform capability type definitions
   - [x] 3.5 Create utility types for conditional platform logic
-  - [ ] 3.6 Write tests for type guards and validation schemas
+  - [x] 3.6 Write tests for type guards and validation schemas
   - [ ] 3.7 Ensure TypeScript strict mode compliance across all types
 
   ### Files created/modified:
@@ -423,6 +423,7 @@ When executing tasks, remember to:
   - `src/shared/types/platform/conditional/index.ts` - Barrel export for conditional utility types (task 3.5)
   - `src/shared/types/platform/index.ts` - Updated to include conditional utility types exports (task 3.5)
   - `tests/unit/shared/types/platform-conditional-types.test.ts` - Comprehensive test suite for conditional utility types with 19 test cases covering type compilation, runtime behavior, and integration scenarios (task 3.5)
+  - `tests/unit/shared/types/validation/platform-validation-helpers.test.ts` - Comprehensive test suite for validation helper functions with 20 test cases covering `isValidationTestEnvironment()` and `isCacheTTLTestEnvironment()` with environment mocking, edge cases, type safety validation, and integration scenarios (task 3.6)
 
 - 4.0 Feature Capability Framework
   - [ ] 4.1 Design extensible capability checking API structure
