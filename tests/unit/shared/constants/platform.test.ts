@@ -32,6 +32,7 @@ describe('Platform Detection Constants', () => {
 
   describe('RuntimeEnvironment enum', () => {
     it('should define all expected runtime environments', () => {
+      expect(RuntimeEnvironment.UNKNOWN).toBe('unknown');
       expect(RuntimeEnvironment.MAIN).toBe('main');
       expect(RuntimeEnvironment.RENDERER).toBe('renderer');
       expect(RuntimeEnvironment.NATIVE).toBe('native');
@@ -45,8 +46,8 @@ describe('Platform Detection Constants', () => {
       });
     });
 
-    it('should have exactly 4 runtime environments', () => {
-      expect(Object.keys(RuntimeEnvironment)).toHaveLength(4);
+    it('should have exactly 5 runtime environments', () => {
+      expect(Object.keys(RuntimeEnvironment)).toHaveLength(5);
     });
   });
 
