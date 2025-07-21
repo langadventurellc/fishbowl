@@ -3,7 +3,6 @@
   "compilerOptions": {
     "target": "esnext",
     "lib": ["esnext"],
-    "module": "esnext",
     "moduleResolution": "node",
     "noEmit": true,
     "jsx": "react-native",
