@@ -1,15 +1,34 @@
 {
   "name": "fishbowl",
   "version": "1.0.0",
+  "private": true,
   "description": "A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.",
-  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "turbo run dev",
+    "dev:desktop": "turbo run dev --filter=desktop",
+    "dev:mobile": "turbo run dev --filter=mobile",
+    "build": "turbo run build",
+    "test": "turbo run test",
+    "test:e2e:desktop": "turbo run test:e2e --filter=desktop",
+    "test:e2e:mobile": "turbo run test:e2e --filter=mobile",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,json}\"",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:migrate": "turbo run db:migrate"
   },
   "keywords": [],
   "author": "LangAdventure LLC",
   "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.13.1",
   "devDependencies": {
-    "turbo": "^2.5.5"
+    "@types/node": "^24.0.15",
+    "eslint": "^9.31.0",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.5",
+    "typescript": "^5.8.3"
   }
 }

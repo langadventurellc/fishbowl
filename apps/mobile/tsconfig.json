@@ -1,0 +1,37 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "jsx": "react-native",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@fishbowl-ai/shared": ["../../packages/shared/src"],
+      "@fishbowl-ai/ui-theme": ["../../packages/ui-theme/src"]
+    }
+  },
+  "include": [
+    "src",
+    "index.js",
+    "../../packages/shared/src",
+    "../../packages/ui-theme/src"
+  ],
+  "exclude": [
+    "node_modules",
+    "android",
+    "ios"
+  ],
+  "references": [
+    {
+      "path": "../../packages/shared"
+    },
+    {
+      "path": "../../packages/ui-theme"
+    }
+  ]
+}

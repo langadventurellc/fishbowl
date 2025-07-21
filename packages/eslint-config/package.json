@@ -1,0 +1,27 @@
+{
+  "name": "@fishbowl-ai/eslint-config",
+  "version": "0.0.0",
+  "main": "./index.js",
+  "files": [
+    "index.js",
+    "react.js",
+    "next.js"
+  ],
+  "scripts": {
+    "lint": "eslint .",
+    "test": "echo \"No tests for eslint config\""
+  },
+  "dependencies": {
+    "@eslint/js": "^9.31.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-turbo": "^2.5.5",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "@typescript-eslint/parser": "^6.7.0"
+  },
+  "peerDependencies": {
+    "eslint": "^9.0.0",
+    "typescript": "^5.0.0"
+  }
+}

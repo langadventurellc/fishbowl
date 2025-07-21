@@ -1,0 +1,33 @@
+{
+  "name": "@fishbowl-ai/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "dev": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "build": "expo build",
+    "test": "jest",
+    "test:e2e:ios": "detox test --configuration ios.sim.debug",
+    "test:e2e:android": "detox test --configuration android.emu.debug",
+    "db:migrate": "node scripts/migrate.js",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@fishbowl-ai/shared": "workspace:*",
+    "@fishbowl-ai/ui-theme": "workspace:*",
+    "expo": "~49.0.0",
+    "react": "^18.2.0",
+    "react-native": "0.72.6",
+    "@react-navigation/native": "^6.1.0",
+    "@react-navigation/bottom-tabs": "^6.5.0"
+  },
+  "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
+    "@types/react": "^18.2.0",
+    "@types/react-native": "^0.72.0",
+    "typescript": "^5.0.0",
+    "metro-config": "^0.77.0"
+  }
+}

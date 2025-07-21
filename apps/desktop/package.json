@@ -1,0 +1,33 @@
+{
+  "name": "@fishbowl-ai/desktop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build && tauri build",
+    "preview": "vite preview",
+    "tauri": "tauri",
+    "test": "jest",
+    "test:e2e": "wdio run ./wdio.conf.ts",
+    "db:migrate": "node scripts/migrate.js",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@fishbowl-ai/shared": "workspace:*",
+    "@fishbowl-ai/ui-theme": "workspace:*",
+    "@tauri-apps/api": "^1.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0"
+  },
+  "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@tauri-apps/cli": "^1.5.0",
+    "vite": "^4.4.0",
+    "@vitejs/plugin-react": "^4.1.0",
+    "typescript": "^5.0.0"
+  }
+}
