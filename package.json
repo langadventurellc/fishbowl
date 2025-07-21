@@ -1,0 +1,15 @@
+{
+  "name": "fishbowl",
+  "version": "1.0.0",
+  "description": "A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "LangAdventure LLC",
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "turbo": "^2.5.5"
+  }
+}
