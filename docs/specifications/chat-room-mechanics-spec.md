@@ -225,11 +225,11 @@ Styled differently (gray, italic):
 
 ```typescript
 type MessageType =
-  | 'user' // Human message
-  | 'agent' // AI response
-  | 'system' // System notification
-  | 'error' // Error message
-  | 'pending'; // Manual mode preview
+  | "user" // Human message
+  | "agent" // AI response
+  | "system" // System notification
+  | "error" // Error message
+  | "pending"; // Manual mode preview
 ```
 
 ## Mode Switching

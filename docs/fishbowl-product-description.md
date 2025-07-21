@@ -9,12 +9,14 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Multi-Agent Conversations
 
 #### Simultaneous Agent Participation
+
 - Create conversations with multiple AI agents participating at the same time
 - Each agent maintains its own context and perspective within the conversation
 - Agents can see and respond to messages from other agents, not just the user
 - No fixed limit on the number of agents in a single conversation (configurable maximum)
 
 #### Agent Awareness
+
 - Agents are aware of other participants in the conversation
 - Each message clearly identifies which agent or user sent it
 - Agents can reference and respond to specific messages from other agents
@@ -23,6 +25,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Agent Configuration
 
 #### Personality System
+
 - **Big Five Personality Model**: Configure agents using five core personality dimensions
   - Openness: Creativity and willingness to explore new ideas
   - Conscientiousness: Attention to detail and methodical approach
@@ -51,6 +54,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - **Predefined Personalities**: Quick-start templates like "The Innovator", "The Critic", "The Mentor"
 
 #### Role System
+
 - **Specialized Expertise**: Assign specific roles that define an agent's area of focus
 - **Predefined Roles**: Ready-to-use roles including:
   - Project Manager: Focus on timelines and coordination
@@ -68,6 +72,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - **Role-Specific Behaviors**: Each role includes tailored interaction patterns and focus areas
 
 #### Model Selection
+
 - **Multiple AI Providers**: Connect to different AI services (OpenAI, Anthropic, Google, etc.)
 - **Model Choice**: Select specific models from each provider
 - **Per-Agent Configuration**: Each agent can use a different AI model
@@ -77,6 +82,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Conversation Modes
 
 #### Manual Mode
+
 - **Response Preview**: See all agent responses before they're added to the conversation
 - **Selective Inclusion**: Choose which agent responses to include
 - **Response Comparison**: View multiple perspectives side-by-side
@@ -84,6 +90,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - **Edit Capability**: Modify your own messages before sending
 
 #### Auto Mode
+
 - **Automatic Turn-Taking**: Agents respond in sequence without manual intervention
 - **Intelligent Participation**: Agents evaluate whether they have valuable input
 - **Skip Detection**: Agents can skip their turn if nothing relevant to add
@@ -92,6 +99,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - **Pause/Resume**: Interrupt and continue auto mode at any time
 
 #### @ Mention System
+
 - **Directed Questions**: Use @AgentName to direct questions to specific agents
 - **Queue Management**: Mentioned agents get priority in response order
 - **Multiple Mentions**: Can mention multiple agents in one message
@@ -101,6 +109,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Message Management
 
 #### Message States
+
 - **Active/Inactive Toggle**: Mark any message as active or inactive
 - **Visual Distinction**: Inactive messages appear with reduced opacity
 - **Context Control**: Only active messages are included in agent context
@@ -108,6 +117,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - **Bulk Management**: Select multiple messages to activate/deactivate
 
 #### Message Features
+
 - **Timestamps**: Track when each message was sent
 - **Copy Function**: Easy copying of message content
 - **Collapse/Expand**: Minimize long messages to show only first line
@@ -117,6 +127,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Conversation Management
 
 #### Organization
+
 - **Multiple Conversations**: Maintain numerous separate conversations
 - **Easy Switching**: Quick navigation between conversations
 - **Rename Capability**: Update conversation titles as needed
@@ -124,6 +135,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - **Last Activity Tracking**: See when conversations were last active
 
 #### Persistence
+
 - **Auto-Save**: All conversations automatically saved
 - **Full History**: Complete conversation history preserved
 - **State Preservation**: Agent configurations saved with conversations
@@ -132,6 +144,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Agent Management
 
 #### Real-Time Control
+
 - **Add/Remove Agents**: Modify agent lineup during conversations
 - **Pause Participation**: Temporarily disable specific agents
 - **Visual Indicators**: See which agents are active, thinking, or paused
@@ -139,6 +152,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - **Status Display**: Real-time status updates for each agent
 
 #### Agent Library
+
 - **Save Configurations**: Store commonly used agent setups
 - **Quick Deploy**: Add pre-configured agents to new conversations
 - **Template Management**: Organize and maintain agent templates
@@ -147,12 +161,14 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Context Management
 
 #### Token Awareness
+
 - **Usage Display**: See current token consumption
 - **Limit Warnings**: Alerts when approaching context limits
 - **Active Message Count**: Track tokens for active messages only
 - **Model Limits**: Respect each AI model's context window
 
 #### Context Optimization
+
 - **Selective History**: Use message active/inactive states to manage context
 - **Smart Truncation**: Intelligent handling of long conversations
 - **Priority Preservation**: Keep most relevant messages in context
@@ -160,12 +176,14 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### User Interface
 
 #### Visual Design
+
 - **Theme Support**: Light and dark mode options
 - **System Integration**: Follow system theme preferences
 - **Responsive Layout**: Adapts to different window sizes
 - **Accessibility**: Keyboard navigation and screen reader support
 
 #### Layout Elements
+
 - **Conversation Sidebar**: Easy access to all conversations
 - **Agent Label Bar**: Visual representation of active agents
 - **Chat Area**: Central space for conversation display
@@ -175,12 +193,14 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Settings & Configuration
 
 #### API Management
+
 - **Secure Storage**: Safe storage of API credentials
 - **Connection Testing**: Verify API connections before use
 - **Multiple Providers**: Support for various AI service providers
 - **Usage Tracking**: Monitor API usage and costs
 
 #### Customization Options
+
 - **Interface Preferences**: Adjust UI elements to preference
 - **Behavior Defaults**: Set default settings for new agents
 - **Conversation Defaults**: Configure default conversation settings
@@ -189,12 +209,14 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Advanced Features
 
 #### Conversation Intelligence
+
 - **Smart Turn-Taking**: Agents respond based on relevance
 - **Context Awareness**: Agents understand conversation flow
 - **Inter-Agent Dynamics**: Agents can build on each other's ideas
 - **Conflict Resolution**: Agents can respectfully disagree and debate
 
 #### Workflow Optimization
+
 - **Quick Start**: Begin conversations with minimal setup
 - **Batch Operations**: Manage multiple agents efficiently
 - **Preset Scenarios**: Common agent combinations for specific tasks
@@ -203,6 +225,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Export & Sharing
 
 #### Data Portability
+
 - **Conversation Export**: Save conversations in standard formats
 - **Configuration Export**: Share agent and personality settings
 - **Import Capability**: Load exported configurations
@@ -211,12 +234,14 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Performance Features
 
 #### Optimization
+
 - **Streaming Responses**: See agent responses as they generate
 - **Efficient Updates**: Smooth UI performance with many messages
 - **Resource Management**: Intelligent handling of system resources
 - **Background Processing**: Non-blocking operations for better responsiveness
 
 #### Reliability
+
 - **Error Recovery**: Graceful handling of API failures
 - **Rate Limit Management**: Intelligent request distribution
 - **Offline Capability**: Access existing conversations without internet
@@ -225,12 +250,14 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Privacy & Security
 
 #### Data Protection
+
 - **Local Storage**: Conversations stored on user's device
 - **Encrypted Credentials**: Secure storage of sensitive information
 - **No Cloud Dependency**: Full functionality without cloud services
 - **User Control**: Complete control over data retention
 
 #### API Security
+
 - **Credential Isolation**: API keys never exposed to UI
 - **Secure Communication**: Protected communication with AI services
 - **Provider Isolation**: Credentials separated by provider
@@ -239,29 +266,34 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ## Use Case Examples
 
 ### Creative Writing
+
 - Multiple agents with different creative perspectives
 - Storyteller for narrative, Critic for feedback, Editor for refinement
 - Collaborative story development with diverse viewpoints
 
 ### Technical Problem Solving
+
 - Technical Advisor for implementation details
 - Architect for system design
 - Project Manager for practical constraints
 - Analyst for performance considerations
 
 ### Business Strategy
+
 - Business Strategist for market analysis
 - Financial Advisor for budget considerations
 - Marketing Expert for go-to-market strategy
 - Risk Analyst for potential challenges
 
 ### Personal Development
+
 - Coach for motivation and goal-setting
 - Analyst for progress tracking
 - Mentor for wisdom and guidance
 - Challenger for pushing boundaries
 
 ### Educational Exploration
+
 - Teacher for explanations
 - Student for questions
 - Expert for deep knowledge
@@ -270,6 +302,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ## Future Extensibility
 
 ### Planned Capabilities
+
 - Mobile device support for on-the-go access
 - Tool integration for agents to perform actions
 - Document collaboration with multi-agent editing
@@ -280,6 +313,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 - Visual content generation and analysis
 
 ### Platform Evolution
+
 - Desktop application as primary platform
 - Mobile applications for iOS and Android
 - Potential web access for limited functionality

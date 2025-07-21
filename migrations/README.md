@@ -5,6 +5,7 @@ This directory is reserved for SQL migration files that will be created when imp
 ## Migration Structure
 
 When ready to implement database features, migration files should follow this naming convention:
+
 - `001_initial_schema.sql` - Initial database schema
 - `002_add_feature_table.sql` - Additional feature migrations
 - etc.

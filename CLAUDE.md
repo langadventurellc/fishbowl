@@ -1,10 +1,35 @@
 # Instructions for working in the Fishbowl Monorepo
 
+A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.
+
+## Development
+
+See [Architecture Guide](docs/architecture/monorepo.md) for the overall structure and guidelines.
+
+### Commands
+
+| Command                 | Description                                           |
+| ----------------------- | ----------------------------------------------------- |
+| `pnpm dev`              | Start development servers for all apps                |
+| `pnpm dev:desktop`      | Start development server for desktop app only         |
+| `pnpm dev:mobile`       | Start development server for mobile app only          |
+| `pnpm build`            | Build all packages and apps                           |
+| `pnpm build:desktop`    | Build desktop app and dependencies                    |
+| `pnpm build:mobile`     | Build mobile app and dependencies                     |
+| `pnpm test`             | Run tests for all packages                            |
+| `pnpm test:e2e:desktop` | Run end-to-end tests for desktop app                  |
+| `pnpm test:e2e:mobile`  | Run end-to-end tests for mobile app                   |
+| `pnpm lint`             | Run linting for all packages                          |
+| `pnpm format`           | Format all TypeScript, JavaScript, and Markdown files |
+| `pnpm clean`            | Clean all build outputs and node_modules              |
+| `pnpm db:migrate`       | Run database migrations for all apps                  |
+
 ## Architecture
 
 How to structure code across shared packages and platform-specific applications. It is designed to ensure clean separations of concerns, maintainability, and reusability of code. The monorepo contains projects for both desktop (Tauri) and mobile (React Native) platforms, with shared logic in a common package.
 
 ### Technology Stack
+
 - **Desktop**: Tauri with React
 - **Mobile**: React Native with Expo
 - **Shared Logic**: TypeScript, Zustand for state management, custom hooks
@@ -15,12 +40,15 @@ How to structure code across shared packages and platform-specific applications.
 - **Styling**: Tailwind and shadcn/ui for Tauri, NativeWind and Tamagui for React Native
 
 ### 1. Code Placement Rules
+
 - **Shared Package (`@your-app/shared`)**: Business logic, API clients, hooks, stores, types, utils
 - **Platform Apps**: ONLY UI components and platform-specific code
 - **No UI in shared packages**: React Native and web React components are incompatible
 
 ### 2. What Can Be Shared
+
 ✅ **CAN Share:**
+
 - Business logic and algorithms
 - API clients and network code
 - State management (Zustand stores)
@@ -30,24 +58,27 @@ How to structure code across shared packages and platform-specific applications.
 - Constants and configuration
 
 ❌ **CANNOT Share:**
+
 - UI components (View vs div, Text vs span)
 - Styles (StyleSheet vs CSS)
 - Navigation (React Navigation vs React Router)
 - Platform-specific APIs
 
 ### 4. Import Rules
+
 - Always use workspace protocol: `"@your-app/shared": "workspace:*"`
 - Import from package names, not relative paths across packages
 - Use barrel exports in shared packages
 
 ### 5. Platform Bridges
+
 For platform-specific features, use the bridge pattern:
 
 ```typescript
 // In shared package - define interface
 export interface StorageBridge {
-get<T>(key: string): Promise<T | null>;
-set<T>(key: string, value: T): Promise<void>;
+  get<T>(key: string): Promise<T | null>;
+  set<T>(key: string, value: T): Promise<void>;
 }
 
 // In platform apps - implement
@@ -56,11 +87,13 @@ set<T>(key: string, value: T): Promise<void>;
 ```
 
 ### 7. Testing Strategy
+
 - Shared package: Unit tests for business logic (Vitest)
 - Platform apps: Component/integration tests
 - Keep platform-specific test utilities separate
 
 ### 8. Environment Variables
+
 - Desktop: Use Vite env vars (`VITE_API_URL`)
 - Mobile: Use React Native Config or process.env
 - Abstract in shared config module
@@ -68,6 +101,7 @@ set<T>(key: string, value: T): Promise<void>;
 ## Quick Reference for AI Agents
 
 When adding features:
+
 1. **Business logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
 3. **Mobile UI** → `apps/mobile/src/`
@@ -87,15 +121,15 @@ For full architecture details, see: [Monorepo Architecture](docs/architecture/mo
 
 ### 1 Guiding Maxims (agents must echo these before coding)
 
-| Maxim | Practical test |
+| Maxim                                  | Practical test                                                      |
 | -------------------------------------- | ------------------------------------------------------------------- |
-| **KISS** - _Keep It Super Simple_ | Could a junior dev explain the design to a peer in ≤ 2 min? |
-| **YAGNI** - _You Aren't Gonna Need It_ | Is the abstraction used < 3 times? If so, inline it. |
-| **SRP / small units** | One concept per function; ≤ 20 logical LOC; cyclomatic ≤ 5. |
-| **DRY** - _Don't Repeat Yourself_ | Is the code repeated in ≥ 2 places? If so, extract it. |
-| **Simplicity** | Is the code simpler than the alternative? If not, refactor it. |
-| **Explicit is better than implicit** | Is the code self‑documenting? If not, add comments. |
-| **Fail fast** | Does the code handle errors gracefully? If not, add error handling. |
+| **KISS** - _Keep It Super Simple_      | Could a junior dev explain the design to a peer in ≤ 2 min?         |
+| **YAGNI** - _You Aren't Gonna Need It_ | Is the abstraction used < 3 times? If so, inline it.                |
+| **SRP / small units**                  | One concept per function; ≤ 20 logical LOC; cyclomatic ≤ 5.         |
+| **DRY** - _Don't Repeat Yourself_      | Is the code repeated in ≥ 2 places? If so, extract it.              |
+| **Simplicity**                         | Is the code simpler than the alternative? If not, refactor it.      |
+| **Explicit is better than implicit**   | Is the code self‑documenting? If not, add comments.                 |
+| **Fail fast**                          | Does the code handle errors gracefully? If not, add error handling. |
 
 ### 2 Architecture Heuristics
 

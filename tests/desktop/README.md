@@ -10,6 +10,7 @@ This directory contains end-to-end tests for the desktop application using Webdr
 ## Usage
 
 Tests will be run using:
+
 ```bash
 pnpm test:e2e:desktop
 ```

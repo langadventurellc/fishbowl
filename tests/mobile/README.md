@@ -10,6 +10,7 @@ This directory contains end-to-end tests for the mobile application using Detox.
 ## Usage
 
 Tests will be run using:
+
 ```bash
 pnpm test:e2e:mobile
 ```

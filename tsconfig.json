@@ -18,7 +18,15 @@
     "noEmit": true
   },
   "include": [],
-  "exclude": ["node_modules", "dist", "build", ".next", ".turbo", "apps", "packages"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    ".turbo",
+    "apps",
+    "packages"
+  ],
   "references": [
     { "path": "./packages/shared" },
     { "path": "./packages/ui-theme" },

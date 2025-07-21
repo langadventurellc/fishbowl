@@ -312,8 +312,8 @@ Using Tailwind's responsive utilities:
 Example responsive pattern:
 
 ```tsx
-<div className='p-6 md:p-4 sm:p-2'>
-  <Button className='w-full sm:w-auto'>Save</Button>
+<div className="p-6 md:p-4 sm:p-2">
+  <Button className="w-full sm:w-auto">Save</Button>
 </div>
 ```
 

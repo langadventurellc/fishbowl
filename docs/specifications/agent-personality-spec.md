@@ -10,7 +10,7 @@ The Agent Personality system defines how AI agents behave, communicate, and make
 
 ```typescript
 interface AgentPersonality {
-  system: 'big-five' | 'custom';
+  system: "big-five" | "custom";
 
   // If system === 'big-five'
   bigFive?: {

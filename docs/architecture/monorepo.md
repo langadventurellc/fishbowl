@@ -1,6 +1,7 @@
 # Tauri + React Native Monorepo Architecture Guide
 
 ## Table of Contents
+
 1. [Project Structure](#project-structure)
 2. [Technology Stack](#technology-stack)
 3. [Initial Setup](#initial-setup)
@@ -100,6 +101,7 @@ fishbowl/
 ## Technology Stack
 
 ### Shared (Both Platforms)
+
 - **Monorepo Tool**: Turborepo
 - **Package Manager**: PNPM
 - **Language**: TypeScript
@@ -110,6 +112,7 @@ fishbowl/
 - **Testing**: Jest (unit tests)
 
 ### Desktop (Tauri)
+
 - **Framework**: Tauri + React + Vite
 - **Database**: tauri-plugin-sql (SQLite)
 - **Styling**: Tailwind CSS + ShadCN UI
@@ -117,6 +120,7 @@ fishbowl/
 - **Secure Storage**: Tauri keychain integration
 
 ### Mobile (React Native)
+
 - **Framework**: React Native + Expo
 - **Database**: expo-sqlite
 - **Styling**: NativeWind + Tamagui
@@ -141,6 +145,7 @@ pnpm add -D turbo typescript @types/node prettier eslint
 ### 2. Root Configuration Files
 
 **package.json**
+
 ```json
 {
   "name": "fishbowl-ai",
@@ -173,6 +178,7 @@ pnpm add -D turbo typescript @types/node prettier eslint
 ```
 
 **turbo.json**
+
 ```json
 {
   "$schema": "https://turbo.build/schema.json",
@@ -208,6 +214,7 @@ pnpm add -D turbo typescript @types/node prettier eslint
 ```
 
 **pnpm-workspace.yaml**
+
 ```yaml
 packages:
   - "apps/*"
@@ -215,30 +222,30 @@ packages:
   - "tests/*"
 ```
 
-
 ## Platform-Specific Implementation
 
 ### Desktop App Structure
 
 **apps/desktop/src/App.tsx**
+
 ```tsx
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useEffect } from 'react';
-import { DatabaseProvider } from './providers/DatabaseProvider';
-import { SecureStorageProvider } from './providers/SecureStorageProvider';
-import { AIServiceProvider } from './providers/AIServiceProvider';
-import { LoginPage } from './pages/LoginPage';
-import { DashboardPage } from './pages/DashboardPage';
-import { SettingsPage } from './pages/SettingsPage';
-import { ChatPage } from './pages/ChatPage';
-import { useAuthStore } from '@fishbowl-ai/shared';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { DatabaseProvider } from "./providers/DatabaseProvider";
+import { SecureStorageProvider } from "./providers/SecureStorageProvider";
+import { AIServiceProvider } from "./providers/AIServiceProvider";
+import { LoginPage } from "./pages/LoginPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import { SettingsPage } from "./pages/SettingsPage";
+import { ChatPage } from "./pages/ChatPage";
+import { useAuthStore } from "@fishbowl-ai/shared";
 
 const queryClient = new QueryClient();
 
 function App() {
   const { isAuthenticated } = useAuthStore();
-  
+
   return (
     <QueryClientProvider client={queryClient}>
       <DatabaseProvider>
@@ -246,21 +253,41 @@ function App() {
           <AIServiceProvider>
             <BrowserRouter>
               <Routes>
-                <Route 
-                  path="/login" 
-                  element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" />} 
+                <Route
+                  path="/login"
+                  element={
+                    !isAuthenticated ? (
+                      <LoginPage />
+                    ) : (
+                      <Navigate to="/dashboard" />
+                    )
+                  }
                 />
-                <Route 
-                  path="/dashboard" 
-                  element={isAuthenticated ? <DashboardPage /> : <Navigate to="/login" />} 
+                <Route
+                  path="/dashboard"
+                  element={
+                    isAuthenticated ? (
+                      <DashboardPage />
+                    ) : (
+                      <Navigate to="/login" />
+                    )
+                  }
                 />
-                <Route 
-                  path="/settings" 
-                  element={isAuthenticated ? <SettingsPage /> : <Navigate to="/login" />} 
+                <Route
+                  path="/settings"
+                  element={
+                    isAuthenticated ? (
+                      <SettingsPage />
+                    ) : (
+                      <Navigate to="/login" />
+                    )
+                  }
                 />
-                <Route 
-                  path="/chat" 
-                  element={isAuthenticated ? <ChatPage /> : <Navigate to="/login" />} 
+                <Route
+                  path="/chat"
+                  element={
+                    isAuthenticated ? <ChatPage /> : <Navigate to="/login" />
+                  }
                 />
                 <Route path="/" element={<Navigate to="/dashboard" />} />
               </Routes>
@@ -278,24 +305,25 @@ export default App;
 ### Mobile App Structure
 
 **apps/mobile/src/App.tsx**
+
 ```tsx
-import React, { useEffect } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { DatabaseProvider } from './providers/DatabaseProvider';
-import { SecureStorageProvider } from './providers/SecureStorageProvider';
-import { AIServiceProvider } from './providers/AIServiceProvider';
-import { LoginScreen } from './screens/LoginScreen';
-import { DashboardScreen } from './screens/DashboardScreen';
-import { SettingsScreen } from './screens/SettingsScreen';
-import { ChatScreen } from './screens/ChatScreen';
-import { useAuthStore } from '@fishbowl-ai/shared';
+import React, { useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { DatabaseProvider } from "./providers/DatabaseProvider";
+import { SecureStorageProvider } from "./providers/SecureStorageProvider";
+import { AIServiceProvider } from "./providers/AIServiceProvider";
+import { LoginScreen } from "./screens/LoginScreen";
+import { DashboardScreen } from "./screens/DashboardScreen";
+import { SettingsScreen } from "./screens/SettingsScreen";
+import { ChatScreen } from "./screens/ChatScreen";
+import { useAuthStore } from "@fishbowl-ai/shared";
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   const { isAuthenticated } = useAuthStore();
-  
+
   return (
     <DatabaseProvider>
       <SecureStorageProvider>
@@ -323,6 +351,7 @@ export default function App() {
 ### Scripts
 
 **apps/desktop/package.json**
+
 ```json
 {
   "scripts": {
@@ -338,6 +367,7 @@ export default function App() {
 ```
 
 **apps/mobile/package.json**
+
 ```json
 {
   "scripts": {
@@ -356,6 +386,7 @@ export default function App() {
 ### Environment Variables
 
 **apps/desktop/.env.local**
+
 ```env
 VITE_APP_NAME=Fishbowl AI
 VITE_APP_VERSION=$npm_package_version
@@ -363,6 +394,7 @@ VITE_LOG_LEVEL=debug
 ```
 
 **apps/mobile/.env**
+
 ```env
 EXPO_PUBLIC_APP_NAME=Fishbowl AI
 EXPO_PUBLIC_LOG_LEVEL=debug
@@ -380,18 +412,32 @@ EXPO_PUBLIC_LOG_LEVEL=debug
 
 ```typescript
 // Always use parameterized queries
-await db.execute('INSERT INTO users (id, email) VALUES (?, ?)', [id, email]);
+await db.execute("INSERT INTO users (id, email) VALUES (?, ?)", [id, email]);
 
 // Use transactions for multi-step operations
 await db.transaction(async (tx) => {
-  await tx.execute('INSERT INTO conversations (id, user_id) VALUES (?, ?)', [convId, userId]);
-  await tx.execute('INSERT INTO messages (conversation_id, content) VALUES (?, ?)', [convId, content]);
+  await tx.execute("INSERT INTO conversations (id, user_id) VALUES (?, ?)", [
+    convId,
+    userId,
+  ]);
+  await tx.execute(
+    "INSERT INTO messages (conversation_id, content) VALUES (?, ?)",
+    [convId, content],
+  );
 });
 
 // Always handle migrations
 const migrations = [
-  { version: 1, name: 'initial', sql: readFileSync('./migrations/001_initial_schema.sql', 'utf-8') },
-  { version: 2, name: 'api_keys', sql: readFileSync('./migrations/002_add_api_keys.sql', 'utf-8') }
+  {
+    version: 1,
+    name: "initial",
+    sql: readFileSync("./migrations/001_initial_schema.sql", "utf-8"),
+  },
+  {
+    version: 2,
+    name: "api_keys",
+    sql: readFileSync("./migrations/002_add_api_keys.sql", "utf-8"),
+  },
 ];
 
 await db.migrate(migrations);
@@ -401,18 +447,18 @@ await db.migrate(migrations);
 
 ```typescript
 // Never store sensitive data in plain text
-const encryptedKey = await secureStorage.saveAPIKey('openai', apiKey);
+const encryptedKey = await secureStorage.saveAPIKey("openai", apiKey);
 
 // Validate all user inputs
 const schema = z.object({
   email: z.string().email(),
-  password: z.string().min(8)
+  password: z.string().min(8),
 });
 
 const validated = schema.parse(userInput);
 
 // Sanitize SQL inputs (though parameterized queries handle this)
-const sanitized = input.replace(/[^\w\s]/gi, '');
+const sanitized = input.replace(/[^\w\s]/gi, "");
 ```
 
 ### 4. Testing Best Practices
@@ -424,10 +470,10 @@ describe('Feature: User Authentication', () => {
     it('should authenticate valid credentials', async () => {
       // Given
       const credentials = { email: 'test@example.com', password: 'password123' };
-      
+
       // When
       const result = await authService.login(credentials);
-      
+
       // Then
       expect(result.success).toBe(true);
       expect(result.user).toBeDefined();
@@ -444,12 +490,12 @@ describe('Feature: User Authentication', () => {
 ```typescript
 // Always handle API errors gracefully
 try {
-  const response = await aiService.chat('openai', messages);
+  const response = await aiService.chat("openai", messages);
   return response;
 } catch (error) {
-  if (error.message.includes('rate limit')) {
+  if (error.message.includes("rate limit")) {
     // Switch to backup provider
-    return aiService.chat('anthropic', messages);
+    return aiService.chat("anthropic", messages);
   }
   throw error;
 }
@@ -461,7 +507,9 @@ const retryWithBackoff = async (fn, retries = 3) => {
       return await fn();
     } catch (error) {
       if (i === retries - 1) throw error;
-      await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, Math.pow(2, i) * 1000),
+      );
     }
   }
 };
@@ -481,7 +529,7 @@ export interface PlatformBridge {
 // Desktop
 class TauriBridge implements PlatformBridge {
   async openFilePicker() {
-    return invoke('open_file_dialog');
+    return invoke("open_file_dialog");
   }
   // ...
 }
@@ -499,6 +547,7 @@ class ExpoBridge implements PlatformBridge {
 ## Quick Reference for AI Agents
 
 ### Where Code Goes
+
 1. **Business Logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
 3. **Mobile UI** → `apps/mobile/src/`
@@ -507,6 +556,7 @@ class ExpoBridge implements PlatformBridge {
 6. **E2E Tests Mobile** → `tests/mobile/features/`
 
 ### Key Commands
+
 ```bash
 # Development
 pnpm dev              # Run all apps
@@ -528,19 +578,21 @@ pnpm db:migrate       # Run migrations
 ```
 
 ### Import Examples
+
 ```typescript
 // From shared packages
-import { AIService, Database, useAuthStore } from '@fishbowl-ai/shared';
-import { theme } from '@fishbowl-ai/ui-theme';
+import { AIService, Database, useAuthStore } from "@fishbowl-ai/shared";
+import { theme } from "@fishbowl-ai/ui-theme";
 
 // Platform-specific
-import { TauriDatabase } from './services/database';
-import { ExpoSecureStorage } from './services/secure-storage';
+import { TauriDatabase } from "./services/database";
+import { ExpoSecureStorage } from "./services/secure-storage";
 ```
 
 ## Summary
 
 This architecture provides:
+
 - **Maximum code reuse** through shared packages
 - **Type safety** throughout the stack
 - **Platform-optimized** implementations

@@ -18,11 +18,7 @@
     "../../packages/shared/src",
     "../../packages/ui-theme/src"
   ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src-tauri"
-  ],
+  "exclude": ["node_modules", "dist", "src-tauri"],
   "references": [
     {
       "path": "../../packages/shared"

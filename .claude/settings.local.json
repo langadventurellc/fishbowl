@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm turbo lint:*)",
+      "Bash(pnpm turbo build:*)",
+      "Bash(pnpm turbo run test:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm lint:*)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "task-trellis"
+  ]
+}

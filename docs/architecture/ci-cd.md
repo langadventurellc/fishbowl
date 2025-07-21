@@ -7,6 +7,7 @@ See the [monorepo architecture guide](./monorepo.md) for an overview of the proj
 Sample CircleCI configuration for building and testing the Fishbowl AI applications across desktop and mobile platforms.
 
 **.circleci/config.yml**
+
 ```yaml
 version: 2.1
 

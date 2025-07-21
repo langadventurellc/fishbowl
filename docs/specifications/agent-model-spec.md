@@ -161,15 +161,15 @@ interface APIConfiguration {
 Uses Vercel AI SDK for unified interface across providers:
 
 ```typescript
-import { createOpenAI } from '@ai-sdk/openai';
-import { createAnthropic } from '@ai-sdk/anthropic';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { createOpenAI } from "@ai-sdk/openai";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 
 // Initialize providers with stored API keys
 const providers = {
-  openai: createOpenAI({ apiKey: getSecureApiKey('openai') }),
-  anthropic: createAnthropic({ apiKey: getSecureApiKey('anthropic') }),
-  google: createGoogleGenerativeAI({ apiKey: getSecureApiKey('google') }),
+  openai: createOpenAI({ apiKey: getSecureApiKey("openai") }),
+  anthropic: createAnthropic({ apiKey: getSecureApiKey("anthropic") }),
+  google: createGoogleGenerativeAI({ apiKey: getSecureApiKey("google") }),
 };
 ```
 
@@ -196,23 +196,26 @@ function formatMessages(
   messages: Message[],
 ): FormattedMessage[] {
   switch (provider.systemPromptStrategy) {
-    case 'system_role':
-      return [{ role: 'system', content: systemPrompt }, ...messages];
+    case "system_role":
+      return [{ role: "system", content: systemPrompt }, ...messages];
 
-    case 'first_user_message':
+    case "first_user_message":
       const [first, ...rest] = messages;
       return [
         {
-          role: 'user',
+          role: "user",
           content: `${systemPrompt}\n\n${first.content}`,
         },
         ...rest,
       ];
 
-    case 'user_prefix':
-      return messages.map(msg => ({
+    case "user_prefix":
+      return messages.map((msg) => ({
         ...msg,
-        content: msg.role === 'user' ? `${systemPrompt}\n\n${msg.content}` : msg.content,
+        content:
+          msg.role === "user"
+            ? `${systemPrompt}\n\n${msg.content}`
+            : msg.content,
       }));
   }
 }
