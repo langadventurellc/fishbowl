@@ -13,10 +13,11 @@
 ## Project Structure
 
 ```
-fishbowl-ai/
+fishbowl/
 ├── apps/
 │   ├── desktop/                 # Tauri desktop app
 │   │   ├── src/
+│   │   │   ├── __tests__/          # Unit tests
 │   │   │   ├── App.tsx
 │   │   │   ├── main.tsx
 │   │   │   └── pages/
@@ -32,6 +33,7 @@ fishbowl-ai/
 │       ├── android/
 │       ├── ios/
 │       ├── src/
+│   │   │   ├── __tests__/          # Unit tests
 │       │   ├── App.tsx
 │       │   └── screens/
 │       ├── index.js
@@ -43,12 +45,19 @@ fishbowl-ai/
 │   ├── shared/                  # Shared business logic
 │   │   ├── src/
 │   │   │   ├── api/
+│   │   │       └── __tests__/          # Unit tests
 │   │   │   ├── db/
+│   │   │       └── __tests__/          # Unit tests
 │   │   │   ├── hooks/
+│   │   │       └── __tests__/          # Unit tests
 │   │   │   ├── services/
+│   │   │       └── __tests__/          # Unit tests
 │   │   │   ├── store/
+│   │   │       └── __tests__/          # Unit tests
 │   │   │   ├── types/
+│   │   │       └── __tests__/          # Unit tests
 │   │   │   └── utils/
+│   │   │       └── __tests__/          # Unit tests
 │   │   ├── package.json
 │   │   └── tsconfig.json
 │   │
