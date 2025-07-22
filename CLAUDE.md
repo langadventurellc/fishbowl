@@ -46,16 +46,16 @@ How to structure code across shared packages and platform-specific applications.
 #### Desktop
 
 - **Desktop**: Electron (37.2+) with React (19.1+)
-- **BDD Testing**: WebdriverIO (Linux dev container for macOS)
+- **BDD Testing**: Playwright (1.54+) with Jest (E2E tests)
 - **Database**: SQLite with Electron SQLite integration
 - **Styling**: Tailwind and shadcn/ui
 
 #### Mobile
 
-- **Mobile**: React Native with Expo (React Native 0.76+)
-- **BDD Testing**: Detox with Jest (E2E tests)
+- **Mobile**: React Native with Expo (React Native 0.80+, Expo SDK 53.0+)
+- **BDD Testing**: Detox (20.40+) with Jest (E2E tests)
 - **Database**: SQLite with Expo SQLite integration
-- **Styling**: NativeWind and Tamagui
+- **Styling**: NativeWind (4.1+) and Tamagui (1.132+)
 
 ### 1. Code Placement Rules
 

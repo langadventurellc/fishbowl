@@ -1,0 +1,48 @@
+{
+  "name": "@fishbowl-ai/mobile",
+  "version": "0.0.0",
+  "description": "Fishbowl AI Mobile Application",
+  "author": "LangAdventure LLC",
+  "private": true,
+  "type": "module",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/langadventurellc/fishbowl.git",
+    "directory": "apps/mobile"
+  },
+  "scripts": {
+    "dev": "expo start --clear",
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build": "expo build",
+    "test": "jest --passWithNoTests",
+    "test:unit": "jest --passWithNoTests",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf .expo node_modules/.cache"
+  },
+  "dependencies": {
+    "@fishbowl-ai/shared": "workspace:*",
+    "@fishbowl-ai/ui-theme": "workspace:*",
+    "@react-navigation/native": "^7.1.14",
+    "@react-navigation/bottom-tabs": "^7.4.2",
+    "expo": "~53.0.20",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.1.0",
+    "react-native": "0.79.5",
+    "react-native-screens": "~4.11.1",
+    "react-native-safe-area-context": "5.4.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@fishbowl-ai/eslint-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "@types/react": "~19.1.8",
+    "jest": "^30.0.4",
+    "jest-expo": "~53.0.3",
+    "typescript": "~5.8.3"
+  }
+}
