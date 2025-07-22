@@ -5,14 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "tauri dev",
+    "dev:container": "echo 'Building for container - GUI will not display' && tauri build --debug",
     "build": "tsc && vite build && tauri build",
+    "build:container": "tauri build",
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
     "test:e2e": "wdio run ../../tests/desktop/wdio.conf.ts",
+    "test:e2e:headless": "Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 2 && DISPLAY=:99 wdio run ../../tests/desktop/wdio.conf.ts",
     "db:migrate": "node scripts/migrate.js",
-    "lint": "eslint src --ext .ts,.tsx"
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist src-tauri/target node_modules"
   },
   "dependencies": {
     "@fishbowl-ai/shared": "workspace:*",

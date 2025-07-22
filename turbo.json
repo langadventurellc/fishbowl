@@ -1,33 +1,45 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
-  "tasks": {
-    "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "build/**"]
-    },
+  "pipeline": {
     "dev": {
       "cache": false,
       "persistent": true
     },
-    "lint": {
+    "dev:container": {
+      "cache": false,
       "dependsOn": ["^build"]
     },
-    "test": {
-      "dependsOn": ["build"],
-      "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "src-tauri/target/**"]
+    },
+    "build:container": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "src-tauri/target/**"]
     },
     "test:unit": {
-      "inputs": ["src/**/*.tsx", "src/**/*.ts", "test/**/*.ts"]
+      "dependsOn": ["^build"],
+      "outputs": ["coverage/**"]
     },
     "test:e2e": {
       "dependsOn": ["build"],
       "cache": false
     },
-    "db:migrate": {
+    "test:e2e:headless": {
+      "dependsOn": ["build"],
       "cache": false
     },
+    "test": {
+      "dependsOn": ["test:unit", "test:e2e"]
+    },
+    "lint": {
+      "outputs": []
+    },
     "clean": {
+      "cache": false
+    },
+    "db:migrate": {
       "cache": false
     }
   }

@@ -1,0 +1,44 @@
+FROM ubuntu:22.04
+
+# Avoid prompts from apt
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies for Tauri and development
+RUN apt-get update && apt-get install -y \
+    curl \
+    wget \
+    git \
+    build-essential \
+    pkg-config \
+    libssl-dev \
+    libgtk-3-dev \
+    libayatana-appindicator3-dev \
+    libwebkit2gtk-4.0-dev \
+    librsvg2-dev \
+    libxdo-dev \
+    libxrandr-dev \
+    libdbus-1-dev \
+    sudo \
+    ca-certificates \
+    # For headless testing
+    xvfb \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libxss1 \
+    libgconf-2-4 \
+    # For development
+    vim \
+    htop \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create vscode user (Dev Containers convention)
+RUN groupadd --gid 1000 vscode \
+    && useradd --uid 1000 --gid vscode --shell /bin/bash --create-home vscode \
+    && echo 'vscode ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+
+USER vscode
+WORKDIR /workspace
+
+# The Node.js and Rust will be installed by Dev Container features
+# This keeps the Dockerfile minimal and leverages Microsoft's maintained features

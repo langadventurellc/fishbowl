@@ -8,18 +8,24 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 ### Commands
 
-| Command                 | Description                                           |
-| ----------------------- | ----------------------------------------------------- |
-| `pnpm dev`              | Start development servers for all apps                |
-| `pnpm dev:desktop`      | Start development server for desktop app only         |
-| `pnpm build`            | Build all packages and apps                           |
-| `pnpm build:desktop`    | Build desktop app and dependencies                    |
-| `pnpm test`             | Run tests for all packages                            |
-| `pnpm test:e2e:desktop` | Run end-to-end tests for desktop app                  |
-| `pnpm lint`             | Run linting for all packages                          |
-| `pnpm format`           | Format all TypeScript, JavaScript, and Markdown files |
-| `pnpm clean`            | Clean all build outputs and node_modules              |
-| `pnpm db:migrate`       | Run database migrations for all apps                  |
+| Command                              | Description                                           |
+| ------------------------------------ | ----------------------------------------------------- |
+| `pnpm dev`                           | Start development servers for all apps                |
+| `pnpm dev:desktop`                   | Start development server for desktop app only         |
+| `pnpm dev:desktop:container`         | Build desktop app for container (no GUI)              |
+| `pnpm build`                         | Build all packages and apps                           |
+| `pnpm build:desktop`                 | Build desktop app and dependencies                    |
+| `pnpm build:desktop:container`       | Build desktop app for container environment           |
+| `pnpm test`                          | Run tests for all packages                            |
+| `pnpm test:e2e:desktop`              | Run end-to-end tests for desktop app                  |
+| `pnpm test:e2e:desktop:headless`     | Run E2E tests in headless mode                        |
+| `pnpm test:e2e:desktop:container`    | Run E2E tests in dev container                        |
+| `pnpm container:setup`               | Start virtual display for container testing           |
+| `pnpm container:test-ready`          | Setup container and verify it's ready for testing     |
+| `pnpm lint`                          | Run linting for all packages                          |
+| `pnpm format`                        | Format all TypeScript, JavaScript, and Markdown files |
+| `pnpm clean`                         | Clean all build outputs and node_modules              |
+| `pnpm db:migrate`                    | Run database migrations for all apps                  |
 
 ## Architecture
 
@@ -36,7 +42,7 @@ How to structure code across shared packages and platform-specific applications.
 #### Desktop
 
 - **Desktop**: Tauri (2.7+) with React (19.1+)
-- **BDD Testing**: Jest + tauri-driver + WebdriverIO
+- **BDD Testing**: WebdriverIO + tauri-driver (Linux dev container for macOS)
 - **Database**: SQLite with tauri-plugin-sqlite
 - **Styling**: Tailwind and shadcn/ui 
 
@@ -94,8 +100,10 @@ export interface StorageBridge {
 
 ### 7. Testing Strategy
 
-- Shared package: Unit tests for business logic (Vitest)
-- Platform apps: Component/integration tests
+- **Shared package**: Unit tests for business logic (Jest)
+- **Platform apps**: Component/integration tests
+- **E2E Testing**: WebdriverIO with Tauri in Linux dev container
+- **Cross-platform**: Use dev container for consistent testing environment
 - Keep platform-specific test utilities separate
 
 ### 8. Environment Variables

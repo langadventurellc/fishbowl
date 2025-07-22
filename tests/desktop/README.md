@@ -4,12 +4,12 @@ This directory contains end-to-end tests for the desktop application using Webdr
 
 ## Platform Support
 
-**Important**: WebDriver testing with Tauri is currently only supported on **Linux and Windows**. macOS is not supported due to the lack of a WKWebView WebDriver implementation.
+WebDriver testing with Tauri is supported on **Linux and Windows**. For macOS development, use the **dev container** approach.
 
 ### Supported Platforms:
 - ✅ Linux (uses WebKitWebDriver)
 - ✅ Windows (uses Microsoft Edge Driver)  
-- ❌ macOS (WKWebView driver not available)
+- ✅ macOS (via Linux dev container)
 
 ## Structure
 
@@ -21,38 +21,41 @@ This directory contains end-to-end tests for the desktop application using Webdr
 
 ### Prerequisites
 
-1. Install `tauri-driver` (Linux/Windows only):
+**For Linux/Windows (native):**
+1. Install `tauri-driver`:
    ```bash
    cargo install tauri-driver
    ```
 
-2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
+**For macOS (dev container):**
+1. Open project in dev container (VS Code with Dev Containers extension)
+2. Container will automatically install `tauri-driver` and set up virtual display
 
 ### Running Tests
 
-**Linux/Windows:**
+**Native Linux/Windows:**
 ```bash
 pnpm test:e2e:desktop
 ```
 
-**macOS Alternative Testing:**
+**Dev Container (any platform including macOS):**
+```bash
+# Setup virtual display and run tests
+pnpm container:test-ready
+pnpm test:e2e:desktop:container
 
-Since WebDriver E2E tests aren't supported on macOS, consider these alternatives:
+# Or run headless tests directly
+pnpm test:e2e:desktop:headless
+```
 
-1. **Unit Testing**: Focus on testing business logic in the shared package
-   ```bash
-   pnpm test:unit
-   ```
+**Development in Container:**
+```bash
+# Build for container (no GUI display)
+pnpm dev:desktop:container
 
-2. **Manual Testing**: Test the app manually using the development server
-   ```bash
-   pnpm dev:desktop
-   ```
-
-3. **CI/CD Testing**: Set up GitHub Actions to run E2E tests on Linux runners
+# Build production app in container
+pnpm build:desktop:container
+```
 
 ## Test Structure
 
@@ -70,20 +73,44 @@ describe('Feature: Application Launch', () => {
 });
 ```
 
+## Container Workflow
+
+The dev container provides a Linux environment with all necessary tools pre-installed:
+
+- **Virtual Display**: Xvfb for headless GUI testing
+- **WebDriver**: tauri-driver for Tauri app automation  
+- **Dependencies**: All build tools and dependencies
+
+### Container Commands:
+```bash
+# Setup virtual display
+pnpm container:setup
+
+# Verify container is ready for testing  
+pnpm container:test-ready
+
+# Run tests in container
+DISPLAY=:99 pnpm test:e2e:desktop:headless
+```
+
 ## CI/CD Setup
 
-Add this to your GitHub Actions workflow for cross-platform testing:
+Add this to your GitHub Actions workflow:
 
 ```yaml
-- name: Run E2E tests (Linux)
-  if: matrix.os == 'ubuntu-latest'
+- name: Run E2E tests
   run: |
+    # Install tauri-driver
     cargo install tauri-driver
-    pnpm test:e2e:desktop
+    # Setup virtual display 
+    pnpm container:setup
+    # Run tests
+    pnpm test:e2e:desktop:container
 ```
 
 ## Troubleshooting
 
-- **"tauri-driver is not supported on this platform"**: You're on macOS - use alternative testing approaches above
-- **App bundle installation prompts**: Tests should use the raw executable, not .app bundles
-- **WebDriver connection issues**: Ensure tauri-driver is installed and running
+- **"tauri-driver is not supported on this platform"**: Use dev container on macOS
+- **"Display :99 not found"**: Run `pnpm container:setup` first
+- **App bundle installation prompts**: Tests use raw executable, not .app bundles
+- **WebDriver connection issues**: Ensure tauri-driver is running and virtual display is active
