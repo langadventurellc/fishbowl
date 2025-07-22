@@ -64,11 +64,17 @@
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
-      "node_modules/**/*",
       "package.json"
     ],
+    "compression": "maximum",
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
     "mac": {
       "icon": "assets/icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
       "target": [
         {
           "target": "dmg",
