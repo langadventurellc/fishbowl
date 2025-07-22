@@ -3,39 +3,41 @@ import { _electron as electron } from "playwright";
 import type { ElectronApplication, Page } from "playwright";
 import path from "path";
 
-describe("Feature: Application Startup", () => {
+test.describe("Feature: Application Startup", () => {
   let electronApp: ElectronApplication;
   let window: Page;
 
-  describe("Scenario: First application launch", () => {
-    test.beforeAll(async () => {
-      // Given - Fresh application state
-      const electronPath = path.join(
-        __dirname,
-        "../../../../apps/desktop/dist-electron/main.js",
-      );
+  test.beforeAll(async () => {
+    // Given - Fresh application state
+    const electronPath = path.join(
+      __dirname,
+      "../../../../apps/desktop/dist-electron/main.js",
+    );
 
-      electronApp = await electron.launch({
-        args: [electronPath],
-        timeout: 30000,
-      });
-
-      // Wait for the first window to be ready
-      window = await electronApp.firstWindow();
-      await window.waitForLoadState("domcontentloaded");
+    electronApp = await electron.launch({
+      args: [electronPath],
+      timeout: 30000,
     });
 
-    test.afterAll(async () => {
-      // Cleanup - Close the application
-      if (electronApp) {
-        await electronApp.close();
-      }
-    });
+    // Wait for the first window to be ready
+    window = await electronApp.firstWindow();
+    await window.waitForLoadState("domcontentloaded");
+  });
+
+  test.afterAll(async () => {
+    // Cleanup - Close the application
+    if (electronApp) {
+      await electronApp.close();
+    }
+  });
+
+  test.describe("Scenario: First application launch", () => {
 
     test("should display application window with correct title", async () => {
       // Given - Fresh application state (handled in beforeAll)
 
       // When - Application is launched (handled in beforeAll)
+      await window.waitForLoadState("networkidle");
 
       // Then - Application window is visible with correct title
       const title = await window.title();
@@ -47,7 +49,8 @@ describe("Feature: Application Startup", () => {
       expect(window).toBeDefined();
 
       // When - Main content loads
-      await window.waitForSelector("body");
+      await window.waitForLoadState("networkidle");
+      await window.waitForSelector("h1");
 
       // Then - Hello World message is visible
       const content = await window.textContent("body");
@@ -84,7 +87,7 @@ describe("Feature: Application Startup", () => {
     });
   });
 
-  describe("Scenario: Application shutdown", () => {
+  test.describe("Scenario: Application shutdown", () => {
     test("should close gracefully", async () => {
       // Given - Application is running
       expect(electronApp).toBeDefined();

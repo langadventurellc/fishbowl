@@ -6,6 +6,14 @@ A desktop and mobile application for creating conversations with multiple AI age
 
 See [Architecture Guide](docs/architecture/monorepo.md) for the overall structure and guidelines.
 
+### Quality checks
+
+**IMPORTANT** Run the following commands to ensure code quality after every change. Fix all issues as soon as possible.
+
+- `pnpm lint` - Run linter to check for code style issues
+- `pnpm format` - Format code to ensure consistent style
+- `pnpm test` - Run unit tests to ensure functionality
+
 ### Commands
 
 | Command                           | Description                                           |

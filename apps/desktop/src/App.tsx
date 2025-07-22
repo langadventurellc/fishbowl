@@ -1,5 +1,5 @@
 export default function App() {
-  const electronAPI = window.electronAPI;
+  const electronAPI = window?.electronAPI;
 
   return (
     <div
