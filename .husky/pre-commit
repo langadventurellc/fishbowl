@@ -1,0 +1,5 @@
+# Run quality checks (lint, format, type-check)
+pnpm quality
+
+# Run tests  
+pnpm test
