@@ -52,7 +52,10 @@ How to structure code across shared packages and platform-specific applications.
 
 #### Mobile
 
-Mobile framework is currently on hold. Future mobile implementation approach to be determined.
+- **Mobile**: React Native with Expo (React Native 0.76+)
+- **BDD Testing**: Detox with Jest (E2E tests)
+- **Database**: SQLite with Expo SQLite integration
+- **Styling**: NativeWind and Tamagui
 
 ### 1. Code Placement Rules
 
@@ -97,8 +100,8 @@ export interface StorageBridge {
 }
 
 // In platform apps - implement
-// Desktop: uses localStorage
-// Mobile: TBD when implemented
+// Desktop: uses Electron secure storage
+// Mobile: uses Expo SecureStore
 ```
 
 ### 7. Testing Strategy
@@ -112,7 +115,7 @@ export interface StorageBridge {
 ### 8. Environment Variables
 
 - Desktop: Use Vite env vars (`VITE_API_URL`)
-- Mobile: TBD when implemented
+- Mobile: Use Expo env vars (`EXPO_PUBLIC_API_URL`)
 - Abstract in shared config module
 
 ## Quick Reference for AI Agents
@@ -121,7 +124,7 @@ When adding features:
 
 1. **Business logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
-3. **Mobile UI** → `apps/mobile/src/` (when implemented)
+3. **Mobile UI** → `apps/mobile/src/`
 4. **Shared types** → `packages/shared/src/types/`
 5. **API calls** → `packages/shared/src/api/`
 

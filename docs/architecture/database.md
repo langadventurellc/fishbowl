@@ -137,4 +137,67 @@ export class ElectronDatabase implements IDatabase {
 
 **apps/mobile/src/services/database.ts**
 
-unknown
+```typescript
+import * as SQLite from "expo-sqlite";
+import {
+  Database as IDatabase,
+  Migration,
+  Transaction,
+} from "@fishbowl-ai/shared";
+
+export class ExpoDatabase implements IDatabase {
+  private db: SQLite.SQLiteDatabase;
+
+  async init() {
+    this.db = await SQLite.openDatabaseAsync("fishbowl.db");
+  }
+
+  async execute(query: string, params?: any[]) {
+    await this.db.execAsync([{ sql: query, args: params || [] }], false);
+  }
+
+  async select<T>(query: string, params?: any[]): Promise<T[]> {
+    const result = await this.db.getAllAsync(query, params || []);
+    return result as T[];
+  }
+
+  async selectOne<T>(query: string, params?: any[]): Promise<T | null> {
+    const result = await this.db.getFirstAsync(query, params || []);
+    return (result as T) || null;
+  }
+
+  async transaction<T>(fn: (tx: Transaction) => Promise<T>): Promise<T> {
+    return this.db.withTransactionAsync(async () => {
+      return fn(this as any);
+    });
+  }
+
+  async migrate(migrations: Migration[]) {
+    // Check current version
+    await this.execute(`
+      CREATE TABLE IF NOT EXISTS migrations (
+        id INTEGER PRIMARY KEY,
+        version INTEGER NOT NULL UNIQUE,
+        name TEXT NOT NULL,
+        applied_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    const applied = await this.select<{ version: number }>(
+      "SELECT version FROM migrations",
+    );
+    const appliedVersions = new Set(applied.map((m) => m.version));
+
+    // Apply new migrations
+    for (const migration of migrations) {
+      if (!appliedVersions.has(migration.version)) {
+        await this.execute(migration.sql);
+        await this.execute(
+          "INSERT INTO migrations (version, name) VALUES (?, ?)",
+          [migration.version, migration.name],
+        );
+      }
+    }
+  }
+}
+```

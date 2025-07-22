@@ -93,4 +93,58 @@ export class ElectronSecureStorage implements SecureStorage {
 
 **apps/mobile/src/services/secure-storage.ts**
 
-unknown
+```typescript
+import * as SecureStore from "expo-secure-store";
+import { SecureStorage } from "@fishbowl-ai/shared";
+
+export class ExpoSecureStorage implements SecureStorage {
+  async saveAPIKey(provider: string, key: string): Promise<void> {
+    await SecureStore.setItemAsync(`api_key_${provider}`, key);
+  }
+
+  async getAPIKey(provider: string): Promise<string | null> {
+    return SecureStore.getItemAsync(`api_key_${provider}`);
+  }
+
+  async getAPIKeys(): Promise<Array<{ provider: string; key: string }>> {
+    // Expo doesn't provide a way to list all keys
+    // So we check known providers
+    const providers = ["openai", "anthropic", "google"];
+    const keys = [];
+
+    for (const provider of providers) {
+      const key = await this.getAPIKey(provider);
+      if (key) {
+        keys.push({ provider, key });
+      }
+    }
+
+    return keys;
+  }
+
+  async removeAPIKey(provider: string): Promise<void> {
+    await SecureStore.deleteItemAsync(`api_key_${provider}`);
+  }
+
+  async setItem(key: string, value: string): Promise<void> {
+    await SecureStore.setItemAsync(key, value);
+  }
+
+  async getItem(key: string): Promise<string | null> {
+    return SecureStore.getItemAsync(key);
+  }
+
+  async removeItem(key: string): Promise<void> {
+    await SecureStore.deleteItemAsync(key);
+  }
+
+  async clear(): Promise<void> {
+    // Expo doesn't provide bulk clear
+    // Would need to track keys manually or clear known keys
+    const providers = ["openai", "anthropic", "google"];
+    for (const provider of providers) {
+      await this.removeAPIKey(provider);
+    }
+  }
+}
+```

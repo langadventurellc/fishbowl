@@ -121,4 +121,98 @@ describe("Feature: AI Provider Configuration", () => {
 
 ### Mobile E2E Tests (Detox)
 
-unknown
+**tests/mobile/detox.config.js**
+
+```javascript
+module.exports = {
+  testRunner: "jest",
+  runnerConfig: "e2e/jest.config.js",
+  skipLegacyWorkersInjection: true,
+  apps: {
+    "ios.debug": {
+      type: "ios.app",
+      binaryPath:
+        "apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/FishbowlAI.app",
+      build:
+        "cd apps/mobile && xcodebuild -workspace ios/FishbowlAI.xcworkspace -scheme FishbowlAI -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
+    },
+    "android.debug": {
+      type: "android.apk",
+      binaryPath:
+        "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+      build:
+        "cd apps/mobile/android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug",
+    },
+  },
+  devices: {
+    simulator: {
+      type: "ios.simulator",
+      device: { type: "iPhone 14" },
+    },
+    emulator: {
+      type: "android.emulator",
+      device: { avdName: "Pixel_6_API_33" },
+    },
+  },
+  configurations: {
+    "ios.sim.debug": {
+      device: "simulator",
+      app: "ios.debug",
+    },
+    "android.emu.debug": {
+      device: "emulator",
+      app: "android.debug",
+    },
+  },
+};
+```
+
+**tests/mobile/features/ai-configuration.e2e.ts**
+
+```typescript
+describe("Feature: AI Provider Configuration", () => {
+  beforeAll(async () => {
+    await device.launchApp();
+  });
+
+  beforeEach(async () => {
+    await device.reloadReactNative();
+  });
+
+  describe("Scenario: Add OpenAI API key", () => {
+    it("should save API key securely", async () => {
+      // Given - User is on settings screen
+      await element(by.id("settingsTab")).tap();
+      await expect(element(by.id("settingsScreen"))).toBeVisible();
+
+      // When - User enters OpenAI API key
+      await element(by.id("addProviderButton")).tap();
+      await element(by.id("providerPicker")).tap();
+      await element(by.text("OpenAI")).tap();
+      await element(by.id("apiKeyInput")).typeText("sk-test-key-123");
+      await element(by.id("saveApiKeyButton")).tap();
+
+      // Then - API key is saved and provider is available
+      await expect(element(by.id("provider-openai"))).toBeVisible();
+      await expect(
+        element(by.text("Active").withAncestor(by.id("provider-openai"))),
+      ).toBeVisible();
+    });
+  });
+
+  describe("Scenario: Test AI provider connection", () => {
+    it("should verify API key works", async () => {
+      // Given - Provider is configured
+      await element(by.id("settingsTab")).tap();
+
+      // When - User tests the connection
+      await element(by.id("testOpenAIConnection")).tap();
+
+      // Then - Connection test passes
+      await waitFor(element(by.text("Connected")))
+        .toBeVisible()
+        .withTimeout(5000);
+    });
+  });
+});
+```
