@@ -14,19 +14,20 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest",
+    "test:unit": "jest --passWithNoTests",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rm -rf dist"
   },
   "dependencies": {
     "@fishbowl-ai/ui-theme": "workspace:*",
-    "zustand": "^4.4.0",
-    "zod": "^3.22.0"
+    "zod": "^4.0.5",
+    "zustand": "^5.0.6"
   },
   "devDependencies": {
     "@fishbowl-ai/eslint-config": "workspace:*",
-    "@types/jest": "^29.5.0",
-    "jest": "^29.7.0",
-    "typescript": "^5.0.0"
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.4",
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "react": "^18.0.0"
