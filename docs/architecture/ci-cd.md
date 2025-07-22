@@ -90,32 +90,6 @@ jobs:
           name: Build desktop app
           command: pnpm build:desktop
 
-  build-mobile-ios:
-    executor: macos-executor
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Install CocoaPods
-          command: |
-            sudo gem install cocoapods
-            cd apps/mobile/ios && pod install
-      - run:
-          name: Build iOS app
-          command: pnpm build:ios --filter=mobile
-
-  build-mobile-android:
-    executor: android/android
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - android/accept-licenses
-      - run:
-          name: Build Android app
-          command: pnpm build:android --filter=mobile
-
   test-e2e-desktop:
     executor: node-executor
     steps:
@@ -125,21 +99,6 @@ jobs:
       - run:
           name: Run desktop E2E tests
           command: pnpm test:e2e:desktop
-
-  test-e2e-mobile-ios:
-    executor: macos-executor
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
-      - run:
-          name: Start iOS simulator
-          command: |
-            xcrun simctl boot "iPhone 14" || true
-            xcrun simctl openurl booted https://google.com
-      - run:
-          name: Run iOS E2E tests
-          command: pnpm test:e2e:ios --filter=mobile
 
 workflows:
   build-and-test:
@@ -154,16 +113,7 @@ workflows:
       - build-desktop-macos:
           requires:
             - test-shared
-      - build-mobile-ios:
-          requires:
-            - test-shared
-      - build-mobile-android:
-          requires:
-            - test-shared
       - test-e2e-desktop:
           requires:
             - build-desktop-linux
-      - test-e2e-mobile-ios:
-          requires:
-            - build-mobile-ios
 ```

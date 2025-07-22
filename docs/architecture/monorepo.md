@@ -30,17 +30,7 @@ fishbowl/
 │   │   ├── tsconfig.json
 │   │   └── vite.config.ts
 │   │
-│   └── mobile/                  # React Native app
-│       ├── android/
-│       ├── ios/
-│       ├── src/
-│   │   │   ├── __tests__/          # Unit tests
-│       │   ├── App.tsx
-│       │   └── screens/
-│       ├── index.js
-│       ├── metro.config.js
-│       ├── package.json
-│       └── tsconfig.json
+│   └── mobile/                  # unknown
 │
 ├── packages/
 │   ├── shared/                  # Shared business logic
@@ -119,13 +109,9 @@ fishbowl/
 - **E2E Testing**: WebdriverIO + Jest (BDD approach)
 - **Secure Storage**: Tauri keychain integration
 
-### Mobile (React Native)
+### Mobile 
 
-- **Framework**: React Native + Expo
-- **Database**: expo-sqlite
-- **Styling**: NativeWind + Tamagui
-- **E2E Testing**: Detox + Jest (BDD approach)
-- **Secure Storage**: expo-secure-store
+Mobile framework is currently undecided. Waiting to see how Tauri Mobile matures. In the future we may go with Tauri Mobile or with React Native.
 
 ## Initial Setup
 
@@ -304,47 +290,7 @@ export default App;
 
 ### Mobile App Structure
 
-**apps/mobile/src/App.tsx**
-
-```tsx
-import React, { useEffect } from "react";
-import { NavigationContainer } from "@react-navigation/native";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { DatabaseProvider } from "./providers/DatabaseProvider";
-import { SecureStorageProvider } from "./providers/SecureStorageProvider";
-import { AIServiceProvider } from "./providers/AIServiceProvider";
-import { LoginScreen } from "./screens/LoginScreen";
-import { DashboardScreen } from "./screens/DashboardScreen";
-import { SettingsScreen } from "./screens/SettingsScreen";
-import { ChatScreen } from "./screens/ChatScreen";
-import { useAuthStore } from "@fishbowl-ai/shared";
-
-const Tab = createBottomTabNavigator();
-
-export default function App() {
-  const { isAuthenticated } = useAuthStore();
-
-  return (
-    <DatabaseProvider>
-      <SecureStorageProvider>
-        <AIServiceProvider>
-          <NavigationContainer>
-            {!isAuthenticated ? (
-              <LoginScreen />
-            ) : (
-              <Tab.Navigator>
-                <Tab.Screen name="Dashboard" component={DashboardScreen} />
-                <Tab.Screen name="Chat" component={ChatScreen} />
-                <Tab.Screen name="Settings" component={SettingsScreen} />
-              </Tab.Navigator>
-            )}
-          </NavigationContainer>
-        </AIServiceProvider>
-      </SecureStorageProvider>
-    </DatabaseProvider>
-  );
-}
-```
+unknown
 
 ## Development Workflow
 
@@ -368,20 +314,7 @@ export default function App() {
 
 **apps/mobile/package.json**
 
-```json
-{
-  "scripts": {
-    "dev": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "build": "expo build",
-    "test": "jest",
-    "test:e2e:ios": "detox test --configuration ios.sim.debug",
-    "test:e2e:android": "detox test --configuration android.emu.debug",
-    "db:migrate": "node scripts/migrate.js"
-  }
-}
-```
+unknown
 
 ### Environment Variables
 
@@ -395,10 +328,7 @@ VITE_LOG_LEVEL=debug
 
 **apps/mobile/.env**
 
-```env
-EXPO_PUBLIC_APP_NAME=Fishbowl AI
-EXPO_PUBLIC_LOG_LEVEL=debug
-```
+unknown
 
 ## Best Practices
 
@@ -550,7 +480,7 @@ class ExpoBridge implements PlatformBridge {
 
 1. **Business Logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
-3. **Mobile UI** → `apps/mobile/src/`
+3. **Mobile UI** → unknown
 4. **Database Schemas** → `migrations/`
 5. **E2E Tests Desktop** → `tests/desktop/features/`
 6. **E2E Tests Mobile** → `tests/mobile/features/`

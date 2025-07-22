@@ -26,18 +26,27 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 ## Architecture
 
-How to structure code across shared packages and platform-specific applications. It is designed to ensure clean separations of concerns, maintainability, and reusability of code. The monorepo contains projects for both desktop (Tauri) and mobile (React Native) platforms, with shared logic in a common package.
+How to structure code across shared packages and platform-specific applications. It is designed to ensure clean separations of concerns, maintainability, and reusability of code. The monorepo contains projects for both desktop (Tauri) and mobile (unknown) platforms, with shared logic in a common package.
 
 ### Technology Stack
 
-- **Desktop**: Tauri (2.7+) with React (19.1+)
-- **Mobile**: React Native (0.80+) with Expo (53.0+)
+#### Shared
+
 - **Shared Logic**: TypeScript (5.8+), Zustand (5.0+)
 - **Unit Testing**: Jest (30.0+)
-- **BDD Testing**: Jest + tauri-driver + WebdriverIO for Tauri, Jest + Detox (20.40+) for React Native
-- **Database**: SQLite (tauri-plugin-sql for Tauri, expo-sqlite for React Native)
 - **Validation**: Zod (4.0+)
-- **Styling**: Tailwind and shadcn/ui for Tauri, NativeWind and Tamagui for React Native
+
+#### Desktop
+
+- **Desktop**: Tauri (2.7+) with React (19.1+)
+- **BDD Testing**: Jest + tauri-driver + WebdriverIO
+- **Database**: SQLite with tauri-plugin-sqlite
+- **Styling**: Tailwind and shadcn/ui 
+
+#### Mobile
+
+Mobile framework is currently undecided. Waiting to see how Tauri Mobile matures. In the future we may go with Tauri Mobile or with React Native.
+
 
 ### 1. Code Placement Rules
 
@@ -83,7 +92,7 @@ export interface StorageBridge {
 
 // In platform apps - implement
 // Desktop: uses localStorage
-// Mobile: uses AsyncStorage
+// Mobile: unknown
 ```
 
 ### 7. Testing Strategy
@@ -95,7 +104,7 @@ export interface StorageBridge {
 ### 8. Environment Variables
 
 - Desktop: Use Vite env vars (`VITE_API_URL`)
-- Mobile: Use React Native Config or process.env
+- Mobile: unknown
 - Abstract in shared config module
 
 ## Quick Reference for AI Agents
@@ -104,7 +113,7 @@ When adding features:
 
 1. **Business logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
-3. **Mobile UI** → `apps/mobile/src/`
+3. **Mobile UI** → unknown
 4. **Shared types** → `packages/shared/src/types/`
 5. **API calls** → `packages/shared/src/api/`
 

@@ -44,7 +44,4 @@ Iterative feature development - Using Task Trellis MCP Server
 
 ## Future
 
-1. Create React Native UI skeleton
-   1. As close to raw HTML/CSS as possible
-   2. No implementation except to view other screens
-2. Implement React Native app (see development process above)
+1. Create mobile version
