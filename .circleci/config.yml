@@ -1,0 +1,213 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.2.0
+  win: circleci/windows@5.0.0
+
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:22.12.0
+    working_directory: ~/project
+  macos-executor:
+    macos:
+      xcode: 15.4.0
+    resource_class: macos.m1.medium.gen1
+    working_directory: ~/project
+  windows-executor:
+    machine:
+      image: windows-server-2019-vs2019:2024.01.1
+    resource_class: windows.medium
+    working_directory: ~/project
+
+jobs:
+  install-dependencies:
+    executor: node-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+            - pnpm-deps-v1-
+      - run:
+          name: Install pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.13.1 --activate
+      - run:
+          name: Install dependencies
+          command: pnpm install --frozen-lockfile
+      - save_cache:
+          key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
+          paths:
+            - node_modules
+            - ~/.pnpm-store
+            - apps/*/node_modules
+            - packages/*/node_modules
+            - tests/*/node_modules
+      - persist_to_workspace:
+          root: .
+          paths:
+            - node_modules
+            - apps/*/node_modules
+            - packages/*/node_modules
+            - tests/*/node_modules
+            - pnpm-lock.yaml
+
+  quality-checks:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.13.1 --activate
+      - run:
+          name: Run quality checks
+          command: pnpm quality
+
+  test-unit:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.13.1 --activate
+      - run:
+          name: Run unit tests
+          command: pnpm test:unit
+      - store_test_results:
+          path: test-results
+
+  test-e2e-linux:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.13.1 --activate
+      - run:
+          name: Install system dependencies for Electron
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2 xvfb
+      - run:
+          name: Run E2E tests
+          command: |
+            export DISPLAY=:99
+            Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+            pnpm test:e2e:desktop:headless
+      - store_test_results:
+          path: tests/desktop/test-results
+      - store_artifacts:
+          path: tests/desktop/playwright-report
+
+  build-linux:
+    executor: node-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.13.1 --activate
+      - run:
+          name: Install system dependencies for Electron
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2
+      - run:
+          name: Build desktop app (Linux)
+          command: pnpm build:desktop
+      - store_artifacts:
+          path: apps/desktop/dist
+          destination: linux-build
+
+  build-macos:
+    executor: macos-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.13.1 --activate
+      - run:
+          name: Build desktop app (macOS)
+          command: pnpm build:desktop
+      - store_artifacts:
+          path: apps/desktop/dist
+          destination: macos-build
+
+  build-windows:
+    executor: windows-executor
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: Install pnpm
+          command: |
+            corepack enable
+            corepack prepare pnpm@10.13.1 --activate
+          shell: powershell.exe
+      - run:
+          name: Build desktop app (Windows)
+          command: pnpm build:desktop
+          shell: powershell.exe
+      - store_artifacts:
+          path: apps/desktop/dist
+          destination: windows-build
+
+workflows:
+  test-and-build:
+    jobs:
+      # Install dependencies first
+      - install-dependencies
+
+      # Run quality checks and tests on every push
+      - quality-checks:
+          requires:
+            - install-dependencies
+      - test-unit:
+          requires:
+            - install-dependencies
+      - test-e2e-linux:
+          requires:
+            - quality-checks
+            - test-unit
+
+      # Build artifacts only on main branch
+      - build-linux:
+          requires:
+            - test-e2e-linux
+          filters:
+            branches:
+              only: main
+      - build-macos:
+          requires:
+            - test-e2e-linux
+          filters:
+            branches:
+              only: main
+      - build-windows:
+          requires:
+            - test-e2e-linux
+          filters:
+            branches:
+              only: main
