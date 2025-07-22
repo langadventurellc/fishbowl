@@ -1,4 +1,8 @@
 packages:
-  - "apps/*"
-  - "packages/*"
-  - "tests/*"
+  - apps/*
+  - packages/*
+  - tests/*
+
+ignoredBuiltDependencies:
+  - electron
+  - electron-winstaller
