@@ -7,8 +7,9 @@ This directory contains end-to-end tests for the desktop application using Webdr
 WebDriver testing with Tauri is supported on **Linux and Windows**. For macOS development, use the **dev container** approach.
 
 ### Supported Platforms:
+
 - ✅ Linux (uses WebKitWebDriver)
-- ✅ Windows (uses Microsoft Edge Driver)  
+- ✅ Windows (uses Microsoft Edge Driver)
 - ✅ macOS (via Linux dev container)
 
 ## Structure
@@ -22,23 +23,27 @@ WebDriver testing with Tauri is supported on **Linux and Windows**. For macOS de
 ### Prerequisites
 
 **For Linux/Windows (native):**
+
 1. Install `tauri-driver`:
    ```bash
    cargo install tauri-driver
    ```
 
 **For macOS (dev container):**
+
 1. Open project in dev container (VS Code with Dev Containers extension)
 2. Container will automatically install `tauri-driver` and set up virtual display
 
 ### Running Tests
 
 **Native Linux/Windows:**
+
 ```bash
 pnpm test:e2e:desktop
 ```
 
 **Dev Container (any platform including macOS):**
+
 ```bash
 # Setup virtual display and run tests
 pnpm container:test-ready
@@ -49,6 +54,7 @@ pnpm test:e2e:desktop:headless
 ```
 
 **Development in Container:**
+
 ```bash
 # Build for container (no GUI display)
 pnpm dev:desktop:container
@@ -62,11 +68,11 @@ pnpm build:desktop:container
 Tests follow BDD (Behavior Driven Development) patterns:
 
 ```typescript
-describe('Feature: Application Launch', () => {
-  describe('Scenario: Desktop app starts successfully', () => {
-    it('should launch without errors', async () => {
+describe("Feature: Application Launch", () => {
+  describe("Scenario: Desktop app starts successfully", () => {
+    it("should launch without errors", async () => {
       // Given - Application is starting up
-      // When - Application loads  
+      // When - Application loads
       // Then - Application window is displayed and responsive
     });
   });
@@ -78,15 +84,16 @@ describe('Feature: Application Launch', () => {
 The dev container provides a Linux environment with all necessary tools pre-installed:
 
 - **Virtual Display**: Xvfb for headless GUI testing
-- **WebDriver**: tauri-driver for Tauri app automation  
+- **WebDriver**: tauri-driver for Tauri app automation
 - **Dependencies**: All build tools and dependencies
 
 ### Container Commands:
+
 ```bash
 # Setup virtual display
 pnpm container:setup
 
-# Verify container is ready for testing  
+# Verify container is ready for testing
 pnpm container:test-ready
 
 # Run tests in container

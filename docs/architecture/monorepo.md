@@ -109,7 +109,7 @@ fishbowl/
 - **E2E Testing**: WebdriverIO + Jest (BDD approach)
 - **Secure Storage**: Tauri keychain integration
 
-### Mobile 
+### Mobile
 
 Mobile framework is currently on hold. Waiting to see how Tauri Mobile matures.
 

@@ -9,7 +9,7 @@ module.exports = [
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
     plugins: {
       "@typescript-eslint": tseslint,
-      "turbo": turbo,
+      turbo: turbo,
     },
     languageOptions: {
       parser: tsparser,

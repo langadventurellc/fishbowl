@@ -1,33 +1,33 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  
+
   // Optimize for Electron renderer process
   build: {
-    target: 'chrome120', // Modern Chrome target for Electron
-    outDir: 'dist',
-    assetsDir: 'assets',
+    target: "chrome120", // Modern Chrome target for Electron
+    outDir: "dist",
+    assetsDir: "assets",
     emptyOutDir: true,
     rollupOptions: {
-      input: 'index.html',
+      input: "index.html",
     },
   },
-  
+
   // Development server configuration
   server: {
     port: 5173,
     strictPort: true,
-    host: 'localhost',
+    host: "localhost",
     hmr: {
       port: 5174,
     },
   },
 
   // Environment variables
-  envPrefix: ['VITE_', 'RENDERER_'],
-  
+  envPrefix: ["VITE_", "RENDERER_"],
+
   // CSS handling
   css: {
     devSourcemap: true,
@@ -42,5 +42,5 @@ export default defineConfig({
   clearScreen: false,
 
   // Base path for assets
-  base: './',
-})
+  base: "./",
+});

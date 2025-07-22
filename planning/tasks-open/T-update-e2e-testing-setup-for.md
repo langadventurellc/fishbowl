@@ -5,17 +5,19 @@ title: Replace WebdriverIO with Playwright for Electron E2E testing
 status: open
 priority: normal
 prerequisites:
-- T-update-build-scripts-and
-created: '2025-07-21T22:49:54.403263'
-updated: '2025-07-21T23:00:56.656532'
-schema_version: '1.1'
+  - T-update-build-scripts-and
+created: "2025-07-21T22:49:54.403263"
+updated: "2025-07-21T23:00:56.656532"
+schema_version: "1.1"
 ---
+
 Replace the current WebdriverIO E2E testing setup with Playwright following BDD principles for better Electron application testing.
 
 **Detailed Context:**
 The current E2E testing setup uses WebdriverIO with tauri-driver for testing the Tauri application. With the migration to Electron, we want to replace this entire testing stack with Playwright using BDD structure and Given-When-Then patterns as specified in the project's BDD guidelines.
 
 **Current E2E Setup (to replace):**
+
 - WebdriverIO configuration in tests/desktop/wdio.conf.ts
 - WebdriverIO dependencies: @wdio/cli, @wdio/local-runner, @wdio/mocha-framework, @wdio/spec-reporter
 - Scripts: test:e2e, test:e2e:headless, test:e2e:container
@@ -23,6 +25,7 @@ The current E2E testing setup uses WebdriverIO with tauri-driver for testing the
 
 **BDD Structure Requirements:**
 Following /Users/zach/.claude/commands/bdd-playwright.md guidelines:
+
 - Feature level: `describe('Feature: [Feature Name]', () => {})`
 - Scenario level: `describe('Scenario: [Scenario Description]', () => {})`
 - Test level: `it('should [expected behavior]', async () => {})`
@@ -31,12 +34,14 @@ Following /Users/zach/.claude/commands/bdd-playwright.md guidelines:
 
 **Reference Documentation:**
 Use context7 MCP tool to research:
+
 - Playwright Electron testing capabilities and setup
-- Playwright configuration for desktop applications  
+- Playwright configuration for desktop applications
 - Modern Playwright best practices (2025)
 - Container-based Playwright testing with Electron
 
 **Specific Implementation Requirements:**
+
 1. Remove WebdriverIO dependencies from apps/desktop/package.json:
    - @wdio/cli, @wdio/local-runner, @wdio/mocha-framework, @wdio/spec-reporter
    - webdriverio package
@@ -54,6 +59,7 @@ Use context7 MCP tool to research:
    - `test-data.ts` for test data builders
 
 **Technical Approach:**
+
 1. Remove all WebdriverIO related dependencies
 2. Install Playwright with Electron support:
    ```bash
@@ -81,10 +87,11 @@ Use context7 MCP tool to research:
 7. Ensure Xvfb compatibility for container testing
 
 **BDD Test Structure Example:**
+
 ```typescript
-describe('Feature: Application Startup', () => {
-  describe('Scenario: First application launch', () => {
-    it('should display Hello World message', async () => {
+describe("Feature: Application Startup", () => {
+  describe("Scenario: First application launch", () => {
+    it("should display Hello World message", async () => {
       // Given - Fresh application state
       // When - Application is launched
       // Then - Hello World is visible
@@ -94,13 +101,15 @@ describe('Feature: Application Startup', () => {
 ```
 
 **Files to Create/Update:**
+
 - tests/desktop/playwright.config.ts (new, replaces wdio.conf.ts)
-- __tests__/features/shared/app-startup.spec.ts (new BDD test)
-- __tests__/support/app-helpers.ts (new Electron utilities)
+- **tests**/features/shared/app-startup.spec.ts (new BDD test)
+- **tests**/support/app-helpers.ts (new Electron utilities)
 - apps/desktop/package.json (update dependencies and scripts)
 - Root package.json (update E2E commands)
 
 **New Script Structure:**
+
 ```json
 {
   "scripts": {
@@ -112,13 +121,14 @@ describe('Feature: Application Startup', () => {
 ```
 
 **Detailed Acceptance Criteria:**
+
 - All WebdriverIO dependencies removed from package.json
 - Playwright successfully configured for Electron testing
 - BDD test structure follows project guidelines:
   - Feature/Scenario/Test hierarchy using describe/it blocks
   - Given-When-Then comments in test implementations
   - Business-focused naming (not technical implementation)
-  - Files organized by business domains in __tests__/features/
+  - Files organized by business domains in **tests**/features/
 - Basic E2E test launches Electron app and verifies Hello World display
 - Support utilities created (app-helpers.ts, test-data.ts)
 - Headless mode works in CI/CD environment
@@ -131,16 +141,19 @@ describe('Feature: Application Startup', () => {
   - Built-in Playwright assertions (`toBeVisible()`, etc.)
 
 **Dependencies on Other Tasks:**
+
 - Must complete T-update-build-scripts-and to have working Electron app
 - Can run in parallel with T-update-documentation-for
 
 **Security Considerations:**
+
 - Ensure Playwright tests don't expose application internals
 - Verify test environment isolation
 - Test security features like CSP in Playwright environment
 - Configure secure test data handling
 
 **Testing Requirements:**
+
 - Basic BDD test launches Electron app and verifies Hello World display
 - Test follows Given-When-Then structure with clear business language
 - Screenshots and test artifacts are captured appropriately

@@ -1,5 +1,5 @@
-import { contextBridge } from 'electron';
-import type { ElectronAPI } from '../types/electron';
+import { contextBridge } from "electron";
+import type { ElectronAPI } from "../types/electron";
 
 const electronAPI: ElectronAPI = {
   platform: process.platform,
@@ -10,4 +10,4 @@ const electronAPI: ElectronAPI = {
   },
 };
 
-contextBridge.exposeInMainWorld('electronAPI', electronAPI);
+contextBridge.exposeInMainWorld("electronAPI", electronAPI);

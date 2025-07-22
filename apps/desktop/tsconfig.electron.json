@@ -17,8 +17,6 @@
     "baseUrl": ".",
     "types": ["node"]
   },
-  "include": [
-    "src/electron/**/*"
-  ],
+  "include": ["src/electron/**/*"],
   "exclude": ["node_modules", "dist", "dist-electron"]
 }

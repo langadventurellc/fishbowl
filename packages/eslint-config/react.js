@@ -11,9 +11,9 @@ module.exports = [
     files: ["**/*.{js,mjs,cjs,ts,tsx}"],
     plugins: {
       "@typescript-eslint": tseslint,
-      "react": react,
+      react: react,
       "react-hooks": reactHooks,
-      "turbo": turbo,
+      turbo: turbo,
     },
     languageOptions: {
       parser: tsparser,
