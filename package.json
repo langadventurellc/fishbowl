@@ -1,0 +1,42 @@
+{
+  "name": "fishbowl",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.",
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:desktop": "turbo run dev --filter=@fishbowl-ai/desktop",
+    "build": "turbo run build",
+    "build:libs": "turbo run build --filter=!@fishbowl-ai/desktop",
+    "build:desktop": "turbo run build --filter=@fishbowl-ai/desktop",
+    "build:desktop:container": "turbo run build:container --filter=@fishbowl-ai/desktop",
+    "test": "turbo run test:unit",
+    "test:unit": "turbo run test:unit",
+    "test:all": "turbo run test",
+    "test:e2e:desktop": "turbo run test:e2e --filter=@fishbowl-ai/desktop",
+    "test:e2e:desktop:headless": "turbo run test:e2e:headless --filter=@fishbowl-ai/desktop",
+    "type-check": "turbo run type-check",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,json}\"",
+    "quality": "pnpm lint && pnpm format && pnpm type-check",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "db:migrate": "turbo run db:migrate",
+    "prepare": "husky"
+  },
+  "keywords": [],
+  "author": "LangAdventure LLC",
+  "license": "GPL-3.0-only",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "packageManager": "pnpm@10.13.1",
+  "devDependencies": {
+    "@types/node": "^24.0.15",
+    "eslint": "^9.31.0",
+    "husky": "^9.1.7",
+    "prettier": "^3.6.2",
+    "turbo": "^2.5.5",
+    "typescript": "^5.8.3"
+  }
+}

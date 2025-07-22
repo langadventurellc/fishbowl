@@ -1,0 +1,8 @@
+# Run quality checks (lint, format, type-check)
+pnpm quality
+
+# Add any formatting changes back to staging
+git add .
+
+# Run tests  
+pnpm test

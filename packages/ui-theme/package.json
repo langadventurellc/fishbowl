@@ -1,0 +1,28 @@
+{
+  "name": "@fishbowl-ai/ui-theme",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:unit": "jest --passWithNoTests",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.4",
+    "typescript": "^5.8.3"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "name": "@fishbowl-ai/desktop",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/langadventurellc/fishbowl.git",
+    "directory": "apps/desktop"
+  },
+  "scripts": {
+    "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
+    "dev:renderer": "vite",
+    "dev:main": "wait-on http://localhost:5173 && nodemon --exec \"tsc --project tsconfig.electron.json && VITE_DEV_SERVER_URL=http://localhost:5173 electron .\" --ext ts --watch src/electron",
+    "build": "npm run build:renderer && npm run build:main && electron-builder",
+    "build:renderer": "tsc && vite build",
+    "build:main": "tsc --project tsconfig.electron.json",
+    "preview": "vite preview",
+    "test": "jest",
+    "test:unit": "jest --passWithNoTests",
+    "test:e2e": "npm run build:renderer && npm run build:main && playwright test -c ../../tests/desktop/playwright.config.ts",
+    "test:e2e:headless": "npm run build:renderer && npm run build:main && Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 2 && DISPLAY=:99 playwright test -c ../../tests/desktop/playwright.config.ts",
+    "type-check": "tsc --noEmit",
+    "db:migrate": "node scripts/migrate.js",
+    "lint": "eslint src --ext .ts,.tsx",
+    "clean": "rm -rf dist dist-electron node_modules/.vite out release",
+    "build:all": "electron-builder --mac --win --linux",
+    "publish": "electron-builder --publish=always",
+    "pack": "electron-builder --dir"
+  },
+  "dependencies": {
+    "@fishbowl-ai/shared": "workspace:*",
+    "@fishbowl-ai/ui-theme": "workspace:*",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.7.0"
+  },
+  "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
+    "@playwright/test": "^1.54.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.15",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^9.2.0",
+    "electron": "37.2.3",
+    "electron-builder": "26.0.12",
+    "jest": "^30.0.4",
+    "nodemon": "^3.1.10",
+    "playwright": "^1.54.1",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.5",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.langadventure.fishbowl",
+    "productName": "Fishbowl",
+    "directories": {
+      "app": ".",
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "dist-electron/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "icon": "assets/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "publish": {
+      "provider": "github"
+    }
+  }
+}

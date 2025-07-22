@@ -1,0 +1,54 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["**/.env.*local"],
+  "tasks": {
+    "dev": {
+      "cache": false,
+      "persistent": true,
+      "env": ["NODE_ENV", "VITE_DEV_SERVER_URL", "DISPLAY"]
+    },
+    "dev:container": {
+      "cache": false,
+      "dependsOn": ["^build"],
+      "env": ["NODE_ENV", "VITE_DEV_SERVER_URL", "DISPLAY"]
+    },
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "dist-electron/**"],
+      "env": ["APP_ROOT", "NODE_ENV", "VITE_DEV_SERVER_URL"]
+    },
+    "build:container": {
+      "dependsOn": ["^build"],
+      "outputs": ["dist/**", "dist-electron/**"],
+      "env": ["APP_ROOT", "NODE_ENV", "VITE_DEV_SERVER_URL", "DISPLAY"]
+    },
+    "test:unit": {
+      "dependsOn": ["^build"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": ["CI"]
+    },
+    "test:e2e:headless": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": ["CI"]
+    },
+    "test": {
+      "dependsOn": ["test:unit", "test:e2e"]
+    },
+    "lint": {
+      "outputs": []
+    },
+    "type-check": {
+      "outputs": []
+    },
+    "clean": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false
+    }
+  }
+}
