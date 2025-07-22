@@ -43,13 +43,17 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@babel/plugin-transform-flow-strip-types": "^7.27.1",
+    "@babel/preset-flow": "^7.27.1",
     "@fishbowl-ai/eslint-config": "workspace:*",
     "@testing-library/jest-native": "^5.4.3",
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.1.8",
+    "babel-jest": "^30.0.5",
     "jest": "^30.0.4",
     "jest-expo": "~53.0.3",
+    "react-test-renderer": "19.1.0",
     "typescript": "~5.8.3"
   }
 }

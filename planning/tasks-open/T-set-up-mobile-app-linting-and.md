@@ -77,6 +77,7 @@ Configure ESLint, Prettier, and TypeScript checking for the mobile app, ensuring
 - Development workflow provides immediate feedback on code issues
 - TypeScript strict mode catches common errors
 - ESLint rules help maintain React Native best practices
+- `*.tsx` files should correctly report linting warnings if `import React from "react";` is unused. This is currently a problem in `Settings.tsx` and `Dashboard.tsx`.
 
 **Dependencies**: Requires T-set-up-react-native-mobile-app to be completed
 
