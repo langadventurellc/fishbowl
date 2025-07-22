@@ -1,5 +1,6 @@
 module.exports = {
   preset: "jest-expo",
+  setupFilesAfterEnv: ["<rootDir>/jest-setup.js"],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
   testMatch: [
     "<rootDir>/src/**/__tests__/**/*.(ts|tsx|js|jsx)",
@@ -11,7 +12,7 @@ module.exports = {
     "^@fishbowl-ai/ui-theme$": "<rootDir>/../../packages/ui-theme/src",
   },
   transformIgnorePatterns: [
-    "node_modules/(?!(jest-)?react-native|@react-native|@react-navigation|expo|@expo|@fishbowl-ai)",
+    "node_modules/(?!((jest-)?react-native|@react-native.*|@react-navigation.*|expo(nent)?|@expo(nent)?/.*|@expo/vector-icons|react-clone-referenced-element|@react-native-community|rollbar|@fishbowl-ai.*))",
   ],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",

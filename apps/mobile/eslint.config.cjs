@@ -1,13 +1,22 @@
-const baseConfig = require('@fishbowl-ai/eslint-config');
+const baseConfig = require('@fishbowl-ai/eslint-config/react');
 
 module.exports = [
   ...baseConfig,
   {
     files: ['**/*.ts', '**/*.tsx'],
+    settings: {
+      react: {
+        version: 'detect',
+        runtime: 'automatic', // Tell ESLint about new JSX transform
+      },
+    },
     languageOptions: {
       parserOptions: {
         project: './tsconfig.json',
         tsconfigRootDir: __dirname,
+        ecmaFeatures: {
+          jsx: true,
+        },
       },
     },
     rules: {
