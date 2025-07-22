@@ -1,13 +1,13 @@
 ---
 kind: task
 id: T-set-up-electron-application
+status: in-progress
 title: Set up Electron application infrastructure
-status: open
 priority: high
 prerequisites:
 - T-remove-tauri-dependencies-and
 created: '2025-07-21T22:48:42.418451'
-updated: '2025-07-21T22:48:42.418451'
+updated: '2025-07-21T23:20:05.458230'
 schema_version: '1.1'
 ---
 Install Electron dependencies and create basic infrastructure for the desktop application.

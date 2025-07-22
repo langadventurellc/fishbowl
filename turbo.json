@@ -1,37 +1,59 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": ["**/.env.*local"],
-  "pipeline": {
+  "globalDependencies": [
+    "**/.env.*local"
+  ],
+  "tasks": {
     "dev": {
       "cache": false,
       "persistent": true
     },
     "dev:container": {
       "cache": false,
-      "dependsOn": ["^build"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", "src-tauri/target/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "src-tauri/target/**"
+      ]
     },
     "build:container": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**", "src-tauri/target/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "src-tauri/target/**"
+      ]
     },
     "test:unit": {
-      "dependsOn": ["^build"],
-      "outputs": ["coverage/**"]
+      "dependsOn": [
+        "^build"
+      ]
     },
     "test:e2e": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": false
     },
     "test:e2e:headless": {
-      "dependsOn": ["build"],
+      "dependsOn": [
+        "build"
+      ],
       "cache": false
     },
     "test": {
-      "dependsOn": ["test:unit", "test:e2e"]
+      "dependsOn": [
+        "test:unit",
+        "test:e2e"
+      ]
     },
     "lint": {
       "outputs": []
