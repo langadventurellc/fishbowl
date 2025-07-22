@@ -1,7 +1,11 @@
 import { test, expect } from "@playwright/test";
-import { _electron as electron } from "playwright";
+import playwright from "playwright";
 import path from "path";
+import { fileURLToPath } from "url";
 import type { ElectronApplication, Page } from "playwright";
+
+const { _electron: electron } = playwright;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test.describe("Feature: Application Startup", () => {
   let electronApp: ElectronApplication;
