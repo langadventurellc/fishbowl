@@ -32,7 +32,7 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            corepack enable
+            sudo corepack enable
             corepack prepare pnpm@10.13.1 --activate
       - run:
           name: Install dependencies
@@ -63,7 +63,7 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            corepack enable
+            sudo corepack enable
             corepack prepare pnpm@10.13.1 --activate
       - run:
           name: Run quality checks
@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            corepack enable
+            sudo corepack enable
             corepack prepare pnpm@10.13.1 --activate
       - run:
           name: Run unit tests
@@ -95,7 +95,7 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            corepack enable
+            sudo corepack enable
             corepack prepare pnpm@10.13.1 --activate
       - run:
           name: Install system dependencies for Electron
@@ -122,7 +122,7 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            corepack enable
+            sudo corepack enable
             corepack prepare pnpm@10.13.1 --activate
       - run:
           name: Install system dependencies for Electron
@@ -145,7 +145,7 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            corepack enable
+            sudo corepack enable
             corepack prepare pnpm@10.13.1 --activate
       - run:
           name: Build desktop app (macOS)
@@ -163,7 +163,7 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            corepack enable
+            sudo corepack enable
             corepack prepare pnpm@10.13.1 --activate
           shell: powershell.exe
       - run:
