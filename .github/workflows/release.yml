@@ -30,15 +30,21 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      
       - name: Install system dependencies for Electron
         run: |
           sudo apt-get update
           sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2t64
       
       - name: Build application
-        run: pnpm build:desktop
+        run: cd apps/desktop && pnpm run build:renderer && pnpm run build:main && pnpm run pack
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_package_version: ${{ env.VERSION }}
       
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
@@ -70,10 +76,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      
       - name: Build application
-        run: pnpm build:desktop
+        run: cd apps/desktop && pnpm run build:renderer && pnpm run build:main && pnpm run pack
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_package_version: ${{ env.VERSION }}
       
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
@@ -105,10 +117,16 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      
       - name: Build application
-        run: pnpm build:desktop
+        run: cd apps/desktop && pnpm run build:renderer && pnpm run build:main && pnpm run pack
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_package_version: ${{ env.VERSION }}
       
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
