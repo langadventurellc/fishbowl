@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import path from "path";
 import type { ElectronApplication, Page } from "playwright";
-import { _electron as electron } from "playwright";
+const { _electron: electron } = require("playwright");
 
 test.describe("Feature: Application Startup", () => {
   let electronApp: ElectronApplication;
