@@ -7,6 +7,7 @@
     "dev": "turbo run dev",
     "dev:desktop": "turbo run dev --filter=@fishbowl-ai/desktop",
     "build": "turbo run build",
+    "build:libs": "turbo run build --filter=!@fishbowl-ai/desktop",
     "build:desktop": "turbo run build --filter=@fishbowl-ai/desktop",
     "build:desktop:container": "turbo run build:container --filter=@fishbowl-ai/desktop",
     "test": "turbo run test:unit",

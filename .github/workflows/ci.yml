@@ -71,7 +71,7 @@ jobs:
           fail-on-cache-miss: true
       
       - name: Build dependencies
-        run: pnpm build
+        run: pnpm build:libs
       
       - name: Run quality checks
         run: pnpm quality
@@ -138,7 +138,7 @@ jobs:
         run: npx playwright install --with-deps
       
       - name: Build dependencies
-        run: pnpm build
+        run: pnpm build:libs
       
       - name: Run E2E tests
         run: |
