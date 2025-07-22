@@ -16,7 +16,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+          cache: 'pnpm'
       
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
@@ -50,7 +50,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+          cache: 'pnpm'
       
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
@@ -79,7 +79,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+          cache: 'pnpm'
       
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
