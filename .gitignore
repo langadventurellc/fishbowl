@@ -2,6 +2,7 @@ logs/
 .turbo/
 dist-electron
 release
+test-results
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 /.swc

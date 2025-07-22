@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
     "dev:renderer": "vite",
-    "dev:main": "wait-on http://localhost:5173 && nodemon --exec \"tsc --project tsconfig.electron.json && electron .\" --ext ts --watch src/electron",
+    "dev:main": "wait-on http://localhost:5173 && nodemon --exec \"tsc --project tsconfig.electron.json && VITE_DEV_SERVER_URL=http://localhost:5173 electron .\" --ext ts --watch src/electron",
     "dev:container": "concurrently \"npm run dev:renderer\" \"npm run dev:main:container\"",
-    "dev:main:container": "wait-on http://localhost:5173 && nodemon --exec \"tsc --project tsconfig.electron.json && DISPLAY=:99 electron .\" --ext ts --watch src/electron",
+    "dev:main:container": "wait-on http://localhost:5173 && nodemon --exec \"tsc --project tsconfig.electron.json && DISPLAY=:99 VITE_DEV_SERVER_URL=http://localhost:5173 electron .\" --ext ts --watch src/electron",
     "build": "npm run build:renderer && npm run build:main && electron-builder",
     "build:renderer": "tsc && vite build",
     "build:main": "tsc --project tsconfig.electron.json",
