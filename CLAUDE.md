@@ -29,7 +29,7 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 ## Architecture
 
-How to structure code across shared packages and platform-specific applications. It is designed to ensure clean separations of concerns, maintainability, and reusability of code. The monorepo contains a desktop (Tauri) project with shared logic in a common package. A mobile platform may be added in the future when Tauri Mobile matures.
+How to structure code across shared packages and platform-specific applications. It is designed to ensure clean separations of concerns, maintainability, and reusability of code. The monorepo contains a desktop (Electron) project with shared logic in a common package. A mobile platform may be added in the future.
 
 ### Technology Stack
 
@@ -41,14 +41,14 @@ How to structure code across shared packages and platform-specific applications.
 
 #### Desktop
 
-- **Desktop**: Tauri (2.7+) with React (19.1+)
-- **BDD Testing**: WebdriverIO + tauri-driver (Linux dev container for macOS)
-- **Database**: SQLite with tauri-plugin-sqlite
+- **Desktop**: Electron (37.2+) with React (19.1+)
+- **BDD Testing**: WebdriverIO (Linux dev container for macOS)
+- **Database**: SQLite with Electron SQLite integration
 - **Styling**: Tailwind and shadcn/ui
 
 #### Mobile
 
-Mobile framework is currently on hold. Waiting to see how Tauri Mobile matures. In the future we may go with Tauri Mobile.
+Mobile framework is currently on hold. Future mobile implementation approach to be determined.
 
 ### 1. Code Placement Rules
 
@@ -101,7 +101,7 @@ export interface StorageBridge {
 
 - **Shared package**: Unit tests for business logic (Jest)
 - **Platform apps**: Component/integration tests
-- **E2E Testing**: WebdriverIO with Tauri in Linux dev container
+- **E2E Testing**: WebdriverIO in Linux dev container
 - **Cross-platform**: Use dev container for consistent testing environment
 - Keep platform-specific test utilities separate
 

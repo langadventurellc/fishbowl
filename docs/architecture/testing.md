@@ -1,4 +1,4 @@
-# Fishbowl AI - Tauri Testing Architecture
+# Fishbowl AI - Electron Testing Architecture
 
 See the [monorepo architecture guide](./monorepo.md) for an overview of the project structure and technology stack.
 
@@ -49,13 +49,10 @@ export const config = {
   maxInstances: 1,
   capabilities: [
     {
-      browserName: "tauri",
-      "tauri:options": {
-        application: "../../apps/desktop/src-tauri/target/debug/fishbowl-ai",
-        webdriverOptions: {
-          host: "localhost",
-          port: 4444,
-        },
+      browserName: "chrome",
+      "goog:chromeOptions": {
+        binary: "../../apps/desktop/dist-electron/main.js",
+        args: ["--no-sandbox", "--disable-web-security"],
       },
     },
   ],
@@ -64,7 +61,7 @@ export const config = {
   waitforTimeout: 10000,
   connectionRetryTimeout: 120000,
   connectionRetryCount: 3,
-  services: ["tauri"],
+  services: ["chromedriver"],
   framework: "mocha",
   reporters: ["spec"],
   mochaOpts: {
@@ -79,7 +76,7 @@ export const config = {
 ```typescript
 describe("Feature: AI Provider Configuration", () => {
   beforeAll(async () => {
-    await browser.url("tauri://localhost");
+    await browser.url("http://localhost:5173");
   });
 
   describe("Scenario: Add OpenAI API key", () => {

@@ -1,4 +1,4 @@
-# Fishbowl AI - Tauri AI Service Architecture
+# Fishbowl AI - Electron AI Service Architecture
 
 See the [monorepo architecture guide](./monorepo.md) for an overview of the project structure and technology stack.
 

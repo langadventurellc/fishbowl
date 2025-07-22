@@ -1,4 +1,4 @@
-# Fishbowl AI - Tauri Database Architecture
+# Fishbowl AI - Electron Database Architecture
 
 See the [monorepo architecture guide](./monorepo.md) for an overview of the project structure and technology stack.
 
@@ -77,14 +77,14 @@ export interface Migration {
 **apps/desktop/src/services/database.ts**
 
 ```typescript
-import Database from "@tauri-apps/plugin-sql";
+import Database from "better-sqlite3";
 import { Database as IDatabase, Migration } from "@fishbowl-ai/shared";
 
-export class TauriDatabase implements IDatabase {
+export class ElectronDatabase implements IDatabase {
   private db: Database;
 
   async init() {
-    this.db = await Database.load("sqlite:fishbowl.db");
+    this.db = new Database("fishbowl.db");
   }
 
   async execute(query: string, params?: any[]) {
@@ -101,7 +101,7 @@ export class TauriDatabase implements IDatabase {
   }
 
   async transaction<T>(fn: (tx: Transaction) => Promise<T>): Promise<T> {
-    // Tauri SQL plugin handles transactions internally
+    // Better-sqlite3 handles transactions
     return fn(this as any);
   }
 

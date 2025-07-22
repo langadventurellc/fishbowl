@@ -1,4 +1,4 @@
-# Tauri Monorepo Architecture Guide
+# Electron Monorepo Architecture Guide
 
 ## Table of Contents
 
@@ -16,15 +16,15 @@
 ```
 fishbowl/
 ├── apps/
-│   ├── desktop/                 # Tauri desktop app
+│   ├── desktop/                 # Electron desktop app
 │   │   ├── src/
 │   │   │   ├── __tests__/          # Unit tests
 │   │   │   ├── App.tsx
 │   │   │   ├── main.tsx
-│   │   │   └── pages/
-│   │   ├── src-tauri/          # Rust backend
-│   │   │   ├── src/
-│   │   │   └── Cargo.toml
+│   │   │   ├── pages/
+│   │   │   └── electron/           # Electron main process
+│   │   │       ├── main.ts
+│   │   │       └── preload.ts
 │   │   ├── index.html
 │   │   ├── package.json
 │   │   ├── tsconfig.json
@@ -101,17 +101,17 @@ fishbowl/
 - **Database Interface**: Abstract interface with platform implementations
 - **Testing**: Jest (unit tests)
 
-### Desktop (Tauri)
+### Desktop (Electron)
 
-- **Framework**: Tauri + React + Vite
-- **Database**: tauri-plugin-sql (SQLite)
+- **Framework**: Electron + React + Vite
+- **Database**: SQLite with Electron integration
 - **Styling**: Tailwind CSS + ShadCN UI
-- **E2E Testing**: WebdriverIO + Jest (BDD approach)
-- **Secure Storage**: Tauri keychain integration
+- **E2E Testing**: WebdriverIO (BDD approach)
+- **Secure Storage**: Electron secure storage
 
 ### Mobile
 
-Mobile framework is currently on hold. Waiting to see how Tauri Mobile matures.
+Mobile framework is currently on hold. Future mobile implementation approach to be determined.
 
 ## Initial Setup
 
@@ -290,7 +290,7 @@ export default App;
 
 ### Mobile App Structure
 
-Mobile app is currently on hold while waiting for Tauri Mobile to mature.
+Mobile app is currently on hold while mobile platform strategy is determined.
 
 ## Development Workflow
 
@@ -301,10 +301,9 @@ Mobile app is currently on hold while waiting for Tauri Mobile to mature.
 ```json
 {
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build && tauri build",
+    "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
+    "build": "npm run build:renderer && npm run build:main && electron-builder",
     "preview": "vite preview",
-    "tauri": "tauri",
     "test": "jest",
     "test:e2e": "wdio run ./wdio.conf.ts",
     "db:migrate": "node scripts/migrate.js"
@@ -457,9 +456,9 @@ export interface PlatformBridge {
 
 // Implement per platform
 // Desktop
-class TauriBridge implements PlatformBridge {
+class ElectronBridge implements PlatformBridge {
   async openFilePicker() {
-    return invoke("open_file_dialog");
+    return window.electronAPI.openFileDialog();
   }
   // ...
 }
@@ -514,7 +513,7 @@ import { AIService, Database, useAuthStore } from "@fishbowl-ai/shared";
 import { theme } from "@fishbowl-ai/ui-theme";
 
 // Platform-specific
-import { TauriDatabase } from "./services/database";
+import { ElectronDatabase } from "./services/database";
 // import { MobileSecureStorage } from "./services/secure-storage"; // TBD
 ```
 

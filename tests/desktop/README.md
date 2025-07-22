@@ -4,7 +4,7 @@ This directory contains end-to-end tests for the desktop application using Webdr
 
 ## Platform Support
 
-WebDriver testing with Tauri is supported on **Linux and Windows**. For macOS development, use the **dev container** approach.
+WebDriver testing with Electron is supported on **Linux, Windows, and macOS**. For consistent testing across platforms, use the **dev container** approach.
 
 ### Supported Platforms:
 
@@ -22,17 +22,17 @@ WebDriver testing with Tauri is supported on **Linux and Windows**. For macOS de
 
 ### Prerequisites
 
-**For Linux/Windows (native):**
+**For all platforms (native):**
 
-1. Install `tauri-driver`:
+1. Install WebdriverIO dependencies:
    ```bash
-   cargo install tauri-driver
+   pnpm install
    ```
 
-**For macOS (dev container):**
+**For dev container (any platform):**
 
 1. Open project in dev container (VS Code with Dev Containers extension)
-2. Container will automatically install `tauri-driver` and set up virtual display
+2. Container will automatically install dependencies and set up virtual display
 
 ### Running Tests
 
@@ -84,7 +84,7 @@ describe("Feature: Application Launch", () => {
 The dev container provides a Linux environment with all necessary tools pre-installed:
 
 - **Virtual Display**: Xvfb for headless GUI testing
-- **WebDriver**: tauri-driver for Tauri app automation
+- **WebDriver**: ChromeDriver for Electron app automation
 - **Dependencies**: All build tools and dependencies
 
 ### Container Commands:
@@ -107,8 +107,6 @@ Add this to your GitHub Actions workflow:
 ```yaml
 - name: Run E2E tests
   run: |
-    # Install tauri-driver
-    cargo install tauri-driver
     # Setup virtual display 
     pnpm container:setup
     # Run tests
@@ -117,7 +115,7 @@ Add this to your GitHub Actions workflow:
 
 ## Troubleshooting
 
-- **"tauri-driver is not supported on this platform"**: Use dev container on macOS
+- **"ChromeDriver connection issues"**: Ensure ChromeDriver is installed and running
 - **"Display :99 not found"**: Run `pnpm container:setup` first
-- **App bundle installation prompts**: Tests use raw executable, not .app bundles
-- **WebDriver connection issues**: Ensure tauri-driver is running and virtual display is active
+- **App startup issues**: Ensure Electron app builds successfully before running tests
+- **WebDriver connection issues**: Ensure virtual display is active and app is accessible

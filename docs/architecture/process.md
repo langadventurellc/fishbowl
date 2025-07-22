@@ -22,10 +22,10 @@
    1. Design modules and interactions
    2. Create application folder structure
       1. Monorepo design to force clean separations
-4. Create Tauri UI skeleton
+4. Create Electron UI skeleton
    1. As close to raw HTML/CSS as possible
    2. No implementation except to view other screens
-5. Implement Tauri app (see development process below)
+5. Implement Electron app (see development process below)
 
 ## Development Process
 

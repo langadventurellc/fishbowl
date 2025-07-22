@@ -4,11 +4,11 @@ This directory is reserved for a future mobile application.
 
 ## Current Status
 
-The mobile app has been temporarily removed from the project structure. While Tauri has introduced mobile support, it is still considered immature for production use.
+The mobile app has been temporarily removed from the project structure while mobile platform strategy is being determined.
 
 ## Future Plans
 
-When Tauri Mobile matures sufficiently, we may implement the mobile app using Tauri. Alternatively, we may consider React Native if cross-platform requirements necessitate it.
+Future mobile implementation approach will be determined based on platform requirements. We may consider React Native, native development, or other cross-platform solutions.
 
 The shared architecture (`@fishbowl-ai/shared` package) has been designed to support multiple platforms, so business logic and state management will be reusable when we do implement mobile support.
 

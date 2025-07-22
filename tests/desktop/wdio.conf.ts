@@ -5,8 +5,10 @@ export const config = {
   capabilities: [
     {
       maxInstances: 1,
-      "tauri:options": {
-        application: "../../apps/desktop/src-tauri/target/debug/app",
+      browserName: "chrome",
+      "goog:chromeOptions": {
+        binary: "../../apps/desktop/dist-electron/main.js",
+        args: ["--no-sandbox", "--disable-web-security", "--headless"],
       },
     },
   ],

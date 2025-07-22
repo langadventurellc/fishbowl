@@ -1,4 +1,4 @@
-# Fishbowl AI - Tauri Secure Storage Architecture
+# Fishbowl AI - Electron Secure Storage Architecture
 
 See the [monorepo architecture guide](./monorepo.md) for an overview of the project structure and technology stack.
 
@@ -31,16 +31,16 @@ export interface SecureStorage {
 **apps/desktop/src/services/secure-storage.ts**
 
 ```typescript
-import { invoke } from "@tauri-apps/api/tauri";
+import { ipcRenderer } from "electron";
 import { SecureStorage } from "@fishbowl-ai/shared";
 
-export class TauriSecureStorage implements SecureStorage {
+export class ElectronSecureStorage implements SecureStorage {
   private async encrypt(data: string): Promise<string> {
-    return invoke("encrypt_string", { data });
+    return ipcRenderer.invoke("encrypt_string", { data });
   }
 
   private async decrypt(data: string): Promise<string> {
-    return invoke("decrypt_string", { data });
+    return ipcRenderer.invoke("decrypt_string", { data });
   }
 
   async saveAPIKey(provider: string, key: string): Promise<void> {
@@ -74,19 +74,19 @@ export class TauriSecureStorage implements SecureStorage {
   }
 
   async setItem(key: string, value: string): Promise<void> {
-    await invoke("store_secure", { key, value });
+    await ipcRenderer.invoke("store_secure", { key, value });
   }
 
   async getItem(key: string): Promise<string | null> {
-    return invoke("retrieve_secure", { key });
+    return ipcRenderer.invoke("retrieve_secure", { key });
   }
 
   async removeItem(key: string): Promise<void> {
-    await invoke("delete_secure", { key });
+    await ipcRenderer.invoke("delete_secure", { key });
   }
 
   async clear(): Promise<void> {
-    await invoke("clear_secure_storage");
+    await ipcRenderer.invoke("clear_secure_storage");
   }
 }
 ```

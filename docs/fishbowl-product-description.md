@@ -303,7 +303,7 @@ Fishbowl AI is a desktop application that enables users to create and manage con
 
 ### Planned Capabilities
 
-- Future mobile device support when Tauri Mobile matures
+- Future mobile device support when mobile platform strategy is determined
 - Tool integration for agents to perform actions
 - Document collaboration with multi-agent editing
 - Project management with agent task assignment
