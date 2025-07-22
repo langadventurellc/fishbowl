@@ -17,6 +17,8 @@
     "test:all": "turbo run test",
     "test:e2e:desktop": "turbo run test:e2e --filter=@fishbowl-ai/desktop",
     "test:e2e:desktop:headless": "turbo run test:e2e:headless --filter=@fishbowl-ai/desktop",
+    "test:e2e:mobile": "turbo run test:e2e --filter=@fishbowl-ai/mobile",
+    "test:e2e:mobile:headless": "turbo run test:e2e:headless --filter=@fishbowl-ai/mobile",
     "type-check": "turbo run type-check",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,json}\"",

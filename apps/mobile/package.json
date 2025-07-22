@@ -20,6 +20,8 @@
     "build": "expo build",
     "test": "jest --passWithNoTests",
     "test:unit": "jest --passWithNoTests",
+    "test:e2e": "echo \"Mobile E2E testing not yet implemented. See T-set-up-detox-e2e-testing task.\"",
+    "test:e2e:headless": "echo \"Mobile E2E testing not yet implemented. See T-set-up-detox-e2e-testing task.\"",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rm -rf .expo node_modules/.cache"
