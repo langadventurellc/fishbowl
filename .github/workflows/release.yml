@@ -41,7 +41,7 @@ jobs:
           sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2t64
       
       - name: Build application
-        run: cd apps/desktop && pnpm run build:renderer && pnpm run build:main && pnpm run pack
+        run: pnpm build:desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           npm_package_version: ${{ env.VERSION }}
@@ -82,7 +82,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       
       - name: Build application
-        run: cd apps/desktop && pnpm run build:renderer && pnpm run build:main && pnpm run pack
+        run: pnpm build:desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           npm_package_version: ${{ env.VERSION }}
@@ -123,7 +123,7 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
       
       - name: Build application
-        run: cd apps/desktop && pnpm run build:renderer && pnpm run build:main && pnpm run pack
+        run: pnpm build:desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           npm_package_version: ${{ env.VERSION }}
