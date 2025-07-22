@@ -4,6 +4,11 @@
   "private": true,
   "type": "module",
   "main": "dist-electron/main.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/langadventurellc/fishbowl.git",
+    "directory": "apps/desktop"
+  },
   "scripts": {
     "dev": "concurrently \"npm run dev:renderer\" \"npm run dev:main\"",
     "dev:renderer": "vite",
