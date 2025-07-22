@@ -27,7 +27,7 @@ let mainWindow: BrowserWindow | null = null;
 function createMainWindow(): void {
   mainWindow = new BrowserWindow({
     title: "Fishbowl",
-    icon: path.join(process.env.VITE_PUBLIC!, "vite.svg"),
+    icon: path.join(__dirname, "..", "assets", "icon.png"),
     width: 1200,
     height: 800,
     minWidth: 800,

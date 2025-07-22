@@ -64,20 +64,25 @@
     "files": [
       "dist/**/*",
       "dist-electron/**/*",
-      "package.json"
+      "package.json",
+      "!**/*.map",
+      "!**/node_modules/**",
+      "!**/.DS_Store",
+      "!**/Thumbs.db"
     ],
     "compression": "maximum",
+    "buildDependenciesFromSource": false,
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     },
     "mac": {
       "icon": "assets/icon.icns",
-      "hardenedRuntime": true,
+      "hardenedRuntime": false,
       "gatekeeperAssess": false,
       "target": [
         {
-          "target": "dmg",
+          "target": "zip",
           "arch": [
             "x64",
             "arm64"
