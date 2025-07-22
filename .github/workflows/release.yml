@@ -116,7 +116,7 @@ jobs:
         run: ls -la ./artifacts
       
       - name: Create Release
-        uses: langadventurellc/action-gh-release
+        uses: langadventurellc/action-gh-release@master
         with:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
