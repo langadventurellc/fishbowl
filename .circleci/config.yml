@@ -72,6 +72,9 @@ jobs:
             source $BASH_ENV
             pnpm --version
       - run:
+          name: Build dependencies
+          command: pnpm build
+      - run:
           name: Run quality checks
           command: pnpm quality
 
