@@ -1,4 +1,4 @@
-# Fishbowl AI - Tauri + React Native Secure Storage Architecture
+# Fishbowl AI - Tauri Secure Storage Architecture
 
 See the [monorepo architecture guide](./monorepo.md) for an overview of the project structure and technology stack.
 

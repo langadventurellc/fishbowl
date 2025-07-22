@@ -1,4 +1,4 @@
-# Tauri + React Native Monorepo Architecture Guide
+# Tauri Monorepo Architecture Guide
 
 ## Table of Contents
 
@@ -30,7 +30,7 @@ fishbowl/
 │   │   ├── tsconfig.json
 │   │   └── vite.config.ts
 │   │
-│   └── mobile/                  # unknown
+│   └── mobile/                  # Future mobile app (TBD)
 │
 ├── packages/
 │   ├── shared/                  # Shared business logic
@@ -111,7 +111,7 @@ fishbowl/
 
 ### Mobile 
 
-Mobile framework is currently undecided. Waiting to see how Tauri Mobile matures. In the future we may go with Tauri Mobile or with React Native.
+Mobile framework is currently on hold. Waiting to see how Tauri Mobile matures.
 
 ## Initial Setup
 
@@ -290,7 +290,7 @@ export default App;
 
 ### Mobile App Structure
 
-unknown
+Mobile app is currently on hold while waiting for Tauri Mobile to mature.
 
 ## Development Workflow
 
@@ -314,7 +314,7 @@ unknown
 
 **apps/mobile/package.json**
 
-unknown
+TBD when mobile app is implemented.
 
 ### Environment Variables
 
@@ -328,7 +328,7 @@ VITE_LOG_LEVEL=debug
 
 **apps/mobile/.env**
 
-unknown
+TBD when mobile app is implemented.
 
 ## Best Practices
 
@@ -464,14 +464,13 @@ class TauriBridge implements PlatformBridge {
   // ...
 }
 
-// Mobile
-class ExpoBridge implements PlatformBridge {
-  async openFilePicker() {
-    const result = await DocumentPicker.getDocumentAsync();
-    return result.uri;
-  }
-  // ...
-}
+// Mobile (TBD when implemented)
+// class MobileBridge implements PlatformBridge {
+//   async openFilePicker() {
+//     // Implementation TBD
+//   }
+//   // ...
+// }
 ```
 
 ## Quick Reference for AI Agents
@@ -480,7 +479,7 @@ class ExpoBridge implements PlatformBridge {
 
 1. **Business Logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
-3. **Mobile UI** → unknown
+3. **Mobile UI** → `apps/mobile/src/` (when implemented)
 4. **Database Schemas** → `migrations/`
 5. **E2E Tests Desktop** → `tests/desktop/features/`
 6. **E2E Tests Mobile** → `tests/mobile/features/`
@@ -491,17 +490,17 @@ class ExpoBridge implements PlatformBridge {
 # Development
 pnpm dev              # Run all apps
 pnpm dev:desktop      # Desktop only
-pnpm dev:mobile       # Mobile only
+# pnpm dev:mobile     # Mobile (not yet implemented)
 
 # Testing
 pnpm test             # Unit tests
 pnpm test:e2e:desktop # Desktop E2E
-pnpm test:e2e:mobile  # Mobile E2E
+# pnpm test:e2e:mobile # Mobile E2E (not yet implemented)
 
 # Building
 pnpm build            # Build all
 pnpm build:desktop    # Desktop only
-pnpm build:mobile     # Mobile only
+# pnpm build:mobile   # Mobile (not yet implemented)
 
 # Database
 pnpm db:migrate       # Run migrations
@@ -516,7 +515,7 @@ import { theme } from "@fishbowl-ai/ui-theme";
 
 // Platform-specific
 import { TauriDatabase } from "./services/database";
-import { ExpoSecureStorage } from "./services/secure-storage";
+// import { MobileSecureStorage } from "./services/secure-storage"; // TBD
 ```
 
 ## Summary

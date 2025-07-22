@@ -12,13 +12,10 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 | ----------------------- | ----------------------------------------------------- |
 | `pnpm dev`              | Start development servers for all apps                |
 | `pnpm dev:desktop`      | Start development server for desktop app only         |
-| `pnpm dev:mobile`       | Start development server for mobile app only          |
 | `pnpm build`            | Build all packages and apps                           |
 | `pnpm build:desktop`    | Build desktop app and dependencies                    |
-| `pnpm build:mobile`     | Build mobile app and dependencies                     |
 | `pnpm test`             | Run tests for all packages                            |
 | `pnpm test:e2e:desktop` | Run end-to-end tests for desktop app                  |
-| `pnpm test:e2e:mobile`  | Run end-to-end tests for mobile app                   |
 | `pnpm lint`             | Run linting for all packages                          |
 | `pnpm format`           | Format all TypeScript, JavaScript, and Markdown files |
 | `pnpm clean`            | Clean all build outputs and node_modules              |
@@ -26,7 +23,7 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 ## Architecture
 
-How to structure code across shared packages and platform-specific applications. It is designed to ensure clean separations of concerns, maintainability, and reusability of code. The monorepo contains projects for both desktop (Tauri) and mobile (unknown) platforms, with shared logic in a common package.
+How to structure code across shared packages and platform-specific applications. It is designed to ensure clean separations of concerns, maintainability, and reusability of code. The monorepo contains a desktop (Tauri) project with shared logic in a common package. A mobile platform may be added in the future when Tauri Mobile matures.
 
 ### Technology Stack
 
@@ -45,7 +42,7 @@ How to structure code across shared packages and platform-specific applications.
 
 #### Mobile
 
-Mobile framework is currently undecided. Waiting to see how Tauri Mobile matures. In the future we may go with Tauri Mobile or with React Native.
+Mobile framework is currently on hold. Waiting to see how Tauri Mobile matures. In the future we may go with Tauri Mobile.
 
 
 ### 1. Code Placement Rules
@@ -68,9 +65,9 @@ Mobile framework is currently undecided. Waiting to see how Tauri Mobile matures
 
 ❌ **CANNOT Share:**
 
-- UI components (View vs div, Text vs span)
-- Styles (StyleSheet vs CSS)
-- Navigation (React Navigation vs React Router)
+- UI components (different rendering systems)
+- Styles (platform-specific styling systems)
+- Navigation (platform-specific routing)
 - Platform-specific APIs
 
 ### 4. Import Rules
@@ -92,7 +89,7 @@ export interface StorageBridge {
 
 // In platform apps - implement
 // Desktop: uses localStorage
-// Mobile: unknown
+// Mobile: TBD when implemented
 ```
 
 ### 7. Testing Strategy
@@ -104,7 +101,7 @@ export interface StorageBridge {
 ### 8. Environment Variables
 
 - Desktop: Use Vite env vars (`VITE_API_URL`)
-- Mobile: unknown
+- Mobile: TBD when implemented
 - Abstract in shared config module
 
 ## Quick Reference for AI Agents
@@ -113,7 +110,7 @@ When adding features:
 
 1. **Business logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
-3. **Mobile UI** → unknown
+3. **Mobile UI** → `apps/mobile/src/` (when implemented)
 4. **Shared types** → `packages/shared/src/types/`
 5. **API calls** → `packages/shared/src/api/`
 

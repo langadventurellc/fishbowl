@@ -1,20 +1,17 @@
-# Mobile E2E Tests
+# Mobile E2E Tests (Future)
 
-This directory contains end-to-end tests for the mobile application using Detox.
+This directory is reserved for future mobile end-to-end tests.
 
-## Structure
+## Current Status
 
-- `features/` - Test feature files
-- `support/` - Test support utilities and helpers
+Mobile testing infrastructure has been removed as the mobile app is currently on hold while waiting for Tauri Mobile to mature.
 
-## Usage
+## Future Plans
 
-Tests will be run using:
+When mobile support is implemented (likely with Tauri Mobile), this directory will contain:
 
-```bash
-pnpm test:e2e:mobile
-```
+- E2E test suites for mobile functionality
+- Mobile-specific test utilities and helpers
+- Configuration for mobile testing frameworks
 
-## Setup
-
-Detox configuration will be added in `detox.config.js` when implementing mobile testing.
+The desktop E2E testing patterns in `tests/desktop/` can serve as a reference for implementing mobile tests when needed.

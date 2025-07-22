@@ -1,4 +1,4 @@
-# Fishbowl AI - Tauri + React Native CI/CD Architecture
+# Fishbowl AI - Tauri CI/CD Architecture
 
 See the [monorepo architecture guide](./monorepo.md) for an overview of the project structure and technology stack.
 

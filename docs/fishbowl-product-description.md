@@ -2,7 +2,7 @@
 
 ## Product Overview
 
-Fishbowl AI is a desktop and mobile application that enables users to create and manage conversations with multiple AI agents simultaneously. Each agent can have unique personalities, specialized roles, and connect to different AI services, creating a dynamic environment for brainstorming, problem-solving, and creative exploration.
+Fishbowl AI is a desktop application that enables users to create and manage conversations with multiple AI agents simultaneously. Each agent can have unique personalities, specialized roles, and connect to different AI services, creating a dynamic environment for brainstorming, problem-solving, and creative exploration.
 
 ## Core Features
 
@@ -303,7 +303,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 
 ### Planned Capabilities
 
-- Mobile device support for on-the-go access
+- Future mobile device support when Tauri Mobile matures
 - Tool integration for agents to perform actions
 - Document collaboration with multi-agent editing
 - Project management with agent task assignment
@@ -315,7 +315,7 @@ Fishbowl AI is a desktop and mobile application that enables users to create and
 ### Platform Evolution
 
 - Desktop application as primary platform
-- Mobile applications for iOS and Android
+- Future mobile applications when technology matures
 - Potential web access for limited functionality
 - Cross-platform synchronization
 - Offline-first architecture with sync capabilities

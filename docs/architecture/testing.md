@@ -1,4 +1,4 @@
-# Fishbowl AI - Tauri + React Native Testing Architecture
+# Fishbowl AI - Tauri Testing Architecture
 
 See the [monorepo architecture guide](./monorepo.md) for an overview of the project structure and technology stack.
 
