@@ -134,20 +134,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2t64 xvfb
       
-      - name: Install Playwright browsers
-        run: pnpm --filter=@fishbowl-ai/desktop exec playwright install --with-deps
+      - name: Install Playwright browsers  
+        run: pnpm --filter=@fishbowl-ai/desktop-e2e-tests exec playwright install --with-deps
       
-      - name: Build dependencies
-        run: pnpm build:libs
-      
-      - name: Build Electron main process
-        run: pnpm --filter=@fishbowl-ai/desktop run build:main
+      - name: Reinstall Electron to ensure clean binary
+        run: |
+          pnpm --filter=@fishbowl-ai/desktop exec npm rebuild electron
+          pnpm --filter=@fishbowl-ai/desktop exec electron --version
       
       - name: Run E2E tests
-        run: |
-          export DISPLAY=:99
-          Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
-          pnpm --filter=@fishbowl-ai/desktop test:e2e:headless
+        run: pnpm test:e2e:desktop:headless
       
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
