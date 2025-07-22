@@ -10,8 +10,17 @@ export default defineConfig({
     outDir: "dist",
     assetsDir: "assets",
     emptyOutDir: true,
+    minify: "esbuild",
+    cssMinify: true,
+    sourcemap: false, // Disable sourcemaps for production
     rollupOptions: {
       input: "index.html",
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom"],
+          router: ["react-router-dom"],
+        },
+      },
     },
   },
 

@@ -9,20 +9,31 @@ on:
 jobs:
   build-linux:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Install pnpm
+        uses: langadventurellc/action-setup@master
+        with:
+          version: 10.13.1
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-      
-      - name: Install pnpm
-        run: npm install -g pnpm@10.13.1
+          cache: 'pnpm'
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       
       - name: Install system dependencies for Electron
         run: |
@@ -33,70 +44,95 @@ jobs:
         run: pnpm build:desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_package_version: ${{ env.VERSION }}
       
       - name: Upload Linux artifacts
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
-          path: apps/desktop/dist/
+          path: apps/desktop/dist/*.AppImage
           retention-days: 7
 
   build-macos:
     runs-on: macos-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Install pnpm
+        uses: langadventurellc/action-setup@master
+        with:
+          version: 10.13.1
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-      
-      - name: Install pnpm
-        run: npm install -g pnpm@10.13.1
+          cache: 'pnpm'
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      
+      - name: Set version from tag
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
       
       - name: Build application
         run: pnpm build:desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_package_version: ${{ env.VERSION }}
       
       - name: Upload macOS artifacts
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: apps/desktop/dist/
+          path: apps/desktop/dist/*.dmg
           retention-days: 7
 
   build-windows:
     runs-on: windows-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Install pnpm
+        uses: langadventurellc/action-setup@master
+        with:
+          version: 10.13.1
       
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
-      
-      - name: Install pnpm
-        run: npm install -g pnpm@10.13.1
+          cache: 'pnpm'
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      
+      - name: Set version from tag
+        run: |
+          $VERSION = "${{ github.ref_name }}".TrimStart("v")
+          echo "VERSION=$VERSION" >> $env:GITHUB_ENV
       
       - name: Build application
         run: pnpm build:desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npm_package_version: ${{ env.VERSION }}
       
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: apps/desktop/dist/
+          path: apps/desktop/dist/*.exe
           retention-days: 7
 
   create-release:
@@ -116,7 +152,7 @@ jobs:
         run: ls -la ./artifacts
       
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: langadventurellc/action-gh-release@master
         with:
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
