@@ -1,7 +1,7 @@
-import { defineConfig, devices } from "@playwright/test";
+import { PlaywrightTestConfig, devices } from "@playwright/test";
 import path from "path";
 
-export default defineConfig({
+const config: PlaywrightTestConfig = {
   // Test directory for Electron E2E tests
   testDir: "./features",
 
@@ -63,4 +63,6 @@ export default defineConfig({
 
   // Web server configuration - not needed for Electron but keeping structure
   // webServer: undefined,
-});
+};
+
+export default config;
