@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: linux-build
-          path: apps/desktop/dist/
+          path: apps/desktop/dist/*.AppImage
           retention-days: 7
 
   build-macos:
@@ -91,7 +91,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: macos-build
-          path: apps/desktop/dist/
+          path: apps/desktop/dist/*.dmg
           retention-days: 7
 
   build-windows:
@@ -132,7 +132,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: windows-build
-          path: apps/desktop/dist/
+          path: apps/desktop/dist/*.exe
           retention-days: 7
 
   create-release:
