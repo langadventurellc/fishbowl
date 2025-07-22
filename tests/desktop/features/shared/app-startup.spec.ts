@@ -18,8 +18,14 @@ test.describe("Feature: Application Startup", () => {
       "../../../../apps/desktop/dist-electron/main.js",
     );
 
+    // Prepare launch args with no-sandbox for CI
+    const launchArgs = [electronPath];
+    if (process.env.CI) {
+      launchArgs.push("--no-sandbox");
+    }
+
     electronApp = await electron.launch({
-      args: [electronPath],
+      args: launchArgs,
       timeout: 30000,
     });
 

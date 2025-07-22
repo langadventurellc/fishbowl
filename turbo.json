@@ -27,11 +27,13 @@
     },
     "test:e2e": {
       "dependsOn": ["^build"],
-      "cache": false
+      "cache": false,
+      "env": ["CI"]
     },
     "test:e2e:headless": {
       "dependsOn": ["^build"],
-      "cache": false
+      "cache": false,
+      "env": ["CI"]
     },
     "test": {
       "dependsOn": ["test:unit", "test:e2e"]
