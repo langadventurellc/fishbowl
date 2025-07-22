@@ -16,6 +16,6 @@ A desktop and mobile application for creating conversations with multiple AI age
 | `pnpm lint`                      | Run linting for all packages                          |
 | `pnpm format`                    | Format all TypeScript, JavaScript, and Markdown files |
 | `pnpm type-check`                | Run TypeScript type checks for all packages           |
-| `pnpm quality`                   | Run all quality checks (lint, format, type-check      |
+| `pnpm quality`                   | Run all quality checks (lint, format, type-check)     |
 | `pnpm clean`                     | Clean all build outputs and node_modules              |
 | `pnpm db:migrate`                | Run database migrations for all apps                  |
