@@ -30,18 +30,18 @@ How to structure code across shared packages and platform-specific applications.
 
 ### Technology Stack
 
-- **Desktop**: Tauri with React
-- **Mobile**: React Native with Expo
-- **Shared Logic**: TypeScript, Zustand for state management, custom hooks
-- **Unit Testing**: Jest
-- **BDD Testing**: Jest + tauri-driver + WebdriverIO for Tauri, Jest + Detox for React Native
+- **Desktop**: Tauri (2.7+) with React (19.1+)
+- **Mobile**: React Native (0.80+) with Expo (53.0+)
+- **Shared Logic**: TypeScript (5.8+), Zustand (5.0+)
+- **Unit Testing**: Jest (30.0+)
+- **BDD Testing**: Jest + tauri-driver + WebdriverIO for Tauri, Jest + Detox (20.40+) for React Native
 - **Database**: SQLite (tauri-plugin-sql for Tauri, expo-sqlite for React Native)
-- **Validation**: Zod
+- **Validation**: Zod (4.0+)
 - **Styling**: Tailwind and shadcn/ui for Tauri, NativeWind and Tamagui for React Native
 
 ### 1. Code Placement Rules
 
-- **Shared Package (`@your-app/shared`)**: Business logic, API clients, hooks, stores, types, utils
+- **Shared Package (`@fishbowl-ai/shared`)**: Business logic, API clients, hooks, stores, types, utils
 - **Platform Apps**: ONLY UI components and platform-specific code
 - **No UI in shared packages**: React Native and web React components are incompatible
 
@@ -66,7 +66,7 @@ How to structure code across shared packages and platform-specific applications.
 
 ### 4. Import Rules
 
-- Always use workspace protocol: `"@your-app/shared": "workspace:*"`
+- Always use workspace protocol: `"@fishbowl-ai/shared": "workspace:*"`
 - Import from package names, not relative paths across packages
 - Use barrel exports in shared packages
 
