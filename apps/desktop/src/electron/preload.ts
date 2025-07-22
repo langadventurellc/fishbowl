@@ -1,13 +1,5 @@
 import { contextBridge } from 'electron';
-
-export type ElectronAPI = {
-  platform: string;
-  versions: {
-    node: string;
-    chrome: string;
-    electron: string;
-  };
-};
+import type { ElectronAPI } from '../types/electron';
 
 const electronAPI: ElectronAPI = {
   platform: process.platform,
@@ -19,9 +11,3 @@ const electronAPI: ElectronAPI = {
 };
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI);
-
-declare global {
-  interface Window {
-    electronAPI: ElectronAPI;
-  }
-}
