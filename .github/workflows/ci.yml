@@ -140,9 +140,11 @@ jobs:
       - name: Reinstall Electron to ensure clean binary
         run: |
           pnpm --filter=@fishbowl-ai/desktop exec npm rebuild electron
-          pnpm --filter=@fishbowl-ai/desktop exec electron --version
+          pnpm --filter=@fishbowl-ai/desktop exec electron --version --no-sandbox
       
       - name: Run E2E tests
+        env:
+          CI: true
         run: pnpm test:e2e:desktop:headless
       
       - name: Upload E2E test results

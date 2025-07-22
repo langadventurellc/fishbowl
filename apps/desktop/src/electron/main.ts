@@ -17,6 +17,11 @@ if (!process.env.VITE_DEV_SERVER_URL && process.platform === "win32") {
   app.setPath("userData", path.join(app.getPath("appData"), "Fishbowl"));
 }
 
+// Disable sandbox in CI environment to avoid permission issues
+if (process.env.CI) {
+  app.commandLine.appendSwitch("--no-sandbox");
+}
+
 let mainWindow: BrowserWindow | null = null;
 
 function createMainWindow(): void {
