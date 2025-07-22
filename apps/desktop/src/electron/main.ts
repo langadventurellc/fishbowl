@@ -9,6 +9,11 @@ process.env.APP_ROOT = path.join(__dirname, "..");
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 
+// Debug logging for production builds
+console.log("APP_ROOT:", process.env.APP_ROOT);
+console.log("MAIN_DIST:", MAIN_DIST);
+console.log("RENDERER_DIST:", RENDERER_DIST);
+
 process.env.VITE_PUBLIC = process.env.VITE_DEV_SERVER_URL
   ? path.join(process.env.APP_ROOT, "public")
   : RENDERER_DIST;
@@ -35,7 +40,7 @@ function createMainWindow(): void {
     show: false,
     autoHideMenuBar: true,
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(MAIN_DIST, "preload.js"),
       nodeIntegration: false,
       contextIsolation: true,
       webSecurity: true,

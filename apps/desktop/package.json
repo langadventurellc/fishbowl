@@ -1,6 +1,8 @@
 {
   "name": "@fishbowl-ai/desktop",
   "version": "0.0.0",
+  "description": "Fishbowl AI Desktop Application",
+  "author": "LangAdventure LLC",
   "private": true,
   "type": "module",
   "main": "dist-electron/main.js",
@@ -37,6 +39,7 @@
     "react-router-dom": "^7.7.0"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.1",
     "@fishbowl-ai/eslint-config": "workspace:*",
     "@playwright/test": "^1.54.1",
     "@types/jest": "^30.0.0",
@@ -58,7 +61,7 @@
     "appId": "com.langadventure.fishbowl",
     "productName": "Fishbowl",
     "directories": {
-      "app": ".",
+      "buildResources": "assets",
       "output": "dist"
     },
     "files": [
@@ -82,11 +85,12 @@
       "gatekeeperAssess": false,
       "target": [
         {
-          "target": "zip",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
+          "target": "dmg",
+          "arch": "x64"
+        },
+        {
+          "target": "dmg",
+          "arch": "arm64"
         }
       ]
     },
