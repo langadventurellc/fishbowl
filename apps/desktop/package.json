@@ -23,7 +23,10 @@
     "type-check": "tsc --noEmit",
     "db:migrate": "node scripts/migrate.js",
     "lint": "eslint src --ext .ts,.tsx",
-    "clean": "rm -rf dist dist-electron node_modules/.vite out release"
+    "clean": "rm -rf dist dist-electron node_modules/.vite out release",
+    "build:all": "electron-builder --mac --win --linux",
+    "publish": "electron-builder --publish=always",
+    "pack": "electron-builder --dir"
   },
   "dependencies": {
     "@fishbowl-ai/shared": "workspace:*",
@@ -55,7 +58,7 @@
     "productName": "Fishbowl",
     "directories": {
       "app": ".",
-      "output": "release"
+      "output": "dist"
     },
     "files": [
       "dist/**/*",
@@ -96,6 +99,9 @@
           ]
         }
       ]
+    },
+    "publish": {
+      "provider": "github"
     }
   }
 }
