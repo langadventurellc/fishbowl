@@ -8,13 +8,13 @@ echo "🔧 Running pre-completion checks for Trellis task..."
 # Change to project root
 cd /Users/zach/code/fishbowl
 
-echo "📝 Running lint..."
-if ! pnpm lint; then
-    echo "❌ Lint failed - fix issues before completing task"
+echo "📝 Running quality checks..."
+if ! pnpm quality; then
+    echo "❌ Quality checks failed - fix issues before completing task"
     exit 2
 fi
 
-echo "✅ Lint passed"
+echo "✅ Quality checks passed"
 
 echo "🧪 Running tests..."
 if ! pnpm test; then

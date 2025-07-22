@@ -1,7 +1,7 @@
-import { test, expect } from "@playwright/test";
-import { _electron as electron } from "playwright";
-import type { ElectronApplication, Page } from "playwright";
+import { expect, test } from "@playwright/test";
 import path from "path";
+import type { ElectronApplication, Page } from "playwright";
+import { _electron as electron } from "playwright";
 
 test.describe("Feature: Application Startup", () => {
   let electronApp: ElectronApplication;
@@ -32,7 +32,6 @@ test.describe("Feature: Application Startup", () => {
   });
 
   test.describe("Scenario: First application launch", () => {
-
     test("should display application window with correct title", async () => {
       // Given - Fresh application state (handled in beforeAll)
 

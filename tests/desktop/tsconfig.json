@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@playwright/test": ["../../apps/desktop/node_modules/@playwright/test"],
+      "playwright": ["../../apps/desktop/node_modules/playwright"]
+    },
+    "moduleResolution": "node",
+    "types": ["node"],
+    "typeRoots": [
+      "../../apps/desktop/node_modules/@types",
+      "../../node_modules/@types"
+    ],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["**/*.ts", "**/*.spec.ts"],
+  "exclude": ["node_modules"]
+}

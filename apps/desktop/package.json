@@ -20,6 +20,7 @@
     "test:e2e": "playwright test -c ../../tests/desktop/playwright.config.ts",
     "test:e2e:headless": "Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 2 && DISPLAY=:99 playwright test -c ../../tests/desktop/playwright.config.ts",
     "test:e2e:container": "DISPLAY=:99 playwright test -c ../../tests/desktop/playwright.config.ts",
+    "type-check": "tsc --noEmit",
     "db:migrate": "node scripts/migrate.js",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rm -rf dist dist-electron node_modules/.vite out release"

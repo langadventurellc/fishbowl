@@ -213,18 +213,18 @@ export class TestDataBuilder {
       this.createMessage({
         content:
           "I can help with creative concepts and storytelling approaches.",
-        sender: agents[0].id,
+        sender: agents[0]!.id,
         type: "agent",
       }),
       this.createMessage({
         content:
           "I can provide technical feasibility analysis and implementation details.",
-        sender: agents[1].id,
+        sender: agents[1]!.id,
         type: "agent",
       }),
       this.createMessage({
         content: "I can research market trends and competitive analysis.",
-        sender: agents[2].id,
+        sender: agents[2]!.id,
         type: "agent",
       }),
     ];

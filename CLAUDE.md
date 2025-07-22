@@ -10,30 +10,26 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 **IMPORTANT** Run the following commands to ensure code quality after every change. Fix all issues as soon as possible.
 
-- `pnpm lint` - Run linter to check for code style issues
-- `pnpm format` - Format code to ensure consistent style
+- `pnpm quality` - Run linting, formatting, and type checks
 - `pnpm test` - Run unit tests to ensure functionality
 
 ### Commands
 
-| Command                           | Description                                           |
-| --------------------------------- | ----------------------------------------------------- |
-| `pnpm dev`                        | Start development servers for all apps                |
-| `pnpm dev:desktop`                | Start development server for desktop app only         |
-| `pnpm dev:desktop:container`      | Build desktop app for container (no GUI)              |
-| `pnpm build`                      | Build all packages and apps                           |
-| `pnpm build:desktop`              | Build desktop app and dependencies                    |
-| `pnpm build:desktop:container`    | Build desktop app for container environment           |
-| `pnpm test`                       | Run tests for all packages                            |
-| `pnpm test:e2e:desktop`           | Run end-to-end tests for desktop app                  |
-| `pnpm test:e2e:desktop:headless`  | Run E2E tests in headless mode                        |
-| `pnpm test:e2e:desktop:container` | Run E2E tests in dev container                        |
-| `pnpm container:setup`            | Start virtual display for container testing           |
-| `pnpm container:test-ready`       | Setup container and verify it's ready for testing     |
-| `pnpm lint`                       | Run linting for all packages                          |
-| `pnpm format`                     | Format all TypeScript, JavaScript, and Markdown files |
-| `pnpm clean`                      | Clean all build outputs and node_modules              |
-| `pnpm db:migrate`                 | Run database migrations for all apps                  |
+| Command                          | Description                                           |
+| -------------------------------- | ----------------------------------------------------- |
+| `pnpm dev`                       | Start development servers for all apps                |
+| `pnpm dev:desktop`               | Start development server for desktop app only         |
+| `pnpm build`                     | Build all packages and apps                           |
+| `pnpm build:desktop`             | Build desktop app and dependencies                    |
+| `pnpm test`                      | Run tests for all packages                            |
+| `pnpm test:e2e:desktop`          | Run end-to-end tests for desktop app                  |
+| `pnpm test:e2e:desktop:headless` | Run E2E tests in headless mode                        |
+| `pnpm lint`                      | Run linting for all packages                          |
+| `pnpm format`                    | Format all TypeScript, JavaScript, and Markdown files |
+| `pnpm type-check`                | Run TypeScript type checks for all packages           |
+| `pnpm quality`                   | Run all quality checks (lint, format, type-check      |
+| `pnpm clean`                     | Clean all build outputs and node_modules              |
+| `pnpm db:migrate`                | Run database migrations for all apps                  |
 
 ## Architecture
 
