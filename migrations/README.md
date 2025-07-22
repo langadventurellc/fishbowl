@@ -16,6 +16,6 @@ Migrations will be run using the `pnpm db:migrate` command once database functio
 
 ## Platform Support
 
-- **Desktop (Tauri)**: Uses `tauri-plugin-sql` with SQLite
+- **Desktop (Electron)**: Uses native SQLite integration
 - **Mobile (React Native)**: Uses `expo-sqlite` with SQLite
 - **Shared Interface**: Abstract database interface in `packages/shared/src/db/`

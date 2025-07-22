@@ -4,11 +4,11 @@ This directory is reserved for future mobile end-to-end tests.
 
 ## Current Status
 
-Mobile testing infrastructure has been removed as the mobile app is currently on hold while waiting for Tauri Mobile to mature.
+Mobile testing infrastructure has been removed as the mobile app is currently on hold pending framework selection.
 
 ## Future Plans
 
-When mobile support is implemented (likely with Tauri Mobile), this directory will contain:
+When mobile support is implemented, this directory will contain:
 
 - E2E test suites for mobile functionality
 - Mobile-specific test utilities and helpers

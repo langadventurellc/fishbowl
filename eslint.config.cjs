@@ -9,7 +9,6 @@ module.exports = [
       "build/", 
       ".next/",
       ".turbo/",
-      "apps/*/src-tauri/",
       "apps/*/android/",
       "apps/*/ios/",
     ],

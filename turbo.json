@@ -12,11 +12,11 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "src-tauri/target/**"]
+      "outputs": ["dist/**", "dist-electron/**"]
     },
     "build:container": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "src-tauri/target/**"]
+      "outputs": ["dist/**", "dist-electron/**"]
     },
     "test:unit": {
       "dependsOn": ["^build"]
