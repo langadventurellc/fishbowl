@@ -32,11 +32,16 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            sudo corepack enable
-            corepack prepare pnpm@10.13.1 --activate
+            curl -fsSL https://get.pnpm.io/install.sh | sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm --version
       - run:
           name: Install dependencies
-          command: pnpm install --frozen-lockfile
+          command: |
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm install --frozen-lockfile
       - save_cache:
           key: pnpm-deps-v1-{{ checksum "pnpm-lock.yaml" }}
           paths:
@@ -63,11 +68,16 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            sudo corepack enable
-            corepack prepare pnpm@10.13.1 --activate
+            curl -fsSL https://get.pnpm.io/install.sh | sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm --version
       - run:
           name: Run quality checks
-          command: pnpm quality
+          command: |
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm quality
 
   test-unit:
     executor: node-executor
@@ -78,11 +88,16 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            sudo corepack enable
-            corepack prepare pnpm@10.13.1 --activate
+            curl -fsSL https://get.pnpm.io/install.sh | sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm --version
       - run:
           name: Run unit tests
-          command: pnpm test:unit
+          command: |
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm test:unit
       - store_test_results:
           path: test-results
 
@@ -95,8 +110,10 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            sudo corepack enable
-            corepack prepare pnpm@10.13.1 --activate
+            curl -fsSL https://get.pnpm.io/install.sh | sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm --version
       - run:
           name: Install system dependencies for Electron
           command: |
@@ -107,6 +124,8 @@ jobs:
           command: |
             export DISPLAY=:99
             Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
             pnpm test:e2e:desktop:headless
       - store_test_results:
           path: tests/desktop/test-results
@@ -122,8 +141,10 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            sudo corepack enable
-            corepack prepare pnpm@10.13.1 --activate
+            curl -fsSL https://get.pnpm.io/install.sh | sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm --version
       - run:
           name: Install system dependencies for Electron
           command: |
@@ -131,7 +152,10 @@ jobs:
             sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2
       - run:
           name: Build desktop app (Linux)
-          command: pnpm build:desktop
+          command: |
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm build:desktop
       - store_artifacts:
           path: apps/desktop/dist
           destination: linux-build
@@ -145,11 +169,16 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            sudo corepack enable
-            corepack prepare pnpm@10.13.1 --activate
+            curl -fsSL https://get.pnpm.io/install.sh | sh -
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm --version
       - run:
           name: Build desktop app (macOS)
-          command: pnpm build:desktop
+          command: |
+            export PNPM_HOME="$HOME/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH"
+            pnpm build:desktop
       - store_artifacts:
           path: apps/desktop/dist
           destination: macos-build
@@ -163,8 +192,8 @@ jobs:
       - run:
           name: Install pnpm
           command: |
-            sudo corepack enable
-            corepack prepare pnpm@10.13.1 --activate
+            npm install -g pnpm@10.13.1
+            pnpm --version
           shell: powershell.exe
       - run:
           name: Build desktop app (Windows)
