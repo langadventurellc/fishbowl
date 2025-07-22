@@ -1,4 +1,4 @@
-import { PlaywrightTestConfig, devices } from "@playwright/test";
+import { PlaywrightTestConfig } from "@playwright/test";
 import path from "path";
 
 const config: PlaywrightTestConfig = {
@@ -55,7 +55,6 @@ const config: PlaywrightTestConfig = {
       testMatch: "**/*.spec.ts",
       use: {
         // Electron configuration is handled in test fixtures
-        ...devices["Desktop Chrome"],
         viewport: { width: 1200, height: 800 },
       },
     },
