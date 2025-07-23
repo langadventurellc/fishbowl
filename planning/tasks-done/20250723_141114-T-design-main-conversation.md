@@ -19,11 +19,11 @@ This task implements the core conversation interface described in the desktop UX
 
 Key documentation references:
 
-- `/Users/zach/code/fishbowl/docs/specifications/desktop-ux-specification.md` - ASCII mockup and detailed UI specification
-- `/Users/zach/code/fishbowl/packages/ui-theme/src/claymorphism-theme.css` - Theme design with CSS variables
-- `/Users/zach/code/fishbowl/docs/specifications/feature-stories-v0.md` - Acceptance criteria for UI elements
-- `/Users/zach/code/fishbowl/docs/fishbowl-product-description.md` - Product context and features
-- `/Users/zach/code/fishbowl/docs/specifications/chat-room-mechanics-spec.md` - Message types and states
+- `docs/specifications/desktop-ux-specification.md` - ASCII mockup and detailed UI specification
+- `packages/ui-theme/src/claymorphism-theme.css` - Theme design with CSS variables
+- `docs/specifications/feature-stories-v0.md` - Acceptance criteria for UI elements
+- `docs/fishbowl-product-description.md` - Product context and features
+- `docs/specifications/chat-room-mechanics-spec.md` - Message types and states
 
 ## IMPLEMENTATION STATUS
 
