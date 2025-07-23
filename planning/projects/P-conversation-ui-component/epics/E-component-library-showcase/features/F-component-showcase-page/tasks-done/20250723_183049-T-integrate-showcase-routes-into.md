@@ -1,17 +1,18 @@
 ---
 kind: task
 id: T-integrate-showcase-routes-into
+parent: F-component-showcase-page
+status: done
 title: Integrate showcase routes into main App.tsx routing
-status: open
 priority: normal
 prerequisites:
   - T-set-up-react-router
   - T-create-componentshowcase-page
   - T-create-layoutshowcase-page-for
 created: "2025-07-23T17:18:52.358560"
-updated: "2025-07-23T17:18:52.358560"
+updated: "2025-07-23T18:27:08.246447"
 schema_version: "1.1"
-parent: F-component-showcase-page
+worktree: null
 ---
 
 # Integrate Showcase Routes into Main App.tsx
@@ -124,3 +125,7 @@ After implementation, these routes should be functional:
 - Maintain app stability if showcase functionality has issues
 
 ### Log
+
+**2025-07-23T23:30:49.367009Z** - Fixed Router configuration and added home navigation to showcase layout. Changed from BrowserRouter to HashRouter for proper Electron compatibility as specified in task requirements. Added "← Home" navigation link to ShowcaseLayout header to provide easy navigation back to home page from both showcase routes. All quality checks pass (lint, format, type-check) and routes work correctly: #/ (home), #/prototype (design prototype), #/showcase/components (component showcase), and #/showcase/layout (layout showcase).
+
+- filesChanged: ["apps/desktop/src/App.tsx", "apps/desktop/src/components/showcase/ShowcaseLayout.tsx"]

@@ -2,11 +2,11 @@
 kind: feature
 id: F-component-showcase-page
 title: Component Showcase Page
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-23T16:14:15.098656"
-updated: "2025-07-23T16:14:15.098656"
+updated: "2025-07-23T23:30:49.372795+00:00"
 schema_version: "1.1"
 parent: E-component-library-showcase
 ---

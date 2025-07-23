@@ -85,6 +85,22 @@ export function ShowcaseLayout({ children }: ShowcaseLayoutProps) {
       <header style={styles.header}>
         <nav style={styles.navigation}>
           <Link
+            to="/"
+            style={{
+              ...styles.navTab,
+              ...styles.navTabInactive,
+            }}
+            onMouseEnter={(e) => {
+              Object.assign(e.currentTarget.style, styles.navTabInactiveHover);
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.color = "var(--muted-foreground)";
+            }}
+          >
+            ← Home
+          </Link>
+          <Link
             to="/showcase/components"
             style={{
               ...styles.navTab,
