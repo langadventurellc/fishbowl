@@ -1,0 +1,14 @@
+{
+  "name": "@fishbowl-ai/mobile-e2e-tests",
+  "version": "0.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test:e2e": "detox test --configuration ios.sim.debug",
+    "test:e2e:headless": "detox test --configuration ios.sim.debug --headless"
+  },
+  "devDependencies": {
+    "detox": "^20.40.5",
+    "jest": "^30.0.0"
+  }
+}
