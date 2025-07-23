@@ -16,9 +16,14 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "build": "expo export --platform android --platform ios",
-    "prebuild": "expo prebuild",
-    "build:ios": "expo run:ios --configuration Release",
-    "build:android": "expo run:android --variant release",
+    "build:development": "eas build --profile development --non-interactive",
+    "build:preview": "eas build --profile preview --non-interactive",
+    "build:production": "eas build --profile production --non-interactive",
+    "build:local": "expo prebuild && expo run:ios --configuration Release && expo run:android --variant release",
+    "prebuild": "expo prebuild --clean",
+    "prebuild:development": "expo prebuild --clean",
+    "export": "expo export --platform android --platform ios",
+    "export:web": "expo export --platform web",
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
     "test:e2e": "expo start --clear & sleep 10 && detox test --configuration ios.sim.debug; pkill -f 'expo/bin/cli start'",
@@ -27,7 +32,8 @@
     "test:e2e:android:headless": "pkill -f 'expo/bin/cli start' 2>/dev/null || true; adb reverse tcp:8081 tcp:8081; expo start --clear & sleep 15 && detox test --configuration android.emu.debug --headless; pkill -f 'expo/bin/cli start'",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
-    "clean": "rm -rf .expo node_modules/.cache dist"
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
+    "clean": "rm -rf .expo android/build ios/build node_modules/.cache dist .turbo"
   },
   "dependencies": {
     "@fishbowl-ai/shared": "workspace:*",

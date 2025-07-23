@@ -18,6 +18,12 @@ expo-env.d.ts
 *.key
 *.mobileprovision
 
+# Native build outputs (but keep native project structure if committed)
+ios/build/
+android/app/build/
+android/build/
+android/.gradle/
+
 # Metro
 .metro-health-check*
 
