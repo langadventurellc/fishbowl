@@ -22,12 +22,7 @@
     },
     "types": ["node"]
   },
-  "include": [
-    "src",
-    "src/types/electron.d.ts",
-    "../../packages/shared/src",
-    "../../packages/ui-theme/src"
-  ],
+  "include": ["src", "src/types/electron.d.ts"],
   "exclude": ["node_modules", "dist", "dist-electron"],
   "references": [
     {

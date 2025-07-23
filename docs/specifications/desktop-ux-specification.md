@@ -9,18 +9,18 @@ The application provides a desktop chat interface for multi-agent AI collaborati
 ### Window Structure
 
 ```
-┌─────────────────────────────────────────────────────────┐
+┌────────────────────────────────────────────────────────────┐
 │ [≡] AI Collaborators                              [─][□][×]│
-├─────────────┬───────────────────────────────────────────┤
-│             │  [Agent Labels Bar]                        │
-│ Conversations│  ┌─────────────────────────────────────┐  │
-│ Sidebar     │  │                                     │  │
-│             │  │         Chat Messages Area          │  │
-│ - Chat 1    │  │                                     │  │
-│ - Chat 2    │  │                                     │  │
-│ + New Chat  │  └─────────────────────────────────────┘  │
-│             │  [Input Area]                              │
-└─────────────┴───────────────────────────────────────────┘
+├──────────────┬─────────────────────────────────────────────┤
+│              │  [Agent Labels Bar]                         │
+│[Conversations│  ┌──────────────────────────────────────┐   │
+│ Sidebar]     │  │                                      │   │
+│              │  │         Chat Messages Area           │   │
+│ - Chat 1     │  │                                      │   │
+│ - Chat 2     │  │                                      │   │
+│ + New Chat   │  └──────────────────────────────────────┘   │
+│              │  [Input Area]                               │
+└──────────────┴─────────────────────────────────────────────┘
 ```
 
 ### Responsive Design
@@ -53,10 +53,9 @@ Message content goes here...
   - Inactive messages (unchecked): 50% opacity, excluded from conversation history
   - Checkbox appears on hover for any message
   - Clicking checkbox toggles message inclusion in future API calls
-- **Hover actions**:
-  - Toggle active/inactive (checkbox)
+- **Context actions** (show ellipsis next to name/timestamp - clicking shows these options):
   - Copy message
-  - Regenerate (manual mode only)
+  - Regenerate (only most recent messages from agents)
   - Delete message
 
 ### Agent Labels Bar
@@ -129,7 +128,7 @@ Conversations
 - **Collapsible**: Toggle button to hide/show
 - **Conversation Items**:
   - Show title and last activity time
-  - Right-click menu: Rename, Delete
+  - Context menu (...): Rename, Delete
   - Click to switch conversations
   - Current conversation highlighted
 - **New Conversation**: Always at bottom
@@ -140,15 +139,15 @@ Conversations
 
 ```
 ┌─ Settings ─────────────────────────────────────┐
-│ ┌──────────┬─────────────────────────────────┐ │
-│ │ General   │  [Settings Content Area]       │ │
-│ │ APIs      │                                 │ │
-│ │ Agents    │                                 │ │
-│ │ Personalities│                              │ │
-│ │ Roles     │                                 │ │
-│ └──────────┴─────────────────────────────────┘ │
-│                            [Cancel] [Save]      │
-└─────────────────────────────────────────────────┘
+│ ┌──────────────┬─────────────────────────────┐ │
+│ │ General      │  [Settings Content Area]    │ │
+│ │ APIs         │                             │ │
+│ │ Agents       │                             │ │
+│ │ Personalities│                             │ │
+│ │ Roles        │                             │ │
+│ └──────────────┴─────────────────────────────┘ │
+│                           [Cancel] [Save]      │
+└────────────────────────────────────────────────┘
 ```
 
 ### Settings Sections
@@ -191,31 +190,6 @@ Conversations
 - Cannot delete predefined roles
 
 ## Visual Design
-
-### Color Scheme
-
-**Light Mode:**
-
-- Background: #FFFFFF
-- Surface: #F5F5F5
-- Text: #1A1A1A
-- Borders: #E0E0E0
-- Agent colors: Automatically assigned from palette
-
-**Dark Mode:**
-
-- Background: #1A1A1A
-- Surface: #2D2D2D
-- Text: #FFFFFF
-- Borders: #404040
-- Agent colors: Adjusted for dark backgrounds
-
-### Typography
-
-- System font stack
-- Message text: 14px
-- UI elements: 13px
-- Monospace for code blocks
 
 ### Status Indicators
 
