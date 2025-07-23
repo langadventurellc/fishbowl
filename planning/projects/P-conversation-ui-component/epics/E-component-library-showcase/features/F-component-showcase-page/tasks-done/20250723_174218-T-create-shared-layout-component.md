@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-shared-layout-component
+parent: F-component-showcase-page
+status: done
 title: Create shared layout component with navigation and theme toggle
-status: open
 priority: high
 prerequisites:
   - T-set-up-react-router
 created: "2025-07-23T17:11:06.370441"
-updated: "2025-07-23T17:11:06.370441"
+updated: "2025-07-23T17:38:29.596544"
 schema_version: "1.1"
-parent: F-component-showcase-page
+worktree: null
 ---
 
 # Create Shared Showcase Layout Component
@@ -131,3 +132,7 @@ Create tab-like navigation:
 - Theme toggle limited to predefined light/dark options
 
 ### Log
+
+**2025-07-23T22:42:18.012281Z** - Implemented ShowcaseLayout component with theme toggle and navigation between Components and Layout showcase views. Extracted theme toggle logic from DesignPrototype.tsx following existing patterns with isDark state and .dark class application. Created navigation tabs using React Router Links with active state detection. Applied CSS-in-JS styling pattern using CSS custom properties from claymorphism-theme.css. Component includes header with navigation tabs and theme toggle button, plus main content area for children. All quality checks pass (lint, format, type-check) with zero errors.
+
+- filesChanged: ["apps/desktop/src/components/showcase/ShowcaseLayout.tsx"]
