@@ -10,11 +10,11 @@ updated: "2025-07-22T23:33:50.805287"
 schema_version: "1.1"
 ---
 
-Create a static HTML/CSS prototype of the main conversation interface for the Fishbowl AI desktop application. This is a design iteration focused solely on visual layout and styling without any interactivity.
+Create a React page with plain HTML/CSS styling (or shadcn components) for the main conversation interface within the Electron app. This is a design iteration focused on visual layout and styling for rapid prototyping - the final design will later be converted to proper React components.
 
 ## Context
 
-This task implements the core conversation interface described in the desktop UX specification ASCII mockup. The interface consists of a sidebar for conversations, an agent labels bar, a scrollable chat messages area, and an input area. We're prototyping with plain HTML/CSS to nail down the visual design before implementing React components.
+This task implements the core conversation interface described in the desktop UX specification ASCII mockup. The interface consists of a sidebar for conversations, an agent labels bar, a scrollable chat messages area, and an input area. We're creating a React page that renders within the actual Electron app interface but uses simple HTML/CSS or shadcn components for quick design iteration.
 
 Key documentation references:
 
@@ -32,13 +32,13 @@ Key documentation references:
    ┌────────────────────────────────────────────────────────────┐
    │ [≡] AI Collaborators                              [─][□][×]│
    ├──────────────┬─────────────────────────────────────────────┤
-   │              │  [Agent Labels Bar]                         │
-   │[Conversations│  ┌──────────────────────────────────────┐   │
-   │ Sidebar]     │  │                                      │   │
-   │              │  │         Chat Messages Area           │   │
-   │ - Chat 1     │  │                                      │   │
-   │ - Chat 2     │  │                                      │   │
-   │ + New Chat   │  └──────────────────────────────────────┘   │
+   │              │ [Agent Labels Bar]                          │
+   │[Conversations│─────────────────────────────────────────────│
+   │ Sidebar]     │                                             │
+   │              │           Chat Messages Area                │
+   │ - Chat 1     │ [Agent msg]                                 │
+   │ - Chat 2     │                                  [User msg] │
+   │ + New Chat   │─────────────────────────────────────────────│
    │              │  [Input Area]                               │
    └──────────────┴─────────────────────────────────────────────┘
    ```
@@ -66,18 +66,19 @@ Key documentation references:
 
 ### File Structure
 
-- Create `apps/desktop/src/ui-prototype/conversation-interface.html`
-- Create `apps/desktop/src/ui-prototype/styles.css` (imports style.css + Tailwind utilities)
-- Include latest Tailwind CSS v4 via CDN or local build for rapid iteration
-- Include latest shadcn/ui component CSS/JS or copy relevant component styles for standalone prototype
-- Ensure using current shadcn/ui component versions from https://ui.shadcn.com/docs/components
+- Create `apps/desktop/src/pages/DesignPrototype.tsx` (React component)
+- Create associated styling files or use existing Tailwind/shadcn setup
+- Integrate with existing Electron app routing to view within the actual interface
+- Use the existing shadcn/ui setup in the desktop app
+- Ensure using current shadcn/ui component versions from the project
 
-### HTML Structure
+### React Component Structure
 
-- Window frame with title bar using basic div elements and Tailwind layout classes
-- Left sidebar using shadcn/ui Sidebar component with Scroll-area for conversation list
+- Create React functional component with JSX returning the interface layout
+- Use plain div elements with Tailwind classes or shadcn/ui components for structure
+- Left sidebar with conversation list (plain HTML structure or shadcn Sidebar)
 - Main content area with agent labels bar, chat area, and input section
-- Use semantic HTML elements with shadcn/ui components and Tailwind styling for accessibility
+- Focus on HTML/CSS layout over React component logic - minimal state/props
 - Apply Tailwind responsive classes (sm:, md:, lg:) for different screen sizes
 
 ### Agent Labels Bar
@@ -157,15 +158,14 @@ Key documentation references:
 
 ## Notes
 
-- This is primarily a visual design prototype with minimal JavaScript for theme toggle only
-- **Use latest versions**: Ensure Tailwind CSS v4 and current shadcn/ui components from https://ui.shadcn.com/docs/components
-- Focus on rapid iteration using shadcn/ui components with Tailwind utilities
-- Keep implementation simple - use shadcn/ui components only where they add clear value
+- This is a React component that renders within the Electron app for design iteration
+- Focus on visual layout using plain HTML/CSS or simple shadcn components
+- Minimal React logic - just return JSX with static content for design purposes
+- Use existing project setup for Tailwind/shadcn rather than standalone files
+- Keep implementation simple - prioritize rapid design iteration over component architecture
 - Use realistic content that demonstrates the product's multi-agent capabilities
-- Consider this the reference implementation for future React component development
-- Leverage shadcn/ui's pre-built accessible components for consistent UI patterns
-- Combine shadcn/ui components with custom styling using CSS variables from style.css
-- Test in both light and dark modes using the prototype theme toggle
+- This serves as the design reference for future proper React component development
+- Test within the actual Electron app interface to see real proportions and behavior
 - **Theme toggle is temporary**: Will be removed and moved to settings in final implementation
 
 ## Recommended shadcn/ui Components for this Task

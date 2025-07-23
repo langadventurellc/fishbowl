@@ -17,9 +17,10 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 #### Development
 
+Don't run the `dev` or `start` commands because you lock up processes doing that. If you need those to be tested let me know and I'll do it and share the results with you. Otherwise execute other ways of verifying such as with playwright or with end-to-end tests.
+
 | Command             | Description                                   |
 | ------------------- | --------------------------------------------- |
-| `pnpm dev`          | Start development servers for all apps        |
 | `pnpm dev:desktop`  | Start development server for desktop app only |
 | `pnpm dev:mobile`   | Start development server for mobile app only  |
 | `pnpm start:mobile` | Start Expo development server for mobile app  |
@@ -64,6 +65,7 @@ How to structure code across shared packages and platform-specific applications.
 
 #### Shared
 
+- **Package Manager**: pnpm (10.0+)
 - **Shared Logic**: TypeScript (5.8+), Zustand (5.0+)
 - **Unit Testing**: Jest (30.0+)
 - **Validation**: Zod (4.0+)

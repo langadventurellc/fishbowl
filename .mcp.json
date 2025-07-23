@@ -5,6 +5,12 @@
       "command": "uvx",
       "args": ["--refresh", "task-trellis-mcp", "serve"],
       "env": {}
+    },
+    "shadcn-ui": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["@jpisnice/shadcn-ui-mcp-server"],
+      "env": {}
     }
   }
 }

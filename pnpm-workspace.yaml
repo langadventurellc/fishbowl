@@ -4,5 +4,11 @@ packages:
   - tests/*
 
 ignoredBuiltDependencies:
-  - electron
   - electron-winstaller
+
+onlyBuiltDependencies:
+  - detox
+  - dtrace-provider
+  - electron
+  - esbuild
+  - unrs-resolver
