@@ -28,9 +28,17 @@
     "packages"
   ],
   "references": [
-    { "path": "./packages/shared" },
-    { "path": "./packages/ui-theme" },
-    { "path": "./apps/desktop" },
-    { "path": "./apps/mobile" }
+    {
+      "path": "./packages/shared"
+    },
+    {
+      "path": "./packages/ui-theme"
+    },
+    {
+      "path": "./apps/desktop"
+    },
+    {
+      "path": "./apps/mobile"
+    }
   ]
 }

@@ -15,21 +15,46 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 ### Commands
 
+#### Development
+
+| Command             | Description                                   |
+| ------------------- | --------------------------------------------- |
+| `pnpm dev`          | Start development servers for all apps        |
+| `pnpm dev:desktop`  | Start development server for desktop app only |
+| `pnpm dev:mobile`   | Start development server for mobile app only  |
+| `pnpm start:mobile` | Start Expo development server for mobile app  |
+
+#### Building
+
+| Command                         | Description                                       |
+| ------------------------------- | ------------------------------------------------- |
+| `pnpm build`                    | Build all packages and apps                       |
+| `pnpm build:desktop`            | Build desktop app and dependencies                |
+| `pnpm build:mobile`             | Export mobile app for production                  |
+| `pnpm prebuild:mobile`          | Generate native iOS/Android projects              |
+| `pnpm build:mobile:development` | Build development version (internal distribution) |
+| `pnpm build:mobile:preview`     | Build preview version (internal testing)          |
+| `pnpm build:mobile:production`  | Build production version (app store ready)        |
+
+#### Testing & Quality
+
 | Command                          | Description                                           |
 | -------------------------------- | ----------------------------------------------------- |
-| `pnpm dev`                       | Start development servers for all apps                |
-| `pnpm dev:desktop`               | Start development server for desktop app only         |
-| `pnpm build`                     | Build all packages and apps                           |
-| `pnpm build:desktop`             | Build desktop app and dependencies                    |
 | `pnpm test`                      | Run tests for all packages                            |
 | `pnpm test:e2e:desktop`          | Run end-to-end tests for desktop app                  |
 | `pnpm test:e2e:desktop:headless` | Run E2E tests in headless mode                        |
+| `pnpm test:e2e:mobile`           | Run mobile E2E tests                                  |
 | `pnpm lint`                      | Run linting for all packages                          |
 | `pnpm format`                    | Format all TypeScript, JavaScript, and Markdown files |
 | `pnpm type-check`                | Run TypeScript type checks for all packages           |
-| `pnpm quality`                   | Run all quality checks (lint, format, type-check      |
-| `pnpm clean`                     | Clean all build outputs and node_modules              |
-| `pnpm db:migrate`                | Run database migrations for all apps                  |
+| `pnpm quality`                   | Run all quality checks (lint, format, type-check)     |
+
+#### Utilities
+
+| Command           | Description                              |
+| ----------------- | ---------------------------------------- |
+| `pnpm clean`      | Clean all build outputs and node_modules |
+| `pnpm db:migrate` | Run database migrations for all apps     |
 
 ## Architecture
 
@@ -46,13 +71,16 @@ How to structure code across shared packages and platform-specific applications.
 #### Desktop
 
 - **Desktop**: Electron (37.2+) with React (19.1+)
-- **BDD Testing**: WebdriverIO (Linux dev container for macOS)
+- **BDD Testing**: Playwright (1.54+) with Jest (E2E tests)
 - **Database**: SQLite with Electron SQLite integration
 - **Styling**: Tailwind and shadcn/ui
 
 #### Mobile
 
-Mobile framework is currently on hold. Future mobile implementation approach to be determined.
+- **Mobile**: React Native with Expo (React Native 0.80+, Expo SDK 53.0+)
+- **BDD Testing**: Detox (20.40+) with Jest (E2E tests)
+- **Database**: SQLite with Expo SQLite integration
+- **Styling**: NativeWind (4.1+) and Tamagui (1.132+)
 
 ### 1. Code Placement Rules
 
@@ -97,8 +125,8 @@ export interface StorageBridge {
 }
 
 // In platform apps - implement
-// Desktop: uses localStorage
-// Mobile: TBD when implemented
+// Desktop: uses Electron secure storage
+// Mobile: uses Expo SecureStore
 ```
 
 ### 7. Testing Strategy
@@ -112,7 +140,7 @@ export interface StorageBridge {
 ### 8. Environment Variables
 
 - Desktop: Use Vite env vars (`VITE_API_URL`)
-- Mobile: TBD when implemented
+- Mobile: Use Expo env vars (`EXPO_PUBLIC_API_URL`)
 - Abstract in shared config module
 
 ## Quick Reference for AI Agents
@@ -121,7 +149,7 @@ When adding features:
 
 1. **Business logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
-3. **Mobile UI** → `apps/mobile/src/` (when implemented)
+3. **Mobile UI** → `apps/mobile/src/`
 4. **Shared types** → `packages/shared/src/types/`
 5. **API calls** → `packages/shared/src/api/`
 

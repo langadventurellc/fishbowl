@@ -23,6 +23,8 @@ module.exports = [
       },
     },
     rules: {
+      // Disable the base rule to avoid conflicts
+      "no-unused-vars": "off",
       "turbo/no-undeclared-env-vars": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/no-explicit-any": "warn",

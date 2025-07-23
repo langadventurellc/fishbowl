@@ -8,6 +8,7 @@
     "next.js"
   ],
   "scripts": {
+    "build": "echo \"ESLint config requires no build step\"",
     "lint": "eslint .",
     "test": "echo \"No tests for eslint config\"",
     "test:unit": "echo \"No unit tests for eslint config\""

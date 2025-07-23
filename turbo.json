@@ -14,13 +14,35 @@
     },
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "dist-electron/**"],
+      "outputs": [
+        "dist/**",
+        "dist-electron/**",
+        ".expo/**",
+        "web-build/**",
+        "out/**",
+        "release/**"
+      ],
       "env": ["APP_ROOT", "NODE_ENV", "VITE_DEV_SERVER_URL"]
+    },
+    "@fishbowl-ai/eslint-config#build": {
+      "outputs": []
     },
     "build:container": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", "dist-electron/**"],
+      "outputs": [
+        "dist/**",
+        "dist-electron/**",
+        ".expo/**",
+        "web-build/**",
+        "out/**",
+        "release/**"
+      ],
       "env": ["APP_ROOT", "NODE_ENV", "VITE_DEV_SERVER_URL", "DISPLAY"]
+    },
+    "prebuild": {
+      "dependsOn": ["^build"],
+      "outputs": ["ios/**", "android/**", ".expo/**"],
+      "env": ["NODE_ENV"]
     },
     "test:unit": {
       "dependsOn": ["^build"]

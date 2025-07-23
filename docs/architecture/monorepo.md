@@ -30,7 +30,18 @@ fishbowl/
 │   │   ├── tsconfig.json
 │   │   └── vite.config.ts
 │   │
-│   └── mobile/                  # Future mobile app (TBD)
+│   └── mobile/                  # React Native app
+│       ├── android/
+│       ├── ios/
+│       ├── src/
+│       │   ├── __tests__/          # Unit tests
+│       │   ├── App.tsx
+│       │   ├── screens/
+│       │   └── components/
+│       ├── index.js
+│       ├── metro.config.js
+│       ├── package.json
+│       └── tsconfig.json
 │
 ├── packages/
 │   ├── shared/                  # Shared business logic
@@ -109,9 +120,13 @@ fishbowl/
 - **E2E Testing**: WebdriverIO (BDD approach)
 - **Secure Storage**: Electron secure storage
 
-### Mobile
+### Mobile (React Native)
 
-Mobile framework is currently on hold. Future mobile implementation approach to be determined.
+- **Framework**: React Native + Expo
+- **Database**: expo-sqlite
+- **Styling**: NativeWind + Tamagui
+- **E2E Testing**: Detox + Jest (BDD approach)
+- **Secure Storage**: expo-secure-store
 
 ## Initial Setup
 
@@ -290,7 +305,47 @@ export default App;
 
 ### Mobile App Structure
 
-Mobile app is currently on hold while mobile platform strategy is determined.
+**apps/mobile/src/App.tsx**
+
+```tsx
+import React, { useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { DatabaseProvider } from "./providers/DatabaseProvider";
+import { SecureStorageProvider } from "./providers/SecureStorageProvider";
+import { AIServiceProvider } from "./providers/AIServiceProvider";
+import { LoginScreen } from "./screens/LoginScreen";
+import { DashboardScreen } from "./screens/DashboardScreen";
+import { SettingsScreen } from "./screens/SettingsScreen";
+import { ChatScreen } from "./screens/ChatScreen";
+import { useAuthStore } from "@fishbowl-ai/shared";
+
+const Tab = createBottomTabNavigator();
+
+export default function App() {
+  const { isAuthenticated } = useAuthStore();
+
+  return (
+    <DatabaseProvider>
+      <SecureStorageProvider>
+        <AIServiceProvider>
+          <NavigationContainer>
+            {!isAuthenticated ? (
+              <LoginScreen />
+            ) : (
+              <Tab.Navigator>
+                <Tab.Screen name="Dashboard" component={DashboardScreen} />
+                <Tab.Screen name="Chat" component={ChatScreen} />
+                <Tab.Screen name="Settings" component={SettingsScreen} />
+              </Tab.Navigator>
+            )}
+          </NavigationContainer>
+        </AIServiceProvider>
+      </SecureStorageProvider>
+    </DatabaseProvider>
+  );
+}
+```
 
 ## Development Workflow
 
@@ -313,7 +368,20 @@ Mobile app is currently on hold while mobile platform strategy is determined.
 
 **apps/mobile/package.json**
 
-TBD when mobile app is implemented.
+```json
+{
+  "scripts": {
+    "dev": "expo start",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "build": "expo build",
+    "test": "jest",
+    "test:e2e:ios": "detox test --configuration ios.sim.debug",
+    "test:e2e:android": "detox test --configuration android.emu.debug",
+    "db:migrate": "node scripts/migrate.js"
+  }
+}
+```
 
 ### Environment Variables
 
@@ -327,7 +395,10 @@ VITE_LOG_LEVEL=debug
 
 **apps/mobile/.env**
 
-TBD when mobile app is implemented.
+```env
+EXPO_PUBLIC_APP_NAME=Fishbowl AI
+EXPO_PUBLIC_LOG_LEVEL=debug
+```
 
 ## Best Practices
 
@@ -463,13 +534,14 @@ class ElectronBridge implements PlatformBridge {
   // ...
 }
 
-// Mobile (TBD when implemented)
-// class MobileBridge implements PlatformBridge {
-//   async openFilePicker() {
-//     // Implementation TBD
-//   }
-//   // ...
-// }
+// Mobile (React Native/Expo)
+class ExpoBridge implements PlatformBridge {
+  async openFilePicker() {
+    const result = await DocumentPicker.getDocumentAsync();
+    return result.uri;
+  }
+  // ...
+}
 ```
 
 ## Quick Reference for AI Agents
@@ -478,7 +550,7 @@ class ElectronBridge implements PlatformBridge {
 
 1. **Business Logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
-3. **Mobile UI** → `apps/mobile/src/` (when implemented)
+3. **Mobile UI** → `apps/mobile/src/`
 4. **Database Schemas** → `migrations/`
 5. **E2E Tests Desktop** → `tests/desktop/features/`
 6. **E2E Tests Mobile** → `tests/mobile/features/`
@@ -489,17 +561,17 @@ class ElectronBridge implements PlatformBridge {
 # Development
 pnpm dev              # Run all apps
 pnpm dev:desktop      # Desktop only
-# pnpm dev:mobile     # Mobile (not yet implemented)
+pnpm dev:mobile       # Mobile only
 
 # Testing
 pnpm test             # Unit tests
 pnpm test:e2e:desktop # Desktop E2E
-# pnpm test:e2e:mobile # Mobile E2E (not yet implemented)
+pnpm test:e2e:mobile  # Mobile E2E
 
 # Building
 pnpm build            # Build all
 pnpm build:desktop    # Desktop only
-# pnpm build:mobile   # Mobile (not yet implemented)
+pnpm build:mobile     # Mobile only
 
 # Database
 pnpm db:migrate       # Run migrations
@@ -514,7 +586,7 @@ import { theme } from "@fishbowl-ai/ui-theme";
 
 // Platform-specific
 import { ElectronDatabase } from "./services/database";
-// import { MobileSecureStorage } from "./services/secure-storage"; // TBD
+import { ExpoSecureStorage } from "./services/secure-storage";
 ```
 
 ## Summary

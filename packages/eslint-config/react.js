@@ -38,13 +38,17 @@ module.exports = [
     settings: {
       react: {
         version: "detect",
+        runtime: "automatic", // Enable new JSX transform
       },
     },
     rules: {
+      // Disable the base rule to avoid conflicts
+      "no-unused-vars": "off",
       "turbo/no-undeclared-env-vars": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
       "react/react-in-jsx-scope": "off",
+      "react/jsx-uses-react": "off", // Disable React usage detection for new JSX transform
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "react/prop-types": "off",

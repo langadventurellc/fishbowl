@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "types": ["jest", "detox/globals"]
+  },
+  "include": ["features/**/*", "support/**/*", "*.js", "*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

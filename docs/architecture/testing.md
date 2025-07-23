@@ -38,87 +38,107 @@ export const TestData = {
 };
 ```
 
-### Desktop E2E Tests (WebdriverIO)
+### Desktop E2E Tests (Playwright)
 
-**tests/desktop/wdio.conf.ts**
+(needs playwright setup)
 
-```typescript
-export const config = {
-  runner: "local",
-  specs: ["./features/**/*.spec.ts"],
-  maxInstances: 1,
-  capabilities: [
-    {
-      browserName: "chrome",
-      "goog:chromeOptions": {
-        binary: "../../apps/desktop/dist-electron/main.js",
-        args: ["--no-sandbox", "--disable-web-security"],
-      },
+### Mobile E2E Tests (Detox)
+
+**tests/mobile/detox.config.js**
+
+```javascript
+module.exports = {
+  testRunner: "jest",
+  runnerConfig: "e2e/jest.config.js",
+  skipLegacyWorkersInjection: true,
+  apps: {
+    "ios.debug": {
+      type: "ios.app",
+      binaryPath:
+        "apps/mobile/ios/build/Build/Products/Debug-iphonesimulator/FishbowlAI.app",
+      build:
+        "cd apps/mobile && xcodebuild -workspace ios/FishbowlAI.xcworkspace -scheme FishbowlAI -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build",
     },
-  ],
-  logLevel: "warn",
-  bail: 0,
-  waitforTimeout: 10000,
-  connectionRetryTimeout: 120000,
-  connectionRetryCount: 3,
-  services: ["chromedriver"],
-  framework: "mocha",
-  reporters: ["spec"],
-  mochaOpts: {
-    ui: "bdd",
-    timeout: 60000,
+    "android.debug": {
+      type: "android.apk",
+      binaryPath:
+        "apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk",
+      build:
+        "cd apps/mobile/android && ./gradlew assembleDebug assembleAndroidTest -DtestBuildType=debug",
+    },
+  },
+  devices: {
+    simulator: {
+      "type": "ios.simulator",
+      "device": {
+        "type": "iPhone 15" // or latest available simulator
+      }
+    },
+    "emulator": {
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_7_API_34" // or latest available emulator
+    },
+  },
+  configurations: {
+    "ios.sim.debug": {
+      device: "simulator",
+      app: "ios.debug",
+    },
+    "android.emu.debug": {
+      device: "emulator",
+      app: "android.debug",
+    },
   },
 };
 ```
 
-**tests/desktop/features/ai-configuration.spec.ts**
+**tests/mobile/features/ai-configuration.e2e.ts**
 
 ```typescript
 describe("Feature: AI Provider Configuration", () => {
   beforeAll(async () => {
-    await browser.url("http://localhost:5173");
+    await device.launchApp();
+  });
+
+  beforeEach(async () => {
+    await device.reloadReactNative();
   });
 
   describe("Scenario: Add OpenAI API key", () => {
     it("should save API key securely", async () => {
-      // Given - User is on settings page
-      await $('[data-testid="settings-button"]').click();
-      await expect($('[data-testid="settings-page"]')).toBeDisplayed();
+      // Given - User is on settings screen
+      await element(by.id("settingsTab")).tap();
+      await expect(element(by.id("settingsScreen"))).toBeVisible();
 
       // When - User enters OpenAI API key
-      await $('[data-testid="add-provider-button"]').click();
-      await $('[data-testid="provider-select"]').selectByAttribute(
-        "value",
-        "openai",
-      );
-      await $('[data-testid="api-key-input"]').setValue("sk-test-key-123");
-      await $('[data-testid="save-api-key"]').click();
+      await element(by.id("addProviderButton")).tap();
+      await element(by.id("providerPicker")).tap();
+      await element(by.text("OpenAI")).tap();
+      await element(by.id("apiKeyInput")).typeText("sk-test-key-123");
+      await element(by.id("saveApiKeyButton")).tap();
 
       // Then - API key is saved and provider is available
-      await expect($('[data-testid="provider-openai"]')).toBeDisplayed();
-      await expect($('[data-testid="provider-openai-status"]')).toHaveText(
-        "Active",
-      );
+      await expect(element(by.id("provider-openai"))).toBeVisible();
+      await expect(
+        element(by.text("Active").withAncestor(by.id("provider-openai"))),
+      ).toBeVisible();
     });
   });
 
   describe("Scenario: Test AI provider connection", () => {
     it("should verify API key works", async () => {
       // Given - Provider is configured
-      await $('[data-testid="settings-button"]').click();
+      await element(by.id("settingsTab")).tap();
 
       // When - User tests the connection
-      await $('[data-testid="test-openai-connection"]').click();
+      await element(by.id("testOpenAIConnection")).tap();
 
       // Then - Connection test passes
-      await expect($('[data-testid="connection-status"]')).toHaveText(
-        "Connected",
-      );
+      await waitFor(element(by.text("Connected")))
+        .toBeVisible()
+        .withTimeout(5000);
     });
   });
 });
 ```
-
-### Mobile E2E Tests (Detox)
-
-unknown

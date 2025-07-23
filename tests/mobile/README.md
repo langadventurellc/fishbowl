@@ -1,17 +1,63 @@
-# Mobile E2E Tests (Future)
+# Mobile E2E Tests
 
-This directory is reserved for future mobile end-to-end tests.
+This directory contains end-to-end tests for the mobile application using Detox.
 
-## Current Status
+## Structure
 
-Mobile testing infrastructure has been removed as the mobile app is currently on hold pending framework selection.
+- `features/` - Test feature files organized by functionality
+- `support/` - Test support utilities and helpers
+- `jest.config.js` - Jest configuration for Detox tests
+- `package.json` - Dependencies and scripts
 
-## Future Plans
+## Usage
 
-When mobile support is implemented, this directory will contain:
+### Prerequisites
 
-- E2E test suites for mobile functionality
-- Mobile-specific test utilities and helpers
-- Configuration for mobile testing frameworks
+1. Install dependencies:
 
-The desktop E2E testing patterns in `tests/desktop/` can serve as a reference for implementing mobile tests when needed.
+   ```bash
+   pnpm install
+   ```
+
+2. Ensure the mobile app is built and configured for testing
+
+### Running Tests
+
+```bash
+# Run all mobile E2E tests
+pnpm test:e2e:mobile
+
+# Run tests headless
+pnpm test:e2e:mobile:headless
+```
+
+## Test Structure
+
+Tests follow BDD (Behavior Driven Development) patterns using Detox:
+
+```javascript
+describe("Feature: Application Launch", () => {
+  describe("Scenario: Mobile app starts successfully", () => {
+    it("should launch without errors", async () => {
+      // Given - Application is starting up
+      // When - Application loads
+      // Then - Application content is displayed and responsive
+    });
+  });
+});
+```
+
+## Configuration
+
+The Jest configuration is set up to:
+
+- Run tests from the `features/` directory
+- Use Detox test environment
+- Load setup files from `support/`
+- Set appropriate timeouts for mobile testing
+
+## Troubleshooting
+
+- **"Device not found"**: Ensure emulator/simulator is running
+- **"App not installed"**: Build and install the mobile app first
+- **Timeout issues**: Increase test timeout values in jest.config.js
