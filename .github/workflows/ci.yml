@@ -162,3 +162,49 @@ jobs:
           name: e2e-playwright-report
           path: tests/desktop/playwright-report/
           retention-days: 30
+
+  test-e2e-mobile:
+    runs-on: macos-latest
+    needs: [install-dependencies, quality-checks, test-unit]
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Install pnpm
+        run: npm install -g pnpm@10.13.1
+      
+      - name: Restore dependencies
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+            tests/*/node_modules
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
+      
+      - name: Setup iOS Simulator
+        run: |
+          xcrun simctl create "iPhone 15" "iPhone 15" "iOS17.5"
+          xcrun simctl boot "iPhone 15"
+      
+      - name: Build mobile app for testing
+        run: pnpm prebuild:mobile
+      
+      - name: Run mobile E2E tests
+        env:
+          CI: true
+        run: pnpm test:e2e:mobile:headless
+      
+      - name: Upload mobile E2E test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mobile-e2e-test-results
+          path: tests/mobile/artifacts/
+          retention-days: 30
