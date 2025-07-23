@@ -4,8 +4,7 @@
   "description": "Fishbowl AI Mobile Application",
   "author": "LangAdventure LLC",
   "private": true,
-  "type": "module",
-  "main": "index.ts",
+  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/langadventurellc/fishbowl.git",
@@ -16,15 +15,16 @@
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
-    "web": "expo start --web",
-    "build": "expo export",
+    "build": "expo export --platform android --platform ios",
     "prebuild": "expo prebuild",
-    "build:ios": "expo build:ios",
-    "build:android": "expo build:android",
+    "build:ios": "expo run:ios --configuration Release",
+    "build:android": "expo run:android --variant release",
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
-    "test:e2e": "echo \"Mobile E2E testing not yet implemented. See T-set-up-detox-e2e-testing task.\"",
-    "test:e2e:headless": "echo \"Mobile E2E testing not yet implemented. See T-set-up-detox-e2e-testing task.\"",
+    "test:e2e": "expo start --clear & sleep 10 && detox test --configuration ios.sim.debug; pkill -f 'expo/bin/cli start'",
+    "test:e2e:headless": "expo start --clear & sleep 10 && detox test --configuration ios.sim.debug --headless; pkill -f 'expo/bin/cli start'",
+    "test:e2e:android": "pkill -f 'expo/bin/cli start' 2>/dev/null || true; adb reverse tcp:8081 tcp:8081; expo start --clear & sleep 15 && detox test --configuration android.emu.debug; pkill -f 'expo/bin/cli start'",
+    "test:e2e:android:headless": "pkill -f 'expo/bin/cli start' 2>/dev/null || true; adb reverse tcp:8081 tcp:8081; expo start --clear & sleep 15 && detox test --configuration android.emu.debug --headless; pkill -f 'expo/bin/cli start'",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "clean": "rm -rf .expo node_modules/.cache dist"
@@ -35,20 +35,37 @@
     "@react-navigation/bottom-tabs": "^7.4.2",
     "@react-navigation/native": "^7.1.14",
     "expo": "~53.0.20",
+    "expo-modules-core": "~2.5.0",
     "expo-status-bar": "~2.2.3",
-    "react": "19.1.0",
+    "react": "19.0.0",
     "react-native": "0.79.5",
+    "react-native-edge-to-edge": "1.6.0",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1"
+  },
+  "expo": {
+    "autolinking": {
+      "android": {
+        "exclude": [
+          "expo"
+        ],
+        "include": [
+          "react-native-edge-to-edge"
+        ]
+      }
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@fishbowl-ai/eslint-config": "workspace:*",
+    "@react-native-community/cli": "^19.1.0",
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^30.0.0",
-    "@types/react": "~19.1.8",
+    "@types/react": "~19.0.10",
     "babel-jest": "^30.0.5",
-    "jest": "^30.0.4",
+    "detox": "^20.40.2",
+    "jest": "^29.7.0",
+    "react-test-renderer": "19.0.0",
     "typescript": "~5.8.3"
   }
 }

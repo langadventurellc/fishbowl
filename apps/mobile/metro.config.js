@@ -19,4 +19,10 @@ config.resolver.nodeModulesPaths = [
 // 3. Enable symlinks for shared packages
 config.resolver.unstable_enableSymlinks = true;
 
+// 4. Ensure React is resolved from mobile app's node_modules to avoid duplicates
+config.resolver.alias = {
+  react: path.resolve(projectRoot, "node_modules/react"),
+  "react-native": path.resolve(projectRoot, "node_modules/react-native"),
+};
+
 module.exports = config;

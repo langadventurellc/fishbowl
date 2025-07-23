@@ -3,6 +3,7 @@
     "name": "mobile",
     "slug": "mobile",
     "version": "1.0.0",
+    "platforms": ["ios", "android"],
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,8 +25,6 @@
       "edgeToEdgeEnabled": true,
       "package": "com.langadventurezach.mobile"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": ["react-native-edge-to-edge"]
   }
 }

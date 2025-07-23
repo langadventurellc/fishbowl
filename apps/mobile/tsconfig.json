@@ -25,6 +25,7 @@
   },
   "include": [
     "src",
+    "types",
     "App.tsx",
     "index.ts",
     "../../packages/shared/src",

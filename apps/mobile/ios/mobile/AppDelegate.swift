@@ -8,6 +8,11 @@ public class AppDelegate: ExpoAppDelegate {
 
   var reactNativeDelegate: ExpoReactNativeFactoryDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
+  
+  // Detox support - expose rootViewFactory
+  @objc var rootViewFactory: RCTReactNativeFactory? {
+    return reactNativeFactory
+  }
 
   public override func application(
     _ application: UIApplication,

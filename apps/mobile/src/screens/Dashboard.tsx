@@ -3,9 +3,13 @@ import { View, Text, StyleSheet } from "react-native";
 
 export function Dashboard() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Hello from Fishbowl Mobile!</Text>
-      <Text style={styles.subtitle}>Dashboard Screen</Text>
+    <View style={styles.container} testID="Dashboard.container">
+      <Text style={styles.title} testID="Dashboard.title">
+        Hello from Fishbowl Mobile!
+      </Text>
+      <Text style={styles.subtitle} testID="Dashboard.subtitle">
+        Dashboard Screen
+      </Text>
     </View>
   );
 }

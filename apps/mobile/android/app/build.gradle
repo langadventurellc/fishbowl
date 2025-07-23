@@ -61,6 +61,11 @@ react {
 
     /* Autolinking */
     autolinkLibrariesWithApp()
+    //
+    // Added by install-expo-modules
+    entryFile = file(["node", "-e", "require('expo/scripts/resolveAppEntry')", rootDir.getAbsoluteFile().getParentFile().getAbsolutePath(), "android", "absolute"].execute(null, rootDir).text.trim())
+    cliFile = new File(["node", "--print", "require.resolve('@expo/cli')"].execute(null, rootDir).text.trim())
+    bundleCommand = "export:embed"
 }
 
 /**
@@ -88,12 +93,19 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     namespace 'com.langadventurezach.mobile'
+    
+    kotlinOptions {
+        freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
+    }
     defaultConfig {
         applicationId 'com.langadventurezach.mobile'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
+        testBuildType System.getProperty('testBuildType', 'debug')
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        missingDimensionStrategy 'detox', 'full'
     }
     signingConfigs {
         debug {
@@ -174,4 +186,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    
+    // Detox dependency for Android testing
+    androidTestImplementation(project(path: ":detox"))
 }

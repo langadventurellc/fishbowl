@@ -38,86 +38,9 @@ export const TestData = {
 };
 ```
 
-### Desktop E2E Tests (WebdriverIO)
+### Desktop E2E Tests (Playwright)
 
-**tests/desktop/wdio.conf.ts**
-
-```typescript
-export const config = {
-  runner: "local",
-  specs: ["./features/**/*.spec.ts"],
-  maxInstances: 1,
-  capabilities: [
-    {
-      browserName: "chrome",
-      "goog:chromeOptions": {
-        binary: "../../apps/desktop/dist-electron/main.js",
-        args: ["--no-sandbox", "--disable-web-security"],
-      },
-    },
-  ],
-  logLevel: "warn",
-  bail: 0,
-  waitforTimeout: 10000,
-  connectionRetryTimeout: 120000,
-  connectionRetryCount: 3,
-  services: ["chromedriver"],
-  framework: "mocha",
-  reporters: ["spec"],
-  mochaOpts: {
-    ui: "bdd",
-    timeout: 60000,
-  },
-};
-```
-
-**tests/desktop/features/ai-configuration.spec.ts**
-
-```typescript
-describe("Feature: AI Provider Configuration", () => {
-  beforeAll(async () => {
-    await browser.url("http://localhost:5173");
-  });
-
-  describe("Scenario: Add OpenAI API key", () => {
-    it("should save API key securely", async () => {
-      // Given - User is on settings page
-      await $('[data-testid="settings-button"]').click();
-      await expect($('[data-testid="settings-page"]')).toBeDisplayed();
-
-      // When - User enters OpenAI API key
-      await $('[data-testid="add-provider-button"]').click();
-      await $('[data-testid="provider-select"]').selectByAttribute(
-        "value",
-        "openai",
-      );
-      await $('[data-testid="api-key-input"]').setValue("sk-test-key-123");
-      await $('[data-testid="save-api-key"]').click();
-
-      // Then - API key is saved and provider is available
-      await expect($('[data-testid="provider-openai"]')).toBeDisplayed();
-      await expect($('[data-testid="provider-openai-status"]')).toHaveText(
-        "Active",
-      );
-    });
-  });
-
-  describe("Scenario: Test AI provider connection", () => {
-    it("should verify API key works", async () => {
-      // Given - Provider is configured
-      await $('[data-testid="settings-button"]').click();
-
-      // When - User tests the connection
-      await $('[data-testid="test-openai-connection"]').click();
-
-      // Then - Connection test passes
-      await expect($('[data-testid="connection-status"]')).toHaveText(
-        "Connected",
-      );
-    });
-  });
-});
-```
+(needs playwright setup)
 
 ### Mobile E2E Tests (Detox)
 
@@ -146,12 +69,15 @@ module.exports = {
   },
   devices: {
     simulator: {
-      type: "ios.simulator",
-      device: { type: "iPhone 14" },
+      "type": "ios.simulator",
+      "device": {
+        "type": "iPhone 15" // or latest available simulator
+      }
     },
-    emulator: {
-      type: "android.emulator",
-      device: { avdName: "Pixel_6_API_33" },
+    "emulator": {
+      "type": "android.emulator",
+      "device": {
+        "avdName": "Pixel_7_API_34" // or latest available emulator
     },
   },
   configurations: {

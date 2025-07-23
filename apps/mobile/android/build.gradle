@@ -31,6 +31,13 @@ allprojects {
     mavenCentral()
     maven { url 'https://www.jitpack.io' }
   }
+  
+  // Add Kotlin experimental API opt-in for all projects
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions {
+      freeCompilerArgs += "-opt-in=kotlin.ExperimentalStdlibApi"
+    }
+  }
 }
 
 apply plugin: "expo-root-project"
