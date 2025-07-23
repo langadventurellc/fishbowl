@@ -192,6 +192,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       
+      - name: Build dependencies
+        run: pnpm build:libs
+      
       - name: Setup iOS Simulator
         run: |
           xcrun simctl create "iPhone 15" "iPhone 15" "iOS17.5"
