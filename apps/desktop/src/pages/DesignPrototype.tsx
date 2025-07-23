@@ -468,6 +468,7 @@ export default function DesignPrototype() {
       alignItems: "center",
       justifyContent: "center",
       transition: "all 0.15s",
+      zIndex: 100,
     },
     contextToggleActive: {
       backgroundColor: isDark ? "var(--primary)" : "var(--primary)",
