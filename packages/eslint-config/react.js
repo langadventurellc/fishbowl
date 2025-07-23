@@ -4,6 +4,7 @@ const tsparser = require("@typescript-eslint/parser");
 const react = require("eslint-plugin-react");
 const reactHooks = require("eslint-plugin-react-hooks");
 const turbo = require("eslint-plugin-turbo");
+const globals = require("globals");
 
 module.exports = [
   js.configs.recommended,
@@ -25,14 +26,8 @@ module.exports = [
         },
       },
       globals: {
-        console: "readonly",
-        process: "readonly",
-        window: "readonly",
-        document: "readonly",
-        HTMLElement: "readonly",
-        Element: "readonly",
-        Node: "readonly",
-        NodeList: "readonly",
+        ...globals.browser,
+        ...globals.node,
       },
     },
     settings: {

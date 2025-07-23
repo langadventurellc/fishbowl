@@ -1,5 +1,13 @@
+import { useState } from "react";
+import DesignPrototype from "./pages/DesignPrototype";
+
 export default function App() {
   const electronAPI = window?.electronAPI;
+  const [currentView, setCurrentView] = useState<"home" | "prototype">("home");
+
+  if (currentView === "prototype") {
+    return <DesignPrototype />;
+  }
 
   return (
     <div
@@ -31,6 +39,24 @@ export default function App() {
       >
         Welcome to Fishbowl Desktop
       </p>
+
+      <button
+        onClick={() => setCurrentView("prototype")}
+        style={{
+          fontSize: "1.1rem",
+          padding: "12px 24px",
+          backgroundColor: "#6366f1",
+          color: "white",
+          border: "none",
+          borderRadius: "8px",
+          cursor: "pointer",
+          marginBottom: "2rem",
+          fontWeight: "500",
+        }}
+      >
+        🎨 View Design Prototype
+      </button>
+
       {electronAPI && (
         <div
           style={{
