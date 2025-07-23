@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-set-up-react-router
+parent: F-component-showcase-page
+status: done
 title: Set up React Router configuration in main App.tsx
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-23T17:10:42.522048"
-updated: "2025-07-23T17:10:42.522048"
+updated: "2025-07-23T17:30:43.998982"
 schema_version: "1.1"
-parent: F-component-showcase-page
+worktree: null
 ---
 
 # Set up React Router Configuration
@@ -77,3 +78,7 @@ Replace the existing state-based view switching with React Router using HashRout
 - Validate route parameters if any are added in future
 
 ### Log
+
+**2025-07-23T22:35:07.408399Z** - Implemented React Router configuration in main App.tsx with complete routing setup for existing and showcase pages. Replaced state-based routing with BrowserRouter, Routes, and Route components. Created placeholder components for showcase routes (/showcase/components and /showcase/layout) as specified in parent feature requirements. All routes now work: / (home), /prototype (design prototype), /showcase/components (component showcase), and /showcase/layout (layout showcase). Quality checks pass (lint, format, type-check) and build succeeds.
+
+- filesChanged: ["apps/desktop/src/App.tsx", "apps/desktop/src/pages/Home.tsx", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx", "apps/desktop/src/pages/showcase/LayoutShowcase.tsx"]
