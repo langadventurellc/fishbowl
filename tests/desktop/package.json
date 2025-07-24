@@ -6,9 +6,11 @@
   "scripts": {
     "test:e2e": "playwright test",
     "test:e2e:headless": "Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 2 && DISPLAY=:99 playwright test",
-    "type-check": "tsc --noEmit --project tsconfig.json"
+    "type-check": "tsc --noEmit --project tsconfig.json",
+    "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
     "@playwright/test": "^1.54.1",
     "playwright": "^1.54.1"
   }

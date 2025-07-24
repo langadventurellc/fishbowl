@@ -1,5 +1,4 @@
 import { PlaywrightTestConfig } from "@playwright/test";
-import path from "path";
 
 const config: PlaywrightTestConfig = {
   // Test directory for Electron E2E tests

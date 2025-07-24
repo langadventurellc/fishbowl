@@ -4,7 +4,6 @@
   "private": true,
   "description": "A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.",
   "scripts": {
-    "dev": "turbo run dev",
     "dev:desktop": "turbo run dev --filter=@fishbowl-ai/desktop",
     "dev:mobile": "turbo run dev --filter=@fishbowl-ai/mobile",
     "start:mobile": "cd apps/mobile && pnpm start",
@@ -24,6 +23,10 @@
     "test:e2e:desktop:headless": "turbo run test:e2e:headless --filter=@fishbowl-ai/desktop",
     "test:e2e:mobile": "turbo run test:e2e --filter=@fishbowl-ai/mobile",
     "test:e2e:mobile:headless": "turbo run test:e2e:headless --filter=@fishbowl-ai/mobile",
+    "test:e2e:mobile:build:ios": "turbo run test:e2e:build:ios --filter=@fishbowl-ai/mobile",
+    "test:e2e:mobile:build:android": "turbo run test:e2e:build:android --filter=@fishbowl-ai/mobile",
+    "test:e2e:mobile:android": "turbo run test:e2e:android --filter=@fishbowl-ai/mobile",
+    "test:e2e:mobile:android:headless": "turbo run test:e2e:android:headless --filter=@fishbowl-ai/mobile",
     "type-check": "turbo run type-check",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,json}\"",
@@ -41,6 +44,7 @@
   },
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
+    "@langadventurellc/tsla-linter": "^2.1.2",
     "@types/node": "^24.0.15",
     "eslint": "^9.31.0",
     "husky": "^9.1.7",

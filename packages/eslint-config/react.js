@@ -5,6 +5,10 @@ const react = require("eslint-plugin-react");
 const reactHooks = require("eslint-plugin-react-hooks");
 const turbo = require("eslint-plugin-turbo");
 const globals = require("globals");
+const {
+  multipleExportsPlugin,
+  statementCountPlugin,
+} = require("@langadventurellc/tsla-linter");
 
 module.exports = [
   js.configs.recommended,
@@ -15,6 +19,8 @@ module.exports = [
       react: react,
       "react-hooks": reactHooks,
       turbo: turbo,
+      "statement-count": statementCountPlugin,
+      "multiple-exports": multipleExportsPlugin,
     },
     languageOptions: {
       parser: tsparser,
@@ -47,6 +53,38 @@ module.exports = [
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "react/prop-types": "off",
+      "statement-count/function-statement-count-warn": "warn",
+      "statement-count/function-statement-count-error": "error",
+      "statement-count/class-statement-count-warn": "warn",
+      "statement-count/class-statement-count-error": "error",
+      "multiple-exports/no-multiple-exports": [
+        "error",
+        {
+          checkClasses: true,
+          checkFunctions: true,
+          checkInterfaces: true,
+          checkTypes: true,
+          checkVariables: true,
+          excludeConstants: true,
+          ignoreBarrelFiles: true,
+        },
+      ],
+    },
+  },
+  // Configuration for test files
+  {
+    files: [
+      "**/__tests__/**/*",
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/setup.ts",
+    ],
+    rules: {
+      "statement-count/function-statement-count-warn": "off",
+      "statement-count/function-statement-count-error": "off",
+      "statement-count/class-statement-count-warn": "off",
+      "statement-count/class-statement-count-error": "off",
+      "multiple-exports/no-multiple-exports": "off",
     },
   },
 ];

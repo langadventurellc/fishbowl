@@ -26,10 +26,12 @@
     "export:web": "expo export --platform web",
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
+    "test:e2e:build:ios": "cd ../../tests/mobile && detox build --configuration ios.sim.debug",
+    "test:e2e:build:android": "cd ../../tests/mobile && detox build --configuration android.emu.debug",
     "test:e2e": "expo start --clear & sleep 10 && cd ../../tests/mobile && pnpm exec detox test --configuration ios.sim.debug; cd ../../apps/mobile && pkill -f 'expo/bin/cli start'",
     "test:e2e:headless": "expo start --clear & sleep 10 && cd ../../tests/mobile && pnpm exec detox test --configuration ios.sim.debug --headless; cd ../../apps/mobile && pkill -f 'expo/bin/cli start'",
-    "test:e2e:android": "pkill -f 'expo/bin/cli start' 2>/dev/null || true; adb reverse tcp:8081 tcp:8081; expo start --clear & sleep 15 && detox test --configuration android.emu.debug; pkill -f 'expo/bin/cli start'",
-    "test:e2e:android:headless": "pkill -f 'expo/bin/cli start' 2>/dev/null || true; adb reverse tcp:8081 tcp:8081; expo start --clear & sleep 15 && detox test --configuration android.emu.debug --headless; pkill -f 'expo/bin/cli start'",
+    "test:e2e:android": "cd ../../tests/mobile && detox build --configuration android.emu.debug && detox test --configuration android.emu.debug",
+    "test:e2e:android:headless": "cd ../../tests/mobile && detox build --configuration android.emu.debug && detox test --configuration android.emu.debug --headless",
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts,.tsx",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,json}\"",
@@ -70,7 +72,7 @@
     "@types/react": "~19.0.10",
     "babel-jest": "^30.0.5",
     "detox": "^20.40.2",
-    "jest": "^29.7.0",
+    "jest": "^30.0.4",
     "react-test-renderer": "19.0.0",
     "typescript": "~5.8.3"
   }

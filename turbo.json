@@ -57,6 +57,27 @@
       "cache": false,
       "env": ["CI"]
     },
+    "test:e2e:build:ios": {
+      "dependsOn": ["prebuild"],
+      "cache": false,
+      "outputs": ["ios/build/**"]
+    },
+    "test:e2e:build:android": {
+      "dependsOn": ["prebuild"],
+      "cache": false,
+      "outputs": ["android/app/build/**"],
+      "env": ["ANDROID_HOME"]
+    },
+    "test:e2e:android": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": ["CI", "ANDROID_HOME", "ANDROID_SDK_ROOT"]
+    },
+    "test:e2e:android:headless": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": ["CI", "ANDROID_HOME", "ANDROID_SDK_ROOT"]
+    },
     "test": {
       "dependsOn": ["test:unit", "test:e2e"]
     },

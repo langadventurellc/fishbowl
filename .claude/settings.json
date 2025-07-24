@@ -10,6 +10,17 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write|delete_lines|insert_after_symbol|insert_at_line|insert_before_symbol|replace_text|replace_lines|replace_line|replace_regex|replace_symbol_body",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'cd \"$(git rev-parse --show-toplevel)\" && .claude/hooks/post-edit-task.sh'"
+          }
+        ]
+      }
     ]
   }
 }

@@ -5,9 +5,11 @@
   "type": "commonjs",
   "scripts": {
     "test:e2e": "detox test --configuration ios.sim.debug",
-    "test:e2e:headless": "detox test --configuration ios.sim.debug --headless"
+    "test:e2e:headless": "detox test --configuration ios.sim.debug --headless",
+    "lint": "eslint \"**/*.{js,ts,tsx}\""
   },
   "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
     "detox": "^20.40.2",
     "jest": "^30.0.0"
   }

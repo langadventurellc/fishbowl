@@ -1,0 +1,77 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    types: [opened]
+
+permissions:
+  contents: read
+  pull-requests: write
+  packages: read
+
+jobs:
+  claude-review:
+    runs-on: ubuntu-latest
+    name: Claude Code Review
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      
+      - name: Install pnpm
+        run: npm install -g pnpm@10.13.1
+      
+      - name: Get pnpm store directory
+        shell: bash
+        run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+      
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build dependencies
+        run: pnpm build:libs
+
+      - name: Claude Code Review
+        uses: anthropics/claude-code-action@beta
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          allowed_tools: 'View,GlobTool,GrepTool,BatchTool'
+          direct_prompt: |
+            Please review only the code changes in this pull request and provide feedback for the Fishbowl AI conversation platform.
+
+            IMPORTANT: Check the current CI status first. If all CI checks are passing (SUCCESS), ignore any historical comments about code quality failures. Only address current, real issues.
+
+            Focus on:
+            - TypeScript/React best practices and code quality
+            - Security vulnerabilities and potential issues
+            - Performance considerations for desktop and mobile apps
+            - Adherence to the Clean-Code Charter in CLAUDE.md
+            - Monorepo architecture compliance (shared vs platform-specific code)
+            - Type safety and proper TypeScript annotations
+            - React hooks patterns and state management (Zustand)
+            - Cross-platform compatibility considerations
+
+            Consider the project context:
+            - Fishbowl is a desktop (Electron + React) and mobile (React Native + Expo) app
+            - Uses TypeScript 5.8+, React 19.1+, Zustand for state management
+            - Monorepo structure with shared business logic in @fishbowl-ai/shared
+            - Desktop uses Tailwind + shadcn/ui, Mobile uses NativeWind + Tamagui
+            - SQLite databases with platform-specific integrations
+            - Follow the architecture rules: no UI in shared packages, platform bridges for specific features
+
+            Avoid reviewing files in: node_modules/, dist/, build/, .expo/, android/, ios/, coverage/
