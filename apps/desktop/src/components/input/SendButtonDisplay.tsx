@@ -1,5 +1,5 @@
 import { SendButtonDisplayProps } from "@fishbowl-ai/shared";
-import { Button } from "../atomic/Button";
+import { Button } from "./Button";
 
 /**
  * SendButtonDisplay component renders a visual representation of the send button

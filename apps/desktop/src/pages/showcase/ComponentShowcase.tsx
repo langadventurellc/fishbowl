@@ -1,18 +1,15 @@
 import { Agent, ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import {
-  AgentPill,
-  Button,
-  ThemeToggle,
-  ThinkingIndicator,
-} from "../../components/ui/atomic";
+import { AgentPill, ThinkingIndicator } from "../../components/chat";
+import { Button } from "../../components/input";
+import { ThemeToggle } from "../../components/showcase";
 import {
   ConversationModeToggleDisplay,
   InputContainerDisplay,
   MessageInputDisplay,
   SendButtonDisplay,
-} from "../../components/ui/input";
+} from "../../components/input";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -736,7 +733,7 @@ export default function ComponentShowcase() {
             </span>
           </div>
           <div style={styles.codeBlock}>
-            {`import { NewComponent } from '../../components/ui/NewComponent';`}
+            {`import { NewComponent } from '../../components/NewComponent';`}
           </div>
 
           <div style={styles.step}>
