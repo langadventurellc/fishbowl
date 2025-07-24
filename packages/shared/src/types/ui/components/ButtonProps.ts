@@ -9,6 +9,7 @@
  */
 
 import { ReactNode } from "react";
+import { ButtonType } from "./ButtonType";
 
 /**
  * Props interface for the Button component.
@@ -55,7 +56,7 @@ export interface ButtonProps {
    * - **ghost**: Transparent background with hover effects, for context menus and subtle actions
    * - **toggle**: State-aware styling that changes based on active/inactive state (Sidebar toggle, Context toggle)
    */
-  variant: "primary" | "secondary" | "ghost" | "toggle";
+  variant: ButtonType;
 
   /**
    * Size variant controlling the button's dimensions and padding.

@@ -11,6 +11,7 @@
 // Re-export all component prop interfaces
 export * from "./AgentPillProps";
 export * from "./ButtonProps";
+export * from "./ButtonType";
 export * from "./MessageItemProps";
 export * from "./ConversationItemProps";
 export * from "./ThemeToggleProps";
