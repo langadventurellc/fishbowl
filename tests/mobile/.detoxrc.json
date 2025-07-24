@@ -20,12 +20,10 @@
       "build": "cd ../../apps/mobile/ios && xcodebuild -workspace Fishbowl.xcworkspace -scheme Fishbowl -configuration Release -sdk iphonesimulator -derivedDataPath build"
     },
     "android.debug": {
-      "type": "android.attached",
-      "device": {
-        "adbName": ".*"
-      },
+      "type": "android.apk",
+      "binaryPath": "../../apps/mobile/android/app/build/outputs/apk/release/app-release.apk",
       "testBinaryPath": "../../apps/mobile/android/app/build/outputs/apk/androidTest/debug/app-debug-androidTest.apk",
-      "build": "cd ../../apps/mobile/android && echo \"sdk.dir=$ANDROID_HOME\" > local.properties && ./gradlew assembleAndroidTest -DtestBuildType=debug"
+      "build": "cd ../../apps/mobile && expo export --platform android --output-dir android-export && cd android && echo \"sdk.dir=$ANDROID_HOME\" > local.properties && ./gradlew assembleRelease assembleAndroidTest -DtestBuildType=debug"
     },
     "android.release": {
       "type": "android.apk",

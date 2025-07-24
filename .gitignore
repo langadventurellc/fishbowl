@@ -6,6 +6,7 @@ test-results
 playwright-report
 .jest/
 .serena/cache/
+apps/mobile/android-export
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 /.swc

@@ -1,8 +1,4 @@
 describe("Mobile App Startup", () => {
-  beforeAll(async () => {
-    await device.launchApp();
-  });
-
   beforeEach(async () => {
     // Temporarily commented out due to Expo compatibility issues
     // await device.reloadReactNative();

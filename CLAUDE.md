@@ -19,11 +19,11 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 Don't run the `dev` or `start` commands because you lock up processes doing that. If you need those to be tested let me know and I'll do it and share the results with you. Otherwise execute other ways of verifying such as with playwright or with end-to-end tests.
 
-| Command             | Description                                   |
-| ------------------- | --------------------------------------------- |
-| `pnpm dev:desktop`  | Start development server for desktop app only |
-| `pnpm dev:mobile`   | Start development server for mobile app only  |
-| `pnpm start:mobile` | Start Expo development server for mobile app  |
+| Command             | Description                                                |
+| ------------------- | ---------------------------------------------------------- |
+| `pnpm dev:desktop`  | Start development server for desktop app only (do not run) |
+| `pnpm dev:mobile`   | Start development server for mobile app only (do not run)  |
+| `pnpm start:mobile` | Start Expo development server for mobile app (do not run)  |
 
 #### Building
 

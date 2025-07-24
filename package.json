@@ -4,7 +4,6 @@
   "private": true,
   "description": "A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.",
   "scripts": {
-    "dev": "turbo run dev",
     "dev:desktop": "turbo run dev --filter=@fishbowl-ai/desktop",
     "dev:mobile": "turbo run dev --filter=@fishbowl-ai/mobile",
     "start:mobile": "cd apps/mobile && pnpm start",
