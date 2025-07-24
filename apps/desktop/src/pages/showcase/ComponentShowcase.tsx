@@ -1,8 +1,12 @@
-import { Agent } from "@fishbowl-ai/shared";
+import { Agent, ThemeMode } from "@fishbowl-ai/shared";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import { AgentPill } from "../../components/ui/atomic";
+import { AgentPill, ThemeToggle } from "../../components/ui/atomic";
+import { useState } from "react";
 
 export default function ComponentShowcase() {
+  // Theme toggle state for interactive demo
+  const [currentTheme, setCurrentTheme] = useState<ThemeMode>("light");
+
   // Sample agent data for AgentPill showcase
   const sampleAgents: Agent[] = [
     {
@@ -228,8 +232,47 @@ export default function ComponentShowcase() {
                 interface elements
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Theme Toggle - Interactive:
+                </span>
+                <ThemeToggle
+                  currentTheme={currentTheme}
+                  onToggle={(newTheme) => {
+                    setCurrentTheme(newTheme);
+                    console.log(`Theme switched to: ${newTheme}`);
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--muted-foreground)",
+                  }}
+                >
+                  Current: {currentTheme}
+                </span>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Light Mode:</span>
+                <ThemeToggle
+                  currentTheme="light"
+                  onToggle={(theme) =>
+                    console.log(`Light toggle clicked: ${theme}`)
+                  }
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Dark Mode:</span>
+                <ThemeToggle
+                  currentTheme="dark"
+                  onToggle={(theme) =>
+                    console.log(`Dark toggle clicked: ${theme}`)
+                  }
+                />
+              </div>
             </div>
           </section>
 

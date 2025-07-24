@@ -9,3 +9,4 @@
  */
 
 export { AgentPill } from "./AgentPill";
+export { ThemeToggle } from "./ThemeToggle";

@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-extract-themetoggle-component
+parent: F-atomic-ui-components
+status: done
 title: Extract ThemeToggle component with showcase integration
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-24T07:25:06.195212"
-updated: "2025-07-24T07:25:06.195212"
+updated: "2025-07-24T08:12:12.711487"
 schema_version: "1.1"
-parent: F-atomic-ui-components
+worktree: null
 ---
 
 # Extract ThemeToggle Component
@@ -69,3 +70,7 @@ Extract the ThemeToggle component from `apps/desktop/src/pages/DesignPrototype.t
 - **Theme reference**: `packages/ui-theme/src/claymorphism-theme.css`
 
 ### Log
+
+**2025-07-24T13:16:47.991069Z** - Extracted ThemeToggle component from DesignPrototype.tsx into reusable atomic component with proper TypeScript interfaces. Component features sun/moon icon toggling based on theme state, smooth background transitions, accessibility attributes, and hover effects. Added comprehensive showcase integration with interactive demo showing light/dark modes and current theme state. All styling uses CSS custom properties for theme-aware rendering. Component follows existing patterns and passes all quality checks.
+
+- filesChanged: ["apps/desktop/src/components/ui/atomic/ThemeToggle.tsx", "apps/desktop/src/components/ui/atomic/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
