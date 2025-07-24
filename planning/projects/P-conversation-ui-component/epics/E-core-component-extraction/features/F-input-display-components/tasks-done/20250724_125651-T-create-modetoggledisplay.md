@@ -30,7 +30,7 @@ Extract and create the ConversationModeToggleDisplay component from DesignProtot
 
 ### Component Location:
 
-`apps/desktop/src/components/ui/input/ConversationModeToggleDisplay.tsx`
+`apps/desktop/src/components/input/ConversationModeToggleDisplay.tsx`
 
 ### Component Structure:
 
@@ -74,7 +74,7 @@ Add section to ComponentShowcase.tsx:
 
 ## Acceptance Criteria
 
-- [ ] Component created in `apps/desktop/src/components/ui/input/`
+- [ ] Component created in `apps/desktop/src/components/input/`
 - [ ] Uses ModeToggleDisplayProps from shared package
 - [ ] No click handlers or interactive functionality
 - [ ] Exact visual match with DesignPrototype mode toggle
@@ -100,4 +100,4 @@ Add section to ComponentShowcase.tsx:
 
 **2025-07-24T17:56:51.523041Z** - Implemented ConversationModeToggleDisplay component with exact visual styling extracted from DesignPrototype.tsx lines 436-456. Component displays Manual/Auto mode toggle states without interactive functionality, supporting both mode states (manual/auto) and disabled state with reduced opacity. Added comprehensive showcase integration with state demonstrations including manual active, auto active, disabled, and comparison views. Component uses CSS-in-JS styling with theme variables for consistent theming and follows project patterns from existing input components.
 
-- filesChanged: ["apps/desktop/src/components/ui/input/ConversationModeToggleDisplay.tsx", "apps/desktop/src/components/ui/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
+- filesChanged: ["apps/desktop/src/components/input/ConversationModeToggleDisplay.tsx", "apps/desktop/src/components/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

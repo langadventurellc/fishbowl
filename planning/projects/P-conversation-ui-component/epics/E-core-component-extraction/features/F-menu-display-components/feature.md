@@ -1,7 +1,7 @@
 ---
 kind: feature
 id: F-menu-display-components
-title: "Menu Display Components "
+title: "Menu Display Components"
 status: in-progress
 priority: normal
 prerequisites:
@@ -60,8 +60,8 @@ Extract UI components related to context menus and dropdown displays, focusing p
 
 ✅ **Component Structure**
 
-- Each component in `apps/desktop/src/components/ui/menu/` directory
-- Pure display components with no click handlers or interactions
+- Each component in `apps/desktop/src/components/menu/` directory
+- Display components with no click handlers or added interactions
 - Props-based visual configuration and state representation
 - TypeScript interfaces for all props from shared package
 
@@ -85,13 +85,13 @@ Extract UI components related to context menus and dropdown displays, focusing p
 - Z-index layering for proper visual stacking
 - Backdrop overlay appearance
 - Edge-case positioning (viewport boundaries)
+- Add to `apps/desktop/src/components/chat/MessageItem.tsx` following the same pattern as the prototype
 
 ✅ **Showcase Integration** (CRITICAL - Done as components are created)
 
 - Each menu component added to ComponentShowcase as it's created
 - Different menu configurations and states demonstrated immediately in showcase
 - Various positioning scenarios shown
-- Both light and dark theme compatibility tested
 
 ✅ **Code Quality**
 
@@ -101,7 +101,7 @@ Extract UI components related to context menus and dropdown displays, focusing p
 - Components under 100 lines each
 - TypeScript strict mode compliance
 
-## Implementation Guidance
+## Implementation Guidance%
 
 **Extraction Process:**
 
@@ -109,8 +109,9 @@ Extract UI components related to context menus and dropdown displays, focusing p
 2. Extract menu styling objects and positioning logic from DesignPrototype
 3. Convert styling to use theme variables from `packages/ui-theme/src/claymorphism-theme.css`
 4. Remove all onClick, onToggle, menu interaction handlers
-5. Create pure display components showing menu visual states
-6. **Immediately add each component to ComponentShowcase** for visual verification
+5. Add to `apps/desktop/src/components/chat/MessageItem.tsx` following the same pattern as the prototype
+6. Create display components showing menu visual states
+7. **Immediately add each component to ComponentShowcase** for visual verification
 
 **Visual States to Support:**
 
@@ -118,6 +119,8 @@ Extract UI components related to context menus and dropdown displays, focusing p
 - **MenuItemDisplay**: normal, hover, disabled, danger visual states
 - **MenuTriggerDisplay**: inactive, active, hover appearance
 - **MenuContainerDisplay**: different positioning and backdrop states
+
+(Implement these as named types in TypeScript. See `packages/shared/src/types/ui/core/MessageType.ts` as an example.)
 
 **Styling Focus:**
 
@@ -129,7 +132,7 @@ Extract UI components related to context menus and dropdown displays, focusing p
 **File Organization:**
 
 ```
-apps/desktop/src/components/ui/menu/
+apps/desktop/src/components/menu/
 ├── index.ts (barrel export)
 ├── ContextMenuDisplay.tsx
 ├── MenuItemDisplay.tsx
@@ -140,10 +143,7 @@ apps/desktop/src/components/ui/menu/
 
 ## Testing Requirements
 
-- Visual verification of all menu display states
-- Menu positioning appears correct visually
-- Different menu item types display properly
-- Theme switching preserves all menu styling
+- Manual user visual verification of all menu display states
 - No added interactive behavior or menu functionality present
 
 ## Dependencies

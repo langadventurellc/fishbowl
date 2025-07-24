@@ -269,7 +269,7 @@ The application uses **shadcn/ui** components for consistent, accessible UI elem
 
 #### Component Customization
 
-- All components are copied into `src/components/ui/`
+- All components are copied into `src/components/`
 - Customized for desktop-first with mobile considerations
 - Touch targets ensured to be minimum 44x44px
 - Hover states have touch alternatives

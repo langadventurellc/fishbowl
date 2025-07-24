@@ -30,7 +30,7 @@ Extract and create the SendButtonDisplay component from DesignPrototype.tsx as a
 
 ### Component Location:
 
-`apps/desktop/src/components/ui/input/SendButtonDisplay.tsx`
+`apps/desktop/src/components/input/SendButtonDisplay.tsx`
 
 ### Component Structure:
 
@@ -73,7 +73,7 @@ Add section to ComponentShowcase.tsx:
 
 ## Acceptance Criteria
 
-- [ ] Component created in `apps/desktop/src/components/ui/input/`
+- [ ] Component created in `apps/desktop/src/components/input/`
 - [ ] Uses SendButtonDisplayProps from shared package
 - [ ] No onClick or interactive functionality
 - [ ] Exact visual match with DesignPrototype send button
@@ -98,4 +98,4 @@ Add section to ComponentShowcase.tsx:
 
 **2025-07-24T17:32:11.188939Z** - Implemented SendButtonDisplay component as pure display component with all visual states (enabled, disabled, loading). Extracted styling from DesignPrototype.tsx lines 422-435 with exact visual match. Component features 40x40px dimensions, theme variable integration, loading spinner animation, and accessibility support. Added comprehensive showcase section demonstrating all states and theme compatibility. All quality checks pass with 100% TypeScript coverage.
 
-- filesChanged: ["apps/desktop/src/components/ui/input/SendButtonDisplay.tsx", "apps/desktop/src/components/ui/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
+- filesChanged: ["apps/desktop/src/components/input/SendButtonDisplay.tsx", "apps/desktop/src/components/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

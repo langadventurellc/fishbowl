@@ -61,7 +61,7 @@ Extract UI components related to the conversation sidebar, focusing on pure visu
 
 ✅ **Component Structure**
 
-- Each component in `apps/desktop/src/components/ui/sidebar/` directory
+- Each component in `apps/desktop/src/components/sidebar/` directory
 - Pure display components with no click handlers or state
 - Props-based visual configuration
 - TypeScript interfaces for all props from shared package
@@ -130,7 +130,7 @@ Extract UI components related to the conversation sidebar, focusing on pure visu
 **File Organization:**
 
 ```
-apps/desktop/src/components/ui/sidebar/
+apps/desktop/src/components/sidebar/
 ├── index.ts (barrel export)
 ├── ConversationItemDisplay.tsx
 ├── SidebarToggleDisplay.tsx

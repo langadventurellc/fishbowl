@@ -60,7 +60,7 @@ Extract UI components related to the message input area, focusing purely on visu
 
 ✅ **Component Structure**
 
-- Each component in `apps/desktop/src/components/ui/input/` directory
+- Each component in `apps/desktop/src/components/input/` directory
 - Pure display components with no event handling
 - Props-based styling and content display
 - TypeScript interfaces for all props from shared package
@@ -130,7 +130,7 @@ Extract UI components related to the message input area, focusing purely on visu
 **File Organization:**
 
 ```
-apps/desktop/src/components/ui/input/
+apps/desktop/src/components/input/
 ├── index.ts (barrel export)
 ├── MessageInputDisplay.tsx
 ├── SendButtonDisplay.tsx

@@ -38,7 +38,7 @@ Decompose the conversation screen prototype into distinct, reusable React compon
 - **Styling**: CSS-in-JS (Phase 1) → Tailwind CSS + shadcn/ui (Phase 2)
 - **Build Tool**: Vite 7.0.5+ (existing setup)
 - **Package Structure**: Monorepo with pnpm workspaces
-- **Component Location**: `apps/desktop/src/components/ui/`
+- **Component Location**: `apps/desktop/src/components/`
 - **Shared Types**: `@fishbowl-ai/shared/src/types/ui/`
 
 ### Architecture Principles
@@ -232,7 +232,7 @@ graph LR
 ### File Organization
 
 ```
-apps/desktop/src/components/ui/
+apps/desktop/src/components/
 ├── conversation/
 │   ├── ConversationScreen.tsx
 │   ├── MessageItem.tsx

@@ -22,7 +22,7 @@ Extract the ThemeToggle component from `apps/desktop/src/pages/DesignPrototype.t
 
 ### Component Creation
 
-- Create `apps/desktop/src/components/ui/atomic/ThemeToggle.tsx`
+- Create `apps/desktop/src/components/atomic/ThemeToggle.tsx`
 - Extract styling from DesignPrototype lines 246-257 (themeToggle style object)
 - Convert styles to use theme variables: `var(--secondary)`, transitions
 - Import `ThemeToggleProps` interface from `@fishbowl-ai/shared/types/ui/components`
@@ -52,7 +52,7 @@ Extract the ThemeToggle component from `apps/desktop/src/pages/DesignPrototype.t
 
 ## Acceptance Criteria
 
-- ✅ Component renders in separate file under `apps/desktop/src/components/ui/atomic/`
+- ✅ Component renders in separate file under `apps/desktop/src/components/atomic/`
 - ✅ Props-based rendering with callback for toggle action
 - ✅ Theme-aware styling using CSS custom properties
 - ✅ All variants and states displayed in ComponentShowcase
@@ -60,12 +60,12 @@ Extract the ThemeToggle component from `apps/desktop/src/pages/DesignPrototype.t
 - ✅ Smooth transition animations working
 - ✅ TypeScript strict mode compliance
 - ✅ Component under 100 lines
-- ✅ Export added to `apps/desktop/src/components/ui/atomic/index.ts`
+- ✅ Export added to `apps/desktop/src/components/atomic/index.ts`
 
 ## File Locations
 
 - **Source extraction**: `apps/desktop/src/pages/DesignPrototype.tsx:246-257`
-- **Component file**: `apps/desktop/src/components/ui/atomic/ThemeToggle.tsx`
+- **Component file**: `apps/desktop/src/components/atomic/ThemeToggle.tsx`
 - **Showcase integration**: `apps/desktop/src/pages/showcase/ComponentShowcase.tsx`
 - **Theme reference**: `packages/ui-theme/src/claymorphism-theme.css`
 
@@ -73,4 +73,4 @@ Extract the ThemeToggle component from `apps/desktop/src/pages/DesignPrototype.t
 
 **2025-07-24T13:16:47.991069Z** - Extracted ThemeToggle component from DesignPrototype.tsx into reusable atomic component with proper TypeScript interfaces. Component features sun/moon icon toggling based on theme state, smooth background transitions, accessibility attributes, and hover effects. Added comprehensive showcase integration with interactive demo showing light/dark modes and current theme state. All styling uses CSS custom properties for theme-aware rendering. Component follows existing patterns and passes all quality checks.
 
-- filesChanged: ["apps/desktop/src/components/ui/atomic/ThemeToggle.tsx", "apps/desktop/src/components/ui/atomic/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
+- filesChanged: ["apps/desktop/src/components/atomic/ThemeToggle.tsx", "apps/desktop/src/components/atomic/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

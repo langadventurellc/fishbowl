@@ -22,7 +22,7 @@ Extract the AgentPill component from `apps/desktop/src/pages/DesignPrototype.tsx
 
 ### Component Creation
 
-- Create `apps/desktop/src/components/ui/atomic/AgentPill.tsx`
+- Create `apps/desktop/src/components/atomic/AgentPill.tsx`
 - Extract styling from DesignPrototype lines 322-331 (agentPill style object)
 - Convert hardcoded styles to use theme variables from `packages/ui-theme/src/claymorphism-theme.css`
 - Import `AgentPillProps` interface from `@fishbowl-ai/shared/types/ui/components`
@@ -49,7 +49,7 @@ Extract the AgentPill component from `apps/desktop/src/pages/DesignPrototype.tsx
 
 ## Acceptance Criteria
 
-- ✅ Component renders in separate file under `apps/desktop/src/components/ui/atomic/`
+- ✅ Component renders in separate file under `apps/desktop/src/components/atomic/`
 - ✅ Props-based rendering with no internal state
 - ✅ Theme-aware styling using CSS custom properties
 - ✅ All variants displayed in ComponentShowcase with sample data
@@ -57,12 +57,12 @@ Extract the AgentPill component from `apps/desktop/src/pages/DesignPrototype.tsx
 - ✅ TypeScript strict mode compliance
 - ✅ Component under 100 lines
 - ✅ Thinking indicator animation works correctly
-- ✅ Export added to `apps/desktop/src/components/ui/atomic/index.ts`
+- ✅ Export added to `apps/desktop/src/components/atomic/index.ts`
 
 ## File Locations
 
 - **Source extraction**: `apps/desktop/src/pages/DesignPrototype.tsx:322-331`
-- **Component file**: `apps/desktop/src/components/ui/atomic/AgentPill.tsx`
+- **Component file**: `apps/desktop/src/components/atomic/AgentPill.tsx`
 - **Showcase integration**: `apps/desktop/src/pages/showcase/ComponentShowcase.tsx`
 - **Theme reference**: `packages/ui-theme/src/claymorphism-theme.css`
 
@@ -70,4 +70,4 @@ Extract the AgentPill component from `apps/desktop/src/pages/DesignPrototype.tsx
 
 **2025-07-24T12:56:24.117365Z** - Successfully extracted AgentPill component from DesignPrototype.tsx into a reusable atomic component with complete ComponentShowcase integration. The component displays agent name, role, and color with optional thinking indicator animation. Implemented theme-aware styling using CSS custom properties, TypeScript interfaces from shared package, and comprehensive showcase demonstrations including all agents, thinking states, and non-clickable variants. All quality checks pass with 0 errors.
 
-- filesChanged: ["apps/desktop/src/components/ui/atomic/AgentPill.tsx", "apps/desktop/src/components/ui/atomic/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
+- filesChanged: ["apps/desktop/src/components/atomic/AgentPill.tsx", "apps/desktop/src/components/atomic/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

@@ -32,7 +32,7 @@ Extract and create the MessageInputDisplay component from DesignPrototype.tsx (l
 
 ### Component Location:
 
-`apps/desktop/src/components/ui/input/MessageInputDisplay.tsx`
+`apps/desktop/src/components/input/MessageInputDisplay.tsx`
 
 ### Component Structure:
 
@@ -83,7 +83,7 @@ Add section to ComponentShowcase.tsx:
 
 ## Acceptance Criteria
 
-- [ ] Component created in `apps/desktop/src/components/ui/input/`
+- [ ] Component created in `apps/desktop/src/components/input/`
 - [ ] Uses MessageInputDisplayProps from shared package (includes textarea properties)
 - [ ] No event handlers or interactive functionality
 - [ ] Exact visual match with DesignPrototype textarea
@@ -111,4 +111,4 @@ Add section to ComponentShowcase.tsx:
 
 **2025-07-24T17:18:01.778787Z** - Implemented MessageInputDisplay component with all required features including secure styling extracted from DesignPrototype.tsx lines 406-421, size variants (small, medium, large), visual states (empty, with content, disabled, focused appearance), theme variable integration, and comprehensive showcase integration. Component is pure display without interactive functionality and passes all quality checks.
 
-- filesChanged: ["apps/desktop/src/components/ui/input/MessageInputDisplay.tsx", "apps/desktop/src/components/ui/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
+- filesChanged: ["apps/desktop/src/components/input/MessageInputDisplay.tsx", "apps/desktop/src/components/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

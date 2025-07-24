@@ -62,7 +62,7 @@ Extract high-level layout components that compose smaller components into screen
 
 ✅ **Component Structure**
 
-- Each component in `apps/desktop/src/components/ui/layout/` directory
+- Each component in `apps/desktop/src/components/layout/` directory
 - Pure layout components with no business logic or state
 - Props-based composition of child components
 - TypeScript interfaces for all props from shared package
@@ -129,7 +129,7 @@ Extract high-level layout components that compose smaller components into screen
 **File Organization:**
 
 ```
-apps/desktop/src/components/ui/layout/
+apps/desktop/src/components/layout/
 ├── index.ts (barrel export)
 ├── ConversationScreenDisplay.tsx
 ├── MainContentPanelDisplay.tsx
