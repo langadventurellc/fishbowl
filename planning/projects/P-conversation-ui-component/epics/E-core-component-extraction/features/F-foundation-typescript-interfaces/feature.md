@@ -2,11 +2,11 @@
 kind: feature
 id: F-foundation-typescript-interfaces
 title: Foundation TypeScript Interfaces
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-23T19:06:52.136939"
-updated: "2025-07-23T19:06:52.136939"
+updated: "2025-07-24T07:14:14.987103+00:00"
 schema_version: "1.1"
 parent: E-core-component-extraction
 ---
