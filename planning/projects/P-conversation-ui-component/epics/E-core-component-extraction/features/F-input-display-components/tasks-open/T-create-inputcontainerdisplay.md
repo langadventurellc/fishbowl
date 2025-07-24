@@ -123,7 +123,7 @@ Add section to ComponentShowcase.tsx:
 ## Security Considerations
 
 - Composition component with safe child component rendering
-- All child components are display-only with no interactive functionality
+- Don't create any interactive functionality
 - Props are type-safe and validated across all child components
 
 ### Log

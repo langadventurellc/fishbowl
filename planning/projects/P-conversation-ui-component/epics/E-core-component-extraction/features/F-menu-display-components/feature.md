@@ -16,7 +16,7 @@ parent: E-core-component-extraction
 
 ## Purpose
 
-Extract UI components related to context menus and dropdown displays, focusing purely on visual representation without any interactive functionality. These components show the visual structure and styling of menu elements.
+Extract UI components related to context menus and dropdown displays, focusing purely on visual representation without any added interactive functionality. These components show the visual structure and styling of menu elements.
 
 ## Source References
 
@@ -95,7 +95,7 @@ Extract UI components related to context menus and dropdown displays, focusing p
 
 ✅ **Code Quality**
 
-- No interactive functionality (display only)
+- No added interactive functionality
 - No event handlers, click logic, or state management
 - Pure CSS-in-JS styling with theme variables
 - Components under 100 lines each
@@ -144,7 +144,7 @@ apps/desktop/src/components/ui/menu/
 - Menu positioning appears correct visually
 - Different menu item types display properly
 - Theme switching preserves all menu styling
-- No interactive behavior or menu functionality present
+- No added interactive behavior or menu functionality present
 
 ## Dependencies
 

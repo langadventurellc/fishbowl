@@ -16,7 +16,7 @@ parent: E-core-component-extraction
 
 ## Purpose
 
-Extract UI components related to the conversation sidebar, focusing on pure visual display without interactive functionality. These components show the visual structure and styling of sidebar elements.
+Extract UI components related to the conversation sidebar, focusing on pure visual display without added interactive functionality. These components show the visual structure and styling of sidebar elements.
 
 ## Source References
 
@@ -96,7 +96,7 @@ Extract UI components related to the conversation sidebar, focusing on pure visu
 
 ✅ **Code Quality**
 
-- No interactive functionality (display only)
+- No added interactive functionality
 - No event handlers or state management
 - Pure CSS-in-JS styling with theme variables
 - Components under 120 lines each
@@ -145,7 +145,7 @@ apps/desktop/src/components/ui/sidebar/
 - Collapsed and expanded states render correctly
 - Different conversation data displays properly
 - Theme switching preserves all styling
-- No interactive behavior present
+- No added interactive behavior present
 
 ## Dependencies
 

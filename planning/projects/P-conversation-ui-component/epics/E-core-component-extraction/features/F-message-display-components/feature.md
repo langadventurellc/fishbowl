@@ -16,7 +16,7 @@ parent: E-core-component-extraction
 
 ## Purpose
 
-Extract UI components responsible for displaying messages in the conversation interface. These are pure display components that render message content, metadata, and visual styling without any interactive functionality.
+Extract UI components responsible for displaying messages in the conversation interface. These are pure display components that render message content, metadata, and visual styling without any added interactive functionality.
 
 ## Source References
 
@@ -96,7 +96,7 @@ Extract UI components responsible for displaying messages in the conversation in
 
 ✅ **Code Quality**
 
-- No interactive functionality or event handlers
+- No added interactive functionality or event handlers
 - Pure display logic only
 - Components under 150 lines each
 - Consistent styling patterns across message components
@@ -148,7 +148,7 @@ apps/desktop/src/components/ui/message/
 - Agent color variations display correctly
 - Long and short content renders properly
 - Theme switching preserves all styling
-- No interactive functionality present
+- No added interactive functionality present
 
 ## Dependencies
 

@@ -76,7 +76,7 @@ Ensure ComponentShowcase.tsx includes comprehensive sections for:
 
 ## Security Considerations
 
-- All components are display-only with no interactive functionality
+- Don't create any interactive functionality
 - Props are properly typed and validated
 - No security concerns with pure display components
 

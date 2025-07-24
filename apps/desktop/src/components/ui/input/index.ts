@@ -6,3 +6,4 @@
  */
 
 export { MessageInputDisplay } from "./MessageInputDisplay";
+export { SendButtonDisplay } from "./SendButtonDisplay";

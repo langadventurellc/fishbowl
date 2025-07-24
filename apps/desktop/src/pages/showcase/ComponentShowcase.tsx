@@ -7,7 +7,10 @@ import {
   ThemeToggle,
   ThinkingIndicator,
 } from "../../components/ui/atomic";
-import { MessageInputDisplay } from "../../components/ui/input";
+import {
+  MessageInputDisplay,
+  SendButtonDisplay,
+} from "../../components/ui/input";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -362,10 +365,85 @@ export default function ComponentShowcase() {
 
               <div style={styles.agentPillRow}>
                 <span style={styles.agentPillLabel}>Long Content:</span>
-                <div style={{ width: "300px" }}>
+                <div style={{ flex: 1 }}>
                   <MessageInputDisplay
                     content="This is a longer message that demonstrates how the component handles multi-line content and shows the auto-resize visual appearance. The text wraps naturally and the component adjusts its height accordingly."
                     size="medium"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Send Button Display</h2>
+              <p style={styles.sectionDescription}>
+                Visual representation of the send button with different states -
+                enabled, disabled, and loading variations
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Enabled State:</span>
+                <SendButtonDisplay
+                  disabled={false}
+                  loading={false}
+                  aria-label="Send message to agents"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Disabled State:</span>
+                <SendButtonDisplay
+                  disabled={true}
+                  loading={false}
+                  aria-label="Send button disabled - enter message first"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Loading State:</span>
+                <SendButtonDisplay
+                  disabled={false}
+                  loading={true}
+                  aria-label="Sending message..."
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styled:</span>
+                <SendButtonDisplay
+                  disabled={false}
+                  loading={false}
+                  className="custom-send-button"
+                  aria-label="Send message with custom styling"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>State Comparison:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "12px",
+                    alignItems: "center",
+                  }}
+                >
+                  <SendButtonDisplay
+                    disabled={false}
+                    loading={false}
+                    aria-label="Enabled"
+                  />
+                  <SendButtonDisplay
+                    disabled={true}
+                    loading={false}
+                    aria-label="Disabled"
+                  />
+                  <SendButtonDisplay
+                    disabled={false}
+                    loading={true}
+                    aria-label="Loading"
                   />
                 </div>
               </div>
