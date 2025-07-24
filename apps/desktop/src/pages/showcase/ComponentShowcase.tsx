@@ -5,6 +5,7 @@ import {
   MessageAvatar,
   MessageContent,
   MessageHeader,
+  MessageItem,
   ThinkingIndicator,
 } from "../../components/chat";
 import {
@@ -860,6 +861,346 @@ export default function ComponentShowcase() {
                   />
                 </div>
               </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Complete Messages - Agent:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-1",
+                      agent: "Technical Advisor",
+                      role: "Technical Advisor",
+                      content:
+                        "Here's how you can implement that feature using React hooks and state management.",
+                      timestamp: "2:15 PM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#3b82f6",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-2",
+                      agent: "Project Manager",
+                      role: "Project Manager",
+                      content:
+                        "The timeline looks good. We should be able to deliver this by the end of the sprint.",
+                      timestamp: "2:16 PM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#22c55e",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Complete Messages - User:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-3",
+                      agent: "User",
+                      role: "User",
+                      content:
+                        "Can you help me understand how this component works?",
+                      timestamp: "2:10 PM",
+                      type: "user",
+                      isActive: true,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-4",
+                      agent: "User",
+                      role: "User",
+                      content:
+                        "I think we should consider adding more validation to this form.",
+                      timestamp: "2:18 PM",
+                      type: "user",
+                      isActive: true,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Complete Messages - System:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-5",
+                      agent: "System",
+                      role: "System",
+                      content: "User joined the conversation",
+                      timestamp: "2:05 PM",
+                      type: "system",
+                      isActive: true,
+                      agentColor: "#64748b",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-6",
+                      agent: "System",
+                      role: "System",
+                      content: "Conversation saved successfully",
+                      timestamp: "2:20 PM",
+                      type: "system",
+                      isActive: true,
+                      agentColor: "#64748b",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Long Content Messages:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-7",
+                      agent: "Creative Director",
+                      role: "Creative Director",
+                      content:
+                        "I think we should explore a more modern approach to this design. The current layout feels a bit dated and could benefit from better use of whitespace, improved typography hierarchy, and more thoughtful color choices. We should also consider how this will work across different screen sizes and ensure the user experience is consistent throughout all touchpoints.",
+                      timestamp: "1:45 PM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#ef4444",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-8",
+                      agent: "User",
+                      role: "User",
+                      content:
+                        "I agree with those points. The current design does feel outdated and could use some modernization. What specific changes would you recommend we prioritize first? Should we focus on the typography and spacing issues, or would it be better to start with the color palette and overall visual hierarchy?",
+                      timestamp: "1:50 PM",
+                      type: "user",
+                      isActive: true,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Inactive Messages:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-9",
+                      agent: "UX Designer",
+                      role: "User Experience Designer",
+                      content:
+                        "This message is inactive and should appear dimmed.",
+                      timestamp: "12:30 PM",
+                      type: "agent",
+                      isActive: false,
+                      agentColor: "#a855f7",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-10",
+                      agent: "User",
+                      role: "User",
+                      content: "This user message is also inactive and dimmed.",
+                      timestamp: "12:35 PM",
+                      type: "user",
+                      isActive: false,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Various Agent Colors:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-11",
+                      agent: "Data Analyst",
+                      role: "Data Analyst",
+                      content: "The analytics show strong user engagement.",
+                      timestamp: "11:15 AM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#f59e0b",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-12",
+                      agent: "Backend Developer",
+                      role: "Backend Developer",
+                      content: "The API endpoints are ready for testing.",
+                      timestamp: "11:20 AM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#6366f1",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-13",
+                      agent: "QA Engineer",
+                      role: "Quality Assurance Engineer",
+                      content: "All tests are passing successfully.",
+                      timestamp: "11:25 AM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#10b981",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
             </div>
           </section>
 
@@ -937,7 +1278,6 @@ export default function ComponentShowcase() {
                     borderRadius: "8px",
                     padding: "12px",
                     backgroundColor: "var(--card)",
-                    maxWidth: "600px",
                   }}
                 >
                   <MessageContent
@@ -964,7 +1304,6 @@ It includes paragraph breaks and preserves whitespace formatting.
                     borderRadius: "8px",
                     padding: "12px",
                     backgroundColor: "var(--card)",
-                    maxWidth: "600px",
                   }}
                 >
                   <MessageContent
@@ -995,7 +1334,6 @@ The formatting and indentation are preserved."
                     borderRadius: "8px",
                     padding: "12px",
                     backgroundColor: "var(--card)",
-                    maxWidth: "600px",
                   }}
                 >
                   <MessageContent
@@ -1022,7 +1360,6 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                     borderRadius: "8px",
                     padding: "12px",
                     backgroundColor: "var(--card)",
-                    maxWidth: "600px",
                   }}
                 >
                   <MessageContent
@@ -1049,7 +1386,6 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                     borderRadius: "8px",
                     padding: "12px",
                     backgroundColor: "var(--card)",
-                    maxWidth: "600px",
                   }}
                 >
                   <MessageContent
