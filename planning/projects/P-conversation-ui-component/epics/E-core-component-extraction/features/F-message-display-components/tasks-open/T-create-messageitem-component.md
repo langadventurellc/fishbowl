@@ -35,7 +35,6 @@ Create the main container component that composes MessageHeader, MessageContent,
 4. Implement agent color coding system from existing design
 5. Add proper spacing and layout matching DesignPrototype
 6. Remove all interactive functionality (expand, context menu, etc.) - display only
-7. Write unit tests for different message types and agent combinations
 
 ## Showcase Integration (CRITICAL)
 
@@ -75,7 +74,6 @@ MessageItem
 - ✅ Card-like layout with proper spacing and backgrounds
 - ✅ NO interactive functionality (expand, context menu, etc.)
 - ✅ Added to ComponentShowcase with comprehensive message examples
-- ✅ Unit tests cover composition and message type rendering
 - ✅ Theme switching works across all message types
 - ✅ Component under 150 lines of code
 

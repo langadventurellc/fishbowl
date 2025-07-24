@@ -33,7 +33,6 @@ Extract the agent color indicator from DesignPrototype.tsx (~lines 362-639) to c
 3. Use CSS-in-JS with theme variable integration
 4. Support different sizes (small, medium, large) for flexibility
 5. Include TypeScript strict mode compliance
-6. Write comprehensive unit tests for color rendering and size variants
 
 ## Showcase Integration (CRITICAL)
 
@@ -53,7 +52,6 @@ Extract the agent color indicator from DesignPrototype.tsx (~lines 362-639) to c
 - ✅ Uses theme variables for consistent styling
 - ✅ Theme switching (light/dark) works properly
 - ✅ Added to ComponentShowcase with comprehensive examples
-- ✅ Unit tests cover color rendering and size functionality
 - ✅ TypeScript strict mode compliance
 - ✅ Component under 150 lines of code
 

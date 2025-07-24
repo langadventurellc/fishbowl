@@ -32,7 +32,6 @@ Extract system message styling from DesignPrototype.tsx to create a component wi
 3. Implement centered layout with italic styling
 4. Use muted foreground color: `var(--muted-foreground)`
 5. Font size: 12px for subtle appearance
-6. Write unit tests for different system message types and emphasis levels
 
 ## Showcase Integration (CRITICAL)
 
@@ -64,7 +63,6 @@ Extract system message styling from DesignPrototype.tsx to create a component wi
 - ✅ Supports different emphasis levels (normal, warning, error)
 - ✅ Visually distinct from user and agent messages
 - ✅ Added to ComponentShowcase with system message examples
-- ✅ Unit tests cover styling and emphasis variations
 - ✅ Theme switching maintains proper contrast
 - ✅ Component under 150 lines of code
 

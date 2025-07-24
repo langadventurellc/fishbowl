@@ -4,6 +4,7 @@ import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 import {
   AgentPill,
   MessageAvatar,
+  MessageHeader,
   ThinkingIndicator,
 } from "../../components/chat";
 import { Button } from "../../components/input";
@@ -693,6 +694,170 @@ export default function ComponentShowcase() {
                   role="Chief Technology Officer"
                   size="large"
                 />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Headers - Agent:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="Technical Advisor"
+                    agentRole="Technical Advisor"
+                    agentColor="#3b82f6"
+                    timestamp="2:15 PM"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Project Manager"
+                    agentRole="Project Manager"
+                    agentColor="#22c55e"
+                    timestamp="Yesterday"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Creative Director"
+                    agentRole="Creative Director"
+                    agentColor="#ef4444"
+                    timestamp="Dec 15"
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Headers - User:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="User"
+                    agentRole="User"
+                    agentColor="#6b7280"
+                    timestamp="2:20 PM"
+                    messageType="user"
+                  />
+                  <MessageHeader
+                    agentName="User"
+                    agentRole="User"
+                    agentColor="#6b7280"
+                    timestamp="Just now"
+                    messageType="user"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Headers - System:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="System"
+                    agentRole="System"
+                    agentColor="#64748b"
+                    timestamp="2:25 PM"
+                    messageType="system"
+                  />
+                  <MessageHeader
+                    agentName="System"
+                    agentRole="System Notification"
+                    agentColor="#64748b"
+                    timestamp="1 hour ago"
+                    messageType="system"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Agent Names:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="Senior Software Engineering Manager"
+                    agentRole="Senior Software Engineering Manager"
+                    agentColor="#8b5cf6"
+                    timestamp="10:30 AM"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Principal Product Designer"
+                    agentRole="Principal Product Designer & UX Lead"
+                    agentColor="#06b6d4"
+                    timestamp="9:45 AM"
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Various Timestamps:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="Ted"
+                    agentRole="Technical Advisor"
+                    agentColor="#3b82f6"
+                    timestamp="2:15 PM"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Alice"
+                    agentRole="Project Manager"
+                    agentColor="#22c55e"
+                    timestamp="Yesterday"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Lori"
+                    agentRole="Creative Director"
+                    agentColor="#ef4444"
+                    timestamp="Dec 15, 2024"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Chelsea"
+                    agentRole="UX Designer"
+                    agentColor="#a855f7"
+                    timestamp="Just now"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="User"
+                    agentRole="User"
+                    agentColor="#6b7280"
+                    timestamp="3 minutes ago"
+                    messageType="user"
+                  />
+                </div>
               </div>
             </div>
           </section>

@@ -32,7 +32,6 @@ Extract text content rendering from DesignPrototype.tsx to create a component fo
 3. Implement typography: 14px font, 1.5 line-height, 8px vertical padding
 4. Use `whiteSpace: "pre-wrap"` to preserve formatting and line breaks
 5. Handle text selection and copying functionality
-6. Write unit tests for different content lengths and text formatting
 
 ## Showcase Integration (CRITICAL)
 
@@ -64,7 +63,6 @@ Extract text content rendering from DesignPrototype.tsx to create a component fo
 - ✅ Handles short and long content appropriately
 - ✅ Vertical padding (8px) matches DesignPrototype
 - ✅ Added to ComponentShowcase with varied content examples
-- ✅ Unit tests cover text formatting and display
 - ✅ Theme switching preserves text readability
 - ✅ Component under 150 lines of code
 
