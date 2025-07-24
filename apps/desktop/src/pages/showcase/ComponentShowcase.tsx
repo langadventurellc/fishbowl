@@ -1,15 +1,22 @@
 import { Agent, ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
-import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import { AgentPill, ThinkingIndicator } from "../../components/chat";
-import { Button } from "../../components/input";
-import { ThemeToggle } from "../../components/showcase";
 import {
+  AgentPill,
+  MessageAvatar,
+  MessageContent,
+  MessageHeader,
+  MessageItem,
+  ThinkingIndicator,
+} from "../../components/chat";
+import {
+  Button,
   ConversationModeToggleDisplay,
   InputContainerDisplay,
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/input";
+import { ThemeToggle } from "../../components/showcase";
+import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -597,6 +604,801 @@ export default function ComponentShowcase() {
                 <span style={styles.agentPillLabel}>Non-clickable:</span>
                 <AgentPill agent={sampleAgents[0]!} />
                 <AgentPill agent={sampleAgents[2]!} />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Avatars - All:
+                </span>
+                {sampleAgents.map((agent, index) => (
+                  <MessageAvatar
+                    key={index}
+                    agentColor={agent.color}
+                    agentName={agent.name}
+                    role={agent.role}
+                  />
+                ))}
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Avatar Sizes:</span>
+                <MessageAvatar
+                  agentColor="#3b82f6"
+                  agentName="Technical Advisor"
+                  role="Technical Advisor"
+                  size="small"
+                />
+                <MessageAvatar
+                  agentColor="#22c55e"
+                  agentName="Project Manager"
+                  role="Project Manager"
+                  size="medium"
+                />
+                <MessageAvatar
+                  agentColor="#ef4444"
+                  agentName="Creative Director"
+                  role="Creative Director"
+                  size="large"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Color Variants:</span>
+                <MessageAvatar
+                  agentColor="#3b82f6"
+                  agentName="Technical Advisor"
+                  role="Technical Advisor"
+                />
+                <MessageAvatar
+                  agentColor="#22c55e"
+                  agentName="Project Manager"
+                  role="Project Manager"
+                />
+                <MessageAvatar
+                  agentColor="#ef4444"
+                  agentName="Creative Director"
+                  role="Creative Director"
+                />
+                <MessageAvatar
+                  agentColor="#a855f7"
+                  agentName="UX Designer"
+                  role="User Experience Designer"
+                />
+                <MessageAvatar
+                  agentColor="#f59e0b"
+                  agentName="Data Analyst"
+                  role="Data Analyst"
+                />
+                <MessageAvatar
+                  agentColor="#6366f1"
+                  agentName="Backend Developer"
+                  role="Backend Developer"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Names:</span>
+                <MessageAvatar
+                  agentColor="#8b5cf6"
+                  agentName="Senior Software Engineering Manager"
+                  role="Senior Software Engineering Manager"
+                  size="small"
+                />
+                <MessageAvatar
+                  agentColor="#06b6d4"
+                  agentName="Principal Product Designer"
+                  role="Principal Product Designer"
+                  size="medium"
+                />
+                <MessageAvatar
+                  agentColor="#10b981"
+                  agentName="Chief Technology Officer"
+                  role="Chief Technology Officer"
+                  size="large"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Headers - Agent:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="Technical Advisor"
+                    agentRole="Technical Advisor"
+                    agentColor="#3b82f6"
+                    timestamp="2:15 PM"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Project Manager"
+                    agentRole="Project Manager"
+                    agentColor="#22c55e"
+                    timestamp="Yesterday"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Creative Director"
+                    agentRole="Creative Director"
+                    agentColor="#ef4444"
+                    timestamp="Dec 15"
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Headers - User:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="User"
+                    agentRole="User"
+                    agentColor="#6b7280"
+                    timestamp="2:20 PM"
+                    messageType="user"
+                  />
+                  <MessageHeader
+                    agentName="User"
+                    agentRole="User"
+                    agentColor="#6b7280"
+                    timestamp="Just now"
+                    messageType="user"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Headers - System:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="System"
+                    agentRole="System"
+                    agentColor="#64748b"
+                    timestamp="2:25 PM"
+                    messageType="system"
+                  />
+                  <MessageHeader
+                    agentName="System"
+                    agentRole="System Notification"
+                    agentColor="#64748b"
+                    timestamp="1 hour ago"
+                    messageType="system"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Agent Names:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="Senior Software Engineering Manager"
+                    agentRole="Senior Software Engineering Manager"
+                    agentColor="#8b5cf6"
+                    timestamp="10:30 AM"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Principal Product Designer"
+                    agentRole="Principal Product Designer & UX Lead"
+                    agentColor="#06b6d4"
+                    timestamp="9:45 AM"
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Various Timestamps:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  <MessageHeader
+                    agentName="Ted"
+                    agentRole="Technical Advisor"
+                    agentColor="#3b82f6"
+                    timestamp="2:15 PM"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Alice"
+                    agentRole="Project Manager"
+                    agentColor="#22c55e"
+                    timestamp="Yesterday"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Lori"
+                    agentRole="Creative Director"
+                    agentColor="#ef4444"
+                    timestamp="Dec 15, 2024"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="Chelsea"
+                    agentRole="UX Designer"
+                    agentColor="#a855f7"
+                    timestamp="Just now"
+                    messageType="agent"
+                  />
+                  <MessageHeader
+                    agentName="User"
+                    agentRole="User"
+                    agentColor="#6b7280"
+                    timestamp="3 minutes ago"
+                    messageType="user"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Complete Messages - Agent:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-1",
+                      agent: "Technical Advisor",
+                      role: "Technical Advisor",
+                      content:
+                        "Here's how you can implement that feature using React hooks and state management.",
+                      timestamp: "2:15 PM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#3b82f6",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-2",
+                      agent: "Project Manager",
+                      role: "Project Manager",
+                      content:
+                        "The timeline looks good. We should be able to deliver this by the end of the sprint.",
+                      timestamp: "2:16 PM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#22c55e",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Complete Messages - User:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-3",
+                      agent: "User",
+                      role: "User",
+                      content:
+                        "Can you help me understand how this component works?",
+                      timestamp: "2:10 PM",
+                      type: "user",
+                      isActive: true,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-4",
+                      agent: "User",
+                      role: "User",
+                      content:
+                        "I think we should consider adding more validation to this form.",
+                      timestamp: "2:18 PM",
+                      type: "user",
+                      isActive: true,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Complete Messages - System:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-5",
+                      agent: "System",
+                      role: "System",
+                      content: "User joined the conversation",
+                      timestamp: "2:05 PM",
+                      type: "system",
+                      isActive: true,
+                      agentColor: "#64748b",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-6",
+                      agent: "System",
+                      role: "System",
+                      content: "Conversation saved successfully",
+                      timestamp: "2:20 PM",
+                      type: "system",
+                      isActive: true,
+                      agentColor: "#64748b",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Long Content Messages:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-7",
+                      agent: "Creative Director",
+                      role: "Creative Director",
+                      content:
+                        "I think we should explore a more modern approach to this design. The current layout feels a bit dated and could benefit from better use of whitespace, improved typography hierarchy, and more thoughtful color choices. We should also consider how this will work across different screen sizes and ensure the user experience is consistent throughout all touchpoints.",
+                      timestamp: "1:45 PM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#ef4444",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-8",
+                      agent: "User",
+                      role: "User",
+                      content:
+                        "I agree with those points. The current design does feel outdated and could use some modernization. What specific changes would you recommend we prioritize first? Should we focus on the typography and spacing issues, or would it be better to start with the color palette and overall visual hierarchy?",
+                      timestamp: "1:50 PM",
+                      type: "user",
+                      isActive: true,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Inactive Messages:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-9",
+                      agent: "UX Designer",
+                      role: "User Experience Designer",
+                      content:
+                        "This message is inactive and should appear dimmed.",
+                      timestamp: "12:30 PM",
+                      type: "agent",
+                      isActive: false,
+                      agentColor: "#a855f7",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-10",
+                      agent: "User",
+                      role: "User",
+                      content: "This user message is also inactive and dimmed.",
+                      timestamp: "12:35 PM",
+                      type: "user",
+                      isActive: false,
+                      agentColor: "#6b7280",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={false}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Various Agent Colors:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "16px",
+                    width: "100%",
+                  }}
+                >
+                  <MessageItem
+                    message={{
+                      id: "msg-11",
+                      agent: "Data Analyst",
+                      role: "Data Analyst",
+                      content: "The analytics show strong user engagement.",
+                      timestamp: "11:15 AM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#f59e0b",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-12",
+                      agent: "Backend Developer",
+                      role: "Backend Developer",
+                      content: "The API endpoints are ready for testing.",
+                      timestamp: "11:20 AM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#6366f1",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                  <MessageItem
+                    message={{
+                      id: "msg-13",
+                      agent: "QA Engineer",
+                      role: "Quality Assurance Engineer",
+                      content: "All tests are passing successfully.",
+                      timestamp: "11:25 AM",
+                      type: "agent",
+                      isActive: true,
+                      agentColor: "#10b981",
+                    }}
+                    isExpanded={false}
+                    canRegenerate={true}
+                    contextMenuOpen={false}
+                    onToggleContext={() => {}}
+                    onToggleExpansion={() => {}}
+                    onContextMenuAction={() => {}}
+                    onOpenContextMenu={() => {}}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Message Content</h2>
+              <p style={styles.sectionDescription}>
+                Message text content display with proper typography, whitespace
+                preservation, and text selection support
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Short Text:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This is a short message response."
+                    messageType="agent"
+                  />
+                  <MessageContent
+                    content="Can you help me with this task?"
+                    messageType="user"
+                  />
+                  <MessageContent
+                    content="User joined the conversation"
+                    messageType="system"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Medium Text:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This is a longer message that demonstrates how the MessageContent component handles multi-sentence responses with proper line height and spacing. The typography should be clear and readable with good visual hierarchy."
+                    messageType="agent"
+                  />
+                  <MessageContent
+                    content="I have a more detailed question about how this feature works and whether it supports all the functionality I need for my use case."
+                    messageType="user"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Text with Line Breaks:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This message has multiple lines.
+
+It includes paragraph breaks and preserves whitespace formatting.
+
+• Bullet points work properly
+• Line spacing is maintained
+• Whitespace preservation with pre-wrap"
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Code Snippets:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="Here's a code example:
+
+function MessageContent({ content, messageType }) {
+  return (
+    <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
+      {content}
+    </div>
+  );
+}
+
+The formatting and indentation are preserved."
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Content:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This is a very long message that demonstrates how the MessageContent component handles extensive text content. It should wrap properly and maintain readability even with large amounts of text. The line height and spacing should remain consistent throughout the entire message, making it easy to read and scan.
+
+The component should handle overflow gracefully and ensure that text selection and copying functionality works across the entire content area. This includes preserving formatting when users copy text from the message.
+
+Additional paragraphs should maintain proper spacing and visual hierarchy. The typography should remain clear and accessible regardless of the content length or complexity."
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Expandable Messages (500+ chars):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This message demonstrates character-based expansion with the default 500 character threshold. When a message exceeds this length, it automatically shows a 'Show more...' button that allows users to expand and collapse the content. The preview truncates at word boundaries when possible for better readability, ensuring that partial words aren't shown at the break point."
+                    messageType="agent"
+                  />
+                  <MessageContent
+                    content="Here's another expandable message that shows how the expansion works with user messages. The component intelligently finds good break points near the 500 character threshold, preferring to break at word boundaries rather than in the middle of words. This creates a much better user experience when reading truncated content, as users can understand the preview without seeing partial words or awkward breaks."
+                    messageType="user"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Custom Threshold (100 chars):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This message demonstrates a custom expansion threshold of 100 characters. With a lower threshold, even shorter messages will show the expansion functionality, which can be useful for components that need to keep content more compact."
+                    messageType="agent"
+                    expansionThreshold={100}
+                  />
+                  <MessageContent
+                    content="Another example with the 100 character threshold. This allows for more granular control over when expansion controls appear, making the component flexible for different use cases and layout requirements."
+                    messageType="system"
+                    expansionThreshold={100}
+                  />
+                </div>
               </div>
             </div>
           </section>
