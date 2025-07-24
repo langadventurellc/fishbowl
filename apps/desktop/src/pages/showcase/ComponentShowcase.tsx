@@ -8,6 +8,7 @@ import {
   ThinkingIndicator,
 } from "../../components/ui/atomic";
 import {
+  ConversationModeToggleDisplay,
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/ui/input";
@@ -420,32 +421,43 @@ export default function ComponentShowcase() {
                   aria-label="Send message with custom styling"
                 />
               </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>
+                Conversation Mode Toggle Display
+              </h2>
+              <p style={styles.sectionDescription}>
+                Visual representation of the Manual/Auto mode toggle showing
+                current mode state without interactive functionality
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Manual Mode Active:</span>
+                <ConversationModeToggleDisplay
+                  currentMode="manual"
+                  disabled={false}
+                />
+              </div>
 
               <div style={styles.agentPillRow}>
-                <span style={styles.agentPillLabel}>State Comparison:</span>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "12px",
-                    alignItems: "center",
-                  }}
-                >
-                  <SendButtonDisplay
-                    disabled={false}
-                    loading={false}
-                    aria-label="Enabled"
-                  />
-                  <SendButtonDisplay
-                    disabled={true}
-                    loading={false}
-                    aria-label="Disabled"
-                  />
-                  <SendButtonDisplay
-                    disabled={false}
-                    loading={true}
-                    aria-label="Loading"
-                  />
-                </div>
+                <span style={styles.agentPillLabel}>Auto Mode Active:</span>
+                <ConversationModeToggleDisplay
+                  currentMode="auto"
+                  disabled={false}
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Disabled State:</span>
+                <ConversationModeToggleDisplay
+                  currentMode="manual"
+                  disabled={true}
+                  className="disabled-mode-toggle"
+                />
               </div>
             </div>
           </section>

@@ -5,5 +5,6 @@
  * These are pure display components without interactive functionality.
  */
 
+export { ConversationModeToggleDisplay } from "./ConversationModeToggleDisplay";
 export { MessageInputDisplay } from "./MessageInputDisplay";
 export { SendButtonDisplay } from "./SendButtonDisplay";
