@@ -1,7 +1,7 @@
 ---
 kind: task
 id: T-create-modetoggledisplay
-title: Create ModeToggleDisplay component with showcase integration
+title: Create ConversationModeToggleDisplay component with showcase integration
 status: open
 priority: normal
 prerequisites:
@@ -12,11 +12,11 @@ schema_version: "1.1"
 parent: F-input-display-components
 ---
 
-# Create ModeToggleDisplay Component
+# Create ConversationModeToggleDisplay Component
 
 ## Context
 
-Extract and create the ModeToggleDisplay component from DesignPrototype.tsx showing the visual representation of the Manual/Auto mode toggle without interactive functionality.
+Extract and create the ConversationModeToggleDisplay component from DesignPrototype.tsx showing the visual representation of the Manual/Auto mode toggle without interactive functionality.
 
 ## Technical Approach
 
@@ -30,14 +30,14 @@ Extract and create the ModeToggleDisplay component from DesignPrototype.tsx show
 
 ### Component Location:
 
-`apps/desktop/src/components/ui/input/ModeToggleDisplay.tsx`
+`apps/desktop/src/components/ui/input/ConversationModeToggleDisplay.tsx`
 
 ### Component Structure:
 
 ```typescript
 import { ModeToggleDisplayProps } from "@fishbowl-ai/shared";
 
-export function ModeToggleDisplay(props: ModeToggleDisplayProps) {
+export function ConversationModeToggleDisplay(props: ModeToggleDisplayProps) {
   // Pure display component showing mode toggle appearance
   // No onClick handler - display currentMode visually
   // Show Manual/Auto options with active state styling
@@ -65,7 +65,7 @@ export function ModeToggleDisplay(props: ModeToggleDisplayProps) {
 Add section to ComponentShowcase.tsx:
 
 ```typescript
-// ModeToggleDisplay showcase
+// ConversationModeToggleDisplay showcase
 - Manual mode active state
 - Auto mode active state
 - Disabled state

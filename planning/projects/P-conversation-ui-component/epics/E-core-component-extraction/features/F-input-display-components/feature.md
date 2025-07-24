@@ -38,7 +38,7 @@ Extract UI components related to the message input area, focusing purely on visu
 - **Props**: disabled state, loading state, variant (enabled/disabled)
 - **Styling**: Primary button styling with consistent theming
 
-### ModeToggleDisplay Component
+### ConversationModeToggleDisplay Component
 
 - **Purpose**: Visual representation of Manual/Auto mode toggle
 - **Props**: current mode, disabled state, size variant
@@ -117,7 +117,7 @@ Extract UI components related to the message input area, focusing purely on visu
 
 - **MessageInputDisplay**: empty, with content, disabled, focused appearance
 - **SendButtonDisplay**: enabled, disabled, loading visual states
-- **ModeToggleDisplay**: manual mode, auto mode visual states
+- **ConversationModeToggleDisplay**: manual mode, auto mode visual states
 - **TextareaDisplay**: different content lengths, placeholder states
 
 **Styling Focus:**
@@ -134,7 +134,7 @@ apps/desktop/src/components/ui/input/
 ├── index.ts (barrel export)
 ├── MessageInputDisplay.tsx
 ├── SendButtonDisplay.tsx
-├── ModeToggleDisplay.tsx
+├── ConversationModeToggleDisplay.tsx
 ├── InputContainerDisplay.tsx
 └── TextareaDisplay.tsx
 ```

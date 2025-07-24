@@ -19,13 +19,13 @@ parent: F-input-display-components
 
 ## Context
 
-Extract and create the InputContainerDisplay component from DesignPrototype.tsx as a composition component that brings together all the individual input display components. This component demonstrates how MessageInputDisplay, SendButtonDisplay, and ModeToggleDisplay work together in the complete input area layout.
+Extract and create the InputContainerDisplay component from DesignPrototype.tsx as a composition component that brings together all the individual input display components. This component demonstrates how MessageInputDisplay, SendButtonDisplay, and ConversationModeToggleDisplay work together in the complete input area layout.
 
 ## Technical Approach
 
 1. **Extract styling** from DesignPrototype.tsx inputArea styles (lines 397-405)
 2. **Create composition component** using InputContainerDisplayProps
-3. **Import and compose child components** (MessageInputDisplay, SendButtonDisplay, ModeToggleDisplay)
+3. **Import and compose child components** (MessageInputDisplay, SendButtonDisplay, ConversationModeToggleDisplay)
 4. **Support layout variants** for different spacing/sizing
 5. **Add to ComponentShowcase** immediately for verification with all child components
 6. **Write unit tests** for layout variants and component composition
@@ -42,18 +42,18 @@ Extract and create the InputContainerDisplay component from DesignPrototype.tsx 
 import { InputContainerDisplayProps } from "@fishbowl-ai/shared";
 import { MessageInputDisplay } from "./MessageInputDisplay";
 import { SendButtonDisplay } from "./SendButtonDisplay";
-import { ModeToggleDisplay } from "./ModeToggleDisplay";
+import { ConversationModeToggleDisplay } from "./ConversationModeToggleDisplay";
 
 export function InputContainerDisplay(props: InputContainerDisplayProps) {
   // Composition component that brings together all input components
   // Provides flex layout, spacing, and border styling
-  // Uses MessageInputDisplay, SendButtonDisplay, and ModeToggleDisplay
+  // Uses MessageInputDisplay, SendButtonDisplay, and ConversationModeToggleDisplay
 
   return (
     <div style={containerStyles}>
       <MessageInputDisplay {...messageInputProps} />
       <SendButtonDisplay {...sendButtonProps} />
-      <ModeToggleDisplay {...modeToggleProps} />
+      <ConversationModeToggleDisplay {...modeToggleProps} />
     </div>
   );
 }
@@ -70,7 +70,7 @@ The component will create appropriate props for each child component:
 
 - **MessageInputDisplay**: placeholder, content, size based on layout variant
 - **SendButtonDisplay**: disabled state, loading state
-- **ModeToggleDisplay**: currentMode (default to "manual"), disabled state
+- **ConversationModeToggleDisplay**: currentMode (default to "manual"), disabled state
 
 ### Styling Requirements:
 
@@ -103,7 +103,7 @@ Add section to ComponentShowcase.tsx:
 
 - [ ] Component created in `apps/desktop/src/components/ui/input/`
 - [ ] Uses InputContainerDisplayProps from shared package
-- [ ] Imports and composes MessageInputDisplay, SendButtonDisplay, ModeToggleDisplay
+- [ ] Imports and composes MessageInputDisplay, SendButtonDisplay, ConversationModeToggleDisplay
 - [ ] Provides proper flex layout for child components
 - [ ] Exact visual match with DesignPrototype input container (lines 397-405)
 - [ ] Layout variants (default, compact) implemented with appropriate child props
@@ -118,7 +118,7 @@ Add section to ComponentShowcase.tsx:
 - T-create-input-component-prop (InputContainerDisplayProps)
 - T-create-messageinputdisplay (MessageInputDisplay component)
 - T-create-sendbuttondisplay (SendButtonDisplay component)
-- T-create-modetoggledisplay (ModeToggleDisplay component)
+- T-create-ConversationModeToggleDisplay (ConversationModeToggleDisplay component)
 - Theme variables from packages/ui-theme/src/claymorphism-theme.css
 - ComponentShowcase.tsx for integration
 

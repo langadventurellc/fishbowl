@@ -36,7 +36,7 @@ Create the barrel export file for all input display components and ensure compre
 // Re-export all input display components
 export * from "./MessageInputDisplay";
 export * from "./SendButtonDisplay";
-export * from "./ModeToggleDisplay";
+export * from "./ConversationModeToggleDisplay";
 export * from "./InputContainerDisplay";
 ```
 
@@ -60,7 +60,7 @@ Ensure ComponentShowcase.tsx includes comprehensive sections for:
 ## Acceptance Criteria
 
 - [ ] Barrel export created in `apps/desktop/src/components/ui/input/index.ts`
-- [ ] All 4 input components exported properly (MessageInputDisplay, SendButtonDisplay, ModeToggleDisplay, InputContainerDisplay)
+- [ ] All 4 input components exported properly (MessageInputDisplay, SendButtonDisplay, ConversationModeToggleDisplay, InputContainerDisplay)
 - [ ] ComponentShowcase includes comprehensive demonstrations
 - [ ] Combined input area layout shown using InputContainerDisplay composition
 - [ ] All visual states demonstrated for each component

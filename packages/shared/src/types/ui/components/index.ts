@@ -8,14 +8,22 @@
  * @module types/ui/components
  */
 
-// Re-export all component prop interfaces
 export * from "./AgentPillProps";
 export * from "./ButtonProps";
 export * from "./ButtonType";
-export * from "./MessageItemProps";
+export * from "./ComponentSize";
+export * from "./ContextMenuItem";
+export * from "./ContextMenuProps";
 export * from "./ConversationItemProps";
+export * from "./ConversationModeToggleDisplayProps";
+export * from "./ConversationToggleMode";
+export * from "./InputContainerDisplayProps";
+export * from "./LayoutVariant";
+export * from "./MessageInputDisplayProps";
+export * from "./MessageItemProps";
+export * from "./ResizeDirection";
+export * from "./SendButtonDisplayProps";
+export * from "./SidebarToggleProps";
+export * from "./TextareaDisplayProps";
 export * from "./ThemeToggleProps";
 export * from "./ThinkingIndicatorProps";
-export * from "./ContextMenuProps";
-export * from "./ContextMenuItem";
-export * from "./SidebarToggleProps";
