@@ -8,7 +8,6 @@ prerequisites: []
 created: "2025-07-24T07:13:02.757003"
 updated: "2025-07-24T07:13:02.757003"
 schema_version: "1.1"
-parent: F-atomic-ui-components
 ---
 
 # Fix Theme CSS Duplication
