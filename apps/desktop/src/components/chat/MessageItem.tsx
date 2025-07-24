@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { MessageItemProps } from "@fishbowl-ai/shared";
 import { MessageHeader } from "./MessageHeader";
 import { MessageContent } from "./MessageContent";
@@ -6,18 +6,19 @@ import { MessageContent } from "./MessageContent";
 /**
  * MessageItem component displays individual messages with proper layout and styling.
  *
- * Extracted from DesignPrototype.tsx to create a pure display component that composes
+ * Extracted from DesignPrototype.tsx to create a display component that composes
  * MessageHeader and MessageContent into a complete message container. Maintains the
- * card-like visual styling while removing all interactive functionality.
+ * card-like visual styling and includes context toggle functionality.
  *
  * Features:
- * - Pure display component with no interactive functionality
+ * - Interactive context toggle button for user and agent messages
  * - Composes MessageHeader and MessageContent components
  * - Supports all message types (user, agent, system)
  * - Card-like layout with theme-aware styling
  * - Agent color coding system
  * - Proper visual hierarchy and spacing
  * - Theme switching support (light/dark)
+ * - Accessibility features with ARIA labels and keyboard navigation
  *
  * Message Type Styling:
  * - System: Centered, italic, muted styling
@@ -79,9 +80,14 @@ import { MessageContent } from "./MessageContent";
  * ```
  */
 export function MessageItem(props: MessageItemProps) {
-  const { message, className } = props;
-  // Note: Interactive props (isExpanded, canRegenerate, contextMenuOpen, event handlers)
-  // are received but not used since this is a pure display component
+  const { message, className, onToggleContext } = props;
+  const [isActive, setIsActive] = useState(message.isActive);
+
+  const handleToggleContext = () => {
+    const newActiveState = !isActive;
+    setIsActive(newActiveState);
+    onToggleContext(message.id);
+  };
   // Component styles extracted from DesignPrototype.tsx
   const styles = {
     message: {
@@ -117,12 +123,36 @@ export function MessageItem(props: MessageItemProps) {
       justifyContent: "flex-end",
       width: "100%",
     } as const,
+    contextToggle: {
+      position: "absolute" as const,
+      right: "8px",
+      top: "8px",
+      width: "20px",
+      height: "20px",
+      border: "none",
+      borderRadius: "4px",
+      cursor: "pointer",
+      fontSize: "12px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "all 0.15s",
+      zIndex: 100,
+    } as const,
+    contextToggleActive: {
+      backgroundColor: "var(--primary)",
+      color: "var(--primary-foreground)",
+    } as const,
+    contextToggleInactive: {
+      backgroundColor: "var(--muted)",
+      color: "var(--muted-foreground)",
+    } as const,
   };
 
   // Apply inactive styling if message is not active
   const messageWrapperStyle = {
     ...styles.messageWrapper,
-    ...(message.isActive ? {} : styles.messageInactive),
+    ...(isActive ? {} : styles.messageInactive),
   };
 
   return (
@@ -138,6 +168,27 @@ export function MessageItem(props: MessageItemProps) {
       ) : message.type === "user" ? (
         // User messages: Right-aligned with accent styling
         <div style={messageWrapperStyle}>
+          <button
+            style={{
+              ...styles.contextToggle,
+              ...(isActive
+                ? styles.contextToggleActive
+                : styles.contextToggleInactive),
+            }}
+            onClick={handleToggleContext}
+            title={
+              isActive
+                ? "Click to exclude from context"
+                : "Click to include in context"
+            }
+            aria-label={
+              isActive
+                ? "Exclude message from conversation context"
+                : "Include message in conversation context"
+            }
+          >
+            {isActive ? "✓" : ""}
+          </button>
           <div style={styles.userMessageWrapper}>
             <div style={styles.userMessage}>
               <MessageHeader
@@ -157,6 +208,27 @@ export function MessageItem(props: MessageItemProps) {
       ) : (
         // Agent messages: Left-aligned with standard layout
         <div style={messageWrapperStyle}>
+          <button
+            style={{
+              ...styles.contextToggle,
+              ...(isActive
+                ? styles.contextToggleActive
+                : styles.contextToggleInactive),
+            }}
+            onClick={handleToggleContext}
+            title={
+              isActive
+                ? "Click to exclude from context"
+                : "Click to include in context"
+            }
+            aria-label={
+              isActive
+                ? "Exclude message from conversation context"
+                : "Include message in conversation context"
+            }
+          >
+            {isActive ? "✓" : ""}
+          </button>
           <MessageHeader
             agentName={message.agent}
             agentRole={message.role}
