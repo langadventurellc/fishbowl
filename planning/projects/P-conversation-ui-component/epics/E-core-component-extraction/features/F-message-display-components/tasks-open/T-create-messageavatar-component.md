@@ -19,7 +19,7 @@ Extract the agent color indicator from DesignPrototype.tsx (~lines 362-639) to c
 
 ## Implementation Requirements
 
-- **Location**: `apps/desktop/src/components/ui/chat/MessageAvatar.tsx`
+- **Location**: `apps/desktop/src/components/chat/MessageAvatar.tsx`
 - **Props Interface**: Use existing types from `packages/shared/src/types/ui/components/`
 - **Pure Component**: No state, event handlers, or side effects
 - **Visual Elements**: Colored circle/pill matching agent theme colors

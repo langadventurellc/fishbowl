@@ -21,7 +21,7 @@ Create the main container component that composes MessageHeader, MessageContent,
 
 ## Implementation Requirements
 
-- **Location**: `apps/desktop/src/components/ui/chat/MessageItem.tsx`
+- **Location**: `apps/desktop/src/components/chat/MessageItem.tsx`
 - **Props Interface**: Use existing MessageItemProps from shared types (already defined)
 - **Pure Component**: Composition only, no interactive logic
 - **Visual Elements**: Card-like layout with theme-aware background

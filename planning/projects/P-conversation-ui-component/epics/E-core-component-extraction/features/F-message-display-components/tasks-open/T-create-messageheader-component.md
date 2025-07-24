@@ -20,7 +20,7 @@ Extract message metadata display from DesignPrototype.tsx to create a component 
 
 ## Implementation Requirements
 
-- **Location**: `apps/desktop/src/components/ui/chat/MessageHeader.tsx`
+- **Location**: `apps/desktop/src/components/chat/MessageHeader.tsx`
 - **Props Interface**: agent info, timestamp, message type from shared types
 - **Pure Component**: Display only, no interactive functionality
 - **Visual Elements**: Agent name, role, timestamp with consistent layout

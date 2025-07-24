@@ -19,7 +19,7 @@ Extract system message styling from DesignPrototype.tsx to create a component wi
 
 ## Implementation Requirements
 
-- **Location**: `apps/desktop/src/components/ui/chat/SystemMessage.tsx`
+- **Location**: `apps/desktop/src/components/chat/SystemMessage.tsx`
 - **Props Interface**: content, message type, emphasis level
 - **Pure Component**: Display only, no interactive functionality
 - **Visual Elements**: Centered, italic text with muted coloring

@@ -19,7 +19,7 @@ Extract text content rendering from DesignPrototype.tsx to create a component fo
 
 ## Implementation Requirements
 
-- **Location**: `apps/desktop/src/components/ui/chat/MessageContent.tsx`
+- **Location**: `apps/desktop/src/components/chat/MessageContent.tsx`
 - **Props Interface**: content string, message type, truncation settings
 - **Pure Component**: Text display only, no processing or manipulation
 - **Visual Elements**: Formatted text with proper line spacing and selection

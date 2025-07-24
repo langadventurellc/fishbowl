@@ -21,14 +21,14 @@ Organize all message display components with proper barrel exports and directory
 
 ## Implementation Requirements
 
-- **Location**: `apps/desktop/src/components/ui/chat/index.ts`
+- **Location**: `apps/desktop/src/components/chat/index.ts`
 - **Directory Structure**: Ensure proper organization of chat components
 - **Barrel Exports**: Clean, organized exports for external consumption
 - **Type Exports**: Include component prop types for external use
 
 ## Technical Approach
 
-1. Create `apps/desktop/src/components/ui/chat/` directory structure
+1. Create `apps/desktop/src/components/chat/` directory structure
 2. Create barrel export file `index.ts` with all component exports:
    - MessageItem (main export)
    - MessageHeader
@@ -42,7 +42,7 @@ Organize all message display components with proper barrel exports and directory
 ## File Organization Structure
 
 ```
-apps/desktop/src/components/ui/chat/
+apps/desktop/src/components/chat/
 ├── index.ts (barrel export)
 ├── MessageItem.tsx (main message container)
 ├── MessageHeader.tsx
@@ -74,7 +74,7 @@ export type { MessageItemProps } from "@fishbowl-ai/shared";
 
 ## Acceptance Criteria
 
-- ✅ Directory structure created at `apps/desktop/src/components/ui/chat/`
+- ✅ Directory structure created at `apps/desktop/src/components/chat/`
 - ✅ Barrel export file includes all message components
 - ✅ Component prop types re-exported from shared package
 - ✅ Clean import paths work throughout application

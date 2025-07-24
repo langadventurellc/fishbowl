@@ -60,7 +60,7 @@ Extract UI components responsible for displaying messages in the conversation in
 
 ✅ **Component Structure**
 
-- Each component in `apps/desktop/src/components/ui/chat/` directory
+- Each component in `apps/desktop/src/components/chat/` directory
 - Props-only architecture with no internal state
 - TypeScript interfaces for all props from shared package
 - Pure CSS-in-JS styling using theme variables
@@ -133,7 +133,7 @@ MessageItem
 **File Organization:**
 
 ```
-apps/desktop/src/components/ui/chat/
+apps/desktop/src/components/chat/
 ├── index.ts (barrel export)
 ├── MessageItem.tsx (main message container)
 ├── MessageHeader.tsx
