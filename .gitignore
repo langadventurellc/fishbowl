@@ -5,6 +5,7 @@ release
 test-results
 playwright-report
 .jest/
+.serena/cache/
 
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 /.swc
@@ -105,4 +106,3 @@ storybook-static
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-.gitignore
