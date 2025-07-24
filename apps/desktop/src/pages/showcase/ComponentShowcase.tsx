@@ -3,8 +3,8 @@ import { useState } from "react";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 import {
   AgentPill,
-  ThemeToggle,
   Button,
+  ThemeToggle,
   ThinkingIndicator,
 } from "../../components/ui/atomic";
 import { MessageInputDisplay } from "../../components/ui/input";
@@ -44,8 +44,6 @@ export default function ComponentShowcase() {
   const styles = {
     container: {
       padding: "32px",
-      maxWidth: "1200px",
-      margin: "0 auto",
       fontFamily: "var(--font-sans)",
     },
     header: {
@@ -66,8 +64,8 @@ export default function ComponentShowcase() {
       lineHeight: "1.6",
     },
     sectionsGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
+      display: "flex",
+      flexDirection: "column" as const,
       gap: "32px",
       marginBottom: "48px",
     },
@@ -77,6 +75,7 @@ export default function ComponentShowcase() {
       borderRadius: "var(--radius)",
       padding: "24px",
       boxShadow: "var(--shadow-sm)",
+      flex: 1,
     },
     sectionHeader: {
       marginBottom: "16px",
@@ -300,7 +299,7 @@ export default function ComponentShowcase() {
                 <span style={styles.agentPillLabel}>
                   Message Input - Empty:
                 </span>
-                <div style={{ width: "300px" }}>
+                <div style={{ flex: 1 }}>
                   <MessageInputDisplay
                     placeholder="Type your message here..."
                     size="medium"
