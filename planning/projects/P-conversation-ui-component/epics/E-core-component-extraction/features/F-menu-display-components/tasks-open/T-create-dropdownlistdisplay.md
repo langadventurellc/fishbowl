@@ -29,16 +29,27 @@ Create a scrollable list container component for displaying multiple MenuItemDis
 
 ### Component Structure
 
+**Component Props Interface** (Create in shared package):
+
 ```typescript
-// apps/desktop/src/components/menu/DropdownListDisplay.tsx
+// packages/shared/src/types/ui/menu/DropdownListDisplayProps.ts
+import { ContextMenuItem } from "./ContextMenuItem";
+
 interface DropdownListDisplayProps {
-  items: MenuItemData[];
+  items: ContextMenuItem[];
   maxHeight?: number;
   scrollBehavior?: "auto" | "smooth";
   borderStyling?: "none" | "subtle" | "prominent";
   spacing?: "compact" | "normal" | "comfortable";
   className?: string;
 }
+```
+
+**Component Implementation**:
+
+```typescript
+// apps/desktop/src/components/menu/DropdownListDisplay.tsx
+import { DropdownListDisplayProps } from "@fishbowl-ai/shared/types/ui/menu";
 ```
 
 (Implement `scrollBehavior`, `borderStyling`, and `spacing` as named types in TypeScript. See `packages/shared/src/types/ui/core/MessageType.ts` as an example.)
@@ -72,9 +83,11 @@ Create component at: `apps/desktop/src/components/menu/DropdownListDisplay.tsx`
 
 ### TypeScript Integration
 
-- Props interface for list configuration
-- MenuItemData interface for item structure
+- **Props interface**: Create `DropdownListDisplayProps` in `packages/shared/src/types/ui/menu/DropdownListDisplayProps.ts`
+- **Export from barrel**: Add to `packages/shared/src/types/ui/menu/index.ts`
+- Uses existing `ContextMenuItem` interface for item structure
 - No interactive handlers in props
+- Import props interface from shared package in component implementation
 
 ## Acceptance Criteria
 

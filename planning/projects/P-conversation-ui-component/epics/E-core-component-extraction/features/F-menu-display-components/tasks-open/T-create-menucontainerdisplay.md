@@ -29,8 +29,10 @@ Create a wrapper component for positioning and styling context menus with proper
 
 ### Component Structure
 
+**Component Props Interface** (Create in shared package):
+
 ```typescript
-// apps/desktop/src/components/menu/MenuContainerDisplay.tsx
+// packages/shared/src/types/ui/menu/MenuContainerDisplayProps.ts
 interface MenuContainerDisplayProps {
   position: { x: number; y: number };
   zIndex?: number;
@@ -38,6 +40,13 @@ interface MenuContainerDisplayProps {
   children: React.ReactNode;
   className?: string;
 }
+```
+
+**Component Implementation**:
+
+```typescript
+// apps/desktop/src/components/menu/MenuContainerDisplay.tsx
+import { MenuContainerDisplayProps } from "@fishbowl-ai/shared/types/ui/menu";
 ```
 
 ### Visual Features
@@ -66,9 +75,11 @@ Create component at: `apps/desktop/src/components/menu/MenuContainerDisplay.tsx`
 
 ### TypeScript Integration
 
-- Props interface for positioning and configuration
+- **Props interface**: Create `MenuContainerDisplayProps` in `packages/shared/src/types/ui/menu/MenuContainerDisplayProps.ts`
+- **Export from barrel**: Add to `packages/shared/src/types/ui/menu/index.ts`
 - Children prop for wrapping ContextMenuDisplay
 - No interactive handlers
+- Import props interface from shared package in component implementation
 
 ## Acceptance Criteria
 
