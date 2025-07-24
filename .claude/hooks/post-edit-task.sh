@@ -9,16 +9,20 @@ echo "🔧 Running post-edit checks..."
 cd "$(git rev-parse --show-toplevel)"
 
 echo "📝 Running lint checks..."
-if ! pnpm lint; then
+LINT_OUTPUT=$(pnpm lint 2>&1)
+if [ $? -ne 0 ]; then
     echo "❌ Lint checks failed - consider fixing issues before continuing" >&2
+    echo "$LINT_OUTPUT" | grep -E "(error|warning)" >&2
     exit 2
 fi
 
 echo "✅ Lint checks passed"
 
 echo "📝 Running type checks..."
-if ! pnpm type-check; then
+TYPE_OUTPUT=$(pnpm type-check 2>&1)
+if [ $? -ne 0 ]; then
     echo "❌ Type checks failed - consider fixing issues before continuing" >&2
+    echo "$TYPE_OUTPUT" | grep -E "(error|warning)" >&2
     exit 2
 fi
 

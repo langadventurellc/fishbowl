@@ -21,7 +21,7 @@
       "@fishbowl-ai/shared": ["../../packages/shared/src"],
       "@fishbowl-ai/ui-theme": ["../../packages/ui-theme/src"]
     },
-    "types": ["react-native", "jest"]
+    "types": ["jest"]
   },
   "include": [
     "src",

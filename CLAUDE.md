@@ -13,6 +13,12 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 - `pnpm quality` - Run linting, formatting, and type checks
 - `pnpm test` - Run unit tests to ensure functionality
 
+**CRITICAL** When modifying shared package types or interfaces:
+
+- `pnpm build:libs` - **MUST** rebuild shared packages after adding new types/interfaces
+- Apps cannot import from `@fishbowl-ai/shared` until the shared package is built
+- Type errors like "Module has no exported member" indicate shared package needs rebuilding
+
 ### Commands
 
 #### Development

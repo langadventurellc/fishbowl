@@ -1,6 +1,45 @@
+import { Agent, ThemeMode } from "@fishbowl-ai/shared";
+import { useState } from "react";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
+import {
+  AgentPill,
+  ThemeToggle,
+  Button,
+  ThinkingIndicator,
+} from "../../components/ui/atomic";
 
 export default function ComponentShowcase() {
+  // Theme toggle state for interactive demo
+  const [currentTheme, setCurrentTheme] = useState<ThemeMode>("light");
+
+  // Sample agent data for AgentPill showcase
+  const sampleAgents: Agent[] = [
+    {
+      name: "Ted",
+      role: "Technical Advisor",
+      color: "#3b82f6", // Blue
+      isThinking: false,
+    },
+    {
+      name: "Alice",
+      role: "Project Manager",
+      color: "#22c55e", // Green
+      isThinking: true,
+    },
+    {
+      name: "Lori",
+      role: "Creative Director",
+      color: "#ef4444", // Red
+      isThinking: false,
+    },
+    {
+      name: "Chelsea",
+      role: "User Experience Designer",
+      color: "#a855f7", // Purple
+      isThinking: true,
+    },
+  ];
+
   const styles = {
     container: {
       padding: "32px",
@@ -102,6 +141,27 @@ export default function ComponentShowcase() {
       fontSize: "0.875rem",
       marginLeft: "8px",
     },
+    agentPillShowcase: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "16px",
+      padding: "16px",
+      backgroundColor: "var(--muted)",
+      borderRadius: "calc(var(--radius) - 2px)",
+      border: "1px solid var(--border)",
+    },
+    agentPillRow: {
+      display: "flex",
+      gap: "12px",
+      flexWrap: "wrap" as const,
+      alignItems: "center",
+    },
+    agentPillLabel: {
+      fontSize: "0.875rem",
+      fontWeight: "500",
+      color: "var(--foreground)",
+      minWidth: "120px",
+    },
   };
 
   return (
@@ -125,8 +185,115 @@ export default function ComponentShowcase() {
                 interactive elements
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Button Variants:</span>
+                <Button
+                  variant="primary"
+                  onClick={() => console.log("Primary clicked")}
+                >
+                  Send
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => console.log("Secondary clicked")}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => console.log("Ghost clicked")}
+                >
+                  Copy
+                </Button>
+                <Button
+                  variant="toggle"
+                  onClick={() => console.log("Toggle clicked")}
+                >
+                  ✓
+                </Button>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Button Sizes:</span>
+                <Button
+                  variant="primary"
+                  size="small"
+                  onClick={() => console.log("Small clicked")}
+                >
+                  Small
+                </Button>
+                <Button
+                  variant="primary"
+                  size="medium"
+                  onClick={() => console.log("Medium clicked")}
+                >
+                  Medium
+                </Button>
+                <Button
+                  variant="primary"
+                  size="large"
+                  onClick={() => console.log("Large clicked")}
+                >
+                  Large
+                </Button>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Button States:</span>
+                <Button
+                  variant="secondary"
+                  disabled
+                  onClick={() => console.log("Disabled clicked")}
+                >
+                  Disabled
+                </Button>
+                <Button
+                  variant="secondary"
+                  loading
+                  onClick={() => console.log("Loading clicked")}
+                >
+                  Loading
+                </Button>
+                <Button
+                  variant="ghost"
+                  icon="📁"
+                  onClick={() => console.log("Icon clicked")}
+                >
+                  With Icon
+                </Button>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Real Examples:</span>
+                <Button
+                  variant="primary"
+                  icon="📤"
+                  onClick={() => console.log("Send message")}
+                >
+                  Send Message
+                </Button>
+                <Button
+                  variant="ghost"
+                  icon="📋"
+                  onClick={() => console.log("Copy text")}
+                >
+                  Copy
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => console.log("Save draft")}
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  variant="toggle"
+                  size="small"
+                  onClick={() => console.log("Toggle sidebar")}
+                >
+                  ⚙️
+                </Button>
+              </div>
             </div>
           </section>
 
@@ -138,8 +305,34 @@ export default function ComponentShowcase() {
                 conversation-specific UI
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>All Agents:</span>
+                {sampleAgents.map((agent, index) => (
+                  <AgentPill
+                    key={index}
+                    agent={agent}
+                    onClick={(agentName) =>
+                      console.log(`Clicked: ${agentName}`)
+                    }
+                  />
+                ))}
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Thinking State:</span>
+                {sampleAgents
+                  .filter((agent) => agent.isThinking)
+                  .map((agent, index) => (
+                    <AgentPill key={index} agent={agent} />
+                  ))}
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Non-clickable:</span>
+                <AgentPill agent={sampleAgents[0]!} />
+                <AgentPill agent={sampleAgents[2]!} />
+              </div>
             </div>
           </section>
 
@@ -151,8 +344,101 @@ export default function ComponentShowcase() {
                 interface elements
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Theme Toggle - Interactive:
+                </span>
+                <ThemeToggle
+                  currentTheme={currentTheme}
+                  onToggle={(newTheme) => {
+                    setCurrentTheme(newTheme);
+                    console.log(`Theme switched to: ${newTheme}`);
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: "0.875rem",
+                    color: "var(--muted-foreground)",
+                  }}
+                >
+                  Current: {currentTheme}
+                </span>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Light Mode:</span>
+                <ThemeToggle
+                  currentTheme="light"
+                  onToggle={(theme) =>
+                    console.log(`Light toggle clicked: ${theme}`)
+                  }
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Dark Mode:</span>
+                <ThemeToggle
+                  currentTheme="dark"
+                  onToggle={(theme) =>
+                    console.log(`Dark toggle clicked: ${theme}`)
+                  }
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Thinking Indicators - Sizes:
+                </span>
+                <ThinkingIndicator size="small" />
+                <ThinkingIndicator size="medium" />
+                <ThinkingIndicator size="large" />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Animation Speeds:</span>
+                <ThinkingIndicator animationSpeed="slow" />
+                <ThinkingIndicator animationSpeed="normal" />
+                <ThinkingIndicator animationSpeed="fast" />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Colors:</span>
+                <ThinkingIndicator />
+                <ThinkingIndicator color="#ef4444" />
+                <ThinkingIndicator color="#22c55e" />
+                <ThinkingIndicator color="#f59e0b" />
+                <ThinkingIndicator color="#8b5cf6" />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Multiple Indicators:</span>
+                <ThinkingIndicator
+                  size="small"
+                  color="#3b82f6"
+                  animationSpeed="fast"
+                />
+                <ThinkingIndicator
+                  size="medium"
+                  color="#ef4444"
+                  animationSpeed="normal"
+                />
+                <ThinkingIndicator
+                  size="large"
+                  color="#22c55e"
+                  animationSpeed="slow"
+                />
+                <ThinkingIndicator
+                  size="small"
+                  color="#f59e0b"
+                  animationSpeed="normal"
+                />
+                <ThinkingIndicator
+                  size="medium"
+                  color="#8b5cf6"
+                  animationSpeed="fast"
+                />
+              </div>
             </div>
           </section>
 
