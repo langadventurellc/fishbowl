@@ -7,6 +7,8 @@
  * @module types/ui/core/Message
  */
 
+import { MessageType } from "./MessageType";
+
 /**
  * Represents a single message in the conversation UI system.
  *
@@ -83,7 +85,7 @@ export interface Message {
    * - "agent": Messages from AI agents (left-aligned, standard styling)
    * - "system": System notifications (center-aligned, muted styling)
    */
-  type: "user" | "agent" | "system";
+  type: MessageType;
 
   /**
    * Whether this message is included in the conversation context.

@@ -8,6 +8,7 @@
  */
 
 import { ContextMenuItem } from "./ContextMenuItem";
+import { ContextMenuPosition } from "./ContextMenuPosition";
 
 /**
  * Props interface for the ContextMenu component.
@@ -73,7 +74,7 @@ export interface ContextMenuProps {
    *
    * @default "below"
    */
-  position?: "above" | "below";
+  position?: ContextMenuPosition;
 
   /**
    * Array of menu items to display.
