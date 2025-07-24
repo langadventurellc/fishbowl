@@ -1,6 +1,36 @@
+import { Agent } from "@fishbowl-ai/shared";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
+import { AgentPill } from "../../components/ui/atomic";
 
 export default function ComponentShowcase() {
+  // Sample agent data for AgentPill showcase
+  const sampleAgents: Agent[] = [
+    {
+      name: "Ted",
+      role: "Technical Advisor",
+      color: "#3b82f6", // Blue
+      isThinking: false,
+    },
+    {
+      name: "Alice",
+      role: "Project Manager",
+      color: "#22c55e", // Green
+      isThinking: true,
+    },
+    {
+      name: "Lori",
+      role: "Creative Director",
+      color: "#ef4444", // Red
+      isThinking: false,
+    },
+    {
+      name: "Chelsea",
+      role: "User Experience Designer",
+      color: "#a855f7", // Purple
+      isThinking: true,
+    },
+  ];
+
   const styles = {
     container: {
       padding: "32px",
@@ -102,6 +132,27 @@ export default function ComponentShowcase() {
       fontSize: "0.875rem",
       marginLeft: "8px",
     },
+    agentPillShowcase: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "16px",
+      padding: "16px",
+      backgroundColor: "var(--muted)",
+      borderRadius: "calc(var(--radius) - 2px)",
+      border: "1px solid var(--border)",
+    },
+    agentPillRow: {
+      display: "flex",
+      gap: "12px",
+      flexWrap: "wrap" as const,
+      alignItems: "center",
+    },
+    agentPillLabel: {
+      fontSize: "0.875rem",
+      fontWeight: "500",
+      color: "var(--foreground)",
+      minWidth: "120px",
+    },
   };
 
   return (
@@ -138,8 +189,34 @@ export default function ComponentShowcase() {
                 conversation-specific UI
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>All Agents:</span>
+                {sampleAgents.map((agent, index) => (
+                  <AgentPill
+                    key={index}
+                    agent={agent}
+                    onClick={(agentName) =>
+                      console.log(`Clicked: ${agentName}`)
+                    }
+                  />
+                ))}
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Thinking State:</span>
+                {sampleAgents
+                  .filter((agent) => agent.isThinking)
+                  .map((agent, index) => (
+                    <AgentPill key={index} agent={agent} />
+                  ))}
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Non-clickable:</span>
+                <AgentPill agent={sampleAgents[0]!} />
+                <AgentPill agent={sampleAgents[2]!} />
+              </div>
             </div>
           </section>
 
