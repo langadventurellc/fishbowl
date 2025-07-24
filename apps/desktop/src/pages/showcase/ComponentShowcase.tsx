@@ -15,7 +15,7 @@ import {
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/input";
-import { ContextMenuDisplay } from "../../components/menu";
+import { ContextMenuDisplay, MenuItemDisplay } from "../../components/menu";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
@@ -1624,6 +1624,159 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                       { label: "Option 2", action: "option2" },
                       { label: "Option 3", action: "option3" },
                     ]}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Static Visual States:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "140px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="Normal Item"
+                    action="normal"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Hover State"
+                    action="hover"
+                    variant="hover"
+                  />
+                  <MenuItemDisplay
+                    label="Disabled Item"
+                    action="disabled"
+                    variant="disabled"
+                  />
+                  <MenuItemDisplay
+                    label="Danger Action"
+                    action="danger"
+                    variant="danger"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Interactive Hover (try it!):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "140px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="Hover Me"
+                    action="hover-demo"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="And Me Too"
+                    action="hover-demo2"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Disabled (No Hover)"
+                    action="disabled-demo"
+                    variant="normal"
+                    disabled={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Menu Items with Icons (hover enabled):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "160px",
+                    width: "160px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="Copy"
+                    action="copy"
+                    icon="📋"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Regenerate"
+                    action="regenerate"
+                    icon="🔄"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Delete"
+                    action="delete"
+                    icon="🗑️"
+                    variant="danger"
+                  />
+                  <MenuItemDisplay
+                    label="Unavailable"
+                    action="unavailable"
+                    icon="⚠️"
+                    variant="normal"
+                    disabled={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Menu Items with Separators:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "140px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="First Group"
+                    action="first"
+                    variant="normal"
+                    separator={true}
+                  />
+                  <MenuItemDisplay
+                    label="Second Group"
+                    action="second"
+                    variant="normal"
+                    separator={true}
+                  />
+                  <MenuItemDisplay
+                    label="Final Item"
+                    action="final"
+                    variant="normal"
                   />
                 </div>
               </div>

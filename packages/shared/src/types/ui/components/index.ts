@@ -24,6 +24,7 @@ export * from "./MessageContentProps";
 export * from "./MessageHeaderProps";
 export * from "./MessageInputDisplayProps";
 export * from "./MessageItemProps";
+export * from "./MenuItemVariant";
 export * from "./ResizeDirection";
 export * from "./SendButtonDisplayProps";
 export * from "./SidebarToggleProps";
