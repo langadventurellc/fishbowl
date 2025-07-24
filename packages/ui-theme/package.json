@@ -9,7 +9,7 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./src/claymorphism-theme.css": "./src/claymorphism-theme.css"
+    "./claymorphism-theme.css": "./src/claymorphism-theme.css"
   },
   "scripts": {
     "build": "tsc",

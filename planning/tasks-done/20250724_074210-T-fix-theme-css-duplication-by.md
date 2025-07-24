@@ -1,13 +1,14 @@
 ---
 kind: task
 id: T-fix-theme-css-duplication-by
+status: done
 title: Fix theme CSS duplication by using ui-theme package
-status: open
 priority: normal
 prerequisites: []
 created: "2025-07-24T07:13:02.757003"
-updated: "2025-07-24T07:13:02.757003"
+updated: "2025-07-24T07:38:06.612420"
 schema_version: "1.1"
+worktree: null
 ---
 
 # Fix Theme CSS Duplication
@@ -138,3 +139,7 @@ Update any references to the old CSS location:
 - ✅ **Future-proof** - easier to add new themes or modify existing ones
 
 ### Log
+
+**2025-07-24T12:42:10.666232Z** - Successfully eliminated CSS theme duplication by importing from ui-theme package instead of duplicating variables in HTML. Updated ui-theme package export path and verified functionality with successful build. All CSS variables now centralized in single source of truth, improving maintainability and consistency.
+
+- filesChanged: ["apps/desktop/src/main.tsx", "apps/desktop/index.html", "packages/ui-theme/package.json"]
