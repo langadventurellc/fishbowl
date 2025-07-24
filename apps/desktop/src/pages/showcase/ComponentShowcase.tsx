@@ -9,6 +9,7 @@ import {
 } from "../../components/ui/atomic";
 import {
   ConversationModeToggleDisplay,
+  InputContainerDisplay,
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/ui/input";
@@ -458,6 +459,108 @@ export default function ComponentShowcase() {
                   disabled={true}
                   className="disabled-mode-toggle"
                 />
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Input Container Display</h2>
+              <p style={styles.sectionDescription}>
+                Complete input area composition combining MessageInputDisplay,
+                SendButtonDisplay, and ConversationModeToggleDisplay with layout
+                variants and proper spacing
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Default Layout:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="default"
+                    messageInputProps={{
+                      placeholder: "Type your message here...",
+                      size: "medium",
+                    }}
+                    sendButtonProps={{
+                      disabled: false,
+                      loading: false,
+                      "aria-label": "Send message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "manual",
+                      disabled: false,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Compact Layout:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="compact"
+                    messageInputProps={{
+                      placeholder: "Compact layout input...",
+                      size: "small",
+                    }}
+                    sendButtonProps={{
+                      disabled: false,
+                      loading: false,
+                      "aria-label": "Send message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "auto",
+                      disabled: false,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>With Content:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="default"
+                    messageInputProps={{
+                      content:
+                        "This is a sample message showing how the container handles content",
+                      size: "medium",
+                    }}
+                    sendButtonProps={{
+                      disabled: false,
+                      loading: false,
+                      "aria-label": "Send message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "manual",
+                      disabled: false,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Loading State:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="default"
+                    messageInputProps={{
+                      content: "Sending message to agents...",
+                      disabled: true,
+                      size: "medium",
+                    }}
+                    sendButtonProps={{
+                      disabled: true,
+                      loading: true,
+                      "aria-label": "Sending message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "auto",
+                      disabled: true,
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </section>

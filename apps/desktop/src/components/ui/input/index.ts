@@ -6,5 +6,6 @@
  */
 
 export { ConversationModeToggleDisplay } from "./ConversationModeToggleDisplay";
+export { InputContainerDisplay } from "./InputContainerDisplay";
 export { MessageInputDisplay } from "./MessageInputDisplay";
 export { SendButtonDisplay } from "./SendButtonDisplay";

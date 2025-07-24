@@ -8,40 +8,44 @@
  * @module types/ui/components/InputContainerDisplayProps
  */
 
-import { ReactNode } from "react";
 import { LayoutVariant } from "./LayoutVariant";
+import { ComponentSize } from "./ComponentSize";
+import { ConversationToggleMode } from "./ConversationToggleMode";
 
 /**
  * Props interface for the InputContainerDisplay component.
  *
  * This interface defines the properties required for displaying an input container
- * in its various visual layouts. The component is purely display-focused
- * and does not include any event handlers or interactive functionality.
+ * that composes MessageInputDisplay, SendButtonDisplay, and ConversationModeToggleDisplay
+ * internally. The component is purely display-focused and does not include any
+ * event handlers or interactive functionality.
  *
  * @example
  * ```typescript
  * // Basic default container
  * const defaultContainer: InputContainerDisplayProps = {
- *   children: <div>Input components go here</div>,
- *   layoutVariant: "default"
+ *   layoutVariant: "default",
+ *   messageInputProps: {
+ *     placeholder: "Type your message here...",
+ *     size: "medium"
+ *   },
+ *   sendButtonProps: {
+ *     disabled: false,
+ *     loading: false
+ *   },
+ *   modeToggleProps: {
+ *     currentMode: "manual",
+ *     disabled: false
+ *   }
  * };
  *
  * // Compact layout container
  * const compactContainer: InputContainerDisplayProps = {
- *   children: (
- *     <>
- *       <MessageInputDisplay />
- *       <SendButtonDisplay />
- *     </>
- *   ),
- *   layoutVariant: "compact"
- * };
- *
- * // Custom styled container
- * const customContainer: InputContainerDisplayProps = {
- *   children: <InputAreaComponents />,
- *   layoutVariant: "default",
- *   className: "custom-input-container"
+ *   layoutVariant: "compact",
+ *   messageInputProps: {
+ *     placeholder: "Compact input...",
+ *     size: "small"
+ *   }
  * };
  * ```
  */
@@ -49,8 +53,8 @@ export interface InputContainerDisplayProps {
   /**
    * Layout variant controlling the container's spacing and visual presentation.
    *
-   * - **default**: Standard spacing and layout for normal use
-   * - **compact**: Reduced spacing for smaller screens or constrained layouts
+   * - **default**: Standard spacing and layout for normal use (16px padding, 12px gap)
+   * - **compact**: Reduced spacing for smaller screens (12px padding, 8px gap)
    *
    * @default "default"
    */
@@ -66,11 +70,35 @@ export interface InputContainerDisplayProps {
   className?: string;
 
   /**
-   * The child components to render within the container.
-   * Typically includes input components like MessageInputDisplay,
-   * SendButtonDisplay, and ConversationModeToggleDisplay.
-   *
-   * @example <MessageInputDisplay />, <SendButtonDisplay />
+   * Props for the MessageInputDisplay component.
+   * Controls the input area placeholder, content, size, and disabled state.
    */
-  children: ReactNode;
+  messageInputProps?: {
+    placeholder?: string;
+    content?: string;
+    disabled?: boolean;
+    size?: ComponentSize;
+    className?: string;
+  };
+
+  /**
+   * Props for the SendButtonDisplay component.
+   * Controls the send button disabled, loading states and aria-label.
+   */
+  sendButtonProps?: {
+    disabled?: boolean;
+    loading?: boolean;
+    className?: string;
+    "aria-label"?: string;
+  };
+
+  /**
+   * Props for the ConversationModeToggleDisplay component.
+   * Controls the current mode and disabled state of the mode toggle.
+   */
+  modeToggleProps?: {
+    currentMode?: ConversationToggleMode;
+    disabled?: boolean;
+    className?: string;
+  };
 }
