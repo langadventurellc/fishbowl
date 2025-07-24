@@ -2,7 +2,7 @@
 kind: feature
 id: F-atomic-ui-components
 title: Atomic UI Components
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-foundation-typescript-interfaces
