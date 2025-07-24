@@ -16,7 +16,7 @@ parent: E-core-component-extraction
 
 ## Purpose
 
-Extract UI components responsible for displaying messages in the conversation interface. These are pure display components that render message content, metadata, and visual styling without any added interactive functionality.
+Extract UI components responsible for displaying messages in the conversation interface. These are pure display components that render message content, metadata, and visual styling without any added interactive functionality. -before creating tasks for this feature, be sure to research what components have already been created in the desktop app. I also verified that all of the necessary component property interfaces have been created. These will be found in the shared project in the types UI folder. If they do not already exist, the tasks will need to create them in that same location.
 
 ## Source References
 
@@ -60,7 +60,7 @@ Extract UI components responsible for displaying messages in the conversation in
 
 ✅ **Component Structure**
 
-- Each component in `apps/desktop/src/components/ui/message/` directory
+- Each component in `apps/desktop/src/components/ui/chat/` directory
 - Props-only architecture with no internal state
 - TypeScript interfaces for all props from shared package
 - Pure CSS-in-JS styling using theme variables
@@ -133,7 +133,7 @@ MessageItem
 **File Organization:**
 
 ```
-apps/desktop/src/components/ui/message/
+apps/desktop/src/components/ui/chat/
 ├── index.ts (barrel export)
 ├── MessageItem.tsx (main message container)
 ├── MessageHeader.tsx
