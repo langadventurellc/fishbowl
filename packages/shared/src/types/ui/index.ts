@@ -14,5 +14,8 @@ export * from "./core";
 // Re-export all component prop interfaces
 export * from "./components";
 
+// Re-export all menu component prop interfaces
+export * from "./menu";
+
 // Re-export all theme-related types
 export * from "./theme";

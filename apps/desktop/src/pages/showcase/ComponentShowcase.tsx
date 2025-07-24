@@ -15,7 +15,11 @@ import {
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/input";
-import { ContextMenuDisplay, MenuItemDisplay } from "../../components/menu";
+import {
+  ContextMenuDisplay,
+  MenuItemDisplay,
+  MenuTriggerDisplay,
+} from "../../components/menu";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
@@ -1778,6 +1782,128 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                     action="final"
                     variant="normal"
                   />
+                </div>
+              </div>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Trigger States:</span>
+                <div
+                  style={{ display: "flex", gap: "16px", alignItems: "center" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="normal" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Normal
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="hover" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Hover
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="active" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Active
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="disabled" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Disabled
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Trigger Sizes:</span>
+                <div
+                  style={{ display: "flex", gap: "16px", alignItems: "center" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="normal" size="small" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Small
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="normal" size="medium" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Medium
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
