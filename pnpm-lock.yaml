@@ -224,6 +224,9 @@ importers:
       '@types/jest':
         specifier: ^30.0.0
         version: 30.0.0
+      '@types/react':
+        specifier: ^19.0.0
+        version: 19.1.8
       jest:
         specifier: ^30.0.4
         version: 30.0.4(@types/node@24.0.15)

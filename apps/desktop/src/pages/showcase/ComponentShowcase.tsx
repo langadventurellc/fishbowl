@@ -1,7 +1,7 @@
 import { Agent, ThemeMode } from "@fishbowl-ai/shared";
-import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import { AgentPill, ThemeToggle } from "../../components/ui/atomic";
 import { useState } from "react";
+import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
+import { AgentPill, ThemeToggle, Button } from "../../components/ui/atomic";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -180,8 +180,115 @@ export default function ComponentShowcase() {
                 interactive elements
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Button Variants:</span>
+                <Button
+                  variant="primary"
+                  onClick={() => console.log("Primary clicked")}
+                >
+                  Send
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => console.log("Secondary clicked")}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => console.log("Ghost clicked")}
+                >
+                  Copy
+                </Button>
+                <Button
+                  variant="toggle"
+                  onClick={() => console.log("Toggle clicked")}
+                >
+                  ✓
+                </Button>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Button Sizes:</span>
+                <Button
+                  variant="primary"
+                  size="small"
+                  onClick={() => console.log("Small clicked")}
+                >
+                  Small
+                </Button>
+                <Button
+                  variant="primary"
+                  size="medium"
+                  onClick={() => console.log("Medium clicked")}
+                >
+                  Medium
+                </Button>
+                <Button
+                  variant="primary"
+                  size="large"
+                  onClick={() => console.log("Large clicked")}
+                >
+                  Large
+                </Button>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Button States:</span>
+                <Button
+                  variant="secondary"
+                  disabled
+                  onClick={() => console.log("Disabled clicked")}
+                >
+                  Disabled
+                </Button>
+                <Button
+                  variant="secondary"
+                  loading
+                  onClick={() => console.log("Loading clicked")}
+                >
+                  Loading
+                </Button>
+                <Button
+                  variant="ghost"
+                  icon="📁"
+                  onClick={() => console.log("Icon clicked")}
+                >
+                  With Icon
+                </Button>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Real Examples:</span>
+                <Button
+                  variant="primary"
+                  icon="📤"
+                  onClick={() => console.log("Send message")}
+                >
+                  Send Message
+                </Button>
+                <Button
+                  variant="ghost"
+                  icon="📋"
+                  onClick={() => console.log("Copy text")}
+                >
+                  Copy
+                </Button>
+                <Button
+                  variant="secondary"
+                  onClick={() => console.log("Save draft")}
+                >
+                  Save Draft
+                </Button>
+                <Button
+                  variant="toggle"
+                  size="small"
+                  onClick={() => console.log("Toggle sidebar")}
+                >
+                  ⚙️
+                </Button>
+              </div>
             </div>
           </section>
 
