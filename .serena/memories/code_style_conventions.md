@@ -12,9 +12,9 @@
 
 - **Base**: @eslint/js recommended + TypeScript ESLint
 - **Key Rules**:
-  - `@typescript-eslint/no-unused-vars`: warn
-  - `@typescript-eslint/no-explicit-any`: warn
-  - `turbo/no-undeclared-env-vars`: warn
+  - `@typescript-eslint/no-unused-vars`: error
+  - `@typescript-eslint/no-explicit-any`: error
+  - `turbo/no-undeclared-env-vars`: error
 - **File Extensions**: `.ts`, `.tsx`, `.js`, `.mjs`, `.cjs`
 
 ## Code Organization
