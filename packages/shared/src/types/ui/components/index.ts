@@ -20,6 +20,7 @@ export * from "./ConversationToggleMode";
 export * from "./InputContainerDisplayProps";
 export * from "./LayoutVariant";
 export * from "./MessageAvatarProps";
+export * from "./MessageContentProps";
 export * from "./MessageHeaderProps";
 export * from "./MessageInputDisplayProps";
 export * from "./MessageItemProps";

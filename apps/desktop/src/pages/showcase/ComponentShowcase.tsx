@@ -1,20 +1,21 @@
 import { Agent, ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
-import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 import {
   AgentPill,
   MessageAvatar,
+  MessageContent,
   MessageHeader,
   ThinkingIndicator,
 } from "../../components/chat";
-import { Button } from "../../components/input";
-import { ThemeToggle } from "../../components/showcase";
 import {
+  Button,
   ConversationModeToggleDisplay,
   InputContainerDisplay,
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/input";
+import { ThemeToggle } from "../../components/showcase";
+import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -856,6 +857,210 @@ export default function ComponentShowcase() {
                     agentColor="#6b7280"
                     timestamp="3 minutes ago"
                     messageType="user"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Message Content</h2>
+              <p style={styles.sectionDescription}>
+                Message text content display with proper typography, whitespace
+                preservation, and text selection support
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Short Text:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This is a short message response."
+                    messageType="agent"
+                  />
+                  <MessageContent
+                    content="Can you help me with this task?"
+                    messageType="user"
+                  />
+                  <MessageContent
+                    content="User joined the conversation"
+                    messageType="system"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Medium Text:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                  }}
+                >
+                  <MessageContent
+                    content="This is a longer message that demonstrates how the MessageContent component handles multi-sentence responses with proper line height and spacing. The typography should be clear and readable with good visual hierarchy."
+                    messageType="agent"
+                  />
+                  <MessageContent
+                    content="I have a more detailed question about how this feature works and whether it supports all the functionality I need for my use case."
+                    messageType="user"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Text with Line Breaks:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                    maxWidth: "600px",
+                  }}
+                >
+                  <MessageContent
+                    content="This message has multiple lines.
+
+It includes paragraph breaks and preserves whitespace formatting.
+
+• Bullet points work properly
+• Line spacing is maintained
+• Whitespace preservation with pre-wrap"
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Code Snippets:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                    maxWidth: "600px",
+                  }}
+                >
+                  <MessageContent
+                    content="Here's a code example:
+
+function MessageContent({ content, messageType }) {
+  return (
+    <div style={{ fontSize: '14px', lineHeight: '1.5' }}>
+      {content}
+    </div>
+  );
+}
+
+The formatting and indentation are preserved."
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Content:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                    maxWidth: "600px",
+                  }}
+                >
+                  <MessageContent
+                    content="This is a very long message that demonstrates how the MessageContent component handles extensive text content. It should wrap properly and maintain readability even with large amounts of text. The line height and spacing should remain consistent throughout the entire message, making it easy to read and scan.
+
+The component should handle overflow gracefully and ensure that text selection and copying functionality works across the entire content area. This includes preserving formatting when users copy text from the message.
+
+Additional paragraphs should maintain proper spacing and visual hierarchy. The typography should remain clear and accessible regardless of the content length or complexity."
+                    messageType="agent"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Expandable Messages (500+ chars):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                    maxWidth: "600px",
+                  }}
+                >
+                  <MessageContent
+                    content="This message demonstrates character-based expansion with the default 500 character threshold. When a message exceeds this length, it automatically shows a 'Show more...' button that allows users to expand and collapse the content. The preview truncates at word boundaries when possible for better readability, ensuring that partial words aren't shown at the break point."
+                    messageType="agent"
+                  />
+                  <MessageContent
+                    content="Here's another expandable message that shows how the expansion works with user messages. The component intelligently finds good break points near the 500 character threshold, preferring to break at word boundaries rather than in the middle of words. This creates a much better user experience when reading truncated content, as users can understand the preview without seeing partial words or awkward breaks."
+                    messageType="user"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Custom Threshold (100 chars):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    border: "1px solid var(--border)",
+                    borderRadius: "8px",
+                    padding: "12px",
+                    backgroundColor: "var(--card)",
+                    maxWidth: "600px",
+                  }}
+                >
+                  <MessageContent
+                    content="This message demonstrates a custom expansion threshold of 100 characters. With a lower threshold, even shorter messages will show the expansion functionality, which can be useful for components that need to keep content more compact."
+                    messageType="agent"
+                    expansionThreshold={100}
+                  />
+                  <MessageContent
+                    content="Another example with the 100 character threshold. This allows for more granular control over when expansion controls appear, making the component flexible for different use cases and layout requirements."
+                    messageType="system"
+                    expansionThreshold={100}
                   />
                 </div>
               </div>
