@@ -15,12 +15,21 @@ import {
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/input";
+import { ContextMenuDisplay } from "../../components/menu";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
   const [currentTheme, setCurrentTheme] = useState<ThemeMode>("light");
+
+  // Sample context menu items for ContextMenuDisplay showcase
+  const sampleMenuItems = [
+    { label: "Copy", action: "copy", icon: "copy" },
+    { label: "Regenerate", action: "regenerate", icon: "refresh" },
+    { label: "Delete", action: "delete", icon: "trash" },
+    { label: "Disabled Item", action: "disabled", disabled: true },
+  ];
 
   // Sample agent data for AgentPill showcase
   const sampleAgents: Agent[] = [
@@ -1517,8 +1526,107 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                 components
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Below (Open):</span>
+                <div
+                  style={{
+                    position: "relative",
+                    display: "inline-block",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Trigger Element
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={true}
+                    position="below"
+                    items={sampleMenuItems}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Above (Open):</span>
+                <div
+                  style={{
+                    position: "relative",
+                    display: "inline-block",
+                    marginTop: "80px",
+                    marginLeft: "200px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Trigger Element
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={true}
+                    position="above"
+                    items={sampleMenuItems}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Closed:</span>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Hidden Menu
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={false}
+                    position="below"
+                    items={sampleMenuItems}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Simple Menu:</span>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Simple Options
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={true}
+                    position="below"
+                    items={[
+                      { label: "Option 1", action: "option1" },
+                      { label: "Option 2", action: "option2" },
+                      { label: "Option 3", action: "option3" },
+                    ]}
+                  />
+                </div>
+              </div>
             </div>
           </section>
         </div>
