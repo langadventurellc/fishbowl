@@ -16,15 +16,14 @@ parent: F-input-display-components
 
 ## Context
 
-Create the barrel export file for all input display components and ensure comprehensive integration with ComponentShowcase for visual verification and testing of all components together.
+Create the barrel export file for all input display components and ensure comprehensive integration with ComponentShowcase for visual verification and manual user testing of all components together.
 
 ## Technical Approach
 
 1. **Create barrel export** in input directory
 2. **Verify comprehensive showcase integration** for all components
-3. **Test theme compatibility** across all components
-4. **Run quality checks** to ensure all components work together
-5. **Document component usage** patterns
+3. **Run quality checks** to ensure all components work together
+4. **Document component usage** patterns
 
 ## Implementation Requirements
 
@@ -55,7 +54,6 @@ Ensure ComponentShowcase.tsx includes comprehensive sections for:
 - Run `pnpm quality` to check linting, formatting, type checks
 - Run `pnpm build:libs` to ensure shared package builds correctly
 - Verify all components render without errors
-- Test theme switching functionality
 
 ## Acceptance Criteria
 

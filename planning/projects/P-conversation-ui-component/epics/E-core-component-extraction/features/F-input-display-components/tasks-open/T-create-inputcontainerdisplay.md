@@ -28,7 +28,6 @@ Extract and create the InputContainerDisplay component from DesignPrototype.tsx 
 3. **Import and compose child components** (MessageInputDisplay, SendButtonDisplay, ConversationModeToggleDisplay)
 4. **Support layout variants** for different spacing/sizing
 5. **Add to ComponentShowcase** immediately for verification with all child components
-6. **Write unit tests** for layout variants and component composition
 
 ## Implementation Requirements
 
@@ -109,7 +108,6 @@ Add section to ComponentShowcase.tsx:
 - [ ] Layout variants (default, compact) implemented with appropriate child props
 - [ ] Theme variable integration complete
 - [ ] Added to ComponentShowcase demonstrating complete input area composition
-- [ ] Unit tests cover layout variants, child rendering, and composition
 - [ ] TypeScript strict mode compliance
 - [ ] Component under 150 lines (slightly larger due to composition logic)
 

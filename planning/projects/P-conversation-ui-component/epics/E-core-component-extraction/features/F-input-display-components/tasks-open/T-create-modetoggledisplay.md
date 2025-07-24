@@ -24,7 +24,6 @@ Extract and create the ConversationModeToggleDisplay component from DesignProtot
 2. **Create pure display component** using ModeToggleDisplayProps
 3. **Support both mode states** (manual/auto) visually
 4. **Add to ComponentShowcase** immediately for verification
-5. **Write unit tests** for both mode states
 
 ## Implementation Requirements
 
@@ -82,7 +81,6 @@ Add section to ComponentShowcase.tsx:
 - [ ] Disabled state visual representation
 - [ ] Theme variable integration complete
 - [ ] Added to ComponentShowcase with state demonstrations
-- [ ] Unit tests cover all visual states
 - [ ] TypeScript strict mode compliance
 - [ ] Component under 100 lines
 

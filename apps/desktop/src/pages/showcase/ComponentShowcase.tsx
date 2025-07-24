@@ -7,6 +7,7 @@ import {
   Button,
   ThinkingIndicator,
 } from "../../components/ui/atomic";
+import { MessageInputDisplay } from "../../components/ui/input";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -293,6 +294,81 @@ export default function ComponentShowcase() {
                 >
                   ⚙️
                 </Button>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Empty:
+                </span>
+                <div style={{ width: "300px" }}>
+                  <MessageInputDisplay
+                    placeholder="Type your message here..."
+                    size="medium"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Content:
+                </span>
+                <div style={{ width: "300px" }}>
+                  <MessageInputDisplay
+                    content="Hello, how can I help you today?"
+                    placeholder="Type your message here..."
+                    size="medium"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Sizes:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    width: "280px",
+                  }}
+                >
+                  <MessageInputDisplay
+                    placeholder="Small size input..."
+                    size="small"
+                  />
+                  <MessageInputDisplay
+                    placeholder="Medium size input..."
+                    size="medium"
+                  />
+                  <MessageInputDisplay
+                    placeholder="Large size input..."
+                    size="large"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Disabled:
+                </span>
+                <div style={{ width: "300px" }}>
+                  <MessageInputDisplay
+                    placeholder="Input is disabled"
+                    disabled={true}
+                    size="medium"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Content:</span>
+                <div style={{ width: "300px" }}>
+                  <MessageInputDisplay
+                    content="This is a longer message that demonstrates how the component handles multi-line content and shows the auto-resize visual appearance. The text wraps naturally and the component adjusts its height accordingly."
+                    size="medium"
+                  />
+                </div>
               </div>
             </div>
           </section>

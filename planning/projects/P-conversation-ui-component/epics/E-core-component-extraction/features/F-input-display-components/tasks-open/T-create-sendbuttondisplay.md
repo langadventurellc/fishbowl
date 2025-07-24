@@ -24,7 +24,6 @@ Extract and create the SendButtonDisplay component from DesignPrototype.tsx as a
 2. **Create pure display component** using SendButtonDisplayProps
 3. **Support visual states** for enabled, disabled, and loading
 4. **Add to ComponentShowcase** immediately for verification
-5. **Write unit tests** for all visual states
 
 ## Implementation Requirements
 
@@ -80,7 +79,6 @@ Add section to ComponentShowcase.tsx:
 - [ ] All visual states (enabled, disabled, loading) implemented
 - [ ] Theme variable integration complete
 - [ ] Added to ComponentShowcase with state demonstrations
-- [ ] Unit tests cover all visual states
 - [ ] TypeScript strict mode compliance
 - [ ] Component under 100 lines
 

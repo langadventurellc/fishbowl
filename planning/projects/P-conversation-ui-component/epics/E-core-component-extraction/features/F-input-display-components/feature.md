@@ -141,11 +141,7 @@ apps/desktop/src/components/ui/input/
 
 ## Testing Requirements
 
-- Visual verification of all display states
-- Theme switching preserves all styling
-- Different content lengths display correctly
-- All visual states render without errors
-- No interactive functionality present
+- Manual user testing
 
 ## Dependencies
 
