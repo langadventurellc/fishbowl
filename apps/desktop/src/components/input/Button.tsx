@@ -171,25 +171,47 @@ export function Button({
   };
 
   return (
-    <button
-      type={type}
-      style={styles}
-      onClick={handleClick}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onKeyDown={handleKeyDown}
-      disabled={disabled || loading}
-      aria-label={ariaLabel}
-      tabIndex={disabled ? -1 : 0}
-    >
-      {loading ? (
-        <span style={{ animation: "pulse 2s infinite" }}>⏳</span>
-      ) : (
-        <>
-          {icon && <span>{icon}</span>}
-          {children && <span>{children}</span>}
-        </>
+    <>
+      {/* Loading animation keyframes - only include when loading */}
+      {loading && (
+        <style>
+          {`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}
+        </style>
       )}
-    </button>
+      <button
+        type={type}
+        style={styles}
+        onClick={handleClick}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onKeyDown={handleKeyDown}
+        disabled={disabled || loading}
+        aria-label={ariaLabel}
+        tabIndex={disabled ? -1 : 0}
+      >
+        {loading ? (
+          <div
+            style={{
+              width: "16px",
+              height: "16px",
+              border: "2px solid currentColor",
+              borderTop: "2px solid transparent",
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+            }}
+          />
+        ) : (
+          <>
+            {icon && <span>{icon}</span>}
+            {children && <span>{children}</span>}
+          </>
+        )}
+      </button>
+    </>
   );
 }

@@ -1,12 +1,15 @@
 import { Agent, ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
+import { AgentPill, ThinkingIndicator } from "../../components/chat";
+import { Button } from "../../components/input";
+import { ThemeToggle } from "../../components/showcase";
 import {
-  AgentPill,
-  ThemeToggle,
-  Button,
-  ThinkingIndicator,
-} from "../../components/ui/atomic";
+  ConversationModeToggleDisplay,
+  InputContainerDisplay,
+  MessageInputDisplay,
+  SendButtonDisplay,
+} from "../../components/input";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -43,8 +46,6 @@ export default function ComponentShowcase() {
   const styles = {
     container: {
       padding: "32px",
-      maxWidth: "1200px",
-      margin: "0 auto",
       fontFamily: "var(--font-sans)",
     },
     header: {
@@ -65,8 +66,8 @@ export default function ComponentShowcase() {
       lineHeight: "1.6",
     },
     sectionsGrid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
+      display: "flex",
+      flexDirection: "column" as const,
       gap: "32px",
       marginBottom: "48px",
     },
@@ -76,6 +77,7 @@ export default function ComponentShowcase() {
       borderRadius: "var(--radius)",
       padding: "24px",
       boxShadow: "var(--shadow-sm)",
+      flex: 1,
     },
     sectionHeader: {
       marginBottom: "16px",
@@ -294,6 +296,269 @@ export default function ComponentShowcase() {
                   ⚙️
                 </Button>
               </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Empty:
+                </span>
+                <div style={{ flex: 1 }}>
+                  <MessageInputDisplay
+                    placeholder="Type your message here..."
+                    size="medium"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Content:
+                </span>
+                <div style={{ width: "300px" }}>
+                  <MessageInputDisplay
+                    content="Hello, how can I help you today?"
+                    placeholder="Type your message here..."
+                    size="medium"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Sizes:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                    width: "280px",
+                  }}
+                >
+                  <MessageInputDisplay
+                    placeholder="Small size input..."
+                    size="small"
+                  />
+                  <MessageInputDisplay
+                    placeholder="Medium size input..."
+                    size="medium"
+                  />
+                  <MessageInputDisplay
+                    placeholder="Large size input..."
+                    size="large"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Input - Disabled:
+                </span>
+                <div style={{ width: "300px" }}>
+                  <MessageInputDisplay
+                    placeholder="Input is disabled"
+                    disabled={true}
+                    size="medium"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Content:</span>
+                <div style={{ flex: 1 }}>
+                  <MessageInputDisplay
+                    content="This is a longer message that demonstrates how the component handles multi-line content and shows the auto-resize visual appearance. The text wraps naturally and the component adjusts its height accordingly."
+                    size="medium"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Send Button Display</h2>
+              <p style={styles.sectionDescription}>
+                Visual representation of the send button with different states -
+                enabled, disabled, and loading variations
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Enabled State:</span>
+                <SendButtonDisplay
+                  disabled={false}
+                  loading={false}
+                  aria-label="Send message to agents"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Disabled State:</span>
+                <SendButtonDisplay
+                  disabled={true}
+                  loading={false}
+                  aria-label="Send button disabled - enter message first"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Loading State:</span>
+                <SendButtonDisplay
+                  disabled={false}
+                  loading={true}
+                  aria-label="Sending message..."
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styled:</span>
+                <SendButtonDisplay
+                  disabled={false}
+                  loading={false}
+                  className="custom-send-button"
+                  aria-label="Send message with custom styling"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>
+                Conversation Mode Toggle Display
+              </h2>
+              <p style={styles.sectionDescription}>
+                Visual representation of the Manual/Auto mode toggle showing
+                current mode state without interactive functionality
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Manual Mode Active:</span>
+                <ConversationModeToggleDisplay
+                  currentMode="manual"
+                  disabled={false}
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Auto Mode Active:</span>
+                <ConversationModeToggleDisplay
+                  currentMode="auto"
+                  disabled={false}
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Disabled State:</span>
+                <ConversationModeToggleDisplay
+                  currentMode="manual"
+                  disabled={true}
+                  className="disabled-mode-toggle"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Input Container Display</h2>
+              <p style={styles.sectionDescription}>
+                Complete input area composition combining MessageInputDisplay,
+                SendButtonDisplay, and ConversationModeToggleDisplay with layout
+                variants and proper spacing
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Default Layout:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="default"
+                    messageInputProps={{
+                      placeholder: "Type your message here...",
+                      size: "medium",
+                    }}
+                    sendButtonProps={{
+                      disabled: false,
+                      loading: false,
+                      "aria-label": "Send message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "manual",
+                      disabled: false,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Compact Layout:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="compact"
+                    messageInputProps={{
+                      placeholder: "Compact layout input...",
+                      size: "small",
+                    }}
+                    sendButtonProps={{
+                      disabled: false,
+                      loading: false,
+                      "aria-label": "Send message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "auto",
+                      disabled: false,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>With Content:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="default"
+                    messageInputProps={{
+                      content:
+                        "This is a sample message showing how the container handles content",
+                      size: "medium",
+                    }}
+                    sendButtonProps={{
+                      disabled: false,
+                      loading: false,
+                      "aria-label": "Send message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "manual",
+                      disabled: false,
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Loading State:</span>
+                <div style={{ flex: 1 }}>
+                  <InputContainerDisplay
+                    layoutVariant="default"
+                    messageInputProps={{
+                      content: "Sending message to agents...",
+                      disabled: true,
+                      size: "medium",
+                    }}
+                    sendButtonProps={{
+                      disabled: true,
+                      loading: true,
+                      "aria-label": "Sending message",
+                    }}
+                    modeToggleProps={{
+                      currentMode: "auto",
+                      disabled: true,
+                    }}
+                  />
+                </div>
+              </div>
             </div>
           </section>
 
@@ -468,7 +733,7 @@ export default function ComponentShowcase() {
             </span>
           </div>
           <div style={styles.codeBlock}>
-            {`import { NewComponent } from '../../components/ui/NewComponent';`}
+            {`import { NewComponent } from '../../components/NewComponent';`}
           </div>
 
           <div style={styles.step}>
