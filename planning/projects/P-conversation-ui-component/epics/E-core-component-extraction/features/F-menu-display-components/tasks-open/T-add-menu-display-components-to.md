@@ -16,49 +16,67 @@ parent: F-menu-display-components
 
 ## Overview
 
-Integrate the newly created menu display components into the MessageItem component, following the same pattern as the DesignPrototype implementation.
+Create a message-specific context menu component using the generic context menu component from the prerequisite task, then integrate it into the MessageItem component. This creates a reusable bridge between the low-level display components and the MessageItem's specific needs.
 
 ## Implementation Details
 
-### Target File
+### Target Files
 
-Update `apps/desktop/src/components/chat/MessageItem.tsx`
-
-### Integration Pattern
-
-Following the DesignPrototype pattern from lines 1003-1225:
-
-1. Import menu display components from barrel export
-2. Replace inline styling with component usage
-3. Maintain visual consistency with prototype
-4. Keep all existing prop interfaces and functionality
-
-### Component Integration
-
-```typescript
-import {
-  ContextMenuDisplay,
-  MenuItemDisplay,
-  MenuTriggerDisplay,
-} from "@/components/menu";
-```
+1. Create `apps/desktop/src/components/chat/MessageContextMenu.tsx` - message-specific context menu component
+2. Update `apps/desktop/src/components/chat/MessageItem.tsx` - integrate the new component
 
 ### Implementation Strategy
 
-1. **MenuTriggerDisplay Integration**:
-   - Replace ellipsis button JSX with MenuTriggerDisplay component
+#### Step 1: Create MessageContextMenu Component
+
+Create a reusable message-specific context menu component that:
+
+- Uses the generic ContextMenu component from the prerequisite task
+- Accepts message-specific props for actions and configuration
+- Handles message-specific logic and menu items
+- Provides a clean interface for MessageItem to use
+
+**Component Props Interface** (Create in shared package):
+
+```typescript
+// packages/shared/src/types/ui/chat/MessageContextMenuProps.ts
+interface MessageContextMenuProps {
+  message: Message;
+  position?: "above" | "below";
+  onCopy: () => void;
+  onDelete: () => void;
+  onRegenerate?: () => void;
+  canRegenerate?: boolean;
+}
+```
+
+**Component Implementation**:
+
+```typescript
+// apps/desktop/src/components/chat/MessageContextMenu.tsx
+import { MessageContextMenuProps } from "@fishbowl-ai/shared/types/ui/menu";
+import { ContextMenu, MenuItemDisplay } from "./";
+```
+
+#### Step 2: Integrate into MessageItem
+
+Replace the existing context menu implementation with the new MessageContextMenu component:
+
+1. **Import the new component**:
+
+   ```typescript
+   import { MessageContextMenu } from "@/components/menu/MessageContextMenu";
+   import { MenuTriggerDisplay } from "@/components/menu";
+   ```
+
+2. **Replace menu trigger**:
+   - Use MenuTriggerDisplay for the ellipsis button
    - Maintain existing click handlers and state management
-   - Use variant prop to show active/hover states
 
-2. **ContextMenuDisplay Integration**:
-   - Replace context menu div with ContextMenuDisplay component
-   - Map existing menu items to MenuItemDisplay components
+3. **Replace context menu**:
+   - Use MessageContextMenu component instead of inline context menu JSX
+   - Pass through all necessary props and handlers
    - Preserve positioning logic (above/below)
-
-3. **MenuItemDisplay Usage**:
-   - Replace button elements with MenuItemDisplay components
-   - Maintain existing action handlers
-   - Preserve visual states and styling
 
 ### Visual Consistency Requirements
 
@@ -78,27 +96,63 @@ The integration should follow this pattern:
   onClick={handleMenuToggle}
 />
 
-// Replace context menu
+// Replace context menu with MessageContextMenu component
 {contextMenuOpen === message.id && (
-  <ContextMenuDisplay
-    isOpen={true}
+  <MessageContextMenu
+    message={message}
     position={shouldShowMenuAbove(message.id) ? 'above' : 'below'}
-    items={menuItems}
-  >
-    <MenuItemDisplay label="Copy" onClick={handleCopy} />
-    <MenuItemDisplay label="Delete" onClick={handleDelete} />
-    {canRegenerate && (
-      <MenuItemDisplay label="Regenerate" onClick={handleRegenerate} />
-    )}
-  </ContextMenuDisplay>
+    onCopy={handleCopy}
+    onDelete={handleDelete}
+    onRegenerate={handleRegenerate}
+    canRegenerate={canRegenerate}
+  />
 )}
 ```
 
+### MessageContextMenu Internal Structure
+
+The MessageContextMenu component should internally use the generic ContextMenu:
+
+```typescript
+export function MessageContextMenu(props: MessageContextMenuProps) {
+  return (
+    <ContextMenu position={props.position}>
+      <MenuItemDisplay label="Copy" onClick={props.onCopy} />
+      <MenuItemDisplay label="Delete" onClick={props.onDelete} />
+      {props.canRegenerate && (
+        <MenuItemDisplay label="Regenerate" onClick={props.onRegenerate} />
+      )}
+    </ContextMenu>
+  );
+}
+```
+
+### File Structure
+
+- **Props interface**: `packages/shared/src/types/ui/components/MessageContextMenuProps.ts`
+- **Component**: `apps/desktop/src/components/chat/MessageContextMenu.tsx`
+
+### TypeScript Integration
+
+- **Props interface**: Create `MessageContextMenuProps` in `packages/shared/src/types/ui/components/MessageContextMenuProps.ts`
+- **Export**: Add to `packages/shared/src/types/ui/components/index.ts` barrel export
+- Import props interface from shared package in component implementation
+
 ## Acceptance Criteria
+
+✅ **Component Creation**
+
+- MessageContextMenu component created successfully
+- MessageContextMenuProps interface created in shared package
+- Uses generic ContextMenu component internally
+- Provides clean interface for message-specific functionality
+- Props interface exported from shared package barrel export
+- Component exported from menu components barrel export
 
 ✅ **Component Integration**
 
-- Menu display components imported and used correctly
+- MessageContextMenu integrated into MessageItem correctly
+- MenuTriggerDisplay used for ellipsis button
 - Existing MessageItem functionality preserved completely
 - No breaking changes to props interface
 - Visual appearance matches current implementation exactly
@@ -126,8 +180,9 @@ The integration should follow this pattern:
 
 ## Dependencies
 
-- Requires menu component barrel export (prerequisite)
+- Requires menu component barrel export with generic ContextMenu (prerequisite)
 - Uses existing MessageItem component
+- Creates new MessageContextMenu component
 - Integrates with current theme system
 - Maintains existing prop interfaces
 
@@ -139,10 +194,12 @@ The integration should follow this pattern:
 
 ## Implementation Notes
 
-- This is primarily a refactoring task using new components
+- Create a reusable MessageContextMenu component as a bridge between generic components and MessageItem
+- This provides a clean abstraction for message-specific context menu functionality
 - Focus on maintaining exact existing behavior and appearance
-- Use the new components as replacements for inline JSX
+- The MessageContextMenu acts as a facade, using the generic ContextMenu internally
 - Preserve all existing event handlers and state management
 - Ensure no performance regression from component usage
+- The new component should be reusable for other message-related contexts if needed
 
 ### Log
