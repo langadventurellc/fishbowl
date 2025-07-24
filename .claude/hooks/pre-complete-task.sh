@@ -6,7 +6,7 @@
 echo "🔧 Running pre-completion checks for Trellis task..."
 
 # Change to project root
-cd /Users/zach/code/fishbowl
+cd "$(git rev-parse --show-toplevel)"
 
 echo "📝 Running quality checks..."
 if ! pnpm quality; then
