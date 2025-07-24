@@ -16,6 +16,7 @@ import {
   SendButtonDisplay,
 } from "../../components/input";
 import {
+  ContextMenu,
   ContextMenuDisplay,
   MenuItemDisplay,
   MenuTriggerDisplay,
@@ -1905,6 +1906,110 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                     </span>
                   </div>
                 </div>
+              </div>
+
+              <h3 style={styles.sectionTitle}>Generic ContextMenu Component</h3>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Basic ContextMenu:</span>
+                <ContextMenu>
+                  <MenuItemDisplay
+                    label="Copy"
+                    action="copy"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Regenerate"
+                    action="regenerate"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Delete"
+                    action="delete"
+                    variant="danger"
+                  />
+                </ContextMenu>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Above Position:</span>
+                <div style={{ marginTop: "80px" }}>
+                  <ContextMenu position="above">
+                    <MenuItemDisplay
+                      label="Copy"
+                      action="copy"
+                      variant="normal"
+                    />
+                    <MenuItemDisplay
+                      label="Delete"
+                      action="delete"
+                      variant="danger"
+                    />
+                  </ContextMenu>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Disabled ContextMenu:</span>
+                <ContextMenu disabled>
+                  <MenuItemDisplay
+                    label="Unavailable"
+                    action="unavailable"
+                    variant="normal"
+                  />
+                </ContextMenu>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Trigger:</span>
+                <ContextMenu
+                  trigger={
+                    <div
+                      style={{
+                        padding: "8px 12px",
+                        backgroundColor: "var(--primary)",
+                        color: "var(--primary-foreground)",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Custom Button
+                    </div>
+                  }
+                >
+                  <MenuItemDisplay
+                    label="Action 1"
+                    action="action1"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Action 2"
+                    action="action2"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Action 3"
+                    action="action3"
+                    variant="normal"
+                  />
+                </ContextMenu>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Auto Position:</span>
+                <ContextMenu position="auto">
+                  <MenuItemDisplay
+                    label="Smart Position"
+                    action="smart"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Viewport Aware"
+                    action="viewport"
+                    variant="normal"
+                  />
+                </ContextMenu>
               </div>
             </div>
           </section>

@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-generic-contextmenu
+parent: F-menu-display-components
+status: done
 title: Create generic ContextMenu component with trigger and dropdown
-status: open
 priority: normal
 prerequisites:
   - T-create-menu-component-barrel
 created: "2025-07-24T17:43:32.855551"
-updated: "2025-07-24T17:43:32.855551"
+updated: "2025-07-24T18:33:11.398769"
 schema_version: "1.1"
-parent: F-menu-display-components
+worktree: null
 ---
 
 Create a generic ContextMenu component that combines the MenuTriggerDisplay and ContextMenuDisplay components with basic open/close functionality. This component will handle the interaction pattern while accepting children for menu content, providing a reusable solution for both sidebar conversation menus and message context menus.
@@ -163,3 +164,7 @@ Create component at: `apps/desktop/src/components/menu/ContextMenu.tsx`
 ### Log
 
 ### Log
+
+**2025-07-24T23:40:31.912619Z** - Implemented generic ContextMenu component with trigger and dropdown functionality. This component combines MenuTriggerDisplay and ContextMenuDisplay with internal state management for open/close behavior. Features include: internal isOpen state with useState, click handling for trigger toggle, position support (above/below/auto), custom trigger or default ellipsis button, children composition pattern for flexible menu content, keyboard support (ESC key to close), and click-outside-to-close functionality. Component added to ComponentShowcase with multiple usage examples demonstrating all features. All quality checks pass (lint, format, type-check).
+
+- filesChanged: ["packages/shared/src/types/ui/menu/ContextMenuProps.ts", "apps/desktop/src/components/menu/ContextMenu.tsx", "apps/desktop/src/components/menu/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

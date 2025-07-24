@@ -5,7 +5,7 @@ title: Add menu display components to MessageItem following prototype pattern
 status: open
 priority: normal
 prerequisites:
-  - T-create-menu-component-barrel
+  - T-create-generic-contextmenu
 created: "2025-07-24T16:18:55.710944"
 updated: "2025-07-24T16:18:55.710944"
 schema_version: "1.1"

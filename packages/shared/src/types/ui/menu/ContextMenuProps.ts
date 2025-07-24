@@ -1,107 +1,80 @@
 /**
- * ContextMenuProps interface for dropdown menu component.
+ * ContextMenuProps interface for generic dropdown menu component.
  *
  * Defines the props contract for the ContextMenu component that provides
- * dropdown menu functionality with positioning and item configuration.
+ * dropdown menu functionality with trigger and children-based composition.
+ * This component combines MenuTriggerDisplay and ContextMenuDisplay with
+ * internal state management for open/close behavior.
  *
  * @module types/ui/components/ContextMenuProps
  */
 
-import { ContextMenuItem } from "./ContextMenuItem";
-import { ContextMenuPosition } from "./ContextMenuPosition";
+import React from "react";
 
 /**
  * Props interface for the ContextMenu component.
  *
- * This interface defines the properties required for displaying context menus
- * with proper positioning, item management, and interaction handling. The menu
- * can be positioned above or below the trigger element and supports click-outside-to-close.
+ * This interface defines the properties for a generic context menu that
+ * combines a trigger element with a dropdown containing children content.
+ * The component handles the interaction pattern while accepting children
+ * for flexible menu content composition.
  *
  * @example
  * ```typescript
- * const contextMenuProps: ContextMenuProps = {
- *   isOpen: true,
- *   position: "below",
- *   actions: [
- *     { label: "Copy", action: "copy", icon: "copy" },
- *     { label: "Regenerate", action: "regenerate", icon: "refresh" },
- *     { label: "Delete", action: "delete", icon: "trash" }
- *   ],
- *   onClose: () => {
- *     console.log("Context menu closed");
- *   },
- *   onActionClick: (action) => {
- *     console.log(`Context menu action: ${action}`);
- *   }
- * };
+ * // Basic usage with MenuItemDisplay children
+ * <ContextMenu>
+ *   <MenuItemDisplay label="Copy" />
+ *   <MenuItemDisplay label="Delete" variant="danger" />
+ * </ContextMenu>
  *
- * // Menu with disabled items
- * const menuWithDisabledItems: ContextMenuProps = {
- *   isOpen: true,
- *   position: "above",
- *   actions: [
- *     { label: "Copy", action: "copy" },
- *     { label: "Regenerate", action: "regenerate", disabled: true },
- *     { label: "Delete", action: "delete" }
- *   ],
- *   onClose: () => closeMenu(),
- *   onActionClick: (action) => handleAction(action)
- * };
+ * // With custom trigger and positioning
+ * <ContextMenu trigger={<CustomButton />} position="above">
+ *   <MenuItemDisplay label="Action 1" />
+ *   <MenuItemDisplay label="Action 2" />
+ * </ContextMenu>
+ *
+ * // Disabled menu
+ * <ContextMenu disabled>
+ *   <MenuItemDisplay label="Unavailable" />
+ * </ContextMenu>
  * ```
  */
 export interface ContextMenuProps {
   /**
-   * Whether the context menu is currently open and visible.
-   * Controls the menu's visibility and determines if it should render.
-   * When false, the menu should not be displayed.
+   * Custom trigger element for the menu.
+   * If not provided, uses default ellipsis button from MenuTriggerDisplay.
+   * The trigger element will handle click events to open/close the menu.
    */
-  isOpen: boolean;
+  trigger?: React.ReactNode;
 
   /**
-   * Handler for closing the context menu.
-   * Called when the menu should be closed, typically triggered by
-   * clicking outside the menu, pressing escape, or selecting an item.
-   *
-   * This handler should update the parent component's state to set
-   * isOpen to false.
-   */
-  onClose: () => void;
-
-  /**
-   * Optional positioning preference for the menu.
-   * Determines whether the menu appears above or below the trigger element.
-   * The component may automatically adjust positioning to stay within viewport.
+   * Positioning preference for the menu relative to trigger element.
+   * - "above": Menu appears above the trigger
+   * - "below": Menu appears below the trigger
+   * - "auto": Automatically choose based on viewport space
    *
    * @default "below"
    */
-  position?: ContextMenuPosition;
+  position?: "above" | "below" | "auto";
 
   /**
-   * Array of menu items to display.
-   * Each item defines its label, action, and optional state/visual properties.
-   * The order in this array determines the display order in the menu.
+   * Menu content as React children.
+   * Typically contains MenuItemDisplay components or other menu content.
+   * Children handle their own interactions and styling.
    */
-  actions: ContextMenuItem[];
-
-  /**
-   * Handler for menu item selection.
-   * Called when the user clicks on a menu item, receiving the action
-   * identifier of the selected item.
-   *
-   * After handling the action, the menu should typically be closed.
-   *
-   * @param action - The action identifier from the selected menu item
-   */
-  onActionClick: (action: string) => void;
+  children: React.ReactNode;
 
   /**
    * Optional CSS class name for additional styling.
-   * Allows for custom styling of the context menu component
-   * beyond the default theme-aware styling.
-   *
-   * Applied to the root element of the context menu component.
-   *
-   * @example "message-context-menu", "conversation-menu", "compact-menu"
+   * Applied to the root container element of the context menu.
    */
   className?: string;
+
+  /**
+   * Whether the entire menu is disabled.
+   * When true, the trigger cannot be clicked and menu cannot be opened.
+   *
+   * @default false
+   */
+  disabled?: boolean;
 }
