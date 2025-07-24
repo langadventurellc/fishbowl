@@ -15,7 +15,7 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 **CRITICAL** When modifying shared package types or interfaces:
 
-- `pnpm build` - **MUST** rebuild shared packages after adding new types/interfaces
+- `pnpm build:libs` - **MUST** rebuild shared packages after adding new types/interfaces
 - Apps cannot import from `@fishbowl-ai/shared` until the shared package is built
 - Type errors like "Module has no exported member" indicate shared package needs rebuilding
 

@@ -11,3 +11,4 @@
 export { AgentPill } from "./AgentPill";
 export { Button } from "./Button";
 export { ThemeToggle } from "./ThemeToggle";
+export { ThinkingIndicator } from "./ThinkingIndicator";

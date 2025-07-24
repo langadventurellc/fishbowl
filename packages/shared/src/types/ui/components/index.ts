@@ -14,6 +14,7 @@ export * from "./ButtonProps";
 export * from "./MessageItemProps";
 export * from "./ConversationItemProps";
 export * from "./ThemeToggleProps";
+export * from "./ThinkingIndicatorProps";
 export * from "./ContextMenuProps";
 export * from "./ContextMenuItem";
 export * from "./SidebarToggleProps";

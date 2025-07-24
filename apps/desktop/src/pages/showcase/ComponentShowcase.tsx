@@ -1,7 +1,12 @@
 import { Agent, ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import { AgentPill, ThemeToggle, Button } from "../../components/ui/atomic";
+import {
+  AgentPill,
+  ThemeToggle,
+  Button,
+  ThinkingIndicator,
+} from "../../components/ui/atomic";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -378,6 +383,60 @@ export default function ComponentShowcase() {
                   onToggle={(theme) =>
                     console.log(`Dark toggle clicked: ${theme}`)
                   }
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Thinking Indicators - Sizes:
+                </span>
+                <ThinkingIndicator size="small" />
+                <ThinkingIndicator size="medium" />
+                <ThinkingIndicator size="large" />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Animation Speeds:</span>
+                <ThinkingIndicator animationSpeed="slow" />
+                <ThinkingIndicator animationSpeed="normal" />
+                <ThinkingIndicator animationSpeed="fast" />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Colors:</span>
+                <ThinkingIndicator />
+                <ThinkingIndicator color="#ef4444" />
+                <ThinkingIndicator color="#22c55e" />
+                <ThinkingIndicator color="#f59e0b" />
+                <ThinkingIndicator color="#8b5cf6" />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Multiple Indicators:</span>
+                <ThinkingIndicator
+                  size="small"
+                  color="#3b82f6"
+                  animationSpeed="fast"
+                />
+                <ThinkingIndicator
+                  size="medium"
+                  color="#ef4444"
+                  animationSpeed="normal"
+                />
+                <ThinkingIndicator
+                  size="large"
+                  color="#22c55e"
+                  animationSpeed="slow"
+                />
+                <ThinkingIndicator
+                  size="small"
+                  color="#f59e0b"
+                  animationSpeed="normal"
+                />
+                <ThinkingIndicator
+                  size="medium"
+                  color="#8b5cf6"
+                  animationSpeed="fast"
                 />
               </div>
             </div>
