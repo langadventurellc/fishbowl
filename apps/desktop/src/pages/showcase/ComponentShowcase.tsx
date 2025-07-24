@@ -1,7 +1,11 @@
 import { Agent, ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import { AgentPill, ThinkingIndicator } from "../../components/chat";
+import {
+  AgentPill,
+  MessageAvatar,
+  ThinkingIndicator,
+} from "../../components/chat";
 import { Button } from "../../components/input";
 import { ThemeToggle } from "../../components/showcase";
 import {
@@ -597,6 +601,98 @@ export default function ComponentShowcase() {
                 <span style={styles.agentPillLabel}>Non-clickable:</span>
                 <AgentPill agent={sampleAgents[0]!} />
                 <AgentPill agent={sampleAgents[2]!} />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Message Avatars - All:
+                </span>
+                {sampleAgents.map((agent, index) => (
+                  <MessageAvatar
+                    key={index}
+                    agentColor={agent.color}
+                    agentName={agent.name}
+                    role={agent.role}
+                  />
+                ))}
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Avatar Sizes:</span>
+                <MessageAvatar
+                  agentColor="#3b82f6"
+                  agentName="Technical Advisor"
+                  role="Technical Advisor"
+                  size="small"
+                />
+                <MessageAvatar
+                  agentColor="#22c55e"
+                  agentName="Project Manager"
+                  role="Project Manager"
+                  size="medium"
+                />
+                <MessageAvatar
+                  agentColor="#ef4444"
+                  agentName="Creative Director"
+                  role="Creative Director"
+                  size="large"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Color Variants:</span>
+                <MessageAvatar
+                  agentColor="#3b82f6"
+                  agentName="Technical Advisor"
+                  role="Technical Advisor"
+                />
+                <MessageAvatar
+                  agentColor="#22c55e"
+                  agentName="Project Manager"
+                  role="Project Manager"
+                />
+                <MessageAvatar
+                  agentColor="#ef4444"
+                  agentName="Creative Director"
+                  role="Creative Director"
+                />
+                <MessageAvatar
+                  agentColor="#a855f7"
+                  agentName="UX Designer"
+                  role="User Experience Designer"
+                />
+                <MessageAvatar
+                  agentColor="#f59e0b"
+                  agentName="Data Analyst"
+                  role="Data Analyst"
+                />
+                <MessageAvatar
+                  agentColor="#6366f1"
+                  agentName="Backend Developer"
+                  role="Backend Developer"
+                />
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Names:</span>
+                <MessageAvatar
+                  agentColor="#8b5cf6"
+                  agentName="Senior Software Engineering Manager"
+                  role="Senior Software Engineering Manager"
+                  size="small"
+                />
+                <MessageAvatar
+                  agentColor="#06b6d4"
+                  agentName="Principal Product Designer"
+                  role="Principal Product Designer"
+                  size="medium"
+                />
+                <MessageAvatar
+                  agentColor="#10b981"
+                  agentName="Chief Technology Officer"
+                  role="Chief Technology Officer"
+                  size="large"
+                />
               </div>
             </div>
           </section>
