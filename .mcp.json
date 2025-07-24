@@ -3,13 +3,19 @@
     "task-trellis": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["--refresh", "task-trellis-mcp", "serve"],
+      "args": [
+        "--refresh",
+        "task-trellis-mcp",
+        "serve"
+      ],
       "env": {}
     },
     "shadcn-ui": {
       "type": "stdio",
       "command": "npx",
-      "args": ["@jpisnice/shadcn-ui-mcp-server"],
+      "args": [
+        "@jpisnice/shadcn-ui-mcp-server"
+      ],
       "env": {}
     },
     "serena": {
@@ -22,7 +28,9 @@
         "--context",
         "ide-assistant",
         "--project",
-        "/Users/zach/code/fishbowl"
+        "/Users/zach/code/fishbowl",
+        "--enable-web-dashboard",
+        "false"
       ],
       "env": {}
     }

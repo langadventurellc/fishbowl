@@ -184,6 +184,11 @@ For full architecture details, see: [Monorepo Architecture](docs/architecture/mo
 
 - **≤ 400 LOC per file** (logical lines).
 - No **"util" or "helpers" dumping grounds** - every module owns a domain noun/verb.
+- **Naming convention:**
+  - **tsx** files: PascalCasing - `ComponentName.tsx`
+  - **ts** files: camelCasing - `moduleName.ts`
+  - **css** files: camelCasing - `moduleName.css`
+  - Do not use `kebab-casing` for TypeScript files.
 
 #### 2.2 Module decomposition & dependency rules _(new)_
 

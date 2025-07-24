@@ -1,13 +1,13 @@
-const baseConfig = require('@fishbowl-ai/eslint-config/react');
+const baseConfig = require("@fishbowl-ai/eslint-config/react");
 
 module.exports = [
   ...baseConfig,
   {
-    files: ['**/*.ts', '**/*.tsx'],
+    files: ["**/*.ts", "**/*.tsx"],
     settings: {
       react: {
-        version: 'detect',
-        runtime: 'automatic', // Tell ESLint about new JSX transform
+        version: "detect",
+        runtime: "automatic", // Tell ESLint about new JSX transform
       },
     },
     languageOptions: {
@@ -19,35 +19,54 @@ module.exports = [
     },
     rules: {
       // React Native specific rules
-      'react/react-in-jsx-scope': 'off', // Not needed in React Native
-      '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      "react/react-in-jsx-scope": "off", // Not needed in React Native
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" },
+      ],
     },
   },
   {
-    files: ['**/__tests__/**/*', '**/*.test.ts', '**/*.test.tsx', '**/setup.ts'],
+    files: [
+      "**/__tests__/**/*",
+      "**/*.test.ts",
+      "**/*.test.tsx",
+      "**/setup.ts",
+    ],
     languageOptions: {
       globals: {
-        jest: 'readonly',
-        describe: 'readonly',
-        it: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
+        jest: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
       },
     },
     rules: {
-      '@typescript-eslint/no-unused-vars': 'off',
-      'import/no-extraneous-dependencies': 'off',
+      "@typescript-eslint/no-unused-vars": "off",
+      "import/no-extraneous-dependencies": "off",
+      "statement-count/function-statement-count-warn": "off",
+      "statement-count/function-statement-count-error": "off",
+      "statement-count/class-statement-count-warn": "off",
+      "statement-count/class-statement-count-error": "off",
+      "multiple-exports/no-multiple-exports": [
+        "error",
+        {
+          checkClasses: true,
+          checkFunctions: true,
+          checkInterfaces: true,
+          checkTypes: true,
+          checkVariables: true,
+          excludeConstants: true,
+          ignoreBarrelFiles: true,
+        },
+      ],
     },
   },
   {
-    ignores: [
-      'node_modules/',
-      '.expo/',
-      'dist/',
-      '*.config.js',
-    ],
+    ignores: ["node_modules/", ".expo/", "dist/", "*.config.js"],
   },
 ];

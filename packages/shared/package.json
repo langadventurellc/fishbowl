@@ -16,7 +16,7 @@
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "clean": "rm -rf dist"
   },
   "dependencies": {

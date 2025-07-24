@@ -25,7 +25,7 @@
     "test:e2e:headless": "npm run build:renderer && npm run build:main && Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 2 && DISPLAY=:99 playwright test -c ../../tests/desktop/playwright.config.ts",
     "type-check": "tsc --noEmit",
     "db:migrate": "node scripts/migrate.js",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "clean": "rm -rf dist dist-electron node_modules/.vite out release",
     "build:all": "electron-builder --mac --win --linux",
     "publish": "electron-builder --publish=always",

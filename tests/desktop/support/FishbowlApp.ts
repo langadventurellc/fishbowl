@@ -1,11 +1,10 @@
-import { _electron as electron } from "playwright";
-import type { ElectronApplication, Page } from "playwright";
 import path from "path";
-
-export interface AppInstance {
-  app: ElectronApplication;
-  window: Page;
-}
+import {
+  type ElectronApplication,
+  type Page,
+  _electron as electron,
+} from "playwright";
+import { AppInstance } from "support/AppInstance";
 
 export class FishbowlApp {
   private electronApp: ElectronApplication | null = null;
@@ -24,7 +23,6 @@ export class FishbowlApp {
   ): Promise<AppInstance> {
     const {
       timeout = 30000,
-      headless = false,
       recordVideo = false,
       videoDir = "test-results/videos",
     } = options;
@@ -35,7 +33,11 @@ export class FishbowlApp {
       "../../../apps/desktop/dist-electron/main.js",
     );
 
-    const launchOptions: any = {
+    const launchOptions: {
+      args: string[];
+      timeout: number;
+      recordVideo?: { dir: string };
+    } = {
       args: [electronPath],
       timeout,
     };
@@ -235,18 +237,4 @@ export class FishbowlApp {
       return false;
     }
   }
-}
-
-/**
- * Global helper function to create a new app instance
- */
-export async function createFishbowlApp(options?: {
-  timeout?: number;
-  headless?: boolean;
-  recordVideo?: boolean;
-  videoDir?: string;
-}): Promise<FishbowlApp> {
-  const app = new FishbowlApp();
-  await app.launch(options);
-  return app;
 }
