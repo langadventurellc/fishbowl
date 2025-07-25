@@ -80,19 +80,12 @@ import { MessageHeader } from "./MessageHeader";
  * ```
  */
 export function MessageItem(props: MessageItemProps) {
-  const {
-    message,
-    className,
-    canRegenerate,
-    onToggleContext,
-    onContextMenuAction,
-  } = props;
+  const { message, className, canRegenerate, onContextMenuAction } = props;
   const [isActive, setIsActive] = useState(message.isActive);
 
   const handleToggleContext = () => {
     const newActiveState = !isActive;
     setIsActive(newActiveState);
-    onToggleContext(message.id);
   };
 
   // Context menu handlers

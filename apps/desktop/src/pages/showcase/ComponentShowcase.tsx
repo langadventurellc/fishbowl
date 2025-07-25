@@ -1747,12 +1747,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#3b82f6",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1766,12 +1762,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#22c55e",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1800,12 +1792,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1819,12 +1807,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1852,12 +1836,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#64748b",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1870,12 +1850,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#64748b",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1904,12 +1880,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#ef4444",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1923,12 +1895,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1955,12 +1923,8 @@ export default function ComponentShowcase() {
                       isActive: false,
                       agentColor: "#a855f7",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1973,12 +1937,8 @@ export default function ComponentShowcase() {
                       isActive: false,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -2004,12 +1964,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#f59e0b",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -2022,12 +1978,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6366f1",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -2040,12 +1992,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#10b981",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>

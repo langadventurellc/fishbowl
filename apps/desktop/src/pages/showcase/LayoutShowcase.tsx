@@ -44,8 +44,6 @@ export default function LayoutShowcase() {
   const [inputText] = useState("");
   const [isManualMode] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [expandedMessages] = useState<Set<string>>(new Set());
-  const [openContextMenu, setOpenContextMenu] = useState<string | null>(null);
 
   // Sample conversations data
   const conversations: Conversation[] = [
@@ -162,44 +160,9 @@ export default function LayoutShowcase() {
     },
   ]);
 
-  // Dynamic styles that respond to theme (same pattern as DesignPrototype)
-  const styles = {
-    newConversation: {
-      padding: "12px 8px",
-      marginTop: "auto",
-      borderRadius: "8px",
-      cursor: "pointer",
-      fontSize: "14px",
-      color: "var(--sidebar-primary)",
-      fontWeight: "500",
-      textAlign: "center" as const,
-      border: "2px dashed var(--sidebar-border)",
-      transition: "all 0.15s",
-    },
-    newConversationHover: {
-      backgroundColor: "var(--sidebar-accent)",
-      borderColor: "var(--sidebar-primary)",
-    },
-  };
-
-  const handleOpenContextMenu = (messageId: string | null) => {
-    setOpenContextMenu(messageId);
-  };
-
-  const handleContextMenuAction = (action: string, messageId: string) => {
-    console.log(
-      `Demo: Context menu action: ${action} for message ${messageId}`,
-    );
-    setOpenContextMenu(null);
-  };
-
   return (
     <ShowcaseLayout>
-      <ConversationScreenDisplay
-        onClick={() => {
-          setOpenContextMenu(null);
-        }}
-      >
+      <ConversationScreenDisplay>
         <ConversationLayoutDisplay
           sidebar={
             <>
@@ -248,21 +211,15 @@ export default function LayoutShowcase() {
                   ))}
                 </div>
 
-                {/* New Conversation button - keep as simple element for now */}
-                <div
-                  style={styles.newConversation}
-                  onMouseEnter={(e) => {
-                    Object.assign(
-                      e.currentTarget.style,
-                      styles.newConversationHover,
-                    );
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = "transparent";
-                    e.currentTarget.style.borderColor = "var(--sidebar-border)";
-                  }}
-                >
-                  + New Conversation
+                <div style={{ marginTop: "auto" }}>
+                  <Button
+                    variant="primary"
+                    size="small"
+                    onClick={() => console.log("Demo: New conversation")}
+                    aria-label="Create new conversation"
+                  >
+                    New Conversation
+                  </Button>
                 </div>
               </SidebarContainerDisplay>
             </>
@@ -294,12 +251,8 @@ export default function LayoutShowcase() {
                     <MessageItem
                       key={message.id}
                       message={message}
-                      isExpanded={expandedMessages.has(message.id)}
                       canRegenerate={message.type === "agent"}
-                      contextMenuOpen={openContextMenu === message.id}
-                      onToggleContext={() => {}}
-                      onContextMenuAction={handleContextMenuAction}
-                      onOpenContextMenu={handleOpenContextMenu}
+                      onContextMenuAction={() => {}}
                     />
                   ))}
                 />
