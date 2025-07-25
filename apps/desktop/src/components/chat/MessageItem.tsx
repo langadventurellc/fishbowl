@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MessageItemProps } from "@fishbowl-ai/shared";
 import { MessageHeader } from "./MessageHeader";
 import { MessageContent } from "./MessageContent";
+import { MessageContextMenu } from "./MessageContextMenu";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.
@@ -80,13 +81,38 @@ import { MessageContent } from "./MessageContent";
  * ```
  */
 export function MessageItem(props: MessageItemProps) {
-  const { message, className, onToggleContext } = props;
+  const {
+    message,
+    className,
+    canRegenerate,
+    onToggleContext,
+    onContextMenuAction,
+  } = props;
   const [isActive, setIsActive] = useState(message.isActive);
 
   const handleToggleContext = () => {
     const newActiveState = !isActive;
     setIsActive(newActiveState);
     onToggleContext(message.id);
+  };
+
+  // Context menu handlers
+  const handleCopy = () => {
+    onContextMenuAction("copy", message.id);
+  };
+
+  const handleDelete = () => {
+    onContextMenuAction("delete", message.id);
+  };
+
+  const handleRegenerate = () => {
+    onContextMenuAction("regenerate", message.id);
+  };
+
+  // Position logic from DesignPrototype - show menu above for last messages
+  const shouldShowMenuAbove = () => {
+    // For now, default to below - could be enhanced with viewport detection
+    return false;
   };
   // Component styles extracted from DesignPrototype.tsx
   const styles = {
@@ -191,13 +217,25 @@ export function MessageItem(props: MessageItemProps) {
           </button>
           <div style={styles.userMessageWrapper}>
             <div style={styles.userMessage}>
-              <MessageHeader
-                agentName={message.agent}
-                agentRole={message.role}
-                agentColor={message.agentColor}
-                timestamp={message.timestamp}
-                messageType={message.type}
-              />
+              <div style={{ position: "relative" }}>
+                <MessageHeader
+                  agentName={message.agent}
+                  agentRole={message.role}
+                  agentColor={message.agentColor}
+                  timestamp={message.timestamp}
+                  messageType={message.type}
+                />
+                <div style={{ position: "absolute", right: "0", top: "0" }}>
+                  <MessageContextMenu
+                    message={message}
+                    position={shouldShowMenuAbove() ? "above" : "below"}
+                    onCopy={handleCopy}
+                    onDelete={handleDelete}
+                    onRegenerate={handleRegenerate}
+                    canRegenerate={canRegenerate}
+                  />
+                </div>
+              </div>
               <MessageContent
                 content={message.content}
                 messageType={message.type}
@@ -229,13 +267,23 @@ export function MessageItem(props: MessageItemProps) {
           >
             {isActive ? "✓" : ""}
           </button>
-          <MessageHeader
-            agentName={message.agent}
-            agentRole={message.role}
-            agentColor={message.agentColor}
-            timestamp={message.timestamp}
-            messageType={message.type}
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <MessageHeader
+              agentName={message.agent}
+              agentRole={message.role}
+              agentColor={message.agentColor}
+              timestamp={message.timestamp}
+              messageType={message.type}
+            />
+            <MessageContextMenu
+              message={message}
+              position={shouldShowMenuAbove() ? "above" : "below"}
+              onCopy={handleCopy}
+              onDelete={handleDelete}
+              onRegenerate={handleRegenerate}
+              canRegenerate={canRegenerate}
+            />
+          </div>
           <MessageContent
             content={message.content}
             messageType={message.type}

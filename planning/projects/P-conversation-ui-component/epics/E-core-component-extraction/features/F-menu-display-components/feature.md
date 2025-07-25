@@ -1,13 +1,13 @@
 ---
 kind: feature
 id: F-menu-display-components
-title: "Menu Display Components"
-status: in-progress
+title: Menu Display Components
+status: done
 priority: normal
 prerequisites:
   - F-atomic-ui-components
 created: "2025-07-23T19:08:31.716519"
-updated: "2025-07-23T19:08:31.716519"
+updated: "2025-07-24T23:56:21.059114+00:00"
 schema_version: "1.1"
 parent: E-core-component-extraction
 ---

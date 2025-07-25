@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-add-menu-display-components-to
+parent: F-menu-display-components
+status: done
 title: Add menu display components to MessageItem following prototype pattern
-status: open
 priority: normal
 prerequisites:
   - T-create-generic-contextmenu
 created: "2025-07-24T16:18:55.710944"
-updated: "2025-07-24T16:18:55.710944"
+updated: "2025-07-24T18:47:40.003880"
 schema_version: "1.1"
-parent: F-menu-display-components
+worktree: null
 ---
 
 # Add Menu Display Components to MessageItem
@@ -203,3 +204,7 @@ export function MessageContextMenu(props: MessageContextMenuProps) {
 - The new component should be reusable for other message-related contexts if needed
 
 ### Log
+
+**2025-07-24T23:56:21.052144Z** - Successfully integrated MessageContextMenu component into MessageItem following prototype pattern. Created MessageContextMenuProps interface in shared package and MessageContextMenu component that uses the generic ContextMenu internally. Updated MessageItem to display ellipsis buttons and context menus for both user and agent messages with proper positioning and interaction. All menu items (Copy, Delete, and optional Regenerate) working correctly with hover states and theme integration. Component is now visible in ComponentShowcase with full functionality.
+
+- filesChanged: ["packages/shared/src/types/ui/components/MessageContextMenuProps.ts", "packages/shared/src/types/ui/components/index.ts", "apps/desktop/src/components/chat/MessageContextMenu.tsx", "apps/desktop/src/components/chat/MessageItem.tsx"]
