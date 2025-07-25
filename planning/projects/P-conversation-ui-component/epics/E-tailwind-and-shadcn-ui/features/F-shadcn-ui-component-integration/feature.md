@@ -204,4 +204,9 @@ Strategically integrate shadcn/ui components for basic UI elements while maintai
 
 This feature strategically enhances the application with industry-standard, accessible UI components while preserving the unique functionality required for the conversation interface, creating a best-of-both-worlds approach to component architecture.
 
+### See Also
+
+- `docs/tailwind-css-v4-setup.md` for Tailwind CSS v4 setup details
+- shadcn/ui MCP tools
+
 ### Log
