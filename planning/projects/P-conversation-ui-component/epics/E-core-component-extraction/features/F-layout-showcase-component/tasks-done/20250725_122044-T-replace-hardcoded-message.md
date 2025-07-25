@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-replace-hardcoded-message
+parent: F-layout-showcase-component
+status: done
 title: Replace hardcoded message rendering with MessageItem components
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-25T00:01:35.596182"
-updated: "2025-07-25T00:01:35.596182"
+updated: "2025-07-25T12:11:46.614820"
 schema_version: "1.1"
-parent: F-layout-showcase-component
+worktree: null
 ---
 
 # Replace Hardcoded Message Rendering with MessageItem Components
@@ -202,3 +203,7 @@ Update or remove these message-related helper functions:
 This task requires all chat components to be properly exported from the component library with correct TypeScript interfaces and support for the current message data structure.
 
 ### Log
+
+**2025-07-25T17:20:44.711745Z** - Successfully replaced 300+ lines of hardcoded message rendering with MessageItem components while preserving all interactive behaviors. Integration includes proper context toggle functionality, message expansion/collapse for long messages, and context menu actions (copy, regenerate, delete). Removed 120+ lines of manual message styling objects that are now handled internally by MessageItem components. All quality checks pass (lint, format, type-check, build).
+
+- filesChanged: ["apps/desktop/src/pages/showcase/LayoutShowcase.tsx"]

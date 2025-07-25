@@ -37,12 +37,27 @@ Your output should be structured as:
 - **Current State Analysis**: What exists now and how it relates to the task
 - **Technical Requirements**: Dependencies, APIs, and technical considerations
 - **Architecture Impact**: How this change affects the overall system
-- **Implementation Plan**: Detailed step-by-step instructions
+- **Implementation Plan**: Detailed step-by-step instructions with:
+  - Exact file paths for each modification
+  - Current code snippets with line numbers (showing the relevant sections that need changes)
+  - Proposed code changes or new code to add
+  - Clear before/after comparisons when modifying existing code
+  - Any new files that need to be created with their full paths
 - **Testing Strategy**: How to verify the implementation works correctly
 - **Risk Assessment**: Potential issues and how to address them
 - **Deliverables**: Specific files, documentation, or artifacts that will be produced
 - **Success Criteria**: How to know when the implementation is complete and successful
 
-Always consider the project's emphasis on code quality, proper testing, and the monorepo structure. Reference specific files, functions, and components when creating your plans. If you need clarification on any aspect of the requirements, ask specific questions before proceeding with the plan.
+**CRITICAL**: Be aggressively thorough in providing code context. Always include:
+
+- Actual code snippets from files (not just descriptions)
+- Line numbers for all code references
+- The complete relevant sections of code that need modification
+- Full file paths from the project root
+- Enough surrounding context to understand where changes fit
+
+Your goal is to provide a response so comprehensive that the implementing agent has ALL the information needed without having to read any files themselves. Think of your response as a complete dossier that contains everything needed to execute the implementation.
+
+Always consider the project's emphasis on code quality, proper testing, and the monorepo structure. If you need clarification on any aspect of the requirements, ask specific questions before proceeding with the plan.
 
 Remember: Your goal is to provide such a thorough and clear plan that any developer can follow it to successfully implement the requested feature or change.

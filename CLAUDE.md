@@ -155,6 +155,8 @@ export interface StorageBridge {
 
 When adding features:
 
+Use the implementation planner subagent to plan the implementation of new features.
+
 1. **Business logic** → `packages/shared/src/`
 2. **Desktop UI** → `apps/desktop/src/`
 3. **Mobile UI** → `apps/mobile/src/`
@@ -241,6 +243,7 @@ For full architecture details, see: [Monorepo Architecture](docs/architecture/mo
 
 If you encounter issues:
 
+- Use the debugging subagent
 - Check the documentation in `docs/`
 - Use the context7 MCP tool for up-to-date library documentation
 - Use web for research (the current year is 2025)

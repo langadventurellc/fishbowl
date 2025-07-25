@@ -7,7 +7,7 @@ import {
   AgentLabelsContainerDisplay,
   ConversationLayoutDisplay,
 } from "../../components/layout";
-import { AgentPill } from "../../components/chat/AgentPill";
+import { AgentPill, MessageItem } from "../../components/chat";
 import {
   SidebarContainerDisplay,
   SidebarHeaderDisplay,
@@ -42,11 +42,11 @@ interface Conversation {
 export default function LayoutShowcase() {
   const [inputText, setInputText] = useState("");
   const [isManualMode, setIsManualMode] = useState(true);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [expandedMessages, setExpandedMessages] = useState<Set<string>>(
     new Set(),
   );
   const [openContextMenu, setOpenContextMenu] = useState<string | null>(null);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Sample conversations data
   const conversations: Conversation[] = [
@@ -257,130 +257,6 @@ export default function LayoutShowcase() {
       overflowY: "auto" as const,
       backgroundColor: "var(--background)",
     },
-    message: {
-      marginBottom: "16px",
-      transition: "opacity 0.15s",
-    },
-    messageInactive: {
-      opacity: 0.5,
-    },
-    systemMessage: {
-      textAlign: "center" as const,
-      padding: "8px 16px",
-      backgroundColor: "var(--muted)",
-      borderRadius: "16px",
-      fontSize: "13px",
-      color: "var(--muted-foreground)",
-      fontStyle: "italic",
-      margin: "0 auto",
-      maxWidth: "400px",
-    },
-    messageWrapper: {
-      display: "flex",
-      alignItems: "flex-start",
-      gap: "12px",
-      padding: "12px",
-      borderRadius: "8px",
-      border: "1px solid transparent",
-      transition: "all 0.15s",
-    },
-    messageWrapperHover: {
-      border: "1px solid var(--border)",
-      backgroundColor: "var(--card)",
-    },
-    contextToggle: {
-      width: "20px",
-      height: "20px",
-      borderRadius: "4px",
-      border: "1px solid var(--border)",
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontSize: "12px",
-      fontWeight: "bold",
-      flexShrink: 0,
-      marginTop: "2px",
-      transition: "all 0.15s",
-    },
-    contextToggleActive: {
-      backgroundColor: "var(--primary)",
-      color: "var(--primary-foreground)",
-      borderColor: "var(--primary)",
-    },
-    contextToggleInactive: {
-      backgroundColor: "transparent",
-      color: "transparent",
-    },
-    userMessage: {
-      flex: 1,
-    },
-    messageHeader: {
-      display: "flex",
-      alignItems: "center",
-      gap: "8px",
-      marginBottom: "4px",
-      fontSize: "13px",
-      flexWrap: "wrap" as const,
-    },
-    messageContent: {
-      fontSize: "14px",
-      lineHeight: "1.5",
-      color: "var(--foreground)",
-      whiteSpace: "pre-wrap" as const,
-    },
-    showMoreLink: {
-      color: "var(--primary)",
-      cursor: "pointer",
-      fontSize: "13px",
-      marginTop: "4px",
-      fontWeight: "500",
-    },
-    ellipsisButton: {
-      background: "none",
-      border: "none",
-      color: "var(--muted-foreground)",
-      cursor: "pointer",
-      padding: "4px 6px",
-      borderRadius: "4px",
-      fontSize: "14px",
-      opacity: 0.6,
-      transition: "all 0.15s",
-      position: "relative" as const,
-    },
-    ellipsisButtonHover: {
-      opacity: 1,
-      backgroundColor: "var(--muted)",
-    },
-    contextMenu: {
-      position: "absolute" as const,
-      top: "100%",
-      right: "0",
-      backgroundColor: "var(--popover)",
-      border: "1px solid var(--border)",
-      borderRadius: "6px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-      padding: "4px",
-      minWidth: "140px",
-      zIndex: 1000,
-    },
-    contextMenuItem: {
-      display: "block",
-      width: "100%",
-      padding: "8px 12px",
-      fontSize: "13px",
-      color: "var(--popover-foreground)",
-      backgroundColor: "transparent",
-      border: "none",
-      borderRadius: "4px",
-      cursor: "pointer",
-      textAlign: "left" as const,
-      transition: "background-color 0.15s",
-    },
-    contextMenuItemHover: {
-      backgroundColor: "var(--accent)",
-      color: "var(--accent-foreground)",
-    },
     inputArea: {
       padding: "16px",
       borderTop: "1px solid var(--border)",
@@ -483,18 +359,8 @@ export default function LayoutShowcase() {
     });
   };
 
-  const formatTimestamp = (timestamp: string) => {
-    return `─ ${timestamp}`;
-  };
-
-  const isLongMessage = (content: string) => {
-    const lines = content.split("\n").filter((line) => line.trim() !== "");
-    return lines.length > 3;
-  };
-
-  const getMessagePreview = (content: string) => {
-    const lines = content.split("\n").filter((line) => line.trim() !== "");
-    return lines[0] || "";
+  const handleOpenContextMenu = (messageId: string | null) => {
+    setOpenContextMenu(messageId);
   };
 
   const handleContextMenuAction = (action: string, messageId: string) => {
@@ -610,210 +476,17 @@ export default function LayoutShowcase() {
               chatContainer={
                 <ChatContainerDisplay
                   messages={messages.map((message) => (
-                    <div
+                    <MessageItem
                       key={message.id}
-                      style={{
-                        ...styles.message,
-                        ...(message.isActive ? {} : styles.messageInactive),
-                      }}
-                    >
-                      {message.type === "system" ? (
-                        <div style={styles.systemMessage}>
-                          {message.content}
-                        </div>
-                      ) : (
-                        <div
-                          style={styles.messageWrapper}
-                          onMouseEnter={(e) => {
-                            Object.assign(
-                              e.currentTarget.style,
-                              styles.messageWrapperHover,
-                            );
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.border =
-                              "1px solid transparent";
-                            e.currentTarget.style.backgroundColor =
-                              "transparent";
-                          }}
-                        >
-                          <button
-                            style={{
-                              ...styles.contextToggle,
-                              ...(message.isActive
-                                ? styles.contextToggleActive
-                                : styles.contextToggleInactive),
-                            }}
-                            onClick={() => toggleMessageContext(message.id)}
-                            title={
-                              message.isActive
-                                ? "Click to exclude from context"
-                                : "Click to include in context"
-                            }
-                          >
-                            {message.isActive ? "✓" : ""}
-                          </button>
-
-                          <div style={styles.userMessage}>
-                            <div style={styles.messageHeader}>
-                              <span style={{ color: message.agentColor }}>
-                                [{message.agent}
-                                {message.type === "agent"
-                                  ? ` | ${message.role}`
-                                  : ""}
-                                ]
-                              </span>
-                              <span
-                                style={{
-                                  color: "var(--muted-foreground)",
-                                }}
-                              >
-                                {formatTimestamp(message.timestamp)}
-                              </span>
-                              <button
-                                style={{
-                                  ...styles.ellipsisButton,
-                                  ...(openContextMenu === message.id
-                                    ? styles.ellipsisButtonHover
-                                    : {}),
-                                }}
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  setOpenContextMenu(
-                                    openContextMenu === message.id
-                                      ? null
-                                      : message.id,
-                                  );
-                                }}
-                                onMouseEnter={(e) => {
-                                  Object.assign(
-                                    e.currentTarget.style,
-                                    styles.ellipsisButtonHover,
-                                  );
-                                }}
-                                onMouseLeave={(e) => {
-                                  if (openContextMenu !== message.id) {
-                                    e.currentTarget.style.opacity = "0.6";
-                                    e.currentTarget.style.backgroundColor =
-                                      "transparent";
-                                  }
-                                }}
-                              >
-                                ⋯
-                                {openContextMenu === message.id && (
-                                  <div
-                                    style={styles.contextMenu}
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <button
-                                      style={styles.contextMenuItem}
-                                      onClick={() =>
-                                        handleContextMenuAction(
-                                          "copy",
-                                          message.id,
-                                        )
-                                      }
-                                      onMouseEnter={(e) => {
-                                        Object.assign(
-                                          e.currentTarget.style,
-                                          styles.contextMenuItemHover,
-                                        );
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor =
-                                          "transparent";
-                                        e.currentTarget.style.color =
-                                          "var(--popover-foreground)";
-                                      }}
-                                    >
-                                      Copy message
-                                    </button>
-                                    {message.type === "agent" && (
-                                      <button
-                                        style={styles.contextMenuItem}
-                                        onClick={() =>
-                                          handleContextMenuAction(
-                                            "regenerate",
-                                            message.id,
-                                          )
-                                        }
-                                        onMouseEnter={(e) => {
-                                          Object.assign(
-                                            e.currentTarget.style,
-                                            styles.contextMenuItemHover,
-                                          );
-                                        }}
-                                        onMouseLeave={(e) => {
-                                          e.currentTarget.style.backgroundColor =
-                                            "transparent";
-                                          e.currentTarget.style.color =
-                                            "var(--popover-foreground)";
-                                        }}
-                                      >
-                                        Regenerate
-                                      </button>
-                                    )}
-                                    <button
-                                      style={styles.contextMenuItem}
-                                      onClick={() =>
-                                        handleContextMenuAction(
-                                          "delete",
-                                          message.id,
-                                        )
-                                      }
-                                      onMouseEnter={(e) => {
-                                        Object.assign(
-                                          e.currentTarget.style,
-                                          styles.contextMenuItemHover,
-                                        );
-                                      }}
-                                      onMouseLeave={(e) => {
-                                        e.currentTarget.style.backgroundColor =
-                                          "transparent";
-                                        e.currentTarget.style.color =
-                                          "var(--popover-foreground)";
-                                      }}
-                                    >
-                                      Delete message
-                                    </button>
-                                  </div>
-                                )}
-                              </button>
-                            </div>
-                            <div style={styles.messageContent}>
-                              {isLongMessage(message.content) ? (
-                                <>
-                                  {expandedMessages.has(message.id)
-                                    ? message.content
-                                    : getMessagePreview(message.content)}
-                                  <div
-                                    style={styles.showMoreLink}
-                                    onClick={() =>
-                                      toggleMessageExpansion(message.id)
-                                    }
-                                    onMouseEnter={(e) => {
-                                      e.currentTarget.style.textDecoration =
-                                        "underline";
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.currentTarget.style.textDecoration =
-                                        "none";
-                                    }}
-                                  >
-                                    {expandedMessages.has(message.id)
-                                      ? "Show less"
-                                      : "Show more..."}
-                                  </div>
-                                </>
-                              ) : (
-                                message.content
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
+                      message={message}
+                      isExpanded={expandedMessages.has(message.id)}
+                      canRegenerate={message.type === "agent"}
+                      contextMenuOpen={openContextMenu === message.id}
+                      onToggleContext={toggleMessageContext}
+                      onToggleExpansion={toggleMessageExpansion}
+                      onContextMenuAction={handleContextMenuAction}
+                      onOpenContextMenu={handleOpenContextMenu}
+                    />
                   ))}
                 />
               }
