@@ -22,6 +22,7 @@ import {
   MenuTriggerDisplay,
 } from "../../components/menu";
 import {
+  ConversationListDisplay,
   SidebarContainerDisplay,
   SidebarHeaderDisplay,
   SidebarToggleDisplay,
@@ -66,6 +67,35 @@ export default function ComponentShowcase() {
       role: "User Experience Designer",
       color: "#a855f7", // Purple
       isThinking: true,
+    },
+  ];
+
+  // Sample conversation data for ConversationListDisplay showcase
+  const sampleConversations = [
+    {
+      name: "Project Planning",
+      lastActivity: "2h ago",
+      isActive: true,
+    },
+    {
+      name: "Creative Writing",
+      lastActivity: "Yesterday",
+      isActive: false,
+    },
+    {
+      name: "Code Review",
+      lastActivity: "Dec 15",
+      isActive: false,
+    },
+    {
+      name: "Research Discussion",
+      lastActivity: "Last week",
+      isActive: false,
+    },
+    {
+      name: "Team Standup",
+      lastActivity: "3 days ago",
+      isActive: false,
     },
   ];
 
@@ -1180,6 +1210,90 @@ export default function ComponentShowcase() {
                       Expanded
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Conversation List Display</h2>
+              <p style={styles.sectionDescription}>
+                Conversation list container component that renders a scrollable
+                area for conversation items with proper spacing and visual
+                states
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Empty State:</span>
+                <div style={{ width: "200px", height: "150px" }}>
+                  <ConversationListDisplay
+                    conversations={[]}
+                    activeConversationId=""
+                    scrollState="none"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Populated List:</span>
+                <div style={{ width: "200px", height: "200px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations}
+                    activeConversationId="Project Planning"
+                    scrollState="scrollable"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Scrolled State:</span>
+                <div style={{ width: "200px", height: "150px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations}
+                    activeConversationId="Code Review"
+                    scrollState="scrolled"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>No Active Selection:</span>
+                <div style={{ width: "200px", height: "180px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations}
+                    activeConversationId=""
+                    scrollState="scrollable"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Single Item:</span>
+                <div style={{ width: "200px", height: "120px" }}>
+                  <ConversationListDisplay
+                    conversations={[sampleConversations[0]!]}
+                    activeConversationId="Project Planning"
+                    scrollState="none"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div style={{ width: "220px", height: "160px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations.slice(0, 3)}
+                    activeConversationId="Creative Writing"
+                    scrollState="scrollable"
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      borderRadius: "8px",
+                      padding: "8px",
+                    }}
+                    className="custom-conversation-list"
+                  />
                 </div>
               </div>
             </div>

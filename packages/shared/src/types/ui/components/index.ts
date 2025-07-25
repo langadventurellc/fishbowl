@@ -13,6 +13,8 @@ export * from "./ButtonProps";
 export * from "./ButtonType";
 export * from "./ComponentSize";
 export * from "./ConversationItemProps";
+export * from "./ConversationListDisplayProps";
+export * from "./ConversationListScrollState";
 export * from "./ConversationModeToggleDisplayProps";
 export * from "./ConversationToggleMode";
 export * from "./InputContainerDisplayProps";
