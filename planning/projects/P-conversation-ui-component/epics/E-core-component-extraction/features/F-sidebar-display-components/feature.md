@@ -31,6 +31,7 @@ Extract UI components related to the conversation sidebar, focusing on pure visu
 - **Purpose**: Visual representation of conversation list items
 - **Props**: conversation data, active state, timestamp, unread indicator
 - **Styling**: List item layout with hover states and selection styling
+- **Context Menu Integration**: Use the existing `ContextMenu` component from `apps/desktop/src/components/menu/ContextMenu.tsx` with ellipses trigger that appears on hover. Clicking the ellipses opens the context menu. The ContextMenu component provides keyboard support, click-outside-to-close, and flexible positioning
 
 ### SidebarToggleDisplay Component
 
@@ -111,7 +112,8 @@ Extract UI components related to the conversation sidebar, focusing on pure visu
 3. Convert styling to use theme variables from `packages/ui-theme/src/claymorphism-theme.css`
 4. Remove all onClick, onToggle, selection handlers
 5. Create pure display components showing visual states
-6. **Immediately add each component to ComponentShowcase** for visual verification
+6. **For ConversationItemDisplay**: Integrate with existing `ContextMenu` component using ellipses trigger that appears on hover (from `apps/desktop/src/components/menu/ContextMenu.tsx`)
+7. **Immediately add each component to ComponentShowcase** for visual verification
 
 **Visual States to Support:**
 
