@@ -1,18 +1,19 @@
 import { useState } from "react";
-import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
+import { AgentPill, MessageItem } from "../../components/chat";
+import { InputContainerDisplay } from "../../components/input";
 import {
+  AgentLabelsContainerDisplay,
+  ChatContainerDisplay,
+  ConversationLayoutDisplay,
   ConversationScreenDisplay,
   MainContentPanelDisplay,
-  ChatContainerDisplay,
-  AgentLabelsContainerDisplay,
-  ConversationLayoutDisplay,
 } from "../../components/layout";
-import { AgentPill, MessageItem } from "../../components/chat";
+import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 import {
+  ConversationItemDisplay,
   SidebarContainerDisplay,
   SidebarHeaderDisplay,
   SidebarToggleDisplay,
-  ConversationItemDisplay,
 } from "../../components/sidebar";
 
 interface Message {
@@ -40,8 +41,8 @@ interface Conversation {
 }
 
 export default function LayoutShowcase() {
-  const [inputText, setInputText] = useState("");
-  const [isManualMode, setIsManualMode] = useState(true);
+  const [inputText] = useState("");
+  const [isManualMode] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [expandedMessages, setExpandedMessages] = useState<Set<string>>(
     new Set(),
@@ -165,20 +166,6 @@ export default function LayoutShowcase() {
 
   // Dynamic styles that respond to theme (same pattern as DesignPrototype)
   const styles = {
-    container: {
-      width: "100%",
-      height: "100vh",
-      backgroundColor: "var(--background)",
-      color: "var(--foreground)",
-      fontFamily: "var(--font-sans)",
-      position: "relative" as const,
-      overflow: "hidden",
-    },
-    mainLayout: {
-      display: "flex",
-      height: "100%",
-      position: "relative" as const,
-    },
     newConversation: {
       padding: "12px 8px",
       marginTop: "auto",
@@ -194,42 +181,6 @@ export default function LayoutShowcase() {
     newConversationHover: {
       backgroundColor: "var(--sidebar-accent)",
       borderColor: "var(--sidebar-primary)",
-    },
-    contentArea: {
-      flex: 1,
-      display: "flex",
-      flexDirection: "column" as const,
-      height: "100%",
-      minWidth: 0,
-    },
-    agentLabelsBar: {
-      display: "flex",
-      alignItems: "center",
-      padding: "12px 16px",
-      borderBottom: "1px solid var(--border)",
-      gap: "8px",
-      backgroundColor: "var(--card)",
-      overflowX: "auto" as const,
-      flexShrink: 0,
-    },
-    agentPill: {
-      display: "flex",
-      alignItems: "center",
-      gap: "8px",
-      padding: "6px 12px",
-      borderRadius: "20px",
-      color: "white",
-      fontSize: "12px",
-      fontWeight: "500",
-      whiteSpace: "nowrap" as const,
-      flexShrink: 0,
-    },
-    thinkingDot: {
-      width: "6px",
-      height: "6px",
-      borderRadius: "50%",
-      backgroundColor: "currentColor",
-      animation: "pulse 1.5s infinite",
     },
     addAgentButton: {
       width: "32px",
@@ -251,90 +202,6 @@ export default function LayoutShowcase() {
       color: "var(--primary)",
       backgroundColor: "var(--primary-foreground)",
     },
-    chatArea: {
-      flex: 1,
-      padding: "16px",
-      overflowY: "auto" as const,
-      backgroundColor: "var(--background)",
-    },
-    inputArea: {
-      padding: "16px",
-      borderTop: "1px solid var(--border)",
-      backgroundColor: "var(--card)",
-      display: "flex",
-      alignItems: "flex-end",
-      gap: "12px",
-      flexShrink: 0,
-    },
-    textarea: {
-      flex: 1,
-      minHeight: "44px",
-      maxHeight: "120px",
-      padding: "12px 16px",
-      border: "1px solid var(--border)",
-      borderRadius: "8px",
-      backgroundColor: "var(--background)",
-      color: "var(--foreground)",
-      fontSize: "14px",
-      fontFamily: "inherit",
-      resize: "none" as const,
-      outline: "none",
-      transition: "border-color 0.15s",
-    },
-    textareaFocus: {
-      borderColor: "var(--ring)",
-    },
-    sendButton: {
-      width: "44px",
-      height: "44px",
-      borderRadius: "8px",
-      border: "none",
-      backgroundColor: "var(--primary)",
-      color: "var(--primary-foreground)",
-      cursor: "pointer",
-      fontSize: "16px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      transition: "all 0.15s",
-      flexShrink: 0,
-    },
-    sendButtonDisabled: {
-      opacity: 0.5,
-      cursor: "not-allowed",
-    },
-    modeToggle: {
-      display: "flex",
-      borderRadius: "6px",
-      border: "1px solid var(--border)",
-      overflow: "hidden",
-      flexShrink: 0,
-    },
-    modeOption: {
-      padding: "8px 16px",
-      fontSize: "12px",
-      fontWeight: "500",
-      cursor: "pointer",
-      transition: "all 0.15s",
-      border: "none",
-      outline: "none",
-    },
-    modeOptionActive: {
-      backgroundColor: "var(--primary)",
-      color: "var(--primary-foreground)",
-    },
-    modeOptionInactive: {
-      backgroundColor: "var(--background)",
-      color: "var(--muted-foreground)",
-    },
-  };
-
-  // Event handlers for demonstration
-  const handleSendMessage = () => {
-    if (inputText.trim()) {
-      console.log("Demo: Sending message:", inputText);
-      setInputText("");
-    }
   };
 
   const toggleMessageContext = (messageId: string) => {
@@ -491,77 +358,28 @@ export default function LayoutShowcase() {
                 />
               }
               inputContainer={
-                <div style={styles.inputArea}>
-                  <textarea
-                    style={styles.textarea}
-                    value={inputText}
-                    onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Type your message here..."
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSendMessage();
-                      }
-                    }}
-                    onFocus={(e) => {
-                      e.currentTarget.style.borderColor = "var(--ring)";
-                    }}
-                    onBlur={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border)";
-                    }}
-                  />
-
-                  <button
-                    style={{
-                      ...styles.sendButton,
-                      ...(inputText.trim() ? {} : styles.sendButtonDisabled),
-                    }}
-                    onClick={handleSendMessage}
-                    disabled={!inputText.trim()}
-                    title="Send message"
-                  >
-                    ✈️
-                  </button>
-
-                  <div style={styles.modeToggle}>
-                    <button
-                      style={{
-                        ...styles.modeOption,
-                        ...(isManualMode
-                          ? styles.modeOptionActive
-                          : styles.modeOptionInactive),
-                      }}
-                      onClick={() => setIsManualMode(true)}
-                    >
-                      Manual
-                    </button>
-                    <button
-                      style={{
-                        ...styles.modeOption,
-                        ...(!isManualMode
-                          ? styles.modeOptionActive
-                          : styles.modeOptionInactive),
-                      }}
-                      onClick={() => setIsManualMode(false)}
-                    >
-                      Auto
-                    </button>
-                  </div>
-                </div>
+                <InputContainerDisplay
+                  layoutVariant="default"
+                  messageInputProps={{
+                    placeholder: "Type your message here...",
+                    content: inputText,
+                    disabled: false,
+                    size: "medium",
+                  }}
+                  sendButtonProps={{
+                    disabled: !inputText.trim(),
+                    loading: false,
+                    "aria-label": "Send message",
+                  }}
+                  modeToggleProps={{
+                    currentMode: isManualMode ? "manual" : "auto",
+                    disabled: false,
+                  }}
+                />
               }
             />
           }
         />
-
-        {/* Add pulse animation for thinking indicators */}
-        <style>
-          {`
-            @keyframes pulse {
-              0%, 100% { opacity: 0.7; }
-              50% { opacity: 0.3; }
-            }
-          `}
-        </style>
       </ConversationScreenDisplay>
     </ShowcaseLayout>
   );
