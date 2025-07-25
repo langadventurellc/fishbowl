@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
+import { ConversationScreenDisplay } from "../../components/layout";
 
 interface Message {
   id: string;
@@ -608,8 +609,7 @@ export default function LayoutShowcase() {
 
   return (
     <ShowcaseLayout>
-      <div
-        style={styles.container}
+      <ConversationScreenDisplay
         onClick={() => {
           setOpenContextMenu(null);
           setOpenConversationMenu(null);
@@ -1092,7 +1092,7 @@ export default function LayoutShowcase() {
             }
           `}
         </style>
-      </div>
+      </ConversationScreenDisplay>
     </ShowcaseLayout>
   );
 }
