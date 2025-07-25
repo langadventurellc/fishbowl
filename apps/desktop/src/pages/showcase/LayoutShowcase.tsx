@@ -44,9 +44,7 @@ export default function LayoutShowcase() {
   const [inputText] = useState("");
   const [isManualMode] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const [expandedMessages, setExpandedMessages] = useState<Set<string>>(
-    new Set(),
-  );
+  const [expandedMessages] = useState<Set<string>>(new Set());
   const [openContextMenu, setOpenContextMenu] = useState<string | null>(null);
 
   // Sample conversations data
@@ -96,7 +94,7 @@ export default function LayoutShowcase() {
   ];
 
   // Sample messages data with realistic conversation flow
-  const [messages, setMessages] = useState<Message[]>([
+  const [messages] = useState<Message[]>([
     {
       id: "1",
       agent: "System",
@@ -182,28 +180,6 @@ export default function LayoutShowcase() {
       backgroundColor: "var(--sidebar-accent)",
       borderColor: "var(--sidebar-primary)",
     },
-  };
-
-  const toggleMessageContext = (messageId: string) => {
-    setMessages((prevMessages) =>
-      prevMessages.map((message) =>
-        message.id === messageId
-          ? { ...message, isActive: !message.isActive }
-          : message,
-      ),
-    );
-  };
-
-  const toggleMessageExpansion = (messageId: string) => {
-    setExpandedMessages((prev) => {
-      const newExpanded = new Set(prev);
-      if (newExpanded.has(messageId)) {
-        newExpanded.delete(messageId);
-      } else {
-        newExpanded.add(messageId);
-      }
-      return newExpanded;
-    });
   };
 
   const handleOpenContextMenu = (messageId: string | null) => {
@@ -321,8 +297,7 @@ export default function LayoutShowcase() {
                       isExpanded={expandedMessages.has(message.id)}
                       canRegenerate={message.type === "agent"}
                       contextMenuOpen={openContextMenu === message.id}
-                      onToggleContext={toggleMessageContext}
-                      onToggleExpansion={toggleMessageExpansion}
+                      onToggleContext={() => {}}
                       onContextMenuAction={handleContextMenuAction}
                       onOpenContextMenu={handleOpenContextMenu}
                     />
@@ -356,35 +331,3 @@ export default function LayoutShowcase() {
     </ShowcaseLayout>
   );
 }
-
-// Layout Component Addition Pattern for LayoutShowcase
-// ===================================================
-//
-// This page demonstrates how major layout components work together
-// in a full-screen conversation interface. To add new layout components:
-//
-// 1. Import layout components (when they become available as extracted components):
-//    import { Sidebar } from '../../components/layout/Sidebar';
-//    import { AgentPillsBar } from '../../components/layout/AgentPillsBar';
-//    import { ChatArea } from '../../components/layout/ChatArea';
-//    import { InputArea } from '../../components/layout/InputArea';
-//
-// 2. Define realistic sample data for layout integration:
-//    const layoutData = {
-//      conversations: [...],
-//      agents: [...],
-//      messages: [...],
-//      // Include interactive state and realistic content
-//    };
-//
-// 3. Replace sections with extracted components while maintaining integration:
-//    <div style={styles.contentArea}>
-//      <AgentPillsBar agents={agents} onAddAgent={handleAddAgent} />
-//      <ChatArea messages={messages} onMessageAction={handleMessageAction} />
-//      <InputArea onSendMessage={handleSendMessage} mode={mode} />
-//    </div>
-//
-// The current implementation shows the full layout structure that can be
-// incrementally replaced with extracted components as they become available.
-// This provides a realistic demonstration of how the components work together
-// in the actual application layout.

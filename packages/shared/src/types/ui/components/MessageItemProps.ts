@@ -92,15 +92,6 @@ export interface MessageItemProps {
   onToggleContext: (messageId: string) => void;
 
   /**
-   * Handler for toggling message expansion state.
-   * Called when the user clicks "Show more" or "Show less" for long messages.
-   * Controls whether the full message content is displayed or truncated.
-   *
-   * @param messageId - The ID of the message to toggle expansion for
-   */
-  onToggleExpansion: (messageId: string) => void;
-
-  /**
    * Handler for context menu actions.
    * Called when the user selects an action from the message context menu.
    * Common actions include "copy", "regenerate", and "delete".

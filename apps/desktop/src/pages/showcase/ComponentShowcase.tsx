@@ -21,6 +21,8 @@ import {
   MenuItemDisplay,
   MenuTriggerDisplay,
 } from "../../components/menu";
+import { ThemeToggle } from "../../components/showcase";
+import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 import {
   ConversationItemDisplay,
   ConversationListDisplay,
@@ -28,8 +30,6 @@ import {
   SidebarHeaderDisplay,
   SidebarToggleDisplay,
 } from "../../components/sidebar";
-import { ThemeToggle } from "../../components/showcase";
-import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -1751,7 +1751,6 @@ export default function ComponentShowcase() {
                     canRegenerate={true}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1771,7 +1770,6 @@ export default function ComponentShowcase() {
                     canRegenerate={true}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1806,7 +1804,6 @@ export default function ComponentShowcase() {
                     canRegenerate={false}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1826,7 +1823,6 @@ export default function ComponentShowcase() {
                     canRegenerate={false}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1860,7 +1856,6 @@ export default function ComponentShowcase() {
                     canRegenerate={false}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1879,7 +1874,6 @@ export default function ComponentShowcase() {
                     canRegenerate={false}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1914,7 +1908,6 @@ export default function ComponentShowcase() {
                     canRegenerate={true}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1934,7 +1927,6 @@ export default function ComponentShowcase() {
                     canRegenerate={false}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1967,7 +1959,6 @@ export default function ComponentShowcase() {
                     canRegenerate={true}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -1986,7 +1977,6 @@ export default function ComponentShowcase() {
                     canRegenerate={false}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -2018,7 +2008,6 @@ export default function ComponentShowcase() {
                     canRegenerate={true}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -2037,7 +2026,6 @@ export default function ComponentShowcase() {
                     canRegenerate={true}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />
@@ -2056,7 +2044,6 @@ export default function ComponentShowcase() {
                     canRegenerate={true}
                     contextMenuOpen={false}
                     onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
                     onOpenContextMenu={() => {}}
                   />

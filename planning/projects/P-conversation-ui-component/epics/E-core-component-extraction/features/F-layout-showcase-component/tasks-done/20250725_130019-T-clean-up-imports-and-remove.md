@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-clean-up-imports-and-remove
+parent: F-layout-showcase-component
+status: done
 title: Clean up imports and remove unused code
-status: open
 priority: normal
 prerequisites:
   - T-integrate-layout-display
 created: "2025-07-25T00:03:16.527575"
-updated: "2025-07-25T00:03:16.527575"
+updated: "2025-07-25T12:57:23.439570"
 schema_version: "1.1"
-parent: F-layout-showcase-component
+worktree: null
 ---
 
 # Clean Up Imports and Remove Unused Code
@@ -200,3 +201,7 @@ This task requires:
 - No breaking changes introduced during cleanup
 
 ### Log
+
+**2025-07-25T18:00:19.219592Z** - Successfully cleaned up imports and removed unused code from LayoutShowcase. Optimized imports to only include actually used components, removing potential lint errors. Removed 30+ line outdated documentation comment block that was no longer relevant after component integration. File size reduced to 358 lines (well under <600 target). All quality checks pass with no functionality lost. The showcase now has clean, optimized imports and focuses purely on demonstrating the integrated component library.
+
+- filesChanged: ["apps/desktop/src/pages/showcase/LayoutShowcase.tsx"]

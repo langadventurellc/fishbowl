@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import { MessageItemProps } from "@fishbowl-ai/shared";
-import { MessageHeader } from "./MessageHeader";
+import { useState } from "react";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
+import { MessageHeader } from "./MessageHeader";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.
@@ -44,7 +44,6 @@ import { MessageContextMenu } from "./MessageContextMenu";
  *   canRegenerate={true}
  *   contextMenuOpen={false}
  *   onToggleContext={() => {}}
- *   onToggleExpansion={() => {}}
  *   onContextMenuAction={() => {}}
  *   onOpenContextMenu={() => {}}
  * />
