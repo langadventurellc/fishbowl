@@ -9,7 +9,9 @@
  */
 
 import type React from "react";
+import { useState } from "react";
 import type { ConversationItemDisplayProps } from "@fishbowl-ai/shared";
+import { ConversationContextMenu } from "./ConversationContextMenu";
 
 /**
  * ConversationItemDisplay component.
@@ -32,6 +34,7 @@ export function ConversationItemDisplay({
   className = "",
   style = {},
 }: ConversationItemDisplayProps) {
+  const [isHovered, setIsHovered] = useState(false);
   // Core conversation item styles extracted from DesignPrototype lines 274-286
   const baseItemStyles: React.CSSProperties = {
     position: "relative",
@@ -128,6 +131,16 @@ export function ConversationItemDisplay({
     whiteSpace: "nowrap",
   };
 
+  // Ellipses trigger styles - positioned in top-right area
+  const ellipsesStyles: React.CSSProperties = {
+    position: "absolute",
+    top: "8px",
+    right: "8px",
+    opacity: isHovered ? 1 : 0,
+    transition: "opacity 0.15s ease",
+    zIndex: 2,
+  };
+
   // Combine all styles with custom styles taking precedence
   const combinedStyles: React.CSSProperties = {
     ...baseItemStyles,
@@ -148,6 +161,9 @@ export function ConversationItemDisplay({
             : "rgba(var(--sidebar-primary), 0.08)";
         target.style.transform = "translateX(2px)";
         target.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
+
+        // Show ellipses on hover
+        setIsHovered(true);
       }}
       onMouseLeave={(e) => {
         // Remove hover effect
@@ -157,10 +173,30 @@ export function ConversationItemDisplay({
           originalStyles.backgroundColor || "transparent";
         target.style.transform = "translateX(0)";
         target.style.boxShadow = "none";
+
+        // Hide ellipses when not hovering
+        setIsHovered(false);
       }}
     >
       {/* Unread indicator dot */}
       {showUnreadIndicator && <div style={unreadIndicatorStyles} />}
+
+      {/* Context menu with ellipses trigger - appears on hover */}
+      <div style={ellipsesStyles}>
+        <ConversationContextMenu
+          conversation={conversation}
+          position="below"
+          onRename={() => {
+            /* Placeholder for rename action */
+          }}
+          onDuplicate={() => {
+            /* Placeholder for duplicate action */
+          }}
+          onDelete={() => {
+            /* Placeholder for delete action */
+          }}
+        />
+      </div>
 
       {/* Conversation name */}
       <div style={conversationNameStyles}>{conversation.name}</div>

@@ -1306,7 +1306,9 @@ export default function ComponentShowcase() {
               <p style={styles.sectionDescription}>
                 Individual conversation item display component showing
                 conversation entries with different visual states - active,
-                inactive, unread, and hover
+                inactive, unread, and hover. Includes context menu with ellipses
+                trigger that appears on hover for conversation actions (rename,
+                duplicate, delete).
               </p>
             </div>
             <div style={styles.agentPillShowcase}>
@@ -1350,6 +1352,29 @@ export default function ComponentShowcase() {
                       isActive: false,
                     }}
                     appearanceState="hover"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Context Menu Demo:</span>
+                <div style={{ width: "200px" }}>
+                  <div
+                    style={{
+                      fontSize: "11px",
+                      color: "var(--muted-foreground)",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    ↗ Hover to see ellipses trigger
+                  </div>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "API Development",
+                      lastActivity: "30m ago",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
                   />
                 </div>
               </div>

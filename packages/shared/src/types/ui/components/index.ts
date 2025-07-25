@@ -12,6 +12,7 @@ export * from "./AgentPillProps";
 export * from "./ButtonProps";
 export * from "./ButtonType";
 export * from "./ComponentSize";
+export * from "./ConversationContextMenuProps";
 export * from "./ConversationItemDisplayProps";
 export * from "./ConversationItemProps";
 export * from "./ConversationListDisplayProps";

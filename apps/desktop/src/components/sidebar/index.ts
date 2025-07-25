@@ -8,6 +8,7 @@
  * @module components/sidebar
  */
 
+export * from "./ConversationContextMenu";
 export * from "./ConversationItemDisplay";
 export * from "./ConversationListDisplay";
 export * from "./SidebarContainerDisplay";
