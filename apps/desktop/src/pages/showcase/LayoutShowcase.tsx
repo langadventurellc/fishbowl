@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AgentPill, MessageItem } from "../../components/chat";
-import { InputContainerDisplay } from "../../components/input";
+import { Button, InputContainerDisplay } from "../../components/input";
 import {
   AgentLabelsContainerDisplay,
   ChatContainerDisplay,
@@ -182,26 +182,6 @@ export default function LayoutShowcase() {
       backgroundColor: "var(--sidebar-accent)",
       borderColor: "var(--sidebar-primary)",
     },
-    addAgentButton: {
-      width: "32px",
-      height: "32px",
-      borderRadius: "50%",
-      border: "2px dashed var(--border)",
-      backgroundColor: "transparent",
-      color: "var(--muted-foreground)",
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontSize: "16px",
-      transition: "all 0.15s",
-      flexShrink: 0,
-    },
-    addAgentButtonHover: {
-      borderColor: "var(--primary)",
-      color: "var(--primary)",
-      backgroundColor: "var(--primary-foreground)",
-    },
   };
 
   const toggleMessageContext = (messageId: string) => {
@@ -319,24 +299,16 @@ export default function LayoutShowcase() {
                     <AgentPill key={index} agent={agent} />
                   ))}
                   actionButtons={[
-                    <button
+                    <Button
                       key="add-agent"
-                      style={styles.addAgentButton}
-                      onMouseEnter={(e) => {
-                        Object.assign(
-                          e.currentTarget.style,
-                          styles.addAgentButtonHover,
-                        );
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = "var(--border)";
-                        e.currentTarget.style.color = "var(--muted-foreground)";
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }}
-                      title="Add new agent to conversation"
+                      variant="ghost"
+                      size="small"
+                      onClick={() => console.log("Demo: Adding new agent")}
+                      className="add-agent-button"
+                      aria-label="Add new agent to conversation"
                     >
                       +
-                    </button>,
+                    </Button>,
                   ]}
                 />
               }

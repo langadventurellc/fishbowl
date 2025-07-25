@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-replace-hardcoded-agent-labels
+parent: F-layout-showcase-component
+status: done
 title: Replace hardcoded agent labels bar with AgentLabelsContainerDisplay
-status: open
 priority: normal
 prerequisites: []
 created: "2025-07-25T00:02:21.469905"
-updated: "2025-07-25T00:02:21.469905"
+updated: "2025-07-25T12:47:03.290386"
 schema_version: "1.1"
-parent: F-layout-showcase-component
+worktree: null
 ---
 
 # Replace Hardcoded Agent Labels Bar with AgentLabelsContainerDisplay
@@ -191,3 +192,7 @@ This task requires:
 - Button component available for add agent functionality
 
 ### Log
+
+**2025-07-25T17:51:27.873729Z** - Successfully replaced hardcoded HTML button with Button component in AgentLabelsContainerDisplay. The AgentLabelsContainerDisplay was already correctly implemented, so the main work involved replacing the raw HTML <button> element in the actionButtons array with the proper Button component using variant="ghost" and size="small". Removed corresponding manual styling objects (addAgentButton and addAgentButtonHover) that were no longer needed. All interactive functionality preserved including onClick handler and accessibility features. Quality checks pass with no lint errors or type issues.
+
+- filesChanged: ["apps/desktop/src/pages/showcase/LayoutShowcase.tsx"]
