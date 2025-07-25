@@ -1,15 +1,15 @@
 ---
 kind: task
 id: T-create-conversationitemdisplay
+parent: F-sidebar-display-components
+status: in-progress
 title: Create ConversationItemDisplay component with props interface
-status: open
 priority: normal
 prerequisites:
   - T-create-conversationlistdisplay
 created: "2025-07-24T19:50:31.693300"
-updated: "2025-07-24T19:50:31.693300"
+updated: "2025-07-24T20:31:54.234719"
 schema_version: "1.1"
-parent: F-sidebar-display-components
 ---
 
 Create the conversation item display component for individual conversation entries.

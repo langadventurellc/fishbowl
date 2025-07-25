@@ -22,6 +22,7 @@ import {
   MenuTriggerDisplay,
 } from "../../components/menu";
 import {
+  ConversationItemDisplay,
   ConversationListDisplay,
   SidebarContainerDisplay,
   SidebarHeaderDisplay,
@@ -1293,6 +1294,111 @@ export default function ComponentShowcase() {
                       padding: "8px",
                     }}
                     className="custom-conversation-list"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Conversation Item Display</h2>
+              <p style={styles.sectionDescription}>
+                Individual conversation item display component showing
+                conversation entries with different visual states - active,
+                inactive, unread, and hover
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Active Conversation:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Project Planning",
+                      lastActivity: "2h ago",
+                      isActive: true,
+                    }}
+                    appearanceState="active"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Inactive Conversation:
+                </span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Creative Writing",
+                      lastActivity: "Yesterday",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Hover Appearance:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Code Review",
+                      lastActivity: "Dec 15",
+                      isActive: false,
+                    }}
+                    appearanceState="hover"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Unread Conversation:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Bug Fixes",
+                      lastActivity: "1h ago",
+                      isActive: false,
+                    }}
+                    appearanceState="unread"
+                    showUnreadIndicator={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Name Example:</span>
+                <div style={{ width: "180px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Very Long Conversation Name That Gets Truncated",
+                      lastActivity: "Just now",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Custom Styled",
+                      lastActivity: "5m ago",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      borderRadius: "8px",
+                      border: "1px solid var(--border)",
+                    }}
+                    className="custom-conversation-item"
                   />
                 </div>
               </div>
