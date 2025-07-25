@@ -3,6 +3,7 @@ import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 import {
   ConversationScreenDisplay,
   MainContentPanelDisplay,
+  ChatContainerDisplay,
 } from "../../components/layout";
 
 interface Message {
@@ -825,8 +826,8 @@ export default function LayoutShowcase() {
               </div>
             }
             chatContainer={
-              <div style={styles.chatArea}>
-                {messages.map((message) => (
+              <ChatContainerDisplay
+                messages={messages.map((message) => (
                   <div
                     key={message.id}
                     style={{
@@ -1029,7 +1030,7 @@ export default function LayoutShowcase() {
                     )}
                   </div>
                 ))}
-              </div>
+              />
             }
             inputContainer={
               <div style={styles.inputArea}>
