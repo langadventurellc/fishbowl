@@ -1,3 +1,7 @@
+@import "tailwindcss";
+
+@layer theme, base, components, utilities;
+
 :root {
   --background: rgb(231, 229, 228);
   --foreground: rgb(30, 41, 59);
