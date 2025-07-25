@@ -5,6 +5,7 @@ import {
   MainContentPanelDisplay,
   ChatContainerDisplay,
   AgentLabelsContainerDisplay,
+  ConversationLayoutDisplay,
 } from "../../components/layout";
 import { AgentPill } from "../../components/chat/AgentPill";
 
@@ -621,327 +622,322 @@ export default function LayoutShowcase() {
           setOpenConversationMenu(null);
         }}
       >
-        <div style={styles.mainLayout}>
-          {/* Sidebar Toggle Button */}
-          <button
-            style={styles.sidebarToggle}
-            onClick={() => {
-              setIsSidebarCollapsed(!isSidebarCollapsed);
-              setOpenConversationMenu(null);
-            }}
-            onMouseEnter={(e) => {
-              Object.assign(e.currentTarget.style, styles.sidebarToggleHover);
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "var(--background)";
-              e.currentTarget.style.color = "var(--foreground)";
-            }}
-            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-          >
-            {isSidebarCollapsed ? "→" : "←"}
-          </button>
-
-          {/* Sidebar */}
-          <div style={styles.sidebar}>
-            <div style={styles.sidebarContent}>
-              <div style={styles.sidebarTitle}>Conversations</div>
-
-              {conversations.map((conv, index) => (
-                <div
-                  key={index}
-                  style={{
-                    ...styles.conversationItem,
-                    ...(conv.isActive
-                      ? styles.conversationItemActive
-                      : styles.conversationItemInactive),
-                  }}
-                  onMouseEnter={(e) => {
-                    if (!conv.isActive) {
-                      Object.assign(
-                        e.currentTarget.style,
-                        styles.conversationItemHover,
-                      );
-                    }
-                    const ellipsis = e.currentTarget.querySelector(
-                      ".conversation-ellipsis",
-                    ) as HTMLElement;
-                    if (ellipsis) {
-                      Object.assign(
-                        ellipsis.style,
-                        styles.conversationEllipsisVisible,
-                      );
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (!conv.isActive) {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }
-                    const ellipsis = e.currentTarget.querySelector(
-                      ".conversation-ellipsis",
-                    ) as HTMLElement;
-                    if (ellipsis && openConversationMenu !== conv.name) {
-                      ellipsis.style.opacity = "0";
-                    }
-                  }}
-                >
-                  <div>🗨 {conv.name}</div>
-                  <div
-                    style={{ fontSize: "11px", opacity: 0.7, marginTop: "2px" }}
-                  >
-                    {conv.lastActivity}
-                  </div>
-                  <button
-                    className="conversation-ellipsis"
-                    style={{
-                      ...styles.conversationEllipsis,
-                      ...(openConversationMenu === conv.name
-                        ? styles.conversationEllipsisHover
-                        : {}),
-                    }}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setOpenConversationMenu(
-                        openConversationMenu === conv.name ? null : conv.name,
-                      );
-                    }}
-                    onMouseEnter={(e) => {
-                      Object.assign(
-                        e.currentTarget.style,
-                        styles.conversationEllipsisHover,
-                      );
-                    }}
-                    onMouseLeave={(e) => {
-                      if (openConversationMenu !== conv.name) {
-                        e.currentTarget.style.opacity = "0.7";
-                        e.currentTarget.style.backgroundColor = "transparent";
-                      }
-                    }}
-                  >
-                    ⋯
-                    {openConversationMenu === conv.name && (
-                      <div
-                        style={styles.conversationContextMenu}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <button
-                          style={styles.contextMenuItem}
-                          onClick={() =>
-                            handleConversationAction("rename", conv.name)
-                          }
-                          onMouseEnter={(e) => {
-                            Object.assign(
-                              e.currentTarget.style,
-                              styles.contextMenuItemHover,
-                            );
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor =
-                              "transparent";
-                            e.currentTarget.style.color =
-                              "var(--popover-foreground)";
-                          }}
-                        >
-                          Rename
-                        </button>
-                        <button
-                          style={styles.contextMenuItem}
-                          onClick={() =>
-                            handleConversationAction("delete", conv.name)
-                          }
-                          onMouseEnter={(e) => {
-                            Object.assign(
-                              e.currentTarget.style,
-                              styles.contextMenuItemHover,
-                            );
-                          }}
-                          onMouseLeave={(e) => {
-                            e.currentTarget.style.backgroundColor =
-                              "transparent";
-                            e.currentTarget.style.color =
-                              "var(--popover-foreground)";
-                          }}
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </button>
-                </div>
-              ))}
-
-              <div
-                style={styles.newConversation}
+        <ConversationLayoutDisplay
+          sidebar={
+            <>
+              {/* Sidebar Toggle Button */}
+              <button
+                style={styles.sidebarToggle}
+                onClick={() => {
+                  setIsSidebarCollapsed(!isSidebarCollapsed);
+                  setOpenConversationMenu(null);
+                }}
                 onMouseEnter={(e) => {
                   Object.assign(
                     e.currentTarget.style,
-                    styles.newConversationHover,
+                    styles.sidebarToggleHover,
                   );
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "transparent";
-                  e.currentTarget.style.borderColor = "var(--sidebar-border)";
+                  e.currentTarget.style.backgroundColor = "var(--background)";
+                  e.currentTarget.style.color = "var(--foreground)";
                 }}
+                title={
+                  isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
+                }
               >
-                + New Conversation
-              </div>
-            </div>
-          </div>
+                {isSidebarCollapsed ? "→" : "←"}
+              </button>
 
-          {/* Content Area */}
-          <MainContentPanelDisplay
-            agentLabelsContainer={
-              <AgentLabelsContainerDisplay
-                agentPills={agents.map((agent, index) => (
-                  <AgentPill key={index} agent={agent} />
-                ))}
-                actionButtons={[
-                  <button
-                    key="add-agent"
-                    style={styles.addAgentButton}
-                    onMouseEnter={(e) => {
-                      Object.assign(
-                        e.currentTarget.style,
-                        styles.addAgentButtonHover,
-                      );
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "var(--border)";
-                      e.currentTarget.style.color = "var(--muted-foreground)";
-                      e.currentTarget.style.backgroundColor = "transparent";
-                    }}
-                    title="Add new agent to conversation"
-                  >
-                    +
-                  </button>,
-                ]}
-              />
-            }
-            chatContainer={
-              <ChatContainerDisplay
-                messages={messages.map((message) => (
-                  <div
-                    key={message.id}
-                    style={{
-                      ...styles.message,
-                      ...(message.isActive ? {} : styles.messageInactive),
-                    }}
-                  >
-                    {message.type === "system" ? (
-                      <div style={styles.systemMessage}>{message.content}</div>
-                    ) : (
+              {/* Sidebar */}
+              <div style={styles.sidebar}>
+                <div style={styles.sidebarContent}>
+                  <div style={styles.sidebarTitle}>Conversations</div>
+
+                  {conversations.map((conv, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        ...styles.conversationItem,
+                        ...(conv.isActive
+                          ? styles.conversationItemActive
+                          : styles.conversationItemInactive),
+                      }}
+                      onMouseEnter={(e) => {
+                        if (!conv.isActive) {
+                          Object.assign(
+                            e.currentTarget.style,
+                            styles.conversationItemHover,
+                          );
+                        }
+                        const ellipsis = e.currentTarget.querySelector(
+                          ".conversation-ellipsis",
+                        ) as HTMLElement;
+                        if (ellipsis) {
+                          Object.assign(
+                            ellipsis.style,
+                            styles.conversationEllipsisVisible,
+                          );
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!conv.isActive) {
+                          e.currentTarget.style.backgroundColor = "transparent";
+                        }
+                        const ellipsis = e.currentTarget.querySelector(
+                          ".conversation-ellipsis",
+                        ) as HTMLElement;
+                        if (ellipsis && openConversationMenu !== conv.name) {
+                          ellipsis.style.opacity = "0";
+                        }
+                      }}
+                    >
+                      <div>🗨 {conv.name}</div>
                       <div
-                        style={styles.messageWrapper}
+                        style={{
+                          fontSize: "11px",
+                          opacity: 0.7,
+                          marginTop: "2px",
+                        }}
+                      >
+                        {conv.lastActivity}
+                      </div>
+                      <button
+                        className="conversation-ellipsis"
+                        style={{
+                          ...styles.conversationEllipsis,
+                          ...(openConversationMenu === conv.name
+                            ? styles.conversationEllipsisHover
+                            : {}),
+                        }}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setOpenConversationMenu(
+                            openConversationMenu === conv.name
+                              ? null
+                              : conv.name,
+                          );
+                        }}
                         onMouseEnter={(e) => {
                           Object.assign(
                             e.currentTarget.style,
-                            styles.messageWrapperHover,
+                            styles.conversationEllipsisHover,
                           );
                         }}
                         onMouseLeave={(e) => {
-                          e.currentTarget.style.border =
-                            "1px solid transparent";
-                          e.currentTarget.style.backgroundColor = "transparent";
+                          if (openConversationMenu !== conv.name) {
+                            e.currentTarget.style.opacity = "0.7";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
+                          }
                         }}
                       >
-                        <button
-                          style={{
-                            ...styles.contextToggle,
-                            ...(message.isActive
-                              ? styles.contextToggleActive
-                              : styles.contextToggleInactive),
-                          }}
-                          onClick={() => toggleMessageContext(message.id)}
-                          title={
-                            message.isActive
-                              ? "Click to exclude from context"
-                              : "Click to include in context"
-                          }
-                        >
-                          {message.isActive ? "✓" : ""}
-                        </button>
-
-                        <div style={styles.userMessage}>
-                          <div style={styles.messageHeader}>
-                            <span style={{ color: message.agentColor }}>
-                              [{message.agent}
-                              {message.type === "agent"
-                                ? ` | ${message.role}`
-                                : ""}
-                              ]
-                            </span>
-                            <span
-                              style={{
-                                color: "var(--muted-foreground)",
-                              }}
-                            >
-                              {formatTimestamp(message.timestamp)}
-                            </span>
+                        ⋯
+                        {openConversationMenu === conv.name && (
+                          <div
+                            style={styles.conversationContextMenu}
+                            onClick={(e) => e.stopPropagation()}
+                          >
                             <button
-                              style={{
-                                ...styles.ellipsisButton,
-                                ...(openContextMenu === message.id
-                                  ? styles.ellipsisButtonHover
-                                  : {}),
-                              }}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                setOpenContextMenu(
-                                  openContextMenu === message.id
-                                    ? null
-                                    : message.id,
-                                );
-                              }}
+                              style={styles.contextMenuItem}
+                              onClick={() =>
+                                handleConversationAction("rename", conv.name)
+                              }
                               onMouseEnter={(e) => {
                                 Object.assign(
                                   e.currentTarget.style,
-                                  styles.ellipsisButtonHover,
+                                  styles.contextMenuItemHover,
                                 );
                               }}
                               onMouseLeave={(e) => {
-                                if (openContextMenu !== message.id) {
-                                  e.currentTarget.style.opacity = "0.6";
-                                  e.currentTarget.style.backgroundColor =
-                                    "transparent";
-                                }
+                                e.currentTarget.style.backgroundColor =
+                                  "transparent";
+                                e.currentTarget.style.color =
+                                  "var(--popover-foreground)";
                               }}
                             >
-                              ⋯
-                              {openContextMenu === message.id && (
-                                <div
-                                  style={styles.contextMenu}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <button
-                                    style={styles.contextMenuItem}
-                                    onClick={() =>
-                                      handleContextMenuAction(
-                                        "copy",
-                                        message.id,
-                                      )
-                                    }
-                                    onMouseEnter={(e) => {
-                                      Object.assign(
-                                        e.currentTarget.style,
-                                        styles.contextMenuItemHover,
-                                      );
-                                    }}
-                                    onMouseLeave={(e) => {
-                                      e.currentTarget.style.backgroundColor =
-                                        "transparent";
-                                      e.currentTarget.style.color =
-                                        "var(--popover-foreground)";
-                                    }}
+                              Rename
+                            </button>
+                            <button
+                              style={styles.contextMenuItem}
+                              onClick={() =>
+                                handleConversationAction("delete", conv.name)
+                              }
+                              onMouseEnter={(e) => {
+                                Object.assign(
+                                  e.currentTarget.style,
+                                  styles.contextMenuItemHover,
+                                );
+                              }}
+                              onMouseLeave={(e) => {
+                                e.currentTarget.style.backgroundColor =
+                                  "transparent";
+                                e.currentTarget.style.color =
+                                  "var(--popover-foreground)";
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        )}
+                      </button>
+                    </div>
+                  ))}
+
+                  <div
+                    style={styles.newConversation}
+                    onMouseEnter={(e) => {
+                      Object.assign(
+                        e.currentTarget.style,
+                        styles.newConversationHover,
+                      );
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = "transparent";
+                      e.currentTarget.style.borderColor =
+                        "var(--sidebar-border)";
+                    }}
+                  >
+                    + New Conversation
+                  </div>
+                </div>
+              </div>
+            </>
+          }
+          mainContent={
+            <MainContentPanelDisplay
+              agentLabelsContainer={
+                <AgentLabelsContainerDisplay
+                  agentPills={agents.map((agent, index) => (
+                    <AgentPill key={index} agent={agent} />
+                  ))}
+                  actionButtons={[
+                    <button
+                      key="add-agent"
+                      style={styles.addAgentButton}
+                      onMouseEnter={(e) => {
+                        Object.assign(
+                          e.currentTarget.style,
+                          styles.addAgentButtonHover,
+                        );
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.borderColor = "var(--border)";
+                        e.currentTarget.style.color = "var(--muted-foreground)";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                      title="Add new agent to conversation"
+                    >
+                      +
+                    </button>,
+                  ]}
+                />
+              }
+              chatContainer={
+                <ChatContainerDisplay
+                  messages={messages.map((message) => (
+                    <div
+                      key={message.id}
+                      style={{
+                        ...styles.message,
+                        ...(message.isActive ? {} : styles.messageInactive),
+                      }}
+                    >
+                      {message.type === "system" ? (
+                        <div style={styles.systemMessage}>
+                          {message.content}
+                        </div>
+                      ) : (
+                        <div
+                          style={styles.messageWrapper}
+                          onMouseEnter={(e) => {
+                            Object.assign(
+                              e.currentTarget.style,
+                              styles.messageWrapperHover,
+                            );
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.border =
+                              "1px solid transparent";
+                            e.currentTarget.style.backgroundColor =
+                              "transparent";
+                          }}
+                        >
+                          <button
+                            style={{
+                              ...styles.contextToggle,
+                              ...(message.isActive
+                                ? styles.contextToggleActive
+                                : styles.contextToggleInactive),
+                            }}
+                            onClick={() => toggleMessageContext(message.id)}
+                            title={
+                              message.isActive
+                                ? "Click to exclude from context"
+                                : "Click to include in context"
+                            }
+                          >
+                            {message.isActive ? "✓" : ""}
+                          </button>
+
+                          <div style={styles.userMessage}>
+                            <div style={styles.messageHeader}>
+                              <span style={{ color: message.agentColor }}>
+                                [{message.agent}
+                                {message.type === "agent"
+                                  ? ` | ${message.role}`
+                                  : ""}
+                                ]
+                              </span>
+                              <span
+                                style={{
+                                  color: "var(--muted-foreground)",
+                                }}
+                              >
+                                {formatTimestamp(message.timestamp)}
+                              </span>
+                              <button
+                                style={{
+                                  ...styles.ellipsisButton,
+                                  ...(openContextMenu === message.id
+                                    ? styles.ellipsisButtonHover
+                                    : {}),
+                                }}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setOpenContextMenu(
+                                    openContextMenu === message.id
+                                      ? null
+                                      : message.id,
+                                  );
+                                }}
+                                onMouseEnter={(e) => {
+                                  Object.assign(
+                                    e.currentTarget.style,
+                                    styles.ellipsisButtonHover,
+                                  );
+                                }}
+                                onMouseLeave={(e) => {
+                                  if (openContextMenu !== message.id) {
+                                    e.currentTarget.style.opacity = "0.6";
+                                    e.currentTarget.style.backgroundColor =
+                                      "transparent";
+                                  }
+                                }}
+                              >
+                                ⋯
+                                {openContextMenu === message.id && (
+                                  <div
+                                    style={styles.contextMenu}
+                                    onClick={(e) => e.stopPropagation()}
                                   >
-                                    Copy message
-                                  </button>
-                                  {message.type === "agent" && (
                                     <button
                                       style={styles.contextMenuItem}
                                       onClick={() =>
                                         handleContextMenuAction(
-                                          "regenerate",
+                                          "copy",
                                           message.id,
                                         )
                                       }
@@ -958,133 +954,158 @@ export default function LayoutShowcase() {
                                           "var(--popover-foreground)";
                                       }}
                                     >
-                                      Regenerate
+                                      Copy message
                                     </button>
-                                  )}
-                                  <button
-                                    style={styles.contextMenuItem}
+                                    {message.type === "agent" && (
+                                      <button
+                                        style={styles.contextMenuItem}
+                                        onClick={() =>
+                                          handleContextMenuAction(
+                                            "regenerate",
+                                            message.id,
+                                          )
+                                        }
+                                        onMouseEnter={(e) => {
+                                          Object.assign(
+                                            e.currentTarget.style,
+                                            styles.contextMenuItemHover,
+                                          );
+                                        }}
+                                        onMouseLeave={(e) => {
+                                          e.currentTarget.style.backgroundColor =
+                                            "transparent";
+                                          e.currentTarget.style.color =
+                                            "var(--popover-foreground)";
+                                        }}
+                                      >
+                                        Regenerate
+                                      </button>
+                                    )}
+                                    <button
+                                      style={styles.contextMenuItem}
+                                      onClick={() =>
+                                        handleContextMenuAction(
+                                          "delete",
+                                          message.id,
+                                        )
+                                      }
+                                      onMouseEnter={(e) => {
+                                        Object.assign(
+                                          e.currentTarget.style,
+                                          styles.contextMenuItemHover,
+                                        );
+                                      }}
+                                      onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor =
+                                          "transparent";
+                                        e.currentTarget.style.color =
+                                          "var(--popover-foreground)";
+                                      }}
+                                    >
+                                      Delete message
+                                    </button>
+                                  </div>
+                                )}
+                              </button>
+                            </div>
+                            <div style={styles.messageContent}>
+                              {isLongMessage(message.content) ? (
+                                <>
+                                  {expandedMessages.has(message.id)
+                                    ? message.content
+                                    : getMessagePreview(message.content)}
+                                  <div
+                                    style={styles.showMoreLink}
                                     onClick={() =>
-                                      handleContextMenuAction(
-                                        "delete",
-                                        message.id,
-                                      )
+                                      toggleMessageExpansion(message.id)
                                     }
                                     onMouseEnter={(e) => {
-                                      Object.assign(
-                                        e.currentTarget.style,
-                                        styles.contextMenuItemHover,
-                                      );
+                                      e.currentTarget.style.textDecoration =
+                                        "underline";
                                     }}
                                     onMouseLeave={(e) => {
-                                      e.currentTarget.style.backgroundColor =
-                                        "transparent";
-                                      e.currentTarget.style.color =
-                                        "var(--popover-foreground)";
+                                      e.currentTarget.style.textDecoration =
+                                        "none";
                                     }}
                                   >
-                                    Delete message
-                                  </button>
-                                </div>
+                                    {expandedMessages.has(message.id)
+                                      ? "Show less"
+                                      : "Show more..."}
+                                  </div>
+                                </>
+                              ) : (
+                                message.content
                               )}
-                            </button>
-                          </div>
-                          <div style={styles.messageContent}>
-                            {isLongMessage(message.content) ? (
-                              <>
-                                {expandedMessages.has(message.id)
-                                  ? message.content
-                                  : getMessagePreview(message.content)}
-                                <div
-                                  style={styles.showMoreLink}
-                                  onClick={() =>
-                                    toggleMessageExpansion(message.id)
-                                  }
-                                  onMouseEnter={(e) => {
-                                    e.currentTarget.style.textDecoration =
-                                      "underline";
-                                  }}
-                                  onMouseLeave={(e) => {
-                                    e.currentTarget.style.textDecoration =
-                                      "none";
-                                  }}
-                                >
-                                  {expandedMessages.has(message.id)
-                                    ? "Show less"
-                                    : "Show more..."}
-                                </div>
-                              </>
-                            ) : (
-                              message.content
-                            )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              />
-            }
-            inputContainer={
-              <div style={styles.inputArea}>
-                <textarea
-                  style={styles.textarea}
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Type your message here..."
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSendMessage();
-                    }
-                  }}
-                  onFocus={(e) => {
-                    e.currentTarget.style.borderColor = "var(--ring)";
-                  }}
-                  onBlur={(e) => {
-                    e.currentTarget.style.borderColor = "var(--border)";
-                  }}
+                      )}
+                    </div>
+                  ))}
                 />
+              }
+              inputContainer={
+                <div style={styles.inputArea}>
+                  <textarea
+                    style={styles.textarea}
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    placeholder="Type your message here..."
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
+                    onFocus={(e) => {
+                      e.currentTarget.style.borderColor = "var(--ring)";
+                    }}
+                    onBlur={(e) => {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                    }}
+                  />
 
-                <button
-                  style={{
-                    ...styles.sendButton,
-                    ...(inputText.trim() ? {} : styles.sendButtonDisabled),
-                  }}
-                  onClick={handleSendMessage}
-                  disabled={!inputText.trim()}
-                  title="Send message"
-                >
-                  ✈️
-                </button>
-
-                <div style={styles.modeToggle}>
                   <button
                     style={{
-                      ...styles.modeOption,
-                      ...(isManualMode
-                        ? styles.modeOptionActive
-                        : styles.modeOptionInactive),
+                      ...styles.sendButton,
+                      ...(inputText.trim() ? {} : styles.sendButtonDisabled),
                     }}
-                    onClick={() => setIsManualMode(true)}
+                    onClick={handleSendMessage}
+                    disabled={!inputText.trim()}
+                    title="Send message"
                   >
-                    Manual
+                    ✈️
                   </button>
-                  <button
-                    style={{
-                      ...styles.modeOption,
-                      ...(!isManualMode
-                        ? styles.modeOptionActive
-                        : styles.modeOptionInactive),
-                    }}
-                    onClick={() => setIsManualMode(false)}
-                  >
-                    Auto
-                  </button>
+
+                  <div style={styles.modeToggle}>
+                    <button
+                      style={{
+                        ...styles.modeOption,
+                        ...(isManualMode
+                          ? styles.modeOptionActive
+                          : styles.modeOptionInactive),
+                      }}
+                      onClick={() => setIsManualMode(true)}
+                    >
+                      Manual
+                    </button>
+                    <button
+                      style={{
+                        ...styles.modeOption,
+                        ...(!isManualMode
+                          ? styles.modeOptionActive
+                          : styles.modeOptionInactive),
+                      }}
+                      onClick={() => setIsManualMode(false)}
+                    >
+                      Auto
+                    </button>
+                  </div>
                 </div>
-              </div>
-            }
-          />
-        </div>
+              }
+            />
+          }
+        />
 
         {/* Add pulse animation for thinking indicators */}
         <style>
