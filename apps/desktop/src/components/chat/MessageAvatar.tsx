@@ -2,18 +2,21 @@ import React from "react";
 import { MessageAvatarProps } from "@fishbowl-ai/shared";
 
 /**
- * MessageAvatar component displays a colored circle/pill for message sender identification.
+ * MessageAvatar component displays a colored circle avatar for message sender identification.
  *
- * Extracted from DesignPrototype.tsx to create a pure display component that shows
- * agent identification through colored visual indicators. Used in message headers
- * to provide visual association between messages and their agent senders.
+ * A pure visual component that creates agent identification through colored circular avatars
+ * with initials. Used in message headers to provide immediate visual association between
+ * messages and their AI agent senders, enhancing conversation readability and organization.
  *
  * Features:
- * - Colored circle/pill matching agent theme colors
- * - Multiple size variants (small, medium, large)
- * - Theme-aware styling with CSS custom properties
- * - Accessibility support with proper ARIA attributes
- * - Pure component with no state or side effects
+ * - Colored circular avatars matching agent theme colors for consistent branding
+ * - Agent initials display for enhanced identification and personalization
+ * - Multiple size variants (small, medium, large) for different UI contexts
+ * - Responsive design with proper scaling and typography adjustments
+ * - Theme-aware styling with CSS custom properties for dark/light mode support
+ * - Full accessibility support with proper ARIA attributes and semantic markup
+ * - Pure component design with no internal state or side effects
+ * - Subtle visual enhancements with borders and shadows for depth
  */
 export function MessageAvatar({
   agentColor,

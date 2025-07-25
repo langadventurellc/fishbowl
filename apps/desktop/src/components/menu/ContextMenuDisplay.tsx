@@ -4,16 +4,16 @@ import { useState } from "react";
 /**
  * ContextMenuDisplay Component
  *
- * Visual representation of dropdown context menus extracted from DesignPrototype.tsx.
- * Focuses on pure visual display with proper positioning, styling, and theming
- * using CSS custom properties from the claymorphism theme system.
+ * Reusable context menu component that renders dropdown menus with proper
+ * positioning and styling. Used throughout the application for right-click
+ * context menus, dropdown actions, and overflow menus.
  *
  * Features:
- * - Above/below positioning with proper margins
+ * - Flexible above/below positioning with automatic margins
  * - Theme-aware styling using CSS custom properties
- * - Visual states for menu items (normal, hover, disabled)
+ * - Interactive states for menu items (normal, hover, disabled)
  * - Proper z-index layering and shadow effects
- * - Exact visual match with DesignPrototype context menu appearance
+ * - Keyboard and mouse accessibility support
  */
 export function ContextMenuDisplay({
   isOpen,
@@ -27,7 +27,7 @@ export function ContextMenuDisplay({
     return null;
   }
 
-  // Base menu styles extracted from DesignPrototype contextMenu object
+  // Base menu styles following the application's design system
   const getMenuStyles = () => {
     const baseStyles = {
       position: "absolute" as const,
@@ -40,7 +40,7 @@ export function ContextMenuDisplay({
       zIndex: 1000,
     };
 
-    // Position-specific styles from contextMenu and contextMenuAbove objects
+    // Position-specific styles for above/below menu positioning
     if (position === "above") {
       return {
         ...baseStyles,
@@ -57,7 +57,7 @@ export function ContextMenuDisplay({
     };
   };
 
-  // Menu item styles extracted from DesignPrototype contextMenuItem object
+  // Menu item styles with interactive state handling
   const getMenuItemStyles = (item: ContextMenuItem, index: number) => {
     const baseStyles = {
       display: "block",

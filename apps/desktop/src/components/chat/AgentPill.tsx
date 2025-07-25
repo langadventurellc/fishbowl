@@ -4,9 +4,9 @@ import { AgentPillProps } from "@fishbowl-ai/shared";
 /**
  * AgentPill component displays agent information in a pill-shaped container.
  *
- * Extracted from DesignPrototype.tsx to create a reusable atomic component
- * that shows agent name, role, and optional thinking indicator with proper
- * theme-aware styling.
+ * A reusable atomic component that shows agent name, role, and optional thinking
+ * indicator with proper theme-aware styling. Features hover effects, keyboard
+ * navigation, and proper accessibility attributes for interactive elements.
  */
 export function AgentPill({ agent, onClick, className }: AgentPillProps) {
   const styles = {

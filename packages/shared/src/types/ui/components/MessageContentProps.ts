@@ -13,8 +13,8 @@ import { MessageType } from "../core/MessageType";
  * Props interface for the MessageContent component.
  *
  * MessageContent displays message text content with proper typography,
- * whitespace preservation, and text selection support. Extracted from
- * DesignPrototype.tsx to create a pure display component for message content.
+ * whitespace preservation, and text selection support. Serves as a pure
+ * display component for rendering formatted message text with expansion capabilities.
  *
  * @example
  * ```typescript

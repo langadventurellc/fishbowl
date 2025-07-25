@@ -2,8 +2,8 @@
  * Component props interfaces barrel export.
  *
  * Re-exports all component prop interfaces for the conversation UI system.
- * This includes props interfaces for all UI components that will be extracted
- * from the DesignPrototype during component decomposition.
+ * This includes props interfaces for all UI components used throughout
+ * the conversation interface.
  *
  * @module types/ui/components
  */

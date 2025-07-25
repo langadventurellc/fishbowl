@@ -1,23 +1,24 @@
 /**
  * Props for AgentLabelsContainerDisplay component.
- * Top bar layout for displaying active agent pills with horizontal
- * scrolling and responsive behavior.
+ * Self-contained top bar layout that internally generates agent pills
+ * from agent data with horizontal scrolling and responsive behavior.
  */
 
 import type React from "react";
+import type { Agent } from "../core/Agent";
 
 export interface AgentLabelsContainerDisplayProps {
   /**
-   * Array of agent pill components to display.
-   * Each agent should be rendered as an AgentPill component.
+   * Array of agent data to display as pills.
+   * Component internally creates AgentPill components from this data.
    */
-  agentPills?: React.ReactNode[];
+  agents: Agent[];
 
   /**
-   * Additional action buttons or controls to display.
-   * Typically includes add agent button and theme toggle.
+   * Optional callback for the built-in "Add New Agent" button.
+   * When provided, displays an "Add Agent" button that calls this function.
    */
-  actionButtons?: React.ReactNode[];
+  onAddAgent?: () => void;
 
   /**
    * Height of the agent labels bar.

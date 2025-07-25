@@ -5,16 +5,16 @@ import { MenuTriggerVariant } from "./MenuTriggerVariant";
 /**
  * Props interface for the MenuTriggerDisplay component.
  *
- * This component provides visual representation of ellipsis button triggers
- * extracted from DesignPrototype.tsx, focusing purely on display without
- * interactive functionality beyond visual state representation.
+ * Defines the configuration options for menu trigger buttons used throughout
+ * the application to activate dropdown menus and context menus. Supports
+ * multiple visual states, positioning options, and sizing configurations.
  *
  * @module types/ui/menu/MenuTriggerDisplayProps
  */
 export interface MenuTriggerDisplayProps {
   /**
    * Visual variant to display the menu trigger in.
-   * Controls which visual state is shown for demonstration purposes.
+   * Controls the interactive state and styling of the trigger button.
    */
   variant?: MenuTriggerVariant;
 

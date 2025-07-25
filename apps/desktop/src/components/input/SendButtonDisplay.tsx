@@ -2,12 +2,12 @@ import { SendButtonDisplayProps } from "@fishbowl-ai/shared";
 import { Button } from "./Button";
 
 /**
- * SendButtonDisplay component renders a visual representation of the send button
- * without any interactive functionality. Pure display component for showcase purposes.
+ * SendButtonDisplay component renders the send button for submitting conversation messages.
+ * Features visual feedback for enabled, disabled, and loading states with appropriate
+ * styling changes to indicate the current interaction state.
  *
- * Uses the existing Button component with primary variant and medium size to match
- * DesignPrototype.tsx lines 422-435 specifications (40px x 40px, primary styling).
- * Supports enabled, disabled, and loading visual states.
+ * Uses the unified Button component with primary variant and medium size (40px x 40px)
+ * for consistent appearance with the rest of the interface.
  */
 export function SendButtonDisplay({
   disabled = false,

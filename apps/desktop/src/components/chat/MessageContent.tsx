@@ -4,21 +4,21 @@ import { useState } from "react";
 /**
  * MessageContent component displays message text with proper formatting and typography.
  *
- * Extracted from DesignPrototype.tsx to create a display component that renders
- * message text content with proper line spacing, whitespace preservation, text
- * selection support, and automatic expansion functionality for long messages.
+ * A specialized display component that renders message text content with optimal
+ * readability, whitespace preservation, and intelligent expansion handling for
+ * long messages. Provides a consistent text display experience across all message types.
  *
  * Features:
- * - Typography extracted from DesignPrototype (14px font, 1.5 line-height)
- * - Vertical padding (8px) matching DesignPrototype messageContent styling
- * - Whitespace preservation with `whiteSpace: "pre-wrap"`
- * - Text selection and copying functionality enabled
- * - Theme-aware styling with CSS custom properties
- * - Support for different message types (user, agent, system)
- * - **Automatic content expansion**: Messages longer than threshold (default 250 chars) show "Show more..." button
- * - **Self-contained logic**: No external state or callbacks required
- * - **Keyboard accessible**: Show more/less button supports Enter and Space keys
- * - Proper overflow handling for long content
+ * - Optimized typography with 14px font size and 1.5 line-height for readability
+ * - Consistent vertical padding (8px) for proper visual spacing
+ * - Whitespace preservation using `whiteSpace: "pre-wrap"` for formatted text
+ * - Full text selection and copying functionality for user convenience
+ * - Theme-aware styling with CSS custom properties for dark/light mode support
+ * - Contextual styling for different message types (user, agent, system)
+ * - **Smart content expansion**: Messages exceeding character threshold show expandable interface
+ * - **Self-contained state management**: No external dependencies for expansion logic
+ * - **Full keyboard accessibility**: Expansion controls support Enter and Space key activation
+ * - Intelligent overflow handling with word-boundary-aware truncation
  *
  * @example
  * ```tsx
@@ -80,7 +80,7 @@ export function MessageContent({
   const displayContent =
     isLong && !isExpanded ? getMessagePreview(content) : content;
 
-  // Component styles extracted from DesignPrototype.tsx (lines 374-379)
+  // Component styles for consistent text formatting and readability
   const styles = {
     content: {
       fontSize: "14px",

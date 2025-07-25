@@ -1,15 +1,17 @@
 import React from "react";
 import { ChatContainerDisplayProps } from "@fishbowl-ai/shared";
+import { MessageItem } from "../chat/MessageItem";
 
 /**
  * ChatContainerDisplay - Scrollable messages area layout component
  *
- * Extracted from DesignPrototype.tsx lines 354-361 (styles.chatArea).
- * Provides the scrollable container layout for chat messages with
- * proper overflow handling, padding, and message spacing.
+ * Main conversation display area that renders chat messages in a scrollable container.
+ * Handles message rendering, empty states, and provides proper overflow management
+ * with customizable padding and spacing between messages.
  */
 export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   messages,
+  onContextMenuAction,
   maxHeight,
   messageSpacing = "12px",
   containerPadding = "16px 24px",
@@ -18,7 +20,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   style,
   onScroll,
 }) => {
-  // Container styles extracted from DesignPrototype.tsx lines 354-361 (chatArea)
+  // Container styles for the scrollable chat messages area
   const containerStyles: React.CSSProperties = {
     flex: 1,
     overflowY: "auto" as const,
@@ -35,7 +37,14 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   // Render messages or children
   const renderContent = () => {
     if (messages && messages.length > 0) {
-      return messages;
+      return messages.map((message) => (
+        <MessageItem
+          key={message.id}
+          message={message}
+          canRegenerate={message.type === "agent"}
+          onContextMenuAction={onContextMenuAction || (() => {})}
+        />
+      ));
     }
 
     if (emptyState) {

@@ -13,8 +13,8 @@ import { MessageType } from "../core/MessageType";
  * Props interface for the MessageHeader component.
  *
  * MessageHeader displays message metadata including agent information and timestamp
- * in a consistent layout with proper spacing and typography. Extracted from
- * DesignPrototype.tsx to create a pure display component for message headers.
+ * in a consistent layout with proper spacing and typography. Used as a pure display
+ * component for rendering message sender information and timestamps.
  *
  * @example
  * ```typescript

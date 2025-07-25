@@ -2,8 +2,8 @@
  * ButtonProps interface for unified button component.
  *
  * Defines the props contract for the Button component that supports multiple
- * variants extracted from DesignPrototype: primary, secondary, ghost, and toggle.
- * Each variant provides different visual styling for different use cases.
+ * variants: primary, secondary, ghost, and toggle. Each variant provides
+ * different visual styling for different use cases within the conversation interface.
  *
  * @module types/ui/components/ButtonProps
  */

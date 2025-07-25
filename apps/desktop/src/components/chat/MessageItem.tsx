@@ -1,30 +1,30 @@
-import React, { useState } from "react";
 import { MessageItemProps } from "@fishbowl-ai/shared";
-import { MessageHeader } from "./MessageHeader";
+import { useState } from "react";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
+import { MessageHeader } from "./MessageHeader";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.
  *
- * Extracted from DesignPrototype.tsx to create a display component that composes
- * MessageHeader and MessageContent into a complete message container. Maintains the
- * card-like visual styling and includes context toggle functionality.
+ * A complete message display component that renders individual chat messages with
+ * contextual styling, interactive features, and proper accessibility support.
+ * Composes MessageHeader and MessageContent components into a unified message container.
  *
  * Features:
- * - Interactive context toggle button for user and agent messages
- * - Composes MessageHeader and MessageContent components
- * - Supports all message types (user, agent, system)
- * - Card-like layout with theme-aware styling
- * - Agent color coding system
- * - Proper visual hierarchy and spacing
- * - Theme switching support (light/dark)
- * - Accessibility features with ARIA labels and keyboard navigation
+ * - Interactive context toggle button for controlling message inclusion in conversation context
+ * - Composable architecture using MessageHeader and MessageContent components
+ * - Support for all message types (user, agent, system) with type-specific styling
+ * - Card-like layout with consistent visual hierarchy and spacing
+ * - Agent color coding system for visual identification
+ * - Context menu integration for message actions (copy, delete, regenerate)
+ * - Theme-aware styling with CSS custom properties
+ * - Full accessibility support with ARIA labels and keyboard navigation
  *
  * Message Type Styling:
- * - System: Centered, italic, muted styling
- * - User: Right-aligned with accent background
- * - Agent: Left-aligned with header composition
+ * - System: Centered, italic, muted appearance for status messages
+ * - User: Right-aligned with accent background for user input
+ * - Agent: Left-aligned with full header composition for AI responses
  *
  * @example
  * ```tsx
@@ -44,7 +44,6 @@ import { MessageContextMenu } from "./MessageContextMenu";
  *   canRegenerate={true}
  *   contextMenuOpen={false}
  *   onToggleContext={() => {}}
- *   onToggleExpansion={() => {}}
  *   onContextMenuAction={() => {}}
  *   onOpenContextMenu={() => {}}
  * />
@@ -81,19 +80,12 @@ import { MessageContextMenu } from "./MessageContextMenu";
  * ```
  */
 export function MessageItem(props: MessageItemProps) {
-  const {
-    message,
-    className,
-    canRegenerate,
-    onToggleContext,
-    onContextMenuAction,
-  } = props;
+  const { message, className, canRegenerate, onContextMenuAction } = props;
   const [isActive, setIsActive] = useState(message.isActive);
 
   const handleToggleContext = () => {
     const newActiveState = !isActive;
     setIsActive(newActiveState);
-    onToggleContext(message.id);
   };
 
   // Context menu handlers
@@ -109,12 +101,12 @@ export function MessageItem(props: MessageItemProps) {
     onContextMenuAction("regenerate", message.id);
   };
 
-  // Position logic from DesignPrototype - show menu above for last messages
+  // Context menu positioning logic - show menu above for messages near bottom of viewport
   const shouldShowMenuAbove = () => {
     // For now, default to below - could be enhanced with viewport detection
     return false;
   };
-  // Component styles extracted from DesignPrototype.tsx
+  // Component styles for consistent message layout and theming
   const styles = {
     message: {
       width: "100%",

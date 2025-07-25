@@ -21,6 +21,8 @@ import {
   MenuItemDisplay,
   MenuTriggerDisplay,
 } from "../../components/menu";
+import { ThemeToggle } from "../../components/showcase";
+import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 import {
   ConversationItemDisplay,
   ConversationListDisplay,
@@ -28,8 +30,6 @@ import {
   SidebarHeaderDisplay,
   SidebarToggleDisplay,
 } from "../../components/sidebar";
-import { ThemeToggle } from "../../components/showcase";
-import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
@@ -636,32 +636,7 @@ export default function ComponentShowcase() {
                     collapsed={false}
                     widthVariant="default"
                     showBorder={true}
-                  >
-                    <SidebarHeaderDisplay title="Conversations" />
-                    <div
-                      style={{
-                        padding: "8px 12px",
-                        borderRadius: "6px",
-                        fontSize: "13px",
-                        backgroundColor: "var(--sidebar-accent)",
-                        color: "var(--sidebar-accent-foreground)",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      🗨 Active Conversation
-                    </div>
-                    <div
-                      style={{
-                        padding: "8px 12px",
-                        borderRadius: "6px",
-                        fontSize: "13px",
-                        color: "var(--muted-foreground)",
-                        marginBottom: "4px",
-                      }}
-                    >
-                      🗨 Previous Chat
-                    </div>
-                  </SidebarContainerDisplay>
+                  />
                 </div>
               </div>
 
@@ -672,9 +647,7 @@ export default function ComponentShowcase() {
                     collapsed={true}
                     widthVariant="default"
                     showBorder={true}
-                  >
-                    <div>This content is hidden when collapsed</div>
-                  </SidebarContainerDisplay>
+                  />
                 </div>
               </div>
 
@@ -708,16 +681,7 @@ export default function ComponentShowcase() {
                       collapsed={false}
                       widthVariant="narrow"
                       showBorder={true}
-                    >
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--sidebar-foreground)",
-                        }}
-                      >
-                        Narrow sidebar
-                      </div>
-                    </SidebarContainerDisplay>
+                    />
                   </div>
                   <div
                     style={{
@@ -739,16 +703,7 @@ export default function ComponentShowcase() {
                       collapsed={false}
                       widthVariant="default"
                       showBorder={true}
-                    >
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--sidebar-foreground)",
-                        }}
-                      >
-                        Default sidebar
-                      </div>
-                    </SidebarContainerDisplay>
+                    />
                   </div>
                   <div
                     style={{
@@ -770,90 +725,7 @@ export default function ComponentShowcase() {
                       collapsed={false}
                       widthVariant="wide"
                       showBorder={true}
-                    >
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--sidebar-foreground)",
-                        }}
-                      >
-                        Wide sidebar
-                      </div>
-                    </SidebarContainerDisplay>
-                  </div>
-                </div>
-              </div>
-
-              <div style={styles.agentPillRow}>
-                <span style={styles.agentPillLabel}>Border Variants:</span>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "16px",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        color: "var(--muted-foreground)",
-                      }}
-                    >
-                      With Border
-                    </span>
-                    <SidebarContainerDisplay
-                      collapsed={false}
-                      widthVariant="default"
-                      showBorder={true}
-                    >
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--sidebar-foreground)",
-                        }}
-                      >
-                        Has right border
-                      </div>
-                    </SidebarContainerDisplay>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      gap: "8px",
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        color: "var(--muted-foreground)",
-                      }}
-                    >
-                      No Border
-                    </span>
-                    <SidebarContainerDisplay
-                      collapsed={false}
-                      widthVariant="default"
-                      showBorder={false}
-                    >
-                      <div
-                        style={{
-                          fontSize: "12px",
-                          color: "var(--sidebar-foreground)",
-                        }}
-                      >
-                        No right border
-                      </div>
-                    </SidebarContainerDisplay>
+                    />
                   </div>
                 </div>
               </div>
@@ -870,17 +742,7 @@ export default function ComponentShowcase() {
                       borderRadius: "8px",
                     }}
                     className="custom-sidebar"
-                  >
-                    <div
-                      style={{
-                        color: "var(--accent-foreground)",
-                        fontSize: "13px",
-                      }}
-                    >
-                      Custom styled sidebar with accent background and rounded
-                      corners
-                    </div>
-                  </SidebarContainerDisplay>
+                  />
                 </div>
               </div>
             </div>
@@ -1747,13 +1609,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#3b82f6",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1767,13 +1624,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#22c55e",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1802,13 +1654,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1822,13 +1669,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1856,13 +1698,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#64748b",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1875,13 +1712,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#64748b",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1910,13 +1742,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#ef4444",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1930,13 +1757,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -1963,13 +1785,8 @@ export default function ComponentShowcase() {
                       isActive: false,
                       agentColor: "#a855f7",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -1982,13 +1799,8 @@ export default function ComponentShowcase() {
                       isActive: false,
                       agentColor: "#6b7280",
                     }}
-                    isExpanded={false}
                     canRegenerate={false}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>
@@ -2014,13 +1826,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#f59e0b",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -2033,13 +1840,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#6366f1",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                   <MessageItem
                     message={{
@@ -2052,13 +1854,8 @@ export default function ComponentShowcase() {
                       isActive: true,
                       agentColor: "#10b981",
                     }}
-                    isExpanded={false}
                     canRegenerate={true}
-                    contextMenuOpen={false}
-                    onToggleContext={() => {}}
-                    onToggleExpansion={() => {}}
                     onContextMenuAction={() => {}}
-                    onOpenContextMenu={() => {}}
                   />
                 </div>
               </div>

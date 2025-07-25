@@ -1,7 +1,7 @@
 /**
  * Layout components barrel export.
  *
- * Re-exports all layout-related display components extracted from the DesignPrototype
+ * Re-exports all layout-related display components
  * for the conversation UI system. These components focus on pure layout structure
  * and visual composition without interactive functionality.
  *

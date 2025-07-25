@@ -5,13 +5,23 @@
  */
 
 import type React from "react";
+import type { Message } from "../core/Message";
 
 export interface ChatContainerDisplayProps {
   /**
-   * Array of message components to display.
-   * Each message should be a complete MessageItem component.
+   * Array of message data to display.
+   * Component will automatically create MessageItem components for each message.
    */
-  messages?: React.ReactNode[];
+  messages?: Message[];
+
+  /**
+   * Handler for context menu actions on messages.
+   * Called when user selects an action from a message's context menu.
+   *
+   * @param action - The selected action identifier
+   * @param messageId - The ID of the message the action was performed on
+   */
+  onContextMenuAction?: (action: string, messageId: string) => void;
 
   /**
    * Whether the container should auto-scroll to the bottom.

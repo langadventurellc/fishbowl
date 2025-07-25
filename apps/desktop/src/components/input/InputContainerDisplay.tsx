@@ -5,11 +5,9 @@ import { SendButtonDisplay } from "./SendButtonDisplay";
 import { ConversationModeToggleDisplay } from "./ConversationModeToggleDisplay";
 
 /**
- * InputContainerDisplay component renders a visual representation of the input area container
- * that composes MessageInputDisplay, SendButtonDisplay, and ConversationModeToggleDisplay internally.
- *
- * Extracted from DesignPrototype.tsx lines 397-405 (inputArea styles) as a composition component
- * that provides proper flex layout, spacing, and border styling for all input components.
+ * InputContainerDisplay component renders the complete message input area for the conversation interface.
+ * Composes MessageInputDisplay, SendButtonDisplay, and ConversationModeToggleDisplay components
+ * within a flexible container that provides proper layout, spacing, and theming.
  *
  * Layout Variants:
  * - Default: Standard spacing (16px padding, 12px gap) for normal use
@@ -41,7 +39,7 @@ export function InputContainerDisplay({
 
   const variantStyles = getLayoutVariantStyles(layoutVariant);
 
-  // Base container styles extracted from DesignPrototype.tsx lines 397-405
+  // Base container styles for the input area
   const containerStyles: React.CSSProperties = {
     // Layout and sizing
     minHeight: "72px",

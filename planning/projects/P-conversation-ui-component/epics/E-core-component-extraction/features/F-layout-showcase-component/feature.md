@@ -2,7 +2,7 @@
 kind: feature
 id: F-layout-showcase-component
 title: Layout Showcase Component Integration
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-layout-display-components
@@ -11,7 +11,7 @@ prerequisites:
   - F-message-display-components
   - F-menu-display-components
 created: "2025-07-24T23:41:42.206397"
-updated: "2025-07-24T23:41:42.206397"
+updated: "2025-07-25T18:00:19.225506+00:00"
 schema_version: "1.1"
 parent: E-core-component-extraction
 ---

@@ -2,8 +2,8 @@
  * ConversationItemDisplay component for sidebar conversation items.
  *
  * Pure display component that renders individual conversation entries with
- * visual states for active, inactive, unread, and hover appearances. Extracted
- * from DesignPrototype lines 274-306 to provide reusable conversation item display.
+ * visual states for active, inactive, unread, and hover appearances. Provides
+ * reusable conversation item display functionality for the sidebar.
  *
  * @module components/sidebar/ConversationItemDisplay
  */
@@ -16,13 +16,12 @@ import { ConversationContextMenu } from "./ConversationContextMenu";
 /**
  * ConversationItemDisplay component.
  *
- * Renders a conversation item with proper styling and visual states extracted
- * from DesignPrototype. Supports active, inactive, unread, and hover visual
- * states without interactive functionality. Shows conversation name, timestamp,
- * and optional unread indicator.
+ * Renders a conversation item with proper styling and visual states.
+ * Supports active, inactive, unread, and hover visual states with interactive
+ * functionality. Shows conversation name, timestamp, and optional unread indicator.
  *
- * The component maintains exact visual fidelity with the original DesignPrototype
- * conversation item styling while providing a reusable, display-only interface.
+ * The component provides a consistent conversation item interface with theme
+ * integration and responsive hover effects.
  *
  * @param props - Component props interface
  * @returns React functional component
@@ -35,7 +34,7 @@ export function ConversationItemDisplay({
   style = {},
 }: ConversationItemDisplayProps) {
   const [isHovered, setIsHovered] = useState(false);
-  // Core conversation item styles extracted from DesignPrototype lines 274-286
+  // Core conversation item styles with theme integration and interactive behavior
   const baseItemStyles: React.CSSProperties = {
     position: "relative",
     padding: "8px 12px",
@@ -58,7 +57,7 @@ export function ConversationItemDisplay({
 
     switch (state) {
       case "active":
-        // Active conversation item styles from DesignPrototype lines 287-294
+        // Active conversation item styles with accent coloring
         return {
           backgroundColor: "var(--sidebar-accent)",
           color: "var(--sidebar-accent-foreground)",
@@ -86,7 +85,7 @@ export function ConversationItemDisplay({
 
       case "inactive":
       default:
-        // Inactive conversation item styles from DesignPrototype lines 295-297
+        // Inactive conversation item styles with muted appearance
         return {
           backgroundColor: isActiveConversation
             ? "var(--sidebar-accent)"

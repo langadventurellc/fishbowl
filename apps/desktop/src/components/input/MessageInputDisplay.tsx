@@ -2,10 +2,9 @@ import React from "react";
 import { MessageInputDisplayProps, ComponentSize } from "@fishbowl-ai/shared";
 
 /**
- * MessageInputDisplay component renders a visual representation of the message input textarea
- * with basic HTML functionality for visual testing. No React event handlers or state management.
- *
- * Extracted from DesignPrototype.tsx lines 406-421 with theme variable integration.
+ * MessageInputDisplay component renders a text input area for composing conversation messages.
+ * Features auto-resizing capabilities, multiple size variants, and disabled state support.
+ * Integrates with the application's theming system for consistent visual styling.
  */
 export function MessageInputDisplay({
   placeholder = "Type your message here...",
@@ -44,7 +43,7 @@ export function MessageInputDisplay({
 
   const sizeStyles = getSizeStyles(size);
 
-  // Base styles extracted from DesignPrototype.tsx lines 406-421
+  // Base styles for the textarea input
   const textareaStyles: React.CSSProperties = {
     // Layout
     flex: 1,

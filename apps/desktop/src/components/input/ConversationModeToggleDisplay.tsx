@@ -2,12 +2,9 @@ import React from "react";
 import { ConversationModeToggleDisplayProps } from "@fishbowl-ai/shared";
 
 /**
- * ConversationModeToggleDisplay component renders a visual representation of the Manual/Auto mode toggle
- * without any interactive functionality. Pure display component for showcase purposes.
- *
- * Extracted from DesignPrototype.tsx lines 436-456 (modeToggle and modeOption styles).
- * Shows the current mode state visually with proper active/inactive styling and supports
- * disabled state for reduced opacity presentation.
+ * ConversationModeToggleDisplay component renders a toggle switch for selecting between
+ * Manual and Auto conversation modes. Provides visual feedback for the current mode state
+ * and supports disabled state for contexts where mode switching is not available.
  *
  * Visual States:
  * - Manual mode active: "Manual" highlighted with primary background, "Auto" normal
@@ -19,7 +16,7 @@ export function ConversationModeToggleDisplay({
   disabled = false,
   className = "",
 }: ConversationModeToggleDisplayProps) {
-  // Base container styles extracted from DesignPrototype.tsx lines 436-447
+  // Base container styles for the mode toggle
   const containerStyles: React.CSSProperties = {
     height: "40px",
     display: "flex",
@@ -36,14 +33,14 @@ export function ConversationModeToggleDisplay({
     cursor: disabled ? "not-allowed" : "default",
   };
 
-  // Mode option base styles extracted from DesignPrototype.tsx lines 448-452
+  // Base styles for individual mode options
   const modeOptionBaseStyles: React.CSSProperties = {
     padding: "4px 8px",
     borderRadius: "4px",
     cursor: disabled ? "not-allowed" : "pointer",
   };
 
-  // Active mode styling extracted from DesignPrototype.tsx lines 453-456
+  // Styling for the currently active mode option
   const modeOptionActiveStyles: React.CSSProperties = {
     backgroundColor: "var(--primary)",
     color: "var(--primary-foreground)",
