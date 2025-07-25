@@ -24,6 +24,7 @@
     "@fishbowl-ai/eslint-config": "workspace:*",
     "@types/jest": "^30.0.0",
     "jest": "^30.0.4",
+    "tailwindcss": "4.1.11",
     "typescript": "^5.8.3"
   }
 }
