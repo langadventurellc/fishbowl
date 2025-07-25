@@ -8,19 +8,24 @@
  * @module types/ui/components
  */
 
+export * from "./AgentLabelsContainerDisplayProps";
 export * from "./AgentPillProps";
 export * from "./ButtonProps";
 export * from "./ButtonType";
+export * from "./ChatContainerDisplayProps";
 export * from "./ComponentSize";
 export * from "./ConversationContextMenuProps";
 export * from "./ConversationItemDisplayProps";
 export * from "./ConversationItemProps";
+export * from "./ConversationLayoutDisplayProps";
 export * from "./ConversationListDisplayProps";
 export * from "./ConversationListScrollState";
 export * from "./ConversationModeToggleDisplayProps";
+export * from "./ConversationScreenDisplayProps";
 export * from "./ConversationToggleMode";
 export * from "./InputContainerDisplayProps";
 export * from "./LayoutVariant";
+export * from "./MainContentPanelDisplayProps";
 export * from "./MessageAvatarProps";
 export * from "./MessageContentProps";
 export * from "./MessageContextMenuProps";
