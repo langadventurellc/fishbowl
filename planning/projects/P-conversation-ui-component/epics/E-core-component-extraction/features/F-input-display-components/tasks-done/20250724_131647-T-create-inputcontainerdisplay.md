@@ -34,7 +34,7 @@ Extract and create the InputContainerDisplay component from DesignPrototype.tsx 
 
 ### Component Location:
 
-`apps/desktop/src/components/ui/input/InputContainerDisplay.tsx`
+`apps/desktop/src/components/input/InputContainerDisplay.tsx`
 
 ### Component Structure:
 
@@ -101,7 +101,7 @@ Add section to ComponentShowcase.tsx:
 
 ## Acceptance Criteria
 
-- [ ] Component created in `apps/desktop/src/components/ui/input/`
+- [ ] Component created in `apps/desktop/src/components/input/`
 - [ ] Uses InputContainerDisplayProps from shared package
 - [ ] Imports and composes MessageInputDisplay, SendButtonDisplay, ConversationModeToggleDisplay
 - [ ] Provides proper flex layout for child components
@@ -131,4 +131,4 @@ Add section to ComponentShowcase.tsx:
 
 **2025-07-24T18:16:47.611255Z** - Implemented InputContainerDisplay component as a composition container that brings together MessageInputDisplay, SendButtonDisplay, and ConversationModeToggleDisplay. Extracted styling from DesignPrototype.tsx lines 397-405 (inputArea styles) with layout variants for default (16px padding, 12px gap) and compact (12px padding, 8px gap) spacing. Added comprehensive showcase integration demonstrating all layout variants, child component combinations, and different states (default, compact, with content, loading). All quality checks pass with TypeScript strict mode compliance.
 
-- filesChanged: ["apps/desktop/src/components/ui/input/InputContainerDisplay.tsx", "apps/desktop/src/components/ui/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
+- filesChanged: ["apps/desktop/src/components/input/InputContainerDisplay.tsx", "apps/desktop/src/components/input/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

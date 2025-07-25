@@ -30,7 +30,7 @@ Create the barrel export file for all input display components and ensure compre
 
 ### Create Barrel Export:
 
-`apps/desktop/src/components/ui/input/index.ts`
+`apps/desktop/src/components/input/index.ts`
 
 ```typescript
 // Re-export all input display components
@@ -58,7 +58,7 @@ Ensure ComponentShowcase.tsx includes comprehensive sections for:
 
 ## Acceptance Criteria
 
-- [ ] Barrel export created in `apps/desktop/src/components/ui/input/index.ts`
+- [ ] Barrel export created in `apps/desktop/src/components/input/index.ts`
 - [ ] All 4 input components exported properly (MessageInputDisplay, SendButtonDisplay, ConversationModeToggleDisplay, InputContainerDisplay)
 - [ ] ComponentShowcase includes comprehensive demonstrations
 - [ ] Combined input area layout shown using InputContainerDisplay composition
@@ -83,4 +83,4 @@ Ensure ComponentShowcase.tsx includes comprehensive sections for:
 
 ### Log
 
-**2025-07-24T18:30:14.933031Z** - Verified barrel export and showcase integration are complete. The barrel export file at apps/desktop/src/components/ui/input/index.ts already exists with all 4 input components properly exported (ConversationModeToggleDisplay, InputContainerDisplay, MessageInputDisplay, SendButtonDisplay). ComponentShowcase.tsx already has comprehensive demonstrations including individual component states, combined input area layouts, and theme compatibility. All quality checks pass successfully.
+**2025-07-24T18:30:14.933031Z** - Verified barrel export and showcase integration are complete. The barrel export file at apps/desktop/src/components/input/index.ts already exists with all 4 input components properly exported (ConversationModeToggleDisplay, InputContainerDisplay, MessageInputDisplay, SendButtonDisplay). ComponentShowcase.tsx already has comprehensive demonstrations including individual component states, combined input area layouts, and theme compatibility. All quality checks pass successfully.

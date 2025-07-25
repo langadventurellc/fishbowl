@@ -24,7 +24,7 @@ Extract multiple button variants from `apps/desktop/src/pages/DesignPrototype.ts
 
 - Create `packages/shared/src/types/ui/components/ButtonProps.ts`
 - Add export to `packages/shared/src/types/ui/components/index.ts`
-- Create `apps/desktop/src/components/ui/atomic/Button.tsx`
+- Create `apps/desktop/src/components/atomic/Button.tsx`
 - Extract styling from DesignPrototype for different button types
 - Create unified component with variant prop system
 - Support different button purposes: primary, secondary, ghost, toggle
@@ -74,7 +74,7 @@ interface ButtonProps {
 
 ## Acceptance Criteria
 
-- ✅ Component renders in separate file under `apps/desktop/src/components/ui/atomic/`
+- ✅ Component renders in separate file under `apps/desktop/src/components/atomic/`
 - ✅ Unified component supporting all button variants
 - ✅ Props-based rendering with proper TypeScript interfaces
 - ✅ All variants and states displayed in ComponentShowcase
@@ -82,12 +82,12 @@ interface ButtonProps {
 - ✅ Accessibility features (focus, keyboard navigation)
 - ✅ TypeScript strict mode compliance
 - ✅ Component under 150 lines
-- ✅ Export added to `apps/desktop/src/components/ui/atomic/index.ts`
+- ✅ Export added to `apps/desktop/src/components/atomic/index.ts`
 
 ## File Locations
 
 - **Source extraction**: `apps/desktop/src/pages/DesignPrototype.tsx` (various button styles)
-- **Component file**: `apps/desktop/src/components/ui/atomic/Button.tsx`
+- **Component file**: `apps/desktop/src/components/atomic/Button.tsx`
 - **Showcase integration**: `apps/desktop/src/pages/showcase/ComponentShowcase.tsx`
 - **Theme reference**: `packages/ui-theme/src/claymorphism-theme.css`
 
@@ -95,4 +95,4 @@ interface ButtonProps {
 
 **2025-07-24T13:51:42.567820Z** - Completed Button component implementation with comprehensive ComponentShowcase integration. Created unified Button component supporting 4 variants (primary, secondary, ghost, toggle) with all required props, sizes, and states. Added comprehensive showcase demonstrating all variants, sizes, disabled/loading states, icon support, and real-world examples. All quality checks passing and component fully integrated into the atomic components system.
 
-- filesChanged: ["packages/shared/src/types/ui/components/ButtonProps.ts", "packages/shared/src/types/ui/components/index.ts", "apps/desktop/src/components/ui/atomic/Button.tsx", "apps/desktop/src/components/ui/atomic/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
+- filesChanged: ["packages/shared/src/types/ui/components/ButtonProps.ts", "packages/shared/src/types/ui/components/index.ts", "apps/desktop/src/components/atomic/Button.tsx", "apps/desktop/src/components/atomic/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]

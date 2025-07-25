@@ -15,12 +15,26 @@ import {
   MessageInputDisplay,
   SendButtonDisplay,
 } from "../../components/input";
+import {
+  ContextMenu,
+  ContextMenuDisplay,
+  MenuItemDisplay,
+  MenuTriggerDisplay,
+} from "../../components/menu";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
 export default function ComponentShowcase() {
   // Theme toggle state for interactive demo
   const [currentTheme, setCurrentTheme] = useState<ThemeMode>("light");
+
+  // Sample context menu items for ContextMenuDisplay showcase
+  const sampleMenuItems = [
+    { label: "Copy", action: "copy", icon: "copy" },
+    { label: "Regenerate", action: "regenerate", icon: "refresh" },
+    { label: "Delete", action: "delete", icon: "trash" },
+    { label: "Disabled Item", action: "disabled", disabled: true },
+  ];
 
   // Sample agent data for AgentPill showcase
   const sampleAgents: Agent[] = [
@@ -1517,8 +1531,486 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                 components
               </p>
             </div>
-            <div style={styles.componentArea}>
-              Components will appear here when manually added
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Below (Open):</span>
+                <div
+                  style={{
+                    position: "relative",
+                    display: "inline-block",
+                    marginLeft: "20px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Trigger Element
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={true}
+                    position="below"
+                    items={sampleMenuItems}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Above (Open):</span>
+                <div
+                  style={{
+                    position: "relative",
+                    display: "inline-block",
+                    marginTop: "80px",
+                    marginLeft: "200px",
+                  }}
+                >
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Trigger Element
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={true}
+                    position="above"
+                    items={sampleMenuItems}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Closed:</span>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Hidden Menu
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={false}
+                    position="below"
+                    items={sampleMenuItems}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Simple Menu:</span>
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <div
+                    style={{
+                      padding: "8px 16px",
+                      backgroundColor: "var(--muted)",
+                      borderRadius: "6px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Simple Options
+                  </div>
+                  <ContextMenuDisplay
+                    isOpen={true}
+                    position="below"
+                    items={[
+                      { label: "Option 1", action: "option1" },
+                      { label: "Option 2", action: "option2" },
+                      { label: "Option 3", action: "option3" },
+                    ]}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Static Visual States:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "140px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="Normal Item"
+                    action="normal"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Hover State"
+                    action="hover"
+                    variant="hover"
+                  />
+                  <MenuItemDisplay
+                    label="Disabled Item"
+                    action="disabled"
+                    variant="disabled"
+                  />
+                  <MenuItemDisplay
+                    label="Danger Action"
+                    action="danger"
+                    variant="danger"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Interactive Hover (try it!):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "140px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="Hover Me"
+                    action="hover-demo"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="And Me Too"
+                    action="hover-demo2"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Disabled (No Hover)"
+                    action="disabled-demo"
+                    variant="normal"
+                    disabled={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Menu Items with Icons (hover enabled):
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "160px",
+                    width: "160px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="Copy"
+                    action="copy"
+                    icon="📋"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Regenerate"
+                    action="regenerate"
+                    icon="🔄"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Delete"
+                    action="delete"
+                    icon="🗑️"
+                    variant="danger"
+                  />
+                  <MenuItemDisplay
+                    label="Unavailable"
+                    action="unavailable"
+                    icon="⚠️"
+                    variant="normal"
+                    disabled={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Menu Items with Separators:
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "0px",
+                    backgroundColor: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: "6px",
+                    padding: "4px",
+                    minWidth: "140px",
+                  }}
+                >
+                  <MenuItemDisplay
+                    label="First Group"
+                    action="first"
+                    variant="normal"
+                    separator={true}
+                  />
+                  <MenuItemDisplay
+                    label="Second Group"
+                    action="second"
+                    variant="normal"
+                    separator={true}
+                  />
+                  <MenuItemDisplay
+                    label="Final Item"
+                    action="final"
+                    variant="normal"
+                  />
+                </div>
+              </div>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Trigger States:</span>
+                <div
+                  style={{ display: "flex", gap: "16px", alignItems: "center" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="normal" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Normal
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="hover" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Hover
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="active" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Active
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="disabled" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Disabled
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Menu Trigger Sizes:</span>
+                <div
+                  style={{ display: "flex", gap: "16px", alignItems: "center" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="normal" size="small" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Small
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <MenuTriggerDisplay variant="normal" size="medium" />
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Medium
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <h3 style={styles.sectionTitle}>Generic ContextMenu Component</h3>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Basic ContextMenu:</span>
+                <ContextMenu>
+                  <MenuItemDisplay
+                    label="Copy"
+                    action="copy"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Regenerate"
+                    action="regenerate"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Delete"
+                    action="delete"
+                    variant="danger"
+                  />
+                </ContextMenu>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Above Position:</span>
+                <div style={{ marginTop: "80px" }}>
+                  <ContextMenu position="above">
+                    <MenuItemDisplay
+                      label="Copy"
+                      action="copy"
+                      variant="normal"
+                    />
+                    <MenuItemDisplay
+                      label="Delete"
+                      action="delete"
+                      variant="danger"
+                    />
+                  </ContextMenu>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Disabled ContextMenu:</span>
+                <ContextMenu disabled>
+                  <MenuItemDisplay
+                    label="Unavailable"
+                    action="unavailable"
+                    variant="normal"
+                  />
+                </ContextMenu>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Trigger:</span>
+                <ContextMenu
+                  trigger={
+                    <div
+                      style={{
+                        padding: "8px 12px",
+                        backgroundColor: "var(--primary)",
+                        color: "var(--primary-foreground)",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        fontSize: "14px",
+                      }}
+                    >
+                      Custom Button
+                    </div>
+                  }
+                >
+                  <MenuItemDisplay
+                    label="Action 1"
+                    action="action1"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Action 2"
+                    action="action2"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Action 3"
+                    action="action3"
+                    variant="normal"
+                  />
+                </ContextMenu>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Auto Position:</span>
+                <ContextMenu position="auto">
+                  <MenuItemDisplay
+                    label="Smart Position"
+                    action="smart"
+                    variant="normal"
+                  />
+                  <MenuItemDisplay
+                    label="Viewport Aware"
+                    action="viewport"
+                    variant="normal"
+                  />
+                </ContextMenu>
+              </div>
             </div>
           </section>
         </div>

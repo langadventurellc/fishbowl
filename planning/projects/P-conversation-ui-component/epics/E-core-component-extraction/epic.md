@@ -23,7 +23,7 @@ Extract and implement the core React components from the existing DesignPrototyp
 ### Foundation Infrastructure
 
 - **TypeScript Interface System**: Create comprehensive TypeScript interfaces in `@fishbowl-ai/shared/src/types/ui/`
-- **File Organization Structure**: Establish organized directory structure in `apps/desktop/src/components/ui/`
+- **File Organization Structure**: Establish organized directory structure in `apps/desktop/src/components/`
 - **Component Props Interfaces**: Define strongly-typed props for all planned components alongside component creation
 - **Showcase Integration**: Add each component to the showcase page as it's created for immediate visual validation
 
@@ -188,7 +188,7 @@ graph TD
 
 ```mermaid
 graph TD
-    A[apps/desktop/src/components/ui/] --> B[conversation/]
+    A[apps/desktop/src/components/] --> B[conversation/]
     A --> C[layout/]
     A --> D[input/]
     A --> E[shared/]

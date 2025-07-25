@@ -56,7 +56,7 @@ Extract the smallest, most reusable UI components from DesignPrototype - compone
 
 ✅ **Component Structure**
 
-- Each component in separate file in `apps/desktop/src/components/ui/atomic/`
+- Each component in separate file in `apps/desktop/src/components/atomic/`
 - Proper TypeScript prop interfaces from shared package
 - Clean CSS-in-JS styling using existing theme variables
 - No internal state management (all props-based)
@@ -111,7 +111,7 @@ Extract the smallest, most reusable UI components from DesignPrototype - compone
 **File Organization:**
 
 ```
-apps/desktop/src/components/ui/atomic/
+apps/desktop/src/components/atomic/
 ├── index.ts (barrel export)
 ├── AgentPill.tsx
 ├── ThemeToggle.tsx
