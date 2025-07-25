@@ -8,6 +8,12 @@ import {
   ConversationLayoutDisplay,
 } from "../../components/layout";
 import { AgentPill } from "../../components/chat/AgentPill";
+import {
+  SidebarContainerDisplay,
+  SidebarHeaderDisplay,
+  SidebarToggleDisplay,
+  ConversationItemDisplay,
+} from "../../components/sidebar";
 
 interface Message {
   id: string;
@@ -40,9 +46,6 @@ export default function LayoutShowcase() {
     new Set(),
   );
   const [openContextMenu, setOpenContextMenu] = useState<string | null>(null);
-  const [openConversationMenu, setOpenConversationMenu] = useState<
-    string | null
-  >(null);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Sample conversations data
@@ -176,49 +179,6 @@ export default function LayoutShowcase() {
       height: "100%",
       position: "relative" as const,
     },
-    sidebar: {
-      width: isSidebarCollapsed ? "0px" : "240px",
-      height: "100%",
-      backgroundColor: "var(--sidebar)",
-      borderRight: "1px solid var(--sidebar-border)",
-      transition: "width 0.3s ease",
-      overflow: "hidden",
-      position: "relative" as const,
-      zIndex: 100,
-    },
-    sidebarContent: {
-      width: "240px",
-      height: "100%",
-      padding: "16px",
-      display: "flex",
-      flexDirection: "column" as const,
-    },
-    sidebarTitle: {
-      fontSize: "18px",
-      fontWeight: "600",
-      color: "var(--sidebar-foreground)",
-      marginBottom: "16px",
-      paddingLeft: "8px",
-    },
-    conversationItem: {
-      padding: "12px 8px",
-      marginBottom: "4px",
-      borderRadius: "8px",
-      cursor: "pointer",
-      transition: "all 0.15s",
-      position: "relative" as const,
-      fontSize: "14px",
-    },
-    conversationItemActive: {
-      backgroundColor: "var(--sidebar-accent)",
-      color: "var(--sidebar-accent-foreground)",
-    },
-    conversationItemInactive: {
-      color: "var(--sidebar-foreground)",
-    },
-    conversationItemHover: {
-      backgroundColor: "var(--sidebar-accent)",
-    },
     newConversation: {
       padding: "12px 8px",
       marginTop: "auto",
@@ -234,30 +194,6 @@ export default function LayoutShowcase() {
     newConversationHover: {
       backgroundColor: "var(--sidebar-accent)",
       borderColor: "var(--sidebar-primary)",
-    },
-    sidebarToggle: {
-      position: "absolute" as const,
-      top: "50%",
-      left: isSidebarCollapsed ? "12px" : "252px",
-      transform: "translateY(-50%)",
-      width: "24px",
-      height: "24px",
-      borderRadius: "50%",
-      backgroundColor: "var(--background)",
-      border: "1px solid var(--border)",
-      cursor: "pointer",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      fontSize: "10px",
-      color: "var(--foreground)",
-      zIndex: 1000,
-      transition: "left 0.3s ease",
-      boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-    },
-    sidebarToggleHover: {
-      backgroundColor: "var(--accent)",
-      color: "var(--accent-foreground)",
     },
     contentArea: {
       flex: 1,
@@ -445,42 +381,6 @@ export default function LayoutShowcase() {
       backgroundColor: "var(--accent)",
       color: "var(--accent-foreground)",
     },
-    conversationEllipsis: {
-      position: "absolute" as const,
-      top: "50%",
-      right: "8px",
-      transform: "translateY(-50%)",
-      background: "none",
-      border: "none",
-      color: "var(--sidebar-foreground)",
-      cursor: "pointer",
-      padding: "2px 4px",
-      borderRadius: "4px",
-      fontSize: "12px",
-      opacity: 0,
-      transition: "all 0.15s",
-      zIndex: 10,
-    },
-    conversationEllipsisVisible: {
-      opacity: 0.7,
-    },
-    conversationEllipsisHover: {
-      opacity: 1,
-      backgroundColor: "var(--sidebar-accent)",
-    },
-    conversationContextMenu: {
-      position: "absolute" as const,
-      top: "0",
-      right: "100%",
-      marginRight: "8px",
-      backgroundColor: "var(--popover)",
-      border: "1px solid var(--border)",
-      borderRadius: "6px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-      padding: "4px",
-      minWidth: "120px",
-      zIndex: 100,
-    },
     inputArea: {
       padding: "16px",
       borderTop: "1px solid var(--border)",
@@ -604,205 +504,78 @@ export default function LayoutShowcase() {
     setOpenContextMenu(null);
   };
 
-  const handleConversationAction = (
-    action: string,
-    conversationName: string,
-  ) => {
-    console.log(
-      `Demo: Conversation action: ${action} for conversation ${conversationName}`,
-    );
-    setOpenConversationMenu(null);
-  };
-
   return (
     <ShowcaseLayout>
       <ConversationScreenDisplay
         onClick={() => {
           setOpenContextMenu(null);
-          setOpenConversationMenu(null);
         }}
       >
         <ConversationLayoutDisplay
           sidebar={
             <>
               {/* Sidebar Toggle Button */}
-              <button
-                style={styles.sidebarToggle}
+              <div
                 onClick={() => {
                   setIsSidebarCollapsed(!isSidebarCollapsed);
-                  setOpenConversationMenu(null);
                 }}
-                onMouseEnter={(e) => {
-                  Object.assign(
-                    e.currentTarget.style,
-                    styles.sidebarToggleHover,
-                  );
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = "var(--background)";
-                  e.currentTarget.style.color = "var(--foreground)";
-                }}
-                title={
-                  isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"
-                }
+                style={{ cursor: "pointer" }}
               >
-                {isSidebarCollapsed ? "→" : "←"}
-              </button>
+                <SidebarToggleDisplay
+                  isCollapsed={isSidebarCollapsed}
+                  showHoverState={false}
+                />
+              </div>
 
               {/* Sidebar */}
-              <div style={styles.sidebar}>
-                <div style={styles.sidebarContent}>
-                  <div style={styles.sidebarTitle}>Conversations</div>
+              <SidebarContainerDisplay
+                collapsed={isSidebarCollapsed}
+                widthVariant="default"
+                showBorder={true}
+              >
+                <SidebarHeaderDisplay
+                  title="Conversations"
+                  showControls={true}
+                  collapsed={isSidebarCollapsed}
+                />
 
+                {/* Conversation items with interactive behavior */}
+                <div
+                  style={{
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "4px",
+                    minHeight: "120px",
+                  }}
+                >
                   {conversations.map((conv, index) => (
-                    <div
+                    <ConversationItemDisplay
                       key={index}
-                      style={{
-                        ...styles.conversationItem,
-                        ...(conv.isActive
-                          ? styles.conversationItemActive
-                          : styles.conversationItemInactive),
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!conv.isActive) {
-                          Object.assign(
-                            e.currentTarget.style,
-                            styles.conversationItemHover,
-                          );
-                        }
-                        const ellipsis = e.currentTarget.querySelector(
-                          ".conversation-ellipsis",
-                        ) as HTMLElement;
-                        if (ellipsis) {
-                          Object.assign(
-                            ellipsis.style,
-                            styles.conversationEllipsisVisible,
-                          );
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!conv.isActive) {
-                          e.currentTarget.style.backgroundColor = "transparent";
-                        }
-                        const ellipsis = e.currentTarget.querySelector(
-                          ".conversation-ellipsis",
-                        ) as HTMLElement;
-                        if (ellipsis && openConversationMenu !== conv.name) {
-                          ellipsis.style.opacity = "0";
-                        }
-                      }}
-                    >
-                      <div>🗨 {conv.name}</div>
-                      <div
-                        style={{
-                          fontSize: "11px",
-                          opacity: 0.7,
-                          marginTop: "2px",
-                        }}
-                      >
-                        {conv.lastActivity}
-                      </div>
-                      <button
-                        className="conversation-ellipsis"
-                        style={{
-                          ...styles.conversationEllipsis,
-                          ...(openConversationMenu === conv.name
-                            ? styles.conversationEllipsisHover
-                            : {}),
-                        }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setOpenConversationMenu(
-                            openConversationMenu === conv.name
-                              ? null
-                              : conv.name,
-                          );
-                        }}
-                        onMouseEnter={(e) => {
-                          Object.assign(
-                            e.currentTarget.style,
-                            styles.conversationEllipsisHover,
-                          );
-                        }}
-                        onMouseLeave={(e) => {
-                          if (openConversationMenu !== conv.name) {
-                            e.currentTarget.style.opacity = "0.7";
-                            e.currentTarget.style.backgroundColor =
-                              "transparent";
-                          }
-                        }}
-                      >
-                        ⋯
-                        {openConversationMenu === conv.name && (
-                          <div
-                            style={styles.conversationContextMenu}
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <button
-                              style={styles.contextMenuItem}
-                              onClick={() =>
-                                handleConversationAction("rename", conv.name)
-                              }
-                              onMouseEnter={(e) => {
-                                Object.assign(
-                                  e.currentTarget.style,
-                                  styles.contextMenuItemHover,
-                                );
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                  "transparent";
-                                e.currentTarget.style.color =
-                                  "var(--popover-foreground)";
-                              }}
-                            >
-                              Rename
-                            </button>
-                            <button
-                              style={styles.contextMenuItem}
-                              onClick={() =>
-                                handleConversationAction("delete", conv.name)
-                              }
-                              onMouseEnter={(e) => {
-                                Object.assign(
-                                  e.currentTarget.style,
-                                  styles.contextMenuItemHover,
-                                );
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.backgroundColor =
-                                  "transparent";
-                                e.currentTarget.style.color =
-                                  "var(--popover-foreground)";
-                              }}
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        )}
-                      </button>
-                    </div>
+                      conversation={conv}
+                      appearanceState={conv.isActive ? "active" : "inactive"}
+                      showUnreadIndicator={false}
+                    />
                   ))}
-
-                  <div
-                    style={styles.newConversation}
-                    onMouseEnter={(e) => {
-                      Object.assign(
-                        e.currentTarget.style,
-                        styles.newConversationHover,
-                      );
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = "transparent";
-                      e.currentTarget.style.borderColor =
-                        "var(--sidebar-border)";
-                    }}
-                  >
-                    + New Conversation
-                  </div>
                 </div>
-              </div>
+
+                {/* New Conversation button - keep as simple element for now */}
+                <div
+                  style={styles.newConversation}
+                  onMouseEnter={(e) => {
+                    Object.assign(
+                      e.currentTarget.style,
+                      styles.newConversationHover,
+                    );
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = "transparent";
+                    e.currentTarget.style.borderColor = "var(--sidebar-border)";
+                  }}
+                >
+                  + New Conversation
+                </div>
+              </SidebarContainerDisplay>
             </>
           }
           mainContent={
