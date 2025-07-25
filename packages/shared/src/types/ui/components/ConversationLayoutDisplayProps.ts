@@ -5,27 +5,36 @@
  */
 
 import type React from "react";
+import type { Agent } from "../core/Agent";
+import type { Conversation } from "../core/Conversation";
+import type { Message } from "../core/Message";
 import type { LayoutVariant } from "./LayoutVariant";
 
 export interface ConversationLayoutDisplayProps {
   /**
-   * Sidebar component to display.
-   * Contains conversation list and navigation controls.
+   * List of conversations to display in the sidebar.
+   * Used to render the conversation list with selection state.
    */
-  sidebar?: React.ReactNode;
+  conversations: Conversation[];
 
   /**
-   * Main content panel component.
-   * Contains agent labels, chat area, and input controls.
+   * List of agents participating in the conversation.
+   * Used for agent pills, message rendering, and state display.
    */
-  mainContent?: React.ReactNode;
+  agents: Agent[];
 
   /**
-   * Whether the sidebar is currently collapsed.
-   * Controls sidebar visibility and main content sizing.
+   * List of messages in the current conversation.
+   * Used to render the chat area with proper message formatting.
+   */
+  messages: Message[];
+
+  /**
+   * Initial collapsed state for the sidebar.
+   * Controls the default sidebar visibility when component first mounts.
    * @default false
    */
-  sidebarCollapsed?: boolean;
+  defaultSidebarCollapsed?: boolean;
 
   /**
    * Layout variant affecting responsive breakpoints.

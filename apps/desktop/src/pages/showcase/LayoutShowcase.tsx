@@ -1,20 +1,9 @@
 import { useState } from "react";
-import { AgentPill, MessageItem } from "../../components/chat";
-import { Button, InputContainerDisplay } from "../../components/input";
 import {
-  AgentLabelsContainerDisplay,
-  ChatContainerDisplay,
   ConversationLayoutDisplay,
   ConversationScreenDisplay,
-  MainContentPanelDisplay,
 } from "../../components/layout";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import {
-  ConversationItemDisplay,
-  SidebarContainerDisplay,
-  SidebarHeaderDisplay,
-  SidebarToggleDisplay,
-} from "../../components/sidebar";
 
 interface Message {
   id: string;
@@ -41,10 +30,6 @@ interface Conversation {
 }
 
 export default function LayoutShowcase() {
-  const [inputText] = useState("");
-  const [isManualMode] = useState(true);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-
   // Sample conversations data
   const conversations: Conversation[] = [
     {
@@ -164,121 +149,10 @@ export default function LayoutShowcase() {
     <ShowcaseLayout>
       <ConversationScreenDisplay>
         <ConversationLayoutDisplay
-          sidebar={
-            <>
-              {/* Sidebar Toggle Button */}
-              <div
-                onClick={() => {
-                  setIsSidebarCollapsed(!isSidebarCollapsed);
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                <SidebarToggleDisplay
-                  isCollapsed={isSidebarCollapsed}
-                  showHoverState={false}
-                />
-              </div>
-
-              {/* Sidebar */}
-              <SidebarContainerDisplay
-                collapsed={isSidebarCollapsed}
-                widthVariant="default"
-                showBorder={true}
-              >
-                <SidebarHeaderDisplay
-                  title="Conversations"
-                  showControls={true}
-                  collapsed={isSidebarCollapsed}
-                />
-
-                {/* Conversation items with interactive behavior */}
-                <div
-                  style={{
-                    flex: 1,
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "4px",
-                    minHeight: "120px",
-                  }}
-                >
-                  {conversations.map((conv, index) => (
-                    <ConversationItemDisplay
-                      key={index}
-                      conversation={conv}
-                      appearanceState={conv.isActive ? "active" : "inactive"}
-                      showUnreadIndicator={false}
-                    />
-                  ))}
-                </div>
-
-                <div style={{ marginTop: "auto" }}>
-                  <Button
-                    variant="primary"
-                    size="small"
-                    onClick={() => console.log("Demo: New conversation")}
-                    aria-label="Create new conversation"
-                  >
-                    New Conversation
-                  </Button>
-                </div>
-              </SidebarContainerDisplay>
-            </>
-          }
-          mainContent={
-            <MainContentPanelDisplay
-              agentLabelsContainer={
-                <AgentLabelsContainerDisplay
-                  agentPills={agents.map((agent, index) => (
-                    <AgentPill key={index} agent={agent} />
-                  ))}
-                  actionButtons={[
-                    <Button
-                      key="add-agent"
-                      variant="ghost"
-                      size="small"
-                      onClick={() => console.log("Demo: Adding new agent")}
-                      className="add-agent-button"
-                      aria-label="Add new agent to conversation"
-                    >
-                      +
-                    </Button>,
-                  ]}
-                />
-              }
-              chatContainer={
-                <ChatContainerDisplay
-                  messages={messages.map((message) => (
-                    <MessageItem
-                      key={message.id}
-                      message={message}
-                      canRegenerate={message.type === "agent"}
-                      onContextMenuAction={() => {}}
-                    />
-                  ))}
-                />
-              }
-              inputContainer={
-                <InputContainerDisplay
-                  layoutVariant="default"
-                  messageInputProps={{
-                    placeholder: "Type your message here...",
-                    content: inputText,
-                    disabled: false,
-                    size: "medium",
-                  }}
-                  sendButtonProps={{
-                    disabled: !inputText.trim(),
-                    loading: false,
-                    "aria-label": "Send message",
-                  }}
-                  modeToggleProps={{
-                    currentMode: isManualMode ? "manual" : "auto",
-                    disabled: false,
-                  }}
-                />
-              }
-            />
-          }
+          conversations={conversations}
+          agents={agents}
+          messages={messages}
+          defaultSidebarCollapsed={false}
         />
       </ConversationScreenDisplay>
     </ShowcaseLayout>

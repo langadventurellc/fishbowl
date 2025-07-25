@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/shared";
+import { AgentPill, MessageItem } from "../chat";
+import { Button, InputContainerDisplay } from "../input";
+import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
 > = ({
-  agentLabelsContainer,
-  chatContainer,
-  inputContainer,
+  agents,
+  messages,
+  defaultInputText = "",
+  defaultManualMode = true,
   className,
   style,
 }) => {
+  // Internal state management for input
+  const [inputText] = useState(defaultInputText);
+  const [isManualMode] = useState(defaultManualMode);
+
   // Container styles extracted from DesignPrototype.tsx lines 307-312 (contentArea)
   const containerStyles: React.CSSProperties = {
     flex: 1,
@@ -22,9 +30,56 @@ export const MainContentPanelDisplay: React.FC<
 
   return (
     <div className={className} style={containerStyles}>
-      {agentLabelsContainer}
-      {chatContainer}
-      {inputContainer}
+      {/* Agent Labels Container */}
+      <AgentLabelsContainerDisplay
+        agentPills={agents.map((agent, index) => (
+          <AgentPill key={index} agent={agent} />
+        ))}
+        actionButtons={[
+          <Button
+            key="add-agent"
+            variant="ghost"
+            size="small"
+            onClick={() => console.log("Demo: Adding new agent")}
+            className="add-agent-button"
+            aria-label="Add new agent to conversation"
+          >
+            +
+          </Button>,
+        ]}
+      />
+
+      {/* Chat Container */}
+      <ChatContainerDisplay
+        messages={messages.map((message) => (
+          <MessageItem
+            key={message.id}
+            message={message}
+            canRegenerate={message.type === "agent"}
+            onContextMenuAction={() => {}}
+          />
+        ))}
+      />
+
+      {/* Input Container */}
+      <InputContainerDisplay
+        layoutVariant="default"
+        messageInputProps={{
+          placeholder: "Type your message here...",
+          content: inputText,
+          disabled: false,
+          size: "medium",
+        }}
+        sendButtonProps={{
+          disabled: !inputText.trim(),
+          loading: false,
+          "aria-label": "Send message",
+        }}
+        modeToggleProps={{
+          currentMode: isManualMode ? "manual" : "auto",
+          disabled: false,
+        }}
+      />
     </div>
   );
 };

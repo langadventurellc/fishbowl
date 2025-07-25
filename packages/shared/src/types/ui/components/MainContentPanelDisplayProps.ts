@@ -5,26 +5,48 @@
  */
 
 import type React from "react";
+import type { Agent } from "../core/Agent";
+import type { Message } from "../core/Message";
 import type { LayoutVariant } from "./LayoutVariant";
 
 export interface MainContentPanelDisplayProps {
   /**
-   * Agent labels container component to display at the top.
-   * Shows active agents with their roles and thinking states.
+   * List of agents participating in the conversation.
+   * Used for agent pills display and message association.
    */
-  agentLabelsContainer?: React.ReactNode;
+  agents: Agent[];
 
   /**
-   * Chat container component for the main message area.
-   * Handles scrollable message display with proper overflow.
+   * List of messages in the current conversation.
+   * Used to render the chat area with proper message formatting.
    */
-  chatContainer?: React.ReactNode;
+  messages: Message[];
 
   /**
-   * Input container component for the bottom input area.
-   * Contains text input, send button, and mode toggle controls.
+   * Initial text content for the input field.
+   * Controls the default input value when component first mounts.
+   * @default ""
    */
-  inputContainer?: React.ReactNode;
+  defaultInputText?: string;
+
+  /**
+   * Initial mode setting for the conversation input.
+   * Controls whether the input starts in manual or auto mode.
+   * @default true (manual mode)
+   */
+  defaultManualMode?: boolean;
+
+  /**
+   * Callback function called when input text changes.
+   * Allows parent components to react to input state changes.
+   */
+  onInputChange?: (text: string) => void;
+
+  /**
+   * Callback function called when input mode changes.
+   * Allows parent components to react to mode toggle changes.
+   */
+  onModeChange?: (isManual: boolean) => void;
 
   /**
    * Layout variant affecting spacing and responsive behavior.
