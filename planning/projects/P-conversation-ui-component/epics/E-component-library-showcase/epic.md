@@ -2,7 +2,7 @@
 kind: epic
 id: E-component-library-showcase
 title: Component Library Showcase
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-23T15:32:15.457096"

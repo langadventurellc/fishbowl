@@ -2,7 +2,7 @@
 kind: epic
 id: E-core-component-extraction
 title: Core Component Extraction
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - E-component-library-showcase
