@@ -21,6 +21,7 @@ import {
   MenuItemDisplay,
   MenuTriggerDisplay,
 } from "../../components/menu";
+import { SidebarContainerDisplay } from "../../components/sidebar";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
@@ -578,6 +579,282 @@ export default function ComponentShowcase() {
                       disabled: true,
                     }}
                   />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Sidebar Container Display</h2>
+              <p style={styles.sectionDescription}>
+                Main sidebar layout wrapper component that handles
+                collapsed/expanded visual states with smooth transitions and
+                theme integration
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Expanded State:</span>
+                <div style={{ flex: 1, maxWidth: "300px" }}>
+                  <SidebarContainerDisplay
+                    collapsed={false}
+                    widthVariant="default"
+                    showBorder={true}
+                  >
+                    <div
+                      style={{
+                        fontSize: "14px",
+                        fontWeight: "600",
+                        marginBottom: "12px",
+                        color: "var(--sidebar-foreground)",
+                      }}
+                    >
+                      Conversations
+                    </div>
+                    <div
+                      style={{
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        fontSize: "13px",
+                        backgroundColor: "var(--sidebar-accent)",
+                        color: "var(--sidebar-accent-foreground)",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      🗨 Active Conversation
+                    </div>
+                    <div
+                      style={{
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        fontSize: "13px",
+                        color: "var(--muted-foreground)",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      🗨 Previous Chat
+                    </div>
+                  </SidebarContainerDisplay>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Collapsed State:</span>
+                <div style={{ flex: 1, maxWidth: "300px" }}>
+                  <SidebarContainerDisplay
+                    collapsed={true}
+                    widthVariant="default"
+                    showBorder={true}
+                  >
+                    <div>This content is hidden when collapsed</div>
+                  </SidebarContainerDisplay>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Width Variants:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "16px",
+                    alignItems: "flex-start",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Narrow (180px)
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="narrow"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Narrow sidebar
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Default (200px)
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="default"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Default sidebar
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Wide (240px)
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="wide"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Wide sidebar
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Border Variants:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "16px",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      With Border
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="default"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Has right border
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      No Border
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="default"
+                      showBorder={false}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        No right border
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div style={{ flex: 1, maxWidth: "300px" }}>
+                  <SidebarContainerDisplay
+                    collapsed={false}
+                    widthVariant="default"
+                    showBorder={true}
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      borderRadius: "8px",
+                    }}
+                    className="custom-sidebar"
+                  >
+                    <div
+                      style={{
+                        color: "var(--accent-foreground)",
+                        fontSize: "13px",
+                      }}
+                    >
+                      Custom styled sidebar with accent background and rounded
+                      corners
+                    </div>
+                  </SidebarContainerDisplay>
                 </div>
               </div>
             </div>
