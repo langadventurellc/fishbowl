@@ -29,6 +29,7 @@ Ensure shadcn/ui components use the existing CSS variable theme system seamlessl
 
 1. Examine existing CSS variable definitions in the current CSS files
 2. Update the main CSS file to include shadcn/ui variable mappings:
+
    ```css
    :root {
      /* Existing variables remain unchanged */
@@ -41,6 +42,7 @@ Ensure shadcn/ui components use the existing CSS variable theme system seamlessl
      /* ... other mappings */
    }
    ```
+
 3. Test theme switching (light/dark mode)
 4. Verify visual consistency across component types
 5. Document the variable mapping strategy
