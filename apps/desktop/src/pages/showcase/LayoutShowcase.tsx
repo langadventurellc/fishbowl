@@ -4,7 +4,9 @@ import {
   ConversationScreenDisplay,
   MainContentPanelDisplay,
   ChatContainerDisplay,
+  AgentLabelsContainerDisplay,
 } from "../../components/layout";
+import { AgentPill } from "../../components/chat/AgentPill";
 
 interface Message {
   id: string;
@@ -789,41 +791,31 @@ export default function LayoutShowcase() {
           {/* Content Area */}
           <MainContentPanelDisplay
             agentLabelsContainer={
-              // Agent Labels Bar
-              <div style={styles.agentLabelsBar}>
-                {agents.map((agent, index) => (
-                  <div
-                    key={index}
-                    style={{
-                      ...styles.agentPill,
-                      backgroundColor: agent.color,
-                    }}
-                  >
-                    <span>
-                      {agent.name} | {agent.role}
-                    </span>
-                    {agent.isThinking && <div style={styles.thinkingDot} />}
-                  </div>
+              <AgentLabelsContainerDisplay
+                agentPills={agents.map((agent, index) => (
+                  <AgentPill key={index} agent={agent} />
                 ))}
-
-                <button
-                  style={styles.addAgentButton}
-                  onMouseEnter={(e) => {
-                    Object.assign(
-                      e.currentTarget.style,
-                      styles.addAgentButtonHover,
-                    );
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = "var(--border)";
-                    e.currentTarget.style.color = "var(--muted-foreground)";
-                    e.currentTarget.style.backgroundColor = "transparent";
-                  }}
-                  title="Add new agent to conversation"
-                >
-                  +
-                </button>
-              </div>
+                actionButtons={[
+                  <button
+                    key="add-agent"
+                    style={styles.addAgentButton}
+                    onMouseEnter={(e) => {
+                      Object.assign(
+                        e.currentTarget.style,
+                        styles.addAgentButtonHover,
+                      );
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--border)";
+                      e.currentTarget.style.color = "var(--muted-foreground)";
+                      e.currentTarget.style.backgroundColor = "transparent";
+                    }}
+                    title="Add new agent to conversation"
+                  >
+                    +
+                  </button>,
+                ]}
+              />
             }
             chatContainer={
               <ChatContainerDisplay
