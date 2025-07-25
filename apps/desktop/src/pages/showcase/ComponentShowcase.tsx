@@ -21,7 +21,10 @@ import {
   MenuItemDisplay,
   MenuTriggerDisplay,
 } from "../../components/menu";
-import { SidebarContainerDisplay } from "../../components/sidebar";
+import {
+  SidebarContainerDisplay,
+  SidebarHeaderDisplay,
+} from "../../components/sidebar";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
@@ -602,16 +605,7 @@ export default function ComponentShowcase() {
                     widthVariant="default"
                     showBorder={true}
                   >
-                    <div
-                      style={{
-                        fontSize: "14px",
-                        fontWeight: "600",
-                        marginBottom: "12px",
-                        color: "var(--sidebar-foreground)",
-                      }}
-                    >
-                      Conversations
-                    </div>
+                    <SidebarHeaderDisplay title="Conversations" />
                     <div
                       style={{
                         padding: "8px 12px",
@@ -855,6 +849,127 @@ export default function ComponentShowcase() {
                       corners
                     </div>
                   </SidebarContainerDisplay>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Sidebar Header Display</h2>
+              <p style={styles.sectionDescription}>
+                Sidebar header component that displays the top section with
+                title and controls, supporting collapsed states and theme
+                integration
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Default Title:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay title="Conversations" />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Title:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay title="My Projects" />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>With Controls:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Chat History"
+                    showControls={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Without Controls:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Recent Files"
+                    showControls={false}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Collapsed State:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Hidden Header"
+                    collapsed={true}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    (Header is hidden when collapsed=true)
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--accent)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Custom Styled"
+                    style={{
+                      color: "var(--accent-foreground)",
+                      fontSize: "16px",
+                      fontWeight: "700",
+                    }}
+                  />
                 </div>
               </div>
             </div>

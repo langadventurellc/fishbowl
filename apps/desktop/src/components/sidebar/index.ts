@@ -9,3 +9,4 @@
  */
 
 export * from "./SidebarContainerDisplay";
+export * from "./SidebarHeaderDisplay";

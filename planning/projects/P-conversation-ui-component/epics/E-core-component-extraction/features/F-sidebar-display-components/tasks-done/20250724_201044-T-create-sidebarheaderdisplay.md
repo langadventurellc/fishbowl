@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-sidebarheaderdisplay
+parent: F-sidebar-display-components
+status: done
 title: Create SidebarHeaderDisplay component with props interface
-status: open
 priority: normal
 prerequisites:
   - T-create-sidebarcontainerdisplay
 created: "2025-07-24T19:49:52.116418"
-updated: "2025-07-24T19:49:52.116418"
+updated: "2025-07-24T20:05:33.518842"
 schema_version: "1.1"
-parent: F-sidebar-display-components
+worktree: null
 ---
 
 Create the sidebar header component that displays the top section with title and controls.
@@ -65,3 +66,7 @@ Extract the sidebar header styling from `apps/desktop/src/pages/DesignPrototype.
 - Access to `packages/ui-theme/src/claymorphism-theme.css` theme variables
 
 ### Log
+
+**2025-07-25T01:10:44.475934Z** - Implemented SidebarHeaderDisplay component with props interface and ComponentShowcase integration. Created pure display component extracting header styles from DesignPrototype lines 268-273, supporting title text display, show/hide controls, collapsed state visibility, and theme variable integration. Added comprehensive showcase demonstrating default/custom titles, controls states, collapsed behavior, and custom styling. All quality checks pass with linting, formatting, and type checking.
+
+- filesChanged: ["packages/shared/src/types/ui/components/SidebarHeaderDisplayProps.ts", "packages/shared/src/types/ui/components/index.ts", "apps/desktop/src/components/sidebar/SidebarHeaderDisplay.tsx", "apps/desktop/src/components/sidebar/index.ts", "apps/desktop/src/pages/showcase/ComponentShowcase.tsx"]
