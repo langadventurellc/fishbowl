@@ -1,13 +1,14 @@
 ---
 kind: task
 id: T-refactor-chatcontainerdisplay-to
+status: done
 title: Refactor ChatContainerDisplay to accept Message array instead of children
-status: open
 priority: normal
 prerequisites: []
 created: "2025-07-25T15:49:23.040349"
-updated: "2025-07-25T15:49:23.040349"
+updated: "2025-07-25T15:54:22.672242"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Context
@@ -100,3 +101,7 @@ Refactor the `ChatContainerDisplay` component to accept raw message data directl
 - `apps/desktop/src/pages/showcase/ComponentShowcase.tsx`
 
 ### Log
+
+**2025-07-25T21:02:41.115019Z** - Successfully refactored ChatContainerDisplay component to accept Message[] array instead of pre-rendered React components. This eliminates code duplication and improves separation of concerns by moving MessageItem creation logic into ChatContainerDisplay. The component now handles message-to-component mapping internally with proper canRegenerate logic (true for agent messages) and context menu action forwarding. All quality checks pass and existing functionality is preserved.
+
+- filesChanged: ["packages/shared/src/types/ui/components/ChatContainerDisplayProps.ts", "apps/desktop/src/components/layout/ChatContainerDisplay.tsx", "apps/desktop/src/components/layout/MainContentPanelDisplay.tsx"]

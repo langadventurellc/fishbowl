@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/shared";
-import { MessageItem } from "../chat";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
@@ -38,14 +37,8 @@ export const MainContentPanelDisplay: React.FC<
 
       {/* Chat Container */}
       <ChatContainerDisplay
-        messages={messages.map((message) => (
-          <MessageItem
-            key={message.id}
-            message={message}
-            canRegenerate={message.type === "agent"}
-            onContextMenuAction={() => {}}
-          />
-        ))}
+        messages={messages}
+        onContextMenuAction={() => {}}
       />
 
       {/* Input Container */}
