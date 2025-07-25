@@ -11,7 +11,7 @@
 
 import React from "react";
 import { MessageContextMenuProps } from "@fishbowl-ai/shared";
-import { ContextMenu } from "../menu";
+import { ContextMenu, MenuItemDisplay } from "../menu";
 
 /**
  * MessageContextMenu component for message-specific context menu functionality.
@@ -57,73 +57,21 @@ export function MessageContextMenu({
   canRegenerate = false,
   className = "",
 }: MessageContextMenuProps) {
-  // Menu item styles matching DesignPrototype contextMenuItem
-  const menuItemStyles: React.CSSProperties = {
-    display: "block",
-    width: "100%",
-    padding: "8px 12px",
-    fontSize: "13px",
-    color: "var(--popover-foreground)",
-    backgroundColor: "transparent",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    textAlign: "left",
-    transition: "background-color 0.15s",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    boxSizing: "border-box",
-  };
-
   return (
     <ContextMenu position={position} className={className}>
-      <button
-        style={menuItemStyles}
-        onClick={onCopy}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "var(--accent)";
-          e.currentTarget.style.color = "var(--accent-foreground)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "transparent";
-          e.currentTarget.style.color = "var(--popover-foreground)";
-        }}
-      >
-        Copy message
-      </button>
+      <div onClick={onCopy} style={{ cursor: "pointer" }}>
+        <MenuItemDisplay label="Copy message" action="copy" />
+      </div>
 
       {canRegenerate && onRegenerate && (
-        <button
-          style={menuItemStyles}
-          onClick={onRegenerate}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = "var(--accent)";
-            e.currentTarget.style.color = "var(--accent-foreground)";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = "transparent";
-            e.currentTarget.style.color = "var(--popover-foreground)";
-          }}
-        >
-          Regenerate
-        </button>
+        <div onClick={onRegenerate} style={{ cursor: "pointer" }}>
+          <MenuItemDisplay label="Regenerate" action="regenerate" />
+        </div>
       )}
 
-      <button
-        style={menuItemStyles}
-        onClick={onDelete}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = "var(--accent)";
-          e.currentTarget.style.color = "var(--accent-foreground)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = "transparent";
-          e.currentTarget.style.color = "var(--popover-foreground)";
-        }}
-      >
-        Delete message
-      </button>
+      <div onClick={onDelete} style={{ cursor: "pointer" }}>
+        <MenuItemDisplay label="Delete message" action="delete" />
+      </div>
     </ContextMenu>
   );
 }

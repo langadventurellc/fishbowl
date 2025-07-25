@@ -1,4 +1,5 @@
 import { ContextMenuItem, ContextMenuDisplayProps } from "@fishbowl-ai/shared";
+import { useState } from "react";
 
 /**
  * ContextMenuDisplay Component
@@ -20,6 +21,7 @@ export function ContextMenuDisplay({
   items,
   className,
 }: ContextMenuDisplayProps) {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   // Don't render if not open
   if (!isOpen) {
     return null;
@@ -56,7 +58,7 @@ export function ContextMenuDisplay({
   };
 
   // Menu item styles extracted from DesignPrototype contextMenuItem object
-  const getMenuItemStyles = (item: ContextMenuItem) => {
+  const getMenuItemStyles = (item: ContextMenuItem, index: number) => {
     const baseStyles = {
       display: "block",
       width: "100%",
@@ -71,6 +73,15 @@ export function ContextMenuDisplay({
       transition: "background-color 0.15s",
     };
 
+    // Apply hover styles if this item is hovered
+    if (hoveredIndex === index && !item.disabled) {
+      return {
+        ...baseStyles,
+        backgroundColor: "var(--accent)",
+        color: "var(--accent-foreground)",
+      };
+    }
+
     // Apply disabled styling if item is disabled
     if (item.disabled) {
       return {
@@ -83,32 +94,21 @@ export function ContextMenuDisplay({
     return baseStyles;
   };
 
-  // Hover styles extracted from DesignPrototype contextMenuItemHover object
-  const getHoverStyles = () => ({
-    backgroundColor: "var(--accent)",
-    color: "var(--accent-foreground)",
-  });
-
   return (
     <div style={getMenuStyles()} className={className}>
       {items.map((item, index) => (
         <button
           key={`${item.action}-${index}`}
-          style={getMenuItemStyles(item)}
+          style={getMenuItemStyles(item, index)}
           disabled={item.disabled}
-          onMouseEnter={(e) => {
+          onMouseEnter={() => {
             if (!item.disabled) {
-              const target = e.currentTarget;
-              const hoverStyles = getHoverStyles();
-              target.style.backgroundColor = hoverStyles.backgroundColor;
-              target.style.color = hoverStyles.color;
+              setHoveredIndex(index);
             }
           }}
-          onMouseLeave={(e) => {
+          onMouseLeave={() => {
             if (!item.disabled) {
-              const target = e.currentTarget;
-              target.style.backgroundColor = "transparent";
-              target.style.color = "var(--popover-foreground)";
+              setHoveredIndex(null);
             }
           }}
         >

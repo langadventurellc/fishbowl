@@ -1,4 +1,5 @@
 import { MenuItemDisplayProps } from "@fishbowl-ai/shared";
+import { useState } from "react";
 
 /**
  * MenuItemDisplay Component
@@ -23,6 +24,7 @@ export function MenuItemDisplay({
   separator = false,
   className,
 }: MenuItemDisplayProps) {
+  const [isHovered, setIsHovered] = useState(false);
   // Base menu item styles extracted from DesignPrototype contextMenuItem (lines 551-563)
   const getBaseStyles = () => ({
     display: "block",
@@ -52,6 +54,15 @@ export function MenuItemDisplay({
         ...baseStyles,
         opacity: 0.5,
         cursor: "not-allowed",
+      };
+    }
+
+    // Apply hover styles when isHovered is true (for normal and danger variants)
+    if (isHovered && (variant === "normal" || variant === "danger")) {
+      return {
+        ...baseStyles,
+        backgroundColor: "var(--accent)",
+        color: "var(--accent-foreground)",
       };
     }
 
@@ -86,21 +97,14 @@ export function MenuItemDisplay({
     <div className={className}>
       <div
         style={getVariantStyles()}
-        onMouseEnter={(e) => {
+        onMouseEnter={() => {
           if ((variant === "normal" || variant === "danger") && !disabled) {
-            const target = e.currentTarget;
-            target.style.backgroundColor = "var(--accent)";
-            target.style.color = "var(--accent-foreground)";
+            setIsHovered(true);
           }
         }}
-        onMouseLeave={(e) => {
+        onMouseLeave={() => {
           if ((variant === "normal" || variant === "danger") && !disabled) {
-            const target = e.currentTarget;
-            target.style.backgroundColor = "transparent";
-            target.style.color =
-              variant === "danger"
-                ? "var(--destructive)"
-                : "var(--popover-foreground)";
+            setIsHovered(false);
           }
         }}
       >
