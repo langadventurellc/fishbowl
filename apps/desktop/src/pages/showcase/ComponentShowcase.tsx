@@ -24,6 +24,7 @@ import {
 import {
   SidebarContainerDisplay,
   SidebarHeaderDisplay,
+  SidebarToggleDisplay,
 } from "../../components/sidebar";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
@@ -970,6 +971,215 @@ export default function ComponentShowcase() {
                       fontWeight: "700",
                     }}
                   />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Sidebar Toggle Display</h2>
+              <p style={styles.sectionDescription}>
+                Sidebar toggle button component showing collapse/expand visual
+                states with positioning animation and hover appearance
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Collapsed State:</span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay isCollapsed={true} />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    → arrow, positioned at left: -12px
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Expanded State:</span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay isCollapsed={false} />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    ← arrow, positioned at left: 188px
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Hover State (Collapsed):
+                </span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay
+                    isCollapsed={true}
+                    showHoverState={true}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    Hover appearance with accent background
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Hover State (Expanded):
+                </span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay
+                    isCollapsed={false}
+                    showHoverState={true}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    Hover appearance with accent background
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Positioning:</span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay
+                    isCollapsed={false}
+                    style={{
+                      left: "100px",
+                      top: "30%",
+                    }}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    Custom positioned at left: 100px, top: 30%
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>State Comparison:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "16px",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                      backgroundColor: "var(--sidebar)",
+                      padding: "24px 40px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--border)",
+                      minHeight: "80px",
+                      flex: 1,
+                    }}
+                  >
+                    <SidebarToggleDisplay isCollapsed={true} />
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "var(--muted-foreground)",
+                        marginTop: "8px",
+                        textAlign: "center",
+                      }}
+                    >
+                      Collapsed
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      position: "relative",
+                      backgroundColor: "var(--sidebar)",
+                      padding: "24px 40px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--border)",
+                      minHeight: "80px",
+                      flex: 1,
+                    }}
+                  >
+                    <SidebarToggleDisplay isCollapsed={false} />
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "var(--muted-foreground)",
+                        marginTop: "8px",
+                        textAlign: "center",
+                      }}
+                    >
+                      Expanded
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
