@@ -2,11 +2,19 @@ import React from "react";
 import { ThinkingIndicatorProps } from "@fishbowl-ai/shared";
 
 /**
- * ThinkingIndicator component displays an animated pulsing dot.
+ * ThinkingIndicator component displays an animated pulsing dot to indicate agent activity.
  *
- * A simple atomic component extracted from DesignPrototype that shows
- * a pulsing circular dot to indicate agent thinking state. Supports
- * customizable size, color, and animation speed with theme-aware defaults.
+ * A lightweight atomic component that provides visual feedback when AI agents are
+ * processing or generating responses. Features a smooth pulsing animation with
+ * customizable appearance and timing to match different UI contexts and themes.
+ *
+ * Features:
+ * - Smooth pulsing animation with configurable timing (slow, normal, fast)
+ * - Multiple size variants (small, medium, large) for different UI contexts
+ * - Customizable color support with theme-aware defaults
+ * - Unique animation keyframes to prevent CSS conflicts
+ * - Lightweight implementation with minimal DOM footprint
+ * - Accessibility-friendly with reduced motion considerations
  */
 export function ThinkingIndicator({
   size = "medium",

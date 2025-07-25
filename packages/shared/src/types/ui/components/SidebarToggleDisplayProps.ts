@@ -3,8 +3,7 @@
  *
  * Defines the props contract for the SidebarToggleDisplay component that shows
  * the visual appearance of the sidebar toggle button without interactive functionality.
- * This is a pure display component extracted from the DesignPrototype for component
- * library showcase purposes.
+ * This is a pure display component for component library showcase purposes.
  *
  * @module types/ui/components/SidebarToggleDisplayProps
  */
@@ -71,7 +70,7 @@ export interface SidebarToggleDisplayProps {
   /**
    * Optional CSS class name for additional styling.
    * Allows for custom styling of the sidebar toggle display component
-   * beyond the default theme-aware styling extracted from DesignPrototype.
+   * beyond the default theme-aware styling.
    *
    * Applied to the root element of the sidebar toggle display component.
    *

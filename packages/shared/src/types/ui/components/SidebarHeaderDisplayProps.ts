@@ -4,7 +4,7 @@ import React from "react";
  * Props interface for SidebarHeaderDisplay component.
  *
  * Defines the configuration interface for the sidebar header component that displays
- * the top section with title and controls, extracted from DesignPrototype.tsx lines 268-273.
+ * the top section with title and controls.
  *
  * This component provides pure visual display of sidebar header styling including:
  * - Title text display with consistent typography

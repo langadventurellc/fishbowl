@@ -6,7 +6,7 @@ import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
- * that handles collapsed/expanded visual states with self-contained conversation list rendering.
+ * that handles collapsed/expanded visual states with conversation list rendering.
  *
  * When conversations prop is provided, automatically renders complete sidebar with:
  * - SidebarHeaderDisplay with "Conversations" title
@@ -44,11 +44,11 @@ export function SidebarContainerDisplay({
         return "240px";
       case "default":
       default:
-        return "200px"; // Matches DesignPrototype original width
+        return "200px"; // Default sidebar width
     }
   };
 
-  // Core sidebar container styles extracted from DesignPrototype lines 258-267
+  // Core sidebar container styles with theme integration and responsive behavior
   const containerStyles: React.CSSProperties = {
     width: collapsed ? "0px" : getWidthForVariant(widthVariant),
     backgroundColor: "var(--sidebar)",

@@ -12,9 +12,9 @@ import { ComponentSize } from "./ComponentSize";
 /**
  * Props interface for the MessageAvatar component.
  *
- * MessageAvatar displays a colored circle/pill to visually identify message senders
- * (agents) in the conversation interface. Extracted from DesignPrototype.tsx to
- * create a reusable display component for message sender identification.
+ * MessageAvatar displays a colored circular avatar to visually identify message senders
+ * (agents) in the conversation interface. Provides a reusable display component for
+ * consistent agent identification with initials and color coding.
  *
  * @example
  * ```typescript

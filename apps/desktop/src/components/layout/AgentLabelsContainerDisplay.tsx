@@ -4,11 +4,12 @@ import { AgentPill } from "../chat";
 import { Button } from "../input";
 
 /**
- * AgentLabelsContainerDisplay component provides the horizontal agent labels bar layout.
+ * AgentLabelsContainerDisplay - Horizontal agent labels bar layout component
  *
- * Self-contained component that internally creates AgentPill components from agent data
- * and includes a built-in "Add New Agent" button. Manages the top area that displays
- * active agents with proper spacing, alignment, and theme integration.
+ * Displays active conversation agents as pills in a horizontal scrollable bar.
+ * Self-contained component that renders AgentPill components from agent data
+ * and includes an "Add Agent" button. Positioned at the top of the conversation
+ * area with proper spacing, alignment, and theme integration.
  */
 export const AgentLabelsContainerDisplay: React.FC<
   AgentLabelsContainerDisplayProps
@@ -24,7 +25,7 @@ export const AgentLabelsContainerDisplay: React.FC<
   className,
   style,
 }) => {
-  // Container styles extracted from DesignPrototype.tsx lines 313-321
+  // Container styles for the horizontal agent labels bar
   const containerStyles: React.CSSProperties = {
     height: barHeight,
     backgroundColor: `var(--${backgroundVariant})`,

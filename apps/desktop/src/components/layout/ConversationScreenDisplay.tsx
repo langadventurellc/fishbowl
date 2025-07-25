@@ -1,10 +1,17 @@
 import React from "react";
 import { ConversationScreenDisplayProps } from "@fishbowl-ai/shared";
 
+/**
+ * ConversationScreenDisplay - Root container for the conversation application
+ *
+ * Top-level wrapper component that provides the foundational styling and structure
+ * for the entire conversation interface. Handles full-screen layout, theme variables,
+ * and serves as the root container for all conversation-related components.
+ */
 export const ConversationScreenDisplay: React.FC<
   ConversationScreenDisplayProps
 > = ({ fullScreen = true, children, className, style, onClick }) => {
-  // Container styles extracted from DesignPrototype.tsx lines 231-240
+  // Container styles for the full-screen conversation wrapper
   const containerStyles: React.CSSProperties = {
     width: "100%",
     height: fullScreen ? "100vh" : "auto",

@@ -4,9 +4,9 @@ import { ThemeToggleProps } from "@fishbowl-ai/shared";
 /**
  * ThemeToggle component provides a visual toggle button for light/dark theme switching.
  *
- * Extracted from DesignPrototype.tsx to create a reusable atomic component
- * that displays a sun/moon icon based on current theme and handles theme
- * switching through a callback prop.
+ * A reusable atomic component that displays a sun/moon icon based on current theme
+ * and handles theme switching through a callback prop. Features hover effects and
+ * proper accessibility attributes.
  */
 export function ThemeToggle({
   currentTheme,

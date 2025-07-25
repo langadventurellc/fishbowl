@@ -5,8 +5,8 @@ import { SidebarHeaderDisplayProps } from "@fishbowl-ai/shared";
  * SidebarHeaderDisplay component renders the top section of the sidebar
  * with title and optional controls.
  *
- * Extracted from DesignPrototype.tsx lines 268-273 (sidebarTitle styles) as a pure display component
- * showing the visual layout of the sidebar header area with consistent typography and spacing.
+ * A pure display component showing the visual layout of the sidebar header area
+ * with consistent typography and spacing.
  *
  * Key Features:
  * - Title text display with proper typography (14px, weight 600)
@@ -32,7 +32,7 @@ export function SidebarHeaderDisplay({
     return null;
   }
 
-  // Core sidebar header styles extracted from DesignPrototype lines 268-273
+  // Core sidebar header styles with consistent typography and theme integration
   const headerStyles: React.CSSProperties = {
     fontSize: "14px",
     fontWeight: "600",

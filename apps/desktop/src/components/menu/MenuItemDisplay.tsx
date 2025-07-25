@@ -4,17 +4,17 @@ import { useState } from "react";
 /**
  * MenuItemDisplay Component
  *
- * Pure visual representation of individual menu items extracted from DesignPrototype.tsx.
- * Focuses on displaying different visual states (normal, hover, disabled, danger)
- * without any interactive functionality or click handlers.
+ * Reusable menu item component that renders individual menu items with consistent
+ * styling and interactive states. Used throughout the application's menu systems
+ * including context menus, dropdown menus, and navigation menus.
  *
  * Features:
- * - Visual state variants for demonstration purposes
+ * - Multiple visual states (normal, hover, disabled, danger)
  * - Icon support with proper alignment
- * - Typography and spacing matching DesignPrototype
  * - Theme-aware styling using CSS custom properties
  * - Separator support for visual grouping
- * - Danger state for destructive actions
+ * - Accessibility-friendly hover and focus states
+ * - Danger variant for destructive actions
  */
 export function MenuItemDisplay({
   label,
@@ -25,7 +25,7 @@ export function MenuItemDisplay({
   className,
 }: MenuItemDisplayProps) {
   const [isHovered, setIsHovered] = useState(false);
-  // Base menu item styles extracted from DesignPrototype contextMenuItem (lines 551-563)
+  // Base menu item styles following the application's design system
   const getBaseStyles = () => ({
     display: "block",
     width: "100%",
@@ -69,14 +69,14 @@ export function MenuItemDisplay({
 
     switch (variant) {
       case "hover":
-        // From DesignPrototype contextMenuItemHover (lines 564-567)
+        // Hover state styling for interactive feedback
         return {
           ...baseStyles,
           backgroundColor: "var(--accent)",
           color: "var(--accent-foreground)",
         };
       case "disabled":
-        // From DesignPrototype contextMenuItemDisabled (lines 568-571)
+        // Disabled state styling with reduced opacity
         return {
           ...baseStyles,
           opacity: 0.5,

@@ -3,6 +3,13 @@ import { ConversationLayoutDisplayProps } from "@fishbowl-ai/shared";
 import { SidebarContainerDisplay, SidebarToggleDisplay } from "../sidebar";
 import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
 
+/**
+ * ConversationLayoutDisplay - Complete conversation interface layout component
+ *
+ * Top-level layout component that combines the sidebar navigation with the main
+ * conversation content area. Manages sidebar collapse state and provides the
+ * overall structure for the conversation interface with proper flex organization.
+ */
 export const ConversationLayoutDisplay: React.FC<
   ConversationLayoutDisplayProps
 > = ({
@@ -22,7 +29,7 @@ export const ConversationLayoutDisplay: React.FC<
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
-  // Container styles extracted from DesignPrototype.tsx lines 241-245 (mainLayout)
+  // Container styles for the main conversation layout
   const containerStyles: React.CSSProperties = {
     flex: 1,
     display: "flex",

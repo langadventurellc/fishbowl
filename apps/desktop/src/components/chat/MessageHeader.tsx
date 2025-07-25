@@ -5,18 +5,19 @@ import { MessageAvatar } from "./MessageAvatar";
 /**
  * MessageHeader component displays message metadata with proper spacing and typography.
  *
- * Extracted from DesignPrototype.tsx to create a pure display component that shows
- * agent name, role, and timestamp information in a consistent layout. Integrates
- * MessageAvatar component for visual association between messages and agents.
+ * A pure display component that renders message sender information including agent name,
+ * role, and timestamp in a consistent, visually appealing layout. Integrates the
+ * MessageAvatar component to provide visual association between messages and their senders.
  *
  * Features:
  * - Flex layout with consistent spacing (8px gap, 4px margin-bottom)
- * - Typography styles matching DesignPrototype (12px font, 500 weight)
- * - Agent color coding for visual consistency
- * - MessageAvatar integration for sender identification
- * - Support for different message types (user, agent, system)
- * - Theme-aware styling with CSS custom properties
- * - Pure component with no state or interactive functionality
+ * - Optimized typography with 12px font size and 500 weight for readability
+ * - Agent color coding system for visual consistency across the conversation
+ * - Integrated MessageAvatar component for immediate sender identification
+ * - Support for all message types (user, agent, system) with contextual formatting
+ * - Theme-aware styling using CSS custom properties for dark/light mode support
+ * - Pure component design with no internal state or side effects
+ * - Full accessibility support with semantic HTML and ARIA attributes
  *
  * Layout Structure:
  * [Avatar] [Agent Name | Role] — [Timestamp]
@@ -50,12 +51,12 @@ export function MessageHeader({
   messageType,
   className,
 }: MessageHeaderProps) {
-  // Format timestamp with dash prefix for consistency with DesignPrototype
+  // Format timestamp with dash prefix for visual consistency
   const formatTimestamp = (timestamp: string): string => {
     return `— ${timestamp}`;
   };
 
-  // Component styles extracted from DesignPrototype.tsx (lines 365-373)
+  // Component styles for consistent header layout and typography
   const styles = {
     header: {
       position: "relative" as const,

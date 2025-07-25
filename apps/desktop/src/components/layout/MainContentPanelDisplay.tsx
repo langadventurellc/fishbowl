@@ -3,6 +3,13 @@ import { MainContentPanelDisplayProps } from "@fishbowl-ai/shared";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
+/**
+ * MainContentPanelDisplay - Primary conversation interface layout component
+ *
+ * Orchestrates the main conversation area by combining agent labels, chat messages,
+ * and message input components. Provides the central content area layout with
+ * proper flex organization and overflow handling for the conversation interface.
+ */
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
 > = ({
@@ -17,7 +24,7 @@ export const MainContentPanelDisplay: React.FC<
   const [inputText] = useState(defaultInputText);
   const [isManualMode] = useState(defaultManualMode);
 
-  // Container styles extracted from DesignPrototype.tsx lines 307-312 (contentArea)
+  // Container styles for the main content area layout
   const containerStyles: React.CSSProperties = {
     flex: 1,
     display: "flex",

@@ -3,9 +3,9 @@ import { ContextMenuItem } from "./ContextMenuItem";
 /**
  * Props interface for the ContextMenuDisplay component.
  *
- * This component provides visual representation of dropdown context menus
- * extracted from DesignPrototype.tsx, focusing purely on display without
- * interactive functionality beyond visual state representation.
+ * Defines the configuration options for context menus used throughout the
+ * application. Supports flexible positioning, menu item management, and
+ * consistent styling across different menu contexts.
  *
  * @module types/ui/menu/ContextMenuDisplayProps
  */

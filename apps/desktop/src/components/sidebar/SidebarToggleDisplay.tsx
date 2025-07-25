@@ -5,8 +5,7 @@ import { SidebarToggleDisplayProps } from "@fishbowl-ai/shared";
  * SidebarToggleDisplay component renders the visual appearance of the sidebar
  * toggle button without interactive functionality.
  *
- * Extracted from DesignPrototype.tsx lines 615-638 (sidebarToggle and sidebarToggleHover styles)
- * as a pure display component showing the visual appearance of the collapse/expand button
+ * A pure display component showing the visual appearance of the collapse/expand button
  * for component library showcase purposes.
  *
  * Key Features:
@@ -16,7 +15,7 @@ import { SidebarToggleDisplayProps } from "@fishbowl-ai/shared";
  * - Hover appearance state support for demonstration
  * - Circular button with arrow indicators (← for expanded, → for collapsed)
  * - Proper positioning with absolute layout and z-index management
- * - Box shadow and border styling maintained from original design
+ * - Box shadow and border styling for visual depth
  *
  * Visual States:
  * - Collapsed: button positioned at left: -12px with "→" arrow
@@ -32,7 +31,7 @@ export function SidebarToggleDisplay({
   className = "",
   style = {},
 }: SidebarToggleDisplayProps) {
-  // Core sidebar toggle styles extracted from DesignPrototype lines 615-638
+  // Core sidebar toggle styles with positioning and theme integration
   const baseToggleStyles: React.CSSProperties = {
     position: "absolute",
     top: "50%",
@@ -54,7 +53,7 @@ export function SidebarToggleDisplay({
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
   };
 
-  // Hover state styles extracted from DesignPrototype lines 635-638
+  // Hover state styles for visual demonstration
   const hoverStateStyles: React.CSSProperties = showHoverState
     ? {
         backgroundColor: "var(--accent)",

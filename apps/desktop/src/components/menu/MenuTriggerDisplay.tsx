@@ -3,15 +3,16 @@ import { MenuTriggerDisplayProps } from "@fishbowl-ai/shared";
 /**
  * MenuTriggerDisplay Component
  *
- * Visual representation of ellipsis button triggers extracted from DesignPrototype.tsx.
- * Renders the three-dot ellipsis character (⋯) with proper styling and visual states
- * using CSS custom properties from the claymorphism theme system.
+ * Reusable menu trigger component that renders ellipsis button triggers for
+ * activating dropdown menus and context menus throughout the application.
+ * Provides consistent styling and interactive states across all menu systems.
  *
  * Features:
  * - Multiple visual states (normal, hover, active, disabled)
  * - Theme-aware styling using CSS custom properties
- * - Flexbox centering for proper ellipsis character alignment
- * - Exact visual match with DesignPrototype ellipsis button appearance
+ * - Flexible positioning and sizing options
+ * - Accessibility-friendly interactive states
+ * - Consistent ellipsis character rendering
  */
 export function MenuTriggerDisplay({
   variant = "normal",

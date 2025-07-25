@@ -2,8 +2,8 @@
  * ConversationListDisplay component for the sidebar conversation list.
  *
  * Pure display component that renders a scrollable container for conversation items
- * with proper spacing, layout, and visual state support. Extracted from DesignPrototype
- * lines 783-906 to provide a reusable conversation list container.
+ * with proper spacing, layout, and visual state support. Provides a reusable
+ * conversation list container for the sidebar.
  *
  * @module components/sidebar/ConversationListDisplay
  */
@@ -15,8 +15,8 @@ import type { ConversationListDisplayProps } from "@fishbowl-ai/shared";
  * ConversationListDisplay component.
  *
  * Renders a scrollable container area for conversation items with proper spacing
- * and layout extracted from DesignPrototype. Supports empty, populated, and scrolled
- * visual states without interactive functionality.
+ * and layout. Supports empty, populated, and scrolled visual states without
+ * interactive functionality.
  *
  * The component focuses on the container layout and spacing, providing the
  * scrollable area that would hold individual conversation items.
@@ -31,7 +31,7 @@ export function ConversationListDisplay({
   className = "",
   style = {},
 }: ConversationListDisplayProps) {
-  // Core conversation list container styles extracted from DesignPrototype
+  // Core conversation list container styles with flexible layout
   const baseContainerStyles: React.CSSProperties = {
     display: "flex",
     flexDirection: "column",
@@ -39,7 +39,7 @@ export function ConversationListDisplay({
     minHeight: "120px", // Minimum height to show empty/scrolled states
     maxHeight: "100%", // Prevent overflow of parent container
     overflow: "hidden", // Container manages its own overflow
-    gap: "4px", // Spacing between conversation items (from marginBottom in conversationItem)
+    gap: "4px", // Spacing between conversation items
   };
 
   // Scrollable area styles based on scroll state
@@ -108,7 +108,7 @@ export function ConversationListDisplay({
         // Determine if this conversation is active based on activeConversationId
         const isActive = conversation.name === activeConversationId;
 
-        // Conversation item placeholder styles extracted from DesignPrototype lines 274-297
+        // Conversation item styles with theme integration and interactive states
         const conversationItemStyles: React.CSSProperties = {
           position: "relative",
           padding: "8px 12px",
