@@ -3,7 +3,7 @@
  *
  * Re-exports all menu-related types, variants, and component prop interfaces
  * for the display system. These define the types and props for menu components
- * extracted from DesignPrototype during component decomposition.
+ * for the menu system throughout the application.
  *
  * @module types/ui/menu
  */

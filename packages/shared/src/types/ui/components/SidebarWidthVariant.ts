@@ -12,5 +12,5 @@
  */
 export type SidebarWidthVariant =
   | "narrow" // 180px - Compact sidebar for smaller screens
-  | "default" // 200px - Standard sidebar width (matches DesignPrototype)
+  | "default" // 200px - Standard sidebar width
   | "wide"; // 240px - Expanded sidebar for more content

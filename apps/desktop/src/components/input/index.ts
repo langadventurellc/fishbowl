@@ -1,7 +1,7 @@
 /**
  * Input Components Barrel Export
  *
- * Exports for input-related display components extracted from DesignPrototype.
+ * Exports for input-related display components for the conversation interface.
  * These are pure display components without interactive functionality.
  */
 

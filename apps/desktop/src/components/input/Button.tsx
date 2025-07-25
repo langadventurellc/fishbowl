@@ -2,7 +2,7 @@ import React from "react";
 import { ButtonProps } from "@fishbowl-ai/shared";
 
 /**
- * Button component supporting multiple variants extracted from DesignPrototype.
+ * Button component supporting multiple variants for diverse UI interactions.
  *
  * Unified button component that supports 4 variants (primary, secondary, ghost, toggle)
  * with consistent styling, accessibility features, and theme-aware colors.
