@@ -65,7 +65,8 @@ Extract high-level layout components that compose smaller components into screen
 - Each component in `apps/desktop/src/components/layout/` directory
 - Pure layout components with no business logic or state
 - Props-based composition of child components
-- TypeScript interfaces for all props from shared package
+- **CRITICAL**: Component props interfaces MUST be created in `packages/shared/src/types/`
+- Components themselves are created in `apps/desktop/src/components/layout/`
 
 ✅ **Visual Fidelity**
 
@@ -110,7 +111,21 @@ Extract high-level layout components that compose smaller components into screen
 1. Identify layout structure patterns in `apps/desktop/src/pages/DesignPrototype.tsx` (lines 354-361 and related sections)
 2. Extract CSS Grid and Flexbox layout styling from DesignPrototype
 3. Convert styling to use theme variables from `packages/ui-theme/src/claymorphism-theme.css`
-4. **Immediately add each component to ComponentShowcase** for visual verification
+4. **MUST reuse existing components** from previous features (message, sidebar, input components)
+5. **Create component props interfaces in shared package** (`packages/shared/src/types/`)
+6. **Immediately add each component to ComponentShowcase** for visual verification
+
+**Component Reuse Requirements:**
+
+- **Chat/Message Components**: Use existing components from `apps/desktop/src/components/chat/`
+  - `MessageItem`, `MessageContent`, `MessageHeader`, `MessageAvatar`, `AgentPill`, `ThinkingIndicator`
+- **Sidebar Components**: Use existing components from `apps/desktop/src/components/sidebar/`
+  - `SidebarContainerDisplay`, `SidebarHeaderDisplay`, `ConversationListDisplay`, `ConversationItemDisplay`, `SidebarToggleDisplay`
+- **Input Components**: Use existing components from `apps/desktop/src/components/input/`
+  - `InputContainerDisplay`, `MessageInputDisplay`, `SendButtonDisplay`, `ConversationModeToggleDisplay`, `Button`
+- **Menu Components**: Use existing components from `apps/desktop/src/components/menu/`
+  - `ContextMenuDisplay`, `MenuItemDisplay`, `MenuTriggerDisplay`
+- Import and compose these existing components rather than recreating functionality
 
 **Layout Patterns to Preserve:**
 
@@ -129,6 +144,11 @@ Extract high-level layout components that compose smaller components into screen
 **File Organization:**
 
 ```
+# Component Props Interfaces (CRITICAL - Create in shared package)
+packages/shared/src/types/
+├── layout-display.types.ts (all layout component prop interfaces)
+
+# Layout Components (Create in desktop app)
 apps/desktop/src/components/layout/
 ├── index.ts (barrel export)
 ├── ConversationScreenDisplay.tsx
@@ -140,7 +160,9 @@ apps/desktop/src/components/layout/
 
 ## Testing Requirements
 
-- Visual verification of all layout structures
+**NO AUTOMATED TESTING REQUIRED** - All verification will be done manually by the user:
+
+- Visual verification of all layout structures in ComponentShowcase
 - Responsive behavior appears correct at different sizes
 - Component composition renders properly
 - Theme switching preserves all layout styling
@@ -148,9 +170,10 @@ apps/desktop/src/components/layout/
 
 ## Dependencies
 
-- F-message-display-components (composes message components)
-- F-sidebar-display-components (composes sidebar components)
-- F-input-display-components (composes input components)
-- F-foundation-typescript-interfaces (for layout-related prop types)
+- Existing chat components in `apps/desktop/src/components/chat/`
+- Existing sidebar components in `apps/desktop/src/components/sidebar/`
+- Existing input components in `apps/desktop/src/components/input/`
+- Existing menu components in `apps/desktop/src/components/menu/`
+- Shared package for TypeScript interfaces (`packages/shared/src/types/`)
 
 ### Log
