@@ -1,18 +1,20 @@
 import React from "react";
 import { AgentLabelsContainerDisplayProps } from "@fishbowl-ai/shared";
+import { AgentPill } from "../chat";
+import { Button } from "../input";
 
 /**
  * AgentLabelsContainerDisplay component provides the horizontal agent labels bar layout.
  *
- * Extracted from DesignPrototype.tsx lines 313-321 (agentLabelsBar styles).
- * Manages the top area that displays active agents with proper spacing, alignment,
- * and theme integration.
+ * Self-contained component that internally creates AgentPill components from agent data
+ * and includes a built-in "Add New Agent" button. Manages the top area that displays
+ * active agents with proper spacing, alignment, and theme integration.
  */
 export const AgentLabelsContainerDisplay: React.FC<
   AgentLabelsContainerDisplayProps
 > = ({
-  agentPills = [],
-  actionButtons = [],
+  agents,
+  onAddAgent,
   barHeight = "56px",
   agentSpacing = "8px",
   containerPadding = "0 16px",
@@ -39,8 +41,23 @@ export const AgentLabelsContainerDisplay: React.FC<
 
   return (
     <div className={className} style={containerStyles}>
-      {agentPills}
-      {actionButtons}
+      {/* Internally generated agent pills */}
+      {agents.map((agent, index) => (
+        <AgentPill key={index} agent={agent} />
+      ))}
+
+      {/* Built-in "Add New Agent" button */}
+      {onAddAgent && (
+        <Button
+          variant="ghost"
+          size="small"
+          onClick={onAddAgent}
+          className="add-agent-button"
+          aria-label="Add new agent to conversation"
+        >
+          +
+        </Button>
+      )}
     </div>
   );
 };

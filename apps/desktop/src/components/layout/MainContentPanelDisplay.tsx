@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/shared";
-import { AgentPill, MessageItem } from "../chat";
-import { Button, InputContainerDisplay } from "../input";
+import { MessageItem } from "../chat";
+import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
 export const MainContentPanelDisplay: React.FC<
@@ -32,21 +32,8 @@ export const MainContentPanelDisplay: React.FC<
     <div className={className} style={containerStyles}>
       {/* Agent Labels Container */}
       <AgentLabelsContainerDisplay
-        agentPills={agents.map((agent, index) => (
-          <AgentPill key={index} agent={agent} />
-        ))}
-        actionButtons={[
-          <Button
-            key="add-agent"
-            variant="ghost"
-            size="small"
-            onClick={() => console.log("Demo: Adding new agent")}
-            className="add-agent-button"
-            aria-label="Add new agent to conversation"
-          >
-            +
-          </Button>,
-        ]}
+        agents={agents}
+        onAddAgent={() => console.log("Demo: Adding new agent")}
       />
 
       {/* Chat Container */}
