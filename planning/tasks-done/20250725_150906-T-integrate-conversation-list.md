@@ -1,12 +1,12 @@
 ---
 kind: task
 id: T-integrate-conversation-list
-status: open
+status: done
 title: Integrate conversation list management into SidebarContainerDisplay component
 priority: normal
 prerequisites: []
 created: "2025-07-25T14:32:55.591244"
-updated: "2025-07-25T14:34:53.293518"
+updated: "2025-07-25T14:54:55.126727"
 schema_version: "1.1"
 worktree: null
 ---
@@ -163,3 +163,19 @@ onCreateConversation?: () => void;
 - No automated tests required for this task
 
 ### Log
+
+**2025-07-25T20:09:06.052141Z** - Successfully integrated conversation list management into SidebarContainerDisplay component, reducing coupling and creating a self-contained sidebar solution.
+
+Key changes implemented:
+
+1. Added optional conversations prop to SidebarContainerDisplayProps interface
+2. Updated SidebarContainerDisplay to render complete sidebar internally when conversations provided
+3. Simplified ConversationLayoutDisplay by removing manual composition (40+ lines removed)
+4. Removed children prop and manual composition mode for cleaner API
+5. Updated component documentation to reflect new self-contained behavior
+
+The component now automatically renders SidebarHeaderDisplay, conversation list with ConversationItemDisplay components, and "New Conversation" button when conversations are provided. When conversations prop is omitted, it renders an empty sidebar container.
+
+All quality checks pass and build succeeds. Visual appearance and functionality remain identical to previous implementation while significantly reducing component coupling.
+
+- filesChanged: ["packages/shared/src/types/ui/components/SidebarContainerDisplayProps.ts", "apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx", "apps/desktop/src/components/layout/ConversationLayoutDisplay.tsx"]

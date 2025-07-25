@@ -1,12 +1,19 @@
-import React from "react";
 import { SidebarContainerDisplayProps } from "@fishbowl-ai/shared";
+import React from "react";
+import { Button } from "../input/Button";
+import { ConversationItemDisplay } from "./ConversationItemDisplay";
+import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
- * that handles collapsed/expanded visual states.
+ * that handles collapsed/expanded visual states with self-contained conversation list rendering.
  *
- * Extracted from DesignPrototype.tsx lines 258-267 (sidebar styles) as a pure display component
- * showing the visual layout of the sidebar wrapper with smooth transitions and theme integration.
+ * When conversations prop is provided, automatically renders complete sidebar with:
+ * - SidebarHeaderDisplay with "Conversations" title
+ * - Scrollable conversation list using ConversationItemDisplay components
+ * - "New Conversation" button at the bottom
+ *
+ * When conversations prop is omitted, renders empty sidebar container.
  *
  * Key Features:
  * - Collapsible width states with smooth 0.3s ease transitions
@@ -14,6 +21,7 @@ import { SidebarContainerDisplayProps } from "@fishbowl-ai/shared";
  * - Flexible width variants (narrow/default/wide)
  * - Border visibility control
  * - Proper overflow handling for collapsed state
+ * - Self-contained conversation list rendering
  *
  * Visual States:
  * - Collapsed: width 0px, padding 0, overflow hidden
@@ -24,8 +32,8 @@ export function SidebarContainerDisplay({
   widthVariant = "default",
   showBorder = true,
   className = "",
-  children,
   style = {},
+  conversations,
 }: SidebarContainerDisplayProps) {
   // Width configurations matching design requirements
   const getWidthForVariant = (variant: typeof widthVariant) => {
@@ -53,9 +61,51 @@ export function SidebarContainerDisplay({
     ...style, // Custom styles take precedence
   };
 
+  // Render self-contained sidebar when conversations are provided
+  const renderSelfContainedContent = () => (
+    <>
+      <SidebarHeaderDisplay
+        title="Conversations"
+        showControls={true}
+        collapsed={collapsed}
+      />
+
+      {/* Conversation items with interactive behavior */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: "4px",
+          minHeight: "120px",
+        }}
+      >
+        {conversations!.map((conv, index) => (
+          <ConversationItemDisplay
+            key={index}
+            conversation={conv}
+            appearanceState={conv.isActive ? "active" : "inactive"}
+            showUnreadIndicator={false}
+          />
+        ))}
+      </div>
+
+      <div style={{ marginTop: "auto" }}>
+        <Button
+          variant="primary"
+          size="small"
+          onClick={() => console.log("Demo: New conversation")}
+          aria-label="Create new conversation"
+        >
+          New Conversation
+        </Button>
+      </div>
+    </>
+  );
+
   return (
     <div className={className} style={containerStyles}>
-      {!collapsed && children}
+      {!collapsed && conversations && renderSelfContainedContent()}
     </div>
   );
 }

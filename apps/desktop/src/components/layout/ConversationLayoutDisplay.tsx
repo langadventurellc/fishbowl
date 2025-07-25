@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import { ConversationLayoutDisplayProps } from "@fishbowl-ai/shared";
-import { Button } from "../input/Button";
-import {
-  ConversationItemDisplay,
-  SidebarContainerDisplay,
-  SidebarHeaderDisplay,
-  SidebarToggleDisplay,
-} from "../sidebar";
+import { SidebarContainerDisplay, SidebarToggleDisplay } from "../sidebar";
 import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
 
 export const ConversationLayoutDisplay: React.FC<
@@ -52,44 +46,8 @@ export const ConversationLayoutDisplay: React.FC<
         collapsed={isSidebarCollapsed}
         widthVariant="default"
         showBorder={true}
-      >
-        <SidebarHeaderDisplay
-          title="Conversations"
-          showControls={true}
-          collapsed={isSidebarCollapsed}
-        />
-
-        {/* Conversation items with interactive behavior */}
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            flexDirection: "column",
-            gap: "4px",
-            minHeight: "120px",
-          }}
-        >
-          {conversations.map((conv, index) => (
-            <ConversationItemDisplay
-              key={index}
-              conversation={conv}
-              appearanceState={conv.isActive ? "active" : "inactive"}
-              showUnreadIndicator={false}
-            />
-          ))}
-        </div>
-
-        <div style={{ marginTop: "auto" }}>
-          <Button
-            variant="primary"
-            size="small"
-            onClick={() => console.log("Demo: New conversation")}
-            aria-label="Create new conversation"
-          >
-            New Conversation
-          </Button>
-        </div>
-      </SidebarContainerDisplay>
+        conversations={conversations}
+      />
 
       {/* Main Content */}
       <MainContentPanelDisplay agents={agents} messages={messages} />

@@ -1,16 +1,20 @@
 import React from "react";
+import { Conversation } from "../core/Conversation";
 import { SidebarWidthVariant } from "./SidebarWidthVariant";
 
 /**
  * Props interface for SidebarContainerDisplay component.
  *
  * Defines the configuration interface for the main sidebar layout wrapper component
- * that handles collapsed/expanded visual states extracted from DesignPrototype.tsx lines 258-267.
+ * that handles collapsed/expanded visual states with self-contained
+ * conversation list rendering.
  *
- * This component provides pure visual display of sidebar container styling including:
+ * This component provides:
  * - Collapsible width states with smooth transitions
  * - Border and background styling from theme variables
  * - Flexible width variants for different layouts
+ * - Self-contained conversation list rendering when conversations prop is provided
+ * - Empty sidebar display when no conversations are provided
  *
  * @module types/ui/components/SidebarContainerDisplayProps
  */
@@ -44,13 +48,15 @@ export interface SidebarContainerDisplayProps {
   className?: string;
 
   /**
-   * Child content to render inside the sidebar container
-   */
-  children?: React.ReactNode;
-
-  /**
    * Custom styles to apply to the container
    * Merged with component styles, custom styles take precedence
    */
   style?: React.CSSProperties;
+
+  /**
+   * Optional conversations array for self-contained sidebar
+   * When provided, renders complete sidebar content internally
+   * When omitted, renders empty sidebar container
+   */
+  conversations?: Conversation[];
 }
