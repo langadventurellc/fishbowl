@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import { ContextMenuProps } from "@fishbowl-ai/shared";
 import { MenuTriggerDisplay } from "./";
 
@@ -40,7 +41,10 @@ export function ContextMenu({
   disabled = false,
 }: ContextMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
   const menuRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const portalMenuRef = useRef<HTMLDivElement>(null);
 
   // Handle trigger click to toggle menu
   const handleTriggerClick = (e: React.MouseEvent) => {
@@ -48,6 +52,18 @@ export function ContextMenu({
     e.stopPropagation();
 
     if (disabled) return;
+
+    // Calculate position for portal rendering
+    if (triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      const actualPosition = getActualPosition();
+
+      const newPosition = {
+        top: actualPosition === "above" ? rect.top - 4 : rect.bottom + 4,
+        left: rect.right - 140, // Align right edges, assuming min width of 140px
+      };
+      setMenuPosition(newPosition);
+    }
 
     setIsOpen((prev) => !prev);
   };
@@ -72,12 +88,14 @@ export function ContextMenu({
   // Handle click outside to close menu
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isOpen &&
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
+      if (isOpen) {
+        const target = event.target as Node;
+        const clickedInsideTrigger = menuRef.current?.contains(target);
+        const clickedInsidePortalMenu = portalMenuRef.current?.contains(target);
+
+        if (!clickedInsideTrigger && !clickedInsidePortalMenu) {
+          setIsOpen(false);
+        }
       }
     };
 
@@ -101,59 +119,51 @@ export function ContextMenu({
     return "below";
   };
 
-  const actualPosition = getActualPosition();
-
   // Container styles for proper positioning
   const containerStyles: React.CSSProperties = {
     position: "relative",
     display: "inline-block",
   };
 
-  // Dropdown menu styles matching ContextMenuDisplay styling
-  const getMenuStyles = () => {
-    const baseStyles: React.CSSProperties = {
-      position: "absolute",
+  // Dropdown menu styles for portal rendering
+  const getMenuStyles = (): React.CSSProperties => {
+    return {
+      position: "fixed",
+      top: `${menuPosition.top}px`,
+      left: `${menuPosition.left}px`,
       backgroundColor: "var(--popover)",
       border: "1px solid var(--border)",
       borderRadius: "6px",
       boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
       padding: "4px",
       minWidth: "140px",
-      zIndex: 1000,
-    };
-
-    // Position-specific styles matching ContextMenuDisplay
-    if (actualPosition === "above") {
-      return {
-        ...baseStyles,
-        bottom: "100%",
-        right: "0",
-        marginBottom: "4px",
-      };
-    }
-
-    return {
-      ...baseStyles,
-      top: "100%",
-      right: "0",
+      zIndex: 9999,
     };
   };
 
   return (
-    <div ref={menuRef} style={containerStyles} className={className}>
-      {/* Trigger Element */}
-      <div onClick={handleTriggerClick}>
-        {trigger ? (
-          trigger
-        ) : (
-          <MenuTriggerDisplay
-            variant={disabled ? "disabled" : isOpen ? "active" : "normal"}
-          />
-        )}
+    <>
+      <div ref={menuRef} style={containerStyles} className={className}>
+        {/* Trigger Element */}
+        <div ref={triggerRef} onClick={handleTriggerClick}>
+          {trigger ? (
+            trigger
+          ) : (
+            <MenuTriggerDisplay
+              variant={disabled ? "disabled" : isOpen ? "active" : "normal"}
+            />
+          )}
+        </div>
       </div>
 
-      {/* Context Menu Dropdown - Custom container for children */}
-      {isOpen && <div style={getMenuStyles()}>{children}</div>}
-    </div>
+      {/* Context Menu Dropdown - Rendered in portal for proper z-index layering */}
+      {isOpen &&
+        createPortal(
+          <div ref={portalMenuRef} style={getMenuStyles()}>
+            {children}
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }

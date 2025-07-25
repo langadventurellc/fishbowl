@@ -21,6 +21,13 @@ import {
   MenuItemDisplay,
   MenuTriggerDisplay,
 } from "../../components/menu";
+import {
+  ConversationItemDisplay,
+  ConversationListDisplay,
+  SidebarContainerDisplay,
+  SidebarHeaderDisplay,
+  SidebarToggleDisplay,
+} from "../../components/sidebar";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
 
@@ -61,6 +68,35 @@ export default function ComponentShowcase() {
       role: "User Experience Designer",
       color: "#a855f7", // Purple
       isThinking: true,
+    },
+  ];
+
+  // Sample conversation data for ConversationListDisplay showcase
+  const sampleConversations = [
+    {
+      name: "Project Planning",
+      lastActivity: "2h ago",
+      isActive: true,
+    },
+    {
+      name: "Creative Writing",
+      lastActivity: "Yesterday",
+      isActive: false,
+    },
+    {
+      name: "Code Review",
+      lastActivity: "Dec 15",
+      isActive: false,
+    },
+    {
+      name: "Research Discussion",
+      lastActivity: "Last week",
+      isActive: false,
+    },
+    {
+      name: "Team Standup",
+      lastActivity: "3 days ago",
+      isActive: false,
     },
   ];
 
@@ -577,6 +613,817 @@ export default function ComponentShowcase() {
                       currentMode: "auto",
                       disabled: true,
                     }}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Sidebar Container Display</h2>
+              <p style={styles.sectionDescription}>
+                Main sidebar layout wrapper component that handles
+                collapsed/expanded visual states with smooth transitions and
+                theme integration
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Expanded State:</span>
+                <div style={{ flex: 1, maxWidth: "300px" }}>
+                  <SidebarContainerDisplay
+                    collapsed={false}
+                    widthVariant="default"
+                    showBorder={true}
+                  >
+                    <SidebarHeaderDisplay title="Conversations" />
+                    <div
+                      style={{
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        fontSize: "13px",
+                        backgroundColor: "var(--sidebar-accent)",
+                        color: "var(--sidebar-accent-foreground)",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      🗨 Active Conversation
+                    </div>
+                    <div
+                      style={{
+                        padding: "8px 12px",
+                        borderRadius: "6px",
+                        fontSize: "13px",
+                        color: "var(--muted-foreground)",
+                        marginBottom: "4px",
+                      }}
+                    >
+                      🗨 Previous Chat
+                    </div>
+                  </SidebarContainerDisplay>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Collapsed State:</span>
+                <div style={{ flex: 1, maxWidth: "300px" }}>
+                  <SidebarContainerDisplay
+                    collapsed={true}
+                    widthVariant="default"
+                    showBorder={true}
+                  >
+                    <div>This content is hidden when collapsed</div>
+                  </SidebarContainerDisplay>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Width Variants:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "16px",
+                    alignItems: "flex-start",
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Narrow (180px)
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="narrow"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Narrow sidebar
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Default (200px)
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="default"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Default sidebar
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      Wide (240px)
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="wide"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Wide sidebar
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Border Variants:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "16px",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      With Border
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="default"
+                      showBorder={true}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        Has right border
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        color: "var(--muted-foreground)",
+                      }}
+                    >
+                      No Border
+                    </span>
+                    <SidebarContainerDisplay
+                      collapsed={false}
+                      widthVariant="default"
+                      showBorder={false}
+                    >
+                      <div
+                        style={{
+                          fontSize: "12px",
+                          color: "var(--sidebar-foreground)",
+                        }}
+                      >
+                        No right border
+                      </div>
+                    </SidebarContainerDisplay>
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div style={{ flex: 1, maxWidth: "300px" }}>
+                  <SidebarContainerDisplay
+                    collapsed={false}
+                    widthVariant="default"
+                    showBorder={true}
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      borderRadius: "8px",
+                    }}
+                    className="custom-sidebar"
+                  >
+                    <div
+                      style={{
+                        color: "var(--accent-foreground)",
+                        fontSize: "13px",
+                      }}
+                    >
+                      Custom styled sidebar with accent background and rounded
+                      corners
+                    </div>
+                  </SidebarContainerDisplay>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Sidebar Header Display</h2>
+              <p style={styles.sectionDescription}>
+                Sidebar header component that displays the top section with
+                title and controls, supporting collapsed states and theme
+                integration
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Default Title:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay title="Conversations" />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Title:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay title="My Projects" />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>With Controls:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Chat History"
+                    showControls={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Without Controls:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Recent Files"
+                    showControls={false}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Collapsed State:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--sidebar)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Hidden Header"
+                    collapsed={true}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      fontStyle: "italic",
+                    }}
+                  >
+                    (Header is hidden when collapsed=true)
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div
+                  style={{
+                    backgroundColor: "var(--accent)",
+                    padding: "16px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                  }}
+                >
+                  <SidebarHeaderDisplay
+                    title="Custom Styled"
+                    style={{
+                      color: "var(--accent-foreground)",
+                      fontSize: "16px",
+                      fontWeight: "700",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Sidebar Toggle Display</h2>
+              <p style={styles.sectionDescription}>
+                Sidebar toggle button component showing collapse/expand visual
+                states with positioning animation and hover appearance
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Collapsed State:</span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay isCollapsed={true} />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    → arrow, positioned at left: -12px
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Expanded State:</span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay isCollapsed={false} />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    ← arrow, positioned at left: 188px
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Hover State (Collapsed):
+                </span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay
+                    isCollapsed={true}
+                    showHoverState={true}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    Hover appearance with accent background
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Hover State (Expanded):
+                </span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay
+                    isCollapsed={false}
+                    showHoverState={true}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    Hover appearance with accent background
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Positioning:</span>
+                <div
+                  style={{
+                    position: "relative",
+                    backgroundColor: "var(--sidebar)",
+                    padding: "24px 40px",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border)",
+                    minHeight: "80px",
+                  }}
+                >
+                  <SidebarToggleDisplay
+                    isCollapsed={false}
+                    style={{
+                      left: "100px",
+                      top: "30%",
+                    }}
+                  />
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "var(--muted-foreground)",
+                      marginTop: "8px",
+                    }}
+                  >
+                    Custom positioned at left: 100px, top: 30%
+                  </div>
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>State Comparison:</span>
+                <div
+                  style={{
+                    display: "flex",
+                    gap: "16px",
+                  }}
+                >
+                  <div
+                    style={{
+                      position: "relative",
+                      backgroundColor: "var(--sidebar)",
+                      padding: "24px 40px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--border)",
+                      minHeight: "80px",
+                      flex: 1,
+                    }}
+                  >
+                    <SidebarToggleDisplay isCollapsed={true} />
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "var(--muted-foreground)",
+                        marginTop: "8px",
+                        textAlign: "center",
+                      }}
+                    >
+                      Collapsed
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      position: "relative",
+                      backgroundColor: "var(--sidebar)",
+                      padding: "24px 40px",
+                      borderRadius: "6px",
+                      border: "1px solid var(--border)",
+                      minHeight: "80px",
+                      flex: 1,
+                    }}
+                  >
+                    <SidebarToggleDisplay isCollapsed={false} />
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        color: "var(--muted-foreground)",
+                        marginTop: "8px",
+                        textAlign: "center",
+                      }}
+                    >
+                      Expanded
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Conversation List Display</h2>
+              <p style={styles.sectionDescription}>
+                Conversation list container component that renders a scrollable
+                area for conversation items with proper spacing and visual
+                states
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Empty State:</span>
+                <div style={{ width: "200px", height: "150px" }}>
+                  <ConversationListDisplay
+                    conversations={[]}
+                    activeConversationId=""
+                    scrollState="none"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Populated List:</span>
+                <div style={{ width: "200px", height: "200px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations}
+                    activeConversationId="Project Planning"
+                    scrollState="scrollable"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Scrolled State:</span>
+                <div style={{ width: "200px", height: "150px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations}
+                    activeConversationId="Code Review"
+                    scrollState="scrolled"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>No Active Selection:</span>
+                <div style={{ width: "200px", height: "180px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations}
+                    activeConversationId=""
+                    scrollState="scrollable"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Single Item:</span>
+                <div style={{ width: "200px", height: "120px" }}>
+                  <ConversationListDisplay
+                    conversations={[sampleConversations[0]!]}
+                    activeConversationId="Project Planning"
+                    scrollState="none"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div style={{ width: "220px", height: "160px" }}>
+                  <ConversationListDisplay
+                    conversations={sampleConversations.slice(0, 3)}
+                    activeConversationId="Creative Writing"
+                    scrollState="scrollable"
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      borderRadius: "8px",
+                      padding: "8px",
+                    }}
+                    className="custom-conversation-list"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section style={styles.section}>
+            <div style={styles.sectionHeader}>
+              <h2 style={styles.sectionTitle}>Conversation Item Display</h2>
+              <p style={styles.sectionDescription}>
+                Individual conversation item display component showing
+                conversation entries with different visual states - active,
+                inactive, unread, and hover. Includes context menu with ellipses
+                trigger that appears on hover for conversation actions (rename,
+                duplicate, delete).
+              </p>
+            </div>
+            <div style={styles.agentPillShowcase}>
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Active Conversation:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Project Planning",
+                      lastActivity: "2h ago",
+                      isActive: true,
+                    }}
+                    appearanceState="active"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>
+                  Inactive Conversation:
+                </span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Creative Writing",
+                      lastActivity: "Yesterday",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Hover Appearance:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Code Review",
+                      lastActivity: "Dec 15",
+                      isActive: false,
+                    }}
+                    appearanceState="hover"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Context Menu Demo:</span>
+                <div style={{ width: "200px" }}>
+                  <div
+                    style={{
+                      fontSize: "11px",
+                      color: "var(--muted-foreground)",
+                      marginBottom: "4px",
+                    }}
+                  >
+                    ↗ Hover to see ellipses trigger
+                  </div>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "API Development",
+                      lastActivity: "30m ago",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Unread Conversation:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Bug Fixes",
+                      lastActivity: "1h ago",
+                      isActive: false,
+                    }}
+                    appearanceState="unread"
+                    showUnreadIndicator={true}
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Long Name Example:</span>
+                <div style={{ width: "180px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Very Long Conversation Name That Gets Truncated",
+                      lastActivity: "Just now",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
+                  />
+                </div>
+              </div>
+
+              <div style={styles.agentPillRow}>
+                <span style={styles.agentPillLabel}>Custom Styling:</span>
+                <div style={{ width: "200px" }}>
+                  <ConversationItemDisplay
+                    conversation={{
+                      name: "Custom Styled",
+                      lastActivity: "5m ago",
+                      isActive: false,
+                    }}
+                    appearanceState="inactive"
+                    style={{
+                      backgroundColor: "var(--accent)",
+                      borderRadius: "8px",
+                      border: "1px solid var(--border)",
+                    }}
+                    className="custom-conversation-item"
                   />
                 </div>
               </div>

@@ -31,6 +31,7 @@ export function MenuItemDisplay({
     width: "100%",
     padding: "8px 12px",
     fontSize: "13px",
+    fontFamily: "var(--font-sans)",
     color: "var(--popover-foreground)",
     backgroundColor: "transparent",
     border: "none",
