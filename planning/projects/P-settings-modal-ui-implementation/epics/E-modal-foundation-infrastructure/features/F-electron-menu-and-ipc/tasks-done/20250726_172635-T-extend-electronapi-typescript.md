@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-extend-electronapi-typescript
+parent: F-electron-menu-and-ipc
+status: done
 title: Extend ElectronAPI TypeScript interfaces for IPC methods
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-26T17:18:26.471623"
-updated: "2025-07-26T17:18:26.471623"
+updated: "2025-07-26T17:23:18.383833"
 schema_version: "1.1"
-parent: F-electron-menu-and-ipc
+worktree: null
 ---
 
 # Extend ElectronAPI TypeScript Interfaces for IPC Methods
@@ -79,3 +80,7 @@ export interface ElectronAPI {
 - `apps/desktop/src/types/electron.d.ts` - Primary interface extension
 
 ### Log
+
+**2025-07-26T22:26:35.583240Z** - Extended ElectronAPI TypeScript interface with IPC methods for settings modal control. Added onOpenSettings method for registering callbacks when settings should be opened via Electron menu or keyboard shortcuts, and removeAllListeners method for cleanup to prevent memory leaks. Implementation follows Electron security best practices by filtering IPC events and not exposing raw ipcRenderer. All quality checks pass with proper TypeScript types and JSDoc documentation.
+
+- filesChanged: ["apps/desktop/src/types/electron.d.ts", "apps/desktop/src/electron/preload.ts"]
