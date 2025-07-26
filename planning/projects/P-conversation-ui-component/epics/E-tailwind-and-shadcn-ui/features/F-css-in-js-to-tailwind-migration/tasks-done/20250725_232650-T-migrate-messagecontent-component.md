@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-migrate-messagecontent-component
+parent: F-css-in-js-to-tailwind-migration
+status: done
 title: Migrate MessageContent component inline styles to Tailwind utilities
-status: open
 priority: normal
 prerequisites:
   - T-migrate-messageitem-component
 created: "2025-07-25T21:39:11.208585"
-updated: "2025-07-25T21:39:11.208585"
+updated: "2025-07-25T23:20:33.945714"
 schema_version: "1.1"
-parent: F-css-in-js-to-tailwind-migration
+worktree: null
 ---
 
 # Migrate MessageContent Component Inline Styles to Tailwind Utilities
@@ -193,3 +194,7 @@ Convert the MessageContent component from CSS-in-JS inline styles to Tailwind ut
 This task ensures message content remains perfectly readable and interactive while working seamlessly with the Tailwind utility system and maintaining exact expansion behavior.
 
 ### Log
+
+**2025-07-26T04:26:50.475567Z** - Successfully migrated MessageContent component from CSS-in-JS to Tailwind utilities while maintaining pixel-perfect visual parity. Replaced the CSS-in-JS styles object with Tailwind utility classes using the cn() function, preserving all interactive states including hover effects on the "Show more" link. Ensured proper support for system vs regular message types with conditional styling. All quality checks passed (linting, formatting, type checking) and all tests are passing without issues.
+
+- filesChanged: ["apps/desktop/src/components/chat/MessageContent.tsx"]

@@ -1,5 +1,6 @@
 import { MessageContentProps } from "@fishbowl-ai/shared";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 /**
  * MessageContent component displays message text with proper formatting and typography.
@@ -80,54 +81,34 @@ export function MessageContent({
   const displayContent =
     isLong && !isExpanded ? getMessagePreview(content) : content;
 
-  // Component styles for consistent text formatting and readability
-  const styles = {
-    content: {
-      fontSize: "14px",
-      lineHeight: "1.5",
-      padding: "8px 0",
-      whiteSpace: "pre-wrap" as const,
-      color:
-        messageType === "system"
-          ? "var(--muted-foreground)"
-          : "var(--foreground)",
-      fontStyle: messageType === "system" ? "italic" : "normal",
-      textAlign:
-        messageType === "system" ? ("center" as const) : ("left" as const),
-      userSelect: "text" as const,
-      WebkitUserSelect: "text" as const,
-      MozUserSelect: "text" as const,
-      msUserSelect: "text" as const,
-    } as const,
-    showMoreLink: {
-      color: "var(--primary)",
-      cursor: "pointer",
-      fontSize: "12px",
-      fontWeight: "500",
-      marginTop: "4px",
-      transition: "opacity 0.15s",
-      opacity: "0.7",
-    } as const,
-  };
+  // Tailwind utility classes for consistent message content styling
+  const contentClasses = cn(
+    // Base typography and spacing
+    "text-sm leading-6 py-2 whitespace-pre-wrap select-text",
+    // Conditional styling based on message type
+    messageType === "system"
+      ? ["text-muted-foreground italic text-center"]
+      : ["text-foreground text-left"],
+  );
+
+  const showMoreLinkClasses = cn(
+    // Base link styling
+    "text-primary cursor-pointer text-xs font-medium mt-1",
+    // Interactive states
+    "transition-opacity duration-150 opacity-70 hover:opacity-100",
+  );
 
   return (
     <div
-      style={styles.content}
-      className={className}
+      className={cn(contentClasses, className)}
       role="article"
       aria-label={`${messageType} message content`}
     >
       {displayContent}
       {isLong && (
         <div
-          style={styles.showMoreLink}
+          className={showMoreLinkClasses}
           onClick={() => setIsExpanded(!isExpanded)}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.opacity = "1";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.opacity = "0.7";
-          }}
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
