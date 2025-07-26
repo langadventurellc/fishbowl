@@ -2,12 +2,12 @@
 kind: feature
 id: F-shadcn-ui-component-integration
 title: shadcn/ui Component Integration
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-tailwind-css-v4-setup-and
 created: "2025-07-25T16:49:17.175065"
-updated: "2025-07-25T16:49:17.175065"
+updated: "2025-07-26T02:10:28.013844+00:00"
 schema_version: "1.1"
 parent: E-tailwind-and-shadcn-ui
 ---
