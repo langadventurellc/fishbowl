@@ -23,7 +23,6 @@ import {
 } from "../../components/menu";
 import { ThemeToggle } from "../../components/showcase";
 import { ShowcaseLayout } from "../../components/showcase/ShowcaseLayout";
-import { Button as ShadcnButton } from "../../components/ui/button";
 import {
   ConversationItemDisplay,
   ConversationListDisplay,
@@ -2057,53 +2056,6 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                     messageType="system"
                     expansionThreshold={100}
                   />
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section style={styles.section}>
-            <div style={styles.sectionHeader}>
-              <h2 style={styles.sectionTitle}>shadcn/ui Integration Test</h2>
-              <p style={styles.sectionDescription}>
-                Testing shadcn/ui components with existing CSS variables and
-                theme system
-              </p>
-            </div>
-            <div style={styles.agentPillShowcase}>
-              <div style={styles.agentPillRow}>
-                <span style={styles.agentPillLabel}>shadcn/ui Buttons:</span>
-                <ShadcnButton variant="default">Default</ShadcnButton>
-                <ShadcnButton variant="secondary">Secondary</ShadcnButton>
-                <ShadcnButton variant="outline">Outline</ShadcnButton>
-                <ShadcnButton variant="ghost">Ghost</ShadcnButton>
-                <ShadcnButton variant="destructive">Destructive</ShadcnButton>
-              </div>
-
-              <div style={styles.agentPillRow}>
-                <span style={styles.agentPillLabel}>Button Sizes:</span>
-                <ShadcnButton size="sm">Small</ShadcnButton>
-                <ShadcnButton size="default">Default</ShadcnButton>
-                <ShadcnButton size="lg">Large</ShadcnButton>
-                <ShadcnButton size="icon">⚙</ShadcnButton>
-              </div>
-
-              <div style={styles.agentPillRow}>
-                <span style={styles.agentPillLabel}>Theme Integration:</span>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "12px",
-                    alignItems: "center",
-                    fontSize: "12px",
-                    color: "var(--muted-foreground)",
-                  }}
-                >
-                  <ShadcnButton variant="default">Uses --primary</ShadcnButton>
-                  <ShadcnButton variant="secondary">
-                    Uses --secondary
-                  </ShadcnButton>
-                  <span>✓ CSS variables working</span>
                 </div>
               </div>
             </div>

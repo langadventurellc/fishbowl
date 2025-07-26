@@ -33,6 +33,8 @@ Don't run the `dev` or `start` commands because you lock up processes doing that
 
 #### Building
 
+**DO NOT** build the applications unless specifically requested by the user.
+
 | Command                         | Description                                       |
 | ------------------------------- | ------------------------------------------------- |
 | `pnpm build`                    | Build all packages and apps                       |
