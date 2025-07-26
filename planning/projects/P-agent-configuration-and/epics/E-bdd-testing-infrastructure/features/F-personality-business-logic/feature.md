@@ -2,7 +2,7 @@
 kind: feature
 id: F-personality-business-logic
 title: Personality Business Logic Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T13:42:39.526562"
