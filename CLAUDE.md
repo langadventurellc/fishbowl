@@ -21,6 +21,10 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 
 ### Commands
 
+All of these commands are commands available in the project root. The most effective way to execute these commands is to ensure that you are executing them from the context of the project root. Since this is a monorepo, it is very common to find yourself in another folder. And attempting to execute these commands from another folder will result in failure, which will often confuse you. If you always execute these commands from the context of the project root, then you won't have that problem.
+
+If you see `Command "quality" not found` or similar errors, it means you are not in the project root directory. Always run commands from the root of the monorepo.
+
 #### Development
 
 Don't run the `dev` or `start` commands because you lock up processes doing that. If you need those to be tested let me know and I'll do it and share the results with you. Otherwise execute other ways of verifying such as with playwright or with end-to-end tests.
@@ -33,7 +37,9 @@ Don't run the `dev` or `start` commands because you lock up processes doing that
 
 #### Building
 
+<important>
 **DO NOT** build the applications unless specifically requested by the user.
+</important>
 
 | Command                         | Description                                       |
 | ------------------------------- | ------------------------------------------------- |
