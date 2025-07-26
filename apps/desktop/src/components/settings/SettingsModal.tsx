@@ -37,6 +37,8 @@ import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
+  DialogOverlay,
+  DialogPortal,
   DialogTitle,
   DialogDescription,
   DialogHeader,
@@ -63,73 +65,98 @@ export function SettingsModal({
   const titleId = useId();
   const descriptionId = useId();
 
+  /**
+   * Prevents event bubbling to ensure modal content clicks don't trigger overlay close
+   */
+  const handleContentClick = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className={cn(
-          // Remove default shadcn/ui styles that conflict with custom requirements
-          "!max-w-none !w-auto !h-auto !gap-0 !p-0",
-          // Custom dimensions with responsive behavior
-          "w-[80vw] h-[80vh]",
-          "min-w-[800px] min-h-[500px]",
-          "max-w-[1000px] max-h-[700px]",
-          // Custom styling as per requirements
-          "rounded-lg", // 8px border radius
-          // Custom shadow: 0 10px 25px rgba(0, 0, 0, 0.3)
-          "shadow-[0_10px_25px_rgba(0,0,0,0.3)]",
-          // Responsive adjustments for smaller screens
-          "max-sm:w-[95vw] max-sm:h-[90vh]",
-          "max-sm:min-w-[320px] max-sm:min-h-[400px]",
-          // Enhanced focus indicators for keyboard navigation
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          // High contrast focus indicators
-          "focus-visible:ring-offset-background",
-        )}
-        showCloseButton={true}
-        // ARIA attributes for screen reader support
-        aria-labelledby={titleId}
-        aria-describedby={descriptionId}
-        // Ensure modal is properly announced to screen readers
-        aria-modal="true"
-        role="dialog"
-        // Additional keyboard navigation attributes
-        tabIndex={-1}
-      >
-        {/* Hidden screen reader elements for accessibility */}
-        <DialogHeader className="sr-only">
-          <DialogTitle id={titleId}>{title}</DialogTitle>
-          <DialogDescription id={descriptionId}>
-            {description}
-          </DialogDescription>
-        </DialogHeader>
-
-        {/* Main modal content */}
-        <div
+      <DialogPortal>
+        <DialogOverlay
           className={cn(
-            "h-full w-full flex flex-col",
-            // Ensure content is keyboard accessible
-            "focus-within:outline-none",
-            // Enhanced visual focus indicators
-            "[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring [&_button:focus-visible]:ring-offset-2",
-            "[&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-ring [&_input:focus-visible]:ring-offset-2",
-            "[&_[role=tab]:focus-visible]:ring-2 [&_[role=tab]:focus-visible]:ring-ring [&_[role=tab]:focus-visible]:ring-offset-2",
-            "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
+            // Enhanced overlay styling with precise requirements
+            "fixed inset-0 z-50 bg-black/50",
+            // Smooth fade animations
+            "data-[state=open]:animate-in data-[state=closed]:animate-out",
+            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+            "data-[state=closed]:duration-200 data-[state=open]:duration-200",
+            // Prevent layout shift
+            "transition-opacity",
           )}
-          role="main"
-          aria-label="Settings content"
-        >
-          {children}
-        </div>
-
-        {/* Live region for screen reader announcements */}
-        <div
-          aria-live="polite"
-          aria-atomic="true"
-          className="sr-only"
-          role="status"
-          id="settings-announcements"
         />
-      </DialogContent>
+        <DialogContent
+          className={cn(
+            // Remove default shadcn/ui styles that conflict with custom requirements
+            "!max-w-none !w-auto !h-auto !gap-0 !p-0",
+            // Custom dimensions with responsive behavior
+            "w-[80vw] h-[80vh]",
+            "min-w-[800px] min-h-[500px]",
+            "max-w-[1000px] max-h-[700px]",
+            // Enhanced z-index for content above overlay
+            "z-50",
+            // Custom styling as per requirements
+            "rounded-lg", // 8px border radius
+            // Custom shadow: 0 10px 25px rgba(0, 0, 0, 0.3)
+            "shadow-[0_10px_25px_rgba(0,0,0,0.3)]",
+            // Responsive adjustments for smaller screens
+            "max-sm:w-[95vw] max-sm:h-[90vh]",
+            "max-sm:min-w-[320px] max-sm:min-h-[400px]",
+            // Enhanced focus indicators for keyboard navigation
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+            // High contrast focus indicators
+            "focus-visible:ring-offset-background",
+          )}
+          showCloseButton={true}
+          // Prevent modal content clicks from bubbling to overlay
+          onPointerDown={handleContentClick}
+          // ARIA attributes for screen reader support
+          aria-labelledby={titleId}
+          aria-describedby={descriptionId}
+          // Ensure modal is properly announced to screen readers
+          aria-modal="true"
+          role="dialog"
+          // Additional keyboard navigation attributes
+          tabIndex={-1}
+        >
+          {/* Hidden screen reader elements for accessibility */}
+          <DialogHeader className="sr-only">
+            <DialogTitle id={titleId}>{title}</DialogTitle>
+            <DialogDescription id={descriptionId}>
+              {description}
+            </DialogDescription>
+          </DialogHeader>
+
+          {/* Main modal content */}
+          <div
+            className={cn(
+              "h-full w-full flex flex-col",
+              // Ensure content is keyboard accessible
+              "focus-within:outline-none",
+              // Enhanced visual focus indicators
+              "[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring [&_button:focus-visible]:ring-offset-2",
+              "[&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-ring [&_input:focus-visible]:ring-offset-2",
+              "[&_[role=tab]:focus-visible]:ring-2 [&_[role=tab]:focus-visible]:ring-ring [&_[role=tab]:focus-visible]:ring-offset-2",
+              "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
+            )}
+            role="main"
+            aria-label="Settings content"
+          >
+            {children}
+          </div>
+
+          {/* Live region for screen reader announcements */}
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            className="sr-only"
+            role="status"
+            id="settings-announcements"
+          />
+        </DialogContent>
+      </DialogPortal>
     </Dialog>
   );
 }
