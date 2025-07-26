@@ -1,0 +1,499 @@
+{
+  "personalityScoring": {
+    "individualScoring": [
+      {
+        "id": "balanced-personality-scoring",
+        "description": "Scoring for well-balanced personality profile",
+        "inputPersonality": {
+          "openness": 65.0,
+          "conscientiousness": 70.0,
+          "extraversion": 55.0,
+          "agreeableness": 75.0,
+          "neuroticism": 35.0,
+          "formality": 60.0,
+          "humor": 65.0,
+          "assertiveness": 55.0,
+          "empathy": 75.0,
+          "storytelling": 50.0,
+          "brevity": 65.0,
+          "imagination": 65.0,
+          "playfulness": 60.0,
+          "dramaticism": 45.0,
+          "analyticalDepth": 70.0,
+          "contrarianism": 25.0,
+          "encouragement": 75.0,
+          "curiosity": 65.0,
+          "patience": 70.0
+        },
+        "expectedScores": {
+          "overallPersonalityScore": 85.5,
+          "bigFiveBalance": 82.0,
+          "behavioralCoherence": 88.0,
+          "psychologicalStability": 90.0,
+          "subscores": {
+            "creativity": 65.0,
+            "reliability": 70.0,
+            "socialWarmth": 75.0,
+            "emotionalStability": 87.5,
+            "adaptability": 72.0
+          }
+        },
+        "scoringNotes": "High scores due to balanced trait distribution and psychological coherence"
+      },
+      {
+        "id": "creative-high-openness-scoring",
+        "description": "Scoring for highly creative, open personality",
+        "inputPersonality": {
+          "openness": 90.0,
+          "conscientiousness": 45.0,
+          "extraversion": 60.0,
+          "agreeableness": 70.0,
+          "neuroticism": 55.0,
+          "formality": 25.0,
+          "humor": 85.0,
+          "assertiveness": 65.0,
+          "empathy": 75.0,
+          "storytelling": 90.0,
+          "brevity": 20.0,
+          "imagination": 95.0,
+          "playfulness": 80.0,
+          "dramaticism": 75.0,
+          "analyticalDepth": 60.0,
+          "contrarianism": 70.0,
+          "encouragement": 65.0,
+          "curiosity": 95.0,
+          "patience": 40.0
+        },
+        "expectedScores": {
+          "overallPersonalityScore": 78.5,
+          "bigFiveBalance": 72.0,
+          "behavioralCoherence": 82.0,
+          "psychologicalStability": 75.0,
+          "subscores": {
+            "creativity": 95.0,
+            "reliability": 45.0,
+            "socialWarmth": 70.0,
+            "emotionalStability": 72.5,
+            "adaptability": 88.0
+          }
+        },
+        "scoringNotes": "High creativity and adaptability offset by lower reliability and stability"
+      },
+      {
+        "id": "analytical-high-conscientiousness-scoring",
+        "description": "Scoring for highly analytical, conscientious personality",
+        "inputPersonality": {
+          "openness": 55.0,
+          "conscientiousness": 92.0,
+          "extraversion": 35.0,
+          "agreeableness": 60.0,
+          "neuroticism": 25.0,
+          "formality": 85.0,
+          "humor": 30.0,
+          "assertiveness": 70.0,
+          "empathy": 65.0,
+          "storytelling": 25.0,
+          "brevity": 85.0,
+          "imagination": 40.0,
+          "playfulness": 20.0,
+          "dramaticism": 15.0,
+          "analyticalDepth": 95.0,
+          "contrarianism": 45.0,
+          "encouragement": 60.0,
+          "curiosity": 75.0,
+          "patience": 85.0
+        },
+        "expectedScores": {
+          "overallPersonalityScore": 82.0,
+          "bigFiveBalance": 78.0,
+          "behavioralCoherence": 90.0,
+          "psychologicalStability": 95.0,
+          "subscores": {
+            "creativity": 40.0,
+            "reliability": 95.0,
+            "socialWarmth": 50.0,
+            "emotionalStability": 95.0,
+            "adaptability": 55.0
+          }
+        },
+        "scoringNotes": "Exceptional reliability and stability, moderate creativity and social warmth"
+      },
+      {
+        "id": "problematic-extreme-neuroticism-scoring",
+        "description": "Scoring for personality with concerning neuroticism levels",
+        "inputPersonality": {
+          "openness": 40.0,
+          "conscientiousness": 30.0,
+          "extraversion": 25.0,
+          "agreeableness": 45.0,
+          "neuroticism": 95.0,
+          "formality": 40.0,
+          "humor": 20.0,
+          "assertiveness": 15.0,
+          "empathy": 50.0,
+          "storytelling": 30.0,
+          "brevity": 60.0,
+          "imagination": 35.0,
+          "playfulness": 15.0,
+          "dramaticism": 80.0,
+          "analyticalDepth": 25.0,
+          "contrarianism": 70.0,
+          "encouragement": 25.0,
+          "curiosity": 35.0,
+          "patience": 15.0
+        },
+        "expectedScores": {
+          "overallPersonalityScore": 35.0,
+          "bigFiveBalance": 25.0,
+          "behavioralCoherence": 40.0,
+          "psychologicalStability": 15.0,
+          "subscores": {
+            "creativity": 35.0,
+            "reliability": 30.0,
+            "socialWarmth": 35.0,
+            "emotionalStability": 5.0,
+            "adaptability": 30.0
+          }
+        },
+        "scoringNotes": "Very low scores due to extreme neuroticism and poor trait balance",
+        "warningFlags": ["high_neuroticism", "low_stability", "poor_balance"]
+      }
+    ],
+    "compatibilityScoring": [
+      {
+        "id": "high-compatibility-balanced-personalities",
+        "description": "Compatibility between two well-balanced personalities",
+        "personality1": {
+          "openness": 65.0,
+          "conscientiousness": 70.0,
+          "extraversion": 55.0,
+          "agreeableness": 75.0,
+          "neuroticism": 35.0
+        },
+        "personality2": {
+          "openness": 60.0,
+          "conscientiousness": 75.0,
+          "extraversion": 60.0,
+          "agreeableness": 80.0,
+          "neuroticism": 30.0
+        },
+        "expectedCompatibility": {
+          "overallCompatibility": 92.0,
+          "traitAlignment": 88.0,
+          "complementarity": 85.0,
+          "conflictPotential": 15.0,
+          "collaborationPotential": 90.0
+        },
+        "compatibilityNotes": "Highly compatible due to similar values and complementary strengths"
+      },
+      {
+        "id": "creative-analytical-complementary",
+        "description": "Compatibility between creative and analytical personalities",
+        "personality1": {
+          "openness": 90.0,
+          "conscientiousness": 45.0,
+          "extraversion": 60.0,
+          "agreeableness": 70.0,
+          "neuroticism": 55.0
+        },
+        "personality2": {
+          "openness": 55.0,
+          "conscientiousness": 92.0,
+          "extraversion": 35.0,
+          "agreeableness": 60.0,
+          "neuroticism": 25.0
+        },
+        "expectedCompatibility": {
+          "overallCompatibility": 78.0,
+          "traitAlignment": 65.0,
+          "complementarity": 95.0,
+          "conflictPotential": 35.0,
+          "collaborationPotential": 85.0
+        },
+        "compatibilityNotes": "Strong complementarity - creative ideas with analytical execution"
+      },
+      {
+        "id": "low-compatibility-conflicting-traits",
+        "description": "Low compatibility due to conflicting personality traits",
+        "personality1": {
+          "openness": 25.0,
+          "conscientiousness": 85.0,
+          "extraversion": 90.0,
+          "agreeableness": 30.0,
+          "neuroticism": 70.0
+        },
+        "personality2": {
+          "openness": 95.0,
+          "conscientiousness": 30.0,
+          "extraversion": 20.0,
+          "agreeableness": 85.0,
+          "neuroticism": 25.0
+        },
+        "expectedCompatibility": {
+          "overallCompatibility": 45.0,
+          "traitAlignment": 25.0,
+          "complementarity": 60.0,
+          "conflictPotential": 75.0,
+          "collaborationPotential": 40.0
+        },
+        "compatibilityNotes": "Significant trait differences may cause communication and value conflicts"
+      }
+    ],
+    "teamScoring": [
+      {
+        "id": "balanced-team-scoring",
+        "description": "Optimal team composition with diverse, balanced personalities",
+        "teamMembers": [
+          {
+            "role": "leader",
+            "personality": {
+              "openness": 70.0,
+              "conscientiousness": 85.0,
+              "extraversion": 75.0,
+              "agreeableness": 65.0,
+              "neuroticism": 30.0
+            }
+          },
+          {
+            "role": "creative",
+            "personality": {
+              "openness": 90.0,
+              "conscientiousness": 55.0,
+              "extraversion": 60.0,
+              "agreeableness": 75.0,
+              "neuroticism": 45.0
+            }
+          },
+          {
+            "role": "analyst",
+            "personality": {
+              "openness": 60.0,
+              "conscientiousness": 90.0,
+              "extraversion": 40.0,
+              "agreeableness": 70.0,
+              "neuroticism": 25.0
+            }
+          },
+          {
+            "role": "facilitator",
+            "personality": {
+              "openness": 65.0,
+              "conscientiousness": 70.0,
+              "extraversion": 80.0,
+              "agreeableness": 85.0,
+              "neuroticism": 35.0
+            }
+          }
+        ],
+        "expectedTeamScores": {
+          "overallTeamDynamics": 88.0,
+          "diversityIndex": 85.0,
+          "collaborationPotential": 90.0,
+          "conflictRisk": 20.0,
+          "productivityPotential": 85.0,
+          "innovationPotential": 82.0
+        },
+        "teamNotes": "Well-balanced team with complementary strengths and minimal conflict risk"
+      },
+      {
+        "id": "problematic-team-composition",
+        "description": "Team with poor personality balance leading to potential issues",
+        "teamMembers": [
+          {
+            "role": "member1",
+            "personality": {
+              "openness": 25.0,
+              "conscientiousness": 95.0,
+              "extraversion": 20.0,
+              "agreeableness": 40.0,
+              "neuroticism": 75.0
+            }
+          },
+          {
+            "role": "member2",
+            "personality": {
+              "openness": 30.0,
+              "conscientiousness": 90.0,
+              "extraversion": 25.0,
+              "agreeableness": 35.0,
+              "neuroticism": 80.0
+            }
+          },
+          {
+            "role": "member3",
+            "personality": {
+              "openness": 20.0,
+              "conscientiousness": 85.0,
+              "extraversion": 15.0,
+              "agreeableness": 45.0,
+              "neuroticism": 85.0
+            }
+          }
+        ],
+        "expectedTeamScores": {
+          "overallTeamDynamics": 35.0,
+          "diversityIndex": 15.0,
+          "collaborationPotential": 25.0,
+          "conflictRisk": 80.0,
+          "productivityPotential": 40.0,
+          "innovationPotential": 20.0
+        },
+        "teamNotes": "Poor team composition - too similar, high neuroticism, low creativity",
+        "recommendedChanges": [
+          "Add high-openness member for innovation",
+          "Include emotionally stable member (low neuroticism)",
+          "Add extroverted member for team communication"
+        ]
+      }
+    ]
+  },
+  "scoringAlgorithmTests": {
+    "weightingSchemes": [
+      {
+        "id": "equal-weighting",
+        "description": "All Big Five traits weighted equally",
+        "weights": {
+          "openness": 0.2,
+          "conscientiousness": 0.2,
+          "extraversion": 0.2,
+          "agreeableness": 0.2,
+          "neuroticism": 0.2
+        },
+        "expectedBehavior": "Balanced consideration of all personality dimensions"
+      },
+      {
+        "id": "stability-weighted",
+        "description": "Emphasizes emotional stability and conscientiousness",
+        "weights": {
+          "openness": 0.1,
+          "conscientiousness": 0.3,
+          "extraversion": 0.15,
+          "agreeableness": 0.15,
+          "neuroticism": 0.3
+        },
+        "expectedBehavior": "Higher scores for emotionally stable, conscientious personalities"
+      },
+      {
+        "id": "creativity-weighted",
+        "description": "Emphasizes openness and related creative traits",
+        "weights": {
+          "openness": 0.4,
+          "conscientiousness": 0.15,
+          "extraversion": 0.15,
+          "agreeableness": 0.15,
+          "neuroticism": 0.15
+        },
+        "expectedBehavior": "Higher scores for creative, open personalities"
+      }
+    ],
+    "edgeCases": [
+      {
+        "id": "all-zeros",
+        "description": "Personality with all traits at minimum values",
+        "inputPersonality": {
+          "openness": 0.0,
+          "conscientiousness": 0.0,
+          "extraversion": 0.0,
+          "agreeableness": 0.0,
+          "neuroticism": 0.0
+        },
+        "expectedScores": {
+          "overallPersonalityScore": 0.0,
+          "allSubscores": 0.0
+        },
+        "scoringNotes": "Minimum possible scores across all dimensions"
+      },
+      {
+        "id": "all-maximums",
+        "description": "Personality with all traits at maximum values",
+        "inputPersonality": {
+          "openness": 100.0,
+          "conscientiousness": 100.0,
+          "extraversion": 100.0,
+          "agreeableness": 100.0,
+          "neuroticism": 100.0
+        },
+        "expectedScores": {
+          "overallPersonalityScore": 60.0,
+          "psychologicalStability": 0.0
+        },
+        "scoringNotes": "High neuroticism severely impacts stability despite other maximum traits"
+      },
+      {
+        "id": "single-extreme-trait",
+        "description": "One extremely high trait, others moderate",
+        "inputPersonality": {
+          "openness": 100.0,
+          "conscientiousness": 50.0,
+          "extraversion": 50.0,
+          "agreeableness": 50.0,
+          "neuroticism": 50.0
+        },
+        "expectedScores": {
+          "creativity": 100.0,
+          "overallPersonalityScore": 70.0
+        },
+        "scoringNotes": "Single extreme trait should influence relevant subscores but not dominate overall"
+      }
+    ],
+    "performanceTestCases": [
+      {
+        "id": "single-personality-performance",
+        "description": "Performance test for individual personality scoring",
+        "inputCount": 1,
+        "expectedMaxTime": 25,
+        "timeUnit": "milliseconds",
+        "testNotes": "Individual scoring should be very fast"
+      },
+      {
+        "id": "batch-scoring-performance",
+        "description": "Performance test for batch personality scoring",
+        "inputCounts": [10, 50, 100, 500],
+        "expectedMaxTimePerItem": 15,
+        "timeUnit": "milliseconds",
+        "testNotes": "Batch processing should be more efficient per item"
+      },
+      {
+        "id": "team-analysis-performance",
+        "description": "Performance test for team dynamics analysis",
+        "teamSizes": [3, 5, 8, 12],
+        "expectedMaxTime": 200,
+        "timeUnit": "milliseconds",
+        "testNotes": "Team analysis includes pairwise compatibility calculations"
+      }
+    ]
+  },
+  "validationIntegration": {
+    "scoringWithValidationErrors": [
+      {
+        "id": "invalid-traits-no-scoring",
+        "description": "Personalities with validation errors should not be scored",
+        "invalidPersonality": {
+          "openness": 150.0,
+          "conscientiousness": -20.0,
+          "extraversion": "invalid",
+          "agreeableness": 75.0,
+          "neuroticism": null
+        },
+        "expectedBehavior": "ValidationError thrown before scoring attempted",
+        "noScoringAttempted": true
+      },
+      {
+        "id": "warning-level-validation-still-scored",
+        "description": "Personalities with warnings should still receive scores",
+        "personalityWithWarnings": {
+          "openness": 95.0,
+          "conscientiousness": 90.0,
+          "extraversion": 95.0,
+          "agreeableness": 85.0,
+          "neuroticism": 85.0
+        },
+        "expectedBehavior": "Statistical improbability warning but scoring proceeds",
+        "expectedScores": {
+          "overallPersonalityScore": 75.0,
+          "warningFlags": ["statistical_improbability"]
+        }
+      }
+    ]
+  }
+}

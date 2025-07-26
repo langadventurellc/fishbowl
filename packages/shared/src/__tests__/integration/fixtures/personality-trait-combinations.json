@@ -1,0 +1,238 @@
+{
+  "validCombinations": [
+    {
+      "id": "balanced-profile",
+      "description": "Psychologically balanced personality profile with moderate traits",
+      "traits": {
+        "openness": 65.0,
+        "conscientiousness": 70.0,
+        "extraversion": 55.0,
+        "agreeableness": 75.0,
+        "neuroticism": 35.0
+      },
+      "expectedValidation": "valid",
+      "psychologicalNotes": "Well-balanced profile following normal distribution patterns"
+    },
+    {
+      "id": "high-achiever",
+      "description": "High conscientiousness with low neuroticism - classic achiever pattern",
+      "traits": {
+        "openness": 72.5,
+        "conscientiousness": 88.0,
+        "extraversion": 62.0,
+        "agreeableness": 68.0,
+        "neuroticism": 22.0
+      },
+      "expectedValidation": "valid",
+      "psychologicalNotes": "Research-backed combination: high C with low N correlates r≈-0.5"
+    },
+    {
+      "id": "creative-introvert",
+      "description": "High openness with moderate extraversion - creative but introspective",
+      "traits": {
+        "openness": 85.0,
+        "conscientiousness": 55.0,
+        "extraversion": 35.0,
+        "agreeableness": 70.0,
+        "neuroticism": 45.0
+      },
+      "expectedValidation": "valid",
+      "psychologicalNotes": "Common pattern in creative individuals - high openness with lower extraversion"
+    },
+    {
+      "id": "empathetic-extrovert",
+      "description": "High agreeableness with high extraversion - socially warm personality",
+      "traits": {
+        "openness": 60.0,
+        "conscientiousness": 65.0,
+        "extraversion": 82.0,
+        "agreeableness": 85.0,
+        "neuroticism": 25.0
+      },
+      "expectedValidation": "valid",
+      "psychologicalNotes": "Positive correlation between agreeableness and extraversion r≈0.3"
+    },
+    {
+      "id": "stable-traditional",
+      "description": "Low neuroticism with moderate openness - emotionally stable traditional type",
+      "traits": {
+        "openness": 45.0,
+        "conscientiousness": 75.0,
+        "extraversion": 50.0,
+        "agreeableness": 72.0,
+        "neuroticism": 18.0
+      },
+      "expectedValidation": "valid",
+      "psychologicalNotes": "Traditional personality with strong emotional stability"
+    }
+  ],
+  "invalidCombinations": [
+    {
+      "id": "extreme-neuroticism-low-conscientiousness",
+      "description": "Very high neuroticism with very low conscientiousness - psychologically improbable",
+      "traits": {
+        "openness": 50.0,
+        "conscientiousness": 15.0,
+        "extraversion": 40.0,
+        "agreeableness": 50.0,
+        "neuroticism": 95.0
+      },
+      "expectedError": "trait_interaction_warning",
+      "psychologicalNotes": "Extreme neuroticism usually correlates with higher conscientiousness as coping mechanism"
+    },
+    {
+      "id": "antisocial-extrovert",
+      "description": "Very low agreeableness with very high extraversion - contradictory social pattern",
+      "traits": {
+        "openness": 60.0,
+        "conscientiousness": 50.0,
+        "extraversion": 92.0,
+        "agreeableness": 8.0,
+        "neuroticism": 65.0
+      },
+      "expectedError": "social_trait_inconsistency",
+      "psychologicalNotes": "High extraversion typically correlates with moderate to high agreeableness"
+    },
+    {
+      "id": "extreme-all-high",
+      "description": "All traits extremely high - statistically improbable combination",
+      "traits": {
+        "openness": 96.0,
+        "conscientiousness": 94.0,
+        "extraversion": 98.0,
+        "agreeableness": 95.0,
+        "neuroticism": 92.0
+      },
+      "expectedError": "statistical_improbability",
+      "psychologicalNotes": "Probability of all traits >90th percentile is <0.001% in population"
+    },
+    {
+      "id": "extreme-all-low",
+      "description": "All traits extremely low - indicates possible data entry error",
+      "traits": {
+        "openness": 5.0,
+        "conscientiousness": 8.0,
+        "extraversion": 6.0,
+        "agreeableness": 7.0,
+        "neuroticism": 4.0
+      },
+      "expectedError": "statistical_improbability",
+      "psychologicalNotes": "Probability of all traits <10th percentile suggests measurement error"
+    },
+    {
+      "id": "perfectionist-chaos",
+      "description": "Maximum conscientiousness with maximum neuroticism - self-defeating pattern",
+      "traits": {
+        "openness": 55.0,
+        "conscientiousness": 98.0,
+        "extraversion": 45.0,
+        "agreeableness": 60.0,
+        "neuroticism": 96.0
+      },
+      "expectedError": "perfectionist_anxiety_pattern",
+      "psychologicalNotes": "Extreme perfectionism combined with extreme anxiety creates unsustainable psychological tension"
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "borderline-valid",
+      "description": "Traits at exact boundaries of validity",
+      "traits": {
+        "openness": 0.0,
+        "conscientiousness": 100.0,
+        "extraversion": 50.0,
+        "agreeableness": 0.0,
+        "neuroticism": 100.0
+      },
+      "expectedValidation": "valid_with_warnings",
+      "psychologicalNotes": "Extreme values at boundaries should trigger review but not rejection"
+    },
+    {
+      "id": "decimal-precision",
+      "description": "Testing decimal precision limits (2 decimal places)",
+      "traits": {
+        "openness": 75.25,
+        "conscientiousness": 68.75,
+        "extraversion": 42.5,
+        "agreeableness": 83.33,
+        "neuroticism": 29.99
+      },
+      "expectedValidation": "valid",
+      "psychologicalNotes": "Maximum allowed precision should be exactly 2 decimal places"
+    },
+    {
+      "id": "age-inappropriate-young",
+      "description": "Personality pattern inappropriate for young adult (18-25)",
+      "ageContext": "young_adult",
+      "traits": {
+        "openness": 45.0,
+        "conscientiousness": 92.0,
+        "extraversion": 35.0,
+        "agreeableness": 85.0,
+        "neuroticism": 15.0
+      },
+      "expectedError": "age_developmental_mismatch",
+      "psychologicalNotes": "Very high conscientiousness and very low neuroticism uncommon in young adults"
+    }
+  ],
+  "businessRuleViolations": [
+    {
+      "id": "corporate-incompatible",
+      "description": "Personality pattern incompatible with corporate agent roles",
+      "businessContext": "corporate_agent",
+      "traits": {
+        "openness": 95.0,
+        "conscientiousness": 25.0,
+        "extraversion": 20.0,
+        "agreeableness": 30.0,
+        "neuroticism": 80.0
+      },
+      "expectedError": "business_rule_violation",
+      "businessRuleNotes": "Corporate agents require minimum conscientiousness 50, maximum neuroticism 60"
+    },
+    {
+      "id": "customer-service-incompatible",
+      "description": "Personality unsuitable for customer service agent roles",
+      "businessContext": "customer_service_agent",
+      "traits": {
+        "openness": 40.0,
+        "conscientiousness": 60.0,
+        "extraversion": 25.0,
+        "agreeableness": 20.0,
+        "neuroticism": 75.0
+      },
+      "expectedError": "business_rule_violation",
+      "businessRuleNotes": "Customer service agents require minimum extraversion 40, agreeableness 60"
+    }
+  ],
+  "culturalConsiderations": [
+    {
+      "id": "collectivist-appropriate",
+      "description": "Personality pattern appropriate for collectivist cultural context",
+      "culturalContext": "collectivist",
+      "traits": {
+        "openness": 55.0,
+        "conscientiousness": 75.0,
+        "extraversion": 45.0,
+        "agreeableness": 85.0,
+        "neuroticism": 35.0
+      },
+      "expectedValidation": "culturally_appropriate",
+      "culturalNotes": "High agreeableness and moderate extraversion typical in collectivist cultures"
+    },
+    {
+      "id": "individualist-mismatch",
+      "description": "Extreme individualist pattern may need cultural sensitivity review",
+      "culturalContext": "mixed",
+      "traits": {
+        "openness": 88.0,
+        "conscientiousness": 45.0,
+        "extraversion": 85.0,
+        "agreeableness": 25.0,
+        "neuroticism": 30.0
+      },
+      "expectedValidation": "cultural_sensitivity_review",
+      "culturalNotes": "Very low agreeableness may be problematic in team-oriented environments"
+    }
+  ]
+}

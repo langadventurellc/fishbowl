@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-set-up-personality-business
+parent: F-personality-business-logic
+status: done
 title: Set up personality business logic test infrastructure and fixtures
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-26T15:53:33.008668"
-updated: "2025-07-26T15:53:33.008668"
+updated: "2025-07-26T16:26:53.048684"
 schema_version: "1.1"
-parent: F-personality-business-logic
+worktree: null
 ---
 
 # Set up personality business logic test infrastructure and fixtures
@@ -118,3 +119,7 @@ packages/shared/src/__tests__/integration/features/personality-management/
 ```
 
 ### Log
+
+**2025-07-26T22:08:51.046108Z** - Successfully completed setup of personality business logic test infrastructure and fixtures. Moved test utilities out of **tests** directory to avoid Jest conflicts, resolved duplicate PersonalityScoringResult interfaces, and split multiple exports into individual files to satisfy linting rules. All test infrastructure files are now properly organized and tests are passing.
+
+- filesChanged: ["packages/shared/src/test-utils/personality-management/", "packages/shared/src/__tests__/integration/fixtures/personality-trait-combinations.json", "packages/shared/src/__tests__/integration/fixtures/psychology-model-constraints.json", "packages/shared/src/__tests__/integration/fixtures/scoring-test-scenarios.json"]

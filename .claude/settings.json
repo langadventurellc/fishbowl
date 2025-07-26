@@ -70,6 +70,8 @@
       "Bash(EXPO_USE_COMMUNITY_AUTOLINKING=1 NODE_ENV=development ./gradlew assembleDebug -x lint)",
       "Bash(EXPO_USE_COMMUNITY_AUTOLINKING=1 NODE_ENV=development ./gradlew assembleAndroidTest -DtestBuildType=debug)",
       "Bash(pnpm:*)",
+      "mcp__serena__think_about_whether_you_are_done",
+      "mcp__serena__think_about_task_adherence",
       "Bash(expo prebuild:*)",
       "Bash(npx expo prebuild:*)",
       "WebFetch(domain:ui.shadcn.com)",
