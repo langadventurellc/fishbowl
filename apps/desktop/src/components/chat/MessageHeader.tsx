@@ -1,4 +1,4 @@
-import React from "react";
+import { cn } from "@/lib/utils";
 import { MessageHeaderProps } from "@fishbowl-ai/shared";
 import { MessageAvatar } from "./MessageAvatar";
 
@@ -10,12 +10,12 @@ import { MessageAvatar } from "./MessageAvatar";
  * MessageAvatar component to provide visual association between messages and their senders.
  *
  * Features:
- * - Flex layout with consistent spacing (8px gap, 4px margin-bottom)
- * - Optimized typography with 12px font size and 500 weight for readability
+ * - Flex layout with consistent spacing (gap-2, mb-1) using Tailwind utilities
+ * - Optimized typography with text-xs and font-medium for readability
  * - Agent color coding system for visual consistency across the conversation
  * - Integrated MessageAvatar component for immediate sender identification
  * - Support for all message types (user, agent, system) with contextual formatting
- * - Theme-aware styling using CSS custom properties for dark/light mode support
+ * - Theme-aware styling using Tailwind utilities and CSS custom properties
  * - Pure component design with no internal state or side effects
  * - Full accessibility support with semantic HTML and ARIA attributes
  *
@@ -56,30 +56,11 @@ export function MessageHeader({
     return `— ${timestamp}`;
   };
 
-  // Component styles for consistent header layout and typography
-  const styles = {
-    header: {
-      position: "relative" as const,
-      display: "flex",
-      alignItems: "center",
-      gap: "8px",
-      marginBottom: "4px",
-      fontSize: "12px",
-      fontWeight: "500",
-    } as const,
-    agentInfo: {
-      color: agentColor,
-      display: "flex",
-      alignItems: "center",
-      gap: "4px",
-    } as const,
-    agentText: {
-      color: agentColor,
-    } as const,
-    timestamp: {
-      color: "var(--muted-foreground)",
-    } as const,
-  };
+  // Tailwind utility classes for consistent header layout and typography
+  const headerClasses = cn(
+    "relative flex items-center gap-2 mb-1 text-xs font-medium",
+    className,
+  );
 
   // Determine agent display text based on message type
   const getAgentDisplayText = (): string => {
@@ -95,8 +76,7 @@ export function MessageHeader({
 
   return (
     <div
-      style={styles.header}
-      className={className}
+      className={headerClasses}
       role="banner"
       aria-label={`Message from ${agentName}, ${agentRole} at ${timestamp}`}
     >
@@ -105,14 +85,16 @@ export function MessageHeader({
         agentColor={agentColor}
         agentName={agentName}
         role={agentRole}
-        size="small"
+        size="large"
       />
 
       {/* Agent information with color coding */}
-      <span style={styles.agentText}>{getAgentDisplayText()}</span>
+      <span style={{ color: agentColor }}>{getAgentDisplayText()}</span>
 
       {/* Formatted timestamp */}
-      <span style={styles.timestamp}>{formatTimestamp(timestamp)}</span>
+      <span className="text-muted-foreground">
+        {formatTimestamp(timestamp)}
+      </span>
     </div>
   );
 }
