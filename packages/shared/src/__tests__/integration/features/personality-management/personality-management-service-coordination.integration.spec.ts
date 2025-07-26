@@ -357,4 +357,368 @@ describe("Feature: Personality Management Service Coordination Integration", () 
       INTEGRATION_TEST_TIMEOUT,
     );
   });
+
+  describe("Scenario: Enhanced multi-service transaction coordination", () => {
+    it.skip(
+      "should coordinate atomic personality creation across all services with rollback capability",
+      async () => {
+        // Given - PersonalityService, ValidationService, and PersistenceService configured for atomic transactions
+        // - Transaction coordinator managing multi-service state consistency
+        // - Rollback mechanisms available for each service layer
+        // - Atomic operation requirements for complete personality workflow
+        // - Transaction timeout configured for 5-second maximum duration
+        // When - Atomic personality creation executes across all three services
+        // - PersonalityService initiates atomic transaction context
+        // - ValidationService validates within transaction boundary
+        // - PersistenceService prepares for atomic commit
+        // - Transaction coordinator ensures all services ready for commit
+        // - Atomic commit executed across all services simultaneously
+        // Then - Personality creation succeeds atomically across all services
+        // - All services commit changes simultaneously or rollback completely
+        // - Transaction consistency maintained across service boundaries
+        // - No partial state exists in any service after completion
+        // - Transaction audit trail captures complete workflow coordination
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should handle mid-transaction failures with comprehensive rollback across services",
+      async () => {
+        // Given - Multi-service transaction with configured failure injection
+        // - PersonalityService, ValidationService ready for transaction
+        // - PersistenceService configured to fail during commit phase
+        // - Rollback coordination mechanisms active across all services
+        // - Transaction state tracking enabled for failure analysis
+        // When - Transaction failure occurs during PersistenceService commit
+        // - PersonalityService initiates transaction successfully
+        // - ValidationService completes validation within transaction
+        // - PersistenceService encounters simulated storage failure
+        // - Transaction coordinator detects PersistenceService failure
+        // - Rollback initiated across PersonalityService and ValidationService
+        // Then - Complete transaction rollback maintains service consistency
+        // - PersonalityService state rolled back to pre-transaction state
+        // - ValidationService clears transaction validation context
+        // - No partial data persisted in any service layer
+        // - Transaction failure audit includes rollback completion confirmation
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should coordinate nested service operations with hierarchical transaction management",
+      async () => {
+        // Given - Complex personality operation requiring nested service coordination
+        // - PersonalityService managing parent transaction context
+        // - ValidationService with sub-transaction for trait validation
+        // - PersistenceService with nested operations for metadata and traits
+        // - Hierarchical transaction coordination with parent-child relationships
+        // When - Nested transaction execution across service hierarchy
+        // - PersonalityService creates parent transaction for personality operation
+        // - ValidationService creates nested transaction for multi-stage validation
+        // - PersistenceService executes nested operations for traits and metadata
+        // - Hierarchical commit coordination from leaf to root transactions
+        // Then - Nested transactions maintain hierarchical consistency
+        // - Child transactions complete before parent transaction commit
+        // - Hierarchical rollback cascades from parent to child transactions
+        // - Service coordination preserves transaction hierarchy semantics
+        // - Nested operation audit trail captures hierarchical transaction flow
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+  });
+
+  describe("Scenario: Advanced error context preservation and propagation", () => {
+    it.skip(
+      "should preserve detailed error context across multiple service boundary crossings",
+      async () => {
+        // Given - Complex service chain with detailed error context requirements
+        // - PersonalityService with contextual error metadata
+        // - ValidationService with trait-specific error context
+        // - PersistenceService with storage-specific error information
+        // - Error context aggregation across service boundaries
+        // When - Error occurs deep in service chain with context propagation
+        // - PersonalityService initiates operation with request context
+        // - ValidationService encounters trait validation error with specific context
+        // - Error propagation preserves PersonalityService request context
+        // - Error aggregation includes service-specific context from each layer
+        // Then - Complete error context preserved across all service boundaries
+        // - Error includes original PersonalityService request context
+        // - ValidationService trait-specific error details maintained
+        // - Error context aggregation provides complete failure analysis
+        // - Service boundary error tracing enables precise error location
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should handle cascading service failures with error context accumulation",
+      async () => {
+        // Given - Service chain configured for cascading failure scenario
+        // - ValidationService with primary validation failure
+        // - PersistenceService with secondary failure due to validation failure
+        // - PersonalityService managing cascading error accumulation
+        // - Error context preservation during cascading failure propagation
+        // When - Cascading failures occur across service coordination
+        // - ValidationService encounters primary trait validation failure
+        // - Validation failure triggers PersistenceService cleanup failure
+        // - PersistenceService failure propagates to PersonalityService
+        // - Error context accumulation throughout cascading failure chain
+        // Then - Cascading failure context provides complete failure analysis
+        // - Primary ValidationService error context preserved
+        // - Secondary PersistenceService error context added to accumulation
+        // - PersonalityService receives complete cascading error context
+        // - Error accumulation enables root cause analysis of cascading failures
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should maintain error correlation IDs across distributed service operations",
+      async () => {
+        // Given - Distributed service operations with correlation ID tracking
+        // - PersonalityService generating unique correlation IDs
+        // - ValidationService maintaining correlation context
+        // - PersistenceService preserving correlation throughout operations
+        // - Error correlation tracking across distributed service boundaries
+        // When - Distributed operation encounters errors with correlation tracking
+        // - PersonalityService assigns correlation ID to operation
+        // - ValidationService maintains correlation ID through validation
+        // - PersistenceService error includes correlation ID context
+        // - Error propagation preserves correlation ID throughout failure path
+        // Then - Error correlation enables distributed operation tracing
+        // - Correlation ID maintained across all service boundaries
+        // - Error reports include correlation ID for operation tracking
+        // - Distributed error analysis enabled through correlation tracking
+        // - Service operation tracing supports debugging across service boundaries
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+  });
+
+  describe("Scenario: Detailed concurrent access and optimistic locking", () => {
+    it.skip(
+      "should handle concurrent personality modifications with version-based conflict detection",
+      async () => {
+        // Given - Multiple concurrent personality modification requests
+        // - PersonalityService with version-based optimistic locking
+        // - ValidationService supporting concurrent validation
+        // - PersistenceService with version conflict detection
+        // - Concurrent modification scenarios with timestamp tracking
+        // When - Simultaneous personality modifications attempt version updates
+        // - First modification request acquires current personality version
+        // - Second modification request acquires same personality version
+        // - First modification completes successfully with version increment
+        // - Second modification detects version conflict during persistence
+        // Then - Version conflict detected and handled appropriately
+        // - First modification succeeds with incremented version number
+        // - Second modification fails with version conflict error
+        // - Conflict error includes current version for retry guidance
+        // - Optimistic locking prevents data corruption during concurrent access
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should coordinate concurrent service operations with resource locking",
+      async () => {
+        // Given - Concurrent service operations requiring resource coordination
+        // - PersonalityService with resource-level locking mechanisms
+        // - ValidationService with concurrent validation resource management
+        // - PersistenceService with storage resource coordination
+        // - Resource locking preventing concurrent access conflicts
+        // When - Multiple service operations compete for shared resources
+        // - First operation acquires personality resource lock
+        // - Second operation waits for resource lock availability
+        // - First operation completes with resource lock release
+        // - Second operation acquires resource lock and proceeds
+        // Then - Resource locking ensures sequential access to shared resources
+        // - Concurrent operations proceed safely without resource conflicts
+        // - Resource lock coordination maintains service operation integrity
+        // - Lock timeout mechanisms prevent indefinite resource blocking
+        // - Resource contention monitoring provides performance insights
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should handle deadlock detection and resolution in multi-service scenarios",
+      async () => {
+        // Given - Multi-service scenario with potential deadlock conditions
+        // - PersonalityService and ValidationService cross-dependencies
+        // - Resource ordering requirements for deadlock prevention
+        // - Deadlock detection algorithms active across services
+        // - Deadlock resolution strategies configured for service coordination
+        // When - Potential deadlock scenario occurs across service boundaries
+        // - Service A waits for resource held by Service B
+        // - Service B waits for resource held by Service A
+        // - Deadlock detection algorithm identifies circular dependency
+        // - Deadlock resolution strategy aborts one operation
+        // Then - Deadlock detected and resolved without system blockage
+        // - One service operation aborted to break deadlock cycle
+        // - Remaining service operation completes successfully
+        // - Deadlock resolution maintains system responsiveness
+        // - Deadlock incident logged for system monitoring and analysis
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+  });
+
+  describe("Scenario: Enhanced service recovery and fallback mechanisms", () => {
+    it.skip(
+      "should implement circuit breaker pattern for service coordination failures",
+      async () => {
+        // Given - Service coordination with circuit breaker protection
+        // - PersonalityService with circuit breaker for ValidationService calls
+        // - Circuit breaker configured with failure threshold and timeout
+        // - Fallback mechanisms for ValidationService unavailability
+        // - Circuit breaker state monitoring and recovery detection
+        // When - ValidationService experiences repeated failures triggering circuit breaker
+        // - Multiple validation requests fail consecutively
+        // - Circuit breaker trips after configured failure threshold
+        // - PersonalityService switches to fallback validation mode
+        // - Circuit breaker periodically tests ValidationService recovery
+        // Then - Circuit breaker protects system from cascading failures
+        // - Fallback validation enables continued personality operations
+        // - Circuit breaker automatically closes when ValidationService recovers
+        // - Service protection maintains system stability during failures
+        // - Circuit breaker metrics provide failure pattern analysis
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should coordinate graceful degradation across multiple service failures",
+      async () => {
+        // Given - Multi-service coordination with graceful degradation capabilities
+        // - PersonalityService with adaptive functionality based on service availability
+        // - ValidationService and PersistenceService with degraded operation modes
+        // - Service capability matrix for various failure scenarios
+        // - Graceful degradation coordination across service boundaries
+        // When - Multiple services experience partial failures requiring degradation
+        // - ValidationService operates in reduced validation mode
+        // - PersistenceService operates with limited storage capabilities
+        // - PersonalityService coordinates operations within degraded constraints
+        // - Service coordination adapts functionality to available capabilities
+        // Then - Graceful degradation maintains essential functionality
+        // - Personality operations continue with reduced but acceptable quality
+        // - Service coordination adapts seamlessly to capability constraints
+        // - Degraded operation monitoring enables proactive service recovery
+        // - System maintains user experience during partial service failures
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should implement automatic service recovery with health monitoring",
+      async () => {
+        // Given - Service coordination with automatic recovery mechanisms
+        // - Health monitoring for PersonalityService, ValidationService, PersistenceService
+        // - Automatic recovery triggers based on service health metrics
+        // - Recovery orchestration across interdependent services
+        // - Health monitoring with configurable recovery thresholds
+        // When - Service health degradation triggers automatic recovery procedures
+        // - Service health monitoring detects ValidationService degradation
+        // - Automatic recovery initiates ValidationService restart procedures
+        // - Service coordination waits for ValidationService health restoration
+        // - Recovery verification ensures service operational readiness
+        // Then - Automatic recovery restores service coordination functionality
+        // - Service health restoration confirmed through monitoring
+        // - Service coordination resumes normal operation after recovery
+        // - Recovery process minimizes service downtime and user impact
+        // - Recovery metrics enable continuous improvement of recovery procedures
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should coordinate service failover with data consistency preservation",
+      async () => {
+        // Given - Service coordination with failover capabilities
+        // - Primary and backup service instances for critical components
+        // - Data consistency requirements during service failover
+        // - Failover coordination with minimal service disruption
+        // - Failover state synchronization across service boundaries
+        // When - Primary service failure triggers coordinated failover
+        // - Primary PersistenceService becomes unavailable
+        // - Failover coordinator detects primary service failure
+        // - Backup PersistenceService activated with data synchronization
+        // - Service coordination redirects to backup service instance
+        // Then - Service failover maintains data consistency and operation continuity
+        // - Backup service provides consistent data view
+        // - Service coordination seamlessly transitions to backup service
+        // - Failover operation completes within acceptable time window
+        // - Data consistency verified across failover transition
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+  });
+
+  describe("Scenario: Service coordination performance and monitoring integration", () => {
+    it.skip(
+      "should monitor service coordination performance with distributed tracing",
+      async () => {
+        // Given - Service coordination with distributed tracing infrastructure
+        // - Trace context propagation across PersonalityService, ValidationService, PersistenceService
+        // - Performance metrics collection at service boundaries
+        // - Distributed tracing correlation with service coordination events
+        // - Performance baseline establishment for service coordination operations
+        // When - Service coordination operations execute with performance tracing
+        // - Personality creation request generates distributed trace
+        // - Trace spans capture service coordination timing and dependencies
+        // - Performance metrics collected at each service boundary
+        // - Distributed trace correlation provides end-to-end operation visibility
+        // Then - Distributed tracing provides comprehensive service coordination insights
+        // - Trace analysis identifies service coordination bottlenecks
+        // - Performance metrics enable service coordination optimization
+        // - Distributed tracing supports performance troubleshooting
+        // - Service coordination performance baselines enable regression detection
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should implement service coordination load balancing with performance optimization",
+      async () => {
+        // Given - Service coordination with load balancing capabilities
+        // - Multiple PersonalityService instances with load distribution
+        // - ValidationService pool with capacity-based routing
+        // - PersistenceService sharding with performance optimization
+        // - Load balancing coordination across service tiers
+        // When - High-volume personality operations require load distribution
+        // - Load balancer distributes requests across PersonalityService instances
+        // - ValidationService routing optimizes validation capacity utilization
+        // - PersistenceService sharding distributes storage operations
+        // - Load balancing coordination maintains service operation quality
+        // Then - Load balancing optimizes service coordination performance
+        // - Request distribution prevents service coordination bottlenecks
+        // - Service coordination scales effectively under high load
+        // - Load balancing maintains response time consistency
+        // - Service coordination performance scales linearly with capacity
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+
+    it.skip(
+      "should coordinate service scaling with adaptive capacity management",
+      async () => {
+        // Given - Service coordination with adaptive scaling capabilities
+        // - Auto-scaling triggers based on service coordination metrics
+        // - Capacity management across PersonalityService, ValidationService, PersistenceService
+        // - Scaling coordination with service dependency management
+        // - Adaptive scaling with service coordination performance optimization
+        // When - Service coordination load triggers adaptive scaling
+        // - Personality operation volume exceeds current service capacity
+        // - Auto-scaling initiates additional service instances
+        // - Service coordination adapts to increased capacity
+        // - Scaling coordination maintains service operation consistency
+        // Then - Adaptive scaling optimizes service coordination capacity
+        // - Service capacity scales automatically with coordination demand
+        // - Service coordination performance maintains quality during scaling
+        // - Scaling operations complete without service coordination disruption
+        // - Adaptive capacity management enables efficient resource utilization
+      },
+      INTEGRATION_TEST_TIMEOUT,
+    );
+  });
 });
