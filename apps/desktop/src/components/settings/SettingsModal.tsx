@@ -31,7 +31,7 @@
  * @module components/settings/SettingsModal
  */
 
-import React, { useId } from "react";
+import React, { useId, useState } from "react";
 import { SettingsModalProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
 import {
@@ -43,6 +43,8 @@ import {
   DialogDescription,
   DialogHeader,
 } from "@/components/ui/dialog";
+import { SettingsNavigation } from "./SettingsNavigation";
+import { SettingsContent } from "./SettingsContent";
 
 /**
  * SettingsModal component for displaying application settings.
@@ -64,6 +66,9 @@ export function SettingsModal({
   // Generate unique IDs for ARIA attributes
   const titleId = useId();
   const descriptionId = useId();
+
+  // State management for active section
+  const [activeSection, setActiveSection] = useState("general");
 
   /**
    * Prevents event bubbling to ensure modal content clicks don't trigger overlay close
@@ -91,19 +96,21 @@ export function SettingsModal({
           className={cn(
             // Remove default shadcn/ui styles that conflict with custom requirements
             "!max-w-none !w-auto !h-auto !gap-0 !p-0",
-            // Custom dimensions with responsive behavior
-            "w-[80vw] h-[80vh]",
-            "min-w-[800px] min-h-[500px]",
-            "max-w-[1000px] max-h-[700px]",
+            // Enhanced responsive behavior
+            // Large screens: 80% viewport, max 1000px
+            "w-[80vw] h-[80vh] max-w-[1000px] max-h-[700px]",
+            // Medium screens (< 1000px): 95% width, navigation 180px
+            "max-[1000px]:w-[95vw]",
+            // Small screens (< 800px): Full width content area, collapsible navigation
+            "max-[800px]:w-[95vw] max-[800px]:h-[90vh]",
+            // Minimum constraints
+            "min-w-[320px] min-h-[400px]",
             // Enhanced z-index for content above overlay
             "z-50",
             // Custom styling as per requirements
             "rounded-lg", // 8px border radius
             // Custom shadow: 0 10px 25px rgba(0, 0, 0, 0.3)
             "shadow-[0_10px_25px_rgba(0,0,0,0.3)]",
-            // Responsive adjustments for smaller screens
-            "max-sm:w-[95vw] max-sm:h-[90vh]",
-            "max-sm:min-w-[320px] max-sm:min-h-[400px]",
             // Enhanced focus indicators for keyboard navigation
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             // High contrast focus indicators
@@ -129,22 +136,36 @@ export function SettingsModal({
             </DialogDescription>
           </DialogHeader>
 
-          {/* Main modal content */}
-          <div
-            className={cn(
-              "h-full w-full flex flex-col",
-              // Ensure content is keyboard accessible
-              "focus-within:outline-none",
-              // Enhanced visual focus indicators
-              "[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring [&_button:focus-visible]:ring-offset-2",
-              "[&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-ring [&_input:focus-visible]:ring-offset-2",
-              "[&_[role=tab]:focus-visible]:ring-2 [&_[role=tab]:focus-visible]:ring-ring [&_[role=tab]:focus-visible]:ring-offset-2",
-              "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
+          {/* Responsive layout container */}
+          <div className="h-full w-full flex flex-col max-[800px]:flex-col min-[801px]:flex-row">
+            {/* Navigation Panel */}
+            <SettingsNavigation
+              activeSection={activeSection}
+              onSectionChange={setActiveSection}
+            />
+
+            {/* Content Area */}
+            <SettingsContent activeSection={activeSection} />
+
+            {/* Backward compatibility: render children if provided */}
+            {children && (
+              <div
+                className={cn(
+                  "h-full w-full flex flex-col",
+                  // Ensure content is keyboard accessible
+                  "focus-within:outline-none",
+                  // Enhanced visual focus indicators
+                  "[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring [&_button:focus-visible]:ring-offset-2",
+                  "[&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-ring [&_input:focus-visible]:ring-offset-2",
+                  "[&_[role=tab]:focus-visible]:ring-2 [&_[role=tab]:focus-visible]:ring-ring [&_[role=tab]:focus-visible]:ring-offset-2",
+                  "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
+                )}
+                role="main"
+                aria-label="Settings content"
+              >
+                {children}
+              </div>
             )}
-            role="main"
-            aria-label="Settings content"
-          >
-            {children}
           </div>
 
           {/* Live region for screen reader announcements */}

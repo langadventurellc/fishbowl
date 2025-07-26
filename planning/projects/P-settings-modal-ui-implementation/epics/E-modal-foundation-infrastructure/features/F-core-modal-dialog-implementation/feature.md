@@ -2,11 +2,11 @@
 kind: feature
 id: F-core-modal-dialog-implementation
 title: Core Modal Dialog Implementation
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T01:09:36.980593"
-updated: "2025-07-26T01:09:36.980593"
+updated: "2025-07-26T16:53:06.745020+00:00"
 schema_version: "1.1"
 parent: E-modal-foundation-infrastructure
 ---

@@ -8,3 +8,5 @@
  */
 
 export * from "./SettingsModal";
+export * from "./SettingsNavigation";
+export * from "./SettingsContent";
