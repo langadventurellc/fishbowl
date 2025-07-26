@@ -1,11 +1,34 @@
 import React from "react";
+import { cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import { InputContainerDisplayProps } from "@fishbowl-ai/shared";
 import { MessageInputDisplay } from "./MessageInputDisplay";
 import { SendButtonDisplay } from "./SendButtonDisplay";
 import { ConversationModeToggleDisplay } from "./ConversationModeToggleDisplay";
 
 /**
+ * InputContainerDisplay component variants using class-variance-authority.
+ * Defines layout-specific spacing that matches the original CSS-in-JS implementation.
+ */
+const inputContainerVariants = cva(
+  // Base styles
+  "min-h-[72px] flex items-end bg-card border-t border-border box-border",
+  {
+    variants: {
+      layoutVariant: {
+        default: "p-4 gap-3", // 16px padding, 12px gap
+        compact: "p-3 gap-2", // 12px padding, 8px gap
+      },
+    },
+    defaultVariants: {
+      layoutVariant: "default",
+    },
+  },
+);
+
+/**
  * InputContainerDisplay component renders the complete message input area for the conversation interface.
+ * Now enhanced with Tailwind utilities while preserving all original functionality and layout variants.
  * Composes MessageInputDisplay, SendButtonDisplay, and ConversationModeToggleDisplay components
  * within a flexible container that provides proper layout, spacing, and theming.
  *
@@ -20,43 +43,6 @@ export function InputContainerDisplay({
   sendButtonProps = {},
   modeToggleProps = {},
 }: InputContainerDisplayProps) {
-  // Layout variant styling adjustments
-  const getLayoutVariantStyles = (variant: "default" | "compact") => {
-    switch (variant) {
-      case "compact":
-        return {
-          padding: "12px",
-          gap: "8px",
-        };
-      case "default":
-      default:
-        return {
-          padding: "16px",
-          gap: "12px",
-        };
-    }
-  };
-
-  const variantStyles = getLayoutVariantStyles(layoutVariant);
-
-  // Base container styles for the input area
-  const containerStyles: React.CSSProperties = {
-    // Layout and sizing
-    minHeight: "72px",
-    display: "flex",
-    alignItems: "flex-end",
-
-    // Spacing - adjusted per layout variant
-    ...variantStyles,
-
-    // Background and border using theme variables
-    backgroundColor: "var(--card)",
-    borderTop: "1px solid var(--border)",
-
-    // Box model
-    boxSizing: "border-box",
-  };
-
   // Default props for child components based on layout variant
   const defaultMessageInputProps = {
     placeholder: "Type your message here...",
@@ -79,7 +65,7 @@ export function InputContainerDisplay({
   };
 
   return (
-    <div style={containerStyles} className={className}>
+    <div className={cn(inputContainerVariants({ layoutVariant }), className)}>
       <MessageInputDisplay {...defaultMessageInputProps} />
       <SendButtonDisplay {...defaultSendButtonProps} />
       <ConversationModeToggleDisplay {...defaultModeToggleProps} />

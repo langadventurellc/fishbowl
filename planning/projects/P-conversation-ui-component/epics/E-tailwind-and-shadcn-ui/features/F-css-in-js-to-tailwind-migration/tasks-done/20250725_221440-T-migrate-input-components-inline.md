@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-migrate-input-components-inline
+parent: F-css-in-js-to-tailwind-migration
+status: done
 title: Migrate Input components inline styles to Tailwind utilities
-status: open
 priority: high
 prerequisites:
   - T-migrate-button-component-inline
 created: "2025-07-25T21:32:32.529934"
-updated: "2025-07-25T21:32:32.529934"
+updated: "2025-07-25T22:10:15.613573"
 schema_version: "1.1"
-parent: F-css-in-js-to-tailwind-migration
+worktree: null
 ---
 
 # Migrate Input Components Inline Styles to Tailwind Utilities
@@ -162,3 +163,7 @@ Convert all input-related components from CSS-in-JS inline styles to Tailwind ut
 This task establishes the foundation for user interaction with the application by ensuring the message input system works flawlessly with Tailwind utilities while maintaining perfect functionality and accessibility.
 
 ### Log
+
+**2025-07-26T03:14:40.689825Z** - Successfully migrated all Input components from CSS-in-JS inline styles to Tailwind utility classes while maintaining pixel-perfect visual parity. Converted InputContainerDisplay to use Tailwind flexbox layout with proper spacing variants (default/compact) and theme integration. Migrated ConversationModeToggleDisplay to use cva variants for container and mode option styling with proper disabled and active states. Verified MessageInputDisplay and SendButtonDisplay already use shadcn/ui components with Tailwind integration. All components now use CSS variable-based theming (bg-card, border-border, text-primary-foreground) for seamless light/dark mode support. Quality checks pass with no linting, formatting, or TypeScript errors.
+
+- filesChanged: ["apps/desktop/src/components/input/InputContainerDisplay.tsx", "apps/desktop/src/components/input/ConversationModeToggleDisplay.tsx"]
