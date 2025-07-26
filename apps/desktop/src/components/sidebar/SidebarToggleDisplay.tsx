@@ -1,5 +1,6 @@
 import React from "react";
 import { SidebarToggleDisplayProps } from "@fishbowl-ai/shared";
+import { cn } from "@/lib/utils";
 
 /**
  * SidebarToggleDisplay component renders the visual appearance of the sidebar
@@ -31,42 +32,19 @@ export function SidebarToggleDisplay({
   className = "",
   style = {},
 }: SidebarToggleDisplayProps) {
-  // Core sidebar toggle styles with positioning and theme integration
-  const baseToggleStyles: React.CSSProperties = {
-    position: "absolute",
-    top: "50%",
-    left: isCollapsed ? "-12px" : "188px",
-    transform: "translateY(-50%)",
-    width: "24px",
-    height: "24px",
-    borderRadius: "50%",
-    backgroundColor: "var(--background)",
-    border: "1px solid var(--border)",
-    cursor: "pointer", // Preserved for visual accuracy even though non-interactive
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "10px",
-    color: "var(--foreground)",
-    zIndex: 1000,
-    transition: "left 0.3s ease",
-    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-  };
-
-  // Hover state styles for visual demonstration
-  const hoverStateStyles: React.CSSProperties = showHoverState
-    ? {
-        backgroundColor: "var(--accent)",
-        color: "var(--accent-foreground)",
-      }
-    : {};
-
-  // Combine all styles with custom styles taking precedence
-  const combinedStyles: React.CSSProperties = {
-    ...baseToggleStyles,
-    ...hoverStateStyles,
-    ...style, // Custom styles override defaults
-  };
+  // Tailwind classes for sidebar toggle styling
+  const toggleClasses = cn(
+    // Base positioning and layout
+    "absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full",
+    "border border-border bg-background cursor-pointer",
+    "flex items-center justify-center text-[10px] text-foreground",
+    "z-[1000] transition-[left] duration-300 ease-out shadow-sm",
+    // Dynamic left positioning based on collapsed state
+    isCollapsed ? "left-[-12px]" : "left-[188px]",
+    // Conditional hover state styling
+    showHoverState && "bg-accent text-accent-foreground",
+    className,
+  );
 
   // Arrow indicator based on collapsed state
   const arrowIndicator = isCollapsed ? "→" : "←";
@@ -78,8 +56,8 @@ export function SidebarToggleDisplay({
 
   return (
     <button
-      className={className}
-      style={combinedStyles}
+      className={toggleClasses}
+      style={style} // Custom styles override defaults
       title={accessibilityTitle}
       // No onClick handler - pure display component
       aria-label={accessibilityTitle}
