@@ -2,6 +2,7 @@ import React from "react";
 import { AgentLabelsContainerDisplayProps } from "@fishbowl-ai/shared";
 import { AgentPill } from "../chat";
 import { Button } from "../input";
+import { cn } from "../../lib/utils";
 
 /**
  * AgentLabelsContainerDisplay - Horizontal agent labels bar layout component
@@ -25,23 +26,26 @@ export const AgentLabelsContainerDisplay: React.FC<
   className,
   style,
 }) => {
-  // Container styles for the horizontal agent labels bar
-  const containerStyles: React.CSSProperties = {
+  // Dynamic styles that can't be converted to Tailwind utilities
+  const dynamicStyles: React.CSSProperties = {
     height: barHeight,
     backgroundColor: `var(--${backgroundVariant})`,
-    borderBottom: showBottomBorder ? "1px solid var(--border)" : "none",
-    display: "flex",
-    alignItems: "center",
     padding: containerPadding,
     gap: agentSpacing,
-    overflowX: horizontalScroll ? "auto" : "visible",
-    overflowY: "hidden",
     // Merge custom styles
     ...style,
   };
 
   return (
-    <div className={className} style={containerStyles}>
+    <div
+      className={cn(
+        "flex items-center overflow-y-hidden",
+        showBottomBorder && "border-b border-border",
+        horizontalScroll ? "overflow-x-auto" : "overflow-x-visible",
+        className,
+      )}
+      style={dynamicStyles}
+    >
       {/* Internally generated agent pills */}
       {agents.map((agent, index) => (
         <AgentPill key={index} agent={agent} />

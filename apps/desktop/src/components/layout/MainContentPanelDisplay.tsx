@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/shared";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
+import { cn } from "../../lib/utils";
 
 /**
  * MainContentPanelDisplay - Primary conversation interface layout component
@@ -24,18 +25,11 @@ export const MainContentPanelDisplay: React.FC<
   const [inputText] = useState(defaultInputText);
   const [isManualMode] = useState(defaultManualMode);
 
-  // Container styles for the main content area layout
-  const containerStyles: React.CSSProperties = {
-    flex: 1,
-    display: "flex",
-    flexDirection: "column",
-    overflow: "hidden",
-    // Merge custom styles
-    ...style,
-  };
-
   return (
-    <div className={className} style={containerStyles}>
+    <div
+      className={cn("flex flex-1 flex-col overflow-hidden", className)}
+      style={style}
+    >
       {/* Agent Labels Container */}
       <AgentLabelsContainerDisplay
         agents={agents}

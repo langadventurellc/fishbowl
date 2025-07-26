@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ConversationLayoutDisplayProps } from "@fishbowl-ai/shared";
 import { SidebarContainerDisplay, SidebarToggleDisplay } from "../sidebar";
 import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
+import { cn } from "../../lib/utils";
 
 /**
  * ConversationLayoutDisplay - Complete conversation interface layout component
@@ -29,19 +30,10 @@ export const ConversationLayoutDisplay: React.FC<
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
 
-  // Container styles for the main conversation layout
-  const containerStyles: React.CSSProperties = {
-    flex: 1,
-    display: "flex",
-    overflow: "hidden",
-    // Merge custom styles
-    ...style,
-  };
-
   return (
-    <div className={className} style={containerStyles}>
+    <div className={cn("flex flex-1 overflow-hidden", className)} style={style}>
       {/* Sidebar Toggle Button */}
-      <div onClick={handleSidebarToggle} style={{ cursor: "pointer" }}>
+      <div onClick={handleSidebarToggle} className="cursor-pointer">
         <SidebarToggleDisplay
           isCollapsed={isSidebarCollapsed}
           showHoverState={false}
