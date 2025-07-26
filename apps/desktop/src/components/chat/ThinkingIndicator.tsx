@@ -37,11 +37,11 @@ export function ThinkingIndicator({
   const getAnimationClasses = () => {
     switch (animationSpeed) {
       case "slow":
-        return "[animation-duration:2s]";
+        return "animate-pulse"; // Default pulse is ~2s
       case "fast":
-        return "[animation-duration:1s]";
+        return "animate-pulse [animation-duration:1s]";
       default: // normal
-        return "[animation-duration:1.5s]";
+        return "animate-pulse [animation-duration:1.5s]";
     }
   };
 
@@ -49,7 +49,7 @@ export function ThinkingIndicator({
     <div
       style={{ backgroundColor: color }}
       className={cn(
-        "rounded-full animate-pulse",
+        "rounded-full",
         getSizeClasses(),
         getAnimationClasses(),
         className,

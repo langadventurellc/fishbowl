@@ -104,32 +104,34 @@ export function MessageItem(props: MessageItemProps) {
 
   // Context menu positioning logic - show menu above for messages near bottom of viewport
   const shouldShowMenuAbove = () => {
-    // For now, default to below - could be enhanced with viewport detection
-    return false;
+    if (typeof window === "undefined") return false;
+
+    // Get current scroll position and viewport height
+    const scrollTop = window.scrollY;
+    const viewportHeight = window.innerHeight;
+    const scrollBottom = scrollTop + viewportHeight;
+
+    // Estimate if we're in the bottom third of the viewport
+    // This is a simple heuristic - could be enhanced with element position detection
+    return scrollBottom > document.body.scrollHeight * 0.75;
   };
   // Tailwind utility classes for consistent message layout and theming
   const messageClasses = "w-full";
 
   const messageWrapperClasses = cn(
-    // Base wrapper styles
     "relative p-2 rounded-lg border border-transparent bg-transparent",
-    // Inactive state
     !isActive && "opacity-50",
   );
 
   const systemMessageClasses =
     "italic text-muted-foreground text-center text-xs py-2";
-
   const userMessageClasses =
     "bg-accent text-accent-foreground py-3 px-4 rounded-xl ml-auto max-w-[70%]";
-
   const userMessageWrapperClasses = "flex justify-end w-full";
 
   const contextToggleClasses = cn(
-    // Base button styles
     "absolute right-2 top-2 w-5 h-5 border-0 rounded cursor-pointer text-xs",
     "flex items-center justify-center transition-all duration-150 z-[100]",
-    // Active/inactive states
     isActive
       ? "bg-primary text-primary-foreground"
       : "bg-muted text-muted-foreground",

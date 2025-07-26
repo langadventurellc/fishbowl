@@ -21,15 +21,14 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   style,
   onScroll,
 }) => {
-  // Dynamic styles that can't be converted to Tailwind utilities
+  // Dynamic styles using CSS custom properties
   const dynamicStyles: React.CSSProperties = {
-    padding: containerPadding,
-    gap: messageSpacing,
-    // Support custom maxHeight
-    ...(maxHeight && { maxHeight }),
+    "--container-padding": containerPadding,
+    "--message-spacing": messageSpacing,
+    "--max-height": maxHeight || "none",
     // Merge custom styles
     ...style,
-  };
+  } as React.CSSProperties;
 
   // Render messages or children
   const renderContent = () => {
@@ -53,7 +52,12 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
 
   return (
     <div
-      className={cn("flex flex-1 flex-col overflow-y-auto", className)}
+      className={cn(
+        "flex flex-1 flex-col overflow-y-auto",
+        "p-[var(--container-padding)] gap-[var(--message-spacing)]",
+        maxHeight && "max-h-[var(--max-height)]",
+        className,
+      )}
       style={dynamicStyles}
       onScroll={onScroll}
     >
