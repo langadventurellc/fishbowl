@@ -1,5 +1,6 @@
 import React from "react";
 import { ThinkingIndicatorProps } from "@fishbowl-ai/shared";
+import { cn } from "@/lib/utils";
 
 /**
  * ThinkingIndicator component displays an animated pulsing dot to indicate agent activity.
@@ -12,7 +13,7 @@ import { ThinkingIndicatorProps } from "@fishbowl-ai/shared";
  * - Smooth pulsing animation with configurable timing (slow, normal, fast)
  * - Multiple size variants (small, medium, large) for different UI contexts
  * - Customizable color support with theme-aware defaults
- * - Unique animation keyframes to prevent CSS conflicts
+ * - Tailwind utility classes for consistent styling
  * - Lightweight implementation with minimal DOM footprint
  * - Accessibility-friendly with reduced motion considerations
  */
@@ -22,49 +23,37 @@ export function ThinkingIndicator({
   animationSpeed = "normal",
   className,
 }: ThinkingIndicatorProps) {
-  // Generate unique animation name to avoid conflicts
-  const animationName = `thinking-pulse-${Math.random().toString(36).substr(2, 9)}`;
-
-  const getSizeStyles = () => {
+  const getSizeClasses = () => {
     switch (size) {
       case "small":
-        return { width: "4px", height: "4px" };
+        return "w-1 h-1"; // 4px
       case "large":
-        return { width: "8px", height: "8px" };
+        return "w-2 h-2"; // 8px
       default: // medium
-        return { width: "6px", height: "6px" };
+        return "w-1.5 h-1.5"; // 6px
     }
   };
 
-  const getAnimationDuration = () => {
+  const getAnimationClasses = () => {
     switch (animationSpeed) {
       case "slow":
-        return "2s";
+        return "[animation-duration:2s]";
       case "fast":
-        return "1s";
+        return "[animation-duration:1s]";
       default: // normal
-        return "1.5s";
+        return "[animation-duration:1.5s]";
     }
   };
-
-  const styles = {
-    ...getSizeStyles(),
-    borderRadius: "50%",
-    backgroundColor: color,
-    animation: `${animationName} ${getAnimationDuration()} infinite ease-in-out`,
-  };
-
-  const keyframes = `
-    @keyframes ${animationName} {
-      0%, 100% { opacity: 0.7; }
-      50% { opacity: 0.3; }
-    }
-  `;
 
   return (
-    <>
-      <style>{keyframes}</style>
-      <div style={styles} className={className} />
-    </>
+    <div
+      style={{ backgroundColor: color }}
+      className={cn(
+        "rounded-full animate-pulse",
+        getSizeClasses(),
+        getAnimationClasses(),
+        className,
+      )}
+    />
   );
 }
