@@ -2,11 +2,11 @@
 kind: feature
 id: F-personality-management-crud
 title: Personality Management CRUD Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T13:41:22.483900"
-updated: "2025-07-26T13:41:22.483900"
+updated: "2025-07-26T20:45:31.990957+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---

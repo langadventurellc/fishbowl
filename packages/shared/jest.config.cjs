@@ -7,7 +7,9 @@ module.exports = {
   ],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
-    "<rootDir>/dist/"
+    "<rootDir>/dist/",
+    "<rootDir>/src/__tests__/integration/support/",
+    "<rootDir>/src/__tests__/integration/fixtures/"
   ],
   collectCoverageFrom: [
     "src/**/*.{ts,tsx}",
