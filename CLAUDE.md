@@ -33,6 +33,8 @@ Don't run the `dev` or `start` commands because you lock up processes doing that
 
 #### Building
 
+**DO NOT** build the applications unless specifically requested by the user.
+
 | Command                         | Description                                       |
 | ------------------------------- | ------------------------------------------------- |
 | `pnpm build`                    | Build all packages and apps                       |
@@ -164,6 +166,8 @@ Use the implementation planner subagent to plan the implementation of new featur
 5. **API calls** → `packages/shared/src/api/`
 
 Never put UI components in shared packages. Always keep platform-specific code in the respective app directories.
+
+When working with shadcn/ui components, always use `shadcn-ui` MCP tools to get the latest updates and best practices.
 
 For full architecture details, see: [Monorepo Architecture](docs/architecture/monorepo.md)
 

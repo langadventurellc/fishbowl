@@ -2,12 +2,12 @@
 kind: feature
 id: F-shadcn-ui-component-integration
 title: shadcn/ui Component Integration
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-tailwind-css-v4-setup-and
 created: "2025-07-25T16:49:17.175065"
-updated: "2025-07-25T16:49:17.175065"
+updated: "2025-07-26T02:10:28.013844+00:00"
 schema_version: "1.1"
 parent: E-tailwind-and-shadcn-ui
 ---
@@ -203,5 +203,10 @@ Strategically integrate shadcn/ui components for basic UI elements while maintai
 - **Development guidelines** for when to use shadcn/ui vs. custom components
 
 This feature strategically enhances the application with industry-standard, accessible UI components while preserving the unique functionality required for the conversation interface, creating a best-of-both-worlds approach to component architecture.
+
+### See Also
+
+- `docs/tailwind-css-v4-setup.md` for Tailwind CSS v4 setup details
+- shadcn/ui MCP tools
 
 ### Log

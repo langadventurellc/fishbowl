@@ -1,32 +1,60 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
 
 @layer theme, base, components, utilities;
 
+/* 
+ * SHADCN/UI INTEGRATION DOCUMENTATION
+ * 
+ * This CSS file provides complete shadcn/ui theme integration with existing design system.
+ * The CSS variables defined below are directly compatible with shadcn/ui components,
+ * enabling seamless integration without additional configuration.
+ * 
+ * Integration Features:
+ * - ✅ All shadcn/ui CSS variables defined with correct naming
+ * - ✅ Light/dark theme support via .dark class
+ * - ✅ Tailwind CSS v4 compatible CSS variable mapping
+ * - ✅ Perfect visual consistency between custom and shadcn/ui components
+ * 
+ * Usage:
+ * - shadcn/ui components automatically use these variables
+ * - Theme switching works via .dark class on document element
+ * - No additional CSS imports needed for shadcn/ui components
+ */
+
+/* Light Theme Variables - Fully compatible with shadcn/ui */
 :root {
-  --background: rgb(231, 229, 228);
-  --foreground: rgb(30, 41, 59);
-  --card: rgb(245, 245, 244);
-  --card-foreground: rgb(30, 41, 59);
-  --popover: rgb(245, 245, 244);
-  --popover-foreground: rgb(30, 41, 59);
-  --primary: rgb(99, 102, 241);
-  --primary-foreground: rgb(255, 255, 255);
-  --secondary: rgb(214, 211, 209);
-  --secondary-foreground: rgb(75, 85, 99);
-  --muted: rgb(231, 229, 228);
-  --muted-foreground: rgb(107, 114, 128);
-  --accent: rgb(214, 211, 209);
-  --accent-foreground: rgb(55, 65, 81);
-  --destructive: rgb(239, 68, 68);
-  --destructive-foreground: rgb(255, 255, 255);
-  --border: rgb(214, 211, 209);
-  --input: rgb(214, 211, 209);
-  --ring: rgb(99, 102, 241);
+  /* Core theme colors used by shadcn/ui components */
+  --background: rgb(231, 229, 228);           /* Page background */
+  --foreground: rgb(30, 41, 59);              /* Primary text */
+  --card: rgb(245, 245, 244);                 /* Card backgrounds */
+  --card-foreground: rgb(30, 41, 59);         /* Card text */
+  --popover: rgb(245, 245, 244);              /* Popover/dropdown backgrounds */
+  --popover-foreground: rgb(30, 41, 59);      /* Popover text */
+  --primary: rgb(99, 102, 241);               /* Primary brand color */
+  --primary-foreground: rgb(255, 255, 255);   /* Text on primary background */
+  --secondary: rgb(214, 211, 209);            /* Secondary backgrounds */
+  --secondary-foreground: rgb(75, 85, 99);    /* Text on secondary background */
+  --muted: rgb(231, 229, 228);                /* Muted backgrounds */
+  --muted-foreground: rgb(107, 114, 128);     /* Muted text */
+  --accent: rgb(214, 211, 209);               /* Accent color */
+  --accent-foreground: rgb(55, 65, 81);       /* Text on accent background */
+  --destructive: rgb(239, 68, 68);            /* Error/danger color */
+  --destructive-foreground: rgb(255, 255, 255); /* Text on destructive background */
+  --border: rgb(214, 211, 209);               /* Border color */
+  --input: rgb(214, 211, 209);                /* Input field backgrounds */
+  --ring: rgb(99, 102, 241);                  /* Focus ring color */
+
+  /* Chart colors for shadcn/ui chart components */
   --chart-1: rgb(99, 102, 241);
   --chart-2: rgb(79, 70, 229);
   --chart-3: rgb(67, 56, 202);
   --chart-4: rgb(55, 48, 163);
   --chart-5: rgb(49, 46, 129);
+
+  /* Sidebar-specific variables for shadcn/ui sidebar components */
   --sidebar: rgb(214, 211, 209);
   --sidebar-foreground: rgb(30, 41, 59);
   --sidebar-primary: rgb(99, 102, 241);
@@ -35,10 +63,16 @@
   --sidebar-accent-foreground: rgb(55, 65, 81);
   --sidebar-border: rgb(214, 211, 209);
   --sidebar-ring: rgb(99, 102, 241);
+
+  /* Typography system */
   --font-sans: Plus Jakarta Sans, sans-serif;
   --font-serif: Lora, serif;
   --font-mono: Roboto Mono, monospace;
+
+  /* Border radius for consistent component styling */
   --radius: 1.25rem;
+
+  /* Shadow system for depth and elevation */
   --shadow-2xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
   --shadow-xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
   --shadow-sm: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
@@ -47,35 +81,43 @@
   --shadow-lg: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 4px 6px 3px hsl(240 4% 60% / 0.18);
   --shadow-xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 8px 10px 3px hsl(240 4% 60% / 0.18);
   --shadow-2xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.45);
+
+  /* Layout and spacing */
   --tracking-normal: 0em;
   --spacing: 0.25rem;
 }
 
+/* Dark Theme Variables - Automatic shadcn/ui dark mode support */
 .dark {
-  --background: rgb(30, 27, 24);
-  --foreground: rgb(226, 232, 240);
-  --card: rgb(44, 40, 37);
-  --card-foreground: rgb(226, 232, 240);
-  --popover: rgb(44, 40, 37);
-  --popover-foreground: rgb(226, 232, 240);
-  --primary: rgb(129, 140, 248);
-  --primary-foreground: rgb(30, 27, 24);
-  --secondary: rgb(58, 54, 51);
-  --secondary-foreground: rgb(209, 213, 219);
-  --muted: rgb(44, 40, 37);
-  --muted-foreground: rgb(156, 163, 175);
-  --accent: rgb(72, 68, 65);
-  --accent-foreground: rgb(209, 213, 219);
-  --destructive: rgb(239, 68, 68);
-  --destructive-foreground: rgb(30, 27, 24);
-  --border: rgb(58, 54, 51);
-  --input: rgb(58, 54, 51);
-  --ring: rgb(129, 140, 248);
+  /* Core theme colors for dark mode */
+  --background: rgb(30, 27, 24);              /* Dark page background */
+  --foreground: rgb(226, 232, 240);           /* Light text on dark background */
+  --card: rgb(44, 40, 37);                    /* Dark card backgrounds */
+  --card-foreground: rgb(226, 232, 240);      /* Light text on dark cards */
+  --popover: rgb(44, 40, 37);                 /* Dark popover backgrounds */
+  --popover-foreground: rgb(226, 232, 240);   /* Light text on dark popovers */
+  --primary: rgb(129, 140, 248);              /* Adjusted primary for dark mode */
+  --primary-foreground: rgb(30, 27, 24);      /* Dark text on primary background */
+  --secondary: rgb(58, 54, 51);               /* Dark secondary backgrounds */
+  --secondary-foreground: rgb(209, 213, 219); /* Light text on secondary background */
+  --muted: rgb(44, 40, 37);                   /* Dark muted backgrounds */
+  --muted-foreground: rgb(156, 163, 175);     /* Muted text for dark mode */
+  --accent: rgb(72, 68, 65);                  /* Dark accent color */
+  --accent-foreground: rgb(209, 213, 219);    /* Light text on accent background */
+  --destructive: rgb(239, 68, 68);            /* Error color (consistent) */
+  --destructive-foreground: rgb(30, 27, 24);  /* Dark text on destructive background */
+  --border: rgb(58, 54, 51);                  /* Dark border color */
+  --input: rgb(58, 54, 51);                   /* Dark input backgrounds */
+  --ring: rgb(129, 140, 248);                 /* Focus ring for dark mode */
+
+  /* Chart colors adapted for dark mode */
   --chart-1: rgb(129, 140, 248);
   --chart-2: rgb(99, 102, 241);
   --chart-3: rgb(79, 70, 229);
   --chart-4: rgb(67, 56, 202);
   --chart-5: rgb(55, 48, 163);
+
+  /* Sidebar colors for dark mode */
   --sidebar: rgb(58, 54, 51);
   --sidebar-foreground: rgb(226, 232, 240);
   --sidebar-primary: rgb(129, 140, 248);
@@ -84,10 +126,16 @@
   --sidebar-accent-foreground: rgb(209, 213, 219);
   --sidebar-border: rgb(58, 54, 51);
   --sidebar-ring: rgb(129, 140, 248);
+
+  /* Typography (inherited from light theme) */
   --font-sans: Plus Jakarta Sans, sans-serif;
   --font-serif: Lora, serif;
   --font-mono: Roboto Mono, monospace;
+
+  /* Border radius (inherited) */
   --radius: 1.25rem;
+
+  /* Dark mode shadow system */
   --shadow-2xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
   --shadow-xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
   --shadow-sm: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
@@ -149,4 +197,13 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
