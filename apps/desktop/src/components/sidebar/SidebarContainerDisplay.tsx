@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "../input/Button";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
+import { cn } from "../../lib/utils";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
@@ -48,16 +49,12 @@ export function SidebarContainerDisplay({
     }
   };
 
-  // Core sidebar container styles with theme integration and responsive behavior
-  const containerStyles: React.CSSProperties = {
+  // Dynamic styles that need to remain as CSS properties
+  const dynamicStyles: React.CSSProperties = {
     width: collapsed ? "0px" : getWidthForVariant(widthVariant),
     backgroundColor: "var(--sidebar)",
     borderRight: showBorder ? `1px solid var(--border)` : "none",
-    display: "flex",
-    flexDirection: "column",
     padding: collapsed ? "0" : "16px",
-    overflow: "hidden",
-    transition: "width 0.3s ease, padding 0.3s ease",
     ...style, // Custom styles take precedence
   };
 
@@ -71,15 +68,7 @@ export function SidebarContainerDisplay({
       />
 
       {/* Conversation items with interactive behavior */}
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          gap: "4px",
-          minHeight: "120px",
-        }}
-      >
+      <div className="flex flex-1 flex-col gap-1 min-h-[120px]">
         {conversations!.map((conv, index) => (
           <ConversationItemDisplay
             key={index}
@@ -90,7 +79,7 @@ export function SidebarContainerDisplay({
         ))}
       </div>
 
-      <div style={{ marginTop: "auto" }}>
+      <div className="mt-auto">
         <Button
           variant="primary"
           size="small"
@@ -104,7 +93,13 @@ export function SidebarContainerDisplay({
   );
 
   return (
-    <div className={className} style={containerStyles}>
+    <div
+      className={cn(
+        "flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+        className,
+      )}
+      style={dynamicStyles}
+    >
       {!collapsed && conversations && renderSelfContainedContent()}
     </div>
   );

@@ -1,6 +1,7 @@
 import React from "react";
 import { ChatContainerDisplayProps } from "@fishbowl-ai/shared";
 import { MessageItem } from "../chat/MessageItem";
+import { cn } from "../../lib/utils";
 
 /**
  * ChatContainerDisplay - Scrollable messages area layout component
@@ -20,19 +21,14 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   style,
   onScroll,
 }) => {
-  // Container styles for the scrollable chat messages area
-  const containerStyles: React.CSSProperties = {
-    flex: 1,
-    overflowY: "auto" as const,
-    padding: containerPadding,
-    display: "flex",
-    flexDirection: "column" as const,
-    gap: messageSpacing,
-    // Support custom maxHeight
-    ...(maxHeight && { maxHeight }),
+  // Dynamic styles using CSS custom properties
+  const dynamicStyles: React.CSSProperties = {
+    "--container-padding": containerPadding,
+    "--message-spacing": messageSpacing,
+    "--max-height": maxHeight || "none",
     // Merge custom styles
     ...style,
-  };
+  } as React.CSSProperties;
 
   // Render messages or children
   const renderContent = () => {
@@ -55,7 +51,16 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   };
 
   return (
-    <div className={className} style={containerStyles} onScroll={onScroll}>
+    <div
+      className={cn(
+        "flex flex-1 flex-col overflow-y-auto",
+        "p-[var(--container-padding)] gap-[var(--message-spacing)]",
+        maxHeight && "max-h-[var(--max-height)]",
+        className,
+      )}
+      style={dynamicStyles}
+      onScroll={onScroll}
+    >
       {renderContent()}
     </div>
   );

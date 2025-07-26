@@ -12,6 +12,7 @@ import type React from "react";
 import { useState } from "react";
 import type { ConversationItemDisplayProps } from "@fishbowl-ai/shared";
 import { ConversationContextMenu } from "./ConversationContextMenu";
+import { cn } from "@/lib/utils";
 
 /**
  * ConversationItemDisplay component.
@@ -34,154 +35,60 @@ export function ConversationItemDisplay({
   style = {},
 }: ConversationItemDisplayProps) {
   const [isHovered, setIsHovered] = useState(false);
-  // Core conversation item styles with theme integration and interactive behavior
-  const baseItemStyles: React.CSSProperties = {
-    position: "relative",
-    padding: "8px 12px",
-    paddingRight: "32px", // Make room for ellipsis (visual space preserved)
-    borderRadius: "6px",
-    cursor: "pointer", // Make it look interactive
-    marginBottom: "4px",
-    fontSize: "13px",
-    transition: "all 0.15s ease",
-    display: "flex",
-    flexDirection: "column",
-    zIndex: 1,
-  };
 
-  // Visual state styles based on appearanceState and conversation.isActive
-  const getStateStyles = (
-    state: typeof appearanceState,
-  ): React.CSSProperties => {
+  // Get Tailwind classes based on appearanceState and conversation.isActive
+  const getStateClasses = (state: typeof appearanceState) => {
     const isActiveConversation = conversation.isActive;
 
     switch (state) {
       case "active":
-        // Active conversation item styles with accent coloring
-        return {
-          backgroundColor: "var(--sidebar-accent)",
-          color: "var(--sidebar-accent-foreground)",
-        };
+        return "bg-sidebar-accent text-sidebar-accent-foreground";
 
       case "hover":
-        // Hover appearance (visual only, no actual hover behavior)
-        return {
-          backgroundColor: "var(--sidebar-accent)",
-          color: "var(--sidebar-accent-foreground)",
-          opacity: 0.8, // Slightly less prominent than truly active
-        };
+        return "bg-sidebar-accent text-sidebar-accent-foreground opacity-80";
 
       case "unread":
-        // Unread conversation with enhanced visibility
-        return {
-          backgroundColor: isActiveConversation
-            ? "var(--sidebar-accent)"
-            : "rgba(var(--sidebar-primary), 0.1)",
-          color: isActiveConversation
-            ? "var(--sidebar-accent-foreground)"
-            : "var(--sidebar-foreground)",
-          fontWeight: "500", // Slightly bolder for unread
-        };
+        return isActiveConversation
+          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
+          : "bg-sidebar-primary/10 text-sidebar-foreground font-medium";
 
       case "inactive":
       default:
-        // Inactive conversation item styles with muted appearance
-        return {
-          backgroundColor: isActiveConversation
-            ? "var(--sidebar-accent)"
-            : "transparent",
-          color: isActiveConversation
-            ? "var(--sidebar-accent-foreground)"
-            : "var(--muted-foreground)",
-        };
+        return isActiveConversation
+          ? "bg-sidebar-accent text-sidebar-accent-foreground"
+          : "bg-transparent text-muted-foreground";
     }
-  };
-
-  // Unread indicator styles
-  const unreadIndicatorStyles: React.CSSProperties = {
-    position: "absolute",
-    top: "12px",
-    right: "12px",
-    width: "6px",
-    height: "6px",
-    borderRadius: "50%",
-    backgroundColor: "var(--sidebar-primary)",
-    opacity: showUnreadIndicator ? 1 : 0,
-    transition: "opacity 0.15s",
-  };
-
-  // Conversation name styles
-  const conversationNameStyles: React.CSSProperties = {
-    fontWeight: appearanceState === "unread" ? "500" : "400",
-    marginBottom: "2px",
-    lineHeight: "1.2",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  };
-
-  // Last activity timestamp styles
-  const lastActivityStyles: React.CSSProperties = {
-    fontSize: "11px",
-    opacity: 0.7,
-    lineHeight: "1.2",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  };
-
-  // Ellipses trigger styles - positioned in top-right area
-  const ellipsesStyles: React.CSSProperties = {
-    position: "absolute",
-    top: "8px",
-    right: "8px",
-    opacity: isHovered ? 1 : 0,
-    transition: "opacity 0.15s ease",
-    zIndex: 2,
-  };
-
-  // Combine all styles with custom styles taking precedence
-  const combinedStyles: React.CSSProperties = {
-    ...baseItemStyles,
-    ...getStateStyles(appearanceState),
-    ...style, // Custom styles override defaults
   };
 
   return (
     <div
-      className={className}
-      style={combinedStyles}
-      onMouseEnter={(e) => {
-        // Add hover effect
-        const target = e.currentTarget;
-        target.style.backgroundColor =
-          appearanceState === "active"
-            ? "var(--sidebar-accent)"
-            : "rgba(var(--sidebar-primary), 0.08)";
-        target.style.transform = "translateX(2px)";
-        target.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.1)";
-
-        // Show ellipses on hover
-        setIsHovered(true);
-      }}
-      onMouseLeave={(e) => {
-        // Remove hover effect
-        const target = e.currentTarget;
-        const originalStyles = getStateStyles(appearanceState);
-        target.style.backgroundColor =
-          originalStyles.backgroundColor || "transparent";
-        target.style.transform = "translateX(0)";
-        target.style.boxShadow = "none";
-
-        // Hide ellipses when not hovering
-        setIsHovered(false);
-      }}
+      className={cn(
+        "relative px-3 py-2 pr-8 rounded-md cursor-pointer mb-1 text-[13px] transition-all duration-150 ease-out flex flex-col z-[1]",
+        "hover:bg-sidebar-primary/8 hover:translate-x-0.5 hover:shadow-sm",
+        getStateClasses(appearanceState),
+        className,
+      )}
+      style={style}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Unread indicator dot */}
-      {showUnreadIndicator && <div style={unreadIndicatorStyles} />}
+      {showUnreadIndicator && (
+        <div
+          className={cn(
+            "absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-sidebar-primary transition-opacity duration-150",
+            showUnreadIndicator ? "opacity-100" : "opacity-0",
+          )}
+        />
+      )}
 
       {/* Context menu with ellipses trigger - appears on hover */}
-      <div style={ellipsesStyles}>
+      <div
+        className={cn(
+          "absolute top-2 right-2 z-[2] transition-opacity duration-150 ease-out",
+          isHovered ? "opacity-100" : "opacity-0",
+        )}
+      >
         <ConversationContextMenu
           conversation={conversation}
           position="below"
@@ -198,10 +105,19 @@ export function ConversationItemDisplay({
       </div>
 
       {/* Conversation name */}
-      <div style={conversationNameStyles}>{conversation.name}</div>
+      <div
+        className={cn(
+          "mb-0.5 leading-tight overflow-hidden text-ellipsis whitespace-nowrap",
+          appearanceState === "unread" ? "font-medium" : "font-normal",
+        )}
+      >
+        {conversation.name}
+      </div>
 
       {/* Last activity timestamp */}
-      <div style={lastActivityStyles}>{conversation.lastActivity}</div>
+      <div className="text-[11px] opacity-70 leading-tight overflow-hidden text-ellipsis whitespace-nowrap">
+        {conversation.lastActivity}
+      </div>
     </div>
   );
 }

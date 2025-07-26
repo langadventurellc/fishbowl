@@ -1,5 +1,5 @@
 import { MenuItemDisplayProps } from "@fishbowl-ai/shared";
-import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 /**
  * MenuItemDisplay Component
@@ -11,7 +11,7 @@ import { useState } from "react";
  * Features:
  * - Multiple visual states (normal, hover, disabled, danger)
  * - Icon support with proper alignment
- * - Theme-aware styling using CSS custom properties
+ * - Theme-aware styling using Tailwind utilities
  * - Separator support for visual grouping
  * - Accessibility-friendly hover and focus states
  * - Danger variant for destructive actions
@@ -24,105 +24,37 @@ export function MenuItemDisplay({
   separator = false,
   className,
 }: MenuItemDisplayProps) {
-  const [isHovered, setIsHovered] = useState(false);
-  // Base menu item styles following the application's design system
-  const getBaseStyles = () => ({
-    display: "block",
-    width: "100%",
-    padding: "8px 12px",
-    fontSize: "13px",
-    fontFamily: "var(--font-sans)",
-    color: "var(--popover-foreground)",
-    backgroundColor: "transparent",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    textAlign: "left" as const,
-    transition: "background-color 0.15s",
-    whiteSpace: "nowrap" as const,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    boxSizing: "border-box" as const,
-  });
+  // Base menu item classes using Tailwind utilities
+  const getMenuItemClasses = () => {
+    return cn(
+      // Base menu item styles
+      "block w-full px-3 py-2 text-[13px] text-popover-foreground bg-transparent border-none rounded cursor-pointer text-left transition-colors duration-150 whitespace-nowrap overflow-hidden text-ellipsis",
+      // Variant-specific styling
+      {
+        // Normal variant with hover states (only when not disabled)
+        "hover:bg-accent hover:text-accent-foreground":
+          variant === "normal" && !disabled,
 
-  // Get variant-specific styles based on variant prop and disabled state
-  const getVariantStyles = () => {
-    const baseStyles = getBaseStyles();
+        // Hover variant (always shows hover state)
+        "bg-accent text-accent-foreground": variant === "hover",
 
-    // If disabled prop is true, always show disabled styling regardless of variant
-    if (disabled) {
-      return {
-        ...baseStyles,
-        opacity: 0.5,
-        cursor: "not-allowed",
-      };
-    }
+        // Disabled variant or disabled prop
+        "opacity-50 cursor-not-allowed": variant === "disabled" || disabled,
 
-    // Apply hover styles when isHovered is true (for normal and danger variants)
-    if (isHovered && (variant === "normal" || variant === "danger")) {
-      return {
-        ...baseStyles,
-        backgroundColor: "var(--accent)",
-        color: "var(--accent-foreground)",
-      };
-    }
-
-    switch (variant) {
-      case "hover":
-        // Hover state styling for interactive feedback
-        return {
-          ...baseStyles,
-          backgroundColor: "var(--accent)",
-          color: "var(--accent-foreground)",
-        };
-      case "disabled":
-        // Disabled state styling with reduced opacity
-        return {
-          ...baseStyles,
-          opacity: 0.5,
-          cursor: "not-allowed",
-        };
-      case "danger":
-        // Custom danger styling for destructive actions
-        return {
-          ...baseStyles,
-          color: "var(--destructive)",
-          backgroundColor: "transparent",
-        };
-      default:
-        return baseStyles;
-    }
+        // Danger variant with hover states (only when not disabled)
+        "text-destructive hover:bg-accent hover:text-accent-foreground":
+          variant === "danger" && !disabled,
+      },
+    );
   };
 
   return (
     <div className={className}>
-      <div
-        style={getVariantStyles()}
-        onMouseEnter={() => {
-          if ((variant === "normal" || variant === "danger") && !disabled) {
-            setIsHovered(true);
-          }
-        }}
-        onMouseLeave={() => {
-          if ((variant === "normal" || variant === "danger") && !disabled) {
-            setIsHovered(false);
-          }
-        }}
-      >
-        {icon && (
-          <span style={{ marginRight: "8px", fontSize: "12px" }}>{icon}</span>
-        )}
+      <div className={getMenuItemClasses()}>
+        {icon && <span className="mr-2 text-xs">{icon}</span>}
         {label}
       </div>
-      {separator && (
-        <div
-          style={{
-            height: "1px",
-            backgroundColor: "var(--border)",
-            margin: "4px 0",
-          }}
-        />
-      )}
+      {separator && <div className="h-px bg-border my-1" />}
     </div>
   );
 }

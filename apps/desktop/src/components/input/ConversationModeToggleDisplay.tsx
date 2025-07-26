@@ -1,9 +1,53 @@
 import React from "react";
+import { cva } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import { ConversationModeToggleDisplayProps } from "@fishbowl-ai/shared";
 
 /**
+ * ConversationModeToggleDisplay component variants using class-variance-authority.
+ * Defines container and mode option styling that matches the original CSS-in-JS implementation.
+ */
+const modeToggleContainerVariants = cva(
+  // Base container styles
+  "h-10 flex items-center gap-2 px-3 border border-border rounded-lg bg-background text-xs font-medium",
+  {
+    variants: {
+      disabled: {
+        true: "opacity-60 cursor-not-allowed",
+        false: "cursor-default",
+      },
+    },
+    defaultVariants: {
+      disabled: false,
+    },
+  },
+);
+
+const modeOptionVariants = cva(
+  // Base mode option styles
+  "px-2 py-1 rounded cursor-pointer transition-colors",
+  {
+    variants: {
+      active: {
+        true: "bg-primary text-primary-foreground",
+        false: "",
+      },
+      disabled: {
+        true: "cursor-not-allowed",
+        false: "cursor-pointer",
+      },
+    },
+    defaultVariants: {
+      active: false,
+      disabled: false,
+    },
+  },
+);
+
+/**
  * ConversationModeToggleDisplay component renders a toggle switch for selecting between
- * Manual and Auto conversation modes. Provides visual feedback for the current mode state
+ * Manual and Auto conversation modes. Now enhanced with Tailwind utilities while preserving
+ * all original functionality and visual states. Provides visual feedback for the current mode state
  * and supports disabled state for contexts where mode switching is not available.
  *
  * Visual States:
@@ -16,52 +60,28 @@ export function ConversationModeToggleDisplay({
   disabled = false,
   className = "",
 }: ConversationModeToggleDisplayProps) {
-  // Base container styles for the mode toggle
-  const containerStyles: React.CSSProperties = {
-    height: "40px",
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    padding: "0 12px",
-    border: "1px solid var(--border)",
-    borderRadius: "8px",
-    backgroundColor: "var(--background)",
-    fontSize: "12px",
-    fontWeight: "500",
-    // Disabled state styling
-    opacity: disabled ? 0.6 : 1,
-    cursor: disabled ? "not-allowed" : "default",
-  };
-
-  // Base styles for individual mode options
-  const modeOptionBaseStyles: React.CSSProperties = {
-    padding: "4px 8px",
-    borderRadius: "4px",
-    cursor: disabled ? "not-allowed" : "pointer",
-  };
-
-  // Styling for the currently active mode option
-  const modeOptionActiveStyles: React.CSSProperties = {
-    backgroundColor: "var(--primary)",
-    color: "var(--primary-foreground)",
-  };
-
-  // Manual mode styling - active if currentMode is "manual"
-  const manualModeStyles: React.CSSProperties = {
-    ...modeOptionBaseStyles,
-    ...(currentMode === "manual" ? modeOptionActiveStyles : {}),
-  };
-
-  // Auto mode styling - active if currentMode is "auto"
-  const autoModeStyles: React.CSSProperties = {
-    ...modeOptionBaseStyles,
-    ...(currentMode === "auto" ? modeOptionActiveStyles : {}),
-  };
-
   return (
-    <div style={containerStyles} className={className}>
-      <span style={manualModeStyles}>Manual</span>
-      <span style={autoModeStyles}>Auto</span>
+    <div className={cn(modeToggleContainerVariants({ disabled }), className)}>
+      <span
+        className={cn(
+          modeOptionVariants({
+            active: currentMode === "manual",
+            disabled,
+          }),
+        )}
+      >
+        Manual
+      </span>
+      <span
+        className={cn(
+          modeOptionVariants({
+            active: currentMode === "auto",
+            disabled,
+          }),
+        )}
+      >
+        Auto
+      </span>
     </div>
   );
 }

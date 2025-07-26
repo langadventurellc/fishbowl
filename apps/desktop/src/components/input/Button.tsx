@@ -49,32 +49,29 @@ export function Button({
     }
   };
 
-  // Custom toggle variant styling that overrides shadcn/ui outline variant
-  const toggleStyles =
+  // Toggle variant Tailwind classes that override shadcn/ui outline variant
+  const toggleClasses =
     variant === "toggle"
-      ? {
-          backgroundColor: "var(--muted)",
-          color: "var(--muted-foreground)",
-          border: "none",
-          minWidth:
-            size === "small" ? "32px" : size === "large" ? "48px" : "40px",
-          width: size === "small" ? "32px" : size === "large" ? "48px" : "40px",
-          padding: size === "small" ? "6px" : size === "large" ? "12px" : "8px",
-        }
-      : {};
-
-  const toggleHoverClass =
-    variant === "toggle"
-      ? "hover:!bg-primary hover:!text-primary-foreground hover:!border-primary"
-      : "";
+      ? [
+          // Base toggle styling
+          "bg-muted text-muted-foreground border-0",
+          // Size-based width and padding
+          size === "small"
+            ? "min-w-8 w-8 p-1.5"
+            : size === "large"
+              ? "min-w-12 w-12 p-3"
+              : "min-w-10 w-10 p-2",
+          // Hover states
+          "hover:bg-primary hover:text-primary-foreground hover:border-primary",
+        ]
+      : [];
 
   return (
     <ShadcnButton
       variant={variantMap[variant]}
       size={sizeMap[size]}
       type={type}
-      className={cn(toggleHoverClass, className)}
-      style={toggleStyles}
+      className={cn(toggleClasses, className)}
       onClick={handleClick}
       disabled={disabled || loading}
       aria-label={ariaLabel}

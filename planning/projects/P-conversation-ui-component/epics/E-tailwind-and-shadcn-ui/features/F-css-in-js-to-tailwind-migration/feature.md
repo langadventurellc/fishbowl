@@ -2,12 +2,12 @@
 kind: feature
 id: F-css-in-js-to-tailwind-migration
 title: CSS-in-JS to Tailwind Migration
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-tailwind-css-v4-setup-and
 created: "2025-07-25T16:48:26.696925"
-updated: "2025-07-25T16:48:26.696925"
+updated: "2025-07-26T04:31:38.970440+00:00"
 schema_version: "1.1"
 parent: E-tailwind-and-shadcn-ui
 ---
