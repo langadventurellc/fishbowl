@@ -24,14 +24,14 @@ interface SettingsNavigationProps {
 }
 
 const navigationSections = [
-  { id: "general", label: "General Preferences" },
-  { id: "api-keys", label: "API Keys" },
-  { id: "appearance", label: "Appearance" },
-  { id: "agents", label: "Agents" },
-  { id: "personalities", label: "Personalities" },
-  { id: "roles", label: "Roles" },
-  { id: "advanced", label: "Advanced Options" },
-];
+  { id: "general" as const, label: "General Preferences" },
+  { id: "api-keys" as const, label: "API Keys" },
+  { id: "appearance" as const, label: "Appearance" },
+  { id: "agents" as const, label: "Agents" },
+  { id: "personalities" as const, label: "Personalities" },
+  { id: "roles" as const, label: "Roles" },
+  { id: "advanced" as const, label: "Advanced Options" },
+] as const;
 
 export function SettingsNavigation({
   activeSection,
@@ -105,13 +105,13 @@ export function SettingsNavigation({
 }
 
 interface NavigationListProps {
-  sections: Array<{ id: string; label: string }>;
+  sections: readonly { readonly id: string; readonly label: string }[];
   activeSection: string;
   onSectionChange: (section: string) => void;
   isCompact: boolean;
 }
 
-function NavigationList({
+const NavigationList = React.memo(function NavigationList({
   sections,
   activeSection,
   onSectionChange,
@@ -150,4 +150,4 @@ function NavigationList({
       ))}
     </nav>
   );
-}
+});

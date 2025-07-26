@@ -34,6 +34,52 @@
 import React, { useId, useState } from "react";
 import { SettingsModalProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+
+const useModalClasses = () => ({
+  overlay: cn(
+    // Enhanced overlay styling with precise requirements
+    "fixed inset-0 z-50 bg-black/50",
+    // Smooth fade animations
+    "data-[state=open]:animate-in data-[state=closed]:animate-out",
+    "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+    "data-[state=closed]:duration-200 data-[state=open]:duration-200",
+    // Prevent layout shift
+    "transition-opacity",
+  ),
+  content: cn(
+    // Remove default shadcn/ui styles that conflict with custom requirements
+    "!max-w-none !w-auto !h-auto !gap-0 !p-0",
+    // Enhanced responsive behavior
+    // Large screens: 80% viewport, max 1000px
+    "w-[80vw] h-[80vh] max-w-[1000px] max-h-[700px]",
+    // Medium screens (< 1000px): 95% width, navigation 180px
+    "max-[1000px]:w-[95vw]",
+    // Small screens (< 800px): Full width content area, collapsible navigation
+    "max-[800px]:w-[95vw] max-[800px]:h-[90vh]",
+    // Minimum constraints
+    "min-w-[320px] min-h-[400px]",
+    // Enhanced z-index for content above overlay
+    "z-50",
+    // Custom styling as per requirements
+    "rounded-lg", // 8px border radius
+    // Custom shadow: 0 10px 25px rgba(0, 0, 0, 0.3)
+    "shadow-[0_10px_25px_rgba(0,0,0,0.3)]",
+    // Enhanced focus indicators for keyboard navigation
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+    // High contrast focus indicators
+    "focus-visible:ring-offset-background",
+  ),
+  children: cn(
+    "h-full w-full flex flex-col",
+    // Ensure content is keyboard accessible
+    "focus-within:outline-none",
+    // Enhanced visual focus indicators
+    "[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring [&_button:focus-visible]:ring-offset-2",
+    "[&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-ring [&_input:focus-visible]:ring-offset-2",
+    "[&_[role=tab]:focus-visible]:ring-2 [&_[role=tab]:focus-visible]:ring-ring [&_[role=tab]:focus-visible]:ring-offset-2",
+    "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
+  ),
+});
 import {
   Dialog,
   DialogContent,
@@ -70,6 +116,9 @@ export function SettingsModal({
   // State management for active section
   const [activeSection, setActiveSection] = useState("general");
 
+  // Extract class names using custom hook
+  const classes = useModalClasses();
+
   /**
    * Prevents event bubbling to ensure modal content clicks don't trigger overlay close
    */
@@ -80,42 +129,9 @@ export function SettingsModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
-        <DialogOverlay
-          className={cn(
-            // Enhanced overlay styling with precise requirements
-            "fixed inset-0 z-50 bg-black/50",
-            // Smooth fade animations
-            "data-[state=open]:animate-in data-[state=closed]:animate-out",
-            "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-            "data-[state=closed]:duration-200 data-[state=open]:duration-200",
-            // Prevent layout shift
-            "transition-opacity",
-          )}
-        />
+        <DialogOverlay className={classes.overlay} />
         <DialogContent
-          className={cn(
-            // Remove default shadcn/ui styles that conflict with custom requirements
-            "!max-w-none !w-auto !h-auto !gap-0 !p-0",
-            // Enhanced responsive behavior
-            // Large screens: 80% viewport, max 1000px
-            "w-[80vw] h-[80vh] max-w-[1000px] max-h-[700px]",
-            // Medium screens (< 1000px): 95% width, navigation 180px
-            "max-[1000px]:w-[95vw]",
-            // Small screens (< 800px): Full width content area, collapsible navigation
-            "max-[800px]:w-[95vw] max-[800px]:h-[90vh]",
-            // Minimum constraints
-            "min-w-[320px] min-h-[400px]",
-            // Enhanced z-index for content above overlay
-            "z-50",
-            // Custom styling as per requirements
-            "rounded-lg", // 8px border radius
-            // Custom shadow: 0 10px 25px rgba(0, 0, 0, 0.3)
-            "shadow-[0_10px_25px_rgba(0,0,0,0.3)]",
-            // Enhanced focus indicators for keyboard navigation
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-            // High contrast focus indicators
-            "focus-visible:ring-offset-background",
-          )}
+          className={classes.content}
           showCloseButton={true}
           // Prevent modal content clicks from bubbling to overlay
           onPointerDown={handleContentClick}
@@ -150,16 +166,7 @@ export function SettingsModal({
             {/* Backward compatibility: render children if provided */}
             {children && (
               <div
-                className={cn(
-                  "h-full w-full flex flex-col",
-                  // Ensure content is keyboard accessible
-                  "focus-within:outline-none",
-                  // Enhanced visual focus indicators
-                  "[&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-ring [&_button:focus-visible]:ring-offset-2",
-                  "[&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-ring [&_input:focus-visible]:ring-offset-2",
-                  "[&_[role=tab]:focus-visible]:ring-2 [&_[role=tab]:focus-visible]:ring-ring [&_[role=tab]:focus-visible]:ring-offset-2",
-                  "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
-                )}
+                className={classes.children}
                 role="main"
                 aria-label="Settings content"
               >
