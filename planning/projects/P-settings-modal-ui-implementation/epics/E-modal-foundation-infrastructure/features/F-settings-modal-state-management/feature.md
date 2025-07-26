@@ -2,7 +2,7 @@
 kind: feature
 id: F-settings-modal-state-management
 title: Settings Modal State Management
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T01:10:36.700461"
