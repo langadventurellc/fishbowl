@@ -165,6 +165,8 @@ Use the implementation planner subagent to plan the implementation of new featur
 
 Never put UI components in shared packages. Always keep platform-specific code in the respective app directories.
 
+When working with shadcn/ui components, always use `shadcn-ui` MCP tools to get the latest updates and best practices.
+
 For full architecture details, see: [Monorepo Architecture](docs/architecture/monorepo.md)
 
 ---

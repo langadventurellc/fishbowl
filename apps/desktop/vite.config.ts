@@ -1,9 +1,25 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import path from "path";
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+
+  // Path aliases to match tsconfig.json
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@fishbowl-ai/shared": path.resolve(
+        __dirname,
+        "../../packages/shared/src",
+      ),
+      "@fishbowl-ai/ui-theme": path.resolve(
+        __dirname,
+        "../../packages/ui-theme/src",
+      ),
+    },
+  },
 
   // Optimize for Electron renderer process
   build: {
