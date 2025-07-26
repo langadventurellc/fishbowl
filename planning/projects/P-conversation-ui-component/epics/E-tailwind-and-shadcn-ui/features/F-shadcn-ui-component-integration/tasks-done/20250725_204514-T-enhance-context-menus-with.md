@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-enhance-context-menus-with
+parent: F-shadcn-ui-component-integration
+status: done
 title: Enhance context menus with shadcn/ui ContextMenu component
-status: open
 priority: normal
 prerequisites:
   - T-integrate-shadcn-ui-css
 created: "2025-07-25T18:22:21.616453"
-updated: "2025-07-25T18:22:21.616453"
+updated: "2025-07-25T20:23:40.970929"
 schema_version: "1.1"
-parent: F-shadcn-ui-component-integration
+worktree: null
 ---
 
 # Enhance Context Menus with shadcn/ui ContextMenu Component
@@ -78,3 +79,7 @@ Enhance existing context menu functionality (MessageContextMenu, ConversationCon
 - Existing menu trigger patterns in the codebase
 
 ### Log
+
+**2025-07-26T01:45:14.567826Z** - Enhanced context menus with shadcn/ui DropdownMenu component while preserving all existing functionality. Implemented hybrid wrapper approach that maintains click-trigger behavior while adding Radix UI accessibility benefits. Updated MessageContextMenu and ConversationContextMenu to use DropdownMenuItem with destructive variant for delete actions. All existing props interfaces and behavior preserved with enhanced keyboard navigation, ARIA support, and consistent theming.
+
+- filesChanged: ["apps/desktop/src/components/menu/ContextMenu.tsx", "apps/desktop/src/components/chat/MessageContextMenu.tsx", "apps/desktop/src/components/sidebar/ConversationContextMenu.tsx", "apps/desktop/package.json"]

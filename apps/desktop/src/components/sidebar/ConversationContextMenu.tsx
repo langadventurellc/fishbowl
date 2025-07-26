@@ -11,7 +11,8 @@
 
 import React from "react";
 import { ConversationContextMenuProps } from "@fishbowl-ai/shared";
-import { ContextMenu, MenuItemDisplay } from "../menu";
+import { ContextMenu } from "../menu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 /**
  * ConversationContextMenu component for conversation-specific context menu functionality.
@@ -21,10 +22,10 @@ import { ContextMenu, MenuItemDisplay } from "../menu";
  * menu items like Rename, Duplicate, and Delete actions while providing
  * a clean interface for ConversationItemDisplay to use.
  *
- * The component uses the generic ContextMenu for positioning and interaction
- * behavior, while composing MenuItemDisplay components for the actual menu items.
- * This creates a clean separation between generic menu functionality and
- * conversation-specific business logic.
+ * The component uses the enhanced ContextMenu (now powered by shadcn/ui DropdownMenu)
+ * for positioning and interaction behavior, while using DropdownMenuItem components
+ * for the actual menu items. This provides enhanced accessibility, keyboard navigation,
+ * and consistent theming via shadcn/ui.
  *
  * Menu items included:
  * - Rename: Allows renaming the conversation
@@ -64,21 +65,17 @@ export function ConversationContextMenu({
 }: ConversationContextMenuProps) {
   return (
     <ContextMenu position={position} className={className}>
-      <div onClick={onRename} style={{ cursor: "pointer" }}>
-        <MenuItemDisplay label="Rename conversation" action="rename" />
-      </div>
+      <DropdownMenuItem onClick={onRename}>
+        Rename conversation
+      </DropdownMenuItem>
 
-      <div onClick={onDuplicate} style={{ cursor: "pointer" }}>
-        <MenuItemDisplay label="Duplicate conversation" action="duplicate" />
-      </div>
+      <DropdownMenuItem onClick={onDuplicate}>
+        Duplicate conversation
+      </DropdownMenuItem>
 
-      <div onClick={onDelete} style={{ cursor: "pointer" }}>
-        <MenuItemDisplay
-          label="Delete conversation"
-          action="delete"
-          variant="danger"
-        />
-      </div>
+      <DropdownMenuItem onClick={onDelete} variant="destructive">
+        Delete conversation
+      </DropdownMenuItem>
     </ContextMenu>
   );
 }

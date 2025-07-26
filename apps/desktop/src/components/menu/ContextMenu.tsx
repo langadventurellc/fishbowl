@@ -1,35 +1,40 @@
-import React, { useState, useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
+import React, { useState, useRef } from "react";
 import { ContextMenuProps } from "@fishbowl-ai/shared";
 import { MenuTriggerDisplay } from "./";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+} from "@/components/ui/dropdown-menu";
 
 /**
- * ContextMenu Component
+ * Enhanced ContextMenu Component
  *
- * Generic context menu component that combines MenuTriggerDisplay with a custom
- * dropdown container for children-based composition. This component handles the
- * interaction pattern while accepting children for flexible menu content.
+ * Generic context menu component that preserves the existing API while internally
+ * leveraging shadcn/ui DropdownMenu primitives for enhanced accessibility and positioning.
+ * This hybrid approach maintains click-trigger behavior while adding Radix UI benefits.
  *
- * Features:
- * - Internal state management for open/close behavior
- * - Custom trigger support or default ellipsis button
- * - Position configuration (above/below/auto)
- * - Keyboard support (ESC key to close)
- * - Click-outside-to-close functionality
- * - Children-based composition for flexible menu content
+ * Enhanced Features:
+ * - Preserved API compatibility with existing ContextMenuProps
+ * - Enhanced accessibility via Radix UI primitives (ARIA labels, keyboard navigation)
+ * - Improved positioning with automatic viewport detection
+ * - Better keyboard support (arrow keys, Enter, Escape, Tab)
+ * - Screen reader compatibility and focus management
+ * - Consistent theming via shadcn/ui CSS variables
+ * - Click-trigger behavior using DropdownMenu (correct primitive for this pattern)
  *
  * Usage Examples:
  * ```tsx
- * // Basic usage
+ * // Basic usage (API unchanged)
  * <ContextMenu>
- *   <MenuItemDisplay label="Copy" />
- *   <MenuItemDisplay label="Delete" variant="danger" />
+ *   <DropdownMenuItem>Copy</DropdownMenuItem>
+ *   <DropdownMenuItem variant="destructive">Delete</DropdownMenuItem>
  * </ContextMenu>
  *
- * // Custom trigger and positioning
+ * // Custom trigger and positioning (API unchanged)
  * <ContextMenu trigger={<CustomButton />} position="above">
- *   <MenuItemDisplay label="Action 1" />
- *   <MenuItemDisplay label="Action 2" />
+ *   <DropdownMenuItem>Action 1</DropdownMenuItem>
+ *   <DropdownMenuItem>Action 2</DropdownMenuItem>
  * </ContextMenu>
  * ```
  */
@@ -41,129 +46,63 @@ export function ContextMenu({
   disabled = false,
 }: ContextMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
-  const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
-  const portalMenuRef = useRef<HTMLDivElement>(null);
 
-  // Handle trigger click to toggle menu
+  // Handle trigger click to programmatically open/close menu
   const handleTriggerClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (disabled) return;
 
-    // Calculate position for portal rendering
-    if (triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      const actualPosition = getActualPosition();
-
-      const newPosition = {
-        top: actualPosition === "above" ? rect.top - 4 : rect.bottom + 4,
-        left: rect.right - 140, // Align right edges, assuming min width of 140px
-      };
-      setMenuPosition(newPosition);
-    }
-
     setIsOpen((prev) => !prev);
   };
 
-  // Handle keyboard events (ESC to close)
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape" && isOpen) {
-        setIsOpen(false);
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleKeyDown);
+  // Convert position prop to shadcn/ui side prop
+  const getSideFromPosition = () => {
+    switch (position) {
+      case "above":
+        return "top";
+      case "below":
+        return "bottom";
+      case "auto":
+        return "bottom"; // Default to bottom, Radix will auto-adjust for viewport
+      default:
+        return "bottom";
     }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [isOpen]);
-
-  // Handle click outside to close menu
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (isOpen) {
-        const target = event.target as Node;
-        const clickedInsideTrigger = menuRef.current?.contains(target);
-        const clickedInsidePortalMenu = portalMenuRef.current?.contains(target);
-
-        if (!clickedInsideTrigger && !clickedInsidePortalMenu) {
-          setIsOpen(false);
-        }
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen]);
-
-  // Determine actual position based on auto positioning
-  const getActualPosition = (): "above" | "below" => {
-    if (position !== "auto") {
-      return position as "above" | "below";
-    }
-
-    // For auto positioning, we could add viewport detection logic here
-    // For now, default to "below" - could be enhanced with actual viewport detection
-    return "below";
   };
 
-  // Container styles for proper positioning
-  const containerStyles: React.CSSProperties = {
-    position: "relative",
-    display: "inline-block",
+  // Handle menu state changes
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
   };
 
-  // Dropdown menu styles for portal rendering
-  const getMenuStyles = (): React.CSSProperties => {
-    return {
-      position: "fixed",
-      top: `${menuPosition.top}px`,
-      left: `${menuPosition.left}px`,
-      backgroundColor: "var(--popover)",
-      border: "1px solid var(--border)",
-      borderRadius: "6px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
-      padding: "4px",
-      minWidth: "140px",
-      zIndex: 9999,
-    };
-  };
-
+  // Wrapper div to enable click trigger with dropdown menu
   return (
-    <>
-      <div ref={menuRef} style={containerStyles} className={className}>
-        {/* Trigger Element */}
-        <div ref={triggerRef} onClick={handleTriggerClick}>
-          {trigger ? (
-            trigger
-          ) : (
-            <MenuTriggerDisplay
-              variant={disabled ? "disabled" : isOpen ? "active" : "normal"}
-            />
-          )}
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+      <DropdownMenuTrigger asChild>
+        <div className={`inline-block ${className}`}>
+          {/* Click Trigger */}
+          <div ref={triggerRef} onClick={handleTriggerClick}>
+            {trigger ? (
+              trigger
+            ) : (
+              <MenuTriggerDisplay
+                variant={disabled ? "disabled" : isOpen ? "active" : "normal"}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      </DropdownMenuTrigger>
 
-      {/* Context Menu Dropdown - Rendered in portal for proper z-index layering */}
-      {isOpen &&
-        createPortal(
-          <div ref={portalMenuRef} style={getMenuStyles()}>
-            {children}
-          </div>,
-          document.body,
-        )}
-    </>
+      {/* Enhanced Dropdown Menu Content with shadcn/ui primitives */}
+      <DropdownMenuContent
+        side={getSideFromPosition() as "top" | "bottom" | "left" | "right"}
+        align="end"
+        className="min-w-[140px]"
+      >
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

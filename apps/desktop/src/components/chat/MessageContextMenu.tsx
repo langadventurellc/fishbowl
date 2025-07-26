@@ -11,7 +11,8 @@
 
 import React from "react";
 import { MessageContextMenuProps } from "@fishbowl-ai/shared";
-import { ContextMenu, MenuItemDisplay } from "../menu";
+import { ContextMenu } from "../menu";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 /**
  * MessageContextMenu component for message-specific context menu functionality.
@@ -21,10 +22,10 @@ import { ContextMenu, MenuItemDisplay } from "../menu";
  * menu items like Copy, Delete, and optional Regenerate actions while providing
  * a clean interface for MessageItem to use.
  *
- * The component uses the generic ContextMenu for positioning and interaction
- * behavior, while composing MenuItemDisplay components for the actual menu items.
- * This creates a clean separation between generic menu functionality and
- * message-specific business logic.
+ * The component uses the enhanced ContextMenu (now powered by shadcn/ui DropdownMenu)
+ * for positioning and interaction behavior, while using DropdownMenuItem components
+ * for the actual menu items. This provides enhanced accessibility, keyboard navigation,
+ * and consistent theming via shadcn/ui.
  *
  * @example
  * ```typescript
@@ -59,19 +60,15 @@ export function MessageContextMenu({
 }: MessageContextMenuProps) {
   return (
     <ContextMenu position={position} className={className}>
-      <div onClick={onCopy} style={{ cursor: "pointer" }}>
-        <MenuItemDisplay label="Copy message" action="copy" />
-      </div>
+      <DropdownMenuItem onClick={onCopy}>Copy message</DropdownMenuItem>
 
       {canRegenerate && onRegenerate && (
-        <div onClick={onRegenerate} style={{ cursor: "pointer" }}>
-          <MenuItemDisplay label="Regenerate" action="regenerate" />
-        </div>
+        <DropdownMenuItem onClick={onRegenerate}>Regenerate</DropdownMenuItem>
       )}
 
-      <div onClick={onDelete} style={{ cursor: "pointer" }}>
-        <MenuItemDisplay label="Delete message" action="delete" />
-      </div>
+      <DropdownMenuItem onClick={onDelete} variant="destructive">
+        Delete message
+      </DropdownMenuItem>
     </ContextMenu>
   );
 }
