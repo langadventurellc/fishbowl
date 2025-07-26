@@ -12,6 +12,7 @@ import type React from "react";
 import { useState } from "react";
 import type { ConversationItemDisplayProps } from "@fishbowl-ai/shared";
 import { ConversationContextMenu } from "./ConversationContextMenu";
+import { cn } from "@/lib/utils";
 
 /**
  * ConversationItemDisplay component.
@@ -34,20 +35,6 @@ export function ConversationItemDisplay({
   style = {},
 }: ConversationItemDisplayProps) {
   const [isHovered, setIsHovered] = useState(false);
-  // Core conversation item styles with theme integration and interactive behavior
-  const baseItemStyles: React.CSSProperties = {
-    position: "relative",
-    padding: "8px 12px",
-    paddingRight: "32px", // Make room for ellipsis (visual space preserved)
-    borderRadius: "6px",
-    cursor: "pointer", // Make it look interactive
-    marginBottom: "4px",
-    fontSize: "13px",
-    transition: "all 0.15s ease",
-    display: "flex",
-    flexDirection: "column",
-    zIndex: 1,
-  };
 
   // Visual state styles based on appearanceState and conversation.isActive
   const getStateStyles = (
@@ -97,60 +84,19 @@ export function ConversationItemDisplay({
     }
   };
 
-  // Unread indicator styles
-  const unreadIndicatorStyles: React.CSSProperties = {
-    position: "absolute",
-    top: "12px",
-    right: "12px",
-    width: "6px",
-    height: "6px",
-    borderRadius: "50%",
-    backgroundColor: "var(--sidebar-primary)",
-    opacity: showUnreadIndicator ? 1 : 0,
-    transition: "opacity 0.15s",
-  };
-
-  // Conversation name styles
-  const conversationNameStyles: React.CSSProperties = {
-    fontWeight: appearanceState === "unread" ? "500" : "400",
-    marginBottom: "2px",
-    lineHeight: "1.2",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  };
-
-  // Last activity timestamp styles
-  const lastActivityStyles: React.CSSProperties = {
-    fontSize: "11px",
-    opacity: 0.7,
-    lineHeight: "1.2",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    whiteSpace: "nowrap",
-  };
-
-  // Ellipses trigger styles - positioned in top-right area
-  const ellipsesStyles: React.CSSProperties = {
-    position: "absolute",
-    top: "8px",
-    right: "8px",
-    opacity: isHovered ? 1 : 0,
-    transition: "opacity 0.15s ease",
-    zIndex: 2,
-  };
-
-  // Combine all styles with custom styles taking precedence
-  const combinedStyles: React.CSSProperties = {
-    ...baseItemStyles,
+  // Combine dynamic styles only
+  const dynamicStyles: React.CSSProperties = {
     ...getStateStyles(appearanceState),
     ...style, // Custom styles override defaults
   };
 
   return (
     <div
-      className={className}
-      style={combinedStyles}
+      className={cn(
+        "relative px-3 py-2 pr-8 rounded-md cursor-pointer mb-1 text-[13px] transition-all duration-150 ease-out flex flex-col z-[1]",
+        className,
+      )}
+      style={dynamicStyles}
       onMouseEnter={(e) => {
         // Add hover effect
         const target = e.currentTarget;
@@ -178,10 +124,18 @@ export function ConversationItemDisplay({
       }}
     >
       {/* Unread indicator dot */}
-      {showUnreadIndicator && <div style={unreadIndicatorStyles} />}
+      {showUnreadIndicator && (
+        <div
+          className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-sidebar-primary transition-opacity duration-150"
+          style={{ opacity: showUnreadIndicator ? 1 : 0 }}
+        />
+      )}
 
       {/* Context menu with ellipses trigger - appears on hover */}
-      <div style={ellipsesStyles}>
+      <div
+        className="absolute top-2 right-2 z-[2] transition-opacity duration-150 ease-out"
+        style={{ opacity: isHovered ? 1 : 0 }}
+      >
         <ConversationContextMenu
           conversation={conversation}
           position="below"
@@ -198,10 +152,17 @@ export function ConversationItemDisplay({
       </div>
 
       {/* Conversation name */}
-      <div style={conversationNameStyles}>{conversation.name}</div>
+      <div
+        className="mb-0.5 leading-tight overflow-hidden text-ellipsis whitespace-nowrap"
+        style={{ fontWeight: appearanceState === "unread" ? "500" : "400" }}
+      >
+        {conversation.name}
+      </div>
 
       {/* Last activity timestamp */}
-      <div style={lastActivityStyles}>{conversation.lastActivity}</div>
+      <div className="text-[11px] opacity-70 leading-tight overflow-hidden text-ellipsis whitespace-nowrap">
+        {conversation.lastActivity}
+      </div>
     </div>
   );
 }
