@@ -1,5 +1,6 @@
 import React from "react";
 import { SidebarHeaderDisplayProps } from "@fishbowl-ai/shared";
+import { cn } from "../../lib/utils";
 
 /**
  * SidebarHeaderDisplay component renders the top section of the sidebar
@@ -32,20 +33,20 @@ export function SidebarHeaderDisplay({
     return null;
   }
 
-  // Core sidebar header styles with consistent typography and theme integration
-  const headerStyles: React.CSSProperties = {
-    fontSize: "14px",
-    fontWeight: "600",
-    marginBottom: "12px",
+  // Theme variable styles that need to remain as CSS properties
+  const themeStyles: React.CSSProperties = {
     color: "var(--sidebar-foreground)",
     ...style, // Custom styles take precedence
   };
 
   return (
-    <div className={className} style={headerStyles}>
+    <div
+      className={cn("text-sm font-semibold mb-3", className)}
+      style={themeStyles}
+    >
       {title}
       {showControls && (
-        <span style={{ opacity: 0.7, marginLeft: "8px", fontSize: "12px" }}>
+        <span className="opacity-70 ml-2 text-xs">
           {/* Placeholder for future controls - could be icons or buttons */}
         </span>
       )}
