@@ -1,15 +1,15 @@
 ---
 kind: task
 id: T-migrate-settingsmodal-component
+parent: F-settings-modal-state-management
+status: in-progress
 title: Migrate SettingsModal component to use Zustand store
-status: open
 priority: high
 prerequisites:
   - T-create-custom-react-hooks-for
 created: "2025-07-26T15:26:20.888682"
-updated: "2025-07-26T15:26:20.888682"
+updated: "2025-07-26T16:56:56.183348"
 schema_version: "1.1"
-parent: F-settings-modal-state-management
 ---
 
 # Migrate SettingsModal Component to Use Zustand Store

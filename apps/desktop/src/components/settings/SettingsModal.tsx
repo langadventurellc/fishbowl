@@ -31,8 +31,12 @@
  * @module components/settings/SettingsModal
  */
 
-import React, { useId, useState } from "react";
-import { SettingsModalProps } from "@fishbowl-ai/shared";
+import React, { useId, useEffect } from "react";
+import {
+  SettingsModalProps,
+  useSettingsModal,
+  useSettingsNavigation,
+} from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
 
 const useModalClasses = () => ({
@@ -113,8 +117,27 @@ export function SettingsModal({
   const titleId = useId();
   const descriptionId = useId();
 
-  // State management for active section
-  const [activeSection, setActiveSection] = useState("general");
+  // Zustand store hooks for state management
+  const { isOpen: storeIsOpen, openModal, closeModal } = useSettingsModal();
+  const { activeSection } = useSettingsNavigation();
+
+  // Sync external props with store state
+  useEffect(() => {
+    if (open !== storeIsOpen) {
+      if (open) {
+        openModal();
+      } else {
+        closeModal();
+      }
+    }
+  }, [open, storeIsOpen, openModal, closeModal]);
+
+  // Sync store changes back to external prop handler
+  useEffect(() => {
+    if (storeIsOpen !== open) {
+      onOpenChange(storeIsOpen);
+    }
+  }, [storeIsOpen, open, onOpenChange]);
 
   // Extract class names using custom hook
   const classes = useModalClasses();
@@ -155,10 +178,7 @@ export function SettingsModal({
           {/* Responsive layout container */}
           <div className="h-full w-full flex flex-col max-[800px]:flex-col min-[801px]:flex-row">
             {/* Navigation Panel */}
-            <SettingsNavigation
-              activeSection={activeSection}
-              onSectionChange={setActiveSection}
-            />
+            <SettingsNavigation />
 
             {/* Content Area */}
             <SettingsContent activeSection={activeSection} />

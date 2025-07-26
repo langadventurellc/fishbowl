@@ -16,10 +16,14 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+import {
+  useSettingsNavigation,
+  type SettingsSection,
+} from "@fishbowl-ai/shared";
 
 interface SettingsNavigationProps {
-  activeSection: string;
-  onSectionChange: (section: string) => void;
+  activeSection?: SettingsSection;
+  onSectionChange?: (section: SettingsSection) => void;
   className?: string;
 }
 
@@ -34,11 +38,21 @@ const navigationSections = [
 ] as const;
 
 export function SettingsNavigation({
-  activeSection,
-  onSectionChange,
+  activeSection: propActiveSection,
+  onSectionChange: propOnSectionChange,
   className,
 }: SettingsNavigationProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Use Zustand store for navigation state and actions
+  const {
+    activeSection: storeActiveSection,
+    setActiveSection: storeSetActiveSection,
+  } = useSettingsNavigation();
+
+  // Use store values unless props are provided (for backward compatibility)
+  const activeSection = propActiveSection ?? storeActiveSection;
+  const onSectionChange = propOnSectionChange ?? storeSetActiveSection;
 
   return (
     <div
@@ -105,9 +119,9 @@ export function SettingsNavigation({
 }
 
 interface NavigationListProps {
-  sections: readonly { readonly id: string; readonly label: string }[];
-  activeSection: string;
-  onSectionChange: (section: string) => void;
+  sections: readonly { readonly id: SettingsSection; readonly label: string }[];
+  activeSection: SettingsSection;
+  onSectionChange: (section: SettingsSection) => void;
   isCompact: boolean;
 }
 
