@@ -43,22 +43,6 @@ export default function Home() {
         }}
       >
         <Link
-          to="/prototype"
-          style={{
-            fontSize: "1.1rem",
-            padding: "12px 24px",
-            backgroundColor: "#6366f1",
-            color: "white",
-            textDecoration: "none",
-            borderRadius: "8px",
-            fontWeight: "500",
-            textAlign: "center",
-          }}
-        >
-          🎨 View Design Prototype
-        </Link>
-
-        <Link
           to="/showcase/components"
           style={{
             fontSize: "1.1rem",
