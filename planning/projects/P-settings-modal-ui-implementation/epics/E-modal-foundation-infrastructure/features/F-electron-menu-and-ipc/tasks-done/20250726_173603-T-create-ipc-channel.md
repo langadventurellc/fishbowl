@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-ipc-channel
+parent: F-electron-menu-and-ipc
+status: done
 title: Create IPC channel infrastructure with secure contextBridge setup
-status: open
 priority: high
 prerequisites:
   - T-extend-electronapi-typescript
 created: "2025-07-26T17:18:44.662565"
-updated: "2025-07-26T17:18:44.662565"
+updated: "2025-07-26T17:29:33.225433"
 schema_version: "1.1"
-parent: F-electron-menu-and-ipc
+worktree: null
 ---
 
 # Create IPC Channel Infrastructure with Secure contextBridge Setup
@@ -100,3 +101,7 @@ const electronAPI: ElectronAPI = {
 - Efficient callback wrapping without performance overhead
 
 ### Log
+
+**2025-07-26T22:36:03.864238Z** - Implemented secure IPC channel infrastructure with contextBridge setup that fixes critical memory leak vulnerability. Updated TypeScript interface to return cleanup function from onOpenSettings method. Added comprehensive error handling around all IPC operations to prevent renderer crashes. Implementation follows Electron security best practices with no direct ipcRenderer exposure and proper callback wrapping. Memory management now properly handles event listener cleanup through returned cleanup functions. All quality checks (lint, format, type-check) passing.
+
+- filesChanged: ["apps/desktop/src/types/electron.d.ts", "apps/desktop/src/electron/preload.ts"]

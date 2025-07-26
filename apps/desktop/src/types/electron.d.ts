@@ -10,8 +10,9 @@ export interface ElectronAPI {
    * This is triggered by Electron menu items or keyboard shortcuts (Cmd/Ctrl+,).
    *
    * @param callback - Function to execute when settings should be opened
+   * @returns Cleanup function to remove the event listener and prevent memory leaks
    */
-  onOpenSettings: (callback: () => void) => void;
+  onOpenSettings: (callback: () => void) => () => void;
   /**
    * Removes all IPC event listeners for the specified channel.
    * Used for cleanup when components unmount to prevent memory leaks.
