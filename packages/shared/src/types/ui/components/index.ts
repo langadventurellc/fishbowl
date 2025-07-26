@@ -34,6 +34,7 @@ export * from "./MessageInputDisplayProps";
 export * from "./MessageItemProps";
 export * from "./ResizeDirection";
 export * from "./SendButtonDisplayProps";
+export * from "./SettingsModalProps";
 export * from "./SidebarContainerDisplayProps";
 export * from "./SidebarHeaderDisplayProps";
 export * from "./SidebarToggleDisplayProps";
