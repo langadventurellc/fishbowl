@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-integrate-shadcn-ui-input-and
+parent: F-shadcn-ui-component-integration
+status: done
 title: Integrate shadcn/ui Input and Textarea components
-status: open
 priority: normal
 prerequisites:
   - T-integrate-shadcn-ui-css
 created: "2025-07-25T18:21:52.233234"
-updated: "2025-07-25T18:21:52.233234"
+updated: "2025-07-25T20:02:09.242241"
 schema_version: "1.1"
-parent: F-shadcn-ui-component-integration
+worktree: null
 ---
 
 # Integrate shadcn/ui Input and Textarea Components
@@ -83,3 +84,7 @@ Replace or enhance existing input components with shadcn/ui Input and Textarea c
 - shadcn/ui Input and Textarea documentation
 
 ### Log
+
+**2025-07-26T01:12:46.209595Z** - Successfully integrated shadcn/ui Input and Textarea components into MessageInputDisplay component. Replaced 83 lines of CSS-in-JS with a clean shadcn/ui + CVA variant system while maintaining 100% backward compatibility. The component now uses shadcn/ui Textarea primitives with custom size variants (small/medium/large) that match the original pixel-perfect specifications. All existing functionality preserved including auto-resize behavior via field-sizing-content, theme integration, and identical props interface. Enhanced accessibility and consistency with shadcn/ui design system while eliminating complex inline styles.
+
+- filesChanged: ["apps/desktop/src/components/input/MessageInputDisplay.tsx", "apps/desktop/src/components/ui/input.tsx", "apps/desktop/src/components/ui/textarea.tsx"]

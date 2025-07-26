@@ -16,7 +16,7 @@ parent: F-shadcn-ui-component-integration
 
 ## Context
 
-Implement shadcn/ui Tooltip components throughout the application to provide helpful context and improve user experience. Tooltips should be added to buttons, icons, and interactive elements that benefit from additional explanation.
+Implement shadcn/ui Tooltip components throughout the application to provide helpful context and improve user experience. Tooltips should be added to buttons, icons, and interactive elements that benefit from additional explanation. No automated tests.
 
 ## Implementation Requirements
 
@@ -48,8 +48,6 @@ Implement shadcn/ui Tooltip components throughout the application to provide hel
    - Appropriate delay timing
    - Proper positioning
    - Keyboard accessibility
-6. Test tooltip functionality across different screen sizes
-7. Write unit tests for tooltip interactions
 
 ## Acceptance Criteria
 
@@ -60,7 +58,6 @@ Implement shadcn/ui Tooltip components throughout the application to provide hel
 ✅ Proper keyboard accessibility for tooltip navigation  
 ✅ Consistent tooltip styling with theme system  
 ✅ Appropriate timing and positioning behavior  
-✅ Unit tests pass for tooltip functionality  
 ✅ Screen reader compatibility verified
 
 ## Technical Notes
@@ -69,13 +66,6 @@ Implement shadcn/ui Tooltip components throughout the application to provide hel
 - Implement proper ARIA attributes for screen readers
 - Consider portal rendering for proper z-index handling
 - Ensure tooltips don't interfere with existing interactions
-
-## Testing Requirements
-
-- Unit tests for tooltip trigger and content
-- Accessibility testing with screen readers
-- Keyboard navigation testing for tooltip access
-- Cross-browser testing for tooltip positioning
 
 ## Files to Analyze for Tooltip Integration
 

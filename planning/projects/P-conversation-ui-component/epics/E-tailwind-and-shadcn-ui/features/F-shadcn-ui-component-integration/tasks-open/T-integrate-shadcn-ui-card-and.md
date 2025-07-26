@@ -16,7 +16,7 @@ parent: F-shadcn-ui-component-integration
 
 ## Context
 
-Integrate shadcn/ui Card and Separator components to provide structured content display throughout the application. These components can enhance the visual organization of content and provide consistent spacing and styling patterns.
+Integrate shadcn/ui Card and Separator components to provide structured content display throughout the application. These components can enhance the visual organization of content and provide consistent spacing and styling patterns. No automated tests.
 
 ## Implementation Requirements
 
@@ -57,7 +57,6 @@ Integrate shadcn/ui Card and Separator components to provide structured content 
 ✅ Consistent styling with existing theme system  
 ✅ Proper spacing and visual hierarchy maintained  
 ✅ Reusable Card patterns created for common use cases  
-✅ Unit tests pass for Card and Separator components  
 ✅ Visual regression testing confirms improved layout
 
 ## Technical Notes
@@ -69,10 +68,7 @@ Integrate shadcn/ui Card and Separator components to provide structured content 
 
 ## Testing Requirements
 
-- Unit tests for Card component variations
 - Visual regression testing for layout improvements
-- Accessibility testing for proper semantic structure
-- Responsive testing for Card layouts across screen sizes
 
 ## Files to Analyze for Integration
 

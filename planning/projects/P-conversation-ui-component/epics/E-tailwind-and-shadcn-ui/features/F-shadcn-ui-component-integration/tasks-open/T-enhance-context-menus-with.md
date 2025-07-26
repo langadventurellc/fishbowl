@@ -16,7 +16,7 @@ parent: F-shadcn-ui-component-integration
 
 ## Context
 
-Enhance existing context menu functionality (MessageContextMenu, ConversationContextMenu) with shadcn/ui ContextMenu component while preserving all existing functionality. Current context menus likely use custom implementations that could benefit from improved accessibility and styling.
+Enhance existing context menu functionality (MessageContextMenu, ConversationContextMenu) with shadcn/ui ContextMenu component while preserving all existing functionality. Current context menus likely use custom implementations that could benefit from improved accessibility and styling. No automated tests.
 
 ## Implementation Requirements
 
@@ -41,12 +41,6 @@ Enhance existing context menu functionality (MessageContextMenu, ConversationCon
 5. Update ConversationContextMenu to use shadcn/ui ContextMenu:
    - Preserve delete and duplicate functionality
    - Maintain proper menu item styling
-6. Test context menu functionality:
-   - Right-click triggers
-   - Keyboard navigation
-   - Menu item actions
-   - Proper positioning
-7. Write unit tests for enhanced context menus
 
 ## Acceptance Criteria
 
@@ -57,7 +51,6 @@ Enhance existing context menu functionality (MessageContextMenu, ConversationCon
 ✅ Improved keyboard navigation and accessibility  
 ✅ Proper menu positioning and trigger behavior  
 ✅ Consistent styling with theme system  
-✅ Unit tests pass for context menu functionality  
 ✅ Visual appearance maintains or improves current design
 
 ## Technical Notes
@@ -69,9 +62,6 @@ Enhance existing context menu functionality (MessageContextMenu, ConversationCon
 
 ## Testing Requirements
 
-- Unit tests for context menu trigger and actions
-- Integration tests with message and conversation interactions
-- Accessibility testing for keyboard navigation
 - Visual regression testing for menu appearance and positioning
 
 ## Files to Update

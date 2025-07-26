@@ -16,7 +16,7 @@ parent: F-shadcn-ui-component-integration
 
 ## Context
 
-Implement shadcn/ui Dialog components to replace any existing modal/dialog functionality in the application. This provides better accessibility, focus management, and consistent styling.
+Implement shadcn/ui Dialog components to replace any existing modal/dialog functionality in the application. This provides better accessibility, focus management, and consistent styling. No automated tests.
 
 ## Implementation Requirements
 
@@ -44,7 +44,6 @@ Implement shadcn/ui Dialog components to replace any existing modal/dialog funct
    - Backdrop click to close
    - Proper ARIA attributes
 5. Replace existing modal implementations
-6. Write unit tests for dialog functionality
 
 ## Acceptance Criteria
 
@@ -55,8 +54,7 @@ Implement shadcn/ui Dialog components to replace any existing modal/dialog funct
 ✅ Proper focus management and keyboard navigation  
 ✅ Accessibility features working (focus trap, ARIA labels)  
 ✅ Consistent styling with theme system  
-✅ All existing modal functionality replaced  
-✅ Unit tests pass for dialog components
+✅ All existing modal functionality replaced
 
 ## Technical Notes
 
@@ -73,9 +71,6 @@ Implement shadcn/ui Dialog components to replace any existing modal/dialog funct
 
 ## Testing Requirements
 
-- Unit tests for dialog open/close behavior
-- Accessibility testing for screen readers and keyboard navigation
-- Integration tests with existing application workflows
 - Visual regression testing for dialog appearance
 
 ## Files to Search and Update
