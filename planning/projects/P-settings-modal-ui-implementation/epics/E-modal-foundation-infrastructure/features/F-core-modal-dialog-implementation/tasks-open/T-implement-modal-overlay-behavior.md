@@ -16,7 +16,7 @@ parent: F-core-modal-dialog-implementation
 
 ## Context
 
-Ensure the modal overlay provides proper visual separation from background content and implements correct stacking behavior. The overlay must prevent interaction with background elements while maintaining proper visual hierarchy.
+Ensure the modal overlay provides proper visual separation from background content and implements correct stacking behavior. The overlay must prevent interaction with background elements while maintaining proper visual hierarchy. No automated tests should be created for this task.
 
 ## Technical Approach
 
@@ -42,7 +42,6 @@ Customize the shadcn/ui Dialog overlay to meet specific styling requirements and
 
 - Verify overlay click closes modal (default Radix behavior)
 - Ensure clicks on modal content don't bubble to overlay
-- Test edge cases around modal boundaries
 
 ### Animation Performance
 
@@ -68,16 +67,6 @@ Customize the shadcn/ui Dialog overlay to meet specific styling requirements and
 - Prevent click-jacking by ensuring overlay fully covers viewport
 - Validate z-index values to prevent malicious stacking manipulation
 - Ensure proper event handling prevents modal bypass
-
-## Testing Requirements
-
-- Test overlay click-to-close behavior
-- Verify z-index stacking with various application states
-- Test animation performance across different devices
-- Verify overlay prevents background interaction
-- Test modal behavior with multiple overlays
-- Cross-browser testing for overlay rendering
-- Performance testing for animation smoothness
 
 ## Performance Requirements
 

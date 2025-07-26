@@ -16,7 +16,7 @@ parent: F-core-modal-dialog-implementation
 
 ## Context
 
-Create the main SettingsModal component that implements the exact dimensional and positioning requirements specified in the feature. This component will serve as the foundation for the settings interface with precise control over size, positioning, and visual styling.
+Create the main SettingsModal component that implements the exact dimensional and positioning requirements specified in the feature. This component will serve as the foundation for the settings interface with precise control over size, positioning, and visual styling. No automated tests should be created for this task.
 
 ## Technical Approach
 
@@ -84,16 +84,6 @@ Create custom Tailwind classes or CSS-in-JS for:
 - Ensure proper escape handling for modal interactions
 - Implement proper focus management within modal boundaries
 - Sanitize any dynamic content passed to modal
-
-## Testing Requirements
-
-- Unit tests for SettingsModal component rendering
-- Test modal dimensions on different viewport sizes (1920x1080, 1366x768, 1024x768)
-- Verify centering behavior during window resize
-- Test responsive breakpoint behavior
-- Verify z-index stacking works correctly
-- Test keyboard navigation (ESC key closes modal)
-- Verify overlay click closes modal
 
 ## Performance Requirements
 

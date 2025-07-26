@@ -16,7 +16,7 @@ parent: F-core-modal-dialog-implementation
 
 ## Context
 
-Ensure the modal meets accessibility standards and provides excellent keyboard navigation experience. This includes proper ARIA attributes, focus management, and screen reader support as specified in the feature requirements.
+Ensure the modal meets accessibility standards and provides excellent keyboard navigation experience. This includes proper ARIA attributes, focus management, and screen reader support as specified in the feature requirements. No automated tests should be created for this task.
 
 ## Technical Approach
 
@@ -79,16 +79,6 @@ Leverage shadcn/ui Dialog's built-in accessibility features while adding custom 
 - Ensure ARIA attributes don't expose sensitive information
 - Validate focus management doesn't create security vulnerabilities
 - Implement proper keyboard event sanitization
-
-## Testing Requirements
-
-- Manual keyboard navigation testing (Tab, Shift+Tab, ESC)
-- Screen reader testing (NVDA, JAWS, VoiceOver)
-- Focus management testing across different browsers
-- Automated accessibility testing (axe-core or similar)
-- Test with assistive technologies
-- Verify WCAG 2.1 AA compliance
-- Test focus behavior with dynamic content changes
 
 ## Performance Requirements
 

@@ -16,7 +16,7 @@ parent: F-core-modal-dialog-implementation
 
 ## Context
 
-Implement responsive behavior to ensure the modal works effectively across different screen sizes, from large desktop displays to smaller laptop screens. The modal must maintain usability and visual hierarchy at all viewport sizes.
+Implement responsive behavior to ensure the modal works effectively across different screen sizes, from large desktop displays to smaller laptop screens. The modal must maintain usability and visual hierarchy at all viewport sizes. No automated tests should be created for this task.
 
 ## Technical Approach
 
@@ -87,15 +87,6 @@ Use Tailwind CSS responsive utilities and custom CSS to implement the specific b
 - Ensure modal boundaries are properly maintained at all sizes
 - Prevent content overflow that could hide important UI elements
 
-## Testing Requirements
-
-- Test on common screen resolutions (1920x1080, 1366x768, 1024x768, 768x1024, 375x667)
-- Browser resize testing for smooth transitions
-- Mobile device testing (iOS Safari, Chrome Mobile)
-- Tablet testing in both portrait and landscape orientations
-- Test with browser zoom levels (50%, 100%, 150%, 200%)
-- Cross-browser responsive behavior verification
-
 ## Performance Requirements
 
 - Responsive transitions complete within 300ms
@@ -114,14 +105,5 @@ Use Tailwind CSS responsive utilities and custom CSS to implement the specific b
 - Requires T-implement-modal-overlay-behavior to be completed
 - Uses Tailwind CSS responsive utilities
 - May require custom CSS for complex responsive logic
-
-## Responsive Testing Checklist
-
-- [ ] Desktop (1920x1080, 1366x768)
-- [ ] Laptop (1024x768, 1440x900)
-- [ ] Tablet (768x1024, 1024x768)
-- [ ] Mobile (375x667, 414x896)
-- [ ] Browser zoom levels tested
-- [ ] Portrait and landscape orientations verified
 
 ### Log
