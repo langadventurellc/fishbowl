@@ -2,7 +2,7 @@
 kind: epic
 id: E-tailwind-and-shadcn-ui
 title: Tailwind and shadcn/ui Integration
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - E-core-component-extraction

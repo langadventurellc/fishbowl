@@ -2,7 +2,7 @@
 kind: project
 id: P-conversation-ui-component
 title: Conversation UI Component Decomposition
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-23T15:09:26.234847"
