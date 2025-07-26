@@ -18,6 +18,10 @@ parent: E-modal-foundation-infrastructure
 
 Implement comprehensive keyboard navigation and accessibility features for the settings modal, ensuring full keyboard operability, proper focus management, screen reader support, and WCAG compliance. This feature makes the settings modal accessible to users with disabilities and provides efficient keyboard-driven navigation for power users.
 
+## Settings Modal UI Specification
+
+**IMPORTANT: Before beginning work on this feature, you MUST read and reference `docs/specifications/settings-modal-ui-spec.md`.** This document contains detailed design and functional requirements for the settings modal, including exact dimensions, layout specifications, navigation structure, content sections, and user experience considerations. All implementation work should follow the specifications outlined in this document. If you have questions about requirements, consult this specification first as it likely contains the answer.
+
 ## Key Components to Implement
 
 ### Focus Management System

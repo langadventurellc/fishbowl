@@ -14,6 +14,10 @@ parent: F-settings-modal-state-management
 
 # Migrate SettingsModal Component to Use Zustand Store
 
+## Settings Modal UI Specification
+
+**IMPORTANT: Before beginning work on this task, you MUST read and reference `docs/specifications/settings-modal-ui-spec.md`.** This document contains detailed design and functional requirements for the settings modal, including exact dimensions, layout specifications, navigation structure, content sections, and user experience considerations. All implementation work should follow the specifications outlined in this document. If you have questions about requirements, consult this specification first as it likely contains the answer.
+
 ## Context
 
 This task migrates the existing SettingsModal component from local `useState` management to the new Zustand store implementation. The component currently manages `activeSection` state locally (line 117 in SettingsModal.tsx) and needs to be updated to use the store-based state management.

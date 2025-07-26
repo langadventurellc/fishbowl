@@ -14,6 +14,10 @@ parent: F-settings-modal-state-management
 
 # Create Comprehensive Unit Tests for Settings Store and Hooks
 
+## Settings Modal UI Specification
+
+**IMPORTANT: Before beginning work on this task, you MUST read and reference `docs/specifications/settings-modal-ui-spec.md`.** This document contains detailed design and functional requirements for the settings modal, including exact dimensions, layout specifications, navigation structure, content sections, and user experience considerations. All implementation work should follow the specifications outlined in this document. If you have questions about requirements, consult this specification first as it likely contains the answer.
+
 ## Context
 
 This task creates comprehensive unit tests for the Zustand settings store and custom React hooks. The tests will validate store functionality, hook behavior, state management, and integration patterns following Jest testing patterns established in the codebase.

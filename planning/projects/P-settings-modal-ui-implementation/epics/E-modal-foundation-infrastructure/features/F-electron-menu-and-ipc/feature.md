@@ -18,6 +18,10 @@ parent: E-modal-foundation-infrastructure
 
 Implement the Inter-Process Communication (IPC) infrastructure to enable the Electron main process to trigger the settings modal from the application menu and keyboard shortcuts. This feature establishes the bridge between the Electron menu system and the React-based settings modal, enabling users to access settings through native desktop application patterns.
 
+## Settings Modal UI Specification
+
+**IMPORTANT: Before beginning work on this feature, you MUST read and reference `docs/specifications/settings-modal-ui-spec.md`.** This document contains detailed design and functional requirements for the settings modal, including exact dimensions, layout specifications, navigation structure, content sections, and user experience considerations. All implementation work should follow the specifications outlined in this document. If you have questions about requirements, consult this specification first as it likely contains the answer.
+
 ## Key Components to Implement
 
 ### IPC Channel Setup
