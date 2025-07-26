@@ -3,6 +3,7 @@ import { useState } from "react";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
 import { MessageHeader } from "./MessageHeader";
+import { cn } from "@/lib/utils";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.
@@ -106,93 +107,48 @@ export function MessageItem(props: MessageItemProps) {
     // For now, default to below - could be enhanced with viewport detection
     return false;
   };
-  // Component styles for consistent message layout and theming
-  const styles = {
-    message: {
-      width: "100%",
-    } as const,
-    messageWrapper: {
-      position: "relative" as const,
-      padding: "8px",
-      borderRadius: "8px",
-      border: "1px solid transparent",
-      backgroundColor: "transparent",
-    } as const,
-    messageInactive: {
-      opacity: 0.5,
-    } as const,
-    systemMessage: {
-      fontStyle: "italic",
-      color: "var(--muted-foreground)",
-      textAlign: "center" as const,
-      fontSize: "12px",
-      padding: "8px 0",
-    } as const,
-    userMessage: {
-      backgroundColor: "var(--accent)",
-      color: "var(--accent-foreground)",
-      padding: "12px 16px",
-      borderRadius: "12px",
-      marginLeft: "auto",
-      maxWidth: "70%",
-    } as const,
-    userMessageWrapper: {
-      display: "flex",
-      justifyContent: "flex-end",
-      width: "100%",
-    } as const,
-    contextToggle: {
-      position: "absolute" as const,
-      right: "8px",
-      top: "8px",
-      width: "20px",
-      height: "20px",
-      border: "none",
-      borderRadius: "4px",
-      cursor: "pointer",
-      fontSize: "12px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      transition: "all 0.15s",
-      zIndex: 100,
-    } as const,
-    contextToggleActive: {
-      backgroundColor: "var(--primary)",
-      color: "var(--primary-foreground)",
-    } as const,
-    contextToggleInactive: {
-      backgroundColor: "var(--muted)",
-      color: "var(--muted-foreground)",
-    } as const,
-  };
+  // Tailwind utility classes for consistent message layout and theming
+  const messageClasses = "w-full";
 
-  // Apply inactive styling if message is not active
-  const messageWrapperStyle = {
-    ...styles.messageWrapper,
-    ...(isActive ? {} : styles.messageInactive),
-  };
+  const messageWrapperClasses = cn(
+    // Base wrapper styles
+    "relative p-2 rounded-lg border border-transparent bg-transparent",
+    // Inactive state
+    !isActive && "opacity-50",
+  );
+
+  const systemMessageClasses =
+    "italic text-muted-foreground text-center text-xs py-2";
+
+  const userMessageClasses =
+    "bg-accent text-accent-foreground py-3 px-4 rounded-xl ml-auto max-w-[70%]";
+
+  const userMessageWrapperClasses = "flex justify-end w-full";
+
+  const contextToggleClasses = cn(
+    // Base button styles
+    "absolute right-2 top-2 w-5 h-5 border-0 rounded cursor-pointer text-xs",
+    "flex items-center justify-center transition-all duration-150 z-[100]",
+    // Active/inactive states
+    isActive
+      ? "bg-primary text-primary-foreground"
+      : "bg-muted text-muted-foreground",
+  );
 
   return (
     <div
-      style={styles.message}
-      className={className}
+      className={cn(messageClasses, className)}
       role="article"
       aria-label={`${message.type} message from ${message.agent}`}
     >
       {message.type === "system" ? (
         // System messages: Simple centered display
-        <div style={styles.systemMessage}>{message.content}</div>
+        <div className={systemMessageClasses}>{message.content}</div>
       ) : message.type === "user" ? (
         // User messages: Right-aligned with accent styling
-        <div style={messageWrapperStyle}>
+        <div className={messageWrapperClasses}>
           <button
-            style={{
-              ...styles.contextToggle,
-              ...(isActive
-                ? styles.contextToggleActive
-                : styles.contextToggleInactive),
-            }}
+            className={contextToggleClasses}
             onClick={handleToggleContext}
             title={
               isActive
@@ -207,9 +163,9 @@ export function MessageItem(props: MessageItemProps) {
           >
             {isActive ? "✓" : ""}
           </button>
-          <div style={styles.userMessageWrapper}>
-            <div style={styles.userMessage}>
-              <div style={{ position: "relative" }}>
+          <div className={userMessageWrapperClasses}>
+            <div className={userMessageClasses}>
+              <div className="relative">
                 <MessageHeader
                   agentName={message.agent}
                   agentRole={message.role}
@@ -217,7 +173,7 @@ export function MessageItem(props: MessageItemProps) {
                   timestamp={message.timestamp}
                   messageType={message.type}
                 />
-                <div style={{ position: "absolute", right: "0", top: "0" }}>
+                <div className="absolute right-0 top-0">
                   <MessageContextMenu
                     message={message}
                     position={shouldShowMenuAbove() ? "above" : "below"}
@@ -237,14 +193,9 @@ export function MessageItem(props: MessageItemProps) {
         </div>
       ) : (
         // Agent messages: Left-aligned with standard layout
-        <div style={messageWrapperStyle}>
+        <div className={messageWrapperClasses}>
           <button
-            style={{
-              ...styles.contextToggle,
-              ...(isActive
-                ? styles.contextToggleActive
-                : styles.contextToggleInactive),
-            }}
+            className={contextToggleClasses}
             onClick={handleToggleContext}
             title={
               isActive
@@ -259,7 +210,7 @@ export function MessageItem(props: MessageItemProps) {
           >
             {isActive ? "✓" : ""}
           </button>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <div className="flex items-center gap-2">
             <MessageHeader
               agentName={message.agent}
               agentRole={message.role}
