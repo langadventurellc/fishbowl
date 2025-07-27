@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, shell, ipcMain, globalShortcut } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -95,8 +95,18 @@ function openSettingsModal(): void {
   }
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   createMainWindow();
+
+  // Setup application menu after window creation
+  const { setupApplicationMenu } = await import("./setupApplicationMenu.js");
+  setupApplicationMenu();
+
+  // Register global shortcuts after app is ready
+  const { registerGlobalShortcuts } = await import(
+    "./registerGlobalShortcuts.js"
+  );
+  registerGlobalShortcuts();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -113,6 +123,8 @@ app.on("window-all-closed", () => {
 });
 
 app.on("before-quit", () => {
+  // Clean up global shortcuts
+  globalShortcut.unregisterAll();
   mainWindow = null;
 });
 

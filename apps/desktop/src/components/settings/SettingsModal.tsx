@@ -32,11 +32,7 @@
  */
 
 import React, { useId, useEffect } from "react";
-import {
-  SettingsModalProps,
-  useSettingsModal,
-  useSettingsNavigation,
-} from "@fishbowl-ai/shared";
+import { SettingsModalProps, useSettingsModal } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
 
 const useModalClasses = () => ({
@@ -118,8 +114,12 @@ export function SettingsModal({
   const descriptionId = useId();
 
   // Zustand store hooks for state management
-  const { isOpen: storeIsOpen, openModal, closeModal } = useSettingsModal();
-  const { activeSection } = useSettingsNavigation();
+  const {
+    isOpen: storeIsOpen,
+    openModal,
+    closeModal,
+    activeSection,
+  } = useSettingsModal();
 
   // Sync external props with store state
   useEffect(() => {

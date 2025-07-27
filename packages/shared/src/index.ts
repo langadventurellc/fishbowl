@@ -3,5 +3,5 @@
 // Export types module
 export * from "./types";
 
-// Export stores module
-export * from "./stores";
+// Export store module
+export * from "./store";

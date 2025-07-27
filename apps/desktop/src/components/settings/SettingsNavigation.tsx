@@ -16,10 +16,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
-import {
-  useSettingsNavigation,
-  type SettingsSection,
-} from "@fishbowl-ai/shared";
+import { useSettingsModal, type SettingsSection } from "@fishbowl-ai/shared";
 
 interface SettingsNavigationProps {
   activeSection?: SettingsSection;
@@ -47,8 +44,8 @@ export function SettingsNavigation({
   // Use Zustand store for navigation state and actions
   const {
     activeSection: storeActiveSection,
-    setActiveSection: storeSetActiveSection,
-  } = useSettingsNavigation();
+    navigateToSection: storeSetActiveSection,
+  } = useSettingsModal();
 
   // Use store values unless props are provided (for backward compatibility)
   const activeSection = propActiveSection ?? storeActiveSection;
