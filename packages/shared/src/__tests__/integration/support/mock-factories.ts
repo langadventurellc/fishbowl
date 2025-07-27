@@ -11,6 +11,51 @@ import type {
 } from "../../../types/personality";
 
 /**
+ * Role management types for testing
+ */
+export interface PredefinedRole {
+  id: string;
+  name: string;
+  description: string;
+  capabilities: string[];
+  constraints: string[];
+  metadata: {
+    version: string;
+    isPredefined: boolean;
+    category: string;
+  };
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  errors: string[];
+}
+
+export interface RoleService {
+  loadPredefinedRoles(): Promise<PredefinedRole[]>;
+  validateRole(role: PredefinedRole): Promise<ValidationResult>;
+  getRoleById(id: string): Promise<PredefinedRole | null>;
+  findRolesByCategory(category: string): Promise<PredefinedRole[]>;
+}
+
+export interface FileService {
+  readFile(path: string): Promise<string>;
+  writeFile(path: string, content: string): Promise<void>;
+  exists(path: string): Promise<boolean>;
+  listFiles(directory: string): Promise<string[]>;
+  createDirectory(path: string): Promise<void>;
+}
+
+export interface RoleValidationService {
+  validateRoleSchema(role: unknown): Promise<ValidationResult>;
+  validateRequiredFields(
+    role: Partial<PredefinedRole>,
+  ): Promise<ValidationResult>;
+  validateCapabilities(capabilities: string[]): Promise<ValidationResult>;
+  validateConstraints(constraints: string[]): Promise<ValidationResult>;
+}
+
+/**
  * Configuration for database mock responses
  */
 interface DatabaseMockConfig {
@@ -366,5 +411,269 @@ export class ExternalApiMockFactory {
         ];
       }),
     };
+  }
+}
+
+/**
+ * Configuration for service mock responses
+ */
+interface ServiceMockConfig {
+  shouldSucceed?: boolean;
+  errorMessage?: string;
+  returnValue?: unknown;
+  latency?: number;
+}
+
+/**
+ * Mock factory for Role Service
+ */
+export class RoleServiceMockFactory {
+  private static defaultConfig: ServiceMockConfig = {
+    shouldSucceed: true,
+    latency: 10,
+  };
+
+  static create(config: ServiceMockConfig = {}): jest.Mocked<RoleService> {
+    const mergedConfig = { ...this.defaultConfig, ...config };
+
+    const simulateOperation = async <T>(operation: () => T): Promise<T> => {
+      // Simulate network latency
+      if (mergedConfig.latency && mergedConfig.latency > 0) {
+        await new Promise((resolve) =>
+          globalThis.setTimeout(resolve, mergedConfig.latency),
+        );
+      }
+
+      // Simulate failures
+      if (!mergedConfig.shouldSucceed) {
+        throw new Error(
+          mergedConfig.errorMessage ?? "Role service operation failed",
+        );
+      }
+
+      return operation();
+    };
+
+    const mockService = {
+      loadPredefinedRoles: jest.fn().mockImplementation(async () => {
+        return simulateOperation(
+          () =>
+            mergedConfig.returnValue ?? [
+              {
+                id: "role-analyst",
+                name: "Analyst",
+                description: "Data analysis and insights",
+                capabilities: ["data-analysis", "reporting"],
+                constraints: ["structured-output-required"],
+                metadata: {
+                  version: "1.0",
+                  isPredefined: true,
+                  category: "analytical",
+                },
+              },
+            ],
+        );
+      }),
+
+      validateRole: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => {
+          if (mergedConfig.shouldSucceed) {
+            return { isValid: true, errors: [] };
+          }
+          return {
+            isValid: false,
+            errors: [mergedConfig.errorMessage ?? "Role validation failed"],
+          };
+        });
+      }),
+
+      getRoleById: jest.fn().mockImplementation(async (id: string) => {
+        return simulateOperation(() => {
+          if (id === "not-found") return null;
+          return (
+            mergedConfig.returnValue ?? {
+              id,
+              name: `Mock Role ${id}`,
+              description: "Mock role for testing",
+              capabilities: ["mock-capability"],
+              constraints: ["mock-constraint"],
+              metadata: {
+                version: "1.0",
+                isPredefined: true,
+                category: "mock",
+              },
+            }
+          );
+        });
+      }),
+
+      findRolesByCategory: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => mergedConfig.returnValue ?? []);
+      }),
+    } as jest.Mocked<RoleService>;
+
+    return mockService;
+  }
+
+  static createSuccess(returnValue?: unknown) {
+    return this.create({ shouldSucceed: true, returnValue });
+  }
+
+  static createFailure(errorMessage: string) {
+    return this.create({ shouldSucceed: false, errorMessage });
+  }
+}
+
+/**
+ * Mock factory for File Service
+ */
+export class FileServiceMockFactory {
+  private static defaultConfig: ServiceMockConfig = {
+    shouldSucceed: true,
+    latency: 5,
+  };
+
+  static create(config: ServiceMockConfig = {}): jest.Mocked<FileService> {
+    const mergedConfig = { ...this.defaultConfig, ...config };
+
+    const simulateOperation = async <T>(operation: () => T): Promise<T> => {
+      if (mergedConfig.latency && mergedConfig.latency > 0) {
+        await new Promise((resolve) =>
+          globalThis.setTimeout(resolve, mergedConfig.latency),
+        );
+      }
+
+      if (!mergedConfig.shouldSucceed) {
+        throw new Error(mergedConfig.errorMessage ?? "File operation failed");
+      }
+
+      return operation();
+    };
+
+    return {
+      readFile: jest.fn().mockImplementation(async () => {
+        return simulateOperation(
+          () => mergedConfig.returnValue ?? '{"id": "mock-role"}',
+        );
+      }),
+
+      writeFile: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => undefined);
+      }),
+
+      exists: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => mergedConfig.returnValue ?? true);
+      }),
+
+      listFiles: jest.fn().mockImplementation(async () => {
+        return simulateOperation(
+          () => mergedConfig.returnValue ?? ["mock-file.json"],
+        );
+      }),
+
+      createDirectory: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => undefined);
+      }),
+    } as jest.Mocked<FileService>;
+  }
+
+  static createSuccess(returnValue?: unknown) {
+    return this.create({ shouldSucceed: true, returnValue });
+  }
+
+  static createFailure(errorMessage: string) {
+    return this.create({ shouldSucceed: false, errorMessage });
+  }
+}
+
+/**
+ * Mock factory for Role Validation Service
+ */
+export class RoleValidationServiceMockFactory {
+  private static defaultConfig: ServiceMockConfig = {
+    shouldSucceed: true,
+    latency: 5,
+  };
+
+  static create(
+    config: ServiceMockConfig = {},
+  ): jest.Mocked<RoleValidationService> {
+    const mergedConfig = { ...this.defaultConfig, ...config };
+
+    const simulateOperation = async <T>(operation: () => T): Promise<T> => {
+      if (mergedConfig.latency && mergedConfig.latency > 0) {
+        await new Promise((resolve) =>
+          globalThis.setTimeout(resolve, mergedConfig.latency),
+        );
+      }
+
+      return operation();
+    };
+
+    return {
+      validateRoleSchema: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => {
+          if (mergedConfig.shouldSucceed) {
+            return { isValid: true, errors: [] };
+          }
+          return {
+            isValid: false,
+            errors: [
+              mergedConfig.errorMessage ?? "Role schema validation failed",
+            ],
+          };
+        });
+      }),
+
+      validateRequiredFields: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => {
+          if (mergedConfig.shouldSucceed) {
+            return { isValid: true, errors: [] };
+          }
+          return {
+            isValid: false,
+            errors: [
+              mergedConfig.errorMessage ?? "Required fields validation failed",
+            ],
+          };
+        });
+      }),
+
+      validateCapabilities: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => {
+          if (mergedConfig.shouldSucceed) {
+            return { isValid: true, errors: [] };
+          }
+          return {
+            isValid: false,
+            errors: [
+              mergedConfig.errorMessage ?? "Capabilities validation failed",
+            ],
+          };
+        });
+      }),
+
+      validateConstraints: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => {
+          if (mergedConfig.shouldSucceed) {
+            return { isValid: true, errors: [] };
+          }
+          return {
+            isValid: false,
+            errors: [
+              mergedConfig.errorMessage ?? "Constraints validation failed",
+            ],
+          };
+        });
+      }),
+    } as jest.Mocked<RoleValidationService>;
+  }
+
+  static createSuccess() {
+    return this.create({ shouldSucceed: true });
+  }
+
+  static createFailure(errorMessage: string) {
+    return this.create({ shouldSucceed: false, errorMessage });
   }
 }

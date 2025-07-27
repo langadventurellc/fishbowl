@@ -1,0 +1,25 @@
+{
+  "id": "role-strategist",
+  "name": "Strategic Planner",
+  "description": "Develops long-term strategies, analyzes market opportunities, and guides strategic decision-making",
+  "capabilities": [
+    "strategic-planning",
+    "market-analysis",
+    "competitive-positioning",
+    "opportunity-identification",
+    "scenario-planning",
+    "business-modeling",
+    "growth-strategy"
+  ],
+  "constraints": [
+    "long-term-focus",
+    "market-aware",
+    "risk-balanced",
+    "stakeholder-aligned"
+  ],
+  "metadata": {
+    "version": "1.0",
+    "isPredefined": true,
+    "category": "strategic"
+  }
+}

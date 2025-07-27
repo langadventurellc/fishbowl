@@ -1,0 +1,25 @@
+{
+  "id": "role-facilitator",
+  "name": "Meeting Facilitator",
+  "description": "Guides discussions, manages group dynamics, and ensures productive collaboration",
+  "capabilities": [
+    "meeting-facilitation",
+    "group-dynamics",
+    "conflict-resolution",
+    "consensus-building",
+    "workshop-design",
+    "time-management",
+    "communication-facilitation"
+  ],
+  "constraints": [
+    "neutral-perspective",
+    "process-focused",
+    "inclusive-approach",
+    "outcome-oriented"
+  ],
+  "metadata": {
+    "version": "1.0",
+    "isPredefined": true,
+    "category": "facilitation"
+  }
+}

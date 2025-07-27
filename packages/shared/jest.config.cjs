@@ -1,8 +1,9 @@
 module.exports = {
-  preset: "ts-jest",
+  preset: "ts-jest/presets/default-esm",
+  extensionsToTreatAsEsm: [".ts"],
   testEnvironment: "node",
   testMatch: [
-    "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+    "<rootDir>/src/**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}",
     "<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}"
   ],
   testPathIgnorePatterns: [
@@ -18,11 +19,14 @@ module.exports = {
     "!src/**/*.{test,spec}.{ts,tsx}"
   ],
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
-  transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest"
+  globals: {
+    "ts-jest": {
+      useESM: true
+    }
   },
   moduleNameMapper: {
-    "^@/(.*)$": "<rootDir>/src/$1"
+    "^@/(.*)$": "<rootDir>/src/$1",
+    "^(\\.{1,2}/.*)\\.js$": "$1"
   },
   setupFilesAfterEnv: [],
   testTimeout: 30000
