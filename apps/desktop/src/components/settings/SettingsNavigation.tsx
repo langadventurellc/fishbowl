@@ -18,9 +18,13 @@ import {
 } from "../ui/collapsible";
 import {
   useActiveSection,
+  useActiveSubTab,
   useSettingsActions,
   type SettingsSection,
+  type SettingsSubTab,
 } from "@fishbowl-ai/shared";
+import { NavigationItem } from "./NavigationItem";
+import { SubNavigationTab } from "./SubNavigationTab";
 
 interface SettingsNavigationProps {
   activeSection?: SettingsSection;
@@ -29,13 +33,38 @@ interface SettingsNavigationProps {
 }
 
 const navigationSections = [
-  { id: "general" as const, label: "General Preferences" },
-  { id: "api-keys" as const, label: "API Keys" },
-  { id: "appearance" as const, label: "Appearance" },
-  { id: "agents" as const, label: "Agents" },
-  { id: "personalities" as const, label: "Personalities" },
-  { id: "roles" as const, label: "Roles" },
-  { id: "advanced" as const, label: "Advanced Options" },
+  { id: "general" as const, label: "General", hasSubTabs: false },
+  { id: "api-keys" as const, label: "API Keys", hasSubTabs: false },
+  { id: "appearance" as const, label: "Appearance", hasSubTabs: false },
+  {
+    id: "agents" as const,
+    label: "Agents",
+    hasSubTabs: true,
+    subTabs: [
+      { id: "library" as const, label: "Library" },
+      { id: "templates" as const, label: "Templates" },
+      { id: "defaults" as const, label: "Defaults" },
+    ],
+  },
+  {
+    id: "personalities" as const,
+    label: "Personalities",
+    hasSubTabs: true,
+    subTabs: [
+      { id: "saved" as const, label: "Saved" },
+      { id: "create-new" as const, label: "Create New" },
+    ],
+  },
+  {
+    id: "roles" as const,
+    label: "Roles",
+    hasSubTabs: true,
+    subTabs: [
+      { id: "predefined" as const, label: "Predefined" },
+      { id: "custom" as const, label: "Custom" },
+    ],
+  },
+  { id: "advanced" as const, label: "Advanced", hasSubTabs: false },
 ] as const;
 
 export function SettingsNavigation({
@@ -47,7 +76,9 @@ export function SettingsNavigation({
 
   // Use Zustand store for navigation state and actions
   const storeActiveSection = useActiveSection();
-  const { setActiveSection: storeSetActiveSection } = useSettingsActions();
+  const activeSubTab = useActiveSubTab();
+  const { setActiveSection: storeSetActiveSection, setActiveSubTab } =
+    useSettingsActions();
 
   // Use store values unless props are provided (for backward compatibility)
   const activeSection = propActiveSection ?? storeActiveSection;
@@ -91,10 +122,12 @@ export function SettingsNavigation({
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent id="navigation-content">
-            <NavigationList
+            <EnhancedNavigationList
               sections={navigationSections}
               activeSection={activeSection}
+              activeSubTab={activeSubTab}
               onSectionChange={onSectionChange}
+              onSubTabChange={setActiveSubTab}
               isCompact={true}
             />
           </CollapsibleContent>
@@ -108,10 +141,12 @@ export function SettingsNavigation({
             Settings
           </h3>
         </div>
-        <NavigationList
+        <EnhancedNavigationList
           sections={navigationSections}
           activeSection={activeSection}
+          activeSubTab={activeSubTab}
           onSectionChange={onSectionChange}
+          onSubTabChange={setActiveSubTab}
           isCompact={false}
         />
       </div>
@@ -119,19 +154,38 @@ export function SettingsNavigation({
   );
 }
 
-interface NavigationListProps {
-  sections: readonly { readonly id: SettingsSection; readonly label: string }[];
+interface EnhancedNavigationListProps {
+  sections: readonly (
+    | {
+        readonly id: SettingsSection;
+        readonly label: string;
+        readonly hasSubTabs: false;
+      }
+    | {
+        readonly id: SettingsSection;
+        readonly label: string;
+        readonly hasSubTabs: true;
+        readonly subTabs: readonly {
+          readonly id: SettingsSubTab;
+          readonly label: string;
+        }[];
+      }
+  )[];
   activeSection: SettingsSection;
+  activeSubTab: SettingsSubTab;
   onSectionChange: (section: SettingsSection) => void;
+  onSubTabChange: (tab: SettingsSubTab) => void;
   isCompact: boolean;
 }
 
-const NavigationList = React.memo(function NavigationList({
+const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
   sections,
   activeSection,
+  activeSubTab,
   onSectionChange,
+  onSubTabChange,
   isCompact,
-}: NavigationListProps) {
+}: EnhancedNavigationListProps) {
   return (
     <nav
       className={cn("space-y-1", isCompact ? "p-2" : "p-4")}
@@ -139,29 +193,33 @@ const NavigationList = React.memo(function NavigationList({
       aria-label="Settings navigation"
     >
       {sections.map((section) => (
-        <Button
+        <NavigationItem
           key={section.id}
-          variant={activeSection === section.id ? "secondary" : "ghost"}
-          className={cn(
-            "w-full justify-start",
-            isCompact ? "text-xs p-2" : "text-sm p-3",
-            "relative",
-            // Active state with left border
-            activeSection === section.id && [
-              "bg-accent text-accent-foreground",
-              "before:absolute before:left-0 before:top-0 before:bottom-0",
-              "before:w-1 before:bg-primary before:rounded-r",
-            ],
-            // Hover and focus states
-            "hover:bg-accent/80 hover:text-accent-foreground",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-            "transition-colors duration-200",
-          )}
+          id={section.id}
+          label={section.label}
+          active={activeSection === section.id}
           onClick={() => onSectionChange(section.id)}
-          aria-current={activeSection === section.id ? "page" : undefined}
+          hasSubTabs={section.hasSubTabs}
+          isExpanded={section.hasSubTabs && activeSection === section.id}
+          isCompact={isCompact}
         >
-          {section.label}
-        </Button>
+          {section.hasSubTabs &&
+            section.subTabs &&
+            activeSection === section.id && (
+              <>
+                {section.subTabs.map((subTab) => (
+                  <SubNavigationTab
+                    key={subTab.id}
+                    id={subTab.id}
+                    label={subTab.label}
+                    active={activeSubTab === subTab.id}
+                    onClick={() => onSubTabChange(subTab.id)}
+                    isCompact={isCompact}
+                  />
+                ))}
+              </>
+            )}
+        </NavigationItem>
       ))}
     </nav>
   );

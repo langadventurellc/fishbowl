@@ -22,7 +22,7 @@
         "--context",
         "ide-assistant",
         "--project",
-        "/Users/zach/code/fishbowl",
+        "/Users/zach/code/fishbowl-worktrees/E-modal-foundation-infrastructure",
         "--enable-web-dashboard",
         "false"
       ],
