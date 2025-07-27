@@ -7,7 +7,7 @@
  * - Supports keyboard navigation and accessibility
  */
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -16,46 +16,117 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
+import {
+  useActiveSection,
+  useActiveSubTab,
+  useSettingsActions,
+  type SettingsSection,
+  type SettingsSubTab,
+} from "@fishbowl-ai/shared";
+import { NavigationItem } from "./NavigationItem";
+import { SubNavigationTab } from "./SubNavigationTab";
+import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
+import { useAccessibilityAnnouncements } from "@/utils";
 
 interface SettingsNavigationProps {
-  activeSection: string;
-  onSectionChange: (section: string) => void;
+  activeSection?: SettingsSection;
+  onSectionChange?: (section: SettingsSection) => void;
   className?: string;
+  navigationId?: string; // New prop for ARIA relationships
 }
 
 const navigationSections = [
-  { id: "general" as const, label: "General Preferences" },
-  { id: "api-keys" as const, label: "API Keys" },
-  { id: "appearance" as const, label: "Appearance" },
-  { id: "agents" as const, label: "Agents" },
-  { id: "personalities" as const, label: "Personalities" },
-  { id: "roles" as const, label: "Roles" },
-  { id: "advanced" as const, label: "Advanced Options" },
+  { id: "general" as const, label: "General", hasSubTabs: false },
+  { id: "api-keys" as const, label: "API Keys", hasSubTabs: false },
+  { id: "appearance" as const, label: "Appearance", hasSubTabs: false },
+  {
+    id: "agents" as const,
+    label: "Agents",
+    hasSubTabs: true,
+    subTabs: [
+      { id: "library" as const, label: "Library" },
+      { id: "templates" as const, label: "Templates" },
+      { id: "defaults" as const, label: "Defaults" },
+    ],
+  },
+  {
+    id: "personalities" as const,
+    label: "Personalities",
+    hasSubTabs: true,
+    subTabs: [
+      { id: "saved" as const, label: "Saved" },
+      { id: "create-new" as const, label: "Create New" },
+    ],
+  },
+  {
+    id: "roles" as const,
+    label: "Roles",
+    hasSubTabs: true,
+    subTabs: [
+      { id: "predefined" as const, label: "Predefined" },
+      { id: "custom" as const, label: "Custom" },
+    ],
+  },
+  { id: "advanced" as const, label: "Advanced", hasSubTabs: false },
 ] as const;
 
 export function SettingsNavigation({
-  activeSection,
-  onSectionChange,
+  activeSection: propActiveSection,
+  onSectionChange: propOnSectionChange,
   className,
+  navigationId = "settings-navigation", // Default ID
 }: SettingsNavigationProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
+  // Accessibility announcements
+  const { announceSection } = useAccessibilityAnnouncements();
+
+  // Use Zustand store for navigation state and actions
+  const storeActiveSection = useActiveSection();
+  const activeSubTab = useActiveSubTab();
+  const { setActiveSection: storeSetActiveSection, setActiveSubTab } =
+    useSettingsActions();
+
+  // Use store values unless props are provided (for backward compatibility)
+  const activeSection = propActiveSection ?? storeActiveSection;
+  const onSectionChange = propOnSectionChange ?? storeSetActiveSection;
+
+  // Announce section changes with accessibility hook
+  const handleSectionChange = useCallback(
+    (section: SettingsSection) => {
+      onSectionChange(section);
+      announceSection(section);
+    },
+    [onSectionChange, announceSection],
+  );
+
   return (
-    <div
+    <nav
       className={cn(
         // Base navigation styling
-        "bg-muted/50 border-r border-border flex flex-col",
-        // Responsive width behavior
-        "w-full", // Full width on mobile when collapsed
-        "sm:w-64", // 256px on small screens and up (640px+)
-        "lg:w-48", // 192px on large screens (1024px+)
-        // Custom breakpoint: 180px width on screens < 1000px but > 800px
-        "max-[1000px]:w-[180px]", // 180px width for medium screens
-        // Collapsible behavior on screens < 800px
-        "max-[800px]:w-auto max-[800px]:border-r-0 max-[800px]:border-b",
+        "bg-muted/50 border-r border-solid border-border flex flex-col",
+        // Desktop: exactly 200px width (≥ 1000px)
+        "min-[1000px]:w-[200px]",
+        // Medium screens: exactly 180px width (< 1000px, ≥ 800px)
+        "min-[800px]:max-[999px]:w-[180px]",
+        // Mobile: collapsible hamburger menu (< 800px)
+        "max-[799px]:w-auto max-[799px]:border-r-0 max-[799px]:border-b",
+        // Padding: 10px internal padding
+        "p-[10px]",
+        // Scrollable when content exceeds height
+        "overflow-y-auto",
         className,
       )}
+      role="navigation"
+      aria-label="Settings navigation"
+      aria-describedby={`${navigationId}-description`}
+      id={navigationId}
     >
+      {/* Hidden description for screen readers */}
+      <div id={`${navigationId}-description`} className="sr-only">
+        Navigate between different settings sections using arrow keys or Tab.
+        Press Enter or Space to select a section.
+      </div>
       {/* Collapsible trigger for small screens */}
       <div className="max-[800px]:block hidden">
         <Collapsible open={!isCollapsed} onOpenChange={setIsCollapsed}>
@@ -76,10 +147,12 @@ export function SettingsNavigation({
             </Button>
           </CollapsibleTrigger>
           <CollapsibleContent id="navigation-content">
-            <NavigationList
+            <EnhancedNavigationList
               sections={navigationSections}
               activeSection={activeSection}
-              onSectionChange={onSectionChange}
+              activeSubTab={activeSubTab}
+              onSectionChange={handleSectionChange}
+              onSubTabChange={setActiveSubTab}
               isCompact={true}
             />
           </CollapsibleContent>
@@ -93,60 +166,131 @@ export function SettingsNavigation({
             Settings
           </h3>
         </div>
-        <NavigationList
+        <EnhancedNavigationList
           sections={navigationSections}
           activeSection={activeSection}
-          onSectionChange={onSectionChange}
+          activeSubTab={activeSubTab}
+          onSectionChange={handleSectionChange}
+          onSubTabChange={setActiveSubTab}
           isCompact={false}
         />
       </div>
-    </div>
+    </nav>
   );
 }
 
-interface NavigationListProps {
-  sections: readonly { readonly id: string; readonly label: string }[];
-  activeSection: string;
-  onSectionChange: (section: string) => void;
+interface EnhancedNavigationListProps {
+  sections: readonly (
+    | {
+        readonly id: SettingsSection;
+        readonly label: string;
+        readonly hasSubTabs: false;
+      }
+    | {
+        readonly id: SettingsSection;
+        readonly label: string;
+        readonly hasSubTabs: true;
+        readonly subTabs: readonly {
+          readonly id: SettingsSubTab;
+          readonly label: string;
+        }[];
+      }
+  )[];
+  activeSection: SettingsSection;
+  activeSubTab: SettingsSubTab;
+  onSectionChange: (section: SettingsSection) => void;
+  onSubTabChange: (tab: SettingsSubTab) => void;
   isCompact: boolean;
 }
 
-const NavigationList = React.memo(function NavigationList({
+const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
   sections,
   activeSection,
+  activeSubTab,
   onSectionChange,
+  onSubTabChange,
   isCompact,
-}: NavigationListProps) {
+}: EnhancedNavigationListProps) {
+  const navigationRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  const { handleKeyDown, isItemFocused, getFlatItems } = useNavigationKeyboard({
+    sections,
+    activeSection,
+    activeSubTab,
+    onSectionChange,
+    onSubTabChange,
+  });
+
+  // Focus management effect
+  useEffect(() => {
+    const flatItems = getFlatItems();
+    const focusedItem = flatItems.find((item) =>
+      isItemFocused(item.id, item.type),
+    );
+    if (focusedItem) {
+      const element = navigationRefs.current.get(
+        `${focusedItem.type}-${focusedItem.id}`,
+      );
+      if (element) {
+        element.focus();
+      }
+    }
+  }, [getFlatItems, isItemFocused]);
+
+  const setRef = (key: string, element: HTMLButtonElement | null) => {
+    if (element) {
+      navigationRefs.current.set(key, element);
+    } else {
+      navigationRefs.current.delete(key);
+    }
+  };
+
   return (
     <nav
       className={cn("space-y-1", isCompact ? "p-2" : "p-4")}
       role="navigation"
       aria-label="Settings navigation"
+      onKeyDown={handleKeyDown}
     >
       {sections.map((section) => (
-        <Button
+        <NavigationItem
           key={section.id}
-          variant={activeSection === section.id ? "secondary" : "ghost"}
-          className={cn(
-            "w-full justify-start",
-            isCompact ? "text-xs p-2" : "text-sm p-3",
-            "relative",
-            // Active state with left border
-            activeSection === section.id && [
-              "bg-accent text-accent-foreground",
-              "before:absolute before:left-0 before:top-0 before:bottom-0",
-              "before:w-1 before:bg-primary before:rounded-r",
-            ],
-            // Hover and focus states
-            "hover:bg-accent/80 hover:text-accent-foreground",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-            "transition-colors duration-200",
-          )}
+          ref={(el) => setRef(`section-${section.id}`, el)}
+          id={section.id}
+          label={section.label}
+          active={activeSection === section.id}
           onClick={() => onSectionChange(section.id)}
-          aria-current={activeSection === section.id ? "page" : undefined}
+          hasSubTabs={section.hasSubTabs}
+          isExpanded={section.hasSubTabs && activeSection === section.id}
+          isCompact={isCompact}
+          isFocused={isItemFocused(section.id, "section")}
+          tabIndex={isItemFocused(section.id, "section") ? 0 : -1}
         >
-          {section.label}
-        </Button>
+          {section.hasSubTabs &&
+            section.subTabs &&
+            activeSection === section.id && (
+              <>
+                {section.subTabs.map((subTab) => {
+                  // Only render if subTab.id is not null
+                  if (!subTab.id) return null;
+
+                  return (
+                    <SubNavigationTab
+                      key={subTab.id}
+                      ref={(el) => setRef(`subtab-${subTab.id}`, el)}
+                      id={subTab.id}
+                      label={subTab.label}
+                      active={activeSubTab === subTab.id}
+                      onClick={() => onSubTabChange(subTab.id)}
+                      isCompact={isCompact}
+                      isFocused={isItemFocused(subTab.id, "subtab")}
+                      tabIndex={isItemFocused(subTab.id, "subtab") ? 0 : -1}
+                    />
+                  );
+                })}
+              </>
+            )}
+        </NavigationItem>
       ))}
     </nav>
   );

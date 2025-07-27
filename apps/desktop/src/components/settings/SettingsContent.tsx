@@ -10,6 +10,7 @@
 
 import React from "react";
 import { cn } from "../../lib/utils";
+import { getAccessibleDescription } from "@/utils";
 
 const createProviderSections = (providers: string[]) =>
   providers.map((provider) => (
@@ -314,35 +315,74 @@ const sectionComponents = {
 interface SettingsContentProps {
   activeSection: string;
   className?: string;
+  contentId?: string; // New prop for ARIA relationships
 }
 
 export function SettingsContent({
   activeSection,
   className,
+  contentId = "settings-content",
 }: SettingsContentProps) {
   const Component =
     sectionComponents[activeSection as keyof typeof sectionComponents] ||
     DefaultSettings;
 
+  // Get accessible description for current section
+  const sectionDescription = getAccessibleDescription(activeSection);
+
   return (
-    <div
+    <main
       className={cn(
         // Base content styling
-        "flex-1 overflow-auto",
-        // Responsive padding
-        "p-4 sm:p-6 lg:p-8",
-        // Full width on mobile when navigation is collapsed
-        "max-[800px]:w-full",
-        // Adjusted width when navigation is visible
-        "min-[801px]:flex-1",
+        "flex-1 overflow-y-scroll",
+        // Responsive padding: 30px desktop, 20px reduced screens
+        "min-[1000px]:p-[30px]",
+        "max-[999px]:p-[20px]",
+        // Full width when navigation is hidden/collapsed
+        "max-[799px]:w-full",
+        // Takes remaining width when navigation is visible
+        "min-[800px]:flex-1",
         // Background for content area
         "bg-background",
         className,
       )}
+      role="main"
+      aria-label={`${activeSection} settings`}
+      aria-describedby={`${contentId}-description`}
+      aria-live="polite"
+      aria-busy="false"
+      id={contentId}
+      tabIndex={-1}
     >
-      <div className="max-w-3xl mx-auto">
-        <Component />
+      {/* Hidden description for screen readers */}
+      <div id={`${contentId}-description`} className="sr-only">
+        {sectionDescription}. Use Tab to navigate between form controls. Changes
+        are automatically saved.
       </div>
-    </div>
+
+      {/* Section heading for screen readers */}
+      <h2 className="sr-only">{activeSection} Settings Section</h2>
+
+      {/* Maximum content width container with region role */}
+      <div
+        className="max-w-[600px] mx-auto"
+        role="region"
+        aria-labelledby={`${contentId}-section-title`}
+      >
+        {/* Dynamic section title for screen readers */}
+        <h3 id={`${contentId}-section-title`} className="sr-only">
+          Configure {activeSection} settings
+        </h3>
+
+        {/* Form wrapper with proper ARIA attributes */}
+        <div
+          role="group"
+          aria-labelledby={`${contentId}-section-title`}
+          aria-describedby={`${contentId}-description`}
+        >
+          <Component />
+        </div>
+      </div>
+    </main>
   );
 }

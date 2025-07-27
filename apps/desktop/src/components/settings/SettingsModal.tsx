@@ -31,9 +31,17 @@
  * @module components/settings/SettingsModal
  */
 
-import React, { useId, useState } from "react";
-import { SettingsModalProps } from "@fishbowl-ai/shared";
+import React, { useEffect } from "react";
+import {
+  SettingsModalProps,
+  useModalState,
+  useActiveSection,
+  useSettingsActions,
+} from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { useFocusTrap } from "../../hooks/useFocusTrap";
+import { useGlobalKeyboardShortcuts } from "../../hooks/useGlobalKeyboardShortcuts";
+import { generateDialogAriaIds, useAccessibilityAnnouncements } from "@/utils";
 
 const useModalClasses = () => ({
   overlay: cn(
@@ -48,7 +56,7 @@ const useModalClasses = () => ({
   ),
   content: cn(
     // Remove default shadcn/ui styles that conflict with custom requirements
-    "!max-w-none !w-auto !h-auto !gap-0 !p-0",
+    "!max-w-none !w-auto !gap-0 !p-0 flex flex-col",
     // Enhanced responsive behavior
     // Large screens: 80% viewport, max 1000px
     "w-[80vw] h-[80vh] max-w-[1000px] max-h-[700px]",
@@ -91,6 +99,8 @@ import {
 } from "@/components/ui/dialog";
 import { SettingsNavigation } from "./SettingsNavigation";
 import { SettingsContent } from "./SettingsContent";
+import { ModalHeader } from "./ModalHeader";
+import { ModalFooter } from "./ModalFooter";
 
 /**
  * SettingsModal component for displaying application settings.
@@ -109,12 +119,67 @@ export function SettingsModal({
   title = "Settings",
   description = "Configure application settings including general preferences, API keys, appearance, agents, personalities, roles, and advanced options.",
 }: SettingsModalProps) {
-  // Generate unique IDs for ARIA attributes
-  const titleId = useId();
-  const descriptionId = useId();
+  // Generate consistent ARIA IDs using accessibility utilities
+  const dialogIds = generateDialogAriaIds("settings-modal");
 
-  // State management for active section
-  const [activeSection, setActiveSection] = useState("general");
+  // Accessibility announcements
+  const { announceStateChange } = useAccessibilityAnnouncements();
+
+  // Zustand store hooks for state management
+  const { isOpen: storeIsOpen } = useModalState();
+  const activeSection = useActiveSection();
+  const { openModal, closeModal } = useSettingsActions();
+
+  // Focus trap integration for modal-level focus management
+  const { containerRef } = useFocusTrap({
+    isActive: open,
+    restoreFocus: true,
+    initialFocusSelector: "[data-modal-initial-focus]",
+  });
+
+  // Global keyboard shortcuts for modal-wide actions
+  useGlobalKeyboardShortcuts({
+    shortcuts: {
+      Escape: () => onOpenChange(false),
+      "Ctrl+S": () => {
+        // TODO: Implement save functionality when Save button logic is added
+        console.log("Save shortcut triggered (Ctrl+S)");
+      },
+      "Meta+S": () => {
+        // TODO: Implement save functionality when Save button logic is added
+        console.log("Save shortcut triggered (Cmd+S)");
+      },
+    },
+    enabled: open,
+    preventDefault: true,
+  });
+
+  // Announce modal state changes for screen readers
+  useEffect(() => {
+    if (open) {
+      announceStateChange(
+        "Settings modal opened. Use Tab to navigate, Escape to close.",
+      );
+    }
+  }, [open, announceStateChange]);
+
+  // Sync external props with store state
+  useEffect(() => {
+    if (open !== storeIsOpen) {
+      if (open) {
+        openModal();
+      } else {
+        closeModal();
+      }
+    }
+  }, [open, storeIsOpen, openModal, closeModal]);
+
+  // Sync store changes back to external prop handler
+  useEffect(() => {
+    if (storeIsOpen !== open) {
+      onOpenChange(storeIsOpen);
+    }
+  }, [storeIsOpen, open, onOpenChange]);
 
   // Extract class names using custom hook
   const classes = useModalClasses();
@@ -131,57 +196,81 @@ export function SettingsModal({
       <DialogPortal>
         <DialogOverlay className={classes.overlay} />
         <DialogContent
+          ref={containerRef}
           className={classes.content}
-          showCloseButton={true}
+          showCloseButton={false}
           // Prevent modal content clicks from bubbling to overlay
           onPointerDown={handleContentClick}
-          // ARIA attributes for screen reader support
-          aria-labelledby={titleId}
-          aria-describedby={descriptionId}
-          // Ensure modal is properly announced to screen readers
+          // Enhanced ARIA attributes for screen reader support
+          aria-labelledby={dialogIds.titleId}
+          aria-describedby={dialogIds.descriptionId}
           aria-modal="true"
           role="dialog"
-          // Additional keyboard navigation attributes
           tabIndex={-1}
+          // Additional accessibility attributes for better screen reader experience
+          aria-live="polite"
+          aria-relevant="additions removals"
         >
-          {/* Hidden screen reader elements for accessibility */}
+          {/* Enhanced screen reader elements for accessibility */}
           <DialogHeader className="sr-only">
-            <DialogTitle id={titleId}>{title}</DialogTitle>
-            <DialogDescription id={descriptionId}>
+            <DialogTitle id={dialogIds.titleId}>{title}</DialogTitle>
+            <DialogDescription id={dialogIds.descriptionId}>
               {description}
             </DialogDescription>
           </DialogHeader>
 
-          {/* Responsive layout container */}
-          <div className="h-full w-full flex flex-col max-[800px]:flex-col min-[801px]:flex-row">
-            {/* Navigation Panel */}
-            <SettingsNavigation
-              activeSection={activeSection}
-              onSectionChange={setActiveSection}
-            />
+          {/* Main modal content container with enhanced landmarks */}
+          <div
+            className="h-full w-full flex flex-col max-h-full"
+            role="application"
+            aria-label="Settings application"
+          >
+            {/* Modal Header with banner landmark */}
+            <ModalHeader title={title} titleId={dialogIds.titleId} />
 
-            {/* Content Area */}
-            <SettingsContent activeSection={activeSection} />
+            {/* Modal body with navigation and content landmarks */}
+            <div
+              className="flex-1 flex max-[799px]:flex-col min-[800px]:flex-row overflow-hidden"
+              role="main"
+              id={dialogIds.mainId}
+            >
+              {/* Navigation Panel with navigation landmark */}
+              <SettingsNavigation
+                navigationId={dialogIds.navigationId}
+                activeSection={activeSection}
+              />
 
-            {/* Backward compatibility: render children if provided */}
-            {children && (
-              <div
-                className={classes.children}
-                role="main"
-                aria-label="Settings content"
-              >
-                {children}
-              </div>
-            )}
+              {/* Content Area with main landmark */}
+              <SettingsContent
+                activeSection={activeSection}
+                contentId={dialogIds.contentId}
+              />
+
+              {/* Backward compatibility: render children if provided */}
+              {children && (
+                <div
+                  className={classes.children}
+                  role="complementary"
+                  aria-label="Additional settings content"
+                  aria-describedby={dialogIds.descriptionId}
+                >
+                  {children}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer with contentinfo landmark */}
+            <ModalFooter />
           </div>
 
-          {/* Live region for screen reader announcements */}
+          {/* Enhanced live region for comprehensive announcements */}
           <div
+            id={dialogIds.announcementId}
             aria-live="polite"
-            aria-atomic="true"
+            aria-atomic="false"
+            aria-relevant="additions"
             className="sr-only"
             role="status"
-            id="settings-announcements"
           />
         </DialogContent>
       </DialogPortal>
