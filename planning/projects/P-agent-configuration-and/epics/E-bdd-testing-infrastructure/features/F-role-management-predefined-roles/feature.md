@@ -2,11 +2,11 @@
 kind: feature
 id: F-role-management-predefined-roles
 title: Role Management Predefined Roles Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T13:43:24.645537"
-updated: "2025-07-26T13:43:24.645537"
+updated: "2025-07-27T02:28:20.549660+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
