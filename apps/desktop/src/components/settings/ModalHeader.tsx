@@ -120,6 +120,7 @@ export function ModalHeader({
         aria-label="Close settings modal"
         aria-describedby="close-button-description"
         title="Close settings (Esc)"
+        data-modal-initial-focus
       >
         <XIcon className="w-4 h-4" aria-hidden="true" />
 

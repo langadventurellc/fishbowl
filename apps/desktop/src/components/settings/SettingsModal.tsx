@@ -39,6 +39,8 @@ import {
   useSettingsActions,
 } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { useFocusTrap } from "../../hooks/useFocusTrap";
+import { useGlobalKeyboardShortcuts } from "../../hooks/useGlobalKeyboardShortcuts";
 
 const useModalClasses = () => ({
   overlay: cn(
@@ -125,6 +127,30 @@ export function SettingsModal({
   const activeSection = useActiveSection();
   const { openModal, closeModal } = useSettingsActions();
 
+  // Focus trap integration for modal-level focus management
+  const { containerRef } = useFocusTrap({
+    isActive: open,
+    restoreFocus: true,
+    initialFocusSelector: "[data-modal-initial-focus]",
+  });
+
+  // Global keyboard shortcuts for modal-wide actions
+  useGlobalKeyboardShortcuts({
+    shortcuts: {
+      Escape: () => onOpenChange(false),
+      "Ctrl+S": () => {
+        // TODO: Implement save functionality when Save button logic is added
+        console.log("Save shortcut triggered (Ctrl+S)");
+      },
+      "Meta+S": () => {
+        // TODO: Implement save functionality when Save button logic is added
+        console.log("Save shortcut triggered (Cmd+S)");
+      },
+    },
+    enabled: open,
+    preventDefault: true,
+  });
+
   // Sync external props with store state
   useEffect(() => {
     if (open !== storeIsOpen) {
@@ -158,6 +184,7 @@ export function SettingsModal({
       <DialogPortal>
         <DialogOverlay className={classes.overlay} />
         <DialogContent
+          ref={containerRef}
           className={classes.content}
           showCloseButton={false}
           // Prevent modal content clicks from bubbling to overlay

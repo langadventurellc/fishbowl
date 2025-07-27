@@ -51,7 +51,8 @@ export function useKeyboardNavigation({
     if (newIndex >= 0 && newIndex !== focusedIndex) {
       setFocusedIndex(newIndex);
     }
-  }, [activeItem, items]); // Remove focusedIndex from deps to avoid interference
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeItem, items]); // Intentionally exclude focusedIndex to prevent infinite update loops
 
   // Ensure focused index stays within bounds when items change
   useEffect(() => {
