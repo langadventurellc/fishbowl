@@ -32,7 +32,12 @@
  */
 
 import React, { useId, useEffect } from "react";
-import { SettingsModalProps, useSettingsModal } from "@fishbowl-ai/shared";
+import {
+  SettingsModalProps,
+  useModalState,
+  useActiveSection,
+  useSettingsActions,
+} from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
 
 const useModalClasses = () => ({
@@ -115,12 +120,9 @@ export function SettingsModal({
   const descriptionId = useId();
 
   // Zustand store hooks for state management
-  const {
-    isOpen: storeIsOpen,
-    openModal,
-    closeModal,
-    activeSection,
-  } = useSettingsModal();
+  const { isOpen: storeIsOpen } = useModalState();
+  const activeSection = useActiveSection();
+  const { openModal, closeModal } = useSettingsActions();
 
   // Sync external props with store state
   useEffect(() => {
@@ -179,7 +181,7 @@ export function SettingsModal({
           {/* Main modal content container with header, body, and footer */}
           <div className="h-full w-full flex flex-col">
             {/* Modal body with navigation and content */}
-            <div className="flex-1 flex max-[800px]:flex-col min-[801px]:flex-row overflow-hidden">
+            <div className="flex-1 flex max-[799px]:flex-col min-[800px]:flex-row overflow-hidden">
               {/* Navigation Panel */}
               <SettingsNavigation />
 

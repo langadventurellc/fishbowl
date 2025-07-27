@@ -328,19 +328,21 @@ export function SettingsContent({
     <div
       className={cn(
         // Base content styling
-        "flex-1 overflow-auto",
-        // Responsive padding
-        "p-4 sm:p-6 lg:p-8",
-        // Full width on mobile when navigation is collapsed
-        "max-[800px]:w-full",
-        // Adjusted width when navigation is visible
-        "min-[801px]:flex-1",
+        "flex-1 overflow-y-auto",
+        // Responsive padding: 30px desktop, 20px reduced screens
+        "min-[1000px]:p-[30px]",
+        "max-[999px]:p-[20px]",
+        // Full width when navigation is hidden/collapsed
+        "max-[799px]:w-full",
+        // Takes remaining width when navigation is visible
+        "min-[800px]:flex-1",
         // Background for content area
         "bg-background",
         className,
       )}
     >
-      <div className="max-w-3xl mx-auto">
+      {/* Maximum content width: 600px (centered when wider) */}
+      <div className="max-w-[600px] mx-auto">
         <Component />
       </div>
     </div>

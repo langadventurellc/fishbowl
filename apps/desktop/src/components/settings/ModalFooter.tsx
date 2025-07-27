@@ -25,7 +25,11 @@
  */
 
 import React from "react";
-import { useSettingsModal, ModalFooterProps } from "@fishbowl-ai/shared";
+import {
+  useModalState,
+  useSettingsActions,
+  ModalFooterProps,
+} from "@fishbowl-ai/shared";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -61,8 +65,8 @@ export function ModalFooter({
   className,
 }: ModalFooterProps) {
   // Zustand store hooks for modal control and state
-  const { closeModal, hasUnsavedChanges: storeHasUnsavedChanges } =
-    useSettingsModal();
+  const { hasUnsavedChanges: storeHasUnsavedChanges } = useModalState();
+  const { closeModal } = useSettingsActions();
 
   // Use prop value if provided, otherwise fall back to store value
   const hasChanges = hasUnsavedChangesProp ?? storeHasUnsavedChanges;

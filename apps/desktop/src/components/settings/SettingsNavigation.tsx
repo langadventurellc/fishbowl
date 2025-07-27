@@ -16,7 +16,11 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "../ui/collapsible";
-import { useSettingsModal, type SettingsSection } from "@fishbowl-ai/shared";
+import {
+  useActiveSection,
+  useSettingsActions,
+  type SettingsSection,
+} from "@fishbowl-ai/shared";
 
 interface SettingsNavigationProps {
   activeSection?: SettingsSection;
@@ -42,10 +46,8 @@ export function SettingsNavigation({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   // Use Zustand store for navigation state and actions
-  const {
-    activeSection: storeActiveSection,
-    navigateToSection: storeSetActiveSection,
-  } = useSettingsModal();
+  const storeActiveSection = useActiveSection();
+  const { setActiveSection: storeSetActiveSection } = useSettingsActions();
 
   // Use store values unless props are provided (for backward compatibility)
   const activeSection = propActiveSection ?? storeActiveSection;
@@ -55,15 +57,17 @@ export function SettingsNavigation({
     <div
       className={cn(
         // Base navigation styling
-        "bg-muted/50 border-r border-border flex flex-col",
-        // Responsive width behavior
-        "w-full", // Full width on mobile when collapsed
-        "sm:w-64", // 256px on small screens and up (640px+)
-        "lg:w-48", // 192px on large screens (1024px+)
-        // Custom breakpoint: 180px width on screens < 1000px but > 800px
-        "max-[1000px]:w-[180px]", // 180px width for medium screens
-        // Collapsible behavior on screens < 800px
-        "max-[800px]:w-auto max-[800px]:border-r-0 max-[800px]:border-b",
+        "bg-muted/50 border-r border-solid border-border flex flex-col",
+        // Desktop: exactly 200px width (≥ 1000px)
+        "min-[1000px]:w-[200px]",
+        // Medium screens: exactly 180px width (< 1000px, ≥ 800px)
+        "min-[800px]:max-[999px]:w-[180px]",
+        // Mobile: collapsible hamburger menu (< 800px)
+        "max-[799px]:w-auto max-[799px]:border-r-0 max-[799px]:border-b",
+        // Padding: 10px internal padding
+        "p-[10px]",
+        // Scrollable when content exceeds height
+        "overflow-y-auto",
         className,
       )}
     >
