@@ -9,8 +9,27 @@
  */
 
 import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "../../lib/utils";
 import { getAccessibleDescription } from "@/utils";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  generalSettingsSchema,
+  type GeneralSettingsFormData,
+  defaultGeneralSettings,
+} from "@fishbowl-ai/shared";
 
 const createProviderSections = (providers: string[]) =>
   providers.map((provider) => (
@@ -30,48 +49,172 @@ const createProviderSections = (providers: string[]) =>
     </div>
   ));
 
-const GeneralSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">General Preferences</h1>
-      <p className="text-muted-foreground mb-6">
-        Configure general application preferences and behavior.
-      </p>
-    </div>
+const GeneralSettings: React.FC = () => {
+  // Initialize form with default values and validation
+  const form = useForm<GeneralSettingsFormData>({
+    resolver: zodResolver(generalSettingsSchema),
+    defaultValues: defaultGeneralSettings,
+  });
+
+  // Handle form submission (placeholder for now)
+  const onSubmit = (data: GeneralSettingsFormData) => {
+    console.log("Form data:", data);
+    // TODO: Integrate with settings store in future tasks
+  };
+
+  return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Auto Mode Settings</h2>
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Response Delay</label>
-            <div className="h-10 bg-muted rounded border" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Maximum Messages</label>
-            <div className="h-10 bg-muted rounded border" />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Maximum Wait Time</label>
-            <div className="h-10 bg-muted rounded border" />
-          </div>
-        </div>
+      <div>
+        <h1 className="text-2xl font-bold mb-2">General Preferences</h1>
+        <p className="text-muted-foreground mb-6">
+          Configure general application preferences and behavior.
+        </p>
       </div>
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Conversation Defaults</h2>
-        <div className="grid gap-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Default Mode</label>
-            <div className="h-10 bg-muted rounded border" />
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Auto Mode Settings</h2>
+            <div className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="responseDelay"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Response Delay (seconds)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="2"
+                        {...field}
+                        value={field.value / 1000} // Convert ms to seconds for display
+                        onChange={(e) =>
+                          field.onChange(Number(e.target.value) * 1000)
+                        } // Convert seconds to ms
+                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Time between agent responses in auto mode
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="maximumMessages"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Maximum Messages</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="50"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Stop auto mode after this many messages (0 = unlimited)
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="maximumWaitTime"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Maximum Wait Time (seconds)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="30"
+                        {...field}
+                        value={field.value / 1000} // Convert ms to seconds for display
+                        onChange={(e) =>
+                          field.onChange(Number(e.target.value) * 1000)
+                        } // Convert seconds to ms
+                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Maximum time to wait for agent response
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Maximum Agents</label>
-            <div className="h-10 bg-muted rounded border" />
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Conversation Defaults</h2>
+            <div className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="defaultMode"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>Default Mode</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        className="flex flex-col space-y-1"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="manual" id="manual" />
+                          <Label htmlFor="manual">Manual</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="auto" id="auto" />
+                          <Label htmlFor="auto">Auto</Label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormDescription>
+                      Default conversation mode for new conversations
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="maximumAgents"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Maximum Agents</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="5"
+                        {...field}
+                        onChange={(e) => field.onChange(Number(e.target.value))}
+                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Limit the number of agents in a conversation
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
-        </div>
-      </div>
+        </form>
+      </Form>
     </div>
-  </div>
-);
+  );
+};
 
 const ApiKeysSettings: React.FC = () => (
   <div className="space-y-6">

@@ -6,3 +6,17 @@
  */
 
 import "@testing-library/jest-dom";
+
+// Mock ResizeObserver for tests
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(global as any).ResizeObserver = class ResizeObserver {
+  observe() {
+    // Mock implementation
+  }
+  unobserve() {
+    // Mock implementation
+  }
+  disconnect() {
+    // Mock implementation
+  }
+};
