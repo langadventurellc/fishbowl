@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-implement-custom-role
+parent: F-role-management-custom-roles
+status: done
 title: Implement custom role capabilities integration tests with validation services
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-26T21:40:54.150963"
-updated: "2025-07-26T21:40:54.150963"
+updated: "2025-07-26T22:18:17.778835"
 schema_version: "1.1"
-parent: F-role-management-custom-roles
+worktree: null
 ---
 
 # Custom Role Capabilities Integration Tests
@@ -164,3 +165,7 @@ await capabilityService.validateCustomCapability(capability);
 - Validate security boundaries and authorization integration
 
 ### Log
+
+**2025-07-27T03:34:44.204031Z** - Implemented comprehensive BDD integration tests for custom role capabilities with validation services. Created CapabilityService and AuthorizationService interfaces with complete mock factories, and implemented role-custom-capabilities.integration.spec.ts following BDD structure with all tests initially skipped. Tests cover capability definition validation, constraint enforcement, authorization integration, and conflict detection with performance requirements. All quality checks pass with proper TypeScript types and service coordination patterns.
+
+- filesChanged: ["packages/shared/src/types/services/CapabilityServiceInterface.ts", "packages/shared/src/types/services/AuthorizationServiceInterface.ts", "packages/shared/src/types/services/index.ts", "packages/shared/src/types/role/SecurityContext.ts", "packages/shared/src/__tests__/integration/support/CapabilityServiceMockFactory.ts", "packages/shared/src/__tests__/integration/support/AuthorizationServiceMockFactory.ts", "packages/shared/src/__tests__/integration/features/role-management/role-custom-capabilities.integration.spec.ts"]

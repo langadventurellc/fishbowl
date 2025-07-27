@@ -29,7 +29,7 @@
     "test:e2e:mobile:android:headless": "turbo run test:e2e:android:headless --filter=@fishbowl-ai/mobile",
     "type-check": "turbo run type-check",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,json}\"",
+    "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,json}\" --log-level silent",
     "quality": "pnpm lint && pnpm format && pnpm type-check",
     "clean": "turbo run clean && rm -rf node_modules",
     "db:migrate": "turbo run db:migrate",
