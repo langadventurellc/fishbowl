@@ -2,7 +2,7 @@
 kind: feature
 id: F-electron-menu-and-ipc
 title: Electron Menu and IPC Integration
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-settings-modal-state-management
