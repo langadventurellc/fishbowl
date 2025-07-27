@@ -28,6 +28,6 @@ module.exports = {
     "^@/(.*)$": "<rootDir>/src/$1",
     "^(\\.{1,2}/.*)\\.js$": "$1"
   },
-  setupFilesAfterEnv: [],
+  setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
   testTimeout: 30000
 };
