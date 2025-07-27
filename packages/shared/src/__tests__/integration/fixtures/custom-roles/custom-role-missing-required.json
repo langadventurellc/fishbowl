@@ -1,0 +1,10 @@
+{
+  "name": "Missing Required Fields Role",
+  "description": "Custom role missing required ID field for testing validation",
+  "capabilities": ["test-capability"],
+  "constraints": [],
+  "isTemplate": false,
+  "createdAt": "2025-01-15T10:30:00.000Z",
+  "updatedAt": "2025-01-15T10:30:00.000Z",
+  "version": 1
+}

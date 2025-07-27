@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-create-custom-role-fixture-data
+parent: F-role-management-custom-roles
+status: done
 title: Create custom role fixture data and test builders for integration testing
-status: open
 priority: normal
 prerequisites: []
 created: "2025-07-26T21:42:36.696087"
-updated: "2025-07-26T21:42:36.696087"
+updated: "2025-07-27T12:29:44.629150"
 schema_version: "1.1"
-parent: F-role-management-custom-roles
+worktree: null
 ---
 
 # Custom Role Fixture Data and Test Builders
@@ -254,3 +255,7 @@ Create custom role fixture support for service mocks:
 - Focus on performance and caching behavior
 
 ### Log
+
+**2025-07-27T17:47:36.830803Z** - Completed custom role fixture data and test builder implementation. Created comprehensive CustomRoleFixtureManager with caching and validation, 8 JSON fixture files covering valid/invalid scenarios, and CustomRoleTestDataBuilder with fluent API for building test data. All quality checks pass.
+
+- filesChanged: ["packages/shared/src/__tests__/integration/helpers/customRoleFixtures.ts", "packages/shared/src/__tests__/integration/helpers/customRoleBuilders.ts", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-valid.json", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-template-based.json", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-minimal.json", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-complex-capabilities.json", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-invalid-capabilities.json", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-missing-required.json", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-invalid-constraints.json", "packages/shared/src/__tests__/integration/fixtures/custom-roles/custom-role-business-rule-violations.json"]

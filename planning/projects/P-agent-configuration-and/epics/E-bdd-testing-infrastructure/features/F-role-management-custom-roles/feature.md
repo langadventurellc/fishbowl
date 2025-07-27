@@ -2,12 +2,12 @@
 kind: feature
 id: F-role-management-custom-roles
 title: Role Management Custom Roles Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-role-management-predefined-roles
 created: "2025-07-26T13:43:51.958321"
-updated: "2025-07-26T13:43:51.958321"
+updated: "2025-07-27T17:47:36.838030+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
