@@ -102,18 +102,29 @@ export function ModalFooter({
         className,
       )}
       role="contentinfo"
-      aria-label="Modal actions"
+      aria-label="Settings modal actions"
+      aria-describedby="footer-description"
     >
+      {/* Hidden description for screen readers */}
+      <div id="footer-description" className="sr-only">
+        Action buttons for the settings modal. Use Tab to navigate between
+        buttons.
+      </div>
       {/* Button container with precise spacing */}
       <div className="flex gap-2.5">
         {/* Cancel Button */}
         <Button
           variant="secondary"
           onClick={handleCancel}
-          aria-label="Cancel and close settings without saving changes"
+          aria-label="Cancel changes and close settings modal"
+          aria-describedby="cancel-button-description"
+          aria-keyshortcuts="Escape"
           type="button"
         >
           Cancel
+          <span id="cancel-button-description" className="sr-only">
+            Discards any unsaved changes and closes the settings modal
+          </span>
         </Button>
 
         {/* Save Button */}
@@ -122,13 +133,18 @@ export function ModalFooter({
           onClick={handleSave}
           disabled={isSaveDisabled}
           aria-label={
-            isSaveDisabled
-              ? "Save changes (disabled - no changes to save)"
-              : "Save changes and close settings"
+            isSaveDisabled ? "No changes to save" : "Save settings changes"
           }
+          aria-describedby="save-button-description"
+          aria-keyshortcuts="Control+S Meta+S"
           type="button"
         >
           Save
+          <span id="save-button-description" className="sr-only">
+            {isSaveDisabled
+              ? "No changes have been made to save"
+              : "Saves all changes made to settings"}
+          </span>
         </Button>
       </div>
     </footer>

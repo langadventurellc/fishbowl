@@ -236,7 +236,9 @@ describe("SettingsModal Keyboard Integration", () => {
     test("live region for announcements is present", () => {
       render(<SettingsModal open={true} onOpenChange={mockOnOpenChange} />);
 
-      const liveRegion = document.getElementById("settings-announcements");
+      const liveRegion = document.getElementById(
+        "settings-modal-announcements",
+      );
       expect(liveRegion).toBeInTheDocument();
       expect(liveRegion).toHaveAttribute("aria-live", "polite");
       expect(liveRegion).toHaveAttribute("role", "status");

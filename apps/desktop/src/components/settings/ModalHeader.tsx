@@ -38,6 +38,7 @@ export function ModalHeader({
   title = "Settings",
   className,
   onClose,
+  titleId = "modal-title", // Default ID
 }: ModalHeaderProps) {
   // Zustand store hook for modal state management
   const { closeModal } = useSettingsModal();
@@ -96,7 +97,7 @@ export function ModalHeader({
           // Prevent text selection on title
           "select-none",
         )}
-        id="modal-title"
+        id={titleId}
       >
         {title}
       </h1>

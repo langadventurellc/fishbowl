@@ -7,7 +7,7 @@
  * - Supports keyboard navigation and accessibility
  */
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -26,11 +26,13 @@ import {
 import { NavigationItem } from "./NavigationItem";
 import { SubNavigationTab } from "./SubNavigationTab";
 import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
+import { useAccessibilityAnnouncements } from "@/utils";
 
 interface SettingsNavigationProps {
   activeSection?: SettingsSection;
   onSectionChange?: (section: SettingsSection) => void;
   className?: string;
+  navigationId?: string; // New prop for ARIA relationships
 }
 
 const navigationSections = [
@@ -72,8 +74,12 @@ export function SettingsNavigation({
   activeSection: propActiveSection,
   onSectionChange: propOnSectionChange,
   className,
+  navigationId = "settings-navigation", // Default ID
 }: SettingsNavigationProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
+
+  // Accessibility announcements
+  const { announceSection } = useAccessibilityAnnouncements();
 
   // Use Zustand store for navigation state and actions
   const storeActiveSection = useActiveSection();
@@ -85,8 +91,17 @@ export function SettingsNavigation({
   const activeSection = propActiveSection ?? storeActiveSection;
   const onSectionChange = propOnSectionChange ?? storeSetActiveSection;
 
+  // Announce section changes with accessibility hook
+  const handleSectionChange = useCallback(
+    (section: SettingsSection) => {
+      onSectionChange(section);
+      announceSection(section);
+    },
+    [onSectionChange, announceSection],
+  );
+
   return (
-    <div
+    <nav
       className={cn(
         // Base navigation styling
         "bg-muted/50 border-r border-solid border-border flex flex-col",
@@ -102,7 +117,16 @@ export function SettingsNavigation({
         "overflow-y-auto",
         className,
       )}
+      role="navigation"
+      aria-label="Settings navigation"
+      aria-describedby={`${navigationId}-description`}
+      id={navigationId}
     >
+      {/* Hidden description for screen readers */}
+      <div id={`${navigationId}-description`} className="sr-only">
+        Navigate between different settings sections using arrow keys or Tab.
+        Press Enter or Space to select a section.
+      </div>
       {/* Collapsible trigger for small screens */}
       <div className="max-[800px]:block hidden">
         <Collapsible open={!isCollapsed} onOpenChange={setIsCollapsed}>
@@ -127,7 +151,7 @@ export function SettingsNavigation({
               sections={navigationSections}
               activeSection={activeSection}
               activeSubTab={activeSubTab}
-              onSectionChange={onSectionChange}
+              onSectionChange={handleSectionChange}
               onSubTabChange={setActiveSubTab}
               isCompact={true}
             />
@@ -146,12 +170,12 @@ export function SettingsNavigation({
           sections={navigationSections}
           activeSection={activeSection}
           activeSubTab={activeSubTab}
-          onSectionChange={onSectionChange}
+          onSectionChange={handleSectionChange}
           onSubTabChange={setActiveSubTab}
           isCompact={false}
         />
       </div>
-    </div>
+    </nav>
   );
 }
 

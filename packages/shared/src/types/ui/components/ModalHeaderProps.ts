@@ -8,4 +8,6 @@ export interface ModalHeaderProps {
   className?: string;
   /** Optional custom close handler (defaults to Zustand closeModal action) */
   onClose?: () => void;
+  /** Optional title ID for ARIA labelledby relationships */
+  titleId?: string;
 }
