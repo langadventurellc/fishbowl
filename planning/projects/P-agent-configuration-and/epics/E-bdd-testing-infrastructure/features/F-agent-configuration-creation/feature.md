@@ -2,13 +2,13 @@
 kind: feature
 id: F-agent-configuration-creation
 title: Agent Configuration Creation Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-personality-management-crud
   - F-role-management-predefined-roles
 created: "2025-07-26T13:45:04.856108"
-updated: "2025-07-26T13:45:04.856108"
+updated: "2025-07-27T22:49:23.168925+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
