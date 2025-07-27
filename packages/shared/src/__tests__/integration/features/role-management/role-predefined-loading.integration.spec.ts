@@ -19,34 +19,18 @@
 import { promises as fs } from "fs";
 import { join } from "path";
 import {
-  RoleServiceMockFactory,
-  FileServiceMockFactory,
-  RoleValidationServiceMockFactory,
-} from "../../support/mock-factories";
-import type {
-  RoleService,
-  FileService,
-  RoleValidationService,
-} from "../../support/mock-factories";
-import {
   RoleFixtureManager,
   createRoleFixturesInTempDir,
 } from "../../helpers/roleFixtures";
+import type { FileService } from "../../support/mock-factories";
+import { FileServiceMockFactory } from "../../support/mock-factories";
 
 describe("Feature: Role Management Predefined Roles Integration", () => {
   // Test timeout for integration tests with file operations
   const INTEGRATION_TEST_TIMEOUT = 30000;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const PERFORMANCE_TIMEOUT_ALL_ROLES = 300; // ms
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const PERFORMANCE_TIMEOUT_INDIVIDUAL = 50; // ms
 
   // Service instances for integration testing
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let roleService: jest.Mocked<RoleService>;
   let fileService: jest.Mocked<FileService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let validationService: jest.Mocked<RoleValidationService>;
   let tempDir: string;
   let tempRolesDir: string;
 
@@ -63,8 +47,6 @@ describe("Feature: Role Management Predefined Roles Integration", () => {
 
   const setupServiceMocks = (): void => {
     fileService = FileServiceMockFactory.createSuccess();
-    validationService = RoleValidationServiceMockFactory.createSuccess();
-    roleService = RoleServiceMockFactory.createSuccess();
   };
 
   const configureFileServiceMocks = (): void => {
