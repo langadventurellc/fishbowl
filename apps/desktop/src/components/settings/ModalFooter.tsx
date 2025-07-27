@@ -77,8 +77,8 @@ export function ModalFooter({
   const handleSave =
     onSave ||
     (() => {
-      // Future: implement save logic here
-      console.log("Save functionality not yet implemented");
+      // Trigger form submission via custom event
+      window.dispatchEvent(new CustomEvent("settings-save"));
     });
 
   // Determine save button disabled state

@@ -22,6 +22,10 @@ jest.mock("@fishbowl-ai/shared", () => ({
     setActiveSection: jest.fn(),
     setActiveSubTab: jest.fn(),
   }),
+  useUnsavedChanges: jest.fn(() => ({
+    hasUnsavedChanges: false,
+    setUnsavedChanges: jest.fn(),
+  })),
   SettingsModalProps: {},
 }));
 

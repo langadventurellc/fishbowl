@@ -8,11 +8,12 @@
  * - Placeholder content for each settings section
  */
 
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "../../lib/utils";
 import { getAccessibleDescription } from "@/utils";
+import { FormErrorDisplay } from "./FormErrorDisplay";
 import {
   Form,
   FormControl,
@@ -31,6 +32,7 @@ import {
   generalSettingsSchema,
   type GeneralSettingsFormData,
   defaultGeneralSettings,
+  useUnsavedChanges,
 } from "@fishbowl-ai/shared";
 
 const createProviderSections = (providers: string[]) =>
@@ -52,17 +54,70 @@ const createProviderSections = (providers: string[]) =>
   ));
 
 const GeneralSettings: React.FC = () => {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const { setUnsavedChanges } = useUnsavedChanges();
+
   // Initialize form with default values and validation
   const form = useForm<GeneralSettingsFormData>({
     resolver: zodResolver(generalSettingsSchema),
     defaultValues: defaultGeneralSettings,
+    mode: "onChange", // Enable real-time validation
   });
 
-  // Handle form submission (placeholder for now)
-  const onSubmit = (data: GeneralSettingsFormData) => {
-    console.log("Form data:", data);
-    // TODO: Integrate with settings store in future tasks
-  };
+  // Enhanced form submission with error handling
+  const onSubmit = useCallback(
+    async (data: GeneralSettingsFormData) => {
+      setSubmitError(null);
+
+      try {
+        // Validate data one more time
+        const validatedData = generalSettingsSchema.parse(data);
+
+        // Log form data for verification during development
+        console.log("General Settings submitted:", validatedData);
+
+        // TODO: Integrate with settings store/persistence layer
+        // This will be connected to the settings system in future tasks
+
+        // Mark as saved
+        setUnsavedChanges(false);
+        form.reset(validatedData); // Reset dirty state
+
+        // Success feedback (could use toast notification in the future)
+        console.log("Settings saved successfully");
+      } catch (error) {
+        if (error instanceof Error) {
+          setSubmitError(error.message);
+        } else {
+          setSubmitError("Failed to save settings");
+        }
+        console.error("Failed to save general settings:", error);
+      }
+    },
+    [form, setUnsavedChanges],
+  );
+
+  // Track unsaved changes
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      setUnsavedChanges(form.formState.isDirty);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, setUnsavedChanges]);
+
+  // Add form submission trigger for modal footer
+  useEffect(() => {
+    const handleSave = () => {
+      form.handleSubmit(onSubmit)();
+    };
+
+    // Register global save handler
+    window.addEventListener("settings-save", handleSave);
+
+    return () => {
+      window.removeEventListener("settings-save", handleSave);
+    };
+  }, [form, onSubmit]);
 
   return (
     <div className="space-y-6">
@@ -75,6 +130,17 @@ const GeneralSettings: React.FC = () => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Hidden submit button for accessibility */}
+          <button type="submit" className="sr-only" aria-hidden="true">
+            Save Settings
+          </button>
+
+          {/* Display submission error */}
+          <FormErrorDisplay
+            error={submitError}
+            onDismiss={() => setSubmitError(null)}
+          />
+
           <div className="space-y-4">
             <h2 className="text-lg font-semibold">Auto Mode Settings</h2>
             <div className="grid gap-4">

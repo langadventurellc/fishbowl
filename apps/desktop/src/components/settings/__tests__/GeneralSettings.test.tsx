@@ -26,6 +26,10 @@ jest.mock("@fishbowl-ai/shared", () => {
       maximumAgents: 5,
       checkUpdates: true,
     },
+    useUnsavedChanges: jest.fn(() => ({
+      hasUnsavedChanges: false,
+      setUnsavedChanges: jest.fn(),
+    })),
   };
 });
 
