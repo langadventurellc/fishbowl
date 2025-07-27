@@ -91,6 +91,7 @@ import {
 } from "@/components/ui/dialog";
 import { SettingsNavigation } from "./SettingsNavigation";
 import { SettingsContent } from "./SettingsContent";
+import { ModalFooter } from "./ModalFooter";
 
 /**
  * SettingsModal component for displaying application settings.
@@ -175,24 +176,30 @@ export function SettingsModal({
             </DialogDescription>
           </DialogHeader>
 
-          {/* Responsive layout container */}
-          <div className="h-full w-full flex flex-col max-[800px]:flex-col min-[801px]:flex-row">
-            {/* Navigation Panel */}
-            <SettingsNavigation />
+          {/* Main modal content container with header, body, and footer */}
+          <div className="h-full w-full flex flex-col">
+            {/* Modal body with navigation and content */}
+            <div className="flex-1 flex max-[800px]:flex-col min-[801px]:flex-row overflow-hidden">
+              {/* Navigation Panel */}
+              <SettingsNavigation />
 
-            {/* Content Area */}
-            <SettingsContent activeSection={activeSection} />
+              {/* Content Area */}
+              <SettingsContent activeSection={activeSection} />
 
-            {/* Backward compatibility: render children if provided */}
-            {children && (
-              <div
-                className={classes.children}
-                role="main"
-                aria-label="Settings content"
-              >
-                {children}
-              </div>
-            )}
+              {/* Backward compatibility: render children if provided */}
+              {children && (
+                <div
+                  className={classes.children}
+                  role="main"
+                  aria-label="Settings content"
+                >
+                  {children}
+                </div>
+              )}
+            </div>
+
+            {/* Modal Footer */}
+            <ModalFooter />
           </div>
 
           {/* Live region for screen reader announcements */}

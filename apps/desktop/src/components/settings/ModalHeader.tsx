@@ -22,7 +22,7 @@ import { useSettingsModal } from "@fishbowl-ai/shared";
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ModalHeaderProps } from "./ModalHeaderProps";
+import { ModalHeaderProps } from "@fishbowl-ai/shared";
 
 /**
  * ModalHeader component for settings modal.
