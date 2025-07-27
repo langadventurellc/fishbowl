@@ -2,11 +2,11 @@
 kind: feature
 id: F-general-settings-section
 title: General Settings Section Implementation
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-27T16:36:05.716918"
-updated: "2025-07-27T16:36:05.716918"
+updated: "2025-07-27T23:34:13.163787+00:00"
 schema_version: "1.1"
 parent: E-basic-settings-sections
 ---

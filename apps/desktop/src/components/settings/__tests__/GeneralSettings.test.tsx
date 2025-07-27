@@ -49,7 +49,7 @@ describe("GeneralSettings Form Foundation", () => {
       render(<SettingsContent activeSection="general" />);
     }).not.toThrow();
 
-    expect(screen.getByText("General Preferences")).toBeInTheDocument();
+    expect(screen.getByText("General")).toBeInTheDocument();
     expect(screen.getByText("Auto Mode Settings")).toBeInTheDocument();
     expect(screen.getByText("Conversation Defaults")).toBeInTheDocument();
     expect(screen.getByText("Other Settings")).toBeInTheDocument();
@@ -66,8 +66,8 @@ describe("GeneralSettings Form Foundation", () => {
   it("maintains visual structure and styling", () => {
     render(<SettingsContent activeSection="general" />);
 
-    // Check that the general preferences text is rendered (indicating structure is maintained)
-    const title = screen.getByText("General Preferences");
+    // Check that the general text is rendered (indicating structure is maintained)
+    const title = screen.getByText("General");
     expect(title).toBeInTheDocument();
 
     // Check that the main container has proper styling structure

@@ -120,10 +120,10 @@ const GeneralSettings: React.FC = () => {
   }, [form, onSubmit]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-[600px] mx-auto px-4 sm:px-6">
       <div>
-        <h1 className="text-2xl font-bold mb-2">General Preferences</h1>
-        <p className="text-muted-foreground mb-6">
+        <h1 className="text-[24px] font-bold mb-[20px]">General</h1>
+        <p className="text-muted-foreground text-sm mb-6">
           Configure general application preferences and behavior.
         </p>
       </div>
@@ -141,8 +141,10 @@ const GeneralSettings: React.FC = () => {
             onDismiss={() => setSubmitError(null)}
           />
 
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Auto Mode Settings</h2>
+          <div className="space-y-6">
+            <h2 className="text-[18px] font-semibold mb-4">
+              Auto Mode Settings
+            </h2>
             <div className="grid gap-4">
               <FormField
                 control={form.control}
@@ -161,15 +163,26 @@ const GeneralSettings: React.FC = () => {
                             field.onChange((value[0] || 1) * 1000)
                           } // Convert seconds to ms
                           className="w-full"
+                          aria-describedby="responseDelay-description responseDelay-value"
+                          aria-label="Response delay in seconds"
                         />
-                        <div className="text-sm text-muted-foreground">
-                          {field.value / 1000} second
-                          {field.value / 1000 !== 1 ? "s" : ""}
+                        <div
+                          id="responseDelay-value"
+                          className="text-[13px] text-muted-foreground mt-1"
+                          aria-live="polite"
+                          aria-atomic="true"
+                          role="status"
+                        >
+                          {field.value / 1000}{" "}
+                          {field.value / 1000 === 1 ? "second" : "seconds"}
                         </div>
                       </div>
                     </FormControl>
                     <FormMessage />
-                    <FormDescription>
+                    <FormDescription
+                      id="responseDelay-description"
+                      className="text-[13px] text-muted-foreground mt-1"
+                    >
                       Time between agent responses in auto mode
                     </FormDescription>
                   </FormItem>
@@ -195,15 +208,18 @@ const GeneralSettings: React.FC = () => {
                           onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
                           className="w-full"
                         />
-                        <div className="text-sm text-muted-foreground">
+                        <div
+                          className="text-[13px] text-muted-foreground mt-1"
+                          aria-live="polite"
+                        >
                           {field.value === 0
                             ? "Unlimited"
-                            : `${field.value} messages`}
+                            : `${field.value} message${field.value !== 1 ? "s" : ""}`}
                         </div>
                       </div>
                     </FormControl>
                     <FormMessage />
-                    <FormDescription>
+                    <FormDescription className="text-[13px] text-muted-foreground mt-1">
                       Stop auto mode after this many messages (0 = unlimited)
                     </FormDescription>
                   </FormItem>
@@ -232,13 +248,17 @@ const GeneralSettings: React.FC = () => {
                           onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
                           className="w-full"
                         />
-                        <div className="text-sm text-muted-foreground">
-                          {field.value / 1000} seconds
+                        <div
+                          className="text-[13px] text-muted-foreground mt-1"
+                          aria-live="polite"
+                        >
+                          {field.value / 1000}{" "}
+                          {field.value / 1000 === 1 ? "second" : "seconds"}
                         </div>
                       </div>
                     </FormControl>
                     <FormMessage />
-                    <FormDescription>
+                    <FormDescription className="text-[13px] text-muted-foreground mt-1">
                       Maximum time to wait for agent response
                     </FormDescription>
                   </FormItem>
@@ -247,8 +267,10 @@ const GeneralSettings: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Conversation Defaults</h2>
+          <div className="space-y-6">
+            <h2 className="text-[18px] font-semibold mb-4">
+              Conversation Defaults
+            </h2>
             <div className="grid gap-4">
               <FormField
                 control={form.control}
@@ -261,28 +283,32 @@ const GeneralSettings: React.FC = () => {
                         onValueChange={field.onChange}
                         value={field.value}
                         className="flex flex-col space-y-2"
+                        aria-describedby="defaultMode-description"
                       >
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 min-h-[44px] py-1">
                           <RadioGroupItem value="manual" id="mode-manual" />
                           <Label
                             htmlFor="mode-manual"
-                            className="text-sm font-normal"
+                            className="text-sm font-normal flex-1 py-2 cursor-pointer"
                           >
                             Manual
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 min-h-[44px] py-1">
                           <RadioGroupItem value="auto" id="mode-auto" />
                           <Label
                             htmlFor="mode-auto"
-                            className="text-sm font-normal"
+                            className="text-sm font-normal flex-1 py-2 cursor-pointer"
                           >
                             Auto
                           </Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription
+                      id="defaultMode-description"
+                      className="text-[13px] text-muted-foreground mt-1"
+                    >
                       Default conversation mode for new conversations
                     </FormDescription>
                     <FormMessage />
@@ -308,14 +334,17 @@ const GeneralSettings: React.FC = () => {
                           }
                           className="w-full"
                         />
-                        <div className="text-sm text-muted-foreground">
+                        <div
+                          className="text-[13px] text-muted-foreground mt-1"
+                          aria-live="polite"
+                        >
                           {field.value} agent{field.value !== 1 ? "s" : ""}
                         </div>
                       </div>
                     </FormControl>
-                    <div className="text-xs text-muted-foreground">
+                    <FormDescription className="text-[13px] text-muted-foreground mt-1">
                       Limit the number of agents in a conversation
-                    </div>
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -323,8 +352,8 @@ const GeneralSettings: React.FC = () => {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h2 className="text-lg font-semibold">Other Settings</h2>
+          <div className="space-y-6">
+            <h2 className="text-[18px] font-semibold mb-4">Other Settings</h2>
             <div className="grid gap-4">
               <FormField
                 control={form.control}
@@ -335,9 +364,9 @@ const GeneralSettings: React.FC = () => {
                       <FormLabel className="text-base">
                         Automatically check for updates
                       </FormLabel>
-                      <div className="text-xs text-muted-foreground">
+                      <FormDescription className="text-[13px] text-muted-foreground mt-1">
                         Check for new versions on startup
-                      </div>
+                      </FormDescription>
                     </div>
                     <FormControl>
                       <Switch
