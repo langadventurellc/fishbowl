@@ -12,7 +12,7 @@
  * @module components/settings/NavigationItem
  */
 
-import React from "react";
+import React, { type KeyboardEvent } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
@@ -37,22 +37,38 @@ interface NavigationItemProps {
   className?: string;
   /** Children for sub-navigation rendering */
   children?: React.ReactNode;
+  /** Whether this item is focused for keyboard navigation */
+  isFocused?: boolean;
+  /** Tab index for keyboard navigation */
+  tabIndex?: number;
+  /** Keyboard event handler for navigation */
+  onKeyDown?: (event: KeyboardEvent<HTMLButtonElement>) => void;
 }
 
-export function NavigationItem({
-  id,
-  label,
-  active,
-  onClick,
-  hasSubTabs = false,
-  isExpanded = false,
-  isCompact = false,
-  className,
-  children,
-}: NavigationItemProps) {
+export const NavigationItem = React.forwardRef<
+  HTMLButtonElement,
+  NavigationItemProps
+>(function NavigationItem(
+  {
+    id,
+    label,
+    active,
+    onClick,
+    hasSubTabs = false,
+    isExpanded = false,
+    isCompact = false,
+    className,
+    children,
+    isFocused = false,
+    tabIndex,
+    onKeyDown,
+  },
+  ref,
+) {
   return (
     <div className={cn("space-y-1", className)}>
       <Button
+        ref={ref}
         variant="ghost"
         className={cn(
           // Exact specifications: 40px height, 12px horizontal padding, 4px border radius
@@ -68,6 +84,8 @@ export function NavigationItem({
           "transition-all duration-200 ease-in-out",
           // Focus state: keyboard focus indicators for accessibility
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          // Enhanced focus state for keyboard navigation
+          isFocused && "ring-2 ring-ring ring-offset-2",
           // Active state: darker background with accent color and 3px left accent border
           active && [
             "bg-accent text-accent-foreground",
@@ -78,6 +96,8 @@ export function NavigationItem({
           hasSubTabs && "justify-between",
         )}
         onClick={onClick}
+        onKeyDown={onKeyDown}
+        tabIndex={tabIndex}
         aria-current={active ? "page" : undefined}
         aria-expanded={hasSubTabs ? isExpanded : undefined}
         aria-controls={hasSubTabs ? `${id}-subtabs` : undefined}
@@ -108,4 +128,4 @@ export function NavigationItem({
       )}
     </div>
   );
-}
+});

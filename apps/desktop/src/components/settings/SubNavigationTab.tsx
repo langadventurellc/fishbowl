@@ -11,7 +11,7 @@
  * @module components/settings/SubNavigationTab
  */
 
-import React from "react";
+import React, { type KeyboardEvent } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import type { SettingsSubTab } from "@fishbowl-ai/shared";
@@ -29,18 +29,34 @@ interface SubNavigationTabProps {
   isCompact?: boolean;
   /** Additional CSS classes */
   className?: string;
+  /** Whether this item is focused for keyboard navigation */
+  isFocused?: boolean;
+  /** Tab index for keyboard navigation */
+  tabIndex?: number;
+  /** Keyboard event handler for navigation */
+  onKeyDown?: (event: KeyboardEvent<HTMLButtonElement>) => void;
 }
 
-export function SubNavigationTab({
-  id,
-  label,
-  active,
-  onClick,
-  isCompact = false,
-  className,
-}: SubNavigationTabProps) {
+export const SubNavigationTab = React.forwardRef<
+  HTMLButtonElement,
+  SubNavigationTabProps
+>(function SubNavigationTab(
+  {
+    id,
+    label,
+    active,
+    onClick,
+    isCompact = false,
+    className,
+    isFocused = false,
+    tabIndex,
+    onKeyDown,
+  },
+  ref,
+) {
   return (
     <Button
+      ref={ref}
       variant="ghost"
       className={cn(
         // Smaller dimensions for sub-level navigation
@@ -56,6 +72,8 @@ export function SubNavigationTab({
         "transition-all duration-200 ease-in-out",
         // Focus state: keyboard focus indicators
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+        // Enhanced focus state for keyboard navigation
+        isFocused && "ring-2 ring-ring ring-offset-2",
         // Active state: more prominent styling with left border
         active && [
           "bg-accent/80 text-accent-foreground",
@@ -66,6 +84,8 @@ export function SubNavigationTab({
         className,
       )}
       onClick={onClick}
+      onKeyDown={onKeyDown}
+      tabIndex={tabIndex}
       aria-current={active ? "page" : undefined}
       role="tab"
       aria-selected={active}
@@ -74,4 +94,4 @@ export function SubNavigationTab({
       {label}
     </Button>
   );
-}
+});

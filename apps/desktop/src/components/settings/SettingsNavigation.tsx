@@ -7,7 +7,7 @@
  * - Supports keyboard navigation and accessibility
  */
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -25,6 +25,7 @@ import {
 } from "@fishbowl-ai/shared";
 import { NavigationItem } from "./NavigationItem";
 import { SubNavigationTab } from "./SubNavigationTab";
+import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
 
 interface SettingsNavigationProps {
   activeSection?: SettingsSection;
@@ -186,15 +187,51 @@ const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
   onSubTabChange,
   isCompact,
 }: EnhancedNavigationListProps) {
+  const navigationRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
+
+  const { handleKeyDown, isItemFocused, getFlatItems } = useNavigationKeyboard({
+    sections,
+    activeSection,
+    activeSubTab,
+    onSectionChange,
+    onSubTabChange,
+  });
+
+  // Focus management effect
+  useEffect(() => {
+    const flatItems = getFlatItems();
+    const focusedItem = flatItems.find((item) =>
+      isItemFocused(item.id, item.type),
+    );
+    if (focusedItem) {
+      const element = navigationRefs.current.get(
+        `${focusedItem.type}-${focusedItem.id}`,
+      );
+      if (element) {
+        element.focus();
+      }
+    }
+  }, [getFlatItems, isItemFocused]);
+
+  const setRef = (key: string, element: HTMLButtonElement | null) => {
+    if (element) {
+      navigationRefs.current.set(key, element);
+    } else {
+      navigationRefs.current.delete(key);
+    }
+  };
+
   return (
     <nav
       className={cn("space-y-1", isCompact ? "p-2" : "p-4")}
       role="navigation"
       aria-label="Settings navigation"
+      onKeyDown={handleKeyDown}
     >
       {sections.map((section) => (
         <NavigationItem
           key={section.id}
+          ref={(el) => setRef(`section-${section.id}`, el)}
           id={section.id}
           label={section.label}
           active={activeSection === section.id}
@@ -202,21 +239,31 @@ const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
           hasSubTabs={section.hasSubTabs}
           isExpanded={section.hasSubTabs && activeSection === section.id}
           isCompact={isCompact}
+          isFocused={isItemFocused(section.id, "section")}
+          tabIndex={isItemFocused(section.id, "section") ? 0 : -1}
         >
           {section.hasSubTabs &&
             section.subTabs &&
             activeSection === section.id && (
               <>
-                {section.subTabs.map((subTab) => (
-                  <SubNavigationTab
-                    key={subTab.id}
-                    id={subTab.id}
-                    label={subTab.label}
-                    active={activeSubTab === subTab.id}
-                    onClick={() => onSubTabChange(subTab.id)}
-                    isCompact={isCompact}
-                  />
-                ))}
+                {section.subTabs.map((subTab) => {
+                  // Only render if subTab.id is not null
+                  if (!subTab.id) return null;
+
+                  return (
+                    <SubNavigationTab
+                      key={subTab.id}
+                      ref={(el) => setRef(`subtab-${subTab.id}`, el)}
+                      id={subTab.id}
+                      label={subTab.label}
+                      active={activeSubTab === subTab.id}
+                      onClick={() => onSubTabChange(subTab.id)}
+                      isCompact={isCompact}
+                      isFocused={isItemFocused(subTab.id, "subtab")}
+                      tabIndex={isItemFocused(subTab.id, "subtab") ? 0 : -1}
+                    />
+                  );
+                })}
               </>
             )}
         </NavigationItem>
