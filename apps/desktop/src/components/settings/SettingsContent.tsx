@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
+import { Switch } from "@/components/ui/switch";
 import {
   generalSettingsSchema,
   type GeneralSettingsFormData,
@@ -250,6 +251,34 @@ const GeneralSettings: React.FC = () => {
                       Limit the number of agents in a conversation
                     </div>
                     <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-lg font-semibold">Other Settings</h2>
+            <div className="grid gap-4">
+              <FormField
+                control={form.control}
+                name="checkUpdates"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">
+                        Automatically check for updates
+                      </FormLabel>
+                      <div className="text-xs text-muted-foreground">
+                        Check for new versions on startup
+                      </div>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
                   </FormItem>
                 )}
               />

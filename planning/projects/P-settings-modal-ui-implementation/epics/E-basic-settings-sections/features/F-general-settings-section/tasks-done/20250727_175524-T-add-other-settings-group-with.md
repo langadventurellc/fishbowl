@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-add-other-settings-group-with
+parent: F-general-settings-section
+status: done
 title: Add Other Settings group with update checking toggle
-status: open
 priority: normal
 prerequisites:
   - T-setup-form-dependencies-and-base
 created: "2025-07-27T16:43:59.645245"
-updated: "2025-07-27T16:43:59.645245"
+updated: "2025-07-27T17:47:08.196237"
 schema_version: "1.1"
-parent: F-general-settings-section
+worktree: null
 ---
 
 # Add Other Settings group with update checking toggle
@@ -166,3 +167,7 @@ Add the toggle switch component within the Other Settings group:
 - [ ] Accessibility test with screen reader compatibility
 
 ### Log
+
+**2025-07-27T22:55:24.859920Z** - Successfully implemented the Other Settings group with update checking toggle in the General Settings section. Extended the Zod validation schema to include the checkUpdates boolean field, updated form default values, and added the new form group with proper shadcn/ui Switch integration. The implementation follows all specified styling classes, accessibility requirements, and form patterns established in the existing codebase. All quality checks pass including linting, formatting, type checking, and unit tests.
+
+- filesChanged: ["packages/shared/src/types/settings/generalSettings.ts", "apps/desktop/src/components/settings/SettingsContent.tsx", "apps/desktop/src/components/settings/__tests__/GeneralSettings.test.tsx"]

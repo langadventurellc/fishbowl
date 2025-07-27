@@ -13,6 +13,9 @@ export const generalSettingsSchema = z.object({
   // Conversation Defaults
   defaultMode: z.enum(["manual", "auto"]),
   maximumAgents: z.number().min(1).max(8),
+
+  // Other Settings
+  checkUpdates: z.boolean(),
 });
 
 export type GeneralSettingsFormData = z.infer<typeof generalSettingsSchema>;
@@ -23,4 +26,5 @@ export const defaultGeneralSettings: GeneralSettingsFormData = {
   maximumWaitTime: 30000, // 30 seconds
   defaultMode: "manual",
   maximumAgents: 4,
+  checkUpdates: true,
 };

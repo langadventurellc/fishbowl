@@ -13,6 +13,7 @@ jest.mock("@fishbowl-ai/shared", () => {
     maximumWaitTime: z.number().min(5000).max(120000),
     defaultMode: z.enum(["manual", "auto"]),
     maximumAgents: z.number().min(1).max(8),
+    checkUpdates: z.boolean(),
   });
 
   return {
@@ -23,6 +24,7 @@ jest.mock("@fishbowl-ai/shared", () => {
       maximumWaitTime: 30000,
       defaultMode: "manual",
       maximumAgents: 5,
+      checkUpdates: true,
     },
   };
 });
@@ -46,6 +48,7 @@ describe("GeneralSettings Form Foundation", () => {
     expect(screen.getByText("General Preferences")).toBeInTheDocument();
     expect(screen.getByText("Auto Mode Settings")).toBeInTheDocument();
     expect(screen.getByText("Conversation Defaults")).toBeInTheDocument();
+    expect(screen.getByText("Other Settings")).toBeInTheDocument();
   });
 
   it("creates form infrastructure successfully", () => {
