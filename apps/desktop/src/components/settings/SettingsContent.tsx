@@ -25,6 +25,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Slider } from "@/components/ui/slider";
 import {
   generalSettingsSchema,
   type GeneralSettingsFormData,
@@ -81,23 +82,29 @@ const GeneralSettings: React.FC = () => {
                 name="responseDelay"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Response Delay (seconds)</FormLabel>
+                    <FormLabel>Response Delay</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="2"
-                        {...field}
-                        value={field.value / 1000} // Convert ms to seconds for display
-                        onChange={(e) =>
-                          field.onChange(Number(e.target.value) * 1000)
-                        } // Convert seconds to ms
-                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
-                      />
+                      <div className="space-y-2">
+                        <Slider
+                          min={1}
+                          max={30}
+                          step={1}
+                          value={[field.value / 1000]} // Convert ms to seconds for slider
+                          onValueChange={(value) =>
+                            field.onChange((value[0] || 1) * 1000)
+                          } // Convert seconds to ms
+                          className="w-full"
+                        />
+                        <div className="text-sm text-muted-foreground">
+                          {field.value / 1000} second
+                          {field.value / 1000 !== 1 ? "s" : ""}
+                        </div>
+                      </div>
                     </FormControl>
+                    <FormMessage />
                     <FormDescription>
                       Time between agent responses in auto mode
                     </FormDescription>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -109,18 +116,29 @@ const GeneralSettings: React.FC = () => {
                   <FormItem>
                     <FormLabel>Maximum Messages</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="50"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
-                      />
+                      <div className="space-y-1">
+                        <Input
+                          type="number"
+                          min={0}
+                          max={500}
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value) || 0)
+                          }
+                          onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
+                          className="w-full"
+                        />
+                        <div className="text-sm text-muted-foreground">
+                          {field.value === 0
+                            ? "Unlimited"
+                            : `${field.value} messages`}
+                        </div>
+                      </div>
                     </FormControl>
+                    <FormMessage />
                     <FormDescription>
                       Stop auto mode after this many messages (0 = unlimited)
                     </FormDescription>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -130,23 +148,32 @@ const GeneralSettings: React.FC = () => {
                 name="maximumWaitTime"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Maximum Wait Time (seconds)</FormLabel>
+                    <FormLabel>Maximum Wait Time</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="30"
-                        {...field}
-                        value={field.value / 1000} // Convert ms to seconds for display
-                        onChange={(e) =>
-                          field.onChange(Number(e.target.value) * 1000)
-                        } // Convert seconds to ms
-                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
-                      />
+                      <div className="space-y-1">
+                        <Input
+                          type="number"
+                          min={5}
+                          max={120}
+                          {...field}
+                          value={field.value / 1000} // Convert ms to seconds for display
+                          onChange={(e) =>
+                            field.onChange(
+                              (parseInt(e.target.value) || 5) * 1000,
+                            )
+                          } // Convert seconds to ms
+                          onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
+                          className="w-full"
+                        />
+                        <div className="text-sm text-muted-foreground">
+                          {field.value / 1000} seconds
+                        </div>
+                      </div>
                     </FormControl>
+                    <FormMessage />
                     <FormDescription>
                       Maximum time to wait for agent response
                     </FormDescription>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
