@@ -2,12 +2,12 @@
 kind: feature
 id: F-keyboard-navigation-and
 title: Keyboard Navigation and Accessibility
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-modal-shell-structure-and-layout
 created: "2025-07-26T01:13:41.721174"
-updated: "2025-07-26T01:13:41.721174"
+updated: "2025-07-27T19:26:09.329788+00:00"
 schema_version: "1.1"
 parent: E-modal-foundation-infrastructure
 ---

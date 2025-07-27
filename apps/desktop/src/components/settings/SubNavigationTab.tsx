@@ -15,6 +15,7 @@ import React, { type KeyboardEvent } from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import type { SettingsSubTab } from "@fishbowl-ai/shared";
+import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
 
 interface SubNavigationTabProps {
   /** Unique sub-tab identifier */
@@ -69,11 +70,13 @@ export const SubNavigationTab = React.forwardRef<
         "bg-transparent text-muted-foreground",
         // Hover state: light background tint
         "hover:bg-accent/60 hover:text-accent-foreground",
-        "transition-all duration-200 ease-in-out",
-        // Focus state: keyboard focus indicators
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        // Enhanced focus state for keyboard navigation
-        isFocused && "ring-2 ring-ring ring-offset-2",
+        // Enhanced focus indicators for accessibility and keyboard navigation
+        COMMON_FOCUS_CLASSES.removeOutline,
+        COMMON_FOCUS_CLASSES.backgroundOffset,
+        COMMON_FOCUS_CLASSES.transition,
+        getNavigationFocus(active),
+        // Enhanced focus state for keyboard navigation with tighter offset for sub-tabs
+        isFocused && "ring-2 ring-accent ring-offset-1",
         // Active state: more prominent styling with left border
         active && [
           "bg-accent/80 text-accent-foreground",

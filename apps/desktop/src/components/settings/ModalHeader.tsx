@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ModalHeaderProps } from "@fishbowl-ai/shared";
+import { getFocusClasses, COMMON_FOCUS_CLASSES } from "@/styles/focus";
 
 /**
  * ModalHeader component for settings modal.
@@ -113,10 +114,13 @@ export function ModalHeader({
           "w-10 h-10",
           // Ensure proper hover and focus states
           "hover:bg-accent/50 focus-visible:bg-accent/50",
-          // Enhanced focus indicators for accessibility
-          "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          // Enhanced focus indicators for critical close button
+          COMMON_FOCUS_CLASSES.removeOutline,
+          COMMON_FOCUS_CLASSES.backgroundOffset,
+          COMMON_FOCUS_CLASSES.enhancedOpacity,
+          getFocusClasses("highContrast"),
           // Smooth transitions
-          "transition-colors duration-200",
+          COMMON_FOCUS_CLASSES.transition,
         )}
         aria-label="Close settings modal"
         aria-describedby="close-button-description"

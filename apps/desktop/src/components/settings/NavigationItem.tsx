@@ -17,6 +17,7 @@ import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
 import type { SettingsSection } from "@fishbowl-ai/shared";
+import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
 
 interface NavigationItemProps {
   /** Unique section identifier */
@@ -81,11 +82,13 @@ export const NavigationItem = React.forwardRef<
           "bg-transparent text-foreground",
           // Hover state: light background tint with smooth transition
           "hover:bg-accent/80 hover:text-accent-foreground",
-          "transition-all duration-200 ease-in-out",
-          // Focus state: keyboard focus indicators for accessibility
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          // Enhanced focus indicators for accessibility and keyboard navigation
+          COMMON_FOCUS_CLASSES.removeOutline,
+          COMMON_FOCUS_CLASSES.backgroundOffset,
+          COMMON_FOCUS_CLASSES.transition,
+          getNavigationFocus(active),
           // Enhanced focus state for keyboard navigation
-          isFocused && "ring-2 ring-ring ring-offset-2",
+          isFocused && "ring-2 ring-accent ring-offset-1",
           // Active state: darker background with accent color and 3px left accent border
           active && [
             "bg-accent text-accent-foreground",

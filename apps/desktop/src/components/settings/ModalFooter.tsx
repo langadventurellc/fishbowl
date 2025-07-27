@@ -32,6 +32,7 @@ import {
 } from "@fishbowl-ai/shared";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getButtonFocus, COMMON_FOCUS_CLASSES } from "@/styles/focus";
 
 /**
  * ModalFooter component for settings modal action buttons.
@@ -120,6 +121,12 @@ export function ModalFooter({
           aria-describedby="cancel-button-description"
           aria-keyshortcuts="Escape"
           type="button"
+          className={cn(
+            COMMON_FOCUS_CLASSES.removeOutline,
+            COMMON_FOCUS_CLASSES.backgroundOffset,
+            COMMON_FOCUS_CLASSES.transition,
+            getButtonFocus("secondary"),
+          )}
         >
           Cancel
           <span id="cancel-button-description" className="sr-only">
@@ -138,6 +145,12 @@ export function ModalFooter({
           aria-describedby="save-button-description"
           aria-keyshortcuts="Control+S Meta+S"
           type="button"
+          className={cn(
+            COMMON_FOCUS_CLASSES.removeOutline,
+            COMMON_FOCUS_CLASSES.backgroundOffset,
+            COMMON_FOCUS_CLASSES.transition,
+            getButtonFocus("primary", "default", isSaveDisabled),
+          )}
         >
           Save
           <span id="save-button-description" className="sr-only">
