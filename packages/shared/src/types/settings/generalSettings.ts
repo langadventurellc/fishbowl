@@ -22,5 +22,5 @@ export const defaultGeneralSettings: GeneralSettingsFormData = {
   maximumMessages: 50,
   maximumWaitTime: 30000, // 30 seconds
   defaultMode: "manual",
-  maximumAgents: 5,
+  maximumAgents: 4,
 };

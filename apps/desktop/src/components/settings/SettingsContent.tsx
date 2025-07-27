@@ -188,20 +188,30 @@ const GeneralSettings: React.FC = () => {
                 name="defaultMode"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
-                    <FormLabel>Default Mode</FormLabel>
+                    <FormLabel>Default Conversation Mode</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="flex flex-col space-y-1"
+                        value={field.value}
+                        className="flex flex-col space-y-2"
                       >
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="manual" id="manual" />
-                          <Label htmlFor="manual">Manual</Label>
+                          <RadioGroupItem value="manual" id="mode-manual" />
+                          <Label
+                            htmlFor="mode-manual"
+                            className="text-sm font-normal"
+                          >
+                            Manual
+                          </Label>
                         </div>
                         <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="auto" id="auto" />
-                          <Label htmlFor="auto">Auto</Label>
+                          <RadioGroupItem value="auto" id="mode-auto" />
+                          <Label
+                            htmlFor="mode-auto"
+                            className="text-sm font-normal"
+                          >
+                            Auto
+                          </Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
@@ -220,17 +230,25 @@ const GeneralSettings: React.FC = () => {
                   <FormItem>
                     <FormLabel>Maximum Agents</FormLabel>
                     <FormControl>
-                      <Input
-                        type="number"
-                        placeholder="5"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
-                      />
+                      <div className="space-y-1">
+                        <Input
+                          type="number"
+                          min={1}
+                          max={8}
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value) || 1)
+                          }
+                          className="w-full"
+                        />
+                        <div className="text-sm text-muted-foreground">
+                          {field.value} agent{field.value !== 1 ? "s" : ""}
+                        </div>
+                      </div>
                     </FormControl>
-                    <FormDescription>
+                    <div className="text-xs text-muted-foreground">
                       Limit the number of agents in a conversation
-                    </FormDescription>
+                    </div>
                     <FormMessage />
                   </FormItem>
                 )}
