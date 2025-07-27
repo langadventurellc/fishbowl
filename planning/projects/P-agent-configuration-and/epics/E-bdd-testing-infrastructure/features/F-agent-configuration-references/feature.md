@@ -6,7 +6,6 @@ status: in-progress
 priority: high
 prerequisites:
   - F-agent-configuration-creation
-  - F-personality-template-integration
   - F-role-management-custom-roles
 created: "2025-07-26T13:45:33.539261"
 updated: "2025-07-26T13:45:33.539261"
