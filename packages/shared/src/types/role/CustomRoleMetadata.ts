@@ -16,5 +16,6 @@ export const CustomRoleMetadataSchema = z
     complexity: z.enum(["basic", "intermediate", "advanced"]).optional(),
     tags: z.array(z.string()).optional(),
     templateSource: z.string().optional(),
+    templateVersion: z.string().optional(),
   })
   .optional();

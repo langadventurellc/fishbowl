@@ -10,6 +10,7 @@ import type {
   CustomRoleUpdateRequest,
   RoleFilters,
   ValidationResult,
+  SecurityContext,
 } from "../role";
 
 /**
@@ -49,4 +50,41 @@ export interface RoleService {
    * Validate role capabilities against system constraints
    */
   validateRoleCapabilities(capabilities: string[]): Promise<ValidationResult>;
+
+  /**
+   * Create a custom role from a predefined template
+   */
+  createCustomRoleFromTemplate(
+    templateId: string,
+    customizations: Partial<CustomRoleCreateRequest>,
+    context: SecurityContext,
+  ): Promise<CustomRole>;
+
+  /**
+   * Track template reference for custom role lineage
+   */
+  trackTemplateReference(
+    roleId: string,
+    templateId: string,
+    customizations: string[],
+  ): Promise<{
+    templateId: string;
+    templateVersion?: string;
+    templateSource?: string;
+    derivedAt: Date;
+    customizations: string[];
+  }>;
+
+  /**
+   * Update template reference tracking for role modifications
+   */
+  updateTemplateReference(
+    roleId: string,
+    templateId: string,
+    customizations: string[],
+  ): Promise<{
+    templateId: string;
+    customizations: string[];
+    lastModified: Date;
+  }>;
 }

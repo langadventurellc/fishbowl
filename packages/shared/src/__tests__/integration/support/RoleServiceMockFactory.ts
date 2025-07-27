@@ -146,6 +146,47 @@ export class RoleServiceMockFactory {
           return mergedConfig.returnValue ?? result;
         });
       }),
+
+      createCustomRoleFromTemplate: jest
+        .fn()
+        .mockImplementation(async (templateId, customizations) => {
+          return simulateOperation(() => {
+            const templateBasedRole: CustomRole = {
+              ...RoleTestDataBuilder.createRoleFromTemplateWithModifications(),
+              ...customizations,
+              id: `role-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              templateId,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              version: 1,
+            };
+            return mergedConfig.returnValue ?? templateBasedRole;
+          });
+        }),
+
+      trackTemplateReference: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => {
+          const templateMetadata = {
+            templateId: "template-001",
+            templateVersion: "1.0.0",
+            templateSource: "predefined_template",
+            derivedAt: new Date(),
+            customizations: ["capabilities", "constraints"],
+          };
+          return mergedConfig.returnValue ?? templateMetadata;
+        });
+      }),
+
+      updateTemplateReference: jest.fn().mockImplementation(async () => {
+        return simulateOperation(() => {
+          const updatedReference = {
+            templateId: "template-001",
+            customizations: ["capabilities", "constraints"],
+            lastModified: new Date(),
+          };
+          return mergedConfig.returnValue ?? updatedReference;
+        });
+      }),
     } as jest.Mocked<RoleService>;
   }
 

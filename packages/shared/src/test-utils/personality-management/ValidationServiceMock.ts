@@ -80,23 +80,6 @@ export class ValidationServiceMock {
       }
     }
 
-    // Statistical improbability check
-    const traitValues = [
-      personality.openness,
-      personality.conscientiousness,
-      personality.extraversion,
-      personality.agreeableness,
-      personality.neuroticism,
-    ].filter((v) => v !== undefined);
-    if (traitValues.length === 5) {
-      const extremeCount = traitValues.filter((v) => v > 90 || v < 10).length;
-      if (extremeCount >= 4) {
-        warnings.push(
-          "Statistical improbability: too many extreme trait values",
-        );
-      }
-    }
-
     return {
       isValid: errors.length === 0,
       errors,

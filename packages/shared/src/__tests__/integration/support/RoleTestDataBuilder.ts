@@ -135,6 +135,85 @@ export class RoleTestDataBuilder {
   }
 
   /**
+   * Create template with comprehensive template metadata
+   */
+  static createTemplateWithMetadata(): CustomRoleCreateRequest {
+    return this.createCustomRole({
+      name: "Advanced Analytics Template",
+      description: "Comprehensive template for data analytics roles",
+      capabilities: [
+        "data_analysis",
+        "statistical_modeling",
+        "report_generation",
+        "visualization_creation",
+      ],
+      constraints: [
+        "data_privacy_compliance",
+        "statistical_accuracy_required",
+        "peer_review_mandatory",
+      ],
+      isTemplate: true,
+      metadata: {
+        domain: "data_science",
+        complexity: "advanced",
+        tags: ["template", "analytics", "data_science"],
+        templateSource: "predefined_analytics_template",
+      },
+    });
+  }
+
+  /**
+   * Create role from template with custom modifications
+   */
+  static createRoleFromTemplateWithModifications(): CustomRoleCreateRequest {
+    return this.createCustomRole({
+      name: "Marketing Analytics Specialist",
+      description:
+        "Marketing-focused analytics role based on analytics template",
+      capabilities: [
+        "market_data_analysis", // Modified from template
+        "campaign_performance_tracking", // Added custom capability
+        "customer_segmentation", // Added custom capability
+        "report_generation", // Inherited from template
+      ],
+      constraints: [
+        "data_privacy_compliance", // Inherited from template
+        "marketing_data_only", // Added custom constraint
+        "campaign_confidentiality", // Added custom constraint
+      ],
+      isTemplate: false,
+      templateId: "550e8400-e29b-41d4-a716-446655440000",
+      metadata: {
+        domain: "marketing_analytics",
+        complexity: "intermediate",
+        tags: ["marketing", "analytics", "custom"],
+        templateSource: "advanced_analytics_template",
+      },
+    });
+  }
+
+  /**
+   * Create template-based role for version compatibility testing
+   */
+  static createTemplateRoleWithVersionConstraints(): CustomRoleCreateRequest {
+    return this.createCustomRole({
+      name: "Version-Constrained Role",
+      description:
+        "Role created from template with specific version constraints",
+      capabilities: ["versioned_capability_1", "versioned_capability_2"],
+      constraints: ["version_compatibility_required"],
+      templateId: "version-template-001",
+      metadata: {
+        domain: "version_testing",
+        complexity: "basic",
+        tags: ["versioned", "template", "compatibility"],
+        templateSource: "versioned_template_v2",
+        templateVersion: "2.1.0",
+      },
+    });
+  }
+
+  /**
    * Create a role with security constraints
    */
   static createSecurityConstrainedRole(): CustomRoleCreateRequest {

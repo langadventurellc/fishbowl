@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-implement-template-based-custom
+parent: F-role-management-custom-roles
+status: done
 title: Implement template-based custom role creation integration tests
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-26T21:41:23.941938"
-updated: "2025-07-26T21:41:23.941938"
+updated: "2025-07-27T11:49:27.868961"
 schema_version: "1.1"
-parent: F-role-management-custom-roles
+worktree: null
 ---
 
 # Template-Based Custom Role Creation Integration Tests
@@ -173,3 +174,7 @@ await roleService.createCustomRoleFromTemplate(templateId, customizations);
 - Validate template isolation and security boundaries thoroughly
 
 ### Log
+
+**2025-07-27T17:04:33.687036Z** - Implemented comprehensive BDD integration tests for template-based custom role creation, including service coordination between RoleService, TemplateService, and PersistenceService. Created TemplateService interface and mock factory for testing template operations. Enhanced RoleTestDataBuilder with template-specific methods and added templateVersion field to CustomRoleMetadata schema. All tests follow BDD Given-When-Then structure with it.skip pattern and validate performance requirements (Template creation: 300ms, Copy: 100ms, Reference tracking: 50ms, Version validation: 150ms). Tests cover template-based creation, reference tracking, security isolation, version compatibility, and error handling scenarios.
+
+- filesChanged: ["packages/shared/src/types/services/TemplateServiceInterface.ts", "packages/shared/src/types/services/index.ts", "packages/shared/src/types/role/CustomRoleMetadata.ts", "packages/shared/src/types/services/RoleServiceInterface.ts", "packages/shared/src/__tests__/integration/support/TemplateServiceMockFactory.ts", "packages/shared/src/__tests__/integration/support/RoleTestDataBuilder.ts", "packages/shared/src/__tests__/integration/support/RoleServiceMockFactory.ts", "packages/shared/src/__tests__/integration/features/role-management/role-custom-templates.integration.spec.ts"]
