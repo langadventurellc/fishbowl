@@ -11,3 +11,4 @@ export type { PersistenceService } from "./PersistenceServiceInterface";
 export type { ValidationService } from "./ValidationServiceInterface";
 export type { CapabilityService } from "./CapabilityServiceInterface";
 export type { AuthorizationService } from "./AuthorizationServiceInterface";
+export type { ModelService } from "./ModelServiceInterface";

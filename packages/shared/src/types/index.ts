@@ -28,3 +28,6 @@ export * from "./services";
 
 // Personality types
 export * from "./personality";
+
+// Model types
+export * from "./model";
