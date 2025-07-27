@@ -14,13 +14,13 @@ import { CustomRoleMetadataSchema } from "./CustomRoleMetadata";
  * Complete definition of a custom role with all required and optional fields
  */
 export const CustomRoleSchema = z.object({
-  id: z.string().uuid(),
+  id: z.uuid(),
   name: z.string().min(1).max(100),
   description: z.string().min(1).max(500),
   capabilities: z.array(CustomRoleCapabilitySchema).min(1),
   constraints: z.array(CustomRoleConstraintSchema),
   isTemplate: z.boolean().default(false),
-  templateId: z.string().uuid().optional(),
+  templateId: z.uuid().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
   version: z.number().int().positive(),
