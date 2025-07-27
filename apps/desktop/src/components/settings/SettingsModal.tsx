@@ -53,7 +53,7 @@ const useModalClasses = () => ({
   ),
   content: cn(
     // Remove default shadcn/ui styles that conflict with custom requirements
-    "!max-w-none !w-auto !h-auto !gap-0 !p-0",
+    "!max-w-none !w-auto !gap-0 !p-0 flex flex-col",
     // Enhanced responsive behavior
     // Large screens: 80% viewport, max 1000px
     "w-[80vw] h-[80vh] max-w-[1000px] max-h-[700px]",
@@ -96,6 +96,7 @@ import {
 } from "@/components/ui/dialog";
 import { SettingsNavigation } from "./SettingsNavigation";
 import { SettingsContent } from "./SettingsContent";
+import { ModalHeader } from "./ModalHeader";
 import { ModalFooter } from "./ModalFooter";
 
 /**
@@ -158,7 +159,7 @@ export function SettingsModal({
         <DialogOverlay className={classes.overlay} />
         <DialogContent
           className={classes.content}
-          showCloseButton={true}
+          showCloseButton={false}
           // Prevent modal content clicks from bubbling to overlay
           onPointerDown={handleContentClick}
           // ARIA attributes for screen reader support
@@ -179,7 +180,10 @@ export function SettingsModal({
           </DialogHeader>
 
           {/* Main modal content container with header, body, and footer */}
-          <div className="h-full w-full flex flex-col">
+          <div className="h-full w-full flex flex-col max-h-full">
+            {/* Modal Header */}
+            <ModalHeader title={title} />
+
             {/* Modal body with navigation and content */}
             <div className="flex-1 flex max-[799px]:flex-col min-[800px]:flex-row overflow-hidden">
               {/* Navigation Panel */}

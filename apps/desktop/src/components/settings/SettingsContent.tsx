@@ -328,7 +328,7 @@ export function SettingsContent({
     <div
       className={cn(
         // Base content styling
-        "flex-1 overflow-y-auto",
+        "flex-1 overflow-y-scroll",
         // Responsive padding: 30px desktop, 20px reduced screens
         "min-[1000px]:p-[30px]",
         "max-[999px]:p-[20px]",
