@@ -1,0 +1,474 @@
+{
+  "personalityModelCompatibility": {
+    "creative_personalities": {
+      "template-creative-001": {
+        "personalityType": "Creative Innovator",
+        "compatibleModels": {
+          "claude-3-opus": {
+            "score": 95,
+            "reasoning": "Excellent creative capabilities with large context for detailed creative work",
+            "optimizations": {
+              "temperature": 0.8,
+              "maxTokens": 3000,
+              "topP": 0.95
+            }
+          },
+          "claude-3-sonnet": {
+            "score": 92,
+            "reasoning": "Strong creative specialization with good balance of speed and capability",
+            "optimizations": {
+              "temperature": 0.9,
+              "maxTokens": 2500,
+              "topP": 0.9
+            }
+          },
+          "gpt-4-turbo-preview": {
+            "score": 85,
+            "reasoning": "Good general capabilities but less specialized for creative tasks",
+            "optimizations": {
+              "temperature": 0.8,
+              "maxTokens": 2000,
+              "frequencyPenalty": 0.1
+            }
+          }
+        },
+        "incompatibleModels": {
+          "gpt-4-analysis": {
+            "score": 45,
+            "reasoning": "Analytical specialization conflicts with creative personality traits",
+            "issues": [
+              "analytical_bias",
+              "reduced_creativity",
+              "structured_over_imaginative"
+            ]
+          },
+          "mock-fast-model": {
+            "score": 30,
+            "reasoning": "Limited capabilities insufficient for creative expression",
+            "issues": [
+              "limited_context",
+              "basic_capabilities",
+              "no_creative_specialization"
+            ]
+          }
+        }
+      }
+    },
+    "analytical_personalities": {
+      "template-analytical-001": {
+        "personalityType": "Analytical Thinker",
+        "compatibleModels": {
+          "gpt-4-analysis": {
+            "score": 98,
+            "reasoning": "Perfect match - specialized for analytical tasks with high precision",
+            "optimizations": {
+              "temperature": 0.3,
+              "maxTokens": 4000,
+              "topP": 0.85,
+              "presencePenalty": 0.0
+            }
+          },
+          "gpt-4-turbo-preview": {
+            "score": 90,
+            "reasoning": "Strong reasoning capabilities with large context for complex analysis",
+            "optimizations": {
+              "temperature": 0.4,
+              "maxTokens": 3500,
+              "topP": 0.8
+            }
+          },
+          "claude-3-opus": {
+            "score": 85,
+            "reasoning": "Excellent reasoning but may be overly nuanced for pure analysis",
+            "optimizations": {
+              "temperature": 0.2,
+              "maxTokens": 3000,
+              "topP": 0.75
+            }
+          }
+        },
+        "incompatibleModels": {
+          "claude-3-sonnet": {
+            "score": 55,
+            "reasoning": "Creative specialization doesn't align with analytical personality",
+            "issues": [
+              "creative_bias",
+              "less_structured_output",
+              "imaginative_over_factual"
+            ]
+          }
+        }
+      }
+    },
+    "supportive_personalities": {
+      "template-supportive-001": {
+        "personalityType": "Supportive Guide",
+        "compatibleModels": {
+          "claude-3-opus": {
+            "score": 94,
+            "reasoning": "Excellent empathy simulation and nuanced understanding",
+            "optimizations": {
+              "temperature": 0.7,
+              "maxTokens": 2500,
+              "topP": 0.9,
+              "presencePenalty": 0.1
+            }
+          },
+          "gpt-4-turbo-preview": {
+            "score": 88,
+            "reasoning": "Strong general capabilities with good empathy modeling",
+            "optimizations": {
+              "temperature": 0.6,
+              "maxTokens": 2200,
+              "topP": 0.85
+            }
+          },
+          "claude-3-sonnet": {
+            "score": 82,
+            "reasoning": "Good balance of empathy and responsiveness",
+            "optimizations": {
+              "temperature": 0.7,
+              "maxTokens": 2000,
+              "topP": 0.9
+            }
+          }
+        },
+        "incompatibleModels": {
+          "gpt-4-analysis": {
+            "score": 40,
+            "reasoning": "Analytical focus conflicts with supportive communication style",
+            "issues": [
+              "analytical_coldness",
+              "fact_over_feeling",
+              "reduced_empathy"
+            ]
+          }
+        }
+      }
+    },
+    "assertive_personalities": {
+      "template-assertive-001": {
+        "personalityType": "Direct Leader",
+        "compatibleModels": {
+          "gpt-4-turbo-preview": {
+            "score": 92,
+            "reasoning": "Strong reasoning with capability for direct, authoritative responses",
+            "optimizations": {
+              "temperature": 0.5,
+              "maxTokens": 2000,
+              "topP": 0.8,
+              "frequencyPenalty": 0.0
+            }
+          },
+          "gpt-4-analysis": {
+            "score": 87,
+            "reasoning": "Analytical precision supports assertive decision-making",
+            "optimizations": {
+              "temperature": 0.4,
+              "maxTokens": 2500,
+              "topP": 0.75
+            }
+          },
+          "claude-3-opus": {
+            "score": 75,
+            "reasoning": "High capability but may be too nuanced for direct leadership style",
+            "optimizations": {
+              "temperature": 0.4,
+              "maxTokens": 2000,
+              "topP": 0.7
+            }
+          }
+        },
+        "incompatibleModels": {
+          "claude-3-haiku": {
+            "score": 45,
+            "reasoning": "Too basic for authoritative leadership requirements",
+            "issues": [
+              "limited_context",
+              "basic_reasoning",
+              "insufficient_depth"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "roleModelCompatibility": {
+    "technical_roles": {
+      "technical-advisor": {
+        "compatibleModels": {
+          "gpt-4-turbo-preview": {
+            "score": 95,
+            "reasoning": "Excellent coding and technical analysis capabilities",
+            "specializations": ["coding", "analysis", "reasoning"]
+          },
+          "gpt-4-analysis": {
+            "score": 90,
+            "reasoning": "Strong analytical capabilities for technical problem-solving",
+            "specializations": ["analysis", "reasoning"]
+          },
+          "claude-3-opus": {
+            "score": 85,
+            "reasoning": "High-level reasoning good for architecture decisions",
+            "specializations": ["reasoning", "analysis"]
+          }
+        },
+        "incompatibleModels": {
+          "claude-3-haiku": {
+            "score": 35,
+            "reasoning": "Insufficient technical depth for advisory role",
+            "issues": ["limited_technical_knowledge", "basic_reasoning"]
+          }
+        }
+      },
+      "developer": {
+        "compatibleModels": {
+          "gpt-4-turbo-preview": {
+            "score": 98,
+            "reasoning": "Specialized coding capabilities with function calling support",
+            "specializations": ["coding", "general", "reasoning"]
+          },
+          "gpt-3.5-turbo": {
+            "score": 82,
+            "reasoning": "Good coding support with fast response times",
+            "specializations": ["coding", "general"]
+          }
+        }
+      }
+    },
+    "creative_roles": {
+      "creative-director": {
+        "compatibleModels": {
+          "claude-3-sonnet": {
+            "score": 96,
+            "reasoning": "Specialized for creative content with excellent creative capabilities",
+            "specializations": ["creative", "general"]
+          },
+          "claude-3-opus": {
+            "score": 94,
+            "reasoning": "Highest capability model excellent for complex creative direction",
+            "specializations": ["creative", "reasoning", "general"]
+          },
+          "gpt-4-turbo-preview": {
+            "score": 80,
+            "reasoning": "Good general capabilities but less creative specialization",
+            "specializations": ["general", "reasoning"]
+          }
+        }
+      }
+    },
+    "analytical_roles": {
+      "analyst": {
+        "compatibleModels": {
+          "gpt-4-analysis": {
+            "score": 99,
+            "reasoning": "Purpose-built for analytical tasks with specialized capabilities",
+            "specializations": ["analysis", "reasoning"]
+          },
+          "claude-3-opus": {
+            "score": 92,
+            "reasoning": "Excellent reasoning capabilities for complex analysis",
+            "specializations": ["analysis", "reasoning", "general"]
+          },
+          "gpt-4-turbo-preview": {
+            "score": 88,
+            "reasoning": "Strong analytical reasoning with large context",
+            "specializations": ["analysis", "reasoning", "general"]
+          }
+        }
+      },
+      "researcher": {
+        "compatibleModels": {
+          "claude-3-opus": {
+            "score": 95,
+            "reasoning": "Large context excellent for comprehensive research synthesis",
+            "specializations": ["analysis", "reasoning", "general"]
+          },
+          "gpt-4-analysis": {
+            "score": 90,
+            "reasoning": "Strong analytical capabilities for research methodology",
+            "specializations": ["analysis", "reasoning"]
+          }
+        }
+      }
+    },
+    "support_roles": {
+      "coach": {
+        "compatibleModels": {
+          "claude-3-opus": {
+            "score": 93,
+            "reasoning": "Excellent empathy modeling and nuanced understanding for coaching",
+            "specializations": ["general", "reasoning"]
+          },
+          "claude-3-sonnet": {
+            "score": 85,
+            "reasoning": "Good balance of empathy and practical guidance",
+            "specializations": ["creative", "general"]
+          },
+          "gpt-4-turbo-preview": {
+            "score": 80,
+            "reasoning": "Strong reasoning for goal-oriented coaching",
+            "specializations": ["general", "reasoning"]
+          }
+        }
+      },
+      "facilitator": {
+        "compatibleModels": {
+          "claude-3-opus": {
+            "score": 90,
+            "reasoning": "Excellent for managing complex group dynamics",
+            "specializations": ["general", "reasoning"]
+          },
+          "gpt-4-turbo-preview": {
+            "score": 85,
+            "reasoning": "Good general capabilities for facilitation tasks",
+            "specializations": ["general", "reasoning"]
+          }
+        }
+      }
+    }
+  },
+  "combinedCompatibility": {
+    "optimal_combinations": [
+      {
+        "personalityId": "template-analytical-001",
+        "role": "analyst",
+        "modelId": "gpt-4-analysis",
+        "combinedScore": 97,
+        "reasoning": "Perfect alignment: analytical personality + analytical role + analytical model",
+        "optimizations": {
+          "temperature": 0.3,
+          "maxTokens": 4000,
+          "topP": 0.8,
+          "presencePenalty": 0.0
+        }
+      },
+      {
+        "personalityId": "template-creative-001",
+        "role": "creative-director",
+        "modelId": "claude-3-sonnet",
+        "combinedScore": 94,
+        "reasoning": "Excellent creative alignment across all components",
+        "optimizations": {
+          "temperature": 0.9,
+          "maxTokens": 3000,
+          "topP": 0.95,
+          "frequencyPenalty": 0.1
+        }
+      },
+      {
+        "personalityId": "template-supportive-001",
+        "role": "coach",
+        "modelId": "claude-3-opus",
+        "combinedScore": 93,
+        "reasoning": "Supportive personality + coaching role + empathetic model",
+        "optimizations": {
+          "temperature": 0.7,
+          "maxTokens": 2500,
+          "topP": 0.9,
+          "presencePenalty": 0.1
+        }
+      }
+    ],
+    "problematic_combinations": [
+      {
+        "personalityId": "template-creative-001",
+        "role": "analyst",
+        "modelId": "gpt-4-analysis",
+        "combinedScore": 35,
+        "reasoning": "Creative personality conflicts with analytical role and model",
+        "issues": [
+          "personality_role_mismatch",
+          "model_specialization_conflict",
+          "reduced_performance_expected"
+        ]
+      },
+      {
+        "personalityId": "template-analytical-001",
+        "role": "creative-director",
+        "modelId": "claude-3-sonnet",
+        "combinedScore": 42,
+        "reasoning": "Analytical personality conflicts with creative role requirements",
+        "issues": [
+          "personality_creativity_limitation",
+          "role_expectation_mismatch",
+          "suboptimal_creative_output"
+        ]
+      }
+    ]
+  },
+  "performanceMetrics": {
+    "responseTimeByComplexity": {
+      "simple_tasks": {
+        "gpt-3.5-turbo": 800,
+        "claude-3-haiku": 600,
+        "mock-fast-model": 100
+      },
+      "complex_analysis": {
+        "gpt-4-analysis": 3000,
+        "claude-3-opus": 3500,
+        "gpt-4-turbo-preview": 2500
+      },
+      "creative_generation": {
+        "claude-3-sonnet": 2000,
+        "claude-3-opus": 3500,
+        "gpt-4-turbo-preview": 2800
+      }
+    },
+    "costEfficiencyMatrix": {
+      "budget_conscious": [
+        {
+          "modelId": "gpt-3.5-turbo",
+          "costPerInteraction": 0.02,
+          "qualityScore": 75,
+          "efficiency": 85
+        },
+        {
+          "modelId": "claude-3-haiku",
+          "costPerInteraction": 0.01,
+          "qualityScore": 70,
+          "efficiency": 90
+        }
+      ],
+      "performance_focused": [
+        {
+          "modelId": "claude-3-opus",
+          "costPerInteraction": 0.5,
+          "qualityScore": 95,
+          "efficiency": 75
+        },
+        {
+          "modelId": "gpt-4-turbo-preview",
+          "costPerInteraction": 0.4,
+          "qualityScore": 90,
+          "efficiency": 80
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Model compatibility matrix for personality-role-model combinations",
+    "lastUpdated": "2025-07-27T00:00:00.000Z",
+    "categories": [
+      "personalityModelCompatibility",
+      "roleModelCompatibility",
+      "combinedCompatibility",
+      "performanceMetrics"
+    ],
+    "scoringSystem": {
+      "range": "0-100",
+      "excellent": "90-100",
+      "good": "70-89",
+      "acceptable": "50-69",
+      "poor": "30-49",
+      "incompatible": "0-29"
+    },
+    "optimizationGuidelines": {
+      "creative_tasks": "Higher temperature (0.7-0.9), higher topP (0.9-0.95)",
+      "analytical_tasks": "Lower temperature (0.2-0.4), moderate topP (0.75-0.85)",
+      "supportive_tasks": "Moderate temperature (0.6-0.7), high topP (0.85-0.9)",
+      "technical_tasks": "Low-moderate temperature (0.3-0.6), moderate topP (0.8-0.9)"
+    }
+  }
+}
