@@ -1,0 +1,10 @@
+/**
+ * Desktop app custom hooks exports.
+ *
+ * Barrel file for organizing and exporting all custom React hooks
+ * used in the desktop application.
+ *
+ * @module hooks
+ */
+
+export { useElectronIPC } from "./useElectronIPC";

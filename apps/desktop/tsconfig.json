@@ -20,7 +20,7 @@
       "@fishbowl-ai/shared": ["../../packages/shared/src"],
       "@fishbowl-ai/ui-theme": ["../../packages/ui-theme/src"]
     },
-    "types": ["node"]
+    "types": ["node", "jest", "@testing-library/jest-dom"]
   },
   "include": ["src", "src/types/electron.d.ts"],
   "exclude": ["node_modules", "dist", "dist-electron"],
