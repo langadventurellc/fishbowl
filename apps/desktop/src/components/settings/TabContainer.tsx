@@ -16,7 +16,7 @@
  * @module components/settings/TabContainer
  */
 
-import React, { useMemo, useCallback, useEffect } from "react";
+import React, { useMemo, useCallback, useEffect, useState } from "react";
 import { cn } from "../../lib/utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { COMMON_FOCUS_CLASSES } from "../../styles/focus";
@@ -128,23 +128,45 @@ export const TabContainer = React.memo(function TabContainer({
     disabled,
   });
 
-  // Enhanced tab change handler with announcements (must be before early return)
+  // Transition state management to prevent conflicts during rapid tab switching
+  const [isTransitioning, setIsTransitioning] = useState(false);
+
+  // Enhanced tab change handler with announcements and transition management
   const handleEnhancedTabChange = useCallback(
     (value: string) => {
       const newTab = value as SettingsSubTab;
+
+      // Prevent rapid transitions that could cause conflicts
+      if (isTransitioning) return;
+
+      // Set transitioning state to debounce rapid changes
+      setIsTransitioning(true);
 
       // Call appropriate change handler based on integration mode
       if (onTabChange) {
         onTabChange(newTab);
       }
 
-      // Announce tab change for screen readers
+      // Clear transition state after animation completes
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, animationDuration);
+
+      // Announce tab change for screen readers (delayed for smooth transition)
       const tabLabel = validTabs.find((tab) => tab.id === newTab)?.label;
       if (tabLabel) {
-        announceStateChange(`${tabLabel} tab selected`);
+        setTimeout(() => {
+          announceStateChange(`${tabLabel} tab selected`);
+        }, animationDuration / 2);
       }
     },
-    [onTabChange, validTabs, announceStateChange],
+    [
+      onTabChange,
+      validTabs,
+      announceStateChange,
+      animationDuration,
+      isTransitioning,
+    ],
   );
 
   // Don't render if no valid tabs are provided
@@ -212,10 +234,17 @@ export const TabContainer = React.memo(function TabContainer({
             className={cn(
               // Base content styling
               "mt-4 outline-none",
-              // Smooth transition for content changes
-              COMMON_FOCUS_CLASSES.transition,
-              // Custom transition duration
-              `transition-opacity duration-[${animationDuration}ms] ease-in-out`,
+              // Enhanced transition system with GPU acceleration
+              "transition-all duration-200 ease-in-out",
+              // Opacity and transform transitions for smooth enter/exit
+              `transition-opacity transition-transform duration-[${animationDuration}ms] ease-in-out`,
+              // GPU acceleration hint during transitions
+              "will-change-transform will-change-opacity",
+              // Reduced motion support - disable animations if user prefers reduced motion
+              "motion-safe:transition-all motion-reduce:transition-none",
+              // Enhanced data-state transitions for smooth tab switching
+              "data-[state=active]:opacity-100 data-[state=active]:translate-y-0",
+              "data-[state=inactive]:opacity-0 data-[state=inactive]:translate-y-1",
               // Screen reader support
               "focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2",
             )}

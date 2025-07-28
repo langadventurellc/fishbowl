@@ -1,0 +1,93 @@
+/**
+ * Tab content transition classes for smooth 200ms animations.
+ *
+ * Provides enhanced enter/exit animations for tab content switching with:
+ * - Smooth fade-in/fade-out effects with subtle vertical movement
+ * - GPU-accelerated transforms for optimal performance
+ * - Reduced motion support for accessibility compliance
+ * - Proper timing coordination with TabContainer component
+ *
+ * @module styles/tab-transitions
+ */
+
+/* Base tab content styling with transitions */
+.tab-content-base {
+  @apply transition-all duration-200 ease-in-out;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Enhanced transitions that respect reduced motion preferences */
+@media (prefers-reduced-motion: no-preference) {
+  /* Enter animation: content fades in from slightly below */
+  .tab-content-enter {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  
+  .tab-content-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: 
+      opacity 200ms ease-out,
+      transform 200ms ease-out;
+  }
+  
+  /* Exit animation: content fades out while moving slightly up */
+  .tab-content-exit {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .tab-content-exit-active {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: 
+      opacity 200ms ease-in,
+      transform 200ms ease-in;
+  }
+
+  /* Smooth transition between active and inactive states */
+  .tab-content-transition {
+    transition: 
+      opacity 200ms ease-in-out,
+      transform 200ms ease-in-out;
+  }
+
+  /* Active state: fully visible at normal position */
+  .tab-content-active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Inactive state: hidden and slightly offset */
+  .tab-content-inactive {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Reduced motion fallback - disable all animations */
+@media (prefers-reduced-motion: reduce) {
+  .tab-content-enter,
+  .tab-content-enter-active,
+  .tab-content-exit,
+  .tab-content-exit-active,
+  .tab-content-transition,
+  .tab-content-active,
+  .tab-content-inactive {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* GPU acceleration hints for smooth performance */
+.tab-content-transitioning {
+  will-change: transform, opacity;
+}
+
+/* Remove GPU acceleration hint when transitions are complete */
+.tab-content-stable {
+  will-change: auto;
+}
