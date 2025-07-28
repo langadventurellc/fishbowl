@@ -10,3 +10,6 @@
 export * from "./SettingsModal";
 export * from "./SettingsNavigation";
 export * from "./SettingsContent";
+
+// Re-export Tabs components for convenient access from settings module
+export { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";

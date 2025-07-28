@@ -8,13 +8,7 @@
  * - Placeholder content for each settings section
  */
 
-import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "../../lib/utils";
-import { getAccessibleDescription } from "@/utils";
-import { ApiKeysSettings } from "./api-keys/ApiKeysSettings";
-import { FormErrorDisplay } from "./FormErrorDisplay";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -29,14 +23,20 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { getAccessibleDescription } from "@/utils";
 import {
-  generalSettingsSchema,
-  type GeneralSettingsFormData,
   defaultGeneralSettings,
+  generalSettingsSchema,
   useUnsavedChanges,
+  type GeneralSettingsFormData,
 } from "@fishbowl-ai/shared";
-import { Button } from "@/components/ui/button";
-import { Download, Upload, Trash2, AlertTriangle } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertTriangle, Download, Trash2, Upload } from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { cn } from "../../lib/utils";
+import { ApiKeysSettings } from "./ApiKeysSettings";
+import { FormErrorDisplay } from "./FormErrorDisplay";
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
