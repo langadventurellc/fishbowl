@@ -417,6 +417,12 @@ const AppearanceSettings: React.FC = () => {
   const [showActivityTime, setShowActivityTime] = useState(true);
   const [compactList, setCompactList] = useState(false);
 
+  // Local state management for chat display settings
+  const [fontSize, setFontSize] = useState<number[]>([14]);
+  const [messageSpacing, setMessageSpacing] = useState<
+    "compact" | "normal" | "relaxed"
+  >("normal");
+
   // Helper function to get preview colors based on selected theme
   const getPreviewColors = (theme: "light" | "dark" | "system") => {
     const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
@@ -618,6 +624,81 @@ const AppearanceSettings: React.FC = () => {
                   onCheckedChange={setCompactList}
                   aria-describedby="compact-list-description"
                 />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Chat Display Group */}
+        <div className="space-y-4">
+          <h2 className="text-[18px] font-semibold mb-4">Chat Display</h2>
+          <div className="grid gap-6">
+            {/* Font Size Slider Control */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="text-sm font-medium">Message Font Size</Label>
+                <span className="text-sm text-muted-foreground">
+                  {fontSize[0]}px
+                </span>
+              </div>
+              <Slider
+                value={fontSize}
+                onValueChange={setFontSize}
+                min={12}
+                max={18}
+                step={1}
+                className="w-full"
+                aria-label="Message font size"
+              />
+              <div className="text-[13px] text-muted-foreground">
+                Adjust the font size for chat messages
+              </div>
+            </div>
+
+            {/* Message Spacing Radio Group */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Message Spacing</Label>
+              <RadioGroup
+                value={messageSpacing}
+                onValueChange={(value) =>
+                  setMessageSpacing(value as "compact" | "normal" | "relaxed")
+                }
+                className="flex flex-row space-x-6"
+                aria-describedby="spacing-description"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="compact" id="spacing-compact" />
+                  <Label
+                    htmlFor="spacing-compact"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    Compact
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="normal" id="spacing-normal" />
+                  <Label
+                    htmlFor="spacing-normal"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    Normal
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="relaxed" id="spacing-relaxed" />
+                  <Label
+                    htmlFor="spacing-relaxed"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    Relaxed
+                  </Label>
+                </div>
+              </RadioGroup>
+              <div
+                id="spacing-description"
+                className="text-[13px] text-muted-foreground"
+              >
+                Control the spacing between chat messages
               </div>
             </div>
           </div>
