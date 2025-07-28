@@ -8,7 +8,7 @@
  * - Placeholder content for each settings section
  */
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "../../lib/utils";
@@ -404,6 +404,97 @@ const ApiKeysSettings: React.FC = () => (
   </div>
 );
 
+// ThemePreview component with React.memo for performance optimization
+interface ThemePreviewProps {
+  selectedTheme: "light" | "dark" | "system";
+}
+
+const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
+  const previewColors = useMemo(() => {
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    const effectiveTheme =
+      selectedTheme === "system" ? systemTheme : selectedTheme;
+
+    return effectiveTheme === "dark"
+      ? {
+          background: "rgb(44, 40, 37)",
+          foreground: "rgb(226, 232, 240)",
+          border: "rgb(58, 54, 51)",
+          primary: "rgb(129, 140, 248)",
+          accent: "rgb(72, 68, 65)",
+        }
+      : {
+          background: "rgb(245, 245, 244)",
+          foreground: "rgb(30, 41, 59)",
+          border: "rgb(214, 211, 209)",
+          primary: "rgb(99, 102, 241)",
+          accent: "rgb(214, 211, 209)",
+        };
+  }, [selectedTheme]);
+
+  return (
+    <div
+      className="w-[200px] h-[100px] border rounded-lg p-3 flex flex-col justify-between transition-colors duration-200 ease-in-out"
+      style={{
+        backgroundColor: previewColors.background,
+        borderColor: previewColors.border,
+        color: previewColors.foreground,
+      }}
+      aria-label="Theme preview showing background, text, and accent colors"
+      role="img"
+    >
+      <div className="flex items-center justify-between">
+        <div className="text-xs font-medium">Sample Text</div>
+        <div
+          className="w-2 h-2 rounded-full transition-colors duration-200 ease-in-out"
+          style={{ backgroundColor: previewColors.accent }}
+          aria-hidden="true"
+        />
+      </div>
+      <div className="flex gap-1" aria-hidden="true">
+        <div
+          className="h-1 flex-1 rounded transition-colors duration-200 ease-in-out"
+          style={{ backgroundColor: previewColors.primary }}
+        />
+        <div
+          className="h-1 flex-1 rounded opacity-50 transition-colors duration-200 ease-in-out"
+          style={{ backgroundColor: previewColors.primary }}
+        />
+      </div>
+    </div>
+  );
+});
+
+ThemePreview.displayName = "ThemePreview";
+
+// FontSizePreview component with React.memo for performance optimization
+interface FontSizePreviewProps {
+  fontSize: number;
+}
+
+const FontSizePreview = React.memo<FontSizePreviewProps>(({ fontSize }) => {
+  return (
+    <div className="mt-4 p-3 border rounded-lg bg-muted/30">
+      <div
+        className="text-foreground transition-all duration-150 ease-in-out"
+        style={{
+          fontSize: `${fontSize}px`,
+          lineHeight: 1.5,
+        }}
+        aria-label={`Font size preview at ${fontSize} pixels`}
+        role="text"
+      >
+        This is how your messages will appear
+      </div>
+    </div>
+  );
+});
+
+FontSizePreview.displayName = "FontSizePreview";
+
 const AppearanceSettings: React.FC = () => {
   // Local state management for theme selection
   const [selectedTheme, setSelectedTheme] = useState<
@@ -423,30 +514,14 @@ const AppearanceSettings: React.FC = () => {
     "compact" | "normal" | "relaxed"
   >("normal");
 
-  // Helper function to get preview colors based on selected theme
-  const getPreviewColors = (theme: "light" | "dark" | "system") => {
-    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-      .matches
-      ? "dark"
-      : "light";
-    const effectiveTheme = theme === "system" ? systemTheme : theme;
+  // Optimized event handlers with useCallback
+  const handleThemeChange = useCallback((value: string) => {
+    setSelectedTheme(value as "light" | "dark" | "system");
+  }, []);
 
-    return effectiveTheme === "dark"
-      ? {
-          background: "rgb(44, 40, 37)",
-          foreground: "rgb(226, 232, 240)",
-          border: "rgb(58, 54, 51)",
-          primary: "rgb(129, 140, 248)",
-          accent: "rgb(72, 68, 65)",
-        }
-      : {
-          background: "rgb(245, 245, 244)",
-          foreground: "rgb(30, 41, 59)",
-          border: "rgb(214, 211, 209)",
-          primary: "rgb(99, 102, 241)",
-          accent: "rgb(214, 211, 209)",
-        };
-  };
+  const handleFontSizeChange = useCallback((value: number[]) => {
+    setFontSize(value);
+  }, []);
 
   return (
     <div className="space-y-6 max-w-[600px] mx-auto px-4 sm:px-6">
@@ -464,9 +539,7 @@ const AppearanceSettings: React.FC = () => {
           <div className="grid gap-4">
             <RadioGroup
               value={selectedTheme}
-              onValueChange={(value) =>
-                setSelectedTheme(value as "light" | "dark" | "system")
-              }
+              onValueChange={handleThemeChange}
               className="flex flex-col space-y-2"
             >
               <div className="flex items-center space-x-2 min-h-[44px] py-1">
@@ -509,39 +582,7 @@ const AppearanceSettings: React.FC = () => {
         <div className="space-y-4">
           <h2 className="text-[18px] font-semibold mb-4">Preview</h2>
           <div className="grid gap-4">
-            <div
-              className="w-[200px] h-[100px] border rounded-lg p-3 flex flex-col justify-between transition-colors"
-              style={{
-                backgroundColor: getPreviewColors(selectedTheme).background,
-                borderColor: getPreviewColors(selectedTheme).border,
-                color: getPreviewColors(selectedTheme).foreground,
-              }}
-              aria-label="Theme preview"
-            >
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-medium">Sample Text</div>
-                <div
-                  className="w-2 h-2 rounded-full"
-                  style={{
-                    backgroundColor: getPreviewColors(selectedTheme).accent,
-                  }}
-                />
-              </div>
-              <div className="flex gap-1">
-                <div
-                  className="h-1 flex-1 rounded"
-                  style={{
-                    backgroundColor: getPreviewColors(selectedTheme).primary,
-                  }}
-                />
-                <div
-                  className="h-1 flex-1 rounded opacity-50"
-                  style={{
-                    backgroundColor: getPreviewColors(selectedTheme).primary,
-                  }}
-                />
-              </div>
-            </div>
+            <ThemePreview selectedTheme={selectedTheme} />
           </div>
         </div>
 
@@ -643,13 +684,17 @@ const AppearanceSettings: React.FC = () => {
               </div>
               <Slider
                 value={fontSize}
-                onValueChange={setFontSize}
+                onValueChange={handleFontSizeChange}
                 min={12}
                 max={18}
                 step={1}
                 className="w-full"
                 aria-label="Message font size"
               />
+
+              {/* Font Size Preview */}
+              <FontSizePreview fontSize={fontSize[0] || 14} />
+
               <div className="text-[13px] text-muted-foreground">
                 Adjust the font size for chat messages
               </div>
