@@ -159,15 +159,15 @@ export function ApiKeysSettings() {
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-[24px] font-bold mb-[20px]">API Keys</h1>
-        <p className="text-muted-foreground">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="space-y-2">
+        <h1 className="text-xl sm:text-2xl font-bold">API Keys</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           Manage API keys for various AI services and integrations
         </p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         {Object.values(PROVIDERS).map((provider) => {
           const providerState = providerStates[provider.id];
           if (!providerState) {

@@ -2,11 +2,11 @@
 kind: feature
 id: F-api-keys-section-implementation
 title: API Keys Section Implementation
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-27T16:36:52.087564"
-updated: "2025-07-27T16:36:52.087564"
+updated: "2025-07-28T15:57:36.718204+00:00"
 schema_version: "1.1"
 parent: E-basic-settings-sections
 ---
