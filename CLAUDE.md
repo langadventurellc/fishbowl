@@ -2,6 +2,26 @@
 
 A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.
 
+## Repository Structure
+
+**Applications:**
+
+- `apps/desktop/` - Electron desktop application with React UI
+- `apps/mobile/` - React Native mobile application with Expo
+
+**Shared Code:**
+
+- `packages/shared/` - Business logic, state management, types, and utilities shared between platforms
+- `packages/eslint-config/` - Shared ESLint configuration
+- `packages/ui-theme/` - Shared theme and styling utilities
+
+**Development & Documentation:**
+
+- `docs/` - Architecture guides, specifications, and documentation
+- `tests/` - End-to-end testing suites for desktop and mobile
+- `migrations/` - Database migration scripts
+- `planning/` - Project planning and task management using Trellis MCP
+
 ## Development
 
 See [Architecture Guide](docs/architecture/monorepo.md) for the overall structure and guidelines.
@@ -175,71 +195,61 @@ Never put UI components in shared packages. Always keep platform-specific code i
 
 When working with shadcn/ui components, always use `shadcn-ui` MCP tools to get the latest updates and best practices.
 
-For full architecture details, see: [Monorepo Architecture](docs/architecture/monorepo.md)
-
 ---
 
-## Clean‑Code Charter
+# Clean‑Code Charter
 
-> **Purpose** Guide large‑language‑model (LLM) coding agents toward the simplest **working** solution, written in the style of seasoned engineers (Kent Beck, Robert Martin, et al.).
-> The charter is language‑agnostic but assumes most code is authored in **Python**.
+**Purpose** Steer LLM coding agents toward the **simplest working solution**, in the spirit of Kent Beck & Robert C. Martin.
 
-### 1 Guiding Maxims (agents must echo these before coding)
+## 1  Guiding Maxims – echo before coding
 
-| Maxim                                  | Practical test                                                      |
-| -------------------------------------- | ------------------------------------------------------------------- |
-| **KISS** - _Keep It Super Simple_      | Could a junior dev explain the design to a peer in ≤ 2 min?         |
-| **YAGNI** - _You Aren't Gonna Need It_ | Is the abstraction used < 3 times? If so, inline it.                |
-| **SRP / small units**                  | One concept per function; ≤ 20 logical LOC; cyclomatic ≤ 5.         |
-| **DRY** - _Don't Repeat Yourself_      | Is the code repeated in ≥ 2 places? If so, extract it.              |
-| **Simplicity**                         | Is the code simpler than the alternative? If not, refactor it.      |
-| **Explicit is better than implicit**   | Is the code self‑documenting? If not, add comments.                 |
-| **Fail fast**                          | Does the code handle errors gracefully? If not, add error handling. |
+| Maxim                   | Practical test                         |
+| ----------------------- | -------------------------------------- |
+| **KISS**                | Junior dev explains in ≤ 2 min         |
+| **YAGNI**               | Abstraction < 3 uses? Inline           |
+| **SRP**                 | One concept/function; ≤ 20 LOC; CC ≤ 5 |
+| **DRY**                 | Duplication? Extract                   |
+| **Simplicity**          | Choose the simpler path                |
+| **Explicit > Implicit** | Self‑documenting, or add comments      |
+| **Fail fast**           | Clear, early error handling            |
 
-### 2 Architecture Heuristics
+## 2  Architecture
 
-#### 2.1 File‑ & package‑level
+### Files / Packages
 
-- **≤ 400 LOC per file** (logical lines).
-- No **"util" or "helpers" dumping grounds** - every module owns a domain noun/verb.
-- **Naming convention:**
-  - **tsx** files: PascalCasing - `ComponentName.tsx`
-  - **ts** files: camelCasing - `moduleName.ts`
-  - **css** files: camelCasing - `moduleName.css`
-  - Do not use `kebab-casing` for TypeScript files.
+- ≤ 400 logical LOC
+- No “util” dumping grounds
+- Naming:
+  - `ComponentName.tsx` (PascalCase)
+  - `moduleName.ts` / `moduleName.css` (camelCase)
 
-#### 2.2 Module decomposition & dependency rules _(new)_
+### Modules & Dependencies
 
-1. **Domain‑oriented modules.** Each module encapsulates **one** coherent business concept (noun) or service (verb).
-2. **Explicit public surface.** Export `index.ts` only what callers need; everything else is private.
-3. **Acyclic dependency graph.** Imports must not form cycles; prefer dependency‑inversion interfaces to break loops.
-4. **Shallow import depth ≤ 3.** Deep chains signal hidden coupling.
-5. **Rule of three for new layers.** Add a new package level only after three modules share the same concern.
-6. **Composition over inheritance** unless ≥ 2 concrete subclasses are already required.
-7. **Ports & Adapters pattern** for I/O: keep domain logic free of external frameworks (DB, HTTP, UI).
-8. **Naming convention:** _package/module = noun_, _class = noun_, _function = verb + noun_.
+1. Each module owns **one** domain concept.
+2. Export only what callers need (`index.ts`).
+3. No import cycles – break with interfaces.
+4. Import depth ≤ 3.
+5. Prefer composition; inherit only if ≥ 2 real subclasses.
+6. Keep domain pure; use **Ports & Adapters** for I/O.
+7. Names: packages/modules = nouns; functions = verb + noun.
 
-### 3 Testing Policy
+## 3  Testing
 
-- **Goldilocks rule.** Exactly **one** happy‑path unit test per public function _unless_ complexity > 5.
-- **Integration tests only at seams.** Use fakes/mocks internally.
-- **Performance tests gated.** Only generate when the target class/function bears a `@PerfTest` decorator.
+- **One** happy‑path unit test per public function (unless CC > 5).
+- Integration tests only at service seams; mock internals.
 
-### 4 Agent Self‑Review Checklist (before emitting code)
+## 4  Self‑Review Checklist
 
-1. Could this be **one function simpler**?
-2. Did I introduce an abstraction used **only once**?
-3. Did I write a performance test for a function or class without a `@PerfTest` decorator?
-4. Can a junior dev grok each file in **< 5 min**?
+1. Could this be one function simpler?
 
-### 5. Forbidden
+## 5  Forbidden
 
-- **NO any types** - Use specific, concrete types always
-- **NO console.log in production code** - Use proper logging
-- **NO keeping old and new code together** - Delete replaced code immediately
-- **NO shared "kitchen-sink" modules** - One export per file!
-- **NO hardcoded secrets or environment values**
-- **NO direct DOM manipulation in React** - Use React patterns
+- `any` types
+- `console.log` in production
+- Dead code kept around
+- Shared “kitchen‑sink” modules
+- Hard‑coded secrets or env values
+- Direct DOM manipulation in React
 
 ---
 
@@ -253,7 +263,6 @@ For full architecture details, see: [Monorepo Architecture](docs/architecture/mo
 
 If you encounter issues:
 
-- Use the debugging subagent
 - Check the documentation in `docs/`
 - Use the context7 MCP tool for up-to-date library documentation
 - Use web for research (the current year is 2025)

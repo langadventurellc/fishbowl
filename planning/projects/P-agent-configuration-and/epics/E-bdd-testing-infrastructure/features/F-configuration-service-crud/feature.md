@@ -2,12 +2,12 @@
 kind: feature
 id: F-configuration-service-crud
 title: Configuration Service CRUD Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-agent-configuration-creation
 created: "2025-07-26T13:46:47.793691"
-updated: "2025-07-26T13:46:47.793691"
+updated: "2025-07-28T20:26:03.031770+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
