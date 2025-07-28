@@ -404,42 +404,137 @@ const ApiKeysSettings: React.FC = () => (
   </div>
 );
 
-const AppearanceSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Appearance</h1>
-      <p className="text-muted-foreground mb-6">
-        Customize the appearance and theme of the application.
-      </p>
-    </div>
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Theme</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {["Light", "Dark", "System"].map((theme) => (
-            <div key={theme} className="border rounded-lg p-4 space-y-2">
-              <div className="h-16 bg-muted rounded" />
-              <div className="text-sm font-medium text-center">{theme}</div>
+const AppearanceSettings: React.FC = () => {
+  // Local state management for theme selection
+  const [selectedTheme, setSelectedTheme] = useState<
+    "light" | "dark" | "system"
+  >("system");
+
+  // Helper function to get preview colors based on selected theme
+  const getPreviewColors = (theme: "light" | "dark" | "system") => {
+    const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+      .matches
+      ? "dark"
+      : "light";
+    const effectiveTheme = theme === "system" ? systemTheme : theme;
+
+    return effectiveTheme === "dark"
+      ? {
+          background: "rgb(44, 40, 37)",
+          foreground: "rgb(226, 232, 240)",
+          border: "rgb(58, 54, 51)",
+          primary: "rgb(129, 140, 248)",
+          accent: "rgb(72, 68, 65)",
+        }
+      : {
+          background: "rgb(245, 245, 244)",
+          foreground: "rgb(30, 41, 59)",
+          border: "rgb(214, 211, 209)",
+          primary: "rgb(99, 102, 241)",
+          accent: "rgb(214, 211, 209)",
+        };
+  };
+
+  return (
+    <div className="space-y-6 max-w-[600px] mx-auto px-4 sm:px-6">
+      <div>
+        <h1 className="text-[24px] font-bold mb-[20px]">Appearance</h1>
+        <p className="text-muted-foreground text-sm mb-6">
+          Customize the appearance and theme of the application
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {/* Theme Selection Group */}
+        <div className="space-y-4">
+          <h2 className="text-[18px] font-semibold mb-4">Theme</h2>
+          <div className="grid gap-4">
+            <RadioGroup
+              value={selectedTheme}
+              onValueChange={(value) =>
+                setSelectedTheme(value as "light" | "dark" | "system")
+              }
+              className="flex flex-col space-y-2"
+            >
+              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <RadioGroupItem value="light" id="theme-light" />
+                <Label
+                  htmlFor="theme-light"
+                  className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                >
+                  Light
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <RadioGroupItem value="dark" id="theme-dark" />
+                <Label
+                  htmlFor="theme-dark"
+                  className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                >
+                  Dark
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <RadioGroupItem value="system" id="theme-system" />
+                <div className="flex flex-col flex-1 py-2">
+                  <Label
+                    htmlFor="theme-system"
+                    className="text-sm font-normal cursor-pointer"
+                  >
+                    System
+                  </Label>
+                  <span className="text-xs text-muted-foreground mt-1">
+                    Use your system preference
+                  </span>
+                </div>
+              </div>
+            </RadioGroup>
+          </div>
+        </div>
+
+        {/* Theme Preview Area */}
+        <div className="space-y-4">
+          <h2 className="text-[18px] font-semibold mb-4">Preview</h2>
+          <div className="grid gap-4">
+            <div
+              className="w-[200px] h-[100px] border rounded-lg p-3 flex flex-col justify-between transition-colors"
+              style={{
+                backgroundColor: getPreviewColors(selectedTheme).background,
+                borderColor: getPreviewColors(selectedTheme).border,
+                color: getPreviewColors(selectedTheme).foreground,
+              }}
+              aria-label="Theme preview"
+            >
+              <div className="flex items-center justify-between">
+                <div className="text-xs font-medium">Sample Text</div>
+                <div
+                  className="w-2 h-2 rounded-full"
+                  style={{
+                    backgroundColor: getPreviewColors(selectedTheme).accent,
+                  }}
+                />
+              </div>
+              <div className="flex gap-1">
+                <div
+                  className="h-1 flex-1 rounded"
+                  style={{
+                    backgroundColor: getPreviewColors(selectedTheme).primary,
+                  }}
+                />
+                <div
+                  className="h-1 flex-1 rounded opacity-50"
+                  style={{
+                    backgroundColor: getPreviewColors(selectedTheme).primary,
+                  }}
+                />
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Display Settings</h2>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-muted rounded border" />
-            <label className="text-sm">Show timestamps</label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-muted rounded border" />
-            <label className="text-sm">Show conversation list</label>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const AgentsSettings: React.FC = () => (
   <div className="space-y-6">

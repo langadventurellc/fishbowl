@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-replace-appearancesettings
+parent: F-appearance-settings-section
+status: done
 title: Replace AppearanceSettings placeholder with theme selection UI
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-27T18:45:34.183012"
-updated: "2025-07-27T18:45:34.183012"
+updated: "2025-07-27T21:24:03.420126"
 schema_version: "1.1"
-parent: F-appearance-settings-section
+worktree: null
 ---
 
 # Replace AppearanceSettings Placeholder with Theme Selection UI
@@ -105,3 +106,7 @@ Include basic unit tests in the same task:
 - Current settings modal structure and styling
 
 ### Log
+
+**2025-07-28T02:35:36.243743Z** - Successfully replaced AppearanceSettings placeholder with fully functional theme selection UI featuring shadcn/ui RadioGroup component for Light/Dark/System theme options, 200x100px live theme preview area with color mapping, local state management, and comprehensive accessibility support. Implementation follows exact design specifications and existing GeneralSettings patterns. Includes complete unit test suite with 8 passing tests covering rendering, interaction, accessibility, and visual hierarchy.
+
+- filesChanged: ["apps/desktop/src/components/settings/SettingsContent.tsx", "apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx"]
