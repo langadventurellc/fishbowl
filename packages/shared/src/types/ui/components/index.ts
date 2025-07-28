@@ -45,3 +45,4 @@ export * from "./SidebarWidthVariant";
 export * from "./TextareaDisplayProps";
 export * from "./ThemeToggleProps";
 export * from "./ThinkingIndicatorProps";
+export * from "./TabContainerProps";

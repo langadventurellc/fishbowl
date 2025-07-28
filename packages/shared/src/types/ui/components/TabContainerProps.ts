@@ -4,11 +4,11 @@
  * Defines all the properties that can be passed to TabContainer,
  * including tab configurations, state management, and customization options.
  *
- * @module components/settings/types/TabContainerProps
+ * @module types/ui/components/TabContainerProps
  */
 
-import type { SettingsSubTab } from "@fishbowl-ai/shared";
-import type { TabConfiguration } from "./TabConfiguration";
+import type { SettingsSubTab } from "../../../stores/settings/settingsSubTab";
+import type { TabConfiguration } from "../../settings/TabConfiguration";
 
 /**
  * Props interface for the TabContainer component.
@@ -28,4 +28,10 @@ export interface TabContainerProps {
   className?: string;
   /** Duration in milliseconds for content transitions (default: 200ms) */
   animationDuration?: number;
+  /** Tab orientation for keyboard navigation (default: 'horizontal') */
+  orientation?: "horizontal" | "vertical";
+  /** Tab activation mode (default: 'automatic') */
+  activationMode?: "automatic" | "manual";
+  /** Whether tab navigation is disabled */
+  disabled?: boolean;
 }

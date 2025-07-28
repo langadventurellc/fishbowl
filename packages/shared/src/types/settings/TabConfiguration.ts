@@ -23,4 +23,6 @@ export interface TabConfiguration {
   className?: string;
   /** Icon component to display alongside label */
   icon?: ComponentType;
+  /** Custom ARIA label for accessibility (overrides label) */
+  ariaLabel?: string;
 }

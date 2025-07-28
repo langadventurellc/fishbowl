@@ -15,5 +15,5 @@ export { TabContainer } from "./TabContainer";
 // Re-export Tabs components for convenient access from settings module
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 
-// Re-export types for TabContainer
-export type { TabConfiguration, TabContainerProps } from "./types";
+// Re-export types for TabContainer from shared package
+export type { TabConfiguration, TabContainerProps } from "@fishbowl-ai/shared";
