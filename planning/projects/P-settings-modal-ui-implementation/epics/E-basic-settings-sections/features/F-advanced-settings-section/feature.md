@@ -2,11 +2,11 @@
 kind: feature
 id: F-advanced-settings-section
 title: Advanced Settings Section Implementation
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-27T16:38:30.075242"
-updated: "2025-07-27T16:38:30.075242"
+updated: "2025-07-28T17:43:47.798053+00:00"
 schema_version: "1.1"
 parent: E-basic-settings-sections
 ---

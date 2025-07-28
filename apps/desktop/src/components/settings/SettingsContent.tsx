@@ -836,52 +836,24 @@ const RolesSettings: React.FC = () => (
   </div>
 );
 
-// Reusable warning and helper text components for consistent typography and visual hierarchy
-const HelperText = ({
-  children,
-  className = "mt-2",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => (
-  <div className={`text-[13px] text-muted-foreground ${className}`}>
-    {children}
-  </div>
-);
-
-const WarningText = ({
-  children,
-  icon,
-  className = "mt-2",
-}: {
-  children: React.ReactNode;
-  icon?: React.ReactNode;
-  className?: string;
-}) => (
-  <div
-    className={`text-[13px] text-amber-600 dark:text-amber-400 ${className} flex items-center gap-1`}
-  >
-    {icon}
-    {children}
-  </div>
-);
-
-const DangerText = ({
-  children,
-  id,
-}: {
-  children: React.ReactNode;
-  id?: string;
-}) => (
-  <div id={id} className="text-[13px] text-destructive mt-2">
-    {children}
-  </div>
-);
+// Helper components removed - using direct div elements for better accessibility control
 
 const AdvancedSettings: React.FC = () => {
   // Developer Options state management
   const [debugMode, setDebugMode] = useState(false);
   const [experimentalFeatures, setExperimentalFeatures] = useState(false);
+
+  // Loading states for accessibility announcements
+  const [isExporting] = useState(false);
+  const [isImporting] = useState(false);
+  const [isClearing] = useState(false);
+
+  // Success/error states for user feedback
+  const [exportSuccess] = useState(false);
+  const [importError] = useState("");
+
+  // File input ref for Import button accessibility
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Handler functions for Data Management buttons
   const handleExportSettings = useCallback(() => {
@@ -891,6 +863,7 @@ const AdvancedSettings: React.FC = () => {
 
   const handleImportSettings = useCallback(() => {
     console.log("Import Settings clicked - functionality to be implemented");
+    fileInputRef.current?.click();
     // TODO: Implement settings import functionality
   }, []);
 
@@ -909,6 +882,18 @@ const AdvancedSettings: React.FC = () => {
           Advanced configuration options for power users.
         </p>
       </div>
+
+      {/* Live regions for screen reader announcements */}
+      <div role="status" aria-live="polite" className="sr-only">
+        {isExporting && "Exporting settings..."}
+        {isImporting && "Importing settings..."}
+        {isClearing && "Clearing conversations..."}
+      </div>
+
+      <div role="alert" aria-live="assertive" className="sr-only">
+        {exportSuccess && "Settings exported successfully"}
+        {importError && `Import failed: ${importError}`}
+      </div>
       <div className="space-y-6">
         <div className="space-y-4">
           <h2 className="text-[18px] font-semibold mb-4">Data Management</h2>
@@ -920,46 +905,78 @@ const AdvancedSettings: React.FC = () => {
                   variant="secondary"
                   size="default"
                   onClick={handleExportSettings}
-                  className="h-10 justify-start gap-2"
-                  aria-label="Export all settings as JSON file"
+                  className="h-10 justify-start gap-2 min-h-[44px]"
+                  aria-label="Export all application settings as JSON file"
+                  aria-describedby="export-help-text"
                 >
-                  <Download className="w-4 h-4" />
+                  <Download className="w-4 h-4" aria-hidden="true" />
                   Export All Settings
                 </Button>
-                <HelperText>Export settings as JSON file</HelperText>
+                <div
+                  id="export-help-text"
+                  className="text-[13px] text-muted-foreground mt-2"
+                >
+                  Downloads a JSON file containing all your application settings
+                </div>
               </div>
 
-              {/* Import Settings Button */}
+              {/* Import Settings Button with hidden file input */}
               <div className="flex flex-col">
                 <Button
                   variant="secondary"
                   size="default"
                   onClick={handleImportSettings}
-                  className="h-10 justify-start gap-2"
+                  className="h-10 justify-start gap-2 min-h-[44px]"
                   aria-label="Import settings from JSON file"
+                  aria-describedby="import-help-text import-warning"
                 >
-                  <Upload className="w-4 h-4" />
+                  <Upload className="w-4 h-4" aria-hidden="true" />
                   Import Settings
                 </Button>
-                <HelperText>Import settings from JSON file</HelperText>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept=".json"
+                  className="sr-only"
+                  aria-label="Select JSON settings file to import"
+                  onChange={(e) => {
+                    // TODO: Handle file selection
+                    console.log("File selected:", e.target.files?.[0]);
+                  }}
+                />
+                <div
+                  id="import-help-text"
+                  className="text-[13px] text-muted-foreground mt-2"
+                >
+                  Import settings from a JSON file
+                </div>
+                <div id="import-warning" className="sr-only">
+                  Importing settings will replace your current configuration
+                </div>
               </div>
 
-              {/* Clear All Conversations Button */}
+              {/* Clear All Conversations Button with enhanced warnings */}
               <div className="flex flex-col">
                 <Button
                   variant="destructive"
                   size="default"
                   onClick={handleClearConversations}
-                  className="h-10 justify-start gap-2"
-                  aria-label="Clear all conversations - this action cannot be undone"
+                  className="h-10 justify-start gap-2 min-h-[44px]"
+                  aria-label="Clear all conversations permanently"
                   aria-describedby="clear-warning"
+                  aria-expanded="false"
+                  aria-haspopup="dialog"
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4" aria-hidden="true" />
                   Clear All Conversations
                 </Button>
-                <DangerText id="clear-warning">
+                <div
+                  id="clear-warning"
+                  role="alert"
+                  className="text-[13px] text-destructive mt-2"
+                >
                   This cannot be undone
-                </DangerText>
+                </div>
               </div>
             </div>
           </div>
@@ -967,55 +984,56 @@ const AdvancedSettings: React.FC = () => {
         <div className="space-y-4">
           <h2 className="text-[18px] font-semibold mb-4">Developer Options</h2>
           <div className="grid gap-6">
+            {/* Debug Mode Toggle with enhanced accessibility */}
             <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
               <div className="space-y-0.5">
-                <Label className="text-base">Enable debug logging</Label>
-                <HelperText className="">
+                <Label htmlFor="debug-mode" className="text-base">
+                  Enable debug logging
+                </Label>
+                <div
+                  id="debug-help"
+                  className="text-[13px] text-muted-foreground"
+                >
                   Show detailed logs in developer console
-                </HelperText>
+                </div>
               </div>
               <Switch
+                id="debug-mode"
                 checked={debugMode}
                 onCheckedChange={setDebugMode}
-                aria-describedby="debug-mode-description"
-                aria-label="Toggle debug logging"
-              />
-            </div>
-            <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-              <div className="space-y-0.5">
-                <Label className="text-base">
-                  Enable experimental features
-                </Label>
-                <HelperText className="">
-                  Enable experimental features that may be unstable
-                </HelperText>
-                <WarningText
-                  icon={<AlertTriangle className="h-4 w-4" />}
-                  className=""
-                >
-                  May cause instability
-                </WarningText>
-              </div>
-              <Switch
-                checked={experimentalFeatures}
-                onCheckedChange={setExperimentalFeatures}
-                aria-describedby="experimental-features-description experimental-features-warning"
-                aria-label="Toggle experimental features"
+                aria-describedby="debug-help"
+                aria-label="Toggle debug logging on or off"
               />
             </div>
 
-            {/* Hidden descriptions for screen readers */}
-            <div id="debug-mode-description" className="sr-only">
-              Enable debug logging to show detailed logs in the developer
-              console. This can help with troubleshooting issues.
-            </div>
-            <div id="experimental-features-description" className="sr-only">
-              Enable experimental features that are still in development and
-              testing.
-            </div>
-            <div id="experimental-features-warning" className="sr-only">
-              Warning: Experimental features may cause application instability
-              or unexpected behavior.
+            {/* Experimental Features Toggle with warning context */}
+            <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="space-y-0.5">
+                <Label htmlFor="experimental-features" className="text-base">
+                  Enable experimental features
+                </Label>
+                <div
+                  id="experimental-help"
+                  className="text-[13px] text-muted-foreground"
+                >
+                  Access features currently in development
+                </div>
+                <div
+                  id="experimental-warning"
+                  role="alert"
+                  className="text-[13px] text-amber-600 dark:text-amber-400 flex items-center gap-1"
+                >
+                  <AlertTriangle className="h-4 w-4" aria-hidden="true" />
+                  May cause instability
+                </div>
+              </div>
+              <Switch
+                id="experimental-features"
+                checked={experimentalFeatures}
+                onCheckedChange={setExperimentalFeatures}
+                aria-describedby="experimental-help experimental-warning"
+                aria-label="Toggle experimental features with instability risk"
+              />
             </div>
           </div>
         </div>
