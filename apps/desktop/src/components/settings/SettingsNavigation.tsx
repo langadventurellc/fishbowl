@@ -24,7 +24,7 @@ import {
   type SettingsSubTab,
 } from "@fishbowl-ai/shared";
 import { NavigationItem } from "./NavigationItem";
-import { SubNavigationTab } from "./SubNavigationTab";
+import { TabContainer } from "./TabContainer";
 import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
 import { useAccessibilityAnnouncements } from "@/utils";
 
@@ -269,26 +269,20 @@ const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
           {section.hasSubTabs &&
             section.subTabs &&
             activeSection === section.id && (
-              <>
-                {section.subTabs.map((subTab) => {
-                  // Only render if subTab.id is not null
-                  if (!subTab.id) return null;
-
-                  return (
-                    <SubNavigationTab
-                      key={subTab.id}
-                      ref={(el) => setRef(`subtab-${subTab.id}`, el)}
-                      id={subTab.id}
-                      label={subTab.label}
-                      active={activeSubTab === subTab.id}
-                      onClick={() => onSubTabChange(subTab.id)}
-                      isCompact={isCompact}
-                      isFocused={isItemFocused(subTab.id, "subtab")}
-                      tabIndex={isItemFocused(subTab.id, "subtab") ? 0 : -1}
-                    />
-                  );
-                })}
-              </>
+              <div className="mt-2">
+                <TabContainer
+                  tabs={section.subTabs
+                    .filter((tab) => tab.id)
+                    .map((tab) => ({
+                      id: tab.id!,
+                      label: tab.label,
+                      content: () => null, // Content handled elsewhere
+                    }))}
+                  useStore={true}
+                  className="navigation-tabs"
+                  orientation="vertical"
+                />
+              </div>
             )}
         </NavigationItem>
       ))}
