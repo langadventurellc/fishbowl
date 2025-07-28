@@ -1,14 +1,14 @@
 ---
 kind: task
 id: T-set-up-configuration-service
+parent: F-configuration-service-file
+status: in-progress
 title: Set up configuration service file operations test infrastructure
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-28T15:28:37.769871"
-updated: "2025-07-28T15:28:37.769871"
+updated: "2025-07-28T15:37:49.376345"
 schema_version: "1.1"
-parent: F-configuration-service-file
 ---
 
 # Set up Configuration Service File Operations Test Infrastructure

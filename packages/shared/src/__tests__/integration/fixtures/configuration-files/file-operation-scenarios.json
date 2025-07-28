@@ -1,0 +1,304 @@
+{
+  "description": "File operation scenarios for testing atomic operations, concurrency, and error handling",
+  "atomicOperationScenarios": {
+    "successfulAtomicWrite": {
+      "name": "successful-atomic-write",
+      "description": "Normal atomic write operation that succeeds",
+      "configuration": {
+        "version": "1.0.0",
+        "format": "json",
+        "encoding": "utf8",
+        "metadata": {
+          "createdAt": "2024-01-01T00:00:00.000Z",
+          "createdBy": "atomic-test",
+          "operation": "atomic-write"
+        },
+        "data": {
+          "agents": [
+            {
+              "id": "atomic-agent",
+              "name": "Atomic Test Agent",
+              "personalityId": "atomic-personality",
+              "roleId": "atomic-role"
+            }
+          ]
+        }
+      },
+      "expectation": "success",
+      "expectedFiles": ["config.json", "config.json.backup"],
+      "unexpectedFiles": ["config.json.tmp", "config.json.staging"]
+    },
+    "rollbackOnStagingFailure": {
+      "name": "rollback-on-staging-failure",
+      "description": "Atomic write fails during staging phase",
+      "configuration": {
+        "version": "1.0.0",
+        "format": "json",
+        "encoding": "utf8",
+        "data": {
+          "agents": []
+        }
+      },
+      "failurePoint": "staging",
+      "simulatedError": "ENOSPC",
+      "expectation": "rollback",
+      "expectedFiles": ["original-config.json"],
+      "unexpectedFiles": [
+        "config.json.tmp",
+        "config.json.staging",
+        "config.json.backup"
+      ]
+    },
+    "rollbackOnCommitFailure": {
+      "name": "rollback-on-commit-failure",
+      "description": "Atomic write fails during commit phase",
+      "configuration": {
+        "version": "1.0.0",
+        "format": "json",
+        "encoding": "utf8",
+        "data": {
+          "agents": []
+        }
+      },
+      "failurePoint": "commit",
+      "simulatedError": "EPERM",
+      "expectation": "rollback",
+      "expectedFiles": ["original-config.json"],
+      "unexpectedFiles": ["config.json.tmp", "config.json.staging"]
+    },
+    "rollbackOnValidationFailure": {
+      "name": "rollback-on-validation-failure",
+      "description": "Atomic write fails during validation phase",
+      "configuration": {
+        "version": "1.0.0",
+        "format": "json",
+        "encoding": "utf8",
+        "data": {
+          "agents": [
+            {
+              "id": "invalid-agent",
+              "personalityId": "non-existent-personality"
+            }
+          ]
+        }
+      },
+      "failurePoint": "validation",
+      "simulatedError": "VALIDATION_ERROR",
+      "expectation": "rollback",
+      "expectedFiles": ["original-config.json"],
+      "unexpectedFiles": [
+        "config.json.tmp",
+        "config.json.staging",
+        "config.json.backup"
+      ]
+    }
+  },
+  "concurrentAccessScenarios": {
+    "multipleWritersSameFile": {
+      "name": "multiple-writers-same-file",
+      "description": "Multiple processes attempting to write the same configuration file",
+      "operations": [
+        {
+          "id": "writer-1",
+          "content": {
+            "version": "1.0.0",
+            "data": {
+              "agents": [{ "id": "writer-1-agent", "name": "Writer 1 Agent" }]
+            }
+          },
+          "delay": 0,
+          "priority": "normal"
+        },
+        {
+          "id": "writer-2",
+          "content": {
+            "version": "1.0.0",
+            "data": {
+              "agents": [{ "id": "writer-2-agent", "name": "Writer 2 Agent" }]
+            }
+          },
+          "delay": 10,
+          "priority": "high"
+        },
+        {
+          "id": "writer-3",
+          "content": {
+            "version": "1.0.0",
+            "data": {
+              "agents": [{ "id": "writer-3-agent", "name": "Writer 3 Agent" }]
+            }
+          },
+          "delay": 20,
+          "priority": "low"
+        }
+      ],
+      "expectedBehavior": "last-writer-wins",
+      "lockingStrategy": "file-lock",
+      "timeoutMs": 5000
+    },
+    "readerWriterConflict": {
+      "name": "reader-writer-conflict",
+      "description": "Reader and writer operations on same file with different timing",
+      "operations": [
+        {
+          "id": "reader-1",
+          "type": "read",
+          "delay": 0,
+          "expectedResult": "success"
+        },
+        {
+          "id": "writer-1",
+          "type": "write",
+          "content": {
+            "version": "1.0.0",
+            "data": { "agents": [] }
+          },
+          "delay": 50,
+          "expectedResult": "success"
+        },
+        {
+          "id": "reader-2",
+          "type": "read",
+          "delay": 100,
+          "expectedResult": "success"
+        }
+      ],
+      "expectedBehavior": "readers-can-proceed-concurrently",
+      "lockingStrategy": "read-write-lock"
+    },
+    "highConcurrencyScenario": {
+      "name": "high-concurrency-scenario",
+      "description": "High number of concurrent operations to test locking performance",
+      "operations": {
+        "readers": 10,
+        "writers": 5,
+        "duration": "30s",
+        "pattern": "random"
+      },
+      "expectedBehavior": "no-data-corruption",
+      "performanceThreshold": {
+        "maxResponseTime": "500ms",
+        "minThroughput": "100ops/sec"
+      }
+    }
+  },
+  "errorRecoveryScenarios": {
+    "diskSpaceExhaustion": {
+      "name": "disk-space-exhaustion",
+      "description": "File operations when disk space is insufficient",
+      "simulatedConditions": {
+        "availableDiskSpace": "0bytes",
+        "operation": "write"
+      },
+      "expectedBehavior": "graceful-error-handling",
+      "expectedError": "ENOSPC",
+      "recoveryActions": [
+        "cleanup-temp-files",
+        "notify-user",
+        "retry-with-smaller-file"
+      ]
+    },
+    "permissionDenied": {
+      "name": "permission-denied",
+      "description": "File operations when permissions are insufficient",
+      "simulatedConditions": {
+        "filePermissions": "444",
+        "operation": "write"
+      },
+      "expectedBehavior": "permission-error-handling",
+      "expectedError": "EACCES",
+      "recoveryActions": [
+        "check-permissions",
+        "request-elevation",
+        "fallback-location"
+      ]
+    },
+    "fileSystemCorruption": {
+      "name": "filesystem-corruption",
+      "description": "Operations on corrupted configuration files",
+      "simulatedConditions": {
+        "corruptionType": "partial-write",
+        "corruptionLocation": "middle"
+      },
+      "expectedBehavior": "corruption-detection-and-recovery",
+      "expectedError": "CORRUPTION_DETECTED",
+      "recoveryActions": [
+        "restore-from-backup",
+        "validate-integrity",
+        "recreate-file"
+      ]
+    },
+    "networkFileSystemIssues": {
+      "name": "network-filesystem-issues",
+      "description": "Operations on network-mounted file systems with connectivity issues",
+      "simulatedConditions": {
+        "networkLatency": "5000ms",
+        "intermittentFailures": true
+      },
+      "expectedBehavior": "network-resilient-operations",
+      "expectedError": "ETIMEDOUT",
+      "recoveryActions": ["retry-with-backoff", "cache-locally", "offline-mode"]
+    }
+  },
+  "performanceTestScenarios": {
+    "largeFileOperations": {
+      "name": "large-file-operations",
+      "description": "Operations on large configuration files",
+      "fileSize": "10MB",
+      "operationType": "atomic-write",
+      "expectedPerformance": {
+        "maxWriteTime": "2000ms",
+        "maxReadTime": "500ms",
+        "memoryUsage": "< 50MB"
+      }
+    },
+    "frequentUpdates": {
+      "name": "frequent-updates",
+      "description": "Frequent small updates to configuration files",
+      "updateFrequency": "100/second",
+      "duration": "60s",
+      "expectedPerformance": {
+        "averageLatency": "< 10ms",
+        "p99Latency": "< 50ms",
+        "errorRate": "< 0.1%"
+      }
+    }
+  },
+  "crossPlatformScenarios": {
+    "windowsPathHandling": {
+      "name": "windows-path-handling",
+      "description": "Path handling on Windows systems",
+      "paths": [
+        "C:\\Users\\test\\config.json",
+        "\\\\server\\share\\config.json",
+        "config.json"
+      ],
+      "expectedBehavior": "correct-path-normalization"
+    },
+    "unixPathHandling": {
+      "name": "unix-path-handling",
+      "description": "Path handling on Unix-like systems",
+      "paths": [
+        "/home/user/config.json",
+        "/tmp/config.json",
+        "./config.json",
+        "../config.json"
+      ],
+      "expectedBehavior": "correct-path-normalization"
+    },
+    "permissionDifferences": {
+      "name": "permission-differences",
+      "description": "Platform-specific permission handling",
+      "platforms": {
+        "windows": {
+          "expectedPermissions": "read-write",
+          "permissionModel": "access-control-list"
+        },
+        "unix": {
+          "expectedPermissions": "644",
+          "permissionModel": "chmod"
+        }
+      }
+    }
+  }
+}

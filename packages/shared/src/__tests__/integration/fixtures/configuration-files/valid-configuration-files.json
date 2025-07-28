@@ -1,0 +1,214 @@
+{
+  "description": "Valid configuration file fixtures for testing file operations",
+  "validConfigurations": {
+    "minimumValidConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z"
+      },
+      "data": {
+        "agents": [],
+        "personalities": [],
+        "roles": []
+      }
+    },
+    "completeValidConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z",
+        "description": "Complete test configuration with all data types"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-test-001",
+            "name": "Test Agent",
+            "description": "A test agent configuration",
+            "personalityId": "personality-balanced",
+            "roleId": "technical-advisor",
+            "modelConfig": {
+              "provider": "openai",
+              "modelId": "gpt-4-turbo-preview",
+              "parameters": {
+                "temperature": 0.7,
+                "maxTokens": 2000,
+                "topP": 0.9
+              }
+            },
+            "color": "#3B82F6",
+            "isTemplate": false,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ],
+        "personalities": [
+          {
+            "id": "personality-balanced",
+            "name": "Balanced Assistant",
+            "description": "Well-rounded personality with neutral traits",
+            "openness": 50,
+            "conscientiousness": 50,
+            "extraversion": 50,
+            "agreeableness": 50,
+            "neuroticism": 50,
+            "formality": 50,
+            "humor": 50,
+            "assertiveness": 50,
+            "empathy": 50,
+            "storytelling": 50,
+            "brevity": 50,
+            "imagination": 50,
+            "playfulness": 50,
+            "dramaticism": 50,
+            "analyticalDepth": 50,
+            "contrarianism": 50,
+            "encouragement": 50,
+            "curiosity": 50,
+            "patience": 50,
+            "isTemplate": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ],
+        "roles": [
+          {
+            "id": "technical-advisor",
+            "name": "Technical Advisor",
+            "description": "Provides technical expertise and implementation guidance",
+            "systemPrompt": "You are a Technical Advisor with deep expertise in software development, architecture, and engineering best practices. Focus on providing technical solutions, identifying implementation approaches, and offering guidance on technical feasibility.",
+            "focusAreas": [
+              "software architecture",
+              "code review",
+              "technical feasibility",
+              "implementation planning"
+            ],
+            "isTemplate": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "largeValidConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z",
+        "description": "Large configuration for performance testing"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-large-001",
+            "name": "Large Test Agent 1",
+            "personalityId": "personality-analytical",
+            "roleId": "analyst",
+            "modelConfig": {
+              "provider": "openai",
+              "modelId": "gpt-4-turbo-preview",
+              "parameters": { "temperature": 0.3 }
+            }
+          },
+          {
+            "id": "agent-large-002",
+            "name": "Large Test Agent 2",
+            "personalityId": "personality-creative",
+            "roleId": "creative-director",
+            "modelConfig": {
+              "provider": "anthropic",
+              "modelId": "claude-3-opus",
+              "parameters": { "temperature": 0.9 }
+            }
+          }
+        ],
+        "personalities": [
+          {
+            "id": "personality-analytical",
+            "name": "Analytical Personality",
+            "openness": 70,
+            "conscientiousness": 85,
+            "extraversion": 30,
+            "agreeableness": 45,
+            "neuroticism": 25,
+            "formality": 80,
+            "humor": 20,
+            "assertiveness": 75,
+            "empathy": 40,
+            "storytelling": 25,
+            "brevity": 85,
+            "imagination": 60,
+            "playfulness": 15,
+            "dramaticism": 10,
+            "analyticalDepth": 95,
+            "contrarianism": 60,
+            "encouragement": 30,
+            "curiosity": 90,
+            "patience": 70,
+            "isTemplate": false
+          },
+          {
+            "id": "personality-creative",
+            "name": "Creative Personality",
+            "openness": 95,
+            "conscientiousness": 40,
+            "extraversion": 80,
+            "agreeableness": 70,
+            "neuroticism": 45,
+            "formality": 20,
+            "humor": 85,
+            "assertiveness": 60,
+            "empathy": 75,
+            "storytelling": 90,
+            "brevity": 25,
+            "imagination": 95,
+            "playfulness": 85,
+            "dramaticism": 80,
+            "analyticalDepth": 40,
+            "contrarianism": 45,
+            "encouragement": 80,
+            "curiosity": 95,
+            "patience": 55,
+            "isTemplate": false
+          }
+        ],
+        "roles": [
+          {
+            "id": "analyst",
+            "name": "Data Analyst",
+            "description": "Provides data-driven insights and logical reasoning",
+            "systemPrompt": "You are a Data Analyst focused on extracting insights from data, identifying patterns, and providing evidence-based recommendations.",
+            "focusAreas": [
+              "data analysis",
+              "statistical reasoning",
+              "pattern recognition"
+            ],
+            "isTemplate": true
+          },
+          {
+            "id": "creative-director",
+            "name": "Creative Director",
+            "description": "Guides creative vision and artistic decisions",
+            "systemPrompt": "You are a Creative Director responsible for guiding creative vision, artistic decisions, and innovative approaches to problem-solving.",
+            "focusAreas": [
+              "creative strategy",
+              "artistic vision",
+              "innovation"
+            ],
+            "isTemplate": true
+          }
+        ]
+      }
+    }
+  }
+}
