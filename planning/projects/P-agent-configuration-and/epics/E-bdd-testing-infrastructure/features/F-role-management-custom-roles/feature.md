@@ -18,6 +18,13 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for custom role CRUD operations, focusing on user-created roles with full lifecycle management. These tests verify custom role service integration with persistence layers, validation services, and ensure custom roles can be created, modified, and deleted while maintaining system integrity.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: RoleConfiguration interface, custom role validation schemas, and role business rule enforcement
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: RoleService custom role CRUD operations, role persistence management, and custom role lifecycle handling
+
 ## Key Components to Implement
 
 - **Custom Role CRUD Operations**: Test complete lifecycle management through service integration

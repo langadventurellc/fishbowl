@@ -18,6 +18,12 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for library initialization workflows, focusing on component startup coordination, dependency resolution, and library configuration loading. These tests verify the library initializes correctly with all components properly configured and ready for operation.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-system-integration](../../../E-system-integration/epic.md)**: Service registration, application integration points, and dependency injection container configuration
+
 ## Key Components to Implement
 
 - **Component Initialization Coordination**: Test startup sequence coordination across all library components

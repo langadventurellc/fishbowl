@@ -19,6 +19,12 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for configuration service coordination workflows, focusing on complex multi-service orchestration, workflow management, and system-wide configuration consistency. These tests verify ConfigurationService coordinates effectively across all system services while maintaining performance and reliability.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: ConfigurationService cross-service coordination, workflow orchestration mechanisms, and system-wide configuration consistency management
+
 ## Key Components to Implement
 
 - **Multi-Service Orchestration**: Test complex workflows coordinating PersonalityService, RoleService, AgentService, and FileService

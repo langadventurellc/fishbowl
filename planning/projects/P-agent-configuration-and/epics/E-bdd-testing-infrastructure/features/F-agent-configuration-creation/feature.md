@@ -19,6 +19,13 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for agent configuration creation workflows, focusing on the composition of personality, role, and model configurations into complete agent definitions. These tests verify cross-service coordination and ensure agent creation integrates correctly with all dependent services.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: AgentConfiguration and AgentModelConfig interfaces, agent validation schemas, and cross-reference validation logic
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: AgentService CRUD operations, agent creation workflows, and cross-service coordination mechanisms
+
 ## Key Components to Implement
 
 - **Agent Composition Integration**: Test agent creation combining personality, role, and model configurations

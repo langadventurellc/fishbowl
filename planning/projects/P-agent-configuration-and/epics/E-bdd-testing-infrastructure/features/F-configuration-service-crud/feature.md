@@ -18,6 +18,12 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for configuration service CRUD operations, focusing on multi-service coordination for complete configuration lifecycle management. These tests verify ConfigurationService coordinates properly with PersonalityService, RoleService, and AgentService while maintaining data consistency and transaction integrity.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: ConfigurationService unified interface, cross-service coordination mechanisms, and transaction-like consistency implementation
+
 ## Key Components to Implement
 
 - **Cross-Service CRUD Coordination**: Test ConfigurationService coordination with multiple dependent services

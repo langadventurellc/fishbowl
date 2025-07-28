@@ -17,6 +17,13 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for predefined role management, focusing on the 10 predefined roles with immutability enforcement and file-based loading. These tests verify role service integration with file operations, validation services, and ensure predefined roles maintain their integrity across system operations.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: RoleConfiguration interface, role validation schemas, and predefined role template structures
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: RoleService predefined role management, immutability enforcement, and role loading mechanisms
+
 ## Key Components to Implement
 
 - **Predefined Role Loading**: Test file-based loading of 10 predefined roles with validation

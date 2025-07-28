@@ -17,6 +17,13 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for personality business logic enforcement, trait interaction rules, and psychological model constraints. These tests verify complex business rules are properly enforced across service integrations and ensure personality configurations adhere to psychological validity requirements.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: Business rule validation schemas, trait interdependency validation, and personality constraint enforcement
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: PersonalityService business logic implementation, trait validation algorithms, and psychological model consistency checks
+
 ## Key Components to Implement
 
 - **Trait Interaction Validation**: Test business rules for trait combinations and psychological constraints

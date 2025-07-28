@@ -18,6 +18,12 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for library component interaction patterns, focusing on end-to-end workflows, component communication, and library-wide integration scenarios. These tests verify all library components work together effectively to provide seamless user experiences and reliable functionality.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-system-integration](../../../E-system-integration/epic.md)**: AI Service integration, database integration, and component interaction patterns across the integrated system
+
 ## Key Components to Implement
 
 - **End-to-End Workflow Testing**: Test complete user workflows across multiple library components

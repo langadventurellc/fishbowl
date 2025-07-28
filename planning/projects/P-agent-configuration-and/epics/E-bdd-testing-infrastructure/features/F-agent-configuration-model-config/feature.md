@@ -19,6 +19,13 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for agent model configuration management, focusing on AI model parameter validation, personality-model compatibility, and model service integration. These tests verify model configurations integrate correctly with agent personalities and roles while maintaining performance and compatibility constraints.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: AgentModelConfig interface, model parameter validation schemas, and provider-specific constraint validation
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: AgentService model configuration management, parameter validation logic, and model compatibility checks
+
 ## Key Components to Implement
 
 - **Model Parameter Validation**: Test AI model parameter validation against agent requirements and constraints

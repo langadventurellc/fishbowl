@@ -17,6 +17,13 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for personality management CRUD operations, focusing on Big Five personality model integration with 14 behavioral traits. These tests verify service layer coordination, data validation, and business logic enforcement across multiple components.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: PersonalityConfiguration interface, Zod validation schemas, and personality-specific validation rules
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: PersonalityService CRUD operations, business logic implementation, and file-based persistence layer
+
 ## Key Components to Implement
 
 - **CRUD Operations Tests**: Create, Read, Update, Delete personality configurations through service integration

@@ -19,6 +19,13 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for agent configuration reference management, focusing on cross-service reference validation, dependency tracking, and referential integrity. These tests verify agent configurations properly reference and integrate with personality, role, and model components across service boundaries.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: Cross-reference validation schemas, referential integrity constraints, and ID validation logic
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: AgentService reference validation, cross-service dependency management, and referential integrity enforcement
+
 ## Key Components to Implement
 
 - **Cross-Service Reference Validation**: Test reference integrity across PersonalityService, RoleService, and ModelService

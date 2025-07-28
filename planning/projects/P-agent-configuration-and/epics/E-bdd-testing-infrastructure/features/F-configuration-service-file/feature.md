@@ -18,6 +18,12 @@ parent: E-bdd-testing-infrastructure
 
 Implement comprehensive BDD integration tests for configuration service file operations, focusing on configuration file management, atomic file operations, and file system integration with validation services. These tests verify file operations maintain consistency and integrate properly with configuration validation workflows.
 
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: FileService atomic operations, file system abstraction layer, and storage architecture implementation
+
 ## Key Components to Implement
 
 - **Atomic File Operations**: Test configuration file operations maintain atomicity and consistency
