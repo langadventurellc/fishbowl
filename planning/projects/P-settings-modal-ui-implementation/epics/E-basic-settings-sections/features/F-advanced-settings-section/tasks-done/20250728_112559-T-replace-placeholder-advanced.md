@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-replace-placeholder-advanced
+parent: F-advanced-settings-section
+status: done
 title: Replace placeholder Advanced Settings with proper section structure and typography
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-28T11:11:58.878630"
-updated: "2025-07-28T11:11:58.878630"
+updated: "2025-07-28T11:17:13.353546"
 schema_version: "1.1"
-parent: F-advanced-settings-section
+worktree: null
 ---
 
 # Replace Advanced Settings Placeholder Structure
@@ -66,3 +67,7 @@ The current Advanced Settings section in `apps/desktop/src/components/settings/S
 - Ensure no breaking changes to parent component integration
 
 ### Log
+
+**2025-07-28T16:25:59.332284Z** - Successfully replaced placeholder Advanced Settings section with proper semantic structure and exact typography specifications. Fixed section title from text-2xl to text-[24px] font-bold mb-[20px], updated group titles to text-[18px] font-semibold mb-4, and applied consistent helper text styling with text-[13px] text-muted-foreground. Removed all placeholder muted background divs and created proper semantic structure for Data Management group (Export Settings, Import Settings, Clear All Conversations) and Developer Options group (Debug Mode, Experimental Features). Added proper container structure with max-w-[600px] mx-auto px-4 sm:px-6 to match other settings sections. Structure is now ready for functional buttons and toggles to be added in subsequent tasks.
+
+- filesChanged: ["apps/desktop/src/components/settings/SettingsContent.tsx"]

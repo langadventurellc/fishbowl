@@ -835,37 +835,65 @@ const RolesSettings: React.FC = () => (
 );
 
 const AdvancedSettings: React.FC = () => (
-  <div className="space-y-6">
+  <div className="space-y-6 max-w-[600px] mx-auto px-4 sm:px-6">
     <div>
-      <h1 className="text-2xl font-bold mb-2">Advanced Options</h1>
-      <p className="text-muted-foreground mb-6">
+      <h1 className="text-[24px] font-bold mb-[20px]">Advanced Settings</h1>
+      <p className="text-muted-foreground text-sm mb-6">
         Advanced configuration options for power users.
       </p>
     </div>
     <div className="space-y-6">
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Data Management</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {["Export Data", "Import Data", "Clear Data"].map((action) => (
-            <div
-              key={action}
-              className="h-10 bg-muted rounded border flex items-center justify-center"
-            >
-              <span className="text-sm">{action}</span>
+        <h2 className="text-[18px] font-semibold mb-4">Data Management</h2>
+        <div className="grid gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex flex-col space-y-2">
+              <span className="text-sm font-medium">Export Settings</span>
+              <div className="text-[13px] text-muted-foreground">
+                Export your settings and data
+              </div>
             </div>
-          ))}
+            <div className="flex flex-col space-y-2">
+              <span className="text-sm font-medium">Import Settings</span>
+              <div className="text-[13px] text-muted-foreground">
+                Import settings from a file
+              </div>
+            </div>
+            <div className="flex flex-col space-y-2">
+              <span className="text-sm font-medium">
+                Clear All Conversations
+              </span>
+              <div className="text-[13px] text-muted-foreground">
+                Permanently delete all conversation data
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Developer Options</h2>
-        <div className="space-y-3">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-muted rounded border" />
-            <label className="text-sm">Debug mode</label>
+        <h2 className="text-[18px] font-semibold mb-4">Developer Options</h2>
+        <div className="grid gap-6">
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <span className="text-sm font-medium">Debug Mode</span>
+                <div className="text-[13px] text-muted-foreground">
+                  Enable debugging features and console output
+                </div>
+              </div>
+            </div>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-muted rounded border" />
-            <label className="text-sm">Experimental features</label>
+          <div className="flex flex-col space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <span className="text-sm font-medium">
+                  Experimental Features
+                </span>
+                <div className="text-[13px] text-muted-foreground">
+                  Enable experimental features that may be unstable
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
