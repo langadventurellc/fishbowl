@@ -15,7 +15,7 @@ const httpsUrlSchema = z
   )
   .refine((url) => {
     try {
-      const parsed = new URL(url);
+      const parsed = new globalThis.URL(url);
       return parsed.hostname.length > 0;
     } catch {
       return false;

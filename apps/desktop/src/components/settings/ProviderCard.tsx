@@ -1,12 +1,12 @@
 import React from "react";
-import { Card, CardHeader, CardContent } from "../../ui/card";
-import { Input } from "../../ui/input";
-import { Button } from "../../ui/button";
+import { Card, CardHeader, CardContent } from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
 import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
-} from "../../ui/collapsible";
+} from "../ui/collapsible";
 import { Eye, EyeOff, Check, X, ChevronDown, ChevronRight } from "lucide-react";
 
 interface ProviderCardProps {
@@ -83,7 +83,9 @@ export function ProviderCard({
               id={`${provider.id}-api-key`}
               type={showApiKey ? "text" : "password"}
               value={apiKey}
-              onChange={(e) => onApiKeyChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onApiKeyChange(e.target.value)
+              }
               placeholder={`Enter your ${provider.name} API key`}
               className="pr-10"
               aria-describedby={`${provider.id}-api-key-description`}
@@ -166,7 +168,9 @@ export function ProviderCard({
               id={`${provider.id}-base-url`}
               type="url"
               value={baseUrl}
-              onChange={(e) => onBaseUrlChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                onBaseUrlChange(e.target.value)
+              }
               placeholder={provider.defaultBaseUrl}
               aria-describedby={`${provider.id}-base-url-description`}
             />
