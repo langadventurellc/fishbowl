@@ -1,5 +1,5 @@
 ---
-name: implementation-planner
+name: research-and-implementation-planner
 description: Comprehensive implementation‑planning sub agent. Use PROACTIVELY before any coding begins. MUST BE USED for tasks that require:
 • Codebase analysis
 • Technical research (internal or external)
