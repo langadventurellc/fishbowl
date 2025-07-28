@@ -410,6 +410,13 @@ const AppearanceSettings: React.FC = () => {
     "light" | "dark" | "system"
   >("system");
 
+  // Local state management for display settings
+  const [showTimestamps, setShowTimestamps] = useState<
+    "always" | "hover" | "never"
+  >("hover");
+  const [showActivityTime, setShowActivityTime] = useState(true);
+  const [compactList, setCompactList] = useState(false);
+
   // Helper function to get preview colors based on selected theme
   const getPreviewColors = (theme: "light" | "dark" | "system") => {
     const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
@@ -526,6 +533,90 @@ const AppearanceSettings: React.FC = () => {
                   style={{
                     backgroundColor: getPreviewColors(selectedTheme).primary,
                   }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Display Settings Group */}
+        <div className="space-y-4">
+          <h2 className="text-[18px] font-semibold mb-4">Display Settings</h2>
+          <div className="grid gap-6">
+            {/* Message Timestamps Control */}
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Show Timestamps</Label>
+              <RadioGroup
+                value={showTimestamps}
+                onValueChange={(value) =>
+                  setShowTimestamps(value as "always" | "hover" | "never")
+                }
+                className="flex flex-col space-y-2"
+                aria-describedby="timestamps-description"
+              >
+                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                  <RadioGroupItem value="always" id="timestamps-always" />
+                  <Label
+                    htmlFor="timestamps-always"
+                    className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                  >
+                    Always
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                  <RadioGroupItem value="hover" id="timestamps-hover" />
+                  <Label
+                    htmlFor="timestamps-hover"
+                    className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                  >
+                    On Hover
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                  <RadioGroupItem value="never" id="timestamps-never" />
+                  <Label
+                    htmlFor="timestamps-never"
+                    className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                  >
+                    Never
+                  </Label>
+                </div>
+              </RadioGroup>
+              <div
+                id="timestamps-description"
+                className="text-[13px] text-muted-foreground mt-1"
+              >
+                Control when message timestamps are displayed
+              </div>
+            </div>
+
+            {/* Conversation List Toggle Controls */}
+            <div className="space-y-4">
+              <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Show last activity time</Label>
+                  <div className="text-[13px] text-muted-foreground">
+                    Display the last activity time for each conversation
+                  </div>
+                </div>
+                <Switch
+                  checked={showActivityTime}
+                  onCheckedChange={setShowActivityTime}
+                  aria-describedby="activity-time-description"
+                />
+              </div>
+
+              <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                  <Label className="text-base">Compact conversation list</Label>
+                  <div className="text-[13px] text-muted-foreground">
+                    Use a more compact layout for the conversation list
+                  </div>
+                </div>
+                <Switch
+                  checked={compactList}
+                  onCheckedChange={setCompactList}
+                  aria-describedby="compact-list-description"
                 />
               </div>
             </div>

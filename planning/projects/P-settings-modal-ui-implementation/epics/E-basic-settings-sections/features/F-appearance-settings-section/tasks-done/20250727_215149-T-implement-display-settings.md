@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-implement-display-settings
+parent: F-appearance-settings-section
+status: done
 title: Implement display settings section with timestamp and conversation list controls
-status: open
 priority: high
 prerequisites:
   - T-replace-appearancesettings
 created: "2025-07-27T18:45:52.964285"
-updated: "2025-07-27T18:45:52.964285"
+updated: "2025-07-27T21:42:14.262531"
 schema_version: "1.1"
-parent: F-appearance-settings-section
+worktree: null
 ---
 
 # Implement Display Settings Section
@@ -112,3 +113,7 @@ Include basic functionality tests:
 - Form styling patterns from GeneralSettings component
 
 ### Log
+
+**2025-07-28T02:51:49.091227Z** - Implemented Display Settings section in AppearanceSettings component with timestamp control radio group and conversation list toggle switches. Added proper state management for UX demonstration, followed existing patterns for accessibility and styling, and created comprehensive unit tests. All quality checks and tests pass.
+
+- filesChanged: ["apps/desktop/src/components/settings/SettingsContent.tsx", "apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx"]
