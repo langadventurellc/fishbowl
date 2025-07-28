@@ -99,9 +99,9 @@ export function ProviderCard({
               aria-label={showApiKey ? "Hide API key" : "Show API key"}
             >
               {showApiKey ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
                 <Eye className="h-4 w-4" />
+              ) : (
+                <EyeOff className="h-4 w-4" />
               )}
             </Button>
           </div>

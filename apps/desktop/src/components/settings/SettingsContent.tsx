@@ -13,6 +13,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "../../lib/utils";
 import { getAccessibleDescription } from "@/utils";
+import { ApiKeysSettings } from "./api-keys/ApiKeysSettings";
 import { FormErrorDisplay } from "./FormErrorDisplay";
 import {
   Form,
@@ -34,24 +35,6 @@ import {
   defaultGeneralSettings,
   useUnsavedChanges,
 } from "@fishbowl-ai/shared";
-
-const createProviderSections = (providers: string[]) =>
-  providers.map((provider) => (
-    <div key={provider} className="border rounded-lg p-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">{provider}</h3>
-        <div className="w-2 h-2 bg-muted rounded-full" />
-      </div>
-      <div className="space-y-2">
-        <label className="text-sm font-medium">API Key</label>
-        <div className="h-10 bg-muted rounded border" />
-      </div>
-      <div className="flex gap-2">
-        <div className="h-9 bg-muted rounded border flex-1" />
-        <div className="h-9 bg-muted rounded border w-16" />
-      </div>
-    </div>
-  ));
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -384,25 +367,6 @@ const GeneralSettings: React.FC = () => {
     </div>
   );
 };
-
-const ApiKeysSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">API Keys</h1>
-      <p className="text-muted-foreground mb-6">
-        Manage API keys for various AI services and integrations.
-      </p>
-    </div>
-    <div className="space-y-4">
-      {createProviderSections([
-        "OpenAI",
-        "Anthropic",
-        "Google",
-        "Other Providers",
-      ])}
-    </div>
-  </div>
-);
 
 // ThemePreview component with React.memo for performance optimization
 interface ThemePreviewProps {
