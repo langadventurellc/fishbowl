@@ -18,6 +18,8 @@ parent: F-configuration-service-crud
 
 Implement comprehensive BDD integration tests for ConfigurationService coordination with PersonalityService, RoleService, and AgentService. Tests focus on service integration validation, error propagation, and coordination patterns from the feature specification's Service Coordination Validation requirements.
 
+See `planning/projects/P-agent-configuration-and/epics/E-configuration-management/epic.md` for details on the configuration management epic and its requirements.
+
 ## Technical Approach
 
 ### Service Coordination Patterns

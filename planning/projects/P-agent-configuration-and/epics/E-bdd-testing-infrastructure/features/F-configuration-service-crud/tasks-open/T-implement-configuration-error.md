@@ -18,6 +18,8 @@ parent: F-configuration-service-crud
 
 Implement comprehensive BDD integration tests for ConfigurationService error handling and recovery mechanisms across service interactions. Tests validate error recovery, resilience under failure conditions, and graceful degradation across PersonalityService, RoleService, and AgentService coordination.
 
+See `planning/projects/P-agent-configuration-and/epics/E-configuration-management/epic.md` for details on the configuration management epic and its requirements.
+
 ## Technical Approach
 
 ### Error Handling Scenarios

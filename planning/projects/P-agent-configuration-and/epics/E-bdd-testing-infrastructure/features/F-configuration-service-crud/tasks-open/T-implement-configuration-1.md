@@ -18,6 +18,8 @@ parent: F-configuration-service-crud
 
 Implement comprehensive BDD integration tests for complete configuration lifecycle management through ConfigurationService coordination with dependent services. Tests focus on AC-3: Configuration Lifecycle Integration from the feature specification, covering creation, updates, archiving, and deletion workflows.
 
+See `planning/projects/P-agent-configuration-and/epics/E-configuration-management/epic.md` for details on the configuration management epic and its requirements.
+
 ## Technical Approach
 
 ### Lifecycle Management Stages

@@ -18,6 +18,8 @@ parent: F-configuration-service-crud
 
 Implement comprehensive BDD integration tests for ConfigurationService transaction-like consistency across service boundaries. Tests focus on AC-2: Configuration Transaction Consistency from the feature specification, ensuring CRUD operations maintain consistency with proper rollback mechanisms.
 
+See `planning/projects/P-agent-configuration-and/epics/E-configuration-management/epic.md` for details on the configuration management epic and its requirements.
+
 ## Technical Approach
 
 ### Transaction Consistency Patterns
