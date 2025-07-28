@@ -23,6 +23,21 @@ interface ServiceMockConfig {
 }
 
 /**
+ * Enhanced role service with transaction rollback support
+ */
+interface RoleServiceWithTransaction extends jest.Mocked<RoleService> {
+  rollbackRole: jest.MockedFunction<(roleId?: string) => Promise<void>> & {
+    lastCallTime?: number;
+    lastCallId?: string;
+  };
+  createRole: jest.MockedFunction<
+    (roleData: unknown) => Promise<CustomRole>
+  > & {
+    lastCallTime?: number;
+  };
+}
+
+/**
  * Role Service Mock Factory
  * Creates mocked role service instances with configurable behavior
  */
@@ -200,6 +215,65 @@ export class RoleServiceMockFactory {
 
   static createWithLatency(latency: number) {
     return this.create({ shouldSucceed: true, latency });
+  }
+
+  /**
+   * Create RoleService mock with rollback capabilities for transaction testing
+   * Adds rollback and timing-aware creation methods for transaction consistency testing
+   */
+  static createWithRollbackSupport(
+    config: ServiceMockConfig = {},
+  ): RoleServiceWithTransaction {
+    const baseService = this.create(config);
+
+    // Add rollback method for transaction consistency
+    const rollbackMock = jest
+      .fn()
+      .mockImplementation(async (roleId?: string) => {
+        if (!config.shouldSucceed) {
+          throw new Error(config.errorMessage ?? "Role rollback failed");
+        }
+        // Track rollback calls for verification
+        const typedRollback = rollbackMock as jest.MockedFunction<
+          (roleId?: string) => Promise<void>
+        > & {
+          lastCallTime?: number;
+          lastCallId?: string;
+        };
+        typedRollback.lastCallTime = Date.now();
+        typedRollback.lastCallId = roleId;
+      });
+
+    // Add timing-aware createRole method
+    const createRoleMock = jest
+      .fn()
+      .mockImplementation(async (roleData: unknown) => {
+        const startTime = Date.now();
+        // Simulate role creation
+        const result = {
+          ...(roleData as CustomRole),
+          id: `role-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          version: 1,
+        } as CustomRole;
+        const typedCreate = createRoleMock as jest.MockedFunction<
+          (roleData: unknown) => Promise<CustomRole>
+        > & {
+          lastCallTime?: number;
+        };
+        typedCreate.lastCallTime = startTime;
+        return result;
+      });
+
+    const enhancedService =
+      baseService as unknown as RoleServiceWithTransaction;
+    enhancedService.rollbackRole =
+      rollbackMock as RoleServiceWithTransaction["rollbackRole"];
+    enhancedService.createRole =
+      createRoleMock as RoleServiceWithTransaction["createRole"];
+
+    return enhancedService;
   }
 }
 

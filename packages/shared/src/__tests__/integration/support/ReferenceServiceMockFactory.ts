@@ -5,13 +5,13 @@
  * Follows established patterns from AgentServiceMockFactory for consistency across test infrastructure.
  */
 
+import type { ValidationResult } from "../../../types/role/ValidationResult";
 import type {
-  ReferenceService,
-  ReferenceValidationRequest,
   DependencyGraph,
   ReferenceResolutionResult,
+  ReferenceService,
+  ReferenceValidationRequest,
 } from "../../../types/services";
-import type { ValidationResult } from "../../../types/role/ValidationResult";
 
 /**
  * Configuration for ReferenceService mock responses
@@ -71,8 +71,7 @@ async function simulateOperation<T>(
   // Simulate latency
   if (config.latency && config.latency > 0) {
     await new Promise((resolve) => {
-      // eslint-disable-next-line no-undef
-      setTimeout(resolve, config.latency);
+      globalThis.setTimeout(resolve, config.latency);
     });
   }
 

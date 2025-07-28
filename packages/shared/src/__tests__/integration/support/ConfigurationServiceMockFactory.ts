@@ -25,6 +25,16 @@ interface ServiceMockConfig {
 }
 
 /**
+ * Enhanced configuration service with transaction support
+ */
+interface ConfigurationServiceWithTransaction
+  extends jest.Mocked<ConfigurationService> {
+  rollbackConfiguration: jest.MockedFunction<() => Promise<void>> & {
+    lastCallTime?: number;
+  };
+}
+
+/**
  * Configuration Service Mock Factory
  * Creates mocked configuration service instances with configurable behavior
  */
@@ -289,5 +299,94 @@ export class ConfigurationServiceMockFactory {
         ],
       },
     });
+  }
+
+  /**
+   * Create ConfigurationService mock with transaction rollback capabilities
+   * Adds rollback method for transaction consistency testing
+   */
+  static createWithTransactionSupport(
+    config: ServiceMockConfig = {},
+  ): ConfigurationServiceWithTransaction {
+    const baseService = this.create(config);
+
+    // Add rollback method for transaction consistency testing
+    const rollbackMock = jest.fn().mockImplementation(async () => {
+      if (!config.shouldSucceed) {
+        throw new Error(config.errorMessage ?? "Configuration rollback failed");
+      }
+      // Successful rollback returns void - track call time for ordering verification
+      (
+        rollbackMock as jest.MockedFunction<() => Promise<void>> & {
+          lastCallTime?: number;
+        }
+      ).lastCallTime = Date.now();
+    });
+
+    const enhancedService =
+      baseService as unknown as ConfigurationServiceWithTransaction;
+    enhancedService.rollbackConfiguration = rollbackMock as jest.MockedFunction<
+      () => Promise<void>
+    > & { lastCallTime?: number };
+
+    return enhancedService;
+  }
+
+  /**
+   * Create service that tracks call ordering for transaction boundary testing
+   * Enhanced mocks that record timing information for transaction sequence verification
+   */
+  static createWithCallOrderingTracking(): ConfigurationServiceWithTransaction {
+    const service = this.createWithTransactionSupport({ shouldSucceed: true });
+
+    // Enhanced mocks that track call timing for transaction boundary enforcement
+    const originalCreate = service.createUnifiedConfiguration;
+    const createMock = jest.fn().mockImplementation(async (request) => {
+      const startTime = Date.now();
+      const result = await originalCreate(request);
+      (
+        createMock as jest.MockedFunction<typeof originalCreate> & {
+          lastCallTime?: number;
+        }
+      ).lastCallTime = startTime;
+      return result;
+    });
+    service.createUnifiedConfiguration = createMock as jest.MockedFunction<
+      typeof originalCreate
+    >;
+
+    const originalGet = service.getUnifiedConfiguration;
+    const getMock = jest.fn().mockImplementation(async (agentId) => {
+      const startTime = Date.now();
+      const result = await originalGet(agentId);
+      (
+        getMock as jest.MockedFunction<typeof originalGet> & {
+          lastCallTime?: number;
+        }
+      ).lastCallTime = startTime;
+      return result;
+    });
+    service.getUnifiedConfiguration = getMock as jest.MockedFunction<
+      typeof originalGet
+    >;
+
+    const originalUpdate = service.updateUnifiedConfiguration;
+    const updateMock = jest
+      .fn()
+      .mockImplementation(async (agentId, updates) => {
+        const startTime = Date.now();
+        const result = await originalUpdate(agentId, updates);
+        (
+          updateMock as jest.MockedFunction<typeof originalUpdate> & {
+            lastCallTime?: number;
+          }
+        ).lastCallTime = startTime;
+        return result;
+      });
+    service.updateUnifiedConfiguration = updateMock as jest.MockedFunction<
+      typeof originalUpdate
+    >;
+
+    return service;
   }
 }

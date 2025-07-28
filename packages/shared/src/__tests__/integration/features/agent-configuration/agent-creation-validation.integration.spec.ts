@@ -15,19 +15,11 @@
  */
 
 import type { AgentCreateRequest } from "../../../../types/agent";
+import type { ModelConfiguration } from "../../../../types/model";
 import type { PersonalityConfiguration } from "../../../../types/personality";
 import type { CustomRole } from "../../../../types/role";
-import type { ModelConfiguration } from "../../../../types/model";
-import type {
-  AgentService,
-  RoleService,
-  ModelService,
-  ValidationService,
-} from "../../../../types/services";
+import type { AgentService } from "../../../../types/services";
 import { AgentServiceMockFactory } from "../../support/AgentServiceMockFactory";
-import { ValidationServiceMockFactory } from "../../support/ValidationServiceMockFactory";
-import { RoleServiceMockFactory } from "../../support/RoleServiceMockFactory";
-import { ModelServiceMockFactory } from "../../support/ModelServiceMockFactory";
 
 describe("Feature: Agent Configuration Creation Integration", () => {
   // Test timeout for complex validation integration scenarios
@@ -35,25 +27,21 @@ describe("Feature: Agent Configuration Creation Integration", () => {
 
   // Performance requirements from task specification
   const CROSS_SERVICE_VALIDATION_TIMEOUT = 300; // 300ms maximum for cross-service validation
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const AGENT_CREATION_TIMEOUT = 1000; // 1000ms maximum for agent creation
+  // const AGENT_CREATION_TIMEOUT = 1000; // 1000ms maximum for agent creation
 
   // Service mocks for cross-service validation coordination testing
   let agentService: jest.Mocked<AgentService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let validationService: jest.Mocked<ValidationService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let roleService: jest.Mocked<RoleService>;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  let modelService: jest.Mocked<ModelService>;
+  // let validationService: jest.Mocked<ValidationService>;
+  // let roleService: jest.Mocked<RoleService>;
+  // let modelService: jest.Mocked<ModelService>;
 
   beforeEach(() => {
     // Reset all service mocks before each test for cross-service validation coordination
     agentService = AgentServiceMockFactory.createSuccess();
-    validationService =
-      ValidationServiceMockFactory.createCrossServiceCoordination();
-    roleService = RoleServiceMockFactory.createSuccess();
-    modelService = ModelServiceMockFactory.createSuccess();
+    // validationService =
+    //   ValidationServiceMockFactory.createCrossServiceCoordination();
+    // roleService = RoleServiceMockFactory.createSuccess();
+    // modelService = ModelServiceMockFactory.createSuccess();
   });
 
   afterEach(() => {
@@ -275,34 +263,34 @@ describe("Feature: Agent Configuration Creation Integration", () => {
         };
 
         // Configure ValidationService to detect incompatibilities
-        validationService = ValidationServiceMockFactory.createWithFailures({
-          validationErrors: [
-            {
-              field: "personality-role-compatibility",
-              message:
-                "Personality conscientiousness (25) below role minimum requirement (80)",
-              code: "PERSONALITY_ROLE_INCOMPATIBLE",
-            },
-            {
-              field: "personality-role-compatibility",
-              message:
-                "Personality formality (20) below role minimum requirement (75)",
-              code: "PERSONALITY_TRAIT_INSUFFICIENT",
-            },
-            {
-              field: "model-configuration-compatibility",
-              message:
-                "Model temperature (1.5) exceeds role maximum requirement (0.5) for financial analysis",
-              code: "MODEL_CONFIG_INCOMPATIBLE",
-            },
-            {
-              field: "capability-role-alignment",
-              message:
-                "Capabilities [creative-writing, artistic-guidance] incompatible with financial-analyst role",
-              code: "CAPABILITY_ROLE_MISMATCH",
-            },
-          ],
-        });
+        // validationService = ValidationServiceMockFactory.createWithFailures({
+        //   validationErrors: [
+        //     {
+        //       field: "personality-role-compatibility",
+        //       message:
+        //         "Personality conscientiousness (25) below role minimum requirement (80)",
+        //       code: "PERSONALITY_ROLE_INCOMPATIBLE",
+        //     },
+        //     {
+        //       field: "personality-role-compatibility",
+        //       message:
+        //         "Personality formality (20) below role minimum requirement (75)",
+        //       code: "PERSONALITY_TRAIT_INSUFFICIENT",
+        //     },
+        //     {
+        //       field: "model-configuration-compatibility",
+        //       message:
+        //         "Model temperature (1.5) exceeds role maximum requirement (0.5) for financial analysis",
+        //       code: "MODEL_CONFIG_INCOMPATIBLE",
+        //     },
+        //     {
+        //       field: "capability-role-alignment",
+        //       message:
+        //         "Capabilities [creative-writing, artistic-guidance] incompatible with financial-analyst role",
+        //       code: "CAPABILITY_ROLE_MISMATCH",
+        //     },
+        //   ],
+        // });
 
         // When - Cross-service validation detects multiple incompatibilities
         // - ValidationService identifies personality-role trait incompatibilities
@@ -557,34 +545,34 @@ describe("Feature: Agent Configuration Creation Integration", () => {
         };
 
         // Configure ValidationService to detect personality-role incompatibilities
-        validationService = ValidationServiceMockFactory.createWithFailures({
-          validationErrors: [
-            {
-              field: "personality-role-compatibility",
-              message:
-                "Analytical depth (30) significantly below role requirement (85) for technical analysis",
-              code: "ANALYTICAL_DEPTH_INSUFFICIENT",
-            },
-            {
-              field: "personality-role-compatibility",
-              message:
-                "Patience (25) below role minimum requirement (70) for detailed analysis tasks",
-              code: "PATIENCE_INSUFFICIENT",
-            },
-            {
-              field: "personality-role-compatibility",
-              message:
-                "Conscientiousness (45) below role requirement (65) for quality analytical work",
-              code: "CONSCIENTIOUSNESS_INSUFFICIENT",
-            },
-            {
-              field: "personality-behavioral-alignment",
-              message:
-                "High playfulness (90) may conflict with focused analytical work requirements",
-              code: "BEHAVIORAL_TRAIT_CONFLICT",
-            },
-          ],
-        });
+        // validationService = ValidationServiceMockFactory.createWithFailures({
+        //   validationErrors: [
+        //     {
+        //       field: "personality-role-compatibility",
+        //       message:
+        //         "Analytical depth (30) significantly below role requirement (85) for technical analysis",
+        //       code: "ANALYTICAL_DEPTH_INSUFFICIENT",
+        //     },
+        //     {
+        //       field: "personality-role-compatibility",
+        //       message:
+        //         "Patience (25) below role minimum requirement (70) for detailed analysis tasks",
+        //       code: "PATIENCE_INSUFFICIENT",
+        //     },
+        //     {
+        //       field: "personality-role-compatibility",
+        //       message:
+        //         "Conscientiousness (45) below role requirement (65) for quality analytical work",
+        //       code: "CONSCIENTIOUSNESS_INSUFFICIENT",
+        //     },
+        //     {
+        //       field: "personality-behavioral-alignment",
+        //       message:
+        //         "High playfulness (90) may conflict with focused analytical work requirements",
+        //       code: "BEHAVIORAL_TRAIT_CONFLICT",
+        //     },
+        //   ],
+        // });
 
         // When - Cross-service validation detects personality-role incompatibilities
         // - PersonalityService analyzes social personality traits
@@ -860,34 +848,34 @@ describe("Feature: Agent Configuration Creation Integration", () => {
         };
 
         // Configure ValidationService to detect model configuration conflicts
-        validationService = ValidationServiceMockFactory.createWithFailures({
-          validationErrors: [
-            {
-              field: "model-personality-compatibility",
-              message:
-                "Model temperature (1.4) conflicts with conservative personality (imagination: 25, openness: 35)",
-              code: "MODEL_PERSONALITY_CONFLICT",
-            },
-            {
-              field: "model-role-compatibility",
-              message:
-                "Model creativity parameters exceed role conservative requirements for financial compliance",
-              code: "MODEL_ROLE_CONFLICT",
-            },
-            {
-              field: "model-configuration-validation",
-              message:
-                "Negative frequency penalty (-0.5) inappropriate for compliance work requiring consistent terminology",
-              code: "MODEL_PARAMETER_INAPPROPRIATE",
-            },
-            {
-              field: "cross-component-alignment",
-              message:
-                "High-creativity model configuration incompatible with risk-averse personality and compliance role",
-              code: "CROSS_COMPONENT_MISALIGNMENT",
-            },
-          ],
-        });
+        // validationService = ValidationServiceMockFactory.createWithFailures({
+        //   validationErrors: [
+        //     {
+        //       field: "model-personality-compatibility",
+        //       message:
+        //         "Model temperature (1.4) conflicts with conservative personality (imagination: 25, openness: 35)",
+        //       code: "MODEL_PERSONALITY_CONFLICT",
+        //     },
+        //     {
+        //       field: "model-role-compatibility",
+        //       message:
+        //         "Model creativity parameters exceed role conservative requirements for financial compliance",
+        //       code: "MODEL_ROLE_CONFLICT",
+        //     },
+        //     {
+        //       field: "model-configuration-validation",
+        //       message:
+        //         "Negative frequency penalty (-0.5) inappropriate for compliance work requiring consistent terminology",
+        //       code: "MODEL_PARAMETER_INAPPROPRIATE",
+        //     },
+        //     {
+        //       field: "cross-component-alignment",
+        //       message:
+        //         "High-creativity model configuration incompatible with risk-averse personality and compliance role",
+        //       code: "CROSS_COMPONENT_MISALIGNMENT",
+        //     },
+        //   ],
+        // });
 
         // When - Model configuration conflicts are detected through cross-service validation
         // - ModelService identifies parameter conflicts with personality traits
@@ -986,40 +974,40 @@ describe("Feature: Agent Configuration Creation Integration", () => {
         };
 
         // Configure multiple services with different error scenarios
-        validationService = ValidationServiceMockFactory.createWithFailures({
-          validationErrors: [
-            {
-              field: "personalityId",
-              message:
-                "Personality 'personality-non-existent' not found in PersonalityService",
-              code: "PERSONALITY_NOT_FOUND",
-            },
-            {
-              field: "role",
-              message:
-                "Role 'role-invalid-capabilities' has invalid capability definitions in RoleService",
-              code: "ROLE_INVALID_CAPABILITIES",
-            },
-            {
-              field: "modelId",
-              message:
-                "Model 'model-deprecated' is deprecated and unavailable in ModelService",
-              code: "MODEL_UNAVAILABLE",
-            },
-            {
-              field: "settings.temperature",
-              message:
-                "Temperature value 2.5 exceeds maximum allowed value (2.0) in ModelService configuration",
-              code: "MODEL_PARAMETER_OUT_OF_RANGE",
-            },
-            {
-              field: "settings.maxTokens",
-              message:
-                "Negative token count (-1000) is invalid in ModelService parameter validation",
-              code: "MODEL_PARAMETER_INVALID",
-            },
-          ],
-        });
+        // validationService = ValidationServiceMockFactory.createWithFailures({
+        //   validationErrors: [
+        //     {
+        //       field: "personalityId",
+        //       message:
+        //         "Personality 'personality-non-existent' not found in PersonalityService",
+        //       code: "PERSONALITY_NOT_FOUND",
+        //     },
+        //     {
+        //       field: "role",
+        //       message:
+        //         "Role 'role-invalid-capabilities' has invalid capability definitions in RoleService",
+        //       code: "ROLE_INVALID_CAPABILITIES",
+        //     },
+        //     {
+        //       field: "modelId",
+        //       message:
+        //         "Model 'model-deprecated' is deprecated and unavailable in ModelService",
+        //       code: "MODEL_UNAVAILABLE",
+        //     },
+        //     {
+        //       field: "settings.temperature",
+        //       message:
+        //         "Temperature value 2.5 exceeds maximum allowed value (2.0) in ModelService configuration",
+        //       code: "MODEL_PARAMETER_OUT_OF_RANGE",
+        //     },
+        //     {
+        //       field: "settings.maxTokens",
+        //       message:
+        //         "Negative token count (-1000) is invalid in ModelService parameter validation",
+        //       code: "MODEL_PARAMETER_INVALID",
+        //     },
+        //   ],
+        // });
 
         // When - Validation errors occur across service coordination
         // - PersonalityService reports personality ID resolution errors
@@ -1123,34 +1111,34 @@ describe("Feature: Agent Configuration Creation Integration", () => {
         };
 
         // Configure ValidationService with cascading error scenarios
-        validationService = ValidationServiceMockFactory.createWithFailures({
-          validationErrors: [
-            {
-              field: "personality-validation-chain",
-              message:
-                "Personality validation failed in PersonalityService, propagating to role compatibility check",
-              code: "PERSONALITY_VALIDATION_CASCADE",
-            },
-            {
-              field: "role-dependency-validation",
-              message:
-                "Role validation depends on personality context from PersonalityService - validation chain broken",
-              code: "ROLE_DEPENDENCY_FAILURE",
-            },
-            {
-              field: "model-compatibility-chain",
-              message:
-                "Model validation cannot proceed due to personality and role validation failures upstream",
-              code: "MODEL_VALIDATION_BLOCKED",
-            },
-            {
-              field: "cross-service-correlation",
-              message:
-                "Service correlation ID: CSS-12345 - tracking validation failure across PersonalityService -> RoleService -> ModelService",
-              code: "CROSS_SERVICE_CORRELATION",
-            },
-          ],
-        });
+        // validationService = ValidationServiceMockFactory.createWithFailures({
+        //   validationErrors: [
+        //     {
+        //       field: "personality-validation-chain",
+        //       message:
+        //         "Personality validation failed in PersonalityService, propagating to role compatibility check",
+        //       code: "PERSONALITY_VALIDATION_CASCADE",
+        //     },
+        //     {
+        //       field: "role-dependency-validation",
+        //       message:
+        //         "Role validation depends on personality context from PersonalityService - validation chain broken",
+        //       code: "ROLE_DEPENDENCY_FAILURE",
+        //     },
+        //     {
+        //       field: "model-compatibility-chain",
+        //       message:
+        //         "Model validation cannot proceed due to personality and role validation failures upstream",
+        //       code: "MODEL_VALIDATION_BLOCKED",
+        //     },
+        //     {
+        //       field: "cross-service-correlation",
+        //       message:
+        //         "Service correlation ID: CSS-12345 - tracking validation failure across PersonalityService -> RoleService -> ModelService",
+        //       code: "CROSS_SERVICE_CORRELATION",
+        //     },
+        //   ],
+        // });
 
         // When - Complex service interaction chains encounter cascading failures
         // - Initial validation failure in PersonalityService

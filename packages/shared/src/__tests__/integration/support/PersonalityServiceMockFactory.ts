@@ -72,6 +72,24 @@ interface PersonalityServiceMockConfig {
 }
 
 /**
+ * Enhanced personality service with transaction rollback support
+ */
+interface PersonalityServiceWithTransaction
+  extends jest.Mocked<PersonalityService> {
+  rollbackPersonality: jest.MockedFunction<
+    (personalityId?: string) => Promise<void>
+  > & {
+    lastCallTime?: number;
+    lastCallId?: string;
+  };
+  createPersonality: jest.MockedFunction<
+    (personalityData: unknown) => Promise<PersonalityConfiguration>
+  > & {
+    lastCallTime?: number;
+  };
+}
+
+/**
  * Personality Service Mock Factory
  * Creates mocked personality service instances with configurable behavior for cross-service testing
  */
@@ -392,5 +410,63 @@ export class PersonalityServiceMockFactory {
       latency: timeoutMs,
       errorMessage: "PersonalityService operation timed out",
     });
+  }
+
+  /**
+   * Create PersonalityService mock with rollback capabilities for transaction testing
+   * Adds rollback and timing-aware creation methods for transaction consistency testing
+   */
+  static createWithRollbackSupport(
+    config: PersonalityServiceMockConfig = {},
+  ): PersonalityServiceWithTransaction {
+    const baseService = this.create(config);
+
+    // Add rollback method for transaction consistency
+    const rollbackMock = jest
+      .fn()
+      .mockImplementation(async (personalityId?: string) => {
+        if (!config.shouldSucceed) {
+          throw new Error(config.errorMessage ?? "Personality rollback failed");
+        }
+        // Track rollback calls for verification
+        const typedRollback = rollbackMock as jest.MockedFunction<
+          (personalityId?: string) => Promise<void>
+        > & {
+          lastCallTime?: number;
+          lastCallId?: string;
+        };
+        typedRollback.lastCallTime = Date.now();
+        typedRollback.lastCallId = personalityId;
+      });
+
+    // Add timing-aware createPersonality method
+    const createMock = jest
+      .fn()
+      .mockImplementation(async (personalityData: unknown) => {
+        const startTime = Date.now();
+        // Simulate personality creation
+        const result = {
+          ...(personalityData as PersonalityConfiguration),
+          id: `personality-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        } as PersonalityConfiguration;
+        const typedCreate = createMock as jest.MockedFunction<
+          (personalityData: unknown) => Promise<PersonalityConfiguration>
+        > & {
+          lastCallTime?: number;
+        };
+        typedCreate.lastCallTime = startTime;
+        return result;
+      });
+
+    const enhancedService =
+      baseService as unknown as PersonalityServiceWithTransaction;
+    enhancedService.rollbackPersonality =
+      rollbackMock as PersonalityServiceWithTransaction["rollbackPersonality"];
+    enhancedService.createPersonality =
+      createMock as PersonalityServiceWithTransaction["createPersonality"];
+
+    return enhancedService;
   }
 }

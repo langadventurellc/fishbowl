@@ -27,6 +27,16 @@ interface AgentServiceMockConfig {
 }
 
 /**
+ * Enhanced agent service with transaction rollback support
+ */
+interface AgentServiceWithTransaction extends jest.Mocked<AgentService> {
+  rollbackAgent: jest.MockedFunction<(agentId?: string) => Promise<void>> & {
+    lastCallTime?: number;
+    lastCallId?: string;
+  };
+}
+
+/**
  * Mock factory for AgentService following established patterns
  * Supports agent configuration creation, validation, and management testing
  */
@@ -220,5 +230,40 @@ export class AgentServiceMockFactory {
       crossServiceFailures: true,
       errorMessage: "Cross-service coordination failed",
     });
+  }
+
+  /**
+   * Create AgentService mock with rollback capabilities for transaction testing
+   * Adds rollback method for transaction consistency testing
+   */
+  static createWithRollbackSupport(
+    config: AgentServiceMockConfig = {},
+  ): AgentServiceWithTransaction {
+    const baseService = this.create(config);
+
+    // Add rollback method for transaction consistency
+    const rollbackMock = jest
+      .fn()
+      .mockImplementation(async (agentId?: string) => {
+        if (!config.shouldSucceed) {
+          throw new Error(config.errorMessage ?? "Agent rollback failed");
+        }
+        // Track rollback calls for verification
+        const typedRollback = rollbackMock as jest.MockedFunction<
+          (agentId?: string) => Promise<void>
+        > & {
+          lastCallTime?: number;
+          lastCallId?: string;
+        };
+        typedRollback.lastCallTime = Date.now();
+        typedRollback.lastCallId = agentId;
+      });
+
+    const enhancedService =
+      baseService as unknown as AgentServiceWithTransaction;
+    enhancedService.rollbackAgent =
+      rollbackMock as AgentServiceWithTransaction["rollbackAgent"];
+
+    return enhancedService;
   }
 }
