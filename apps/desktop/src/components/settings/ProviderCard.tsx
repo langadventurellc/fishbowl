@@ -7,7 +7,17 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "../ui/collapsible";
-import { Eye, EyeOff, Check, X, ChevronDown, ChevronRight } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  Check,
+  X,
+  ChevronDown,
+  ChevronRight,
+  AlertTriangle,
+  Loader2,
+} from "lucide-react";
+import { cn } from "../../lib/utils";
 
 interface ProviderCardProps {
   provider: {
@@ -25,6 +35,11 @@ interface ProviderCardProps {
   onToggleApiKey: () => void;
   onToggleAdvanced: () => void;
   onTest: () => void;
+  errors?: {
+    apiKey?: string;
+    baseUrl?: string;
+  };
+  isValidating?: boolean;
 }
 
 export function ProviderCard({
@@ -39,6 +54,8 @@ export function ProviderCard({
   onToggleApiKey,
   onToggleAdvanced,
   onTest,
+  errors,
+  isValidating = false,
 }: ProviderCardProps) {
   const getStatusIcon = () => {
     switch (status) {
@@ -87,8 +104,17 @@ export function ProviderCard({
                 onApiKeyChange(e.target.value)
               }
               placeholder={`Enter your ${provider.name} API key`}
-              className="pr-10"
-              aria-describedby={`${provider.id}-api-key-description`}
+              className={cn(
+                "pr-10",
+                errors?.apiKey &&
+                  "border-red-500 focus:border-red-500 focus:ring-red-200",
+              )}
+              aria-invalid={!!errors?.apiKey}
+              aria-describedby={
+                errors?.apiKey
+                  ? `${provider.id}-api-key-error ${provider.id}-api-key-description`
+                  : `${provider.id}-api-key-description`
+              }
             />
             <Button
               type="button"
@@ -105,6 +131,17 @@ export function ProviderCard({
               )}
             </Button>
           </div>
+          {errors?.apiKey && (
+            <p
+              id={`${provider.id}-api-key-error`}
+              className="text-sm text-red-600 flex items-center gap-1"
+              role="alert"
+              aria-live="polite"
+            >
+              <AlertTriangle className="h-3 w-3" />
+              {errors.apiKey}
+            </p>
+          )}
           <div
             id={`${provider.id}-api-key-description`}
             className="sr-only"
@@ -125,11 +162,25 @@ export function ProviderCard({
           <Button
             type="button"
             variant="secondary"
-            onClick={onTest}
+            onClick={() => {
+              // Validate before testing
+              if (errors?.apiKey || errors?.baseUrl) {
+                return;
+              }
+              onTest();
+            }}
             className="w-20"
+            disabled={!!errors?.apiKey || !!errors?.baseUrl || isValidating}
             aria-describedby={`${provider.id}-test-description`}
           >
-            Test
+            {isValidating ? (
+              <>
+                <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                Validating
+              </>
+            ) : (
+              "Test"
+            )}
           </Button>
           <div id={`${provider.id}-test-description`} className="sr-only">
             Test connection to {provider.name} API
@@ -172,13 +223,33 @@ export function ProviderCard({
                 onBaseUrlChange(e.target.value)
               }
               placeholder={provider.defaultBaseUrl}
-              aria-describedby={`${provider.id}-base-url-description`}
+              className={cn(
+                errors?.baseUrl &&
+                  "border-red-500 focus:border-red-500 focus:ring-red-200",
+              )}
+              aria-invalid={!!errors?.baseUrl}
+              aria-describedby={
+                errors?.baseUrl
+                  ? `${provider.id}-base-url-error ${provider.id}-base-url-description`
+                  : `${provider.id}-base-url-description`
+              }
             />
+            {errors?.baseUrl && (
+              <p
+                id={`${provider.id}-base-url-error`}
+                className="text-sm text-red-600 flex items-center gap-1"
+                role="alert"
+                aria-live="polite"
+              >
+                <AlertTriangle className="h-3 w-3" />
+                {errors.baseUrl}
+              </p>
+            )}
             <div
               id={`${provider.id}-base-url-description`}
               className="text-xs text-muted-foreground"
             >
-              Override the default API endpoint URL for {provider.name}
+              The base URL for API requests. Must use HTTPS for security.
             </div>
           </CollapsibleContent>
         </Collapsible>

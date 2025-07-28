@@ -21,6 +21,8 @@ const defaultProps = {
   onToggleApiKey: jest.fn(),
   onToggleAdvanced: jest.fn(),
   onTest: jest.fn(),
+  errors: undefined,
+  isValidating: false,
 };
 
 describe("ProviderCard Component", () => {
@@ -340,11 +342,13 @@ describe("ProviderCard Component", () => {
       render(<ProviderCard {...defaultProps} showAdvanced={true} />);
 
       expect(
-        screen.getByText("Override the default API endpoint URL for OpenAI"),
+        screen.getByText(
+          "The base URL for API requests. Must use HTTPS for security.",
+        ),
       ).toBeInTheDocument();
 
       const helperText = screen.getByText(
-        "Override the default API endpoint URL for OpenAI",
+        "The base URL for API requests. Must use HTTPS for security.",
       );
       expect(helperText).toHaveAttribute("id", "openai-base-url-description");
       expect(helperText).toHaveClass("text-xs", "text-muted-foreground");
@@ -372,7 +376,9 @@ describe("ProviderCard Component", () => {
 
       // Base URL description
       expect(
-        screen.getByText("Override the default API endpoint URL for OpenAI"),
+        screen.getByText(
+          "The base URL for API requests. Must use HTTPS for security.",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -419,7 +425,9 @@ describe("ProviderCard Component", () => {
         screen.getByText("Test connection to Anthropic API"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText("Override the default API endpoint URL for Anthropic"),
+        screen.getByText(
+          "The base URL for API requests. Must use HTTPS for security.",
+        ),
       ).toBeInTheDocument();
     });
 
@@ -473,6 +481,339 @@ describe("ProviderCard Component", () => {
       expect(() => {
         render(<ProviderCard {...testProps} />);
       }).not.toThrow();
+    });
+  });
+
+  describe("Validation Error Display", () => {
+    describe("API Key Validation Errors", () => {
+      it("displays API key error message when validation fails", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            errors={{ apiKey: "API key must be at least 20 characters" }}
+          />,
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent(
+          "API key must be at least 20 characters",
+        );
+      });
+
+      it("applies error styling to API key input when validation fails", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            errors={{ apiKey: "Invalid API key format" }}
+          />,
+        );
+
+        const input = screen.getByLabelText("API Key");
+        expect(input).toHaveClass(
+          "border-red-500",
+          "focus:border-red-500",
+          "focus:ring-red-200",
+        );
+      });
+
+      it("sets aria-invalid attribute when API key has errors", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            errors={{ apiKey: "Invalid API key" }}
+          />,
+        );
+
+        const input = screen.getByLabelText("API Key");
+        expect(input).toHaveAttribute("aria-invalid", "true");
+      });
+
+      it("associates error message with API key input via aria-describedby", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            errors={{ apiKey: "Invalid API key" }}
+          />,
+        );
+
+        const input = screen.getByLabelText("API Key");
+        expect(input).toHaveAttribute(
+          "aria-describedby",
+          "openai-api-key-error openai-api-key-description",
+        );
+
+        const errorMessage = screen.getByRole("alert");
+        expect(errorMessage).toHaveAttribute("id", "openai-api-key-error");
+      });
+
+      it("displays error with alert triangle icon", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            errors={{ apiKey: "Invalid API key" }}
+          />,
+        );
+
+        const errorMessage = screen.getByRole("alert");
+        expect(errorMessage.querySelector("svg")).toBeInTheDocument();
+        expect(errorMessage).toHaveClass("text-red-600");
+      });
+
+      it("does not display error message when no API key error", () => {
+        render(<ProviderCard {...defaultProps} />);
+
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      });
+    });
+
+    describe("Base URL Validation Errors", () => {
+      it("displays base URL error message when validation fails", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            showAdvanced={true}
+            errors={{ baseUrl: "URL must use HTTPS for security" }}
+          />,
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent(
+          "URL must use HTTPS for security",
+        );
+      });
+
+      it("applies error styling to base URL input when validation fails", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            showAdvanced={true}
+            errors={{ baseUrl: "Invalid URL format" }}
+          />,
+        );
+
+        const input = screen.getByLabelText("Base URL");
+        expect(input).toHaveClass(
+          "border-red-500",
+          "focus:border-red-500",
+          "focus:ring-red-200",
+        );
+      });
+
+      it("sets aria-invalid attribute when base URL has errors", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            showAdvanced={true}
+            errors={{ baseUrl: "Invalid URL" }}
+          />,
+        );
+
+        const input = screen.getByLabelText("Base URL");
+        expect(input).toHaveAttribute("aria-invalid", "true");
+      });
+
+      it("associates error message with base URL input via aria-describedby", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            showAdvanced={true}
+            errors={{ baseUrl: "Invalid URL" }}
+          />,
+        );
+
+        const input = screen.getByLabelText("Base URL");
+        expect(input).toHaveAttribute(
+          "aria-describedby",
+          "openai-base-url-error openai-base-url-description",
+        );
+
+        const errorMessage = screen.getByRole("alert");
+        expect(errorMessage).toHaveAttribute("id", "openai-base-url-error");
+      });
+
+      it("displays updated helper text for base URL security", () => {
+        render(<ProviderCard {...defaultProps} showAdvanced={true} />);
+
+        expect(
+          screen.getByText(
+            "The base URL for API requests. Must use HTTPS for security.",
+          ),
+        ).toBeInTheDocument();
+      });
+    });
+
+    describe("Multiple Validation Errors", () => {
+      it("displays both API key and base URL errors simultaneously", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            showAdvanced={true}
+            errors={{
+              apiKey: "API key too short",
+              baseUrl: "Invalid URL format",
+            }}
+          />,
+        );
+
+        const alerts = screen.getAllByRole("alert");
+        expect(alerts).toHaveLength(2);
+        expect(alerts[0]).toHaveTextContent("API key too short");
+        expect(alerts[1]).toHaveTextContent("Invalid URL format");
+      });
+
+      it("applies error styling to both inputs when both have errors", () => {
+        render(
+          <ProviderCard
+            {...defaultProps}
+            showAdvanced={true}
+            errors={{
+              apiKey: "API key error",
+              baseUrl: "Base URL error",
+            }}
+          />,
+        );
+
+        const apiKeyInput = screen.getByLabelText("API Key");
+        const baseUrlInput = screen.getByLabelText("Base URL");
+
+        expect(apiKeyInput).toHaveClass("border-red-500");
+        expect(baseUrlInput).toHaveClass("border-red-500");
+      });
+    });
+  });
+
+  describe("Test Button Validation Enhancement", () => {
+    it("disables test button when API key has validation errors", () => {
+      render(
+        <ProviderCard
+          {...defaultProps}
+          errors={{ apiKey: "Invalid API key" }}
+        />,
+      );
+
+      const testButton = screen.getByRole("button", { name: /test/i });
+      expect(testButton).toBeDisabled();
+    });
+
+    it("disables test button when base URL has validation errors", () => {
+      render(
+        <ProviderCard {...defaultProps} errors={{ baseUrl: "Invalid URL" }} />,
+      );
+
+      const testButton = screen.getByRole("button", { name: /test/i });
+      expect(testButton).toBeDisabled();
+    });
+
+    it("disables test button when both inputs have validation errors", () => {
+      render(
+        <ProviderCard
+          {...defaultProps}
+          errors={{
+            apiKey: "API key error",
+            baseUrl: "Base URL error",
+          }}
+        />,
+      );
+
+      const testButton = screen.getByRole("button", { name: /test/i });
+      expect(testButton).toBeDisabled();
+    });
+
+    it("enables test button when no validation errors exist", () => {
+      render(<ProviderCard {...defaultProps} />);
+
+      const testButton = screen.getByRole("button", { name: /test/i });
+      expect(testButton).not.toBeDisabled();
+    });
+
+    it("does not call onTest when button is clicked with validation errors", () => {
+      const onTest = jest.fn();
+      render(
+        <ProviderCard
+          {...defaultProps}
+          onTest={onTest}
+          errors={{ apiKey: "Invalid API key" }}
+        />,
+      );
+
+      const testButton = screen.getByRole("button", { name: /test/i });
+      fireEvent.click(testButton);
+
+      expect(onTest).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Validation Loading State", () => {
+    it("disables test button when validation is in progress", () => {
+      render(<ProviderCard {...defaultProps} isValidating={true} />);
+
+      const testButton = screen.getByRole("button", { name: /validating/i });
+      expect(testButton).toBeDisabled();
+    });
+
+    it("displays validating text and spinner when validation is in progress", () => {
+      render(<ProviderCard {...defaultProps} isValidating={true} />);
+
+      const testButton = screen.getByRole("button", { name: /validating/i });
+      expect(testButton).toHaveTextContent("Validating");
+      expect(testButton.querySelector("svg")).toBeInTheDocument(); // Loader2 spinner
+    });
+
+    it("shows normal test button when not validating", () => {
+      render(<ProviderCard {...defaultProps} isValidating={false} />);
+
+      const testButton = screen.getByRole("button", { name: /test/i });
+      expect(testButton).toHaveTextContent("Test");
+      expect(testButton).not.toBeDisabled();
+    });
+  });
+
+  describe("Accessibility Enhancements", () => {
+    it("includes live region for error announcements", () => {
+      render(
+        <ProviderCard
+          {...defaultProps}
+          errors={{ apiKey: "Invalid API key format" }}
+        />,
+      );
+
+      const errorMessage = screen.getByRole("alert");
+      expect(errorMessage).toHaveAttribute("aria-live", "polite");
+    });
+
+    it("maintains proper focus order with error messages", () => {
+      render(
+        <ProviderCard
+          {...defaultProps}
+          showAdvanced={true}
+          errors={{
+            apiKey: "API key error",
+            baseUrl: "Base URL error",
+          }}
+        />,
+      );
+
+      const apiKeyInput = screen.getByLabelText("API Key");
+      const baseUrlInput = screen.getByLabelText("Base URL");
+      const testButton = screen.getByRole("button", { name: /test/i });
+
+      // Error messages should not interfere with tab order
+      expect(apiKeyInput).not.toHaveAttribute("tabindex", "-1");
+      expect(baseUrlInput).not.toHaveAttribute("tabindex", "-1");
+      expect(testButton).not.toHaveAttribute("tabindex", "-1");
+    });
+
+    it("provides descriptive error messages for screen readers", () => {
+      render(
+        <ProviderCard
+          {...defaultProps}
+          errors={{ apiKey: "API key must be at least 20 characters long" }}
+        />,
+      );
+
+      const errorMessage = screen.getByRole("alert");
+      expect(errorMessage).toHaveTextContent(
+        "API key must be at least 20 characters long",
+      );
+      expect(errorMessage).toHaveClass("text-red-600");
     });
   });
 });

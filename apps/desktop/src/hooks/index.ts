@@ -8,3 +8,4 @@
  */
 
 export { useElectronIPC } from "./useElectronIPC";
+export { useDebounce } from "./useDebounce";
