@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-create-providercard-base
+parent: F-api-keys-section-implementation
+status: done
 title: Create ProviderCard base component with shared form elements
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-27T22:22:38.347805"
-updated: "2025-07-27T22:22:38.347805"
+updated: "2025-07-27T22:26:19.398192"
 schema_version: "1.1"
-parent: F-api-keys-section-implementation
+worktree: null
 ---
 
 # Create ProviderCard Base Component
@@ -87,3 +88,7 @@ interface ProviderCardProps {
 - Proper input sanitization for base URL validation
 
 ### Log
+
+**2025-07-28T03:35:49.192035Z** - Successfully implemented ProviderCard base component with all required features including password input with show/hide toggle, status indicators with proper color coding (green for connected, red for error, gray for untested), 80px test button, and collapsible base URL advanced settings. Component uses shadcn/ui components (Card, Input, Button, Collapsible) with Lucide React icons. All acceptance criteria met: proper card layout (1px border, 8px border-radius, 20px padding), 18px semi-bold provider header, accessible form elements with ARIA attributes, and flexible provider configuration. Comprehensive test suite created with 39 passing tests covering all functionality including accessibility, user interactions, and multi-provider support. Code passes all quality checks (linting, formatting, type checking).
+
+- filesChanged: ["apps/desktop/src/components/settings/api-keys/ProviderCard.tsx", "apps/desktop/src/components/settings/api-keys/__tests__/ProviderCard.test.tsx", "apps/desktop/src/components/ui/card.tsx"]
