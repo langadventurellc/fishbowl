@@ -16,12 +16,13 @@
  * @module components/settings/TabContainer
  */
 
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo, useCallback, useEffect } from "react";
 import { cn } from "../../lib/utils";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
 import { COMMON_FOCUS_CLASSES } from "../../styles/focus";
 import {
   useEnhancedTabNavigation,
+  useSettingsNavigation,
   type SettingsSubTab,
   type TabContainerProps,
 } from "@fishbowl-ai/shared";
@@ -55,14 +56,41 @@ import { useAccessibilityAnnouncements } from "../../utils/useAccessibilityAnnou
  */
 export const TabContainer = React.memo(function TabContainer({
   tabs,
-  activeTab,
-  onTabChange,
+  activeTab: propActiveTab,
+  onTabChange: propOnTabChange,
+  useStore = true,
   className,
   animationDuration = 200,
   orientation = "horizontal",
   activationMode = "automatic",
   disabled = false,
 }: TabContainerProps) {
+  // Get store state when using store integration
+  const { activeSubTab: storeActiveTab, setActiveSubTab } =
+    useSettingsNavigation();
+
+  // Validate props when not using store
+  useEffect(() => {
+    if (!useStore) {
+      if (propActiveTab === undefined) {
+        console.warn(
+          "TabContainer: activeTab prop is required when useStore=false",
+        );
+      }
+      if (propOnTabChange === undefined) {
+        console.warn(
+          "TabContainer: onTabChange prop is required when useStore=false",
+        );
+      }
+    }
+  }, [useStore, propActiveTab, propOnTabChange]);
+
+  // Determine active tab source (store or props)
+  const activeTab = useStore ? storeActiveTab : propActiveTab;
+
+  // Determine tab change handler (store or props)
+  const onTabChange = useStore ? setActiveSubTab : propOnTabChange;
+
   // Filter out tabs with null IDs and ensure we have valid tabs
   const validTabs = useMemo(() => {
     return tabs.filter((tab) => tab.id !== null);
@@ -80,11 +108,21 @@ export const TabContainer = React.memo(function TabContainer({
   // Initialize accessibility announcements (must be before early return)
   const { announceStateChange } = useAccessibilityAnnouncements();
 
+  // Create safe tab change handler for hook (never undefined)
+  const safeTabChangeHandler = useCallback(
+    (tabId: SettingsSubTab) => {
+      if (onTabChange) {
+        onTabChange(tabId);
+      }
+    },
+    [onTabChange],
+  );
+
   // Initialize enhanced tab navigation (must be before early return)
   const { getTabProps, getTabPanelProps } = useEnhancedTabNavigation({
     tabs: validTabs,
     activeTab: validActiveTab || "library", // Provide fallback for hook
-    onTabChange,
+    onTabChange: safeTabChangeHandler,
     orientation,
     activationMode,
     disabled,
@@ -94,7 +132,11 @@ export const TabContainer = React.memo(function TabContainer({
   const handleEnhancedTabChange = useCallback(
     (value: string) => {
       const newTab = value as SettingsSubTab;
-      onTabChange(newTab);
+
+      // Call appropriate change handler based on integration mode
+      if (onTabChange) {
+        onTabChange(newTab);
+      }
 
       // Announce tab change for screen readers
       const tabLabel = validTabs.find((tab) => tab.id === newTab)?.label;

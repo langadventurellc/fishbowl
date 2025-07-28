@@ -20,10 +20,12 @@ import type { TabConfiguration } from "../../settings/TabConfiguration";
 export interface TabContainerProps {
   /** Array of tab configurations defining available tabs */
   tabs: TabConfiguration[];
-  /** Currently active tab ID */
-  activeTab: SettingsSubTab;
-  /** Callback fired when user changes tabs */
-  onTabChange: (tabId: SettingsSubTab) => void;
+  /** Currently active tab ID (optional when useStore=true) */
+  activeTab?: SettingsSubTab;
+  /** Callback fired when user changes tabs (optional when useStore=true) */
+  onTabChange?: (tabId: SettingsSubTab) => void;
+  /** Whether to use Zustand store for state management (default: true) */
+  useStore?: boolean;
   /** Additional CSS classes for the container */
   className?: string;
   /** Duration in milliseconds for content transitions (default: 200ms) */
