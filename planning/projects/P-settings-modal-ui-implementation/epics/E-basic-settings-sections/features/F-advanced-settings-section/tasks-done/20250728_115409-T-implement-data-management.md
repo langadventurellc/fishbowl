@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-implement-data-management
+parent: F-advanced-settings-section
+status: done
 title: Implement Data Management buttons with proper styling and visual feedback
-status: open
 priority: high
 prerequisites:
   - T-replace-placeholder-advanced
 created: "2025-07-28T11:12:23.987895"
-updated: "2025-07-28T11:12:23.987895"
+updated: "2025-07-28T11:47:49.662853"
 schema_version: "1.1"
-parent: F-advanced-settings-section
+worktree: null
 ---
 
 # Implement Data Management Buttons with Visual Feedback
@@ -123,3 +124,7 @@ interface DataManagementState {
 - Prepare structure for future backend integration without implementing it
 
 ### Log
+
+**2025-07-28T16:54:09.688737Z** - Implemented Data Management buttons section within Advanced Settings modal, replacing placeholder content with three fully functional buttons: Export All Settings, Import Settings, and Clear All Conversations. Added proper shadcn/ui Button components with secondary/destructive variants, Lucide React icons (Download, Upload, Trash2), responsive grid layout (1 column mobile, 3 columns desktop), helper text with correct typography (13px muted foreground), warning text for destructive actions (13px destructive color), and comprehensive accessibility features including ARIA labels and descriptions. Handler functions are structured for future functionality implementation. All buttons meet 40px minimum height requirement and follow project styling patterns. Passed all quality checks (lint, format, type-check).
+
+- filesChanged: ["apps/desktop/src/components/settings/SettingsContent.tsx"]

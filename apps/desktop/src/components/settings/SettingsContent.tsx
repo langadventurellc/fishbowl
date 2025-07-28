@@ -35,6 +35,8 @@ import {
   defaultGeneralSettings,
   useUnsavedChanges,
 } from "@fishbowl-ai/shared";
+import { Button } from "@/components/ui/button";
+import { Download, Upload, Trash2 } from "lucide-react";
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -103,7 +105,7 @@ const GeneralSettings: React.FC = () => {
   }, [form, onSubmit]);
 
   return (
-    <div className="space-y-6 max-w-[600px] mx-auto px-4 sm:px-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-[24px] font-bold mb-[20px]">General</h1>
         <p className="text-muted-foreground text-sm mb-6">
@@ -488,7 +490,7 @@ const AppearanceSettings: React.FC = () => {
   }, []);
 
   return (
-    <div className="space-y-6 max-w-[600px] mx-auto px-4 sm:px-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-[24px] font-bold mb-[20px]">Appearance</h1>
         <p className="text-muted-foreground text-sm mb-6">
@@ -834,63 +836,117 @@ const RolesSettings: React.FC = () => (
   </div>
 );
 
-const AdvancedSettings: React.FC = () => (
-  <div className="space-y-6 max-w-[600px] mx-auto px-4 sm:px-6">
-    <div>
-      <h1 className="text-[24px] font-bold mb-[20px]">Advanced Settings</h1>
-      <p className="text-muted-foreground text-sm mb-6">
-        Advanced configuration options for power users.
-      </p>
-    </div>
+const AdvancedSettings: React.FC = () => {
+  // Handler functions for Data Management buttons
+  const handleExportSettings = useCallback(() => {
+    console.log("Export Settings clicked - functionality to be implemented");
+    // TODO: Implement settings export functionality
+  }, []);
+
+  const handleImportSettings = useCallback(() => {
+    console.log("Import Settings clicked - functionality to be implemented");
+    // TODO: Implement settings import functionality
+  }, []);
+
+  const handleClearConversations = useCallback(() => {
+    console.log(
+      "Clear All Conversations clicked - functionality to be implemented",
+    );
+    // TODO: Implement conversation clearing functionality
+  }, []);
+
+  return (
     <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-[18px] font-semibold mb-4">Data Management</h2>
-        <div className="grid gap-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="flex flex-col space-y-2">
-              <span className="text-sm font-medium">Export Settings</span>
-              <div className="text-[13px] text-muted-foreground">
-                Export your settings and data
-              </div>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <span className="text-sm font-medium">Import Settings</span>
-              <div className="text-[13px] text-muted-foreground">
-                Import settings from a file
-              </div>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <span className="text-sm font-medium">
-                Clear All Conversations
-              </span>
-              <div className="text-[13px] text-muted-foreground">
-                Permanently delete all conversation data
-              </div>
-            </div>
-          </div>
-        </div>
+      <div>
+        <h1 className="text-[24px] font-bold mb-[20px]">Advanced Settings</h1>
+        <p className="text-muted-foreground text-sm mb-6">
+          Advanced configuration options for power users.
+        </p>
       </div>
-      <div className="space-y-4">
-        <h2 className="text-[18px] font-semibold mb-4">Developer Options</h2>
-        <div className="grid gap-6">
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <span className="text-sm font-medium">Debug Mode</span>
+      <div className="space-y-6">
+        <div className="space-y-4">
+          <h2 className="text-[18px] font-semibold mb-4">Data Management</h2>
+          <div className="grid gap-4">
+            <div className="grid grid-cols-1 gap-[12px]">
+              {/* Export Settings Button */}
+              <div className="flex flex-col space-y-2">
+                <Button
+                  variant="secondary"
+                  size="default"
+                  onClick={handleExportSettings}
+                  className="h-10 justify-start gap-2"
+                  aria-label="Export all settings as JSON file"
+                >
+                  <Download className="w-4 h-4" />
+                  Export All Settings
+                </Button>
                 <div className="text-[13px] text-muted-foreground">
-                  Enable debugging features and console output
+                  Export settings as JSON file
+                </div>
+              </div>
+
+              {/* Import Settings Button */}
+              <div className="flex flex-col space-y-2">
+                <Button
+                  variant="secondary"
+                  size="default"
+                  onClick={handleImportSettings}
+                  className="h-10 justify-start gap-2"
+                  aria-label="Import settings from JSON file"
+                >
+                  <Upload className="w-4 h-4" />
+                  Import Settings
+                </Button>
+                <div className="text-[13px] text-muted-foreground">
+                  Import settings from JSON file
+                </div>
+              </div>
+
+              {/* Clear All Conversations Button */}
+              <div className="flex flex-col space-y-2">
+                <Button
+                  variant="destructive"
+                  size="default"
+                  onClick={handleClearConversations}
+                  className="h-10 justify-start gap-2"
+                  aria-label="Clear all conversations - this action cannot be undone"
+                  aria-describedby="clear-warning"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  Clear All Conversations
+                </Button>
+                <div
+                  id="clear-warning"
+                  className="text-[13px] text-destructive"
+                >
+                  This cannot be undone
                 </div>
               </div>
             </div>
           </div>
-          <div className="flex flex-col space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <span className="text-sm font-medium">
-                  Experimental Features
-                </span>
-                <div className="text-[13px] text-muted-foreground">
-                  Enable experimental features that may be unstable
+        </div>
+        <div className="space-y-4">
+          <h2 className="text-[18px] font-semibold mb-4">Developer Options</h2>
+          <div className="grid gap-6">
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-medium">Debug Mode</span>
+                  <div className="text-[13px] text-muted-foreground">
+                    Enable debugging features and console output
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="flex flex-col space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <span className="text-sm font-medium">
+                    Experimental Features
+                  </span>
+                  <div className="text-[13px] text-muted-foreground">
+                    Enable experimental features that may be unstable
+                  </div>
                 </div>
               </div>
             </div>
@@ -898,8 +954,8 @@ const AdvancedSettings: React.FC = () => (
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const DefaultSettings: React.FC = () => (
   <div className="space-y-6">
@@ -979,9 +1035,9 @@ export function SettingsContent({
       {/* Section heading for screen readers */}
       <h2 className="sr-only">{activeSection} Settings Section</h2>
 
-      {/* Maximum content width container with region role */}
+      {/* Content container with region role */}
       <div
-        className="max-w-[600px] mx-auto"
+        className="max-w-[900px] mx-auto px-4 sm:px-6"
         role="region"
         aria-labelledby={`${contentId}-section-title`}
       >

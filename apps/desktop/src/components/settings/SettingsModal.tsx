@@ -58,14 +58,14 @@ const useModalClasses = () => ({
     // Remove default shadcn/ui styles that conflict with custom requirements
     "!max-w-none !w-auto !gap-0 !p-0 flex flex-col",
     // Enhanced responsive behavior
-    // Large screens: 80% viewport, max 1000px
-    "w-[80vw] h-[80vh] max-w-[1000px] max-h-[700px]",
+    // Large screens: 80% viewport, max 1600px
+    "w-[80vw] h-[80vh] max-w-[1600px] max-h-[700px]",
     // Medium screens (< 1000px): 95% width, navigation 180px
     "max-[1000px]:w-[95vw]",
     // Small screens (< 800px): Full width content area, collapsible navigation
     "max-[800px]:w-[95vw] max-[800px]:h-[90vh]",
     // Minimum constraints
-    "min-w-[320px] min-h-[400px]",
+    "min-w-[800px] min-h-[500px]",
     // Enhanced z-index for content above overlay
     "z-50",
     // Custom styling as per requirements
