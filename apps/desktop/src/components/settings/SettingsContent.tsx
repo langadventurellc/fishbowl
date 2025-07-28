@@ -36,7 +36,7 @@ import {
   useUnsavedChanges,
 } from "@fishbowl-ai/shared";
 import { Button } from "@/components/ui/button";
-import { Download, Upload, Trash2 } from "lucide-react";
+import { Download, Upload, Trash2, AlertTriangle } from "lucide-react";
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -837,6 +837,10 @@ const RolesSettings: React.FC = () => (
 );
 
 const AdvancedSettings: React.FC = () => {
+  // Developer Options state management
+  const [debugMode, setDebugMode] = useState(false);
+  const [experimentalFeatures, setExperimentalFeatures] = useState(false);
+
   // Handler functions for Data Management buttons
   const handleExportSettings = useCallback(() => {
     console.log("Export Settings clicked - functionality to be implemented");
@@ -928,27 +932,53 @@ const AdvancedSettings: React.FC = () => {
         <div className="space-y-4">
           <h2 className="text-[18px] font-semibold mb-4">Developer Options</h2>
           <div className="grid gap-6">
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <span className="text-sm font-medium">Debug Mode</span>
-                  <div className="text-[13px] text-muted-foreground">
-                    Enable debugging features and console output
-                  </div>
+            <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="space-y-0.5">
+                <Label className="text-base">Enable debug logging</Label>
+                <div className="text-[13px] text-muted-foreground">
+                  Show detailed logs in developer console
                 </div>
               </div>
+              <Switch
+                checked={debugMode}
+                onCheckedChange={setDebugMode}
+                aria-describedby="debug-mode-description"
+                aria-label="Toggle debug logging"
+              />
             </div>
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <span className="text-sm font-medium">
-                    Experimental Features
-                  </span>
-                  <div className="text-[13px] text-muted-foreground">
-                    Enable experimental features that may be unstable
-                  </div>
+            <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+              <div className="space-y-0.5">
+                <Label className="text-base">
+                  Enable experimental features
+                </Label>
+                <div className="text-[13px] text-muted-foreground">
+                  Enable experimental features that may be unstable
+                </div>
+                <div className="text-[13px] text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  <AlertTriangle className="h-4 w-4" />
+                  May cause instability
                 </div>
               </div>
+              <Switch
+                checked={experimentalFeatures}
+                onCheckedChange={setExperimentalFeatures}
+                aria-describedby="experimental-features-description experimental-features-warning"
+                aria-label="Toggle experimental features"
+              />
+            </div>
+
+            {/* Hidden descriptions for screen readers */}
+            <div id="debug-mode-description" className="sr-only">
+              Enable debug logging to show detailed logs in the developer
+              console. This can help with troubleshooting issues.
+            </div>
+            <div id="experimental-features-description" className="sr-only">
+              Enable experimental features that are still in development and
+              testing.
+            </div>
+            <div id="experimental-features-warning" className="sr-only">
+              Warning: Experimental features may cause application instability
+              or unexpected behavior.
             </div>
           </div>
         </div>

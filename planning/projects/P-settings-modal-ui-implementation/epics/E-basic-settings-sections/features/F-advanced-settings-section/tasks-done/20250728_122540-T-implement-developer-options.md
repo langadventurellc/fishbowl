@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-implement-developer-options
+parent: F-advanced-settings-section
+status: done
 title: Implement Developer Options toggles with state management and warning indicators
-status: open
 priority: high
 prerequisites:
   - T-replace-placeholder-advanced
 created: "2025-07-28T11:13:03.145551"
-updated: "2025-07-28T11:13:03.145551"
+updated: "2025-07-28T12:19:55.705506"
 schema_version: "1.1"
-parent: F-advanced-settings-section
+worktree: null
 ---
 
 # Implement Developer Options Toggles with State Management
@@ -133,3 +134,7 @@ const [experimentalFeatures, setExperimentalFeatures] = useState(false);
 - Ensure warning color system works in both light and dark themes
 
 ### Log
+
+**2025-07-28T17:25:40.773212Z** - Implemented functional Developer Options toggles with state management and warning indicators. Replaced placeholder mockups with shadcn/ui Switch components featuring proper ARIA accessibility, amber warning system for experimental features with AlertTriangle icon, and comprehensive screen reader support. Both Debug Mode and Experimental Features toggles now provide immediate visual feedback and follow established container styling patterns from existing settings sections.
+
+- filesChanged: ["apps/desktop/src/components/settings/SettingsContent.tsx"]
