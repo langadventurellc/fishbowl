@@ -836,6 +836,48 @@ const RolesSettings: React.FC = () => (
   </div>
 );
 
+// Reusable warning and helper text components for consistent typography and visual hierarchy
+const HelperText = ({
+  children,
+  className = "mt-2",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => (
+  <div className={`text-[13px] text-muted-foreground ${className}`}>
+    {children}
+  </div>
+);
+
+const WarningText = ({
+  children,
+  icon,
+  className = "mt-2",
+}: {
+  children: React.ReactNode;
+  icon?: React.ReactNode;
+  className?: string;
+}) => (
+  <div
+    className={`text-[13px] text-amber-600 dark:text-amber-400 ${className} flex items-center gap-1`}
+  >
+    {icon}
+    {children}
+  </div>
+);
+
+const DangerText = ({
+  children,
+  id,
+}: {
+  children: React.ReactNode;
+  id?: string;
+}) => (
+  <div id={id} className="text-[13px] text-destructive mt-2">
+    {children}
+  </div>
+);
+
 const AdvancedSettings: React.FC = () => {
   // Developer Options state management
   const [debugMode, setDebugMode] = useState(false);
@@ -873,7 +915,7 @@ const AdvancedSettings: React.FC = () => {
           <div className="grid gap-4">
             <div className="grid grid-cols-1 gap-[12px]">
               {/* Export Settings Button */}
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-col">
                 <Button
                   variant="secondary"
                   size="default"
@@ -884,13 +926,11 @@ const AdvancedSettings: React.FC = () => {
                   <Download className="w-4 h-4" />
                   Export All Settings
                 </Button>
-                <div className="text-[13px] text-muted-foreground">
-                  Export settings as JSON file
-                </div>
+                <HelperText>Export settings as JSON file</HelperText>
               </div>
 
               {/* Import Settings Button */}
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-col">
                 <Button
                   variant="secondary"
                   size="default"
@@ -901,13 +941,11 @@ const AdvancedSettings: React.FC = () => {
                   <Upload className="w-4 h-4" />
                   Import Settings
                 </Button>
-                <div className="text-[13px] text-muted-foreground">
-                  Import settings from JSON file
-                </div>
+                <HelperText>Import settings from JSON file</HelperText>
               </div>
 
               {/* Clear All Conversations Button */}
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-col">
                 <Button
                   variant="destructive"
                   size="default"
@@ -919,12 +957,9 @@ const AdvancedSettings: React.FC = () => {
                   <Trash2 className="w-4 h-4" />
                   Clear All Conversations
                 </Button>
-                <div
-                  id="clear-warning"
-                  className="text-[13px] text-destructive"
-                >
+                <DangerText id="clear-warning">
                   This cannot be undone
-                </div>
+                </DangerText>
               </div>
             </div>
           </div>
@@ -935,9 +970,9 @@ const AdvancedSettings: React.FC = () => {
             <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
               <div className="space-y-0.5">
                 <Label className="text-base">Enable debug logging</Label>
-                <div className="text-[13px] text-muted-foreground">
+                <HelperText className="">
                   Show detailed logs in developer console
-                </div>
+                </HelperText>
               </div>
               <Switch
                 checked={debugMode}
@@ -951,13 +986,15 @@ const AdvancedSettings: React.FC = () => {
                 <Label className="text-base">
                   Enable experimental features
                 </Label>
-                <div className="text-[13px] text-muted-foreground">
+                <HelperText className="">
                   Enable experimental features that may be unstable
-                </div>
-                <div className="text-[13px] text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                  <AlertTriangle className="h-4 w-4" />
+                </HelperText>
+                <WarningText
+                  icon={<AlertTriangle className="h-4 w-4" />}
+                  className=""
+                >
                   May cause instability
-                </div>
+                </WarningText>
               </div>
               <Switch
                 checked={experimentalFeatures}
