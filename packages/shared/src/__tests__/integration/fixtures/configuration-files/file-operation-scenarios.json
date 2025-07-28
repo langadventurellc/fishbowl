@@ -262,6 +262,221 @@
         "p99Latency": "< 50ms",
         "errorRate": "< 0.1%"
       }
+    },
+    "massiveConfigurationFiles": {
+      "name": "massive-configuration-files",
+      "description": "Test with extremely large configuration files for stress testing",
+      "fileSize": "100MB",
+      "entities": {
+        "agents": 50000,
+        "personalities": 5000,
+        "roles": 2500,
+        "models": 500
+      },
+      "operationType": "atomic-write-read-cycle",
+      "expectedPerformance": {
+        "maxWriteTime": "15000ms",
+        "maxReadTime": "3000ms",
+        "memoryUsage": "< 500MB",
+        "tempDiskUsage": "< 200MB"
+      },
+      "testPattern": "sequential-operations",
+      "validationRequired": true
+    },
+    "extremeHighVolumeUpdates": {
+      "name": "extreme-high-volume-updates",
+      "description": "Extremely high frequency updates to test system limits",
+      "updateFrequency": "1000/second",
+      "duration": "300s",
+      "operationTypes": ["read", "write", "atomic-update"],
+      "expectedPerformance": {
+        "averageLatency": "< 50ms",
+        "p99Latency": "< 200ms",
+        "errorRate": "< 1%",
+        "throughput": "> 800ops/sec"
+      },
+      "resourceMonitoring": {
+        "maxCpuUsage": "80%",
+        "maxMemoryUsage": "1GB",
+        "maxDiskIO": "100MB/s"
+      }
+    }
+  },
+  "stressTestScenarios": {
+    "concurrentOperationsStressTest": {
+      "name": "concurrent-operations-stress-test",
+      "description": "High-stress concurrent operations with mixed read/write patterns",
+      "operations": {
+        "readers": 100,
+        "writers": 50,
+        "duration": "120s",
+        "pattern": "burst"
+      },
+      "burstPatterns": {
+        "readBursts": {
+          "frequency": "every-10s",
+          "intensity": "200-concurrent-reads",
+          "duration": "2s"
+        },
+        "writeBursts": {
+          "frequency": "every-15s",
+          "intensity": "50-concurrent-writes",
+          "duration": "3s"
+        }
+      },
+      "expectedBehavior": "no-data-corruption",
+      "performanceThreshold": {
+        "maxResponseTime": "2000ms",
+        "minThroughput": "200ops/sec",
+        "errorRate": "< 0.5%"
+      },
+      "lockingStrategy": "optimistic-locking",
+      "failureRecovery": "automatic-retry"
+    },
+    "memoryPressureScenario": {
+      "name": "memory-pressure-scenario",
+      "description": "File operations under severe memory constraints",
+      "memoryConstraints": {
+        "availableMemory": "256MB",
+        "operationCount": 1000,
+        "fileSize": "50MB"
+      },
+      "operations": {
+        "simultaneousFiles": 10,
+        "operationType": "atomic-write",
+        "memoryOptimization": "streaming"
+      },
+      "expectedBehavior": "memory-efficient-operations",
+      "performanceThreshold": {
+        "maxMemoryUsage": "200MB",
+        "completionRate": "> 95%",
+        "errorRate": "< 2%"
+      }
+    },
+    "longRunningOperationsTest": {
+      "name": "long-running-operations-test",
+      "description": "Extended duration test to identify memory leaks and stability issues",
+      "duration": "3600s",
+      "operationPattern": {
+        "readsPerSecond": 50,
+        "writesPerSecond": 10,
+        "largeOperationsPerMinute": 1
+      },
+      "monitoringMetrics": {
+        "memoryGrowth": "< 10MB/hour",
+        "fileDescriptorLeaks": "none",
+        "tempFileCleanup": "100%",
+        "errorRateIncrease": "< 0.01%/hour"
+      },
+      "expectedBehavior": "stable-long-term-performance"
+    },
+    "chaosTestingScenario": {
+      "name": "chaos-testing-scenario",
+      "description": "Random failures and interruptions during file operations",
+      "chaosEvents": [
+        {
+          "type": "process-kill",
+          "frequency": "every-60s",
+          "duration": "1s",
+          "affectedOperations": "random-writer"
+        },
+        {
+          "type": "disk-full",
+          "frequency": "every-120s",
+          "duration": "5s",
+          "recoveryTime": "10s"
+        },
+        {
+          "type": "permission-change",
+          "frequency": "every-90s",
+          "duration": "3s",
+          "targetFiles": "random"
+        },
+        {
+          "type": "network-partition",
+          "frequency": "every-180s",
+          "duration": "15s",
+          "networkFilesystems": true
+        }
+      ],
+      "expectedBehavior": "resilient-operation-with-recovery",
+      "recoveryThreshold": {
+        "maxRecoveryTime": "30s",
+        "dataIntegrityMaintained": "100%",
+        "automaticRecoveryRate": "> 90%"
+      }
+    }
+  },
+  "advancedConcurrencyScenarios": {
+    "writerStarvationPrevention": {
+      "name": "writer-starvation-prevention",
+      "description": "Ensure writers are not starved by continuous readers",
+      "operations": {
+        "continuousReaders": 200,
+        "occasionalWriters": 5,
+        "testDuration": "180s"
+      },
+      "readerPattern": "continuous-high-frequency",
+      "writerPattern": "periodic-every-10s",
+      "lockingStrategy": "fair-read-write-lock",
+      "expectedBehavior": "writers-get-fair-access",
+      "performanceThreshold": {
+        "maxWriterWaitTime": "5000ms",
+        "minWriterThroughput": "0.4ops/sec"
+      }
+    },
+    "cascadingFailureScenario": {
+      "name": "cascading-failure-scenario",
+      "description": "Test system behavior when one operation failure affects others",
+      "initialOperation": {
+        "type": "large-atomic-write",
+        "size": "500MB",
+        "expectedFailure": "disk-space-exhausted"
+      },
+      "dependentOperations": [
+        {
+          "type": "concurrent-reads",
+          "count": 50,
+          "expectedBehavior": "continue-normally"
+        },
+        {
+          "type": "queued-writes",
+          "count": 20,
+          "expectedBehavior": "fail-gracefully-with-cleanup"
+        }
+      ],
+      "recoveryBehavior": {
+        "cleanupTempFiles": "automatic",
+        "notifyWaitingOperations": "immediate",
+        "retryMechanism": "exponential-backoff"
+      }
+    },
+    "priorityBasedScheduling": {
+      "name": "priority-based-scheduling",
+      "description": "Test priority-based operation scheduling under load",
+      "operations": [
+        {
+          "type": "high-priority-write",
+          "count": 10,
+          "priority": "critical",
+          "expectedLatency": "< 100ms"
+        },
+        {
+          "type": "normal-priority-read",
+          "count": 100,
+          "priority": "normal",
+          "expectedLatency": "< 500ms"
+        },
+        {
+          "type": "low-priority-batch",
+          "count": 50,
+          "priority": "low",
+          "expectedLatency": "< 2000ms"
+        }
+      ],
+      "schedulingAlgorithm": "priority-queue-with-aging",
+      "expectedBehavior": "respect-priority-ordering",
+      "antiStarvationMechanism": "priority-aging-after-60s"
     }
   },
   "crossPlatformScenarios": {

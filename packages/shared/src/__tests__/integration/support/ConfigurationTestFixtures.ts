@@ -7,8 +7,19 @@
  */
 
 import { Buffer } from "buffer";
+import { readFile } from "fs/promises";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 import type { PersonalityConfiguration } from "../../../types/personality";
 import type { ConfigurationData } from "../utilities/TemporaryDirectoryManager";
+import {
+  FixtureValidationUtils,
+  type EntityCounts,
+  type FixtureAgent,
+  type FixturePersonality,
+  type FixtureRole,
+  type FixtureModel,
+} from "../fixtures/configuration-files/fixture-validation-utils";
 
 /**
  * Test fixtures for creating valid and invalid configuration data
@@ -292,5 +303,134 @@ export class ConfigurationTestFixtures {
         roles: [],
       },
     };
+  }
+
+  /**
+   * Generate performance test data with specified entity counts
+   * @param entityCounts Number of each entity type to generate
+   * @returns Large-scale configuration data for performance testing
+   */
+  static generatePerformanceTestData(
+    entityCounts: EntityCounts,
+  ): ConfigurationData {
+    const fixtureData =
+      FixtureValidationUtils.generatePerformanceTestData(entityCounts);
+    // Convert fixture data format to match expected ConfigurationData type
+    return {
+      ...fixtureData,
+      data: {
+        agents: fixtureData.data.agents as unknown as Record<string, unknown>[],
+        personalities: fixtureData.data.personalities as unknown as Record<
+          string,
+          unknown
+        >[],
+        roles: fixtureData.data.roles as unknown as Record<string, unknown>[],
+      },
+    };
+  }
+
+  /**
+   * Create a realistic agent for testing with proper UUIDs and references
+   * @param index Agent index for unique generation
+   * @param personalityCount Number of available personalities to reference
+   * @param roleCount Number of available roles to reference
+   * @param modelCount Number of available models to reference
+   * @returns Generated agent configuration
+   */
+  static createRealisticAgent(
+    index: number,
+    personalityCount: number,
+    roleCount: number,
+    modelCount: number,
+  ): FixtureAgent {
+    return FixtureValidationUtils.createRealisticAgent(
+      index,
+      personalityCount,
+      roleCount,
+      modelCount,
+    );
+  }
+
+  /**
+   * Load and parse fixture file from the fixtures directory
+   * @param filename Name of the fixture file to load
+   * @returns Parsed fixture data
+   */
+  static async loadFixtureFile(filename: string): Promise<unknown> {
+    // Get current directory equivalent for ES modules
+    const currentDir = dirname(fileURLToPath(import.meta.url));
+    const fixturesDir = join(currentDir, "../fixtures/configuration-files");
+    const filePath = join(fixturesDir, filename);
+    const content = await readFile(filePath, "utf-8");
+    return JSON.parse(content);
+  }
+
+  /**
+   * Validate fixture integrity using the validation utilities
+   * @param fixturePath Path to the fixture file
+   * @returns Validation result with errors and warnings
+   */
+  static async validateFixture(fixturePath: string) {
+    return FixtureValidationUtils.validateFixtureIntegrity(fixturePath);
+  }
+
+  /**
+   * Create fixture data with specific entity types for targeted testing
+   * @param agents Array of agent fixtures
+   * @param personalities Array of personality fixtures
+   * @param roles Array of role fixtures
+   * @param models Array of model fixtures
+   * @returns Complete configuration data structure
+   */
+  static createFixtureWithEntities(
+    agents: FixtureAgent[] = [],
+    personalities: FixturePersonality[] = [],
+    roles: FixtureRole[] = [],
+    _models: FixtureModel[] = [],
+  ): ConfigurationData {
+    return {
+      version: "1.0.0",
+      format: "json",
+      encoding: "utf-8",
+      metadata: {
+        createdAt: new Date().toISOString(),
+        createdBy: "ConfigurationTestFixtures",
+        lastModified: new Date().toISOString(),
+        description: "Test fixture with specific entity collections",
+      },
+      data: {
+        agents: agents as unknown as Record<string, unknown>[],
+        personalities: personalities as unknown as Record<string, unknown>[],
+        roles: roles as unknown as Record<string, unknown>[],
+      },
+    };
+  }
+
+  /**
+   * Create a standard performance test fixture with reasonable defaults
+   * @returns Performance test configuration with 1000 agents, 100 personalities, 50 roles, 20 models
+   */
+  static createStandardPerformanceFixture(): ConfigurationData {
+    const entityCounts: EntityCounts = {
+      agents: 1000,
+      personalities: 100,
+      roles: 50,
+      models: 20,
+    };
+    return this.generatePerformanceTestData(entityCounts);
+  }
+
+  /**
+   * Create a stress test fixture with high entity counts
+   * @returns Stress test configuration with 10000 agents, 1000 personalities, 500 roles, 100 models
+   */
+  static createStressTestFixture(): ConfigurationData {
+    const entityCounts: EntityCounts = {
+      agents: 10000,
+      personalities: 1000,
+      roles: 500,
+      models: 100,
+    };
+    return this.generatePerformanceTestData(entityCounts);
   }
 }
