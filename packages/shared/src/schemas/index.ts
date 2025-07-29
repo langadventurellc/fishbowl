@@ -5,4 +5,5 @@
  */
 
 export * from "./personalitySchema";
+export * from "./roleSchema";
 export * from "./createApiKeysFormSchema";

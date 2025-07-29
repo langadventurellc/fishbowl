@@ -15,3 +15,8 @@ export * from "./BigFiveSlidersProps";
 export * from "./PersonalityFormData";
 export * from "./Personality";
 export * from "./PersonalityCardProps";
+
+// Role types
+export * from "./RoleFormData";
+export * from "./PredefinedRole";
+export * from "./CustomRole";

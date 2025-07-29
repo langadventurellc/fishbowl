@@ -59,3 +59,7 @@ export * from "./TextareaDisplayProps";
 export * from "./ThemeToggleProps";
 export * from "./ThinkingIndicatorProps";
 export * from "./TabContainerProps";
+export * from "./RoleCardProps";
+export * from "./CustomRoleCardProps";
+export * from "./CreateRoleFormProps";
+export * from "./RolesSectionProps";
