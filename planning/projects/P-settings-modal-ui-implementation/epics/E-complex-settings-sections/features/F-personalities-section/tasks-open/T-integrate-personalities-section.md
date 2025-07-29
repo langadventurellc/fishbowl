@@ -4,8 +4,7 @@ id: T-integrate-personalities-section
 title: Integrate personalities section with interactive tab system
 status: open
 priority: high
-prerequisites:
-  - T-implement-save-functionality
+prerequisites: []
 created: "2025-07-28T17:06:41.699156"
 updated: "2025-07-28T17:06:41.699156"
 schema_version: "1.1"

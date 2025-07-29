@@ -4,8 +4,7 @@ id: T-create-personality-name-input
 title: Create personality name input with validation
 status: open
 priority: normal
-prerequisites:
-  - T-create-personality-data-types
+prerequisites: []
 created: "2025-07-28T17:03:03.719275"
 updated: "2025-07-28T17:03:03.719275"
 schema_version: "1.1"

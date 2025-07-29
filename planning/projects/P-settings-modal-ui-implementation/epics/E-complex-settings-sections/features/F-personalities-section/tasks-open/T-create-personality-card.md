@@ -4,8 +4,7 @@ id: T-create-personality-card
 title: Create personality card component with Big Five trait display
 status: open
 priority: normal
-prerequisites:
-  - T-create-personality-data-types
+prerequisites: []
 created: "2025-07-28T17:02:04.753410"
 updated: "2025-07-28T17:02:04.753410"
 schema_version: "1.1"
