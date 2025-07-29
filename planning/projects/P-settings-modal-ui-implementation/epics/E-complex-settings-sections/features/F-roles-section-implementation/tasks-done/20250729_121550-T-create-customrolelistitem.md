@@ -1,16 +1,17 @@
 ---
 kind: task
 id: T-create-customrolelistitem
+parent: F-roles-section-implementation
+status: done
 title: Create CustomRoleListItem component with edit and delete actions
-status: open
 priority: normal
 prerequisites:
   - T-create-role-interfaces-and
   - T-implement-custom-roles-zustand
 created: "2025-07-29T11:01:09.257313"
-updated: "2025-07-29T11:01:09.257313"
+updated: "2025-07-29T12:05:41.579426"
 schema_version: "1.1"
-parent: F-roles-section-implementation
+worktree: null
 ---
 
 # Create CustomRoleListItem Component with Edit and Delete Actions
@@ -175,3 +176,28 @@ export const CustomRoleListItem = ({
 - Ensure callback functions are properly bound to prevent errors
 
 ### Log
+
+**2025-07-29T17:15:50.125704Z** - Implemented CustomRoleListItem component with edit and delete actions
+
+Key Features Implemented:
+
+- Role name displayed prominently with proper typography hierarchy
+- Description preview with smart truncation at word boundaries (80-100 chars)
+- Right-aligned Edit and Delete buttons with ghost variant styling
+- Loading states for operations to prevent multiple simultaneous actions
+- Proper accessibility with ARIA labels and keyboard navigation support
+- Memoization for performance optimization with large role lists
+- Hover effects with smooth transitions for better UX
+
+Technical Implementation:
+
+- Created truncateDescription utility with word boundary logic
+- Component uses shadcn/ui Card, Button components for consistency
+- Lucide React icons (Edit, Trash2) for visual clarity
+- Destructive styling on delete button to indicate danger
+- Comprehensive test coverage (100%) for all component behaviors
+- Follows existing project patterns from PersonalityCard component
+
+The component is ready for integration with the Custom tab and role management operations through the useCustomRoles hook.
+
+- filesChanged: ["apps/desktop/src/components/settings/CustomRoleListItem.tsx", "apps/desktop/src/utils/truncateDescription.ts", "apps/desktop/src/utils/index.ts", "apps/desktop/src/components/settings/index.ts", "apps/desktop/src/components/settings/__tests__/CustomRoleListItem.test.tsx", "apps/desktop/src/utils/__tests__/truncateDescription.test.ts"]
