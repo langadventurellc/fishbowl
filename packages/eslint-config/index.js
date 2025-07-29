@@ -32,7 +32,10 @@ module.exports = [
       // Disable the base rule to avoid conflicts
       "no-unused-vars": "off",
       "turbo/no-undeclared-env-vars": "error",
-      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
       "@typescript-eslint/no-explicit-any": "error",
       "statement-count/function-statement-count-warn": "warn",
       "statement-count/function-statement-count-error": "error",

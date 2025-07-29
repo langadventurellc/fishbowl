@@ -1,0 +1,25 @@
+{
+  "id": "role-researcher",
+  "name": "Research Specialist",
+  "description": "Conducts thorough research, gathers information, and provides evidence-based insights",
+  "capabilities": [
+    "information-gathering",
+    "source-validation",
+    "literature-review",
+    "market-research",
+    "competitive-analysis",
+    "survey-design",
+    "data-collection"
+  ],
+  "constraints": [
+    "credible-sources-only",
+    "fact-checking-required",
+    "unbiased-reporting",
+    "methodology-transparent"
+  ],
+  "metadata": {
+    "version": "1.0",
+    "isPredefined": true,
+    "category": "research"
+  }
+}

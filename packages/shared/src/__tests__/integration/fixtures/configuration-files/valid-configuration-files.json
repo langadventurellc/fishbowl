@@ -1,0 +1,448 @@
+{
+  "description": "Valid configuration file fixtures for testing file operations",
+  "validConfigurations": {
+    "minimumValidConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z"
+      },
+      "data": {
+        "agents": [],
+        "personalities": [],
+        "roles": []
+      }
+    },
+    "completeValidConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z",
+        "description": "Complete test configuration with all data types"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-test-001",
+            "name": "Test Agent",
+            "description": "A test agent configuration",
+            "personalityId": "personality-balanced",
+            "roleId": "technical-advisor",
+            "modelConfig": {
+              "provider": "openai",
+              "modelId": "gpt-4-turbo-preview",
+              "parameters": {
+                "temperature": 0.7,
+                "maxTokens": 2000,
+                "topP": 0.9
+              }
+            },
+            "color": "#3B82F6",
+            "isTemplate": false,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ],
+        "personalities": [
+          {
+            "id": "personality-balanced",
+            "name": "Balanced Assistant",
+            "description": "Well-rounded personality with neutral traits",
+            "openness": 50,
+            "conscientiousness": 50,
+            "extraversion": 50,
+            "agreeableness": 50,
+            "neuroticism": 50,
+            "formality": 50,
+            "humor": 50,
+            "assertiveness": 50,
+            "empathy": 50,
+            "storytelling": 50,
+            "brevity": 50,
+            "imagination": 50,
+            "playfulness": 50,
+            "dramaticism": 50,
+            "analyticalDepth": 50,
+            "contrarianism": 50,
+            "encouragement": 50,
+            "curiosity": 50,
+            "patience": 50,
+            "isTemplate": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ],
+        "roles": [
+          {
+            "id": "technical-advisor",
+            "name": "Technical Advisor",
+            "description": "Provides technical expertise and implementation guidance",
+            "systemPrompt": "You are a Technical Advisor with deep expertise in software development, architecture, and engineering best practices. Focus on providing technical solutions, identifying implementation approaches, and offering guidance on technical feasibility.",
+            "focusAreas": [
+              "software architecture",
+              "code review",
+              "technical feasibility",
+              "implementation planning"
+            ],
+            "isTemplate": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "largeValidConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z",
+        "description": "Large configuration for performance testing"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-large-001",
+            "name": "Large Test Agent 1",
+            "personalityId": "personality-analytical",
+            "roleId": "analyst",
+            "modelConfig": {
+              "provider": "openai",
+              "modelId": "gpt-4-turbo-preview",
+              "parameters": { "temperature": 0.3 }
+            }
+          },
+          {
+            "id": "agent-large-002",
+            "name": "Large Test Agent 2",
+            "personalityId": "personality-creative",
+            "roleId": "creative-director",
+            "modelConfig": {
+              "provider": "anthropic",
+              "modelId": "claude-3-opus",
+              "parameters": { "temperature": 0.9 }
+            }
+          }
+        ],
+        "personalities": [
+          {
+            "id": "personality-analytical",
+            "name": "Analytical Personality",
+            "openness": 70,
+            "conscientiousness": 85,
+            "extraversion": 30,
+            "agreeableness": 45,
+            "neuroticism": 25,
+            "formality": 80,
+            "humor": 20,
+            "assertiveness": 75,
+            "empathy": 40,
+            "storytelling": 25,
+            "brevity": 85,
+            "imagination": 60,
+            "playfulness": 15,
+            "dramaticism": 10,
+            "analyticalDepth": 95,
+            "contrarianism": 60,
+            "encouragement": 30,
+            "curiosity": 90,
+            "patience": 70,
+            "isTemplate": false
+          },
+          {
+            "id": "personality-creative",
+            "name": "Creative Personality",
+            "openness": 95,
+            "conscientiousness": 40,
+            "extraversion": 80,
+            "agreeableness": 70,
+            "neuroticism": 45,
+            "formality": 20,
+            "humor": 85,
+            "assertiveness": 60,
+            "empathy": 75,
+            "storytelling": 90,
+            "brevity": 25,
+            "imagination": 95,
+            "playfulness": 85,
+            "dramaticism": 80,
+            "analyticalDepth": 40,
+            "contrarianism": 45,
+            "encouragement": 80,
+            "curiosity": 95,
+            "patience": 55,
+            "isTemplate": false
+          }
+        ],
+        "roles": [
+          {
+            "id": "analyst",
+            "name": "Data Analyst",
+            "description": "Provides data-driven insights and logical reasoning",
+            "systemPrompt": "You are a Data Analyst focused on extracting insights from data, identifying patterns, and providing evidence-based recommendations.",
+            "focusAreas": [
+              "data analysis",
+              "statistical reasoning",
+              "pattern recognition"
+            ],
+            "isTemplate": true
+          },
+          {
+            "id": "creative-director",
+            "name": "Creative Director",
+            "description": "Guides creative vision and artistic decisions",
+            "systemPrompt": "You are a Creative Director responsible for guiding creative vision, artistic decisions, and innovative approaches to problem-solving.",
+            "focusAreas": [
+              "creative strategy",
+              "artistic vision",
+              "innovation"
+            ],
+            "isTemplate": true
+          }
+        ]
+      }
+    },
+    "comprehensiveModelConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z",
+        "description": "Comprehensive model configurations covering all providers and tiers"
+      },
+      "data": {
+        "models": [
+          {
+            "id": "openai-gpt-4-turbo",
+            "name": "GPT-4 Turbo",
+            "provider": "openai",
+            "version": "gpt-4-turbo-2024-04-09",
+            "description": "OpenAI's most capable GPT-4 model with enhanced performance",
+            "isAvailable": true,
+            "tier": "premium",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "anthropic-claude-3-opus",
+            "name": "Claude 3 Opus",
+            "provider": "anthropic",
+            "version": "claude-3-opus-20240229",
+            "description": "Anthropic's most powerful model for complex reasoning tasks",
+            "isAvailable": true,
+            "tier": "enterprise",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "anthropic-claude-3-sonnet",
+            "name": "Claude 3 Sonnet",
+            "provider": "anthropic",
+            "version": "claude-3-sonnet-20240229",
+            "description": "Balanced performance and cost for most use cases",
+            "isAvailable": true,
+            "tier": "standard",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "openai-gpt-3-5-turbo",
+            "name": "GPT-3.5 Turbo",
+            "provider": "openai",
+            "version": "gpt-3.5-turbo-0125",
+            "description": "Cost-effective model for simpler tasks",
+            "isAvailable": true,
+            "tier": "basic",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "google-gemini-pro",
+            "name": "Gemini Pro",
+            "provider": "google",
+            "version": "gemini-pro-1.0",
+            "description": "Google's multimodal AI model",
+            "isAvailable": false,
+            "tier": "standard",
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ],
+        "agents": [],
+        "personalities": [],
+        "roles": []
+      }
+    },
+    "performanceTestConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "lastModified": "2024-01-01T00:00:00.000Z",
+        "description": "Large-scale configuration for performance and stress testing",
+        "entityCounts": {
+          "agents": 100,
+          "personalities": 50,
+          "roles": 25,
+          "models": 10
+        },
+        "expectedFileSize": "~5MB",
+        "testingPurpose": "stress-testing-atomic-operations"
+      },
+      "data": {
+        "models": [
+          {
+            "id": "perf-openai-gpt-4",
+            "name": "Performance Test GPT-4",
+            "provider": "openai",
+            "version": "gpt-4-perf-test",
+            "tier": "premium",
+            "isAvailable": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "perf-anthropic-claude",
+            "name": "Performance Test Claude",
+            "provider": "anthropic",
+            "version": "claude-perf-test",
+            "tier": "enterprise",
+            "isAvailable": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ],
+        "personalities": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440001",
+            "name": "Performance Test Personality 1",
+            "description": "Generated personality for performance testing",
+            "openness": 75,
+            "conscientiousness": 80,
+            "extraversion": 65,
+            "agreeableness": 70,
+            "neuroticism": 45,
+            "formality": 60,
+            "humor": 50,
+            "assertiveness": 75,
+            "empathy": 65,
+            "storytelling": 40,
+            "brevity": 80,
+            "imagination": 70,
+            "playfulness": 35,
+            "dramaticism": 25,
+            "analyticalDepth": 85,
+            "contrarianism": 55,
+            "encouragement": 60,
+            "curiosity": 90,
+            "patience": 75,
+            "isTemplate": false,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440002",
+            "name": "Performance Test Personality 2",
+            "description": "Generated personality for performance testing",
+            "openness": 85,
+            "conscientiousness": 40,
+            "extraversion": 90,
+            "agreeableness": 80,
+            "neuroticism": 35,
+            "formality": 30,
+            "humor": 85,
+            "assertiveness": 70,
+            "empathy": 85,
+            "storytelling": 90,
+            "brevity": 25,
+            "imagination": 95,
+            "playfulness": 90,
+            "dramaticism": 75,
+            "analyticalDepth": 45,
+            "contrarianism": 40,
+            "encouragement": 85,
+            "curiosity": 95,
+            "patience": 60,
+            "isTemplate": false,
+            "createdAt": "2024-01-01T00:00:01.000Z",
+            "updatedAt": "2024-01-01T00:00:01.000Z"
+          }
+        ],
+        "roles": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440010",
+            "name": "Performance Test Role 1",
+            "description": "Generated role for performance testing scenarios",
+            "capabilities": ["analysis", "problem-solving", "communication"],
+            "constraints": ["no-external-api-calls", "limited-context-window"],
+            "isTemplate": false,
+            "version": 1,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z",
+            "metadata": {
+              "category": "performance-testing",
+              "complexity": "medium",
+              "usageCount": 0
+            }
+          }
+        ],
+        "agents": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440020",
+            "name": "Performance Test Agent 1",
+            "description": "Generated agent for performance testing",
+            "role": "performance-tester",
+            "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+            "modelId": "perf-openai-gpt-4",
+            "capabilities": ["performance-analysis", "load-testing"],
+            "constraints": ["test-environment-only"],
+            "settings": {
+              "maxResponseTime": "5000ms",
+              "memoryLimit": "512MB"
+            },
+            "metadata": {
+              "version": "1.0",
+              "createdAt": "2024-01-01T00:00:00.000Z",
+              "updatedAt": "2024-01-01T00:00:00.000Z",
+              "isActive": true,
+              "tags": ["performance", "testing", "load-test"]
+            }
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440021",
+            "name": "Performance Test Agent 2",
+            "description": "Generated agent for performance testing",
+            "role": "stress-tester",
+            "personalityId": "550e8400-e29b-41d4-a716-446655440002",
+            "modelId": "perf-anthropic-claude",
+            "capabilities": ["stress-testing", "concurrent-processing"],
+            "constraints": ["isolated-environment"],
+            "settings": {
+              "concurrentRequests": 50,
+              "timeoutMs": 10000
+            },
+            "metadata": {
+              "version": "1.0",
+              "createdAt": "2024-01-01T00:00:01.000Z",
+              "updatedAt": "2024-01-01T00:00:01.000Z",
+              "isActive": true,
+              "tags": ["stress", "concurrent", "performance"]
+            }
+          }
+        ]
+      }
+    }
+  }
+}

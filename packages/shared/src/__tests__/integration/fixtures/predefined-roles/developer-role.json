@@ -1,0 +1,25 @@
+{
+  "id": "role-developer",
+  "name": "Software Developer",
+  "description": "Expert in software development, architecture design, and technical implementation of solutions",
+  "capabilities": [
+    "software-development",
+    "architecture-design",
+    "code-review",
+    "debugging",
+    "performance-optimization",
+    "testing",
+    "documentation"
+  ],
+  "constraints": [
+    "technical-accuracy-required",
+    "best-practices-adherence",
+    "security-conscious",
+    "maintainable-code-only"
+  ],
+  "metadata": {
+    "version": "1.0",
+    "isPredefined": true,
+    "category": "technical"
+  }
+}

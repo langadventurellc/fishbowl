@@ -2,12 +2,12 @@
 kind: feature
 id: F-configuration-service-crud
 title: Configuration Service CRUD Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-agent-configuration-creation
 created: "2025-07-26T13:46:47.793691"
-updated: "2025-07-26T13:46:47.793691"
+updated: "2025-07-28T20:26:03.031770+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
@@ -17,6 +17,12 @@ parent: E-bdd-testing-infrastructure
 ## Purpose and Functionality
 
 Implement comprehensive BDD integration tests for configuration service CRUD operations, focusing on multi-service coordination for complete configuration lifecycle management. These tests verify ConfigurationService coordinates properly with PersonalityService, RoleService, and AgentService while maintaining data consistency and transaction integrity.
+
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: ConfigurationService unified interface, cross-service coordination mechanisms, and transaction-like consistency implementation
 
 ## Key Components to Implement
 

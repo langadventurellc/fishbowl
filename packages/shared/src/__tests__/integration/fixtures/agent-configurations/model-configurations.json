@@ -1,0 +1,346 @@
+{
+  "basicModels": {
+    "gpt-3.5-turbo": {
+      "id": "gpt-3.5-turbo",
+      "name": "GPT-3.5 Turbo",
+      "provider": "openai",
+      "version": "3.5-turbo-1106",
+      "description": "Fast and efficient model for general tasks",
+      "isAvailable": true,
+      "tier": "standard",
+      "createdAt": "2023-11-01T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 16384,
+        "maxOutputLength": 4096,
+        "inputModalities": ["text"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": true,
+        "supportsStreaming": true,
+        "performance": {
+          "avgResponseTime": 800,
+          "rpmLimit": 3500,
+          "tpmLimit": 90000
+        },
+        "cost": {
+          "inputTokenCost": 0.001,
+          "outputTokenCost": 0.002,
+          "currency": "USD"
+        },
+        "specializations": ["general", "coding"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 0.5,
+        "maxResponseTime": 5000,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"],
+        "minContextLength": 1000,
+        "requiredSpecializations": ["general"]
+      }
+    },
+    "claude-3-haiku": {
+      "id": "claude-3-haiku",
+      "name": "Claude 3 Haiku",
+      "provider": "anthropic",
+      "version": "3.0-haiku-20240307",
+      "description": "Fast and efficient Claude model for quick responses",
+      "isAvailable": true,
+      "tier": "basic",
+      "createdAt": "2024-03-07T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 200000,
+        "maxOutputLength": 4096,
+        "inputModalities": ["text", "image"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": false,
+        "supportsStreaming": true,
+        "performance": {
+          "avgResponseTime": 600,
+          "rpmLimit": 4000,
+          "tpmLimit": 100000
+        },
+        "cost": {
+          "inputTokenCost": 0.00025,
+          "outputTokenCost": 0.00125,
+          "currency": "USD"
+        },
+        "specializations": ["general", "analysis"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 0.25,
+        "maxResponseTime": 3000,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"],
+        "minContextLength": 500
+      }
+    }
+  },
+  "advancedModels": {
+    "gpt-4-turbo-preview": {
+      "id": "gpt-4-turbo-preview",
+      "name": "GPT-4 Turbo Preview",
+      "provider": "openai",
+      "version": "4.0-turbo-preview-1106",
+      "description": "Advanced model with enhanced reasoning and context",
+      "isAvailable": true,
+      "tier": "premium",
+      "createdAt": "2023-11-06T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 128000,
+        "maxOutputLength": 4096,
+        "inputModalities": ["text", "image"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": true,
+        "supportsStreaming": true,
+        "performance": {
+          "avgResponseTime": 2500,
+          "rpmLimit": 500,
+          "tpmLimit": 30000
+        },
+        "cost": {
+          "inputTokenCost": 0.01,
+          "outputTokenCost": 0.03,
+          "currency": "USD"
+        },
+        "specializations": ["general", "coding", "analysis", "reasoning"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 5.0,
+        "maxResponseTime": 10000,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"],
+        "minContextLength": 2000,
+        "requiredSpecializations": ["general", "reasoning"]
+      }
+    },
+    "claude-3-opus": {
+      "id": "claude-3-opus",
+      "name": "Claude 3 Opus",
+      "provider": "anthropic",
+      "version": "3.0-opus-20240229",
+      "description": "Most capable Claude model for complex reasoning",
+      "isAvailable": true,
+      "tier": "enterprise",
+      "createdAt": "2024-02-29T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 200000,
+        "maxOutputLength": 4096,
+        "inputModalities": ["text", "image"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": false,
+        "supportsStreaming": true,
+        "performance": {
+          "avgResponseTime": 3500,
+          "rpmLimit": 500,
+          "tpmLimit": 40000
+        },
+        "cost": {
+          "inputTokenCost": 0.015,
+          "outputTokenCost": 0.075,
+          "currency": "USD"
+        },
+        "specializations": ["general", "analysis", "creative", "reasoning"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 10.0,
+        "maxResponseTime": 15000,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"],
+        "minContextLength": 5000,
+        "requiredSpecializations": ["general", "reasoning"],
+        "security": {
+          "requireOnPremise": false,
+          "requireDataRetention": true,
+          "allowedRegions": ["us-east-1", "us-west-2", "eu-west-1"]
+        }
+      }
+    }
+  },
+  "specializedModels": {
+    "gpt-4-analysis": {
+      "id": "gpt-4-analysis",
+      "name": "GPT-4 Analysis Specialist",
+      "provider": "openai",
+      "version": "4.0-analysis-custom",
+      "description": "Specialized for data analysis and research tasks",
+      "isAvailable": true,
+      "tier": "premium",
+      "createdAt": "2024-01-15T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 32000,
+        "maxOutputLength": 8192,
+        "inputModalities": ["text"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": true,
+        "supportsStreaming": true,
+        "performance": {
+          "avgResponseTime": 3000,
+          "rpmLimit": 300,
+          "tpmLimit": 25000
+        },
+        "cost": {
+          "inputTokenCost": 0.012,
+          "outputTokenCost": 0.036,
+          "currency": "USD"
+        },
+        "specializations": ["analysis", "reasoning"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 3.0,
+        "maxResponseTime": 12000,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"],
+        "minContextLength": 1000,
+        "requiredSpecializations": ["analysis"]
+      }
+    },
+    "claude-3-sonnet-creative": {
+      "id": "claude-3-sonnet",
+      "name": "Claude 3 Sonnet Creative",
+      "provider": "anthropic",
+      "version": "3.0-sonnet-creative-20240229",
+      "description": "Specialized for creative tasks and content generation",
+      "isAvailable": true,
+      "tier": "standard",
+      "createdAt": "2024-02-29T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 200000,
+        "maxOutputLength": 4096,
+        "inputModalities": ["text", "image"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": false,
+        "supportsStreaming": true,
+        "performance": {
+          "avgResponseTime": 2000,
+          "rpmLimit": 1000,
+          "tpmLimit": 50000
+        },
+        "cost": {
+          "inputTokenCost": 0.003,
+          "outputTokenCost": 0.015,
+          "currency": "USD"
+        },
+        "specializations": ["creative", "general"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 2.0,
+        "maxResponseTime": 8000,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"],
+        "minContextLength": 500,
+        "requiredSpecializations": ["creative"]
+      }
+    }
+  },
+  "testingModels": {
+    "mock-fast-model": {
+      "id": "mock-fast-model",
+      "name": "Mock Fast Model",
+      "provider": "test",
+      "version": "1.0-test",
+      "description": "Fast mock model for performance testing",
+      "isAvailable": true,
+      "tier": "basic",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 4096,
+        "maxOutputLength": 1024,
+        "inputModalities": ["text"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": false,
+        "supportsStreaming": false,
+        "performance": {
+          "avgResponseTime": 100,
+          "rpmLimit": 10000,
+          "tpmLimit": 1000000
+        },
+        "cost": {
+          "inputTokenCost": 0.0001,
+          "outputTokenCost": 0.0001,
+          "currency": "USD"
+        },
+        "specializations": ["general"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 0.01,
+        "maxResponseTime": 500,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"]
+      }
+    },
+    "mock-unavailable-model": {
+      "id": "mock-unavailable-model",
+      "name": "Mock Unavailable Model",
+      "provider": "test",
+      "version": "1.0-unavailable",
+      "description": "Mock model that is unavailable for testing error scenarios",
+      "isAvailable": false,
+      "tier": "premium",
+      "createdAt": "2025-01-01T00:00:00.000Z",
+      "updatedAt": "2025-01-01T00:00:00.000Z",
+      "capabilities": {
+        "maxContextLength": 16384,
+        "maxOutputLength": 2048,
+        "inputModalities": ["text"],
+        "outputModalities": ["text"],
+        "supportsFunctionCalling": true,
+        "supportsStreaming": true,
+        "performance": {
+          "avgResponseTime": 1500,
+          "rpmLimit": 1000,
+          "tpmLimit": 50000
+        },
+        "cost": {
+          "inputTokenCost": 0.005,
+          "outputTokenCost": 0.015,
+          "currency": "USD"
+        },
+        "specializations": ["general", "analysis"]
+      },
+      "constraints": {
+        "maxCostPerInteraction": 1.0,
+        "maxResponseTime": 5000,
+        "requiredInputModalities": ["text"],
+        "requiredOutputModalities": ["text"]
+      }
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Model configuration test fixtures with capabilities and constraints",
+    "lastUpdated": "2025-07-27T00:00:00.000Z",
+    "categories": [
+      "basicModels",
+      "advancedModels",
+      "specializedModels",
+      "testingModels"
+    ],
+    "testingPurpose": [
+      "model_selection_validation",
+      "capability_constraint_matching",
+      "performance_requirement_testing",
+      "cost_optimization_scenarios",
+      "availability_status_checking"
+    ],
+    "providers": {
+      "openai": {
+        "models": ["gpt-3.5-turbo", "gpt-4-turbo-preview", "gpt-4-analysis"],
+        "specialties": ["general", "coding", "analysis", "reasoning"]
+      },
+      "anthropic": {
+        "models": ["claude-3-haiku", "claude-3-opus", "claude-3-sonnet"],
+        "specialties": ["general", "analysis", "creative", "reasoning"]
+      },
+      "test": {
+        "models": ["mock-fast-model", "mock-unavailable-model"],
+        "specialties": ["testing", "performance", "error-scenarios"]
+      }
+    }
+  }
+}

@@ -17,27 +17,11 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@fishbowl-ai/shared": ["../../packages/shared/src"],
-      "@fishbowl-ai/ui-theme": ["../../packages/ui-theme/src"]
+      "@/*": ["./src/*"]
     },
     "types": ["jest"]
   },
-  "include": [
-    "src",
-    "types",
-    "App.tsx",
-    "index.ts",
-    "../../packages/shared/src",
-    "../../packages/ui-theme/src"
-  ],
+  "include": ["src", "types", "App.tsx", "index.ts"],
   "exclude": ["node_modules", ".expo", "dist"],
-  "references": [
-    {
-      "path": "../../packages/shared"
-    },
-    {
-      "path": "../../packages/ui-theme"
-    }
-  ]
+  "references": []
 }

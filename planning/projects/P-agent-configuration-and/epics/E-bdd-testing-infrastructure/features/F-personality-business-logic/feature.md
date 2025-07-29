@@ -2,7 +2,7 @@
 kind: feature
 id: F-personality-business-logic
 title: Personality Business Logic Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T13:42:39.526562"
@@ -16,6 +16,13 @@ parent: E-bdd-testing-infrastructure
 ## Purpose and Functionality
 
 Implement comprehensive BDD integration tests for personality business logic enforcement, trait interaction rules, and psychological model constraints. These tests verify complex business rules are properly enforced across service integrations and ensure personality configurations adhere to psychological validity requirements.
+
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: Business rule validation schemas, trait interdependency validation, and personality constraint enforcement
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: PersonalityService business logic implementation, trait validation algorithms, and psychological model consistency checks
 
 ## Key Components to Implement
 

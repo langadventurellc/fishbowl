@@ -1,0 +1,520 @@
+{
+  "description": "Invalid configuration file fixtures for testing validation and error handling",
+  "invalidConfigurations": {
+    "missingRequiredFields": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-missing-fields",
+            "personalityId": "personality-missing",
+            "roleId": "role-missing"
+          }
+        ]
+      }
+    },
+    "invalidPersonalityTraits": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite"
+      },
+      "data": {
+        "personalities": [
+          {
+            "id": "personality-invalid-traits",
+            "name": "Invalid Traits Personality",
+            "openness": 150,
+            "conscientiousness": -20,
+            "extraversion": "not-a-number",
+            "agreeableness": 50,
+            "neuroticism": 50,
+            "formality": 101,
+            "humor": -1,
+            "assertiveness": "invalid",
+            "empathy": null,
+            "storytelling": 50,
+            "brevity": 50,
+            "imagination": 50,
+            "playfulness": 50,
+            "dramaticism": 50,
+            "analyticalDepth": 50,
+            "contrarianism": 50,
+            "encouragement": 50,
+            "curiosity": 50,
+            "patience": 50,
+            "isTemplate": false
+          }
+        ]
+      }
+    },
+    "circularReferences": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-circular-1",
+            "name": "Circular Agent 1",
+            "personalityId": "personality-circular",
+            "roleId": "role-circular",
+            "modelConfig": {
+              "provider": "openai",
+              "modelId": "gpt-4",
+              "parameters": {
+                "temperature": 0.7
+              }
+            },
+            "dependencies": ["agent-circular-2"]
+          },
+          {
+            "id": "agent-circular-2",
+            "name": "Circular Agent 2",
+            "personalityId": "personality-circular",
+            "roleId": "role-circular",
+            "modelConfig": {
+              "provider": "openai",
+              "modelId": "gpt-4",
+              "parameters": {
+                "temperature": 0.7
+              }
+            },
+            "dependencies": ["agent-circular-1"]
+          }
+        ]
+      }
+    },
+    "invalidModelConfiguration": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-invalid-model",
+            "name": "Invalid Model Agent",
+            "personalityId": "personality-test",
+            "roleId": "role-test",
+            "modelConfig": {
+              "provider": "unsupported-provider",
+              "modelId": "",
+              "parameters": {
+                "temperature": 3.0,
+                "maxTokens": -1000,
+                "topP": 2.5,
+                "frequencyPenalty": 5.0,
+                "presencePenalty": -10.0
+              }
+            }
+          }
+        ]
+      }
+    },
+    "malformedJsonStructure": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite"
+      },
+      "data": {
+        "agents": "this-should-be-an-array",
+        "personalities": {
+          "this": "should-be-an-array-not-object"
+        },
+        "roles": null
+      }
+    },
+    "invalidReferences": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "agent-invalid-refs",
+            "name": "Invalid References Agent",
+            "personalityId": "non-existent-personality",
+            "roleId": "non-existent-role",
+            "modelConfig": {
+              "provider": "openai",
+              "modelId": "gpt-4",
+              "parameters": {
+                "temperature": 0.7
+              }
+            }
+          }
+        ],
+        "personalities": [],
+        "roles": []
+      }
+    },
+    "invalidMetadata": {
+      "version": "unsupported-version",
+      "format": "xml",
+      "encoding": "invalid-encoding",
+      "metadata": {
+        "createdAt": "not-a-valid-date",
+        "createdBy": "",
+        "lastModified": null
+      },
+      "data": {
+        "agents": [],
+        "personalities": [],
+        "roles": []
+      }
+    },
+    "emptyConfiguration": {},
+    "nullConfiguration": null,
+    "uuidValidationFailures": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "description": "Testing UUID validation failures for IDs"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "not-a-uuid",
+            "name": "Invalid UUID Agent",
+            "role": "test-role",
+            "personalityId": "also-not-a-uuid",
+            "modelId": "test-model",
+            "capabilities": ["test"],
+            "constraints": [],
+            "settings": {},
+            "metadata": {
+              "version": "1.0",
+              "createdAt": "2024-01-01T00:00:00.000Z",
+              "updatedAt": "2024-01-01T00:00:00.000Z",
+              "isActive": true,
+              "tags": []
+            }
+          },
+          {
+            "id": "123-456-789",
+            "name": "Malformed UUID Agent",
+            "role": "test-role",
+            "personalityId": "invalid-uuid-format",
+            "modelId": "test-model",
+            "capabilities": ["test"],
+            "constraints": [],
+            "settings": {},
+            "metadata": {
+              "version": "1.0",
+              "createdAt": "2024-01-01T00:00:00.000Z",
+              "updatedAt": "2024-01-01T00:00:00.000Z",
+              "isActive": true,
+              "tags": []
+            }
+          }
+        ],
+        "roles": [
+          {
+            "id": "not-uuid-role",
+            "name": "Invalid UUID Role",
+            "description": "Role with invalid UUID",
+            "capabilities": ["test"],
+            "constraints": [],
+            "isTemplate": false,
+            "version": 1,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z",
+            "metadata": {
+              "category": "test",
+              "complexity": "low"
+            }
+          }
+        ]
+      }
+    },
+    "modelTierValidationFailures": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "description": "Testing invalid model tier enum values"
+      },
+      "data": {
+        "models": [
+          {
+            "id": "invalid-tier-model-1",
+            "name": "Invalid Tier Model",
+            "provider": "openai",
+            "version": "gpt-4",
+            "tier": "invalid-tier",
+            "isAvailable": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "invalid-tier-model-2",
+            "name": "Null Tier Model",
+            "provider": "anthropic",
+            "version": "claude-3",
+            "tier": null,
+            "isAvailable": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "invalid-tier-model-3",
+            "name": "Empty Tier Model",
+            "provider": "google",
+            "version": "gemini",
+            "tier": "",
+            "isAvailable": false,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "personalityTraitsOutOfBounds": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "description": "Comprehensive personality trait validation failures"
+      },
+      "data": {
+        "personalities": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440000",
+            "name": "Extreme Out of Bounds Personality",
+            "description": "Personality with extremely out of range values",
+            "openness": 999,
+            "conscientiousness": -999,
+            "extraversion": 50,
+            "agreeableness": 50,
+            "neuroticism": 50,
+            "formality": 150,
+            "humor": -50,
+            "assertiveness": 101,
+            "empathy": -1,
+            "storytelling": 50,
+            "brevity": 50,
+            "imagination": 50,
+            "playfulness": 50,
+            "dramaticism": 50,
+            "analyticalDepth": 50,
+            "contrarianism": 50,
+            "encouragement": 50,
+            "curiosity": 50,
+            "patience": 50,
+            "isTemplate": false,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440001",
+            "name": "Non-Numeric Traits Personality",
+            "description": "Personality with non-numeric trait values",
+            "openness": "very-high",
+            "conscientiousness": true,
+            "extraversion": null,
+            "agreeableness": [],
+            "neuroticism": {},
+            "formality": "formal",
+            "humor": false,
+            "assertiveness": null,
+            "empathy": "empathetic",
+            "storytelling": 50,
+            "brevity": 50,
+            "imagination": 50,
+            "playfulness": 50,
+            "dramaticism": 50,
+            "analyticalDepth": 50,
+            "contrarianism": 50,
+            "encouragement": 50,
+            "curiosity": 50,
+            "patience": 50,
+            "isTemplate": false,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "customRoleValidationFailures": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "description": "Custom role schema validation failures"
+      },
+      "data": {
+        "roles": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440010",
+            "name": "",
+            "description": "",
+            "capabilities": [],
+            "constraints": ["test"],
+            "isTemplate": false,
+            "version": 1,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z",
+            "metadata": {}
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440011",
+            "name": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "description": "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB",
+            "capabilities": [],
+            "constraints": [],
+            "isTemplate": "not-boolean",
+            "version": -1,
+            "createdAt": "invalid-date",
+            "updatedAt": "also-invalid-date",
+            "metadata": "should-be-object"
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440012",
+            "name": "Missing Capabilities Role",
+            "description": "Role without required capabilities array",
+            "constraints": [],
+            "isTemplate": false,
+            "version": 1,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z",
+            "metadata": {}
+          }
+        ]
+      }
+    },
+    "stringLengthValidationFailures": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "description": "String length validation failures across different entities"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440020",
+            "name": "",
+            "role": "test-role",
+            "personalityId": "550e8400-e29b-41d4-a716-446655440000",
+            "modelId": "",
+            "capabilities": [],
+            "constraints": [],
+            "settings": {},
+            "metadata": {
+              "version": "1.0",
+              "createdAt": "2024-01-01T00:00:00.000Z",
+              "updatedAt": "2024-01-01T00:00:00.000Z",
+              "isActive": true,
+              "tags": []
+            }
+          },
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440021",
+            "name": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+            "role": "test-role",
+            "personalityId": "550e8400-e29b-41d4-a716-446655440000",
+            "modelId": "test-model",
+            "capabilities": [],
+            "constraints": [],
+            "settings": {},
+            "metadata": {
+              "version": "1.0",
+              "createdAt": "2024-01-01T00:00:00.000Z",
+              "updatedAt": "2024-01-01T00:00:00.000Z",
+              "isActive": true,
+              "tags": []
+            }
+          }
+        ],
+        "models": [
+          {
+            "id": "",
+            "name": "",
+            "provider": "",
+            "version": "",
+            "tier": "basic",
+            "isAvailable": true,
+            "createdAt": "2024-01-01T00:00:00.000Z",
+            "updatedAt": "2024-01-01T00:00:00.000Z"
+          }
+        ]
+      }
+    },
+    "arrayValidationFailures": {
+      "version": "1.0.0",
+      "format": "json",
+      "encoding": "utf8",
+      "metadata": {
+        "createdAt": "2024-01-01T00:00:00.000Z",
+        "createdBy": "test-suite",
+        "description": "Array validation failures for capabilities, constraints, and tags"
+      },
+      "data": {
+        "agents": [
+          {
+            "id": "550e8400-e29b-41d4-a716-446655440030",
+            "name": "Invalid Array Agent",
+            "role": "test-role",
+            "personalityId": "550e8400-e29b-41d4-a716-446655440000",
+            "modelId": "test-model",
+            "capabilities": "should-be-array",
+            "constraints": null,
+            "settings": "should-be-object",
+            "metadata": {
+              "version": "1.0",
+              "createdAt": "2024-01-01T00:00:00.000Z",
+              "updatedAt": "2024-01-01T00:00:00.000Z",
+              "isActive": "should-be-boolean",
+              "tags": "should-be-array"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "corruptedFiles": {
+    "partialJson": "{\"version\": \"1.0.0\", \"format\": \"json\", \"data\": {\"agents\": [",
+    "invalidJson": "{version: 1.0.0, format: json, data: {agents: []}}",
+    "binaryData": "\\x00\\x01\\x02\\x03\\x04\\x05",
+    "emptyFile": "",
+    "whitespaceOnly": "   \n   \t   \n   "
+  },
+  "encodingIssues": {
+    "invalidUtf8": "Configuration with invalid UTF-8: \\xff\\xfe",
+    "mixedLineEndings": "Configuration with mixed line endings\\r\\nand\\nunix\\r\\nstyle",
+    "nullBytes": "Configuration with null bytes: \\x00embedded\\x00nulls\\x00"
+  }
+}
