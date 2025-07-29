@@ -13,7 +13,7 @@ import type {
   FileOperationResult,
   FileMetadata,
 } from "../../../types/services";
-import type { ConfigurationData } from "../utilities/TemporaryDirectoryManager";
+import type { ConfigurationData } from "../../../types/configuration/ConfigurationData";
 
 /**
  * Configuration for service mock responses

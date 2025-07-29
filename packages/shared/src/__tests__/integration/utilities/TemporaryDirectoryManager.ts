@@ -8,7 +8,7 @@
 import { promises as fs } from "fs";
 import * as os from "os";
 import * as path from "path";
-import { ConfigurationData } from "src/types/configuration/ConfigurationData";
+import { ConfigurationData } from "../../../types/configuration/ConfigurationData";
 import { TemporaryDirectoryManager } from "../support/temp-directory-manager";
 
 /**
@@ -425,7 +425,7 @@ export function useConfigurationTempDirectory(): {
   };
 
   // Auto-cleanup after each test
-  afterEach(async () => {
+  globalThis.afterEach(async () => {
     await cleanup();
   });
 

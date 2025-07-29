@@ -6,8 +6,8 @@
  */
 
 import { promises as fs } from "fs";
-import * as path from "path";
 import * as os from "os";
+import * as path from "path";
 
 /**
  * Configuration for temporary directory creation
@@ -278,7 +278,7 @@ export function useTempDirectory(): {
   const helper = new TestDirectoryHelper();
 
   // Auto-cleanup after each test
-  afterEach(async () => {
+  globalThis.afterEach(async () => {
     await helper.cleanupAll();
   });
 

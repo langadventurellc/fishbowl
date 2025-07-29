@@ -11,7 +11,7 @@ import { readFile } from "fs/promises";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 import type { PersonalityConfiguration } from "../../../types/personality";
-import type { ConfigurationData } from "../utilities/TemporaryDirectoryManager";
+import type { ConfigurationData } from "../../../types/configuration/ConfigurationData";
 import {
   FixtureValidationUtils,
   type EntityCounts,

@@ -5,7 +5,7 @@
  * following the established test data builder patterns in the project.
  */
 
-import type { ConfigurationData } from "../utilities/TemporaryDirectoryManager";
+import type { ConfigurationData } from "../../../types/configuration/ConfigurationData";
 
 /**
  * File Lifecycle Test Data Builder
