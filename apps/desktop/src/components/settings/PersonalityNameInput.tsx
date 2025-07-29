@@ -19,13 +19,10 @@ import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "../../hooks/useDebounce";
 import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import type { PersonalityNameInputProps } from "@fishbowl-ai/shared";
-
-interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  isValidating: boolean;
-}
+import type {
+  PersonalityNameInputProps,
+  ValidationResult,
+} from "@fishbowl-ai/shared";
 
 export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
   value,

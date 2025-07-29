@@ -16,16 +16,9 @@ import React, { memo, useState } from "react";
 import { Card, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Edit, Trash2 } from "lucide-react";
-import type { CustomRole } from "@fishbowl-ai/shared";
+import type { CustomRoleListItemProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
 import { truncateDescription } from "../../utils";
-
-interface CustomRoleListItemProps {
-  role: CustomRole;
-  onEdit: (role: CustomRole) => void;
-  onDelete: (role: CustomRole) => void;
-  className?: string;
-}
 
 export const CustomRoleListItem = memo<CustomRoleListItemProps>(
   function CustomRoleListItem({ role, onEdit, onDelete, className }) {

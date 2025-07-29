@@ -18,6 +18,7 @@ import {
   useUnsavedChanges,
   type RoleFormData,
   type CustomRole,
+  type CreateRoleFormProps,
 } from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useState, useEffect } from "react";
@@ -33,15 +34,6 @@ import {
 import { Button } from "../ui/button";
 import { RoleNameInput } from "./RoleNameInput";
 import { RoleDescriptionTextarea } from "./RoleDescriptionTextarea";
-
-interface CreateRoleFormProps {
-  mode: "create" | "edit";
-  initialData?: Partial<RoleFormData>;
-  onSave: (data: RoleFormData) => void;
-  onCancel: () => void;
-  existingRoles?: CustomRole[];
-  isLoading?: boolean;
-}
 
 export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
   mode,

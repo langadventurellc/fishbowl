@@ -16,15 +16,7 @@ import React, { useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
 import { Label } from "../ui/label";
-
-export interface RoleDescriptionTextareaProps {
-  value: string;
-  onChange: (value: string) => void;
-  maxLength?: number; // Default 200
-  disabled?: boolean;
-  className?: string;
-  "aria-describedby"?: string;
-}
+import type { RoleDescriptionTextareaProps } from "@fishbowl-ai/shared";
 
 export const RoleDescriptionTextarea: React.FC<
   RoleDescriptionTextareaProps

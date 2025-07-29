@@ -4,16 +4,13 @@
  * @module types/ui/components/CreateRoleFormProps
  */
 import type { RoleFormData } from "../../settings/RoleFormData";
+import type { CustomRole } from "../../settings/CustomRole";
 
 export interface CreateRoleFormProps {
-  /** Existing role data for editing (undefined for creation) */
-  initialData?: RoleFormData;
-  /** Callback when form is submitted */
-  onSubmit: (data: RoleFormData) => void;
-  /** Callback when form is cancelled */
+  mode: "create" | "edit";
+  initialData?: Partial<RoleFormData>;
+  onSave: (data: RoleFormData) => void;
   onCancel: () => void;
-  /** Whether form is in loading state */
+  existingRoles?: CustomRole[];
   isLoading?: boolean;
-  /** Form validation errors */
-  errors?: Record<string, string>;
 }

@@ -20,3 +20,7 @@ export * from "./PersonalityCardProps";
 export * from "./RoleFormData";
 export * from "./PredefinedRole";
 export * from "./CustomRole";
+
+// Behavior types
+export * from "./BehaviorTrait";
+export * from "./BehaviorGroup";

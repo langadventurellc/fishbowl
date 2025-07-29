@@ -20,23 +20,7 @@ import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "../../hooks/useDebounce";
 import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import type { CustomRole } from "@fishbowl-ai/shared";
-
-interface RoleNameInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  existingRoles?: CustomRole[];
-  currentRoleId?: string; // For edit mode exclusion
-  disabled?: boolean;
-  className?: string;
-  "aria-describedby"?: string;
-}
-
-interface ValidationResult {
-  isValid: boolean;
-  errors: string[];
-  isValidating: boolean;
-}
+import type { RoleNameInputProps, ValidationResult } from "@fishbowl-ai/shared";
 
 export const RoleNameInput: React.FC<RoleNameInputProps> = ({
   value,

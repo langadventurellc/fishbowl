@@ -15,15 +15,7 @@
 import React, { useCallback } from "react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "../ui/textarea";
-
-export interface CustomInstructionsTextareaProps {
-  value: string;
-  onChange: (value: string) => void;
-  maxLength?: number;
-  disabled?: boolean;
-  className?: string;
-  "aria-describedby"?: string;
-}
+import type { CustomInstructionsTextareaProps } from "@fishbowl-ai/shared";
 
 export const CustomInstructionsTextarea: React.FC<
   CustomInstructionsTextareaProps
