@@ -14,6 +14,8 @@ export { TabContainer } from "./TabContainer";
 export { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 export { PredefinedRoleCard } from "./PredefinedRoleCard";
 export { CustomRoleListItem } from "./CustomRoleListItem";
+export { CustomRolesTab } from "./CustomRolesTab";
+export { PredefinedRolesTab } from "./PredefinedRolesTab";
 
 // Re-export Tabs components for convenient access from settings module
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";

@@ -63,3 +63,5 @@ export * from "./RoleCardProps";
 export * from "./CustomRoleCardProps";
 export * from "./CreateRoleFormProps";
 export * from "./RolesSectionProps";
+export * from "./CustomRolesTabProps";
+export * from "./PredefinedRolesTabProps";

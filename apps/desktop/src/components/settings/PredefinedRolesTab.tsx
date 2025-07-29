@@ -1,5 +1,5 @@
 /**
- * PredefinedTab component displays predefined roles in a responsive 2-column grid layout.
+ * PredefinedRolesTab component displays predefined roles in a responsive 2-column grid layout.
  *
  * Features:
  * - Responsive CSS Grid: 2 columns desktop (≥640px), 1 column mobile (<640px)
@@ -9,20 +9,17 @@
  * - Full accessibility with ARIA labels and keyboard navigation
  * - Error boundary support for graceful fallback
  *
- * @module components/settings/PredefinedTab
+ * @module components/settings/PredefinedRolesTab
  */
 
 import React from "react";
 import { PredefinedRoleCard } from "./PredefinedRoleCard";
 import { PREDEFINED_ROLES } from "@fishbowl-ai/shared";
+import type { PredefinedRolesTabProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
 
-interface PredefinedTabProps {
-  className?: string;
-}
-
-export const PredefinedTab = React.memo<PredefinedTabProps>(
-  function PredefinedTab({ className }) {
+export const PredefinedRolesTab = React.memo<PredefinedRolesTabProps>(
+  function PredefinedRolesTab({ className }) {
     // Error handling for missing or malformed role data
     if (!PREDEFINED_ROLES || PREDEFINED_ROLES.length === 0) {
       return (
@@ -39,7 +36,7 @@ export const PredefinedTab = React.memo<PredefinedTabProps>(
     }
 
     return (
-      <div className={cn("predefined-tab", className)}>
+      <div className={cn("predefined-roles-tab", className)}>
         {/* Accessible heading for screen readers */}
         <h2 className="sr-only">Predefined Roles Grid</h2>
 
