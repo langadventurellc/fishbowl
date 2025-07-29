@@ -2,13 +2,13 @@
 kind: feature
 id: F-configuration-service
 title: Configuration Service Coordination Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-configuration-service-crud
   - F-configuration-service-file
 created: "2025-07-26T13:47:45.459370"
-updated: "2025-07-26T13:47:45.459370"
+updated: "2025-07-29T15:58:46.853680+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
