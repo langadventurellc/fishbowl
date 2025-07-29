@@ -5,3 +5,4 @@
  */
 
 export * from "./useEnhancedTabNavigation";
+export * from "./useCustomRoles";
