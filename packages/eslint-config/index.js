@@ -63,6 +63,19 @@ module.exports = [
       "**/*.test.tsx",
       "**/setup.ts",
     ],
+    languageOptions: {
+      globals: {
+        jest: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        test: "readonly",
+      },
+    },
     rules: {
       "statement-count/function-statement-count-warn": "off",
       "statement-count/function-statement-count-error": "off",

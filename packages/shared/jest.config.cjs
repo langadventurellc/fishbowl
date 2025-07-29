@@ -4,7 +4,6 @@ module.exports = {
   testEnvironment: "node",
   testMatch: [
     "<rootDir>/src/**/__tests__/**/*.{test,spec}.{js,jsx,ts,tsx}",
-    "<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}"
   ],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
@@ -18,6 +17,9 @@ module.exports = {
     "!src/**/__tests__/**",
     "!src/**/*.{test,spec}.{ts,tsx}"
   ],
+  transform: {
+    '^.+\\.(ts|tsx)$': 'ts-jest',
+  },
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json"],
   globals: {
     "ts-jest": {

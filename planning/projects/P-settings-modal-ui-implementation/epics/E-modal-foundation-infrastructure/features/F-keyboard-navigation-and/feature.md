@@ -2,12 +2,12 @@
 kind: feature
 id: F-keyboard-navigation-and
 title: Keyboard Navigation and Accessibility
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-modal-shell-structure-and-layout
 created: "2025-07-26T01:13:41.721174"
-updated: "2025-07-26T01:13:41.721174"
+updated: "2025-07-27T19:26:09.329788+00:00"
 schema_version: "1.1"
 parent: E-modal-foundation-infrastructure
 ---
@@ -17,6 +17,10 @@ parent: E-modal-foundation-infrastructure
 ## Purpose and Functionality
 
 Implement comprehensive keyboard navigation and accessibility features for the settings modal, ensuring full keyboard operability, proper focus management, screen reader support, and WCAG compliance. This feature makes the settings modal accessible to users with disabilities and provides efficient keyboard-driven navigation for power users.
+
+## Settings Modal UI Specification
+
+**IMPORTANT: Before beginning work on this feature, you MUST read and reference `docs/specifications/settings-modal-ui-spec.md`.** This document contains detailed design and functional requirements for the settings modal, including exact dimensions, layout specifications, navigation structure, content sections, and user experience considerations. All implementation work should follow the specifications outlined in this document. If you have questions about requirements, consult this specification first as it likely contains the answer.
 
 ## Key Components to Implement
 

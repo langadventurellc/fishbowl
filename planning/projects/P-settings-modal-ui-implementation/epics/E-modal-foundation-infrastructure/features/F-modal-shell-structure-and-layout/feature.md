@@ -19,6 +19,10 @@ parent: E-modal-foundation-infrastructure
 
 Implement the complete modal shell structure including header with title and close button, two-panel content area with navigation and main content, and footer with Cancel/Save buttons. This feature creates the foundational layout that all settings sections will use, providing consistent navigation and interaction patterns.
 
+## Settings Modal UI Specification
+
+**IMPORTANT: Before beginning work on this feature, you MUST read and reference `docs/specifications/settings-modal-ui-spec.md`.** This document contains detailed design and functional requirements for the settings modal, including exact dimensions, layout specifications, navigation structure, content sections, and user experience considerations. All implementation work should follow the specifications outlined in this document. If you have questions about requirements, consult this specification first as it likely contains the answer.
+
 ## Key Components to Implement
 
 ### Modal Header Implementation

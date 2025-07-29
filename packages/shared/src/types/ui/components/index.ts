@@ -32,6 +32,8 @@ export * from "./MessageContextMenuProps";
 export * from "./MessageHeaderProps";
 export * from "./MessageInputDisplayProps";
 export * from "./MessageItemProps";
+export * from "./ModalFooterProps";
+export * from "./ModalHeaderProps";
 export * from "./ResizeDirection";
 export * from "./SendButtonDisplayProps";
 export * from "./SettingsModalProps";

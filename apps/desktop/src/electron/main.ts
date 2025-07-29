@@ -1,4 +1,5 @@
-import { app, BrowserWindow, shell } from "electron";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { app, BrowserWindow, shell, ipcMain, globalShortcut } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 
@@ -68,8 +69,44 @@ function createMainWindow(): void {
   }
 }
 
-app.whenReady().then(() => {
+/**
+ * Helper function to send settings open command to renderer process.
+ * This function is called by menu items and keyboard shortcuts to trigger
+ * the settings modal in the renderer process.
+ *
+ * @throws {Error} Logs errors instead of throwing to prevent main process crashes
+ */
+function openSettingsModal(): void {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    try {
+      mainWindow.webContents.send("open-settings");
+
+      // Debug logging for development
+      if (process.env.NODE_ENV === "development") {
+        console.log("Settings modal IPC message sent successfully");
+      }
+    } catch (error) {
+      console.error("Failed to send open-settings IPC message:", error);
+    }
+  } else {
+    console.warn(
+      "Cannot open settings: main window not available or destroyed",
+    );
+  }
+}
+
+app.whenReady().then(async () => {
   createMainWindow();
+
+  // Setup application menu after window creation
+  const { setupApplicationMenu } = await import("./setupApplicationMenu.js");
+  setupApplicationMenu();
+
+  // Register global shortcuts after app is ready
+  const { registerGlobalShortcuts } = await import(
+    "./registerGlobalShortcuts.js"
+  );
+  registerGlobalShortcuts();
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -86,5 +123,10 @@ app.on("window-all-closed", () => {
 });
 
 app.on("before-quit", () => {
+  // Clean up global shortcuts
+  globalShortcut.unregisterAll();
   mainWindow = null;
 });
+
+// Export for use by menu and keyboard shortcut handlers
+export { openSettingsModal };
