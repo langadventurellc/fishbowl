@@ -24,7 +24,7 @@ import {
   type SettingsSubTab,
 } from "@fishbowl-ai/shared";
 import { NavigationItem } from "./NavigationItem";
-import { TabContainer } from "./TabContainer";
+import { SubNavigationTab } from "./SubNavigationTab";
 import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
 import { useAccessibilityAnnouncements } from "@/utils";
 
@@ -269,19 +269,27 @@ const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
           {section.hasSubTabs &&
             section.subTabs &&
             activeSection === section.id && (
-              <div className="mt-2">
-                <TabContainer
-                  tabs={section.subTabs
-                    .filter((tab) => tab.id)
-                    .map((tab) => ({
-                      id: tab.id!,
-                      label: tab.label,
-                      content: () => null, // Content handled elsewhere
-                    }))}
-                  useStore={true}
-                  className="navigation-tabs"
-                  orientation="vertical"
-                />
+              <div className="mt-2 ml-4 space-y-1">
+                {section.subTabs
+                  .filter((subTab) => subTab.id)
+                  .map((subTab) => {
+                    const subTabId = subTab.id as string; // Safe assertion after filter
+                    return (
+                      <SubNavigationTab
+                        key={subTabId}
+                        ref={(el) => setRef(`subtab-${subTabId}`, el)}
+                        id={subTabId as SettingsSubTab}
+                        label={subTab.label}
+                        active={activeSubTab === subTabId}
+                        onClick={() =>
+                          onSubTabChange(subTabId as SettingsSubTab)
+                        }
+                        isCompact={isCompact}
+                        isFocused={isItemFocused(subTabId, "subtab")}
+                        tabIndex={isItemFocused(subTabId, "subtab") ? 0 : -1}
+                      />
+                    );
+                  })}
               </div>
             )}
         </NavigationItem>
