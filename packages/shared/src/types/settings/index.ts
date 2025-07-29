@@ -24,3 +24,10 @@ export * from "./CustomRole";
 // Behavior types
 export * from "./BehaviorTrait";
 export * from "./BehaviorGroup";
+
+// Agent types
+export * from "./AgentCard";
+export * from "./AgentConfiguration";
+export * from "./AgentDefaults";
+export * from "./AgentsSectionProps";
+export * from "./AgentTemplate";

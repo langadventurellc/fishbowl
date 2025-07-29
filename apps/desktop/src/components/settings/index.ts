@@ -18,6 +18,7 @@ export { RoleDeleteDialog } from "./RoleDeleteDialog";
 export { CustomRolesTab } from "./CustomRolesTab";
 export { PredefinedRolesTab } from "./PredefinedRolesTab";
 export { RolesSection } from "./RolesSection";
+export { AgentsSection } from "./AgentsSection";
 
 // Re-export Tabs components for convenient access from settings module
 export { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
