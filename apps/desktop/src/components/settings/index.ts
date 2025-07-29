@@ -14,6 +14,7 @@ export { TabContainer } from "./TabContainer";
 export { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 export { PredefinedRoleCard } from "./PredefinedRoleCard";
 export { CustomRoleListItem } from "./CustomRoleListItem";
+export { RoleDeleteDialog } from "./RoleDeleteDialog";
 export { CustomRolesTab } from "./CustomRolesTab";
 export { PredefinedRolesTab } from "./PredefinedRolesTab";
 
