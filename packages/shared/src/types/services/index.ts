@@ -20,3 +20,15 @@ export type { UnifiedConfigurationUpdateRequest } from "./UnifiedConfigurationUp
 export type { DependencyNode } from "./DependencyNode";
 export type { DependencyGraph } from "./DependencyGraph";
 export type { ReferenceResolutionResult } from "./ReferenceResolutionResult";
+export type { FileService } from "./FileServiceInterface";
+export type { FileCreateOptions } from "./FileCreateOptions";
+export type { FileUpdateOptions } from "./FileUpdateOptions";
+export type { FileDeleteOptions } from "./FileDeleteOptions";
+export type { FileOperationResult } from "./FileOperationResult";
+export type { FileMetadata } from "./FileMetadata";
+export type { BackupService } from "./BackupServiceInterface";
+export type { BackupMetadata } from "./BackupMetadata";
+export type { RestoreOptions } from "./RestoreOptions";
+export type { DependencyService } from "./DependencyServiceInterface";
+export type { DependencyCheckResult } from "./DependencyCheckResult";
+export type { DependencyInfo } from "./DependencyInfo";
