@@ -1,5 +1,3 @@
-import { ScoringServiceMock } from "src/test-utils/personality-management/ScoringServiceMock";
-import { ScoringServiceMockConfig } from "src/test-utils/personality-management/ScoringServiceMockConfig";
 import { ValidationServiceMock } from "src/test-utils/personality-management/ValidationServiceMock";
 import { ValidationServiceMockConfig } from "src/test-utils/personality-management/ValidationServiceMockConfig";
 
@@ -12,11 +10,9 @@ export class ServiceMockFactory {
    * Create a complete set of service mocks for testing
    */
   static createMockServices(config?: {
-    scoring?: ScoringServiceMockConfig;
     validation?: ValidationServiceMockConfig;
   }) {
     return {
-      scoringService: new ScoringServiceMock(config?.scoring),
       validationService: new ValidationServiceMock(config?.validation),
     };
   }
@@ -26,7 +22,6 @@ export class ServiceMockFactory {
    */
   static createFailingMocks() {
     return {
-      scoringService: new ScoringServiceMock({ shouldFail: true }),
       validationService: new ValidationServiceMock({ shouldFail: true }),
     };
   }
@@ -36,7 +31,6 @@ export class ServiceMockFactory {
    */
   static createBusinessLogicMocks() {
     return {
-      scoringService: new ScoringServiceMock(),
       validationService: new ValidationServiceMock(),
     };
   }
@@ -44,11 +38,7 @@ export class ServiceMockFactory {
   /**
    * Reset all mocks to default configuration
    */
-  static resetMocks(mocks: {
-    scoringService: ScoringServiceMock;
-    validationService: ValidationServiceMock;
-  }) {
-    mocks.scoringService.reset();
+  static resetMocks(mocks: { validationService: ValidationServiceMock }) {
     mocks.validationService.reset();
   }
 }

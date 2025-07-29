@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-clean-up-over-engineered-test
+status: done
 title: Clean up over-engineered test-utils and personality management helpers
-status: open
 priority: normal
 prerequisites:
   - T-remove-advanced-psychology
   - T-remove-unused-test-fixtures-and
 created: "2025-07-29T11:39:14.422784"
-updated: "2025-07-29T11:39:14.422784"
+updated: "2025-07-29T12:45:42.105641"
 schema_version: "1.1"
+worktree: null
 ---
 
 # Clean Up Over-Engineered Test-Utils and Personality Management Helpers
@@ -76,3 +77,7 @@ Basic utilities that support essential functionality:
 - [ ] Duplicate utility files in packages/shared/packages/ are also cleaned up
 
 ### Log
+
+**2025-07-29T17:53:57.075134Z** - Successfully cleaned up over-engineered test utilities in the personality management directory. Removed all unused complex psychology test utilities and service mocks that were orphaned after the advanced psychology tests were removed. Updated ServiceMockFactory to only include essential ValidationServiceMock functionality. Removed duplicate directory structure. All tests continue to pass and essential personality testing infrastructure remains fully functional.
+
+- filesChanged: ["packages/shared/src/test-utils/personality-management/TraitInteractionValidationResult.ts", "packages/shared/src/test-utils/personality-management/TeamCompatibilityResult.ts", "packages/shared/src/test-utils/personality-management/PersonalityScoringResult.ts", "packages/shared/src/test-utils/personality-management/TraitInteractionWarning.ts", "packages/shared/src/test-utils/personality-management/TraitInteractionError.ts", "packages/shared/src/test-utils/personality-management/TraitInteractionTestConfig.ts", "packages/shared/src/test-utils/personality-management/ScoringServiceMock.ts", "packages/shared/src/test-utils/personality-management/ScoringServiceMockConfig.ts", "packages/shared/src/test-utils/personality-management/ServiceMockFactory.ts", "packages/shared/packages/shared/src/test-utils/personality-management/"]
