@@ -2,12 +2,12 @@
 kind: feature
 id: F-personalities-section
 title: Personalities Section Implementation
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-interactive-tab-system
 created: "2025-07-27T11:49:24.730872"
-updated: "2025-07-27T11:49:24.730872"
+updated: "2025-07-29T15:31:05.497493+00:00"
 schema_version: "1.1"
 parent: E-complex-settings-sections
 ---
