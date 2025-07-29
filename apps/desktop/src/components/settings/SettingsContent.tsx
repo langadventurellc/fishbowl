@@ -41,6 +41,7 @@ import { cn } from "../../lib/utils";
 import { ApiKeysSettings } from "./ApiKeysSettings";
 import { FormErrorDisplay } from "./FormErrorDisplay";
 import { PersonalitiesSection } from "./PersonalitiesSection";
+import { RolesSection } from "./RolesSection";
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -753,46 +754,19 @@ const PersonalitiesSettings: React.FC = () => {
   return <PersonalitiesSection />;
 };
 
-const RolesSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Roles</h1>
-      <p className="text-muted-foreground mb-6">
-        Define and configure agent roles and permissions.
-      </p>
-    </div>
-    <div className="border-b">
-      <div className="flex space-x-8">
-        {["Predefined", "Custom"].map((tab) => (
-          <div key={tab} className="py-2 px-1 border-b-2 border-transparent">
-            <span className="text-sm font-medium">{tab}</span>
-          </div>
-        ))}
+const RolesSettings: React.FC = () => {
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Roles</h1>
+        <p className="text-muted-foreground mb-6">
+          Define and configure agent roles and permissions.
+        </p>
       </div>
+      <RolesSection />
     </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-      {[
-        "Developer",
-        "Designer",
-        "Writer",
-        "Analyst",
-        "Researcher",
-        "Assistant",
-      ].map((role) => (
-        <div key={role} className="border rounded-lg p-4 space-y-2">
-          <h3 className="font-semibold">{role}</h3>
-          <p className="text-sm text-muted-foreground">
-            Role description and capabilities
-          </p>
-          <div className="flex gap-2 mt-3">
-            <div className="h-8 bg-muted rounded w-16" />
-            <div className="h-8 bg-muted rounded w-16" />
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+  );
+};
 
 // Helper components removed - using direct div elements for better accessibility control
 

@@ -43,16 +43,7 @@ export const PredefinedRoleCard = React.memo<PredefinedRoleCardProps>(
           }
         }}
       >
-        <CardHeader className="text-center space-y-3">
-          {/* Role Icon */}
-          <div
-            className="text-4xl mb-2"
-            role="img"
-            aria-label={`${role.name} icon`}
-          >
-            {role.icon}
-          </div>
-
+        <CardHeader className="text-center space-y-2 p-4">
           {/* Role Name */}
           <CardTitle className="text-lg font-semibold">{role.name}</CardTitle>
 
@@ -62,7 +53,7 @@ export const PredefinedRoleCard = React.memo<PredefinedRoleCardProps>(
           </CardDescription>
 
           {/* Non-editable Indicator */}
-          <div className="flex items-center justify-center gap-1 mt-2">
+          <div className="flex items-center justify-center gap-1 mt-1">
             <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-muted-foreground/50 rounded-full"></span>
               Read-only
@@ -70,7 +61,7 @@ export const PredefinedRoleCard = React.memo<PredefinedRoleCardProps>(
           </div>
 
           {/* Hover "View Details" Indication */}
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out mt-2">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out mt-1">
             <span className="text-xs text-accent font-medium">
               View Details
             </span>

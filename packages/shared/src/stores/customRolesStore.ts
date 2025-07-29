@@ -8,8 +8,8 @@
  */
 
 import { create } from "zustand";
-import type { CustomRole, RoleFormData } from "../types/settings";
 import { roleSchema } from "../schemas";
+import type { CustomRole, RoleFormData } from "../types/settings";
 import { customRolesPersistence } from "./customRolesPersistence";
 
 // Generate unique ID using crypto API or fallback
@@ -44,7 +44,6 @@ interface CustomRolesActions {
 type CustomRolesStore = CustomRolesState & CustomRolesActions;
 
 export const useCustomRolesStore = create<CustomRolesStore>()((set, get) => ({
-  // Initial state
   roles: [],
   isLoading: false,
   error: null,

@@ -97,18 +97,6 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Form Header */}
-      <div className="pb-6 border-b">
-        <h2 className="text-xl font-semibold">
-          {isEditMode ? "Edit Role" : "Create New Role"}
-        </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          {isEditMode
-            ? "Modify the role name and description"
-            : "Define a new role with its area of expertise and purpose"}
-        </p>
-      </div>
-
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
           {/* Name Field */}

@@ -16,11 +16,9 @@ describe("Predefined Roles Data", () => {
         expect(role).toHaveProperty("id");
         expect(role).toHaveProperty("name");
         expect(role).toHaveProperty("description");
-        expect(role).toHaveProperty("icon");
         expect(typeof role.id).toBe("string");
         expect(typeof role.name).toBe("string");
         expect(typeof role.description).toBe("string");
-        expect(typeof role.icon).toBe("string");
       });
     });
 
@@ -44,14 +42,6 @@ describe("Predefined Roles Data", () => {
         expect(role.description.length).toBeLessThanOrEqual(
           ROLE_VALIDATION.MAX_DESCRIPTION_LENGTH,
         );
-      });
-    });
-
-    it("should have non-empty icon strings", () => {
-      PREDEFINED_ROLES.forEach((role) => {
-        expect(role.icon).toBeTruthy();
-        expect(role.icon.trim()).not.toBe("");
-        expect(role.icon.length).toBeGreaterThan(0);
       });
     });
 

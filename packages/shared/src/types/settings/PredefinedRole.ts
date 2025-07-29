@@ -5,7 +5,7 @@
  */
 
 /**
- * Predefined system role with icon and optional category
+ * Predefined system role with optional category
  */
 export interface PredefinedRole {
   /** Unique identifier for the predefined role */
@@ -14,8 +14,6 @@ export interface PredefinedRole {
   name: string;
   /** Brief description of the role's purpose */
   description: string;
-  /** Emoji icon for visual representation */
-  icon: string;
   /** Optional category for grouping roles */
   category?: string;
 }

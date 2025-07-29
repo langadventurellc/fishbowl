@@ -2,12 +2,12 @@
 kind: feature
 id: F-roles-section-implementation
 title: Roles Section Implementation
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-interactive-tab-system
 created: "2025-07-27T11:49:56.585802"
-updated: "2025-07-27T11:49:56.585802"
+updated: "2025-07-29T20:56:43.939005+00:00"
 schema_version: "1.1"
 parent: E-complex-settings-sections
 ---
