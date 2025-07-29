@@ -39,6 +39,7 @@ import type {
   AgentsSectionProps,
   TabConfiguration,
   AgentCard,
+  AgentTemplate,
 } from "@fishbowl-ai/shared";
 
 // Mock agent data for demonstration
@@ -252,19 +253,182 @@ const LibraryTab: React.FC = () => {
   );
 };
 
+// Mock template data with 8 realistic templates across categories
+const mockTemplates: AgentTemplate[] = [
+  {
+    id: "template-research-assistant",
+    name: "Research Assistant",
+    description:
+      "Specialized in gathering information, analyzing sources, and providing comprehensive research summaries with proper citations.",
+    icon: "BookOpen",
+    configuration: {
+      temperature: 0.7,
+      maxTokens: 2000,
+      topP: 0.9,
+      model: "Claude 3.5 Sonnet",
+      systemPrompt: "You are a meticulous research assistant...",
+    },
+  },
+  {
+    id: "template-code-reviewer",
+    name: "Code Reviewer",
+    description:
+      "Expert at analyzing code quality, suggesting improvements, and identifying potential security vulnerabilities.",
+    icon: "Code",
+    configuration: {
+      temperature: 0.3,
+      maxTokens: 1500,
+      topP: 0.8,
+      model: "GPT-4",
+      systemPrompt: "You are a senior code reviewer...",
+    },
+  },
+  {
+    id: "template-content-creator",
+    name: "Content Creator",
+    description:
+      "Creative writing specialist for marketing copy, blog posts, and engaging social media content.",
+    icon: "PenTool",
+    configuration: {
+      temperature: 0.9,
+      maxTokens: 1800,
+      topP: 0.95,
+      model: "Claude 3.5 Sonnet",
+      systemPrompt: "You are a creative content writer...",
+    },
+  },
+  {
+    id: "template-data-analyst",
+    name: "Data Analyst",
+    description:
+      "Processes datasets, creates visualizations, and provides statistical insights with clear explanations.",
+    icon: "BarChart3",
+    configuration: {
+      temperature: 0.4,
+      maxTokens: 2000,
+      topP: 0.85,
+      model: "GPT-4",
+      systemPrompt: "You are an experienced data analyst...",
+    },
+  },
+  {
+    id: "template-project-manager",
+    name: "Project Manager",
+    description:
+      "Coordinates tasks, manages timelines, and facilitates communication between team members effectively.",
+    icon: "Calendar",
+    configuration: {
+      temperature: 0.6,
+      maxTokens: 1600,
+      topP: 0.9,
+      model: "Claude 3.5 Sonnet",
+      systemPrompt: "You are a professional project manager...",
+    },
+  },
+  {
+    id: "template-ux-consultant",
+    name: "UX Consultant",
+    description:
+      "Evaluates user interfaces, suggests improvements, and provides user experience best practices.",
+    icon: "Palette",
+    configuration: {
+      temperature: 0.7,
+      maxTokens: 1700,
+      topP: 0.9,
+      model: "GPT-4",
+      systemPrompt: "You are a senior UX consultant...",
+    },
+  },
+  {
+    id: "template-technical-writer",
+    name: "Technical Writer",
+    description:
+      "Creates clear documentation, API guides, and user manuals with proper structure and examples.",
+    icon: "FileText",
+    configuration: {
+      temperature: 0.5,
+      maxTokens: 2200,
+      topP: 0.85,
+      model: "Claude 3.5 Sonnet",
+      systemPrompt: "You are a technical writing specialist...",
+    },
+  },
+  {
+    id: "template-business-strategist",
+    name: "Business Strategist",
+    description:
+      "Analyzes market trends, develops strategic plans, and provides actionable business recommendations.",
+    icon: "TrendingUp",
+    configuration: {
+      temperature: 0.8,
+      maxTokens: 1900,
+      topP: 0.9,
+      model: "GPT-4",
+      systemPrompt: "You are a business strategy consultant...",
+    },
+  },
+];
+
 /**
- * Templates tab placeholder component for agent template management.
+ * Templates tab component with pre-configured template cards in responsive grid layout.
  */
-const TemplatesTab: React.FC = () => (
-  <div className="space-y-4 p-6">
-    <div className="text-center py-8">
-      <h3 className="text-lg font-semibold mb-2">Agent Templates</h3>
-      <p className="text-muted-foreground">
-        Create and manage pre-configured agent templates.
-      </p>
+const TemplatesTab: React.FC = () => {
+  return (
+    <div className="space-y-6 p-6">
+      {/* Header Section */}
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Agent Templates</h3>
+        <p className="text-sm text-muted-foreground">
+          Choose from pre-configured templates to quickly create specialized
+          agents.
+        </p>
+      </div>
+
+      {/* Templates Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {mockTemplates.map((template) => {
+          const IconComponent = iconMap[template.icon] || BookOpen;
+
+          return (
+            <Card
+              key={template.id}
+              className="hover:shadow-lg transition-all duration-200 group cursor-pointer"
+            >
+              <CardHeader className="pb-4">
+                <div className="flex items-start gap-3">
+                  <div className="p-2 bg-muted rounded-lg group-hover:bg-accent/20 transition-colors">
+                    <IconComponent className="h-8 w-8 text-muted-foreground group-hover:text-accent-foreground transition-colors" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-base leading-tight mb-1">
+                      {template.name}
+                    </CardTitle>
+                    <p className="text-xs text-muted-foreground">
+                      {template.configuration.model}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="pt-0">
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
+                  {template.description}
+                </p>
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  size="sm"
+                  aria-label={`Use ${template.name} template`}
+                >
+                  Use Template
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 /**
  * Defaults tab placeholder component for agent default settings.

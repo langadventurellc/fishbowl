@@ -54,12 +54,14 @@ describe("AgentsSection", () => {
     // Library tab content
     expect(screen.getByPlaceholderText("Search agents...")).toBeInTheDocument();
     expect(screen.getByText("Create New Agent")).toBeInTheDocument();
-    expect(screen.getByText("Research Assistant")).toBeInTheDocument();
-    expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
+    expect(screen.getAllByText("Research Assistant")).toHaveLength(2); // One in Library, one in Templates
+    expect(screen.getAllByText("Code Reviewer")).toHaveLength(2); // One in Library, one in Templates
 
     expect(screen.getByText("Agent Templates")).toBeInTheDocument();
     expect(
-      screen.getByText("Create and manage pre-configured agent templates."),
+      screen.getByText(
+        "Choose from pre-configured templates to quickly create specialized agents.",
+      ),
     ).toBeInTheDocument();
 
     expect(screen.getByText("Agent Defaults")).toBeInTheDocument();
@@ -91,10 +93,14 @@ describe("AgentsSection", () => {
     const createButton = screen.getByText("Create New Agent");
     expect(createButton).toBeInTheDocument();
 
-    // Check that other tabs maintain placeholder structure
+    // Check that Templates tab has functional content structure (no longer placeholder)
     const templatesContent = screen.getByText("Agent Templates").closest("div");
-    expect(templatesContent).toHaveClass("text-center", "py-8");
+    expect(templatesContent).toHaveClass("space-y-2");
 
+    // Check template cards are present
+    expect(screen.getAllByText("Use Template")).toHaveLength(8); // 8 template cards
+
+    // Check that Defaults tab maintains placeholder structure
     const defaultsContent = screen.getByText("Agent Defaults").closest("div");
     expect(defaultsContent).toHaveClass("text-center", "py-8");
   });
