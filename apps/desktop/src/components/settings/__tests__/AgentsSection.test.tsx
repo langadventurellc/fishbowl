@@ -51,10 +51,11 @@ describe("AgentsSection", () => {
   test("renders tab content correctly", () => {
     render(<AgentsSection />);
 
-    expect(screen.getByText("Agent Library")).toBeInTheDocument();
-    expect(
-      screen.getByText("Browse and manage your collection of AI agents."),
-    ).toBeInTheDocument();
+    // Library tab content
+    expect(screen.getByPlaceholderText("Search agents...")).toBeInTheDocument();
+    expect(screen.getByText("Create New Agent")).toBeInTheDocument();
+    expect(screen.getByText("Research Assistant")).toBeInTheDocument();
+    expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
 
     expect(screen.getByText("Agent Templates")).toBeInTheDocument();
     expect(
@@ -80,13 +81,17 @@ describe("AgentsSection", () => {
     expect(screen.getByTestId("tab-defaults")).toBeInTheDocument();
   });
 
-  test("placeholder content maintains consistent styling", () => {
+  test("tab content maintains expected structure", () => {
     render(<AgentsSection />);
 
-    // Check that all tab content has the expected structure
-    const libraryContent = screen.getByText("Agent Library").closest("div");
-    expect(libraryContent).toHaveClass("text-center", "py-8");
+    // Check that Library tab has functional content structure
+    const searchInput = screen.getByPlaceholderText("Search agents...");
+    expect(searchInput).toBeInTheDocument();
 
+    const createButton = screen.getByText("Create New Agent");
+    expect(createButton).toBeInTheDocument();
+
+    // Check that other tabs maintain placeholder structure
     const templatesContent = screen.getByText("Agent Templates").closest("div");
     expect(templatesContent).toHaveClass("text-center", "py-8");
 
