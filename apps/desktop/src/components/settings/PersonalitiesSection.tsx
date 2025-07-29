@@ -19,27 +19,12 @@ import {
   useSettingsNavigation,
   useUnsavedChanges,
   type TabConfiguration,
+  type Personality,
+  type PersonalityFormData,
 } from "@fishbowl-ai/shared";
 
 interface PersonalitiesSectionProps {
   // Future props for settings modal integration
-}
-
-interface PersonalityFormData {
-  name: string;
-  bigFive: {
-    openness: number;
-    conscientiousness: number;
-    extraversion: number;
-    agreeableness: number;
-    neuroticism: number;
-  };
-  behaviors: Record<string, number>;
-  customInstructions: string;
-}
-
-interface Personality extends PersonalityFormData {
-  id: string;
 }
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
