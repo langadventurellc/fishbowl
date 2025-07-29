@@ -27,6 +27,7 @@ export * from "./BehaviorGroup";
 
 // Agent types
 export * from "./AgentCard";
+export * from "./AgentCardProps";
 export * from "./AgentConfiguration";
 export * from "./AgentDefaults";
 export * from "./AgentsSectionProps";

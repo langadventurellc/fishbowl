@@ -14,6 +14,7 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { cn } from "../../lib/utils";
 import { TabContainer } from "./TabContainer";
+import { AgentCard } from "./agents/AgentCard";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -25,8 +26,6 @@ import { announceToScreenReader } from "../../utils/announceToScreenReader";
 import {
   Search,
   Plus,
-  Edit,
-  Trash2,
   BookOpen,
   Code,
   PenTool,
@@ -42,68 +41,60 @@ import {
 import type {
   AgentsSectionProps,
   TabConfiguration,
-  AgentCard,
+  AgentCard as AgentCardType,
   AgentTemplate,
   AgentDefaults,
 } from "@fishbowl-ai/shared";
 
 // Mock agent data for demonstration
-const mockAgents: AgentCard[] = [
+const mockAgents: AgentCardType[] = [
   {
     id: "1",
     name: "Research Assistant",
     model: "Claude 3.5 Sonnet",
     role: "Research and Analysis",
-    icon: "BookOpen",
   },
   {
     id: "2",
     name: "Code Reviewer",
     model: "GPT-4",
     role: "Code Analysis",
-    icon: "Code",
   },
   {
     id: "3",
     name: "Creative Writer",
     model: "Claude 3.5 Sonnet",
     role: "Content Creation",
-    icon: "PenTool",
   },
   {
     id: "4",
     name: "Data Analyst",
     model: "GPT-4",
     role: "Data Analysis",
-    icon: "BarChart3",
   },
   {
     id: "5",
     name: "Project Manager",
     model: "Claude 3.5 Sonnet",
     role: "Project Coordination",
-    icon: "Calendar",
   },
   {
     id: "6",
     name: "UX Designer",
     model: "GPT-4",
     role: "User Experience Design",
-    icon: "Palette",
   },
   {
     id: "7",
     name: "Technical Writer",
     model: "Claude 3.5 Sonnet",
     role: "Documentation",
-    icon: "FileText",
   },
   {
     id: "8",
     name: "Marketing Strategist",
     model: "GPT-4",
     role: "Marketing and Strategy",
-    icon: "TrendingUp",
   },
 ];
 
@@ -122,62 +113,23 @@ const iconMap: Record<string, LucideIcon> = {
 };
 
 /**
- * Individual agent card component with hover states and action buttons.
- */
-interface AgentCardComponentProps {
-  agent: AgentCard;
-}
-
-const AgentCardComponent: React.FC<AgentCardComponentProps> = ({ agent }) => {
-  const IconComponent = iconMap[agent.icon] || BookOpen;
-
-  return (
-    <Card className="hover:shadow-md transition-shadow group">
-      <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-muted rounded-lg">
-              <IconComponent className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <div>
-              <CardTitle className="text-lg">{agent.name}</CardTitle>
-              <p className="text-sm text-muted-foreground">{agent.model}</p>
-            </div>
-          </div>
-          <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              aria-label={`Edit ${agent.name}`}
-            >
-              <Edit className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 w-8 p-0"
-              aria-label={`Delete ${agent.name}`}
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground">{agent.role}</p>
-      </CardContent>
-    </Card>
-  );
-};
-
-/**
  * Responsive grid layout for agent cards.
  */
-const AgentGrid: React.FC<{ agents: AgentCard[] }> = ({ agents }) => (
+const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
     {agents.map((agent) => (
-      <AgentCardComponent key={agent.id} agent={agent} />
+      <AgentCard
+        key={agent.id}
+        agent={agent}
+        onEdit={(agentId) => {
+          // TODO: Implement edit functionality
+          console.log("Edit agent:", agentId);
+        }}
+        onDelete={(agentId) => {
+          // TODO: Implement delete functionality
+          console.log("Delete agent:", agentId);
+        }}
+      />
     ))}
   </div>
 );
@@ -206,7 +158,7 @@ const EmptyState: React.FC<{ query: string }> = ({ query }) => (
  */
 const LibraryTab: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [agents] = useState<AgentCard[]>(mockAgents);
+  const [agents] = useState<AgentCardType[]>(mockAgents);
 
   // Debounced search for performance
   const debouncedSearch = useDebounce(() => {
