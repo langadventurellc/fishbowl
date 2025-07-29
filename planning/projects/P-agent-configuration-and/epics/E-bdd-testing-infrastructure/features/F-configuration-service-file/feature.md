@@ -2,12 +2,12 @@
 kind: feature
 id: F-configuration-service-file
 title: Configuration Service File Operations Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-configuration-service-crud
 created: "2025-07-26T13:47:16.958465"
-updated: "2025-07-26T13:47:16.958465"
+updated: "2025-07-29T02:16:30.424142+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
