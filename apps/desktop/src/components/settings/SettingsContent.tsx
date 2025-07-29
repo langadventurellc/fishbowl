@@ -37,6 +37,7 @@ import { useForm } from "react-hook-form";
 import { cn } from "../../lib/utils";
 import { ApiKeysSettings } from "./ApiKeysSettings";
 import { FormErrorDisplay } from "./FormErrorDisplay";
+import { PersonalitiesSection } from "./PersonalitiesSection";
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -751,49 +752,9 @@ const AgentsSettings: React.FC = () => (
   </div>
 );
 
-const PersonalitiesSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Personalities</h1>
-      <p className="text-muted-foreground mb-6">
-        Manage agent personalities and their characteristics.
-      </p>
-    </div>
-    <div className="border-b">
-      <div className="flex space-x-8">
-        {["Saved", "Create New"].map((tab) => (
-          <div key={tab} className="py-2 px-1 border-b-2 border-transparent">
-            <span className="text-sm font-medium">{tab}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Big Five Personality Traits</h2>
-        <div className="space-y-4">
-          {[
-            "Openness",
-            "Conscientiousness",
-            "Extraversion",
-            "Agreeableness",
-            "Neuroticism",
-          ].map((trait) => (
-            <div key={trait} className="space-y-2">
-              <div className="flex justify-between">
-                <label className="text-sm font-medium">{trait}</label>
-                <span className="text-sm text-muted-foreground">50%</span>
-              </div>
-              <div className="h-2 bg-muted rounded">
-                <div className="h-2 bg-primary rounded w-1/2" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-);
+const PersonalitiesSettings: React.FC = () => {
+  return <PersonalitiesSection />;
+};
 
 const RolesSettings: React.FC = () => (
   <div className="space-y-6">
