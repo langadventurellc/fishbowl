@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-predefined-roles-data-and
+parent: F-roles-section-implementation
+status: done
 title: Create predefined roles data and configuration
-status: open
 priority: high
 prerequisites:
   - T-create-role-interfaces-and
 created: "2025-07-29T10:59:41.597924"
-updated: "2025-07-29T10:59:41.597924"
+updated: "2025-07-29T11:33:49.846199"
 schema_version: "1.1"
-parent: F-roles-section-implementation
+worktree: null
 ---
 
 # Create Predefined Roles Data and Configuration
@@ -141,3 +142,7 @@ Based on docs/fishbowl-product-description.md, implement:
 - Validate all data matches TypeScript interfaces
 
 ### Log
+
+**2025-07-29T16:44:20.760964Z** - Implemented comprehensive predefined roles data and configuration for the Fishbowl AI settings modal. Created all 10 predefined roles from the product specification with proper icons, names, descriptions, and categories. Implemented utility functions for role management following the project's one-export-per-file rule. Added role constants for validation and UI layout. Created comprehensive unit tests achieving 100% coverage. All quality checks and tests pass successfully.
+
+- filesChanged: ["packages/shared/src/data/predefinedRoles.ts", "packages/shared/src/data/index.ts", "packages/shared/src/utils/getRoleById.ts", "packages/shared/src/utils/getRolesByCategory.ts", "packages/shared/src/utils/isPredefinedRole.ts", "packages/shared/src/utils/getRoleCategories.ts", "packages/shared/src/utils/isValidPredefinedRole.ts", "packages/shared/src/utils/index.ts", "packages/shared/src/constants/roles.ts", "packages/shared/src/constants/index.ts", "packages/shared/src/data/__tests__/predefinedRoles.test.ts", "packages/shared/src/utils/__tests__/getRoleById.test.ts", "packages/shared/src/utils/__tests__/getRolesByCategory.test.ts", "packages/shared/src/utils/__tests__/isPredefinedRole.test.ts", "packages/shared/src/utils/__tests__/getRoleCategories.test.ts", "packages/shared/src/utils/__tests__/isValidPredefinedRole.test.ts", "packages/shared/src/index.ts"]
