@@ -11,13 +11,17 @@
  * @module components/settings/AgentsSection
  */
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { cn } from "../../lib/utils";
 import { TabContainer } from "./TabContainer";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { Slider } from "../ui/slider";
+import { Label } from "../ui/label";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useDebounce } from "../../hooks/useDebounce";
+import { announceToScreenReader } from "../../utils/announceToScreenReader";
 import {
   Search,
   Plus,
@@ -40,6 +44,7 @@ import type {
   TabConfiguration,
   AgentCard,
   AgentTemplate,
+  AgentDefaults,
 } from "@fishbowl-ai/shared";
 
 // Mock agent data for demonstration
@@ -431,18 +436,231 @@ const TemplatesTab: React.FC = () => {
 };
 
 /**
- * Defaults tab placeholder component for agent default settings.
+ * Defaults tab component with configuration sliders and inputs.
  */
-const DefaultsTab: React.FC = () => (
-  <div className="space-y-4 p-6">
-    <div className="text-center py-8">
-      <h3 className="text-lg font-semibold mb-2">Agent Defaults</h3>
-      <p className="text-muted-foreground">
-        Configure default settings for new agents.
-      </p>
+const DefaultsTab: React.FC = () => {
+  const defaultSettings = useMemo(
+    (): AgentDefaults => ({
+      temperature: 1.0,
+      maxTokens: 1000,
+      topP: 0.95,
+    }),
+    [],
+  );
+
+  const [settings, setSettings] = useState<AgentDefaults>(defaultSettings);
+  const [isResetting, setIsResetting] = useState(false);
+
+  const debouncedAnnouncement = useDebounce((...args: unknown[]) => {
+    const [setting, value] = args as [string, number];
+    announceToScreenReader(`${setting} set to ${value}`, "polite");
+  }, 300);
+
+  const handleTemperatureChange = useCallback(
+    (values: number[]) => {
+      const newValue = values[0] ?? 1.0;
+      setSettings((prev) => ({ ...prev, temperature: newValue }));
+      debouncedAnnouncement("Temperature", newValue);
+    },
+    [debouncedAnnouncement],
+  );
+
+  const handleTopPChange = useCallback(
+    (values: number[]) => {
+      const newValue = values[0] ?? 0.95;
+      setSettings((prev) => ({ ...prev, topP: newValue }));
+      debouncedAnnouncement("Top P", newValue);
+    },
+    [debouncedAnnouncement],
+  );
+
+  const handleMaxTokensChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = Math.max(
+        1,
+        Math.min(4000, parseInt(e.target.value) || 1000),
+      );
+      setSettings((prev) => ({ ...prev, maxTokens: newValue }));
+    },
+    [],
+  );
+
+  const handleReset = useCallback(() => {
+    const confirmReset = confirm(
+      "Are you sure you want to reset all settings to their default values?",
+    );
+    if (confirmReset) {
+      setIsResetting(true);
+      setSettings(defaultSettings);
+      setTimeout(() => setIsResetting(false), 200);
+      announceToScreenReader("Settings reset to defaults", "polite");
+    }
+  }, [defaultSettings]);
+
+  return (
+    <div className="space-y-6 p-6">
+      <div className="space-y-2">
+        <h3 className="text-lg font-semibold">Agent Defaults</h3>
+        <p className="text-muted-foreground">
+          Configure default settings for new agents.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Settings Controls */}
+        <div className="space-y-6">
+          {/* Temperature Slider */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label
+                    htmlFor="temperature-slider"
+                    className="text-sm font-medium cursor-help"
+                  >
+                    Temperature
+                  </Label>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Controls randomness in responses. Lower values (0.1-0.3) are
+                    more focused and deterministic, higher values (1.5-2.0) are
+                    more creative and varied.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+              <span
+                className="text-sm font-mono font-semibold text-primary"
+                aria-live="polite"
+              >
+                {settings.temperature.toFixed(1)}
+              </span>
+            </div>
+            <Slider
+              id="temperature-slider"
+              value={[settings.temperature]}
+              onValueChange={handleTemperatureChange}
+              min={0}
+              max={2}
+              step={0.1}
+              className="w-full"
+              aria-label="Temperature: Controls randomness in responses"
+            />
+          </div>
+
+          {/* Max Tokens Input */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label
+                    htmlFor="max-tokens-input"
+                    className="text-sm font-medium cursor-help"
+                  >
+                    Max Tokens
+                  </Label>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Maximum length of generated responses. Typical range:
+                    100-4000 tokens.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <Input
+              id="max-tokens-input"
+              type="number"
+              value={settings.maxTokens}
+              onChange={handleMaxTokensChange}
+              min={1}
+              max={4000}
+              className="w-full"
+              aria-label="Maximum tokens for responses"
+            />
+          </div>
+
+          {/* Top P Slider */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Label
+                    htmlFor="top-p-slider"
+                    className="text-sm font-medium cursor-help"
+                  >
+                    Top P
+                  </Label>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    Controls diversity by limiting token selection. Lower values
+                    focus on likely tokens, higher values allow more variety.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+              <span
+                className="text-sm font-mono font-semibold text-primary"
+                aria-live="polite"
+              >
+                {settings.topP.toFixed(2)}
+              </span>
+            </div>
+            <Slider
+              id="top-p-slider"
+              value={[settings.topP]}
+              onValueChange={handleTopPChange}
+              min={0}
+              max={1}
+              step={0.01}
+              className="w-full"
+              aria-label="Top P: Controls diversity by limiting token selection"
+            />
+          </div>
+
+          <Button
+            onClick={handleReset}
+            variant="outline"
+            disabled={isResetting}
+            className="w-full"
+          >
+            {isResetting ? "Resetting..." : "Reset to Defaults"}
+          </Button>
+        </div>
+
+        {/* Preview Panel */}
+        <div className="space-y-4">
+          <h4 className="text-md font-semibold">Settings Preview</h4>
+          <div className="border rounded-lg p-4 space-y-3 bg-muted/30">
+            <div className="text-sm">
+              <strong>Temperature ({settings.temperature.toFixed(1)}):</strong>{" "}
+              {settings.temperature < 0.5
+                ? "Very focused and deterministic responses"
+                : settings.temperature < 1.0
+                  ? "Moderately creative responses"
+                  : settings.temperature < 1.5
+                    ? "Creative and varied responses"
+                    : "Highly creative and unpredictable responses"}
+            </div>
+            <div className="text-sm">
+              <strong>Max Tokens ({settings.maxTokens}):</strong> Responses will
+              be limited to approximately{" "}
+              {Math.round(settings.maxTokens * 0.75)} words
+            </div>
+            <div className="text-sm">
+              <strong>Top P ({settings.topP.toFixed(2)}):</strong>{" "}
+              {settings.topP < 0.5
+                ? "Very focused token selection"
+                : settings.topP < 0.9
+                  ? "Balanced token diversity"
+                  : "High token diversity allowing creative choices"}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
   // Tab configuration following established patterns

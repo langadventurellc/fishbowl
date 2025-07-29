@@ -100,8 +100,14 @@ describe("AgentsSection", () => {
     // Check template cards are present
     expect(screen.getAllByText("Use Template")).toHaveLength(8); // 8 template cards
 
-    // Check that Defaults tab maintains placeholder structure
+    // Check that Defaults tab has functional content structure (no longer placeholder)
     const defaultsContent = screen.getByText("Agent Defaults").closest("div");
-    expect(defaultsContent).toHaveClass("text-center", "py-8");
+    expect(defaultsContent).toHaveClass("space-y-2");
+
+    // Check that the default settings controls are present
+    expect(screen.getByText("Temperature")).toBeInTheDocument();
+    expect(screen.getByText("Max Tokens")).toBeInTheDocument();
+    expect(screen.getByText("Top P")).toBeInTheDocument();
+    expect(screen.getByText("Settings Preview")).toBeInTheDocument();
   });
 });
