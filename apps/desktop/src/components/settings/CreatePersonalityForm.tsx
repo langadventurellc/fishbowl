@@ -30,9 +30,9 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Slider } from "../ui/slider";
+import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 import { PersonalityNameInput } from "./PersonalityNameInput";
-import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
 
 export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   onSave,
@@ -129,23 +129,23 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
         neuroticism: 50,
       },
       behaviors: {
-        // Communication Style
+        // Communication Style (default: 50)
         formalityLevel: 50,
-        verbosity: 50,
+        verbosity: 35,
         enthusiasm: 50,
         directness: 50,
-        // Interaction Approach
-        helpfulness: 50,
-        patience: 50,
-        curiosity: 50,
-        empathy: 50,
-        // Reasoning Style
-        analyticalThinking: 50,
-        creativity: 50,
-        cautionLevel: 50,
-        // Response Characteristics
+        // Interaction Approach (specialized defaults)
+        helpfulness: 75,
+        patience: 70,
+        curiosity: 60,
+        empathy: 65,
+        // Reasoning Style (specialized defaults)
+        analyticalThinking: 70,
+        creativity: 60,
+        cautionLevel: 60,
+        // Response Characteristics (specialized defaults)
         detailLevel: 50,
-        questionAsking: 50,
+        questionAsking: 55,
         exampleUsage: 50,
       },
       customInstructions: "",

@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-add-all-14-behavior-sliders-with
+parent: F-personalities-section
+status: done
 title: Add all 14 behavior sliders with proper organization
-status: open
 priority: normal
 prerequisites:
   - T-implement-collapsible-behavior
 created: "2025-07-28T17:04:53.934902"
-updated: "2025-07-28T17:04:53.934902"
+updated: "2025-07-29T10:10:18.492569"
 schema_version: "1.1"
-parent: F-personalities-section
+worktree: null
 ---
 
 # Add All 14 Behavior Sliders with Proper Organization
@@ -273,3 +274,7 @@ const BehaviorSliders: React.FC<BehaviorSlidersProps> = ({ values, onChange }) =
 - Minimal impact on overall form performance with all sliders active
 
 ### Log
+
+**2025-07-29T15:14:41.451196Z** - Updated default behavior values in CreatePersonalityForm to match task specification. All 14 behavior sliders were already properly implemented with correct organization in 4 groups, but the default values in the form initialization needed to be updated to use the specialized defaults as specified in the task requirements rather than all defaulting to 50.
+
+- filesChanged: ["apps/desktop/src/components/settings/CreatePersonalityForm.tsx"]
