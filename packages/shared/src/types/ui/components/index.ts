@@ -39,6 +39,7 @@ export * from "./ModalFooterProps";
 export * from "./ModalHeaderProps";
 export * from "./NavigationItemProps";
 export * from "./PersonalitiesSectionProps";
+export * from "./PersonalityNameInputProps";
 export * from "./ProviderCardProps";
 export * from "./ResizeDirection";
 export * from "./SavedPersonalitiesTabProps";

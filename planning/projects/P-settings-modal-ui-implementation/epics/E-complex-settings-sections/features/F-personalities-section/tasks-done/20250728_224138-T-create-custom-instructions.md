@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-custom-instructions
+parent: F-personalities-section
+status: done
 title: Create custom instructions textarea component
-status: open
 priority: normal
 prerequisites:
   - T-implement-big-five-personality
 created: "2025-07-28T17:03:53.419136"
-updated: "2025-07-28T17:03:53.419136"
+updated: "2025-07-28T22:28:31.718230"
 schema_version: "1.1"
-parent: F-personalities-section
+worktree: null
 ---
 
 # Create Custom Instructions Textarea Component
@@ -141,3 +142,7 @@ interface CustomInstructionsTextareaProps {
 - Responsive text wrapping and layout updates
 
 ### Log
+
+**2025-07-29T03:41:38.799410Z** - Implemented CustomInstructionsTextarea component with comprehensive character counter and validation features. The component extends the shadcn/ui Textarea with a 500-character limit, color-coded feedback (green/yellow/red based on usage), and accessibility support. Key features include: 4-row fixed height, character counter positioned in bottom-right, input prevention beyond max length, enhanced placeholder with usage examples, and proper ARIA attributes for screen readers. Successfully integrated with the CreatePersonalityForm component using React Hook Form patterns. Additionally moved PersonalityNameInputProps interface to shared package following project architecture guidelines.
+
+- filesChanged: ["apps/desktop/src/components/settings/CustomInstructionsTextarea.tsx", "apps/desktop/src/components/settings/CreatePersonalityForm.tsx", "apps/desktop/src/components/settings/index.ts", "packages/shared/src/types/ui/components/PersonalityNameInputProps.ts", "packages/shared/src/types/ui/components/index.ts", "apps/desktop/src/components/settings/PersonalityNameInput.tsx"]

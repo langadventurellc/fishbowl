@@ -19,17 +19,7 @@ import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "../../hooks/useDebounce";
 import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import type { Personality } from "@fishbowl-ai/shared";
-
-export interface PersonalityNameInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  existingPersonalities?: Personality[];
-  showCharacterCounter?: boolean;
-  disabled?: boolean;
-  className?: string;
-  "aria-describedby"?: string;
-}
+import type { PersonalityNameInputProps } from "@fishbowl-ai/shared";
 
 interface ValidationResult {
   isValid: boolean;
@@ -123,7 +113,7 @@ export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
     } else {
       setValidation({ isValid: false, errors: [], isValidating: false });
     }
-  }, [value]); // Remove debouncedValidate from dependencies to prevent infinite loop
+  }, [value, debouncedValidate]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);

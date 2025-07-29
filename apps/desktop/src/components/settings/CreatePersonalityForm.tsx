@@ -37,7 +37,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Slider } from "../ui/slider";
-import { Textarea } from "../ui/textarea";
+import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 import { PersonalityNameInput } from "./PersonalityNameInput";
 
 export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
@@ -316,15 +316,15 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
           name="customInstructions"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Custom Instructions</FormLabel>
               <FormControl>
-                <Textarea
-                  {...field}
-                  rows={4}
-                  placeholder="Enter custom instructions for this personality..."
+                <CustomInstructionsTextarea
+                  value={field.value}
+                  onChange={field.onChange}
+                  maxLength={500}
+                  aria-describedby={`${field.name}-message`}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage id={`${field.name}-message`} />
             </FormItem>
           )}
         />
