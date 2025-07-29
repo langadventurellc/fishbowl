@@ -5,12 +5,12 @@
  * atomic operations, metadata management, and cross-platform compatibility.
  */
 
-import type { ConfigurationData } from "../../__tests__/integration/utilities/TemporaryDirectoryManager";
+import { ConfigurationData } from "src/types/configuration/ConfigurationData";
 import type { FileCreateOptions } from "./FileCreateOptions";
-import type { FileUpdateOptions } from "./FileUpdateOptions";
 import type { FileDeleteOptions } from "./FileDeleteOptions";
-import type { FileOperationResult } from "./FileOperationResult";
 import type { FileMetadata } from "./FileMetadata";
+import type { FileOperationResult } from "./FileOperationResult";
+import type { FileUpdateOptions } from "./FileUpdateOptions";
 
 /**
  * File Service Interface

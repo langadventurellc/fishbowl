@@ -5,7 +5,7 @@
  * with support for versioning, retention policies, and restore functionality.
  */
 
-import type { ConfigurationData } from "../../__tests__/integration/utilities/TemporaryDirectoryManager";
+import { ConfigurationData } from "src/types/configuration/ConfigurationData";
 import type { BackupMetadata } from "./BackupMetadata";
 import type { RestoreOptions } from "./RestoreOptions";
 

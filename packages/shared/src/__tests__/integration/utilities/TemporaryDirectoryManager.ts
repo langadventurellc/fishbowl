@@ -6,30 +6,10 @@
  */
 
 import { promises as fs } from "fs";
-import * as path from "path";
 import * as os from "os";
-import { TemporaryDirectoryManager as BaseTemporaryDirectoryManager } from "../support/temp-directory-manager";
-
-/**
- * Configuration data structure for configuration files
- */
-export interface ConfigurationData {
-  version: string;
-  format: string;
-  encoding: string;
-  metadata: {
-    createdAt: string;
-    createdBy: string;
-    lastModified?: string;
-    description?: string;
-    operation?: string;
-  };
-  data: {
-    agents: Record<string, unknown>[];
-    personalities: Record<string, unknown>[];
-    roles: Record<string, unknown>[];
-  };
-}
+import * as path from "path";
+import { ConfigurationData } from "src/types/configuration/ConfigurationData";
+import { TemporaryDirectoryManager } from "../support/temp-directory-manager";
 
 /**
  * Configuration for configuration file temporary directories
@@ -99,7 +79,7 @@ export interface AtomicWriteResult {
 /**
  * Enhanced Temporary Directory Manager for Configuration File Operations
  */
-export class EnhancedTemporaryDirectoryManager extends BaseTemporaryDirectoryManager {
+export class EnhancedTemporaryDirectoryManager extends TemporaryDirectoryManager {
   /**
    * Create temporary directory specifically for configuration file testing
    */
