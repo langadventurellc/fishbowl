@@ -39,6 +39,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "../../lib/utils";
 import { ApiKeysSettings } from "./ApiKeysSettings";
+import { AgentsSection } from "./AgentsSection";
 import { FormErrorDisplay } from "./FormErrorDisplay";
 import { PersonalitiesSection } from "./PersonalitiesSection";
 import { RolesSection } from "./RolesSection";
@@ -718,54 +719,8 @@ const AppearanceSettings: React.FC = () => {
   );
 };
 
-const AgentsSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Agents</h1>
-      <p className="text-muted-foreground mb-6">
-        Configure AI agents and their behavior settings.
-      </p>
-    </div>
-    <div className="border-b">
-      <div className="flex space-x-8">
-        {["Library", "Templates", "Defaults"].map((tab) => (
-          <div key={tab} className="py-2 px-1 border-b-2 border-transparent">
-            <span className="text-sm font-medium">{tab}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-    <div className="space-y-4">
-      <div className="h-10 bg-muted rounded border" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="border rounded-lg p-4 space-y-2">
-            <div className="h-4 bg-muted rounded" />
-            <div className="h-3 bg-muted rounded w-3/4" />
-            <div className="h-3 bg-muted rounded w-1/2" />
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
 const PersonalitiesSettings: React.FC = () => {
   return <PersonalitiesSection />;
-};
-
-const RolesSettings: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold mb-2">Roles</h1>
-        <p className="text-muted-foreground mb-6">
-          Define and configure agent roles and permissions.
-        </p>
-      </div>
-      <RolesSection />
-    </div>
-  );
 };
 
 // Helper components removed - using direct div elements for better accessibility control
@@ -995,9 +950,9 @@ const sectionComponents = {
   general: GeneralSettings,
   "api-keys": ApiKeysSettings,
   appearance: AppearanceSettings,
-  agents: AgentsSettings,
+  agents: AgentsSection,
   personalities: PersonalitiesSettings,
-  roles: RolesSettings,
+  roles: RolesSection,
   advanced: AdvancedSettings,
 } as const;
 

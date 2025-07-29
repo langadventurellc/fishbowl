@@ -635,7 +635,13 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
   ];
 
   return (
-    <div className={cn("agents-section", className)}>
+    <div className={cn("agents-section space-y-6", className)}>
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Agents</h1>
+        <p className="text-muted-foreground mb-6">
+          Configure AI agents and their behavior settings.
+        </p>
+      </div>
       <TabContainer
         tabs={tabs}
         useStore={true}

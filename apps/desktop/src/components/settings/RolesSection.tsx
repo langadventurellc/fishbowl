@@ -113,7 +113,13 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   ];
 
   return (
-    <div className={cn("roles-section", className)}>
+    <div className={cn("roles-section space-y-6", className)}>
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Roles</h1>
+        <p className="text-muted-foreground mb-6">
+          Define and configure agent roles and permissions.
+        </p>
+      </div>
       <TabContainer
         tabs={tabs}
         useStore={true}
