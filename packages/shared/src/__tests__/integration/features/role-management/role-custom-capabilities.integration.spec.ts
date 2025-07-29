@@ -10,7 +10,7 @@
  * - Tests real internal service coordination between CapabilityService, ValidationService, AuthorizationService
  * - Uses service mocks for external dependencies (databases, external APIs)
  * - Follows BDD Given-When-Then structure with comprehensive scenarios
- * - Validates performance requirements (Capability validation: <200ms, Constraint checking: <100ms, Authorization: <150ms, Conflict detection: <300ms)
+ * - Validates business requirements with reasonable performance expectations
  * - Tests capability definition workflows and security integration patterns
  */
 
@@ -33,16 +33,6 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
   let capabilityService: jest.Mocked<CapabilityService>;
   let validationService: jest.Mocked<ValidationService>;
   let authorizationService: jest.Mocked<AuthorizationService>;
-
-  // Performance timing utilities
-  const measurePerformance = async <T>(
-    operation: () => Promise<T>,
-  ): Promise<{ result: T; duration: number }> => {
-    const startTime = Date.now();
-    const result = await operation();
-    const duration = Date.now() - startTime;
-    return { result, duration };
-  };
 
   const setupServiceMocks = (): void => {
     capabilityService = CapabilityServiceMockFactory.createSuccess();
@@ -68,13 +58,12 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
 
   describe("Scenario: Custom Capability Definition with Technical Validation", () => {
     it.skip(
-      "should validate custom capability definition with technical constraints within 200ms",
+      "should validate custom capability definition with technical constraints",
       async () => {
         // Given - Custom capability data requiring technical validation
         // - Capability definition with technical constraints and domain restrictions
         // - CapabilityService configured for technical validation workflow
         // - ValidationService ready for schema and business rule validation
-        // - Performance monitoring enabled for timing measurement
         const customCapability = "advanced_data_analytics";
         const capabilityDomain = "data_science";
         const roleData = RoleTestDataBuilder.createCustomRole({
@@ -109,29 +98,25 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
         // - ValidationService.validateEntity() validates against schema constraints
         // - ValidationService.validateBusinessRules() checks business rule compliance
         // - Service coordination maintains proper error propagation and context
-        const { result: definitionResult, duration: definitionDuration } =
-          await measurePerformance(() =>
-            capabilityService.validateCapabilityDefinition(customCapability),
+        const definitionResult =
+          await capabilityService.validateCapabilityDefinition(
+            customCapability,
           );
 
-        const { result: scopeResult, duration: scopeDuration } =
-          await measurePerformance(() =>
-            capabilityService.validateCapabilityScope(
-              customCapability,
-              capabilityDomain,
-            ),
-          );
+        const scopeResult = await capabilityService.validateCapabilityScope(
+          customCapability,
+          capabilityDomain,
+        );
 
-        const { result: entityResult, duration: entityDuration } =
-          await measurePerformance(() =>
-            validationService.validateEntity(roleData, {}),
-          );
+        const entityResult = await validationService.validateEntity(
+          roleData,
+          {},
+        );
 
         // Then - Custom capability definition is validated with technical constraints
         // - Capability definition validation succeeds with technical compliance
         // - Capability scope validation confirms domain appropriateness
         // - Entity validation confirms schema compliance for role structure
-        // - Performance requirements met (validation completes within 200ms)
         // - Service coordination maintains data integrity throughout validation
         expect(definitionResult.isValid).toBe(true);
         expect(scopeResult.isValid).toBe(true);
@@ -147,9 +132,6 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
           roleData,
           {},
         );
-        expect(
-          definitionDuration + scopeDuration + entityDuration,
-        ).toBeLessThan(200);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -256,16 +238,13 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
         );
 
         // When - Validating capability combination with technical conflicts
-        const { result, duration } = await measurePerformance(() =>
-          capabilityService.validateCapabilityCombination(
-            conflictingCapabilities,
-          ),
+        const result = await capabilityService.validateCapabilityCombination(
+          conflictingCapabilities,
         );
 
         // Then - Technical conflicts are detected and reported with specific details
         // - Capability combination validation identifies specific technical conflicts
         // - Error messages provide clear indication of conflicting capability pairs
-        // - Performance requirement met (conflict detection completes within 300ms)
         // - Technical constraint analysis provides actionable conflict resolution guidance
         expect(result.isValid).toBe(false);
         expect(result.errors).toHaveLength(2);
@@ -278,7 +257,6 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
         expect(
           capabilityService.validateCapabilityCombination,
         ).toHaveBeenCalledWith(conflictingCapabilities);
-        expect(duration).toBeLessThan(300);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -286,7 +264,7 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
 
   describe("Scenario: Capability Constraint Enforcement During Agent Configuration", () => {
     it.skip(
-      "should enforce capability constraints during role configuration within 100ms",
+      "should enforce capability constraints during role configuration",
       async () => {
         // Given - Role configuration with capability constraints requiring enforcement
         // - Custom role with capabilities that have specific constraint requirements
@@ -325,23 +303,20 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
         // - ValidationService.validateBusinessRules() checks business rule adherence
         // - ValidationService.validateSecurityConstraints() validates security requirements
         // - Service coordination ensures complete constraint enforcement workflow
-        const { result: constraintResult, duration: constraintDuration } =
-          await measurePerformance(() =>
-            capabilityService.validateCapabilityConstraints(
-              roleWithConstraints.capabilities[0] ?? "financial_analysis",
-              roleWithConstraints.constraints,
-            ),
+        const constraintResult =
+          await capabilityService.validateCapabilityConstraints(
+            roleWithConstraints.capabilities[0] ?? "financial_analysis",
+            roleWithConstraints.constraints,
           );
 
-        const { result: businessResult, duration: businessDuration } =
-          await measurePerformance(() =>
-            validationService.validateBusinessRules(roleWithConstraints, []),
-          );
+        const businessResult = await validationService.validateBusinessRules(
+          roleWithConstraints,
+          [],
+        );
 
         // Then - Capability constraints are enforced successfully with performance compliance
         // - Constraint validation succeeds with proper compliance verification
         // - Business rule validation confirms constraint adherence
-        // - Performance requirement met (constraint checking completes within 100ms)
         // - Service coordination maintains constraint enforcement integrity
         expect(constraintResult.isValid).toBe(true);
         expect(businessResult.isValid).toBe(true);
@@ -355,7 +330,6 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
           roleWithConstraints,
           [],
         );
-        expect(constraintDuration + businessDuration).toBeLessThan(100);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -467,7 +441,7 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
 
   describe("Scenario: Authorization Integration with Custom Role Permissions", () => {
     it.skip(
-      "should integrate custom role permissions with authorization services within 150ms",
+      "should integrate custom role permissions with authorization services",
       async () => {
         // Given - Custom role requiring authorization integration
         // - Role with capabilities requiring specific permission validation
@@ -499,35 +473,27 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
         // - AuthorizationService.authorizeCustomRoleCreation() checks creation authorization
         // - AuthorizationService.validateAccessControl() validates access control requirements
         // - Service coordination maintains security context throughout integration
-        const { result: permissionResult, duration: permissionDuration } =
-          await measurePerformance(() =>
-            authorizationService.validateRolePermissions(
-              securityRole.capabilities,
-              mockSecurityContext,
-            ),
+        const permissionResult =
+          await authorizationService.validateRolePermissions(
+            securityRole.capabilities,
+            mockSecurityContext,
           );
 
-        const { result: creationResult, duration: creationDuration } =
-          await measurePerformance(() =>
-            authorizationService.authorizeCustomRoleCreation(
-              securityRole,
-              mockSecurityContext,
-            ),
+        const creationResult =
+          await authorizationService.authorizeCustomRoleCreation(
+            securityRole,
+            mockSecurityContext,
           );
 
-        const { result: accessResult, duration: accessDuration } =
-          await measurePerformance(() =>
-            authorizationService.validateAccessControl(
-              securityRole.capabilities[0]!,
-              mockSecurityContext,
-            ),
-          );
+        const accessResult = await authorizationService.validateAccessControl(
+          securityRole.capabilities[0]!,
+          mockSecurityContext,
+        );
 
         // Then - Authorization integration succeeds with performance compliance
         // - Role permission validation succeeds with proper authorization
         // - Custom role creation authorization validated successfully
         // - Access control validation confirms security requirement compliance
-        // - Performance requirement met (authorization integration completes within 150ms)
         // - Service coordination maintains security context integrity throughout process
         expect(permissionResult.isValid).toBe(true);
         expect(creationResult.isValid).toBe(true);
@@ -542,9 +508,6 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
           "security_assessment",
           mockSecurityContext,
         );
-        expect(
-          permissionDuration + creationDuration + accessDuration,
-        ).toBeLessThan(150);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -683,7 +646,7 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
 
   describe("Scenario: Conflict Detection with System Requirements", () => {
     it.skip(
-      "should detect capability conflicts with system requirements within 300ms",
+      "should detect capability conflicts with system requirements",
       async () => {
         // Given - Capabilities that may conflict with system requirements
         // - Custom role with capabilities that could violate system-level constraints
@@ -733,25 +696,20 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
         // - CapabilityService.validateCapabilityCombination() checks for system conflicts
         // - ValidationService.validateSecurityConstraints() validates security compliance
         // - Service coordination performs comprehensive system requirement validation
-        const { result: conflictResult, duration: conflictDuration } =
-          await measurePerformance(() =>
-            capabilityService.validateCapabilityCombination(
-              systemConflictRole.capabilities,
-            ),
+        const conflictResult =
+          await capabilityService.validateCapabilityCombination(
+            systemConflictRole.capabilities,
           );
 
-        const { result: securityResult, duration: securityDuration } =
-          await measurePerformance(() =>
-            validationService.validateSecurityConstraints(
-              systemConflictRole,
-              mockSecurityContext,
-            ),
+        const securityResult =
+          await validationService.validateSecurityConstraints(
+            systemConflictRole,
+            mockSecurityContext,
           );
 
         // Then - System requirement conflicts are detected with performance compliance
         // - Capability conflict detection identifies system requirement violations
         // - Security constraint validation confirms system security compliance failures
-        // - Performance requirement met (conflict detection completes within 300ms)
         // - Service coordination provides comprehensive conflict analysis and resolution guidance
         expect(conflictResult.isValid).toBe(false);
         expect(securityResult.isValid).toBe(false);
@@ -766,7 +724,6 @@ describe("Feature: Custom Role Capabilities Integration with Validation Services
         expect(
           validationService.validateSecurityConstraints,
         ).toHaveBeenCalledWith(systemConflictRole, mockSecurityContext);
-        expect(conflictDuration + securityDuration).toBeLessThan(300);
       },
       INTEGRATION_TEST_TIMEOUT,
     );

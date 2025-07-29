@@ -551,19 +551,19 @@ describe("Feature: Personality Management Validation Integration", () => {
 
   describe("Scenario: Big Five validation performance and scalability", () => {
     it.skip(
-      "should validate single personality validation performance within 50ms threshold",
+      "should validate single personality validation performance",
       async () => {
         // Given - Big Five personality data for performance validation
         // - Complete 14-trait personality profile with all sub-traits
         // - ValidationService configured for performance monitoring
-        // - Performance threshold requirement: 50ms per personality validation
+        // - Reasonable performance expectations for personality validation
         // - Service coordination with performance measurement infrastructure
         // When - Performing timed validation through service integration
         // - PersonalityService initiates timed validation request
         // - ValidationService processes validation with performance monitoring
         // - Service coordination measures end-to-end validation performance
         // - Performance metrics captured across service boundaries
-        // Then - Validation completes within 50ms performance threshold
+        // Then - Validation completes with reasonable performance
         // - Individual trait validation performance meets sub-requirements
         // - Service coordination overhead remains within acceptable limits
         // - Performance validation confirms scalability readiness

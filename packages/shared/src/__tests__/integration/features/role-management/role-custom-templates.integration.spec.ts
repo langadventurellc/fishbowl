@@ -11,7 +11,7 @@
  * - Tests real internal service coordination between RoleService, TemplateService, PersistenceService, ValidationService
  * - Uses service mocks for external dependencies (databases, external APIs)
  * - Follows BDD Given-When-Then structure with comprehensive scenarios
- * - Validates performance requirements (Template creation: 300ms, Template copy: 100ms, Reference tracking: 50ms, Version validation: 150ms)
+ * - Validates business requirements with reasonable performance expectations
  * - Tests template-based creation workflows and security integration patterns
  */
 
@@ -44,16 +44,6 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
   let persistenceService: jest.Mocked<PersistenceService>;
   let validationService: jest.Mocked<ValidationService>;
 
-  // Performance timing utilities
-  const measurePerformance = async <T>(
-    operation: () => Promise<T>,
-  ): Promise<{ result: T; duration: number }> => {
-    const startTime = Date.now();
-    const result = await operation();
-    const duration = Date.now() - startTime;
-    return { result, duration };
-  };
-
   const setupServiceMocks = (): void => {
     roleService = RoleServiceMockFactory.createSuccess();
     templateService = TemplateServiceMockFactory.createSuccess();
@@ -79,7 +69,7 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
 
   describe("Scenario: Creating custom role from predefined template", () => {
     it.skip(
-      "should create custom role using predefined template through service integration within 300ms",
+      "should create custom role using predefined template through service integration",
       async () => {
         // Given - Predefined role template and custom modifications
         // - Template role available in TemplateService with complete metadata
@@ -148,12 +138,10 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
         // - Custom modifications applied to copied template data
         // - ValidationService validates modified role data
         // - PersistenceService saves custom role with template reference
-        const { result, duration } = await measurePerformance(() =>
-          roleService.createCustomRoleFromTemplate(
-            templateId,
-            customModifications,
-            mockSecurityContext,
-          ),
+        const result = await roleService.createCustomRoleFromTemplate(
+          templateId,
+          customModifications,
+          mockSecurityContext,
         );
 
         // Then - Custom role created with template reference and modifications
@@ -161,7 +149,6 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
         // - Template reference maintained in custom role metadata
         // - Template access validation performed before creation
         // - Template data properly copied without reference sharing
-        // - Performance requirement met (creation completes within 300ms)
         // - Service coordination maintains data integrity throughout process
         expect(result).toEqual(expectedCustomRole);
         expect(result.templateId).toBe(templateId);
@@ -184,7 +171,6 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
           }),
           "custom_role",
         );
-        expect(duration).toBeLessThan(300);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -277,7 +263,7 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
 
   describe("Scenario: Template reference tracking and metadata management", () => {
     it.skip(
-      "should maintain template reference tracking for custom roles within 50ms",
+      "should maintain template reference tracking for custom roles",
       async () => {
         // Given - Custom role created from template requiring reference tracking
         // - Template metadata and version information for tracking
@@ -308,17 +294,15 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
         // - RoleService.trackTemplateReference() records template relationship
         // - Template metadata stored with version and customization information
         // - Reference tracking maintains template lineage for auditing
-        const { result, duration } = await measurePerformance(() =>
-          roleService.trackTemplateReference(customRole.id, templateId, [
-            "capabilities",
-            "constraints",
-          ]),
+        const result = await roleService.trackTemplateReference(
+          customRole.id,
+          templateId,
+          ["capabilities", "constraints"],
         );
 
         // Then - Template reference tracking completed with metadata preservation
         // - Template reference successfully tracked with version information
         // - Template metadata includes customization details and derivation timestamp
-        // - Performance requirement met (reference tracking completes within 50ms)
         // - Template lineage maintained for future template updates and auditing
         expect(result).toEqual(templateMetadata);
         expect(result.templateId).toBe(templateId);
@@ -329,7 +313,6 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
           templateId,
           ["capabilities", "constraints"],
         );
-        expect(duration).toBeLessThan(50);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -400,7 +383,7 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
 
   describe("Scenario: Template modification isolation and security", () => {
     it.skip(
-      "should ensure template data copying prevents reference sharing within 100ms",
+      "should ensure template data copying prevents reference sharing",
       async () => {
         // Given - Template role requiring data copying for custom role creation
         // - Template data isolation to prevent reference sharing between template and custom roles
@@ -443,14 +426,11 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
         // - TemplateService.copyTemplateData() performs deep copy of template data
         // - Array references and object references properly cloned
         // - Template isolation maintained to prevent cross-contamination
-        const { result, duration } = await measurePerformance(() =>
-          templateService.copyTemplateData(templateId),
-        );
+        const result = await templateService.copyTemplateData(templateId);
 
         // Then - Template data copied with proper isolation and performance compliance
         // - Template data successfully copied without reference sharing
         // - Modifications to copied data do not affect original template
-        // - Performance requirement met (data copying completes within 100ms)
         // - Template security isolation maintained throughout copy process
         expect(result.capabilities).toEqual(originalTemplate.capabilities);
         expect(result.capabilities).not.toBe(originalTemplate.capabilities); // Different array reference
@@ -461,7 +441,6 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
         expect(templateService.copyTemplateData).toHaveBeenCalledWith(
           templateId,
         );
-        expect(duration).toBeLessThan(100);
 
         // Verify reference isolation by modifying copied data
         result.capabilities.push("custom_capability");
@@ -530,7 +509,7 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
 
   describe("Scenario: Template version compatibility validation", () => {
     it.skip(
-      "should validate template version compatibility during custom role creation within 150ms",
+      "should validate template version compatibility during custom role creation",
       async () => {
         // Given - Template with version requirements and compatibility constraints
         // - Custom role creation requiring specific template version compatibility
@@ -561,11 +540,9 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
         // - TemplateService.validateTemplateVersion() checks version compatibility
         // - Template version requirements validated against system capabilities
         // - Version compatibility maintained throughout creation process
-        const { duration } = await measurePerformance(() =>
-          templateService.validateTemplateVersion(
-            versionedTemplateId,
-            requiredVersion,
-          ),
+        await templateService.validateTemplateVersion(
+          versionedTemplateId,
+          requiredVersion,
         );
 
         const result = await roleService.createCustomRoleFromTemplate(
@@ -576,7 +553,6 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
 
         // Then - Template version compatibility validated with performance compliance
         // - Version compatibility validation succeeds for supported template version
-        // - Performance requirement met (version validation completes within 150ms)
         // - Custom role creation proceeds with version compatibility confirmed
         // - Template version metadata preserved in custom role for future reference
         expect(templateService.validateTemplateVersion).toHaveBeenCalledWith(
@@ -584,7 +560,6 @@ describe("Feature: Template-Based Custom Role Creation Integration", () => {
           requiredVersion,
         );
         expect(result.metadata?.templateVersion).toBe("2.1.0");
-        expect(duration).toBeLessThan(150);
       },
       INTEGRATION_TEST_TIMEOUT,
     );

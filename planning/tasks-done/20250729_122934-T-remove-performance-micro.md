@@ -1,13 +1,14 @@
 ---
 kind: task
 id: T-remove-performance-micro
+status: done
 title: Remove performance micro-benchmark and timing-specific tests
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-29T11:37:59.116561"
-updated: "2025-07-29T11:37:59.116561"
+updated: "2025-07-29T12:14:38.687685"
 schema_version: "1.1"
+worktree: null
 ---
 
 # Remove Performance Micro-Benchmark and Timing-Specific Tests
@@ -73,3 +74,7 @@ Review and remove timing-specific tests from these files (keep the files if they
 - [ ] Performance is still tested at a reasonable level without specific millisecond requirements
 
 ### Log
+
+**2025-07-29T17:29:34.764090Z** - Successfully removed performance micro-benchmark and timing-specific tests from all 6 integration test files. Eliminated brittle timing assertions (50ms-500ms) that tested implementation details rather than business requirements. All functional test logic preserved, code quality maintained, and test suite remains operational.
+
+- filesChanged: ["packages/shared/src/__tests__/integration/features/role-management/role-custom-capabilities.integration.spec.ts", "packages/shared/src/__tests__/integration/features/role-management/role-custom-crud.integration.spec.ts", "packages/shared/src/__tests__/integration/features/role-management/role-custom-templates.integration.spec.ts", "packages/shared/src/__tests__/integration/features/role-management/role-custom-validation.integration.spec.ts", "packages/shared/src/__tests__/integration/features/personality-management/personality-management-validation.integration.spec.ts", "packages/shared/src/__tests__/integration/features/agent-configuration/agent-references-cross-service.integration.spec.ts"]

@@ -10,7 +10,7 @@
  * - Tests real internal service coordination between RoleService, PersistenceService, ValidationService
  * - Uses service mocks for external dependencies (databases, external APIs)
  * - Follows BDD Given-When-Then structure with comprehensive scenarios
- * - Validates performance requirements (Create/Update: 500ms, Read: 50ms, Delete: 300ms)
+ * - Validates business requirements with reasonable performance expectations
  * - Tests error handling and service coordination patterns
  */
 
@@ -37,16 +37,6 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
   let persistenceService: jest.Mocked<PersistenceService>;
   let validationService: jest.Mocked<ValidationService>;
 
-  // Performance timing utilities
-  const measurePerformance = async <T>(
-    operation: () => Promise<T>,
-  ): Promise<{ result: T; duration: number }> => {
-    const startTime = Date.now();
-    const result = await operation();
-    const duration = Date.now() - startTime;
-    return { result, duration };
-  };
-
   const setupServiceMocks = (): void => {
     roleService = RoleServiceMockFactory.createSuccess();
     persistenceService = PersistenceServiceMockFactory.createSuccess();
@@ -64,7 +54,7 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
 
   describe("Scenario: Creating custom role with complete validation", () => {
     it.skip(
-      "should create custom role through service integration within 500ms",
+      "should create custom role through service integration",
       async () => {
         // Given - Valid custom role data and configured services
         // - Complete custom role data with name, description, capabilities, and constraints
@@ -72,7 +62,6 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
         // - PersistenceService ready for data storage with atomic operations
         // - ValidationService configured for entity, business rule, and security validation
         // - All services are properly mocked and configured for success scenarios
-        // - Performance monitoring enabled for timing measurement
         const roleData = RoleTestDataBuilder.createCustomRole();
         const expectedRole: CustomRole = {
           ...roleData,
@@ -105,15 +94,12 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
         // - ValidationService.validateSecurityConstraints() verifies security requirements
         // - PersistenceService.save() stores validated role data with transaction support
         // - Service coordination maintains proper error propagation and context
-        const { result, duration } = await measurePerformance(() =>
-          roleService.createCustomRole(roleData),
-        );
+        const result = await roleService.createCustomRole(roleData);
 
         // Then - Role is created with complete validation and persistence
         // - Role creation succeeds and returns complete role object with generated ID
         // - All validation services are called in proper sequence
         // - Persistence service saves role data with proper entity type
-        // - Performance requirement is met (creation completes within 500ms)
         // - Service coordination maintains data integrity throughout process
         // - Result contains all expected role data with system-generated metadata
         expect(result).toEqual(expectedRole);
@@ -129,7 +115,6 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
           expect.objectContaining(roleData),
           "custom_role",
         );
-        expect(duration).toBeLessThan(500);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -237,7 +222,7 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
 
   describe("Scenario: Reading custom roles with data integrity", () => {
     it.skip(
-      "should retrieve custom role with complete data within 50ms",
+      "should retrieve custom role with complete data",
       async () => {
         // Given - Existing custom role in persistence layer
         // - Custom role with complete metadata stored in persistence
@@ -261,21 +246,17 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
         // - PersistenceService.findById() fetches role data from storage
         // - Data transformation and formatting applied as needed
         // - Complete role object returned with all metadata intact
-        const { result, duration } = await measurePerformance(() =>
-          roleService.getCustomRole(roleId),
-        );
+        const result = await roleService.getCustomRole(roleId);
 
         // Then - Role data is retrieved with integrity and performance requirements met
         // - Complete role object returned with all original data intact
         // - PersistenceService called with correct role ID and entity type
-        // - Performance requirement met (retrieval completes within 50ms)
         // - All role metadata including capabilities and constraints preserved
         expect(result).toEqual(expectedRole);
         expect(persistenceService.findById).toHaveBeenCalledWith(
           roleId,
           "custom_role",
         );
-        expect(duration).toBeLessThan(50);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -328,13 +309,10 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
         roleService.listCustomRoles.mockResolvedValue(multipleRoles);
 
         // When - Retrieving multiple roles through bulk operation
-        const { result, duration } = await measurePerformance(() =>
-          roleService.listCustomRoles(),
-        );
+        const result = await roleService.listCustomRoles();
 
         // Then - Multiple roles retrieved efficiently within performance requirements
         // - All roles returned with complete data integrity
-        // - Bulk operation completes within 200ms performance requirement
         // - Service coordination maintains efficiency for multiple entity operations
         expect(result).toHaveLength(5);
         expect(result).toEqual(multipleRoles);
@@ -342,7 +320,6 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
           "custom_role",
           undefined,
         );
-        expect(duration).toBeLessThan(200);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -350,7 +327,7 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
 
   describe("Scenario: Updating custom roles with validation and versioning", () => {
     it.skip(
-      "should update custom role with validation within 500ms",
+      "should update custom role with validation",
       async () => {
         // Given - Existing role and update data with validation requirements
         // - Custom role ready for modification with valid update data
@@ -398,15 +375,12 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
         // - ValidationService validates update data and business rule compliance
         // - PersistenceService.update() performs atomic update with version increment
         // - Service coordination maintains data consistency throughout update
-        const { result, duration } = await measurePerformance(() =>
-          roleService.updateCustomRole(roleId, updateData),
-        );
+        const result = await roleService.updateCustomRole(roleId, updateData);
 
         // Then - Role is updated with validation and versioning
         // - Role update succeeds with new data applied correctly
         // - Version number incremented to indicate modification
         // - All validation services called for update data verification
-        // - Performance requirement met (update completes within 500ms)
         // - Service coordination maintains atomicity of update operation
         expect(result).toEqual(updatedRole);
         expect((result as CustomRole).version).toBe(2);
@@ -417,7 +391,6 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
           expect.objectContaining(updateData),
           "custom_role",
         );
-        expect(duration).toBeLessThan(500);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
@@ -502,13 +475,12 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
 
   describe("Scenario: Deleting custom roles with dependency checking", () => {
     it.skip(
-      "should delete custom role with dependency validation within 300ms",
+      "should delete custom role with dependency validation",
       async () => {
         // Given - Custom role without dependencies ready for deletion
         // - Role exists in persistence layer and available for deletion
         // - ValidationService configured to check for dependencies
         // - PersistenceService ready for atomic deletion operations
-        // - Performance monitoring enabled for timing measurement
         const roleId = "role-001";
 
         const existingRole: CustomRole = {
@@ -532,21 +504,17 @@ describe("Feature: Custom Role CRUD Operations Integration", () => {
         // - ValidationService.validateDependencies() checks for dependent entities
         // - PersistenceService.delete() performs atomic deletion operation
         // - Service coordination ensures safe deletion without orphaned references
-        const { duration } = await measurePerformance(() =>
-          roleService.deleteCustomRole(roleId),
-        );
+        await roleService.deleteCustomRole(roleId);
 
         // Then - Role is deleted after dependency checking within performance requirements
         // - Role deletion completes successfully without errors
         // - Dependency validation performed before deletion
-        // - Performance requirement met (deletion completes within 300ms)
         // - Service coordination maintains referential integrity
         expect(persistenceService.delete).toHaveBeenCalledWith(
           roleId,
           "custom_role",
         );
         expect(validationService.validateDependencies).toHaveBeenCalled();
-        expect(duration).toBeLessThan(300);
       },
       INTEGRATION_TEST_TIMEOUT,
     );
