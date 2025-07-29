@@ -185,7 +185,14 @@ export const TabContainer = React.memo(function TabContainer({
       <TabsList
         className={cn(
           "grid w-full",
-          `grid-cols-${validTabs.length}`,
+          // Use explicit grid classes to avoid Tailwind purging issues
+          validTabs.length === 2
+            ? "grid-cols-2"
+            : validTabs.length === 3
+              ? "grid-cols-3"
+              : validTabs.length === 4
+                ? "grid-cols-4"
+                : "grid-cols-1",
           // Enhanced ARIA attributes
         )}
         role="tablist"
