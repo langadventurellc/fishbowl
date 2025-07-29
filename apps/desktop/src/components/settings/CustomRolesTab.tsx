@@ -17,18 +17,25 @@ import { Card } from "../ui/card";
 import { Button } from "../ui/button";
 import { Plus, Users } from "lucide-react";
 import { CustomRoleListItem } from "./CustomRoleListItem";
+import { RoleFormModal } from "./RoleFormModal";
 import { useCustomRoles } from "@fishbowl-ai/shared";
+import { useRoleFormModal } from "../../hooks/useRoleFormModal";
 import type { CustomRolesTabProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
 
 export const CustomRolesTab = memo<CustomRolesTabProps>(
-  function CustomRolesTab({
-    onCreateRole,
-    onEditRole,
-    onDeleteRole,
-    className,
-  }) {
+  function CustomRolesTab({ onDeleteRole, className }) {
     const { roles, isLoading, error } = useCustomRoles();
+    const {
+      isOpen,
+      mode,
+      currentRole,
+      isLoading: modalIsLoading,
+      openCreateModal,
+      openEditModal,
+      closeModal,
+      handleSave,
+    } = useRoleFormModal();
 
     // Sort roles chronologically (newest first)
     const sortedRoles = useMemo(() => {
@@ -71,7 +78,7 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
           for your specific needs.
         </p>
         <Button
-          onClick={onCreateRole}
+          onClick={openCreateModal}
           className="gap-2"
           aria-label="Create your first custom role"
         >
@@ -141,7 +148,7 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
               <div key={role.id} role="listitem">
                 <CustomRoleListItem
                   role={role}
-                  onEdit={onEditRole}
+                  onEdit={openEditModal}
                   onDelete={onDeleteRole}
                 />
               </div>
@@ -152,7 +159,7 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
         {/* Create button container - always visible at bottom */}
         <div className="pt-6 border-t border-border mt-6">
           <Button
-            onClick={onCreateRole}
+            onClick={openCreateModal}
             className="w-full gap-2"
             size="lg"
             aria-label="Create a new custom role"
@@ -161,6 +168,16 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
             Create Custom Role
           </Button>
         </div>
+
+        {/* Role creation/editing modal */}
+        <RoleFormModal
+          isOpen={isOpen}
+          onOpenChange={closeModal}
+          mode={mode}
+          role={currentRole}
+          onSave={handleSave}
+          isLoading={modalIsLoading}
+        />
       </div>
     );
   },
