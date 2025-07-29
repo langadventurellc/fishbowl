@@ -1,0 +1,520 @@
+{
+  "description": "Inter-service communication pattern test scenarios for Configuration Service coordination",
+  "version": "1.0.0",
+  "patterns": {
+    "requestResponsePattern": {
+      "name": "Request-Response Communication",
+      "description": "Standard synchronous communication between services",
+      "scenarios": [
+        {
+          "name": "Successful Cross-Service Validation",
+          "description": "Normal operation with successful validation across multiple services",
+          "communicationFlow": [
+            {
+              "from": "ConfigurationService",
+              "to": "PersonalityService",
+              "operation": "validatePersonalityReference",
+              "payload": {
+                "personalityId": "personality-001",
+                "validationLevel": "full",
+                "includeMetadata": true
+              },
+              "expectedResponse": {
+                "isValid": true,
+                "errors": [],
+                "metadata": {
+                  "personalityName": "Creative Assistant",
+                  "version": "1.2.0",
+                  "lastModified": "2024-01-01T10:00:00.000Z"
+                }
+              },
+              "timeout": 1000,
+              "retryCount": 0
+            },
+            {
+              "from": "ConfigurationService",
+              "to": "RoleService",
+              "operation": "validateRoleCapabilities",
+              "payload": {
+                "roleId": "role-001",
+                "requiredCapabilities": [
+                  "technical-guidance",
+                  "problem-solving"
+                ],
+                "contextPersonalityId": "personality-001"
+              },
+              "expectedResponse": {
+                "isValid": true,
+                "errors": [],
+                "availableCapabilities": [
+                  "technical-guidance",
+                  "problem-solving",
+                  "architecture-review"
+                ],
+                "compatibilityScore": 0.95
+              },
+              "timeout": 1000,
+              "retryCount": 0
+            },
+            {
+              "from": "ConfigurationService",
+              "to": "AgentService",
+              "operation": "validateAgentComposition",
+              "payload": {
+                "personalityId": "personality-001",
+                "roleId": "role-001",
+                "modelConfiguration": {
+                  "provider": "openai",
+                  "modelId": "gpt-4-turbo-preview"
+                }
+              },
+              "expectedResponse": {
+                "isValid": true,
+                "errors": [],
+                "compositionScore": 0.92,
+                "estimatedPerformance": "high"
+              },
+              "timeout": 1500,
+              "retryCount": 0
+            }
+          ],
+          "expectedTotalDuration": 2000,
+          "successCriteria": {
+            "allRequestsSuccessful": true,
+            "responseTimesWithinTimeout": true,
+            "noRetryRequired": true,
+            "dataIntegrityMaintained": true
+          }
+        },
+        {
+          "name": "Validation with Error Recovery",
+          "description": "Communication with validation errors and successful error handling",
+          "communicationFlow": [
+            {
+              "from": "ConfigurationService",
+              "to": "PersonalityService",
+              "operation": "validatePersonalityReference",
+              "payload": {
+                "personalityId": "personality-invalid-001",
+                "validationLevel": "strict"
+              },
+              "expectedResponse": {
+                "isValid": false,
+                "errors": [
+                  {
+                    "code": "PERSONALITY_NOT_FOUND",
+                    "message": "Personality with ID 'personality-invalid-001' does not exist",
+                    "field": "personalityId"
+                  }
+                ]
+              },
+              "timeout": 1000,
+              "retryCount": 0
+            },
+            {
+              "from": "ConfigurationService",
+              "to": "PersonalityService",
+              "operation": "suggestAlternativePersonalities",
+              "payload": {
+                "invalidPersonalityId": "personality-invalid-001",
+                "criteria": {
+                  "similarityThreshold": 0.8,
+                  "maxSuggestions": 3
+                }
+              },
+              "expectedResponse": {
+                "suggestions": [
+                  {
+                    "personalityId": "personality-creative-002",
+                    "name": "Creative Problem Solver",
+                    "similarityScore": 0.85
+                  },
+                  {
+                    "personalityId": "personality-analytical-001",
+                    "name": "Analytical Thinker",
+                    "similarityScore": 0.82
+                  }
+                ]
+              },
+              "timeout": 1200,
+              "retryCount": 0
+            }
+          ],
+          "expectedTotalDuration": 1500,
+          "successCriteria": {
+            "errorHandledGracefully": true,
+            "alternativeSuggestionsProvided": true,
+            "noSystemFailure": true
+          }
+        }
+      ]
+    },
+    "circuitBreakerPattern": {
+      "name": "Circuit Breaker Fault Tolerance",
+      "description": "Circuit breaker implementation for handling service failures",
+      "scenarios": [
+        {
+          "name": "Service Timeout with Circuit Breaker",
+          "description": "Circuit breaker opens after repeated timeouts and provides fallback",
+          "failureThreshold": 3,
+          "timeoutMs": 2000,
+          "recoveryTimeMs": 5000,
+          "testSequence": [
+            {
+              "attempt": 1,
+              "from": "ConfigurationService",
+              "to": "PersonalityService",
+              "operation": "validatePersonalityReference",
+              "expectedResult": "timeout",
+              "circuitState": "closed",
+              "duration": 2000,
+              "fallbackResponse": null
+            },
+            {
+              "attempt": 2,
+              "from": "ConfigurationService",
+              "to": "PersonalityService",
+              "operation": "validatePersonalityReference",
+              "expectedResult": "timeout",
+              "circuitState": "closed",
+              "duration": 2000,
+              "fallbackResponse": null
+            },
+            {
+              "attempt": 3,
+              "from": "ConfigurationService",
+              "to": "PersonalityService",
+              "operation": "validatePersonalityReference",
+              "expectedResult": "timeout",
+              "circuitState": "open",
+              "duration": 2000,
+              "fallbackResponse": null
+            },
+            {
+              "attempt": 4,
+              "from": "ConfigurationService",
+              "to": "PersonalityService",
+              "operation": "validatePersonalityReference",
+              "expectedResult": "circuit_open",
+              "circuitState": "open",
+              "duration": 10,
+              "fallbackResponse": {
+                "isValid": false,
+                "errors": [
+                  {
+                    "code": "SERVICE_UNAVAILABLE",
+                    "message": "PersonalityService is temporarily unavailable",
+                    "fallbackUsed": true
+                  }
+                ]
+              }
+            }
+          ],
+          "successCriteria": {
+            "circuitBreakerFunctioning": true,
+            "fallbackResponseProvided": true,
+            "systemRemainedStable": true,
+            "failureIsolated": true
+          }
+        },
+        {
+          "name": "Circuit Breaker Recovery",
+          "description": "Circuit breaker transitions from open to half-open to closed states",
+          "failureThreshold": 2,
+          "timeoutMs": 1500,
+          "recoveryTimeMs": 3000,
+          "testSequence": [
+            {
+              "attempt": 1,
+              "expectedResult": "timeout",
+              "circuitState": "closed",
+              "duration": 1500
+            },
+            {
+              "attempt": 2,
+              "expectedResult": "timeout",
+              "circuitState": "open",
+              "duration": 1500
+            },
+            {
+              "attempt": 3,
+              "waitTime": 3000,
+              "expectedResult": "success",
+              "circuitState": "half-open",
+              "duration": 500,
+              "response": {
+                "isValid": true,
+                "errors": []
+              }
+            },
+            {
+              "attempt": 4,
+              "expectedResult": "success",
+              "circuitState": "closed",
+              "duration": 450,
+              "response": {
+                "isValid": true,
+                "errors": []
+              }
+            }
+          ],
+          "successCriteria": {
+            "recoverySequenceCompleted": true,
+            "circuitReturnedToClosed": true,
+            "normalOperationResumed": true
+          }
+        }
+      ]
+    },
+    "retryPattern": {
+      "name": "Retry Mechanism with Exponential Backoff",
+      "description": "Retry logic for handling transient failures with exponential backoff",
+      "scenarios": [
+        {
+          "name": "Transient Failure Recovery",
+          "description": "Service recovers after transient failures with exponential backoff retry",
+          "maxRetries": 3,
+          "baseDelayMs": 100,
+          "backoffMultiplier": 2,
+          "jitterEnabled": false,
+          "testSequence": [
+            {
+              "attempt": 1,
+              "from": "ConfigurationService",
+              "to": "FileService",
+              "operation": "createFile",
+              "payload": {
+                "path": "/agents/test-agent.json",
+                "content": "agent-data"
+              },
+              "result": "failure",
+              "errorType": "TransientError",
+              "errorMessage": "Temporary file system unavailable",
+              "nextDelayMs": 100
+            },
+            {
+              "attempt": 2,
+              "from": "ConfigurationService",
+              "to": "FileService",
+              "operation": "createFile",
+              "payload": {
+                "path": "/agents/test-agent.json",
+                "content": "agent-data"
+              },
+              "result": "failure",
+              "errorType": "TransientError",
+              "errorMessage": "Temporary file system unavailable",
+              "nextDelayMs": 200
+            },
+            {
+              "attempt": 3,
+              "from": "ConfigurationService",
+              "to": "FileService",
+              "operation": "createFile",
+              "payload": {
+                "path": "/agents/test-agent.json",
+                "content": "agent-data"
+              },
+              "result": "success",
+              "response": {
+                "filePath": "/agents/test-agent.json",
+                "status": "created",
+                "size": 1024
+              },
+              "totalElapsedMs": 300
+            }
+          ],
+          "successCriteria": {
+            "operationEventuallySucceeded": true,
+            "retryDelaysCorrect": true,
+            "totalRetriesWithinLimit": true,
+            "backoffPatternFollowed": true
+          }
+        },
+        {
+          "name": "Permanent Failure Recognition",
+          "description": "Retry mechanism recognizes permanent failures and stops retrying",
+          "maxRetries": 3,
+          "baseDelayMs": 100,
+          "backoffMultiplier": 2,
+          "testSequence": [
+            {
+              "attempt": 1,
+              "result": "failure",
+              "errorType": "PermanentError",
+              "errorMessage": "Invalid file path - contains illegal characters",
+              "shouldRetry": false,
+              "finalFailure": true
+            }
+          ],
+          "successCriteria": {
+            "permanentErrorRecognized": true,
+            "noUnnecessaryRetries": true,
+            "errorPropagatedCorrectly": true
+          }
+        },
+        {
+          "name": "Retry with Jitter",
+          "description": "Exponential backoff with jitter to prevent thundering herd",
+          "maxRetries": 4,
+          "baseDelayMs": 100,
+          "backoffMultiplier": 2,
+          "jitterEnabled": true,
+          "jitterRangePercent": 25,
+          "testSequence": [
+            {
+              "attempt": 1,
+              "result": "failure",
+              "baseDelayMs": 100,
+              "jitterRangeMs": 25,
+              "actualDelayRange": [75, 125]
+            },
+            {
+              "attempt": 2,
+              "result": "failure",
+              "baseDelayMs": 200,
+              "jitterRangeMs": 50,
+              "actualDelayRange": [150, 250]
+            },
+            {
+              "attempt": 3,
+              "result": "failure",
+              "baseDelayMs": 400,
+              "jitterRangeMs": 100,
+              "actualDelayRange": [300, 500]
+            },
+            {
+              "attempt": 4,
+              "result": "success",
+              "response": {
+                "operationCompleted": true
+              }
+            }
+          ],
+          "successCriteria": {
+            "jitterAppliedCorrectly": true,
+            "delaysWithinExpectedRange": true,
+            "thunderingHerdPrevented": true
+          }
+        }
+      ]
+    },
+    "bulkheadPattern": {
+      "name": "Bulkhead Isolation Pattern",
+      "description": "Service isolation to prevent cascade failures",
+      "scenarios": [
+        {
+          "name": "Service Pool Isolation",
+          "description": "Separate resource pools for different service types",
+          "resourcePools": {
+            "criticalServices": {
+              "maxConcurrentRequests": 10,
+              "services": ["PersonalityService", "AgentService"]
+            },
+            "nonCriticalServices": {
+              "maxConcurrentRequests": 5,
+              "services": ["FileService", "ValidationService"]
+            }
+          },
+          "testScenario": {
+            "overloadNonCritical": {
+              "description": "Overload non-critical services while maintaining critical service availability",
+              "nonCriticalRequestCount": 15,
+              "criticalRequestCount": 8,
+              "expectedBehavior": {
+                "criticalServicesUnaffected": true,
+                "nonCriticalServicesThrottled": true,
+                "systemStabilityMaintained": true
+              }
+            }
+          }
+        }
+      ]
+    },
+    "sagaPattern": {
+      "name": "Saga Pattern for Distributed Transactions",
+      "description": "Choreography-based saga for multi-service transactions",
+      "scenarios": [
+        {
+          "name": "Agent Creation Saga",
+          "description": "Multi-step agent creation with compensating actions",
+          "sagaSteps": [
+            {
+              "step": 1,
+              "service": "PersonalityService",
+              "operation": "reservePersonality",
+              "compensatingAction": "releasePersonalityReservation"
+            },
+            {
+              "step": 2,
+              "service": "RoleService",
+              "operation": "reserveRole",
+              "compensatingAction": "releaseRoleReservation"
+            },
+            {
+              "step": 3,
+              "service": "AgentService",
+              "operation": "createAgent",
+              "compensatingAction": "deleteAgent"
+            },
+            {
+              "step": 4,
+              "service": "FileService",
+              "operation": "persistConfiguration",
+              "compensatingAction": "deleteConfigurationFile"
+            }
+          ],
+          "failureScenarios": {
+            "failAtStep2": {
+              "expectedCompensations": ["releasePersonalityReservation"],
+              "finalState": "rolled_back"
+            },
+            "failAtStep4": {
+              "expectedCompensations": [
+                "deleteAgent",
+                "releaseRoleReservation",
+                "releasePersonalityReservation"
+              ],
+              "finalState": "rolled_back"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "communicationMetrics": {
+    "responseTimeThresholds": {
+      "fast": 500,
+      "acceptable": 1000,
+      "slow": 2000,
+      "timeout": 5000
+    },
+    "reliabilityMetrics": {
+      "successRate": 0.99,
+      "errorRate": 0.01,
+      "availabilityTarget": 0.999
+    },
+    "performanceTargets": {
+      "throughputPerSecond": 100,
+      "concurrentRequests": 50,
+      "memoryUsageMaxMB": 256
+    }
+  },
+  "testingConfiguration": {
+    "mockLatencySimulation": {
+      "enabled": true,
+      "variabilityPercent": 10,
+      "networkLatencyMs": 50
+    },
+    "errorInjection": {
+      "enabled": true,
+      "transientErrorRate": 0.05,
+      "permanentErrorRate": 0.001
+    },
+    "loadSimulation": {
+      "enabled": false,
+      "requestsPerSecond": 10,
+      "durationSeconds": 60
+    }
+  }
+}

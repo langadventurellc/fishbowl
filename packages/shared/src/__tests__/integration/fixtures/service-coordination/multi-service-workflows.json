@@ -1,0 +1,395 @@
+{
+  "description": "Multi-service workflow orchestration test scenarios for Configuration Service coordination",
+  "version": "1.0.0",
+  "workflows": {
+    "completeAgentCreation": {
+      "name": "Complete Agent Creation Workflow",
+      "description": "End-to-end agent creation requiring all services with dependency management",
+      "steps": [
+        {
+          "service": "PersonalityService",
+          "operation": "validatePersonalityConfiguration",
+          "input": {
+            "personalityId": "personality-creative-001",
+            "requiresValidation": true
+          },
+          "expectedDuration": 150,
+          "dependencies": [],
+          "expectedOutput": {
+            "isValid": true,
+            "personalityData": {
+              "id": "personality-creative-001",
+              "name": "Creative Assistant",
+              "creativity": 85,
+              "openness": 80
+            }
+          }
+        },
+        {
+          "service": "RoleService",
+          "operation": "validateRoleCapabilities",
+          "input": {
+            "roleId": "role-technical-advisor",
+            "requiredCapabilities": ["technical-guidance", "problem-solving"]
+          },
+          "expectedDuration": 100,
+          "dependencies": ["PersonalityService"],
+          "expectedOutput": {
+            "isValid": true,
+            "roleData": {
+              "id": "role-technical-advisor",
+              "name": "Technical Advisor",
+              "capabilities": [
+                "technical-guidance",
+                "problem-solving",
+                "architecture-review"
+              ]
+            }
+          }
+        },
+        {
+          "service": "AgentService",
+          "operation": "createAgent",
+          "input": {
+            "name": "Test Coordinated Agent",
+            "personalityId": "personality-creative-001",
+            "roleId": "role-technical-advisor",
+            "modelConfiguration": {
+              "provider": "openai",
+              "modelId": "gpt-4-turbo-preview",
+              "temperature": 0.7
+            }
+          },
+          "expectedDuration": 200,
+          "dependencies": ["PersonalityService", "RoleService"],
+          "expectedOutput": {
+            "agentId": "agent-coordinated-001",
+            "status": "created",
+            "configuration": {
+              "personalityId": "personality-creative-001",
+              "roleId": "role-technical-advisor"
+            }
+          }
+        },
+        {
+          "service": "FileService",
+          "operation": "createFile",
+          "input": {
+            "path": "/agents/test-coordinated-agent.json",
+            "content": "agent-configuration-data",
+            "metadata": {
+              "agentId": "agent-coordinated-001",
+              "version": "1.0.0"
+            }
+          },
+          "expectedDuration": 75,
+          "dependencies": ["AgentService"],
+          "expectedOutput": {
+            "filePath": "/agents/test-coordinated-agent.json",
+            "status": "created",
+            "checksum": "abc123def456"
+          }
+        }
+      ],
+      "totalExpectedDuration": 525,
+      "successCriteria": {
+        "allStepsCompleted": true,
+        "noCompensationRequired": true,
+        "performanceWithinThreshold": true,
+        "stateConsistencyMaintained": true
+      },
+      "failureScenarios": {
+        "personalityValidationFailure": {
+          "failingStep": 0,
+          "errorType": "ValidationError",
+          "errorMessage": "Personality configuration invalid",
+          "expectedCompensation": ["rollbackPersonality"],
+          "compensationDuration": 50,
+          "shouldPropagateError": true
+        },
+        "roleCapabilityFailure": {
+          "failingStep": 1,
+          "errorType": "CapabilityError",
+          "errorMessage": "Required role capabilities not available",
+          "expectedCompensation": ["rollbackRole", "rollbackPersonality"],
+          "compensationDuration": 75,
+          "shouldPropagateError": true
+        },
+        "agentCreationFailure": {
+          "failingStep": 2,
+          "errorType": "AgentCreationError",
+          "errorMessage": "Agent creation failed due to configuration conflict",
+          "expectedCompensation": [
+            "rollbackAgent",
+            "rollbackRole",
+            "rollbackPersonality"
+          ],
+          "compensationDuration": 125,
+          "shouldPropagateError": true
+        },
+        "fileOperationFailure": {
+          "failingStep": 3,
+          "errorType": "FileSystemError",
+          "errorMessage": "File creation failed - insufficient permissions",
+          "expectedCompensation": [
+            "rollbackFile",
+            "rollbackAgent",
+            "rollbackRole",
+            "rollbackPersonality"
+          ],
+          "compensationDuration": 200,
+          "shouldPropagateError": true
+        }
+      }
+    },
+    "complexConfigurationUpdate": {
+      "name": "Complex Configuration Update Workflow",
+      "description": "Multi-service configuration update requiring coordination and consistency validation",
+      "steps": [
+        {
+          "service": "PersonalityService",
+          "operation": "updatePersonalityConfiguration",
+          "input": {
+            "personalityId": "personality-analytical-002",
+            "updates": {
+              "analyticalDepth": 90,
+              "creativity": 65
+            }
+          },
+          "expectedDuration": 120,
+          "dependencies": [],
+          "expectedOutput": {
+            "updated": true,
+            "version": 2,
+            "changes": ["analyticalDepth", "creativity"]
+          }
+        },
+        {
+          "service": "AgentService",
+          "operation": "syncAgentWithPersonality",
+          "input": {
+            "agentId": "agent-analytical-001",
+            "personalityId": "personality-analytical-002",
+            "syncMode": "immediate"
+          },
+          "expectedDuration": 180,
+          "dependencies": ["PersonalityService"],
+          "expectedOutput": {
+            "synced": true,
+            "agentVersion": 2,
+            "syncTimestamp": "2024-01-01T10:00:00.000Z"
+          }
+        },
+        {
+          "service": "FileService",
+          "operation": "updateFile",
+          "input": {
+            "path": "/agents/agent-analytical-001.json",
+            "updates": "updated-configuration-data",
+            "createBackup": true
+          },
+          "expectedDuration": 90,
+          "dependencies": ["AgentService"],
+          "expectedOutput": {
+            "updated": true,
+            "backupPath": "/backups/agent-analytical-001-v1.json",
+            "newChecksum": "def456ghi789"
+          }
+        },
+        {
+          "service": "ValidationService",
+          "operation": "validateSystemConsistency",
+          "input": {
+            "scope": "agent-personality-sync",
+            "agentId": "agent-analytical-001",
+            "personalityId": "personality-analytical-002"
+          },
+          "expectedDuration": 110,
+          "dependencies": ["PersonalityService", "AgentService", "FileService"],
+          "expectedOutput": {
+            "isConsistent": true,
+            "validationChecks": [
+              "personality-agent-sync",
+              "file-integrity",
+              "version-consistency"
+            ],
+            "issues": []
+          }
+        }
+      ],
+      "totalExpectedDuration": 500,
+      "successCriteria": {
+        "configurationUpdated": true,
+        "agentSynced": true,
+        "fileConsistency": true,
+        "systemValidation": true
+      },
+      "failureScenarios": {
+        "personalityUpdateConflict": {
+          "failingStep": 0,
+          "errorType": "ConcurrentModificationError",
+          "errorMessage": "Personality configuration modified by another process",
+          "expectedCompensation": ["resolveConflict", "retryUpdate"],
+          "compensationDuration": 150,
+          "shouldPropagateError": false
+        },
+        "agentSyncFailure": {
+          "failingStep": 1,
+          "errorType": "SynchronizationError",
+          "errorMessage": "Agent synchronization failed - version mismatch",
+          "expectedCompensation": ["rollbackPersonality", "resetAgentState"],
+          "compensationDuration": 200,
+          "shouldPropagateError": true
+        }
+      }
+    },
+    "parallelServiceCoordination": {
+      "name": "Parallel Service Coordination Workflow",
+      "description": "Multiple independent services coordinated in parallel with final synchronization",
+      "steps": [
+        {
+          "service": "PersonalityService",
+          "operation": "batchValidatePersonalities",
+          "input": {
+            "personalityIds": [
+              "personality-001",
+              "personality-002",
+              "personality-003"
+            ],
+            "parallelValidation": true
+          },
+          "expectedDuration": 200,
+          "dependencies": [],
+          "canRunInParallel": true,
+          "expectedOutput": {
+            "validatedCount": 3,
+            "results": [
+              { "id": "personality-001", "isValid": true },
+              { "id": "personality-002", "isValid": true },
+              { "id": "personality-003", "isValid": true }
+            ]
+          }
+        },
+        {
+          "service": "RoleService",
+          "operation": "batchValidateRoles",
+          "input": {
+            "roleIds": ["role-001", "role-002", "role-003"],
+            "parallelValidation": true
+          },
+          "expectedDuration": 180,
+          "dependencies": [],
+          "canRunInParallel": true,
+          "expectedOutput": {
+            "validatedCount": 3,
+            "results": [
+              { "id": "role-001", "isValid": true },
+              { "id": "role-002", "isValid": true },
+              { "id": "role-003", "isValid": true }
+            ]
+          }
+        },
+        {
+          "service": "ModelService",
+          "operation": "validateModelCompatibility",
+          "input": {
+            "modelConfigurations": [
+              { "provider": "openai", "modelId": "gpt-4-turbo-preview" },
+              { "provider": "anthropic", "modelId": "claude-3-opus" },
+              { "provider": "google", "modelId": "gemini-pro" }
+            ]
+          },
+          "expectedDuration": 160,
+          "dependencies": [],
+          "canRunInParallel": true,
+          "expectedOutput": {
+            "compatibilityResults": [
+              { "provider": "openai", "isCompatible": true },
+              { "provider": "anthropic", "isCompatible": true },
+              { "provider": "google", "isCompatible": true }
+            ]
+          }
+        },
+        {
+          "service": "ConfigurationService",
+          "operation": "createUnifiedConfiguration",
+          "input": {
+            "personalities": [
+              "personality-001",
+              "personality-002",
+              "personality-003"
+            ],
+            "roles": ["role-001", "role-002", "role-003"],
+            "models": ["gpt-4-turbo-preview", "claude-3-opus", "gemini-pro"],
+            "coordinationMode": "unified"
+          },
+          "expectedDuration": 250,
+          "dependencies": ["PersonalityService", "RoleService", "ModelService"],
+          "canRunInParallel": false,
+          "expectedOutput": {
+            "configurationId": "unified-config-001",
+            "status": "created",
+            "componentCount": 9,
+            "consistencyScore": 95
+          }
+        }
+      ],
+      "totalExpectedDuration": 450,
+      "parallelExecution": {
+        "enabled": true,
+        "maxParallelSteps": 3,
+        "synchronizationPoints": [3]
+      },
+      "successCriteria": {
+        "parallelValidationCompleted": true,
+        "unifiedConfigurationCreated": true,
+        "consistencyScoreAboveThreshold": true,
+        "noParallelExecutionErrors": true
+      },
+      "failureScenarios": {
+        "parallelValidationTimeout": {
+          "failingStep": "parallel-group-1",
+          "errorType": "TimeoutError",
+          "errorMessage": "One or more parallel validations timed out",
+          "expectedCompensation": [
+            "retryFailedValidations",
+            "fallbackToSequential"
+          ],
+          "compensationDuration": 300,
+          "shouldPropagateError": false
+        },
+        "unifiedConfigurationConflict": {
+          "failingStep": 3,
+          "errorType": "ConfigurationConflictError",
+          "errorMessage": "Conflicting requirements in unified configuration",
+          "expectedCompensation": [
+            "analyzeConflicts",
+            "generateAlternativeConfiguration"
+          ],
+          "compensationDuration": 200,
+          "shouldPropagateError": true
+        }
+      }
+    }
+  },
+  "testingMetadata": {
+    "performanceThresholds": {
+      "warningThreshold": 1.2,
+      "errorThreshold": 2.0,
+      "unit": "ratio_to_expected_duration"
+    },
+    "stateValidation": {
+      "checkpoints": ["after_each_step", "on_failure", "on_completion"],
+      "validationRules": [
+        "no_orphaned_resources",
+        "referential_integrity_maintained",
+        "transaction_atomicity_preserved"
+      ]
+    },
+    "compensationValidation": {
+      "verifyRollbackOrder": true,
+      "validateCleanupCompleteness": true,
+      "checkResourceLeaks": true
+    }
+  }
+}

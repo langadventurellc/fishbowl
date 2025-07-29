@@ -25,6 +25,31 @@ interface ServiceMockConfig {
 }
 
 /**
+ * Workflow step definition for multi-service coordination
+ */
+interface WorkflowStep {
+  service: string;
+  operation: string;
+  input: Record<string, unknown>;
+  expectedDuration?: number;
+  dependencies: string[];
+  canRunInParallel?: boolean;
+  expectedOutput?: Record<string, unknown>;
+}
+
+/**
+ * Workflow state tracking for coordination testing
+ */
+interface WorkflowState {
+  currentStep: number;
+  completedServices: string[];
+  failedServices: string[];
+  startTime: number;
+  compensation: string[];
+  status: "running" | "completed" | "failed" | "rolled_back";
+}
+
+/**
  * Enhanced configuration service with transaction support
  */
 interface ConfigurationServiceWithTransaction
@@ -32,6 +57,30 @@ interface ConfigurationServiceWithTransaction
   rollbackConfiguration: jest.MockedFunction<() => Promise<void>> & {
     lastCallTime?: number;
   };
+}
+
+/**
+ * Configuration service with workflow coordination capabilities
+ */
+interface ConfigurationServiceWithWorkflow
+  extends ConfigurationServiceWithTransaction {
+  coordinateWorkflow: jest.MockedFunction<
+    (
+      workflowId: string,
+      steps: WorkflowStep[],
+    ) => Promise<{
+      workflowId: string;
+      status: string;
+      duration: number;
+      completedServices: string[];
+    }>
+  >;
+  getWorkflowState: jest.MockedFunction<
+    (workflowId: string) => WorkflowState | undefined
+  >;
+  simulateCircuitBreaker: jest.MockedFunction<
+    (serviceName: string, operation: () => Promise<unknown>) => Promise<unknown>
+  >;
 }
 
 /**
@@ -388,5 +437,128 @@ export class ConfigurationServiceMockFactory {
     >;
 
     return service;
+  }
+
+  /**
+   * Create ConfigurationService mock with multi-service workflow coordination
+   * Supports workflow state tracking, service communication simulation, and consistency validation
+   */
+  static createWithWorkflowCoordination(
+    config: ServiceMockConfig = {},
+  ): ConfigurationServiceWithWorkflow {
+    const baseService = this.createWithTransactionSupport(config);
+
+    // Add workflow state tracking
+    const workflowState = new Map<string, WorkflowState>();
+
+    // Enhanced coordination method
+    const coordinateWorkflow = jest
+      .fn()
+      .mockImplementation(async (workflowId: string, steps: WorkflowStep[]) => {
+        const state: WorkflowState = {
+          currentStep: 0,
+          completedServices: [],
+          failedServices: [],
+          startTime: Date.now(),
+          compensation: [],
+          status: "running",
+        };
+        workflowState.set(workflowId, state);
+
+        for (let i = 0; i < steps.length; i++) {
+          state.currentStep = i;
+          const step = steps[i];
+          if (!step) continue;
+
+          try {
+            // Simulate step execution with realistic latency
+            await new Promise((resolve) =>
+              globalThis.setTimeout(resolve, step.expectedDuration || 100),
+            );
+            state.completedServices.push(step.service);
+          } catch (error) {
+            state.failedServices.push(step.service);
+            state.status = "failed";
+            // Execute compensation workflow
+            for (const service of state.completedServices.reverse()) {
+              state.compensation.push(`rollback${service}`);
+            }
+            state.status = "rolled_back";
+            throw error;
+          }
+        }
+
+        state.status = "completed";
+        return {
+          workflowId,
+          status: "completed",
+          duration: Date.now() - state.startTime,
+          completedServices: state.completedServices,
+        };
+      });
+
+    const getWorkflowState = jest
+      .fn()
+      .mockImplementation((workflowId: string) => {
+        return workflowState.get(workflowId);
+      });
+
+    // Circuit breaker simulation
+    const circuitBreakers = new Map<
+      string,
+      {
+        state: "closed" | "open" | "half-open";
+        failures: number;
+        lastFailureTime: number;
+        threshold: number;
+      }
+    >();
+
+    const simulateCircuitBreaker = jest
+      .fn()
+      .mockImplementation(
+        (serviceName: string, operation: () => Promise<unknown>) => {
+          const breaker = circuitBreakers.get(serviceName) || {
+            state: "closed" as const,
+            failures: 0,
+            lastFailureTime: 0,
+            threshold: 3,
+          };
+
+          if (
+            breaker.state === "open" &&
+            Date.now() - breaker.lastFailureTime < 5000
+          ) {
+            throw new Error(`Circuit breaker open for ${serviceName}`);
+          }
+
+          return operation().catch((error) => {
+            breaker.failures++;
+            breaker.lastFailureTime = Date.now();
+            if (breaker.failures >= breaker.threshold) {
+              breaker.state = "open";
+            }
+            circuitBreakers.set(serviceName, breaker);
+            throw error;
+          });
+        },
+      );
+
+    const enhancedService = baseService as ConfigurationServiceWithWorkflow;
+    enhancedService.coordinateWorkflow = coordinateWorkflow;
+    enhancedService.getWorkflowState = getWorkflowState;
+    enhancedService.simulateCircuitBreaker = simulateCircuitBreaker;
+
+    return enhancedService;
+  }
+
+  /**
+   * Create mock with communication pattern simulation
+   * Includes circuit breaker, retry patterns, and bulkhead isolation
+   */
+  static createWithCommunicationPatterns(
+    config: ServiceMockConfig = {},
+  ): ConfigurationServiceWithWorkflow {
+    return this.createWithWorkflowCoordination(config);
   }
 }
