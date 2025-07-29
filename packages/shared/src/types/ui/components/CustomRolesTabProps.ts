@@ -7,6 +7,8 @@
 import type { CustomRole } from "../../settings/CustomRole";
 
 export interface CustomRolesTabProps {
-  onDeleteRole: (role: CustomRole) => void;
+  onCreateRole?: () => void;
+  onEditRole?: (role: CustomRole) => void;
+  onDeleteRole?: (role: CustomRole) => void;
   className?: string;
 }

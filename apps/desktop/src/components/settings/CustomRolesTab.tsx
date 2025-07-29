@@ -24,7 +24,12 @@ import type { CustomRolesTabProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
 
 export const CustomRolesTab = memo<CustomRolesTabProps>(
-  function CustomRolesTab({ onDeleteRole, className }) {
+  function CustomRolesTab({
+    onCreateRole,
+    onEditRole,
+    onDeleteRole,
+    className,
+  }) {
     const { roles, isLoading, error } = useCustomRoles();
     const {
       isOpen,
@@ -36,6 +41,23 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
       closeModal,
       handleSave,
     } = useRoleFormModal();
+
+    // Determine whether to use internal or external handlers
+    const usingExternalHandlers = !!(
+      onCreateRole &&
+      onEditRole &&
+      onDeleteRole
+    );
+
+    // Use external handlers if provided, otherwise fall back to internal ones
+    const handleCreate = onCreateRole || openCreateModal;
+    const handleEdit = onEditRole || openEditModal;
+    const handleDelete =
+      onDeleteRole ||
+      (() => {
+        // Internal delete logic - just a placeholder for now
+        console.log("Internal delete not implemented");
+      });
 
     // Sort roles chronologically (newest first)
     const sortedRoles = useMemo(() => {
@@ -78,7 +100,7 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
           for your specific needs.
         </p>
         <Button
-          onClick={openCreateModal}
+          onClick={handleCreate}
           className="gap-2"
           aria-label="Create your first custom role"
         >
@@ -148,8 +170,8 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
               <div key={role.id} role="listitem">
                 <CustomRoleListItem
                   role={role}
-                  onEdit={openEditModal}
-                  onDelete={onDeleteRole}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
                 />
               </div>
             ))}
@@ -159,7 +181,7 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
         {/* Create button container - always visible at bottom */}
         <div className="pt-6 border-t border-border mt-6">
           <Button
-            onClick={openCreateModal}
+            onClick={handleCreate}
             className="w-full gap-2"
             size="lg"
             aria-label="Create a new custom role"
@@ -169,15 +191,17 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
           </Button>
         </div>
 
-        {/* Role creation/editing modal */}
-        <RoleFormModal
-          isOpen={isOpen}
-          onOpenChange={closeModal}
-          mode={mode}
-          role={currentRole}
-          onSave={handleSave}
-          isLoading={modalIsLoading}
-        />
+        {/* Role creation/editing modal - only render if using internal handlers */}
+        {!usingExternalHandlers && (
+          <RoleFormModal
+            isOpen={isOpen}
+            onOpenChange={closeModal}
+            mode={mode}
+            role={currentRole}
+            onSave={handleSave}
+            isLoading={modalIsLoading}
+          />
+        )}
       </div>
     );
   },
