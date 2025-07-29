@@ -187,8 +187,11 @@ const sectionDescriptions = {
 
 - Follow existing patterns from PersonalitiesSection integration
 - Ensure import paths are correct for the new RolesSection component
+- **IMPORTANT: Import types from shared package using `@fishbowl-ai/shared`**
+- All component props interfaces should already exist in shared package
 - Test integration thoroughly before completing task
 - Consider any build or bundling implications of new components
+- Run `pnpm build:libs` if shared types are updated during implementation
 
 ## Dependencies
 

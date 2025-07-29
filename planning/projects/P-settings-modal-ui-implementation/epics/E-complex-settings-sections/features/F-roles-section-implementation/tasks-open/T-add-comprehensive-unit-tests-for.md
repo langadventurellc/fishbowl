@@ -20,6 +20,8 @@ Create comprehensive unit test suites for all role-related components to ensure 
 
 ## Technical Approach
 
+**IMPORTANT: All types should already exist in the shared package. Tests should import types from `@fishbowl-ai/shared` and verify they work correctly with desktop components.**
+
 ### 1. Test Shared Package Components
 
 **Test files in `packages/shared/src/__tests__/`:**
@@ -51,7 +53,9 @@ Create comprehensive unit test suites for all role-related components to ensure 
 **Test helpers:**
 
 ```typescript
-// Test utilities for role testing
+// Test utilities for role testing - import types from shared package
+import type { CustomRole, PredefinedRole } from "@fishbowl-ai/shared";
+
 export const createMockRole = (
   overrides?: Partial<CustomRole>,
 ): CustomRole => ({
@@ -194,11 +198,14 @@ export const createMockPredefinedRole = (
 
 ## Implementation Notes
 
+- **IMPORTANT: Import all types from `@fishbowl-ai/shared` - do not define types locally**
 - Use React Testing Library for component tests
 - Use Jest for unit tests and mocking
 - Use axe-core for accessibility testing
 - Follow existing test patterns from personality components
 - Create comprehensive mock data for consistent testing
+- Verify that shared types work correctly with all components
+- Test TypeScript type safety and inference
 
 ## Dependencies
 

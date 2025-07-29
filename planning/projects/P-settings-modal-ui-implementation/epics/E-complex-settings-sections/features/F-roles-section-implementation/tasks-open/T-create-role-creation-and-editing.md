@@ -20,14 +20,23 @@ Implement a modal dialog that houses the CreateRoleForm component for both creat
 
 ## Technical Approach
 
-### 1. Create RoleFormModal Component
+### 1. Create Shared Types First
 
-**File: `apps/desktop/src/components/settings/RoleFormModal.tsx`**
+**IMPORTANT: Before implementing components, create all types in the shared package following the project's architecture standards.**
 
-Implement modal using shadcn/ui Dialog:
+**File: `packages/shared/src/types/ui/components/RoleFormModalProps.ts`**
 
-```tsx
-interface RoleFormModalProps {
+```typescript
+/**
+ * RoleFormModal component props interface.
+ *
+ * @module types/ui/components/RoleFormModalProps
+ */
+
+import type { RoleFormData } from "../../settings/RoleFormData";
+import type { CustomRole } from "../../settings/CustomRole";
+
+export interface RoleFormModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   mode: "create" | "edit";
@@ -35,6 +44,24 @@ interface RoleFormModalProps {
   onSave: (data: RoleFormData) => void;
   isLoading?: boolean;
 }
+```
+
+**Update exports in `packages/shared/src/types/ui/components/index.ts`:**
+
+```typescript
+export * from "./RoleFormModalProps";
+```
+
+**Run `pnpm build:libs` after adding shared types to make them available to desktop app.**
+
+### 2. Create RoleFormModal Component
+
+**File: `apps/desktop/src/components/settings/RoleFormModal.tsx`**
+
+Implement modal using shadcn/ui Dialog:
+
+```tsx
+import { type RoleFormModalProps } from "@fishbowl-ai/shared";
 
 export const RoleFormModal = ({
   isOpen,

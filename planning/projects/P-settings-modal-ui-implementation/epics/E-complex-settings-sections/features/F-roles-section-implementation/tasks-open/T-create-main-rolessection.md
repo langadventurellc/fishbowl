@@ -23,16 +23,40 @@ Implement the main RolesSection component that orchestrates the complete roles m
 
 ## Technical Approach
 
-### 1. Create RolesSection Component
+### 1. Create Shared Types First
+
+**IMPORTANT: Before implementing any components, create all types in the shared package following the project's architecture standards.**
+
+**File: `packages/shared/src/types/ui/components/RolesSectionProps.ts`**
+
+```typescript
+/**
+ * RolesSection component props interface.
+ *
+ * @module types/ui/components/RolesSectionProps
+ */
+
+export interface RolesSectionProps {
+  className?: string;
+}
+```
+
+**Update exports in `packages/shared/src/types/ui/components/index.ts`:**
+
+```typescript
+export * from "./RolesSectionProps";
+```
+
+**Run `pnpm build:libs` after adding shared types to make them available to desktop app.**
+
+### 2. Create RolesSection Component
 
 **File: `apps/desktop/src/components/settings/RolesSection.tsx`**
 
 Implement main component with TabContainer integration:
 
 ```tsx
-interface RolesSectionProps {
-  className?: string;
-}
+import { type RolesSectionProps } from "@fishbowl-ai/shared";
 
 export const RolesSection = ({ className }: RolesSectionProps) => {
   const [selectedRole, setSelectedRole] = useState<CustomRole | null>(null);

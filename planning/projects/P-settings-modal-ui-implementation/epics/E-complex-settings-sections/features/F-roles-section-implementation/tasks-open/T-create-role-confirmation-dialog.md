@@ -20,20 +20,46 @@ Implement a confirmation dialog component specifically for role deletion to prev
 
 ## Technical Approach
 
-### 1. Create RoleDeleteDialog Component
+### 1. Create Shared Types First
 
-**File: `apps/desktop/src/components/settings/RoleDeleteDialog.tsx`**
+**IMPORTANT: Before implementing components, create all types in the shared package following the project's architecture standards.**
 
-Implement dialog using shadcn/ui AlertDialog:
+**File: `packages/shared/src/types/ui/components/RoleDeleteDialogProps.ts`**
 
-```tsx
-interface RoleDeleteDialogProps {
+```typescript
+/**
+ * RoleDeleteDialog component props interface.
+ *
+ * @module types/ui/components/RoleDeleteDialogProps
+ */
+
+import type { CustomRole } from "../../settings/CustomRole";
+
+export interface RoleDeleteDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   role: CustomRole | null;
   onConfirm: (role: CustomRole) => void;
   isLoading?: boolean;
 }
+```
+
+**Update exports in `packages/shared/src/types/ui/components/index.ts`:**
+
+```typescript
+export * from "./RoleDeleteDialogProps";
+```
+
+**Run `pnpm build:libs` after adding shared types to make them available to desktop app.**
+
+### 2. Create RoleDeleteDialog Component
+
+**File: `apps/desktop/src/components/settings/RoleDeleteDialog.tsx`**
+
+Implement dialog using shadcn/ui AlertDialog:
+
+```tsx
+import { type RoleDeleteDialogProps } from "@fishbowl-ai/shared";
 
 export const RoleDeleteDialog = ({
   isOpen,
