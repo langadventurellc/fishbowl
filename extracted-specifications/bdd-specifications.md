@@ -1,6 +1,6 @@
 # BDD Specifications
 
-Extracted: 2025-07-29T16:27:59.068Z
+Extracted: 2025-07-29T19:04:04.653Z
 
 ## Feature: Agent Configuration Creation Integration
 
@@ -46,35 +46,6 @@ Scenario: Service performance validation
 
 - should should meet performance requirements for complex cross-service workflows
 
-## Feature: Agent Configuration Error Handling and Validation
-
-Scenario: Security validation and access control enforcement
-
-- should should reject unauthorized agent creation attempts with proper security logging
-- should should sanitize and validate malicious input with comprehensive logging
-- should javascript:alert('xss')
-- should should enforce role-based access control with detailed permission checking
-- should should validate security constraints and policy enforcement with audit trails
-
-Scenario: Comprehensive audit logging and monitoring
-
-- should should log all agent creation operations with performance metrics and context preservation
-- should should track error correlation across service boundaries with detailed audit trails
-- should should monitor system health and resource utilization during agent creation operations
-
-Scenario: Data validation and sanitization enforcement
-
-- should should enforce complex constraint violations with detailed validation context and guidance
-- should should perform comprehensive data sanitization with attack pattern detection and prevention
-- should should validate cross-component data integrity with consistency checking and relationship validation
-
-Scenario: System resilience under sustained error conditions and stress
-
-- should should maintain system stability under sustained validation failures with error isolation
-- should should recover automatically from resource constraint scenarios with graceful degradation
-- should should handle cascading service failures with circuit breaker patterns and failover mechanisms
-- should should maintain data consistency during partial system failures with transaction-like behavior
-
 ## Feature: Agent Configuration Creation Integration
 
 Scenario: Cross-service agent configuration validation
@@ -97,29 +68,6 @@ Scenario: Validation error context preservation across service boundaries
 - should should preserve validation context across service boundaries
 - should should maintain error correlation across complex service interaction chains
 
-## Feature: Agent Configuration Workflow Orchestration
-
-Scenario: Complete End-to-End Workflow Orchestration
-
-- should should orchestrate complete agent creation with performance optimization
-- should should optimize component integration performance throughout workflow
-
-Scenario: Concurrent Workflow Management
-
-- should should handle multiple simultaneous agent creation workflows
-- should should maintain resource efficiency during concurrent workflow execution
-
-Scenario: Complex Configuration Workflow
-
-- should should handle complex agent configurations with advanced requirements
-- should should optimize complex configuration processing for performance
-
-Scenario: Workflow Error Recovery and Resilience
-
-- should should demonstrate workflow resilience under various failure conditions
-- should should maintain system stability during cascading failure scenarios
-- should should recover gracefully from partial workflow execution failures
-
 ## Feature: Agent Configuration References Integration
 
 Scenario: Validating cross-service references
@@ -140,41 +88,12 @@ Scenario: Service communication failures and cleanup
 
 Scenario: Reference validation performance requirements
 
-- should should meet 300ms performance requirement for cross-service reference validation
+- should should meet reasonable performance requirements for cross-service reference validation
 - should should optimize batch reference validation for multiple agents
 
 Scenario: Authorization and security context preservation
 
 - should should maintain security context during cross-service reference validation
-
-## Feature: Agent Configuration References Integration
-
-Scenario: Complex dependency graph validation across services
-
-- should should validate complex dependency chains (A→B→C→D) across service boundaries
-- should should optimize dependency resolution order for performance
-- should should track dependency changes through multi-service dependency chains
-
-Scenario: Circular reference detection and prevention
-
-- should should detect direct circular references (A→B→A) with detailed error reporting
-- should should detect complex circular references (A→B→C→A) across multiple services
-- should should prevent indirect circular references with dependency chain analysis
-
-Scenario: Reference change propagation through dependent configurations
-
-- should should propagate personality changes through dependent agent configurations
-- should should handle cascading dependency changes with conflict resolution
-- should should optimize change propagation for large dependency networks
-
-Scenario: Dependency resolution ordering optimization
-
-- should should optimize dependency resolution order for complex multi-service scenarios
-- should should handle dependency resolution conflicts with fallback strategies
-
-Scenario: Security context preservation during dependency tracking
-
-- should should maintain authorization context throughout dependency graph analysis
 
 ## Feature: Agent Configuration References Integration
 
@@ -245,142 +164,6 @@ Scenario: Cross-service performance validation and optimization
 
 ## Feature: Configuration Service CRUD Integration Tests
 
-Scenario: Configuration error handling and recovery resilience
-
-- should should demonstrate graceful error recovery across service interactions
-- should should handle service communication failures with proper error recovery
-- should should maintain system resilience during cascading failures across services
-- should should recover gracefully from partial operation failures across services
-- should should handle errors properly during rollback operations
-- should should meet performance requirements for error recovery operations
-- should should preserve error context for debugging and monitoring
-- should should maintain data consistency during error recovery across services
-
-## Feature: Configuration File Atomic Operations
-
-Scenario: Atomic configuration file updates
-
-- should should perform atomic file updates with rollback on failure
-- should should use temporary staging files for atomic writes
-- should should rollback changes when staging fails
-- should should rollback changes when commit fails
-
-Scenario: Concurrent file access handling
-
-- should should handle concurrent writes with proper locking
-- should should maintain file integrity during concurrent access
-
-Scenario: File operation error recovery
-
-- should should recover from validation errors during atomic writes
-- should should recover from disk space errors
-- should should handle corrupt file recovery with backup restoration
-
-## Feature: Configuration File Cross-Platform Operations
-
-Scenario: Cross-platform path handling
-
-- should should handle Windows-style paths correctly
-- should should handle Unix-style paths correctly
-- should should normalize paths consistently across platforms
-
-Scenario: Cross-platform file permissions
-
-- should should set appropriate file permissions on Unix-like systems
-- should should handle Windows file attributes appropriately
-- should should respect platform-specific permission inheritance
-
-Scenario: Cross-platform character encoding
-
-- should should handle UTF-8 encoding consistently across platforms
-- should should detect and handle platform-specific line endings
-- should should normalize line endings based on platform preferences
-
-Scenario: Cross-platform temporary file handling
-
-- should should create temporary files in platform-appropriate directories
-- should should clean up temporary files on all platforms
-- should should handle temporary file naming conflicts across platforms
-
-Scenario: Cross-platform file locking
-
-- should should implement file locking on Windows platforms
-- should should implement file locking on Unix-like platforms
-- should should handle file locking failures consistently across platforms
-
-Scenario: Cross-platform atomic operations
-
-- should should perform atomic file operations on all platforms
-- should should handle atomic operation failures consistently
-
-## Feature: Configuration File Lifecycle Management
-
-Scenario: Configuration file creation
-
-- should should create configuration files with proper metadata and permissions
-- should should initialize configuration files with default values
-- should should handle configuration file creation conflicts
-
-Scenario: Configuration file updates
-
-- should should maintain backup copies during file updates
-- should should preserve version history for configuration files
-- should should handle partial update failures with proper rollback
-
-Scenario: Configuration file backup and recovery
-
-- should should create incremental backups for configuration changes
-- should should recover configuration files from backup when needed
-- should should validate recovered configuration files
-
-Scenario: Configuration file deletion and cleanup
-
-- should should check dependencies before configuration file deletion
-- should should perform safe configuration file deletion with backup retention
-- should should clean up temporary files and associated resources
-
-Scenario: Configuration file archival and maintenance
-
-- should should archive old configuration files based on retention policy
-- should should maintain configuration file index for efficient access
-
-## Feature: Configuration File Validation Integration
-
-Scenario: Pre-persistence validation
-
-- should should validate configuration data before file persistence
-- should should prevent invalid configurations from being persisted
-- should should provide detailed validation errors with file context
-
-Scenario: File format validation
-
-- should should validate JSON format before parsing configuration
-- should should validate configuration schema after JSON parsing
-- should should handle encoding validation for configuration files
-
-Scenario: Invalid configuration prevention
-
-- should should prevent invalid configurations from being persisted to files
-- should should maintain transactional integrity during validation failures
-
-Scenario: Validation error context preservation
-
-- should should include file path context in validation errors
-- should should preserve field-level validation detail with debugging support
-
-Scenario: Cross-service validation integration
-
-- should should coordinate file operations with validation service
-- should should maintain validation context across file operations
-- should should handle validation service failures gracefully
-
-Scenario: Validation caching and performance
-
-- should should cache validation results for identical configurations
-- should should invalidate validation cache when schemas change
-
-## Feature: Configuration Service CRUD Integration Tests
-
 Scenario: Configuration Creation Integration Workflow
 
 - should should create configuration integrating personality, role, and agent creation workflows with proper coordination
@@ -405,132 +188,6 @@ Scenario: Complete Lifecycle Performance and Service Coordination
 
 - should should complete full lifecycle operations within performance requirements with service coordination maintenance
 - should should maintain service coordination overhead within requirements throughout lifecycle stages
-
-## Feature: Configuration Multi-Service Orchestration Integration
-
-Scenario: Complex multi-service workflow orchestration
-
-- should should orchestrate complete agent creation workflow across all services with state consistency
-- should should handle complex configuration update workflows with cross-service coordination
-
-Scenario: Workflow failure handling and compensation
-
-- should should execute compensation workflows when service orchestration fails
-- should should handle partial service failures with graceful degradation
-
-Scenario: Service communication patterns and error propagation
-
-- should should implement circuit breaker patterns for service communication fault tolerance
-- should should implement retry mechanisms with exponential backoff for transient failures
-
-Scenario: System-wide configuration consistency validation
-
-- should should maintain configuration consistency across service boundaries during updates
-- should should handle concurrent configuration changes with conflict resolution
-- should should validate eventual consistency during network partition recovery
-
-## Feature: Service Communication Pattern Integration Tests
-
-Scenario: Circuit breaker pattern fault tolerance
-
-- should should implement circuit breaker protection for PersonalityService communication failures
-- should should handle circuit breaker state transitions with proper timing
-- should should provide fallback mechanisms when circuit breakers are open
-
-Scenario: Retry mechanisms with exponential backoff
-
-- should should implement exponential backoff retry for transient FileService failures
-- should should distinguish between transient and permanent failures for retry logic
-- should should respect maximum retry limits to prevent infinite retry loops
-
-Scenario: Message passing integrity and data consistency
-
-- should should maintain message integrity during cross-service communication
-- should should validate data consistency across service boundaries
-- should should handle message corruption and communication timeouts gracefully
-
-Scenario: Service coordination error propagation
-
-- should should propagate errors with proper context across service boundaries
-- should should handle cascading failures with proper isolation
-
-## Feature: Configuration Service CRUD Integration Tests
-
-Scenario: Service coordination validation across all services
-
-- should should integrate properly with PersonalityService maintaining data consistency
-- should should coordinate with RoleService maintaining data consistency
-- should should handle complex dependency scenarios with AgentService integration
-- should should maintain context across service boundaries during error propagation
-
-Scenario: Service coordination performance validation
-
-- should should meet individual service coordination timing requirements
-- should should meet complex cross-service coordination performance requirements
-- should should maintain performance consistency during concurrent service coordination operations
-
-## Feature: Configuration System Consistency Integration
-
-Scenario: System-wide configuration consistency with cross-service validation
-
-- should should maintain consistency across all services during configuration changes
-- should should verify consistency validation includes cross-service boundary validation comprehensively
-
-Scenario: Conflict resolution mechanisms for concurrent configuration changes
-
-- should should handle concurrent configuration changes without data loss using conflict resolution mechanisms
-- should should implement optimistic locking mechanisms to prevent configuration corruption
-
-Scenario: System state consistency during partial service failures
-
-- should should maintain system state consistency even during partial service failures
-- should should implement recovery mechanisms that restore service consistency after failures
-
-Scenario: Eventual consistency guarantees within acceptable time bounds
-
-- should should achieve eventual consistency within 5 seconds maximum time window
-- should should validate eventual consistency with bounded staleness guarantees
-
-## Feature: Configuration Service CRUD Integration Tests
-
-Scenario: Configuration transaction consistency across services
-
-- should should maintain transaction consistency across service boundaries
-- should should enforce transaction boundaries with performance monitoring
-
-Scenario: Transaction rollback mechanism validation
-
-- should should trigger appropriate rollback across affected services on partial failures
-- should should complete rollback operations within performance requirements
-
-Scenario: Concurrent operation handling with conflict resolution
-
-- should should maintain data consistency during concurrent operations with conflict resolution
-- should should handle service communication failures with proper cleanup mechanisms
-
-## Feature: Configuration Workflow Coordination Integration
-
-Scenario: Advanced End-to-End Workflow Integration
-
-- should should execute full agent creation, modification, and deletion workflow with cross-service coordination
-- should should handle agent lifecycle workflow with complex dependency resolution
-- should should execute comprehensive configuration import, validation, transformation, and deployment
-- should should handle system integration workflow with external data synchronization
-
-Scenario: Advanced Coordination Pattern Testing
-
-- should should execute concurrent workflows with proper resource coordination and conflict resolution
-- should should optimize parallel workflow performance with intelligent scheduling
-- should should execute workflow branches based on service responses and validation results
-- should should handle complex branching scenarios with nested decision trees
-- should should execute nested workflows with proper context inheritance and composition patterns
-- should should handle deeply nested workflow hierarchies with efficient resource management
-
-Scenario: Resilient Workflow Execution
-
-- should should handle workflow resilience to partial failures with automatic recovery and continuation
-- should should implement comprehensive error handling with detailed failure analysis and recovery guidance
-- should should maintain workflow stability under high failure rates and system stress
 
 ## Feature: Personality Management CRUD Integration
 
@@ -563,72 +220,6 @@ Scenario: Batch personality operations with transaction management
 - should should handle batch personality creation with transaction consistency
 - should should process batch personality updates with partial success handling
 - should should handle batch personality deletion with cascade analysis
-
-## Feature: Personality Management Service Coordination Integration
-
-Scenario: PersonalityService and ValidationService coordination
-
-- should should coordinate personality creation with validation service integration
-- should should handle validation service errors with proper error propagation
-- should should maintain service transaction consistency during validation failures
-
-Scenario: PersonalityService and PersistenceService coordination
-
-- should should coordinate personality persistence with data service integration
-- should should handle persistence service failures with proper error handling
-- should should coordinate batch personality operations with persistence optimization
-
-Scenario: Three-service coordination for complete personality workflows
-
-- should should coordinate complete personality creation across all three services
-- should should handle complex error scenarios across multiple service failures
-- should should maintain performance characteristics under service coordination load
-
-Scenario: Service communication protocols and error boundaries
-
-- should should implement proper service communication protocols with message validation
-- should should establish proper error boundaries between services with isolation
-
-Scenario: Service configuration and dependency management
-
-- should should handle service configuration changes with dynamic reconfiguration
-- should should manage service dependencies with proper initialization ordering
-
-Scenario: Service monitoring and observability integration
-
-- should should provide comprehensive service coordination monitoring and metrics
-- should should implement distributed tracing for service coordination workflows
-
-Scenario: Enhanced multi-service transaction coordination
-
-- should should coordinate atomic personality creation across all services with rollback capability
-- should should handle mid-transaction failures with comprehensive rollback across services
-- should should coordinate nested service operations with hierarchical transaction management
-
-Scenario: Advanced error context preservation and propagation
-
-- should should preserve detailed error context across multiple service boundary crossings
-- should should handle cascading service failures with error context accumulation
-- should should maintain error correlation IDs across distributed service operations
-
-Scenario: Detailed concurrent access and optimistic locking
-
-- should should handle concurrent personality modifications with version-based conflict detection
-- should should coordinate concurrent service operations with resource locking
-- should should handle deadlock detection and resolution in multi-service scenarios
-
-Scenario: Enhanced service recovery and fallback mechanisms
-
-- should should implement circuit breaker pattern for service coordination failures
-- should should coordinate graceful degradation across multiple service failures
-- should should implement automatic service recovery with health monitoring
-- should should coordinate service failover with data consistency preservation
-
-Scenario: Service coordination performance and monitoring integration
-
-- should should monitor service coordination performance with distributed tracing
-- should should implement service coordination load balancing with performance optimization
-- should should coordinate service scaling with adaptive capacity management
 
 ## Feature: Personality Management Validation Integration
 
@@ -664,13 +255,6 @@ Scenario: Comprehensive 14 behavioral traits validation
 - should should validate complete 14 behavioral traits with Big Five mapping consistency
 - should should enforce business rules for trait combination constraints
 
-Scenario: Advanced psychological model compliance validation
-
-- should should validate trait combinations based on psychological research correlations
-- should should detect statistically improbable trait combinations with confidence scoring
-- should should validate age-appropriate trait development patterns
-- should should validate cultural sensitivity in trait interpretation
-
 Scenario: Advanced validation error handling and service integration
 
 - should should handle complex validation failures with detailed error taxonomy
@@ -682,7 +266,7 @@ Scenario: Advanced validation error handling and service integration
 
 Scenario: Big Five validation performance and scalability
 
-- should should validate single personality validation performance within 50ms threshold
+- should should validate single personality validation performance
 - should should validate batch personality validation performance scaling
 - should should validate memory efficiency during extended validation sessions
 - should should validate validation accuracy under performance pressure
@@ -691,25 +275,25 @@ Scenario: Big Five validation performance and scalability
 
 Scenario: Custom Capability Definition with Technical Validation
 
-- should should validate custom capability definition with technical constraints within 200ms
+- should should validate custom capability definition with technical constraints
 - should should handle invalid capability definitions with detailed feedback
 - should should validate capability combinations for technical conflicts
 
 Scenario: Capability Constraint Enforcement During Agent Configuration
 
-- should should enforce capability constraints during role configuration within 100ms
+- should should enforce capability constraints during role configuration
 - should should prevent role configuration when constraints are violated
 - should should validate constraint inheritance from template roles
 
 Scenario: Authorization Integration with Custom Role Permissions
 
-- should should integrate custom role permissions with authorization services within 150ms
+- should should integrate custom role permissions with authorization services
 - should should handle authorization failures with security context preservation
 - should should validate role hierarchy permissions for authorization integration
 
 Scenario: Conflict Detection with System Requirements
 
-- should should detect capability conflicts with system requirements within 300ms
+- should should detect capability conflicts with system requirements
 - should should validate capability compatibility with existing system roles
 - should should handle complex multi-service conflict resolution scenarios
 
@@ -717,25 +301,25 @@ Scenario: Conflict Detection with System Requirements
 
 Scenario: Creating custom role with complete validation
 
-- should should create custom role through service integration within 500ms
+- should should create custom role through service integration
 - should should handle validation errors with detailed feedback
 - should should validate security constraints during role creation
 
 Scenario: Reading custom roles with data integrity
 
-- should should retrieve custom role with complete data within 50ms
+- should should retrieve custom role with complete data
 - should should handle missing role gracefully
 - should should retrieve multiple roles efficiently
 
 Scenario: Updating custom roles with validation and versioning
 
-- should should update custom role with validation within 500ms
+- should should update custom role with validation
 - should should handle concurrent updates with optimistic locking
 - should should validate business rules during role updates
 
 Scenario: Deleting custom roles with dependency checking
 
-- should should delete custom role with dependency validation within 300ms
+- should should delete custom role with dependency validation
 - should should prevent deletion when dependencies exist
 - should should handle cascade deletion scenarios
 
@@ -749,23 +333,23 @@ Scenario: Service coordination and error handling
 
 Scenario: Creating custom role from predefined template
 
-- should should create custom role using predefined template through service integration within 300ms
+- should should create custom role using predefined template through service integration
 - should should handle template not found gracefully
 - should should validate template access permissions before creation
 
 Scenario: Template reference tracking and metadata management
 
-- should should maintain template reference tracking for custom roles within 50ms
+- should should maintain template reference tracking for custom roles
 - should should handle template reference updates during role modifications
 
 Scenario: Template modification isolation and security
 
-- should should ensure template data copying prevents reference sharing within 100ms
+- should should ensure template data copying prevents reference sharing
 - should should validate template security constraints during custom role creation
 
 Scenario: Template version compatibility validation
 
-- should should validate template version compatibility during custom role creation within 150ms
+- should should validate template version compatibility during custom role creation
 - should should handle template version incompatibility gracefully
 
 Scenario: Error handling and service coordination
@@ -777,25 +361,25 @@ Scenario: Error handling and service coordination
 
 Scenario: Validating custom role schema integration
 
-- should should validate custom role schema through ValidationService integration within 100ms
+- should should validate custom role schema through ValidationService integration
 - should should detect schema violations with specific field context and error reporting
 - should should validate complex schema structures with nested validation requirements
 
 Scenario: Enforcing business rules during custom role operations
 
-- should should validate custom role against business rules through service integration within 200ms
+- should should validate custom role against business rules through service integration
 - should should prevent business rule violations with clear error messages and guidance
 - should should handle complex business rule scenarios with multi-layer validation
 
 Scenario: Validating custom role constraints and capability limits
 
-- should should validate role constraints for feasibility and enforceability within 150ms
+- should should validate role constraints for feasibility and enforceability
 - should should detect constraint violations before role creation or modification
 - should should validate capability boundaries against system limitations and security policies
 
 Scenario: Validating custom roles against existing role ecosystem
 
-- should should validate role ecosystem to detect conflicts between custom roles within 500ms
+- should should validate role ecosystem to detect conflicts between custom roles
 - should should identify role overlap scenarios and manage them appropriately
 - should should maintain system coherence through cross-role validation with performance efficiency
 
