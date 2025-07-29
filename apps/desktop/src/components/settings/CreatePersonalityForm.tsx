@@ -23,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Input } from "../ui/input";
+import { PersonalityNameInput } from "./PersonalityNameInput";
 import { Slider } from "../ui/slider";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
@@ -47,6 +47,75 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
 }) => {
   const [isBehaviorsExpanded, setIsBehaviorsExpanded] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
+
+  // Mock data for uniqueness validation - will be replaced with store data
+  const savedPersonalities = [
+    {
+      id: "analytical-researcher",
+      name: "Analytical Researcher",
+      bigFive: {
+        openness: 85,
+        conscientiousness: 90,
+        extraversion: 35,
+        agreeableness: 70,
+        neuroticism: 25,
+      },
+      behaviors: {},
+      customInstructions: "",
+    },
+    {
+      id: "creative-brainstormer",
+      name: "Creative Brainstormer",
+      bigFive: {
+        openness: 95,
+        conscientiousness: 45,
+        extraversion: 80,
+        agreeableness: 85,
+        neuroticism: 40,
+      },
+      behaviors: {},
+      customInstructions: "",
+    },
+    {
+      id: "diplomatic-mediator",
+      name: "Diplomatic Mediator",
+      bigFive: {
+        openness: 70,
+        conscientiousness: 80,
+        extraversion: 65,
+        agreeableness: 95,
+        neuroticism: 20,
+      },
+      behaviors: {},
+      customInstructions: "",
+    },
+    {
+      id: "pragmatic-executor",
+      name: "Pragmatic Executor",
+      bigFive: {
+        openness: 55,
+        conscientiousness: 95,
+        extraversion: 60,
+        agreeableness: 65,
+        neuroticism: 30,
+      },
+      behaviors: {},
+      customInstructions: "",
+    },
+    {
+      id: "enthusiastic-mentor",
+      name: "Enthusiastic Mentor",
+      bigFive: {
+        openness: 80,
+        conscientiousness: 75,
+        extraversion: 90,
+        agreeableness: 85,
+        neuroticism: 35,
+      },
+      behaviors: {},
+      customInstructions: "",
+    },
+  ];
 
   const form = useForm<PersonalityFormData>({
     resolver: zodResolver(personalitySchema),
@@ -132,11 +201,16 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Personality Name</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Enter personality name" />
+                <PersonalityNameInput
+                  value={field.value}
+                  onChange={field.onChange}
+                  existingPersonalities={savedPersonalities}
+                  showCharacterCounter={true}
+                  aria-describedby={`${field.name}-message`}
+                />
               </FormControl>
-              <FormMessage />
+              <FormMessage id={`${field.name}-message`} />
             </FormItem>
           )}
         />
