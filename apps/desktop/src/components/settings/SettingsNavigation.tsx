@@ -22,18 +22,13 @@ import {
   useSettingsActions,
   type SettingsSection,
   type SettingsSubTab,
+  type SettingsNavigationProps,
+  type EnhancedNavigationListProps,
 } from "@fishbowl-ai/shared";
 import { NavigationItem } from "./NavigationItem";
 import { SubNavigationTab } from "./SubNavigationTab";
 import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
 import { useAccessibilityAnnouncements } from "@/utils";
-
-interface SettingsNavigationProps {
-  activeSection?: SettingsSection;
-  onSectionChange?: (section: SettingsSection) => void;
-  className?: string;
-  navigationId?: string; // New prop for ARIA relationships
-}
 
 const navigationSections = [
   { id: "general" as const, label: "General", hasSubTabs: false },
@@ -177,30 +172,6 @@ export function SettingsNavigation({
       </div>
     </nav>
   );
-}
-
-interface EnhancedNavigationListProps {
-  sections: readonly (
-    | {
-        readonly id: SettingsSection;
-        readonly label: string;
-        readonly hasSubTabs: false;
-      }
-    | {
-        readonly id: SettingsSection;
-        readonly label: string;
-        readonly hasSubTabs: true;
-        readonly subTabs: readonly {
-          readonly id: SettingsSubTab;
-          readonly label: string;
-        }[];
-      }
-  )[];
-  activeSection: SettingsSection;
-  activeSubTab: SettingsSubTab;
-  onSectionChange: (section: SettingsSection) => void;
-  onSubTabChange: (tab: SettingsSubTab) => void;
-  isCompact: boolean;
 }
 
 const EnhancedNavigationList = React.memo(function EnhancedNavigationList({

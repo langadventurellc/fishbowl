@@ -21,11 +21,8 @@ import {
   type TabConfiguration,
   type Personality,
   type PersonalityFormData,
+  type PersonalitiesSectionProps,
 } from "@fishbowl-ai/shared";
-
-interface PersonalitiesSectionProps {
-  // Future props for settings modal integration
-}
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
   const { activeSubTab } = useSettingsNavigation();

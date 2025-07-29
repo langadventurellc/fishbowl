@@ -29,6 +29,9 @@ import {
   generalSettingsSchema,
   useUnsavedChanges,
   type GeneralSettingsFormData,
+  type ThemePreviewProps,
+  type FontSizePreviewProps,
+  type SettingsContentProps,
 } from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Download, Trash2, Upload } from "lucide-react";
@@ -372,9 +375,6 @@ const GeneralSettings: React.FC = () => {
 };
 
 // ThemePreview component with React.memo for performance optimization
-interface ThemePreviewProps {
-  selectedTheme: "light" | "dark" | "system";
-}
 
 const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
   const previewColors = useMemo(() => {
@@ -438,9 +438,6 @@ const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
 ThemePreview.displayName = "ThemePreview";
 
 // FontSizePreview component with React.memo for performance optimization
-interface FontSizePreviewProps {
-  fontSize: number;
-}
 
 const FontSizePreview = React.memo<FontSizePreviewProps>(({ fontSize }) => {
   return (
@@ -1029,12 +1026,6 @@ const sectionComponents = {
   roles: RolesSettings,
   advanced: AdvancedSettings,
 } as const;
-
-interface SettingsContentProps {
-  activeSection: string;
-  className?: string;
-  contentId?: string; // New prop for ARIA relationships
-}
 
 export function SettingsContent({
   activeSection,

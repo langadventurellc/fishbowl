@@ -8,3 +8,6 @@ export * from "./stores";
 
 // Export hooks module
 export * from "./hooks";
+
+// Export schemas module
+export * from "./schemas";

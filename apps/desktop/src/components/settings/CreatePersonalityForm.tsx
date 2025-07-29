@@ -15,7 +15,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -34,28 +33,12 @@ import {
   CollapsibleTrigger,
 } from "../ui/collapsible";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useUnsavedChanges } from "@fishbowl-ai/shared";
-
-const personalitySchema = z.object({
-  name: z.string().min(1, "Name is required").max(50, "Name too long"),
-  bigFive: z.object({
-    openness: z.number().min(0).max(100),
-    conscientiousness: z.number().min(0).max(100),
-    extraversion: z.number().min(0).max(100),
-    agreeableness: z.number().min(0).max(100),
-    neuroticism: z.number().min(0).max(100),
-  }),
-  behaviors: z.record(z.string(), z.number().min(0).max(100)),
-  customInstructions: z.string().max(500, "Instructions too long"),
-});
-
-type PersonalityFormData = z.infer<typeof personalitySchema>;
-
-interface CreatePersonalityFormProps {
-  onSave: (data: PersonalityFormData) => void;
-  onCancel: () => void;
-  initialData?: Partial<PersonalityFormData>;
-}
+import {
+  useUnsavedChanges,
+  personalitySchema,
+  type PersonalityFormData,
+  type CreatePersonalityFormProps,
+} from "@fishbowl-ai/shared";
 
 export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   onSave,

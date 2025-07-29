@@ -19,3 +19,7 @@ export * from "./menu";
 
 // Re-export all theme-related types
 export * from "./theme";
+
+// Re-export preview component props
+export * from "./ThemePreviewProps";
+export * from "./FontSizePreviewProps";

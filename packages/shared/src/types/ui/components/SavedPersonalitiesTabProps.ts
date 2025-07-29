@@ -1,0 +1,12 @@
+/**
+ * Props for saved personalities tab component
+ *
+ * @module types/ui/components/SavedPersonalitiesTabProps
+ */
+
+import type { Personality } from "../../settings";
+
+export interface SavedPersonalitiesTabProps {
+  onEdit: (personality: Personality) => void;
+  onClone: (personality: Personality) => void;
+}

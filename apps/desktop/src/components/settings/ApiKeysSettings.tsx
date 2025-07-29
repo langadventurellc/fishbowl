@@ -1,44 +1,18 @@
 import {
   PROVIDERS,
   createInitialProviderState,
-  createProviderFormSchema,
   validateProviderData,
+  createApiKeysFormSchema,
   type ProviderFormData,
   type ProviderState,
+  type ApiKeysFormData,
+  type ApiKeysState,
 } from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useDebounce } from "../../hooks/useDebounce";
 import { ProviderCard } from "./ProviderCard";
-
-/**
- * Create comprehensive validation schema for all providers
- */
-const createApiKeysFormSchema = () => {
-  const providerSchemas = Object.values(PROVIDERS).reduce(
-    (acc, provider) => {
-      acc[provider.id] = createProviderFormSchema(provider);
-      return acc;
-    },
-    {} as Record<string, z.ZodSchema>,
-  );
-
-  return z.object(providerSchemas);
-};
-
-type ApiKeysFormData = z.infer<ReturnType<typeof createApiKeysFormSchema>>;
-
-/**
- * Enhanced API Keys state interface with validation support
- */
-interface ApiKeysState {
-  [providerId: string]: ProviderState & {
-    errors?: { apiKey?: string; baseUrl?: string };
-    isValidating?: boolean;
-  };
-}
 
 /**
  * API Keys Settings component that renders provider cards for OpenAI and Anthropic

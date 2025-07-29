@@ -13,12 +13,10 @@
 
 import React from "react";
 import { PersonalityCard } from "./PersonalityCard";
-import type { Personality } from "@fishbowl-ai/shared";
-
-interface SavedPersonalitiesTabProps {
-  onEdit: (personality: Personality) => void;
-  onClone: (personality: Personality) => void;
-}
+import type {
+  Personality,
+  SavedPersonalitiesTabProps,
+} from "@fishbowl-ai/shared";
 
 export const SavedPersonalitiesTab: React.FC<SavedPersonalitiesTabProps> = ({
   onEdit,

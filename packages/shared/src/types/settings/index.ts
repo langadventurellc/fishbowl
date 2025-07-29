@@ -1,6 +1,8 @@
 // Settings types
 export * from "./generalSettings";
 export * from "./providers";
+export * from "./ApiKeysFormData";
+export * from "./ApiKeysState";
 
 // Tab system types
 export * from "./TabConfiguration";

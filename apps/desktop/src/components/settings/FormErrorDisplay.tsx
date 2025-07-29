@@ -7,11 +7,7 @@
 
 import React from "react";
 import { AlertTriangle, XCircle } from "lucide-react";
-
-interface FormErrorDisplayProps {
-  error: string | null;
-  onDismiss?: () => void;
-}
+import type { FormErrorDisplayProps } from "@fishbowl-ai/shared";
 
 export const FormErrorDisplay: React.FC<FormErrorDisplayProps> = ({
   error,

@@ -1,17 +1,9 @@
 /**
- * Form data structure for personality creation and editing
+ * Form data type for personality creation and editing (derived from schema)
  *
  * @module types/settings/PersonalityFormData
  */
-import type { BigFiveTraits } from "./BigFiveTraits";
+import { z } from "zod";
+import { personalitySchema } from "../../schemas";
 
-export interface PersonalityFormData {
-  /** Human-readable name for the personality */
-  name: string;
-  /** Big Five personality traits */
-  bigFive: BigFiveTraits;
-  /** Additional behavior slider values (14 total) */
-  behaviors: Record<string, number>;
-  /** Custom instructions for personality behavior */
-  customInstructions: string;
-}
+export type PersonalityFormData = z.infer<typeof personalitySchema>;
