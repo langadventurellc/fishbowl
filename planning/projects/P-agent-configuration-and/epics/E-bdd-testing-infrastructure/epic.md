@@ -2,7 +2,7 @@
 kind: epic
 id: E-bdd-testing-infrastructure
 title: BDD Testing Infrastructure
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T13:21:42.992576"

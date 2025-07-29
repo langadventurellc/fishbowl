@@ -5,20 +5,20 @@
  * covering creation, updates, deletion, and recovery with metadata management.
  */
 
-import { FileLifecycleManager } from "./utilities/FileLifecycleManager";
-import { FileServiceMockFactory } from "./support/FileServiceMockFactory";
-import { BackupServiceMockFactory } from "./support/BackupServiceMockFactory";
-import { DependencyServiceMockFactory } from "./support/DependencyServiceMockFactory";
-import {
-  EnhancedTemporaryDirectoryManager,
-  type ConfigurationData,
-  type ConfigTempDirResult,
-} from "./utilities/TemporaryDirectoryManager";
 import type {
-  FileService,
   BackupService,
   DependencyService,
-} from "../../types/services";
+  FileService,
+} from "../../../types/services";
+import { BackupServiceMockFactory } from "../support/BackupServiceMockFactory";
+import { DependencyServiceMockFactory } from "../support/DependencyServiceMockFactory";
+import { FileServiceMockFactory } from "../support/FileServiceMockFactory";
+import { FileLifecycleManager } from "../utilities/FileLifecycleManager";
+import {
+  EnhancedTemporaryDirectoryManager,
+  type ConfigTempDirResult,
+  type ConfigurationData,
+} from "../utilities/TemporaryDirectoryManager";
 
 describe("Configuration File Lifecycle Management", () => {
   let fileService: jest.Mocked<FileService>;
