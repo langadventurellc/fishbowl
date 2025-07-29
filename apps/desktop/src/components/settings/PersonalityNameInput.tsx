@@ -123,7 +123,7 @@ export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
     } else {
       setValidation({ isValid: false, errors: [], isValidating: false });
     }
-  }, [value, debouncedValidate]);
+  }, [value]); // Remove debouncedValidate from dependencies to prevent infinite loop
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);

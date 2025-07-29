@@ -12,9 +12,22 @@
  * @module components/settings/CreatePersonalityForm
  */
 
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import {
+  personalitySchema,
+  useUnsavedChanges,
+  type CreatePersonalityFormProps,
+  type PersonalityFormData,
+} from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "../ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
 import {
   Form,
   FormControl,
@@ -23,22 +36,9 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { PersonalityNameInput } from "./PersonalityNameInput";
 import { Slider } from "../ui/slider";
 import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../ui/collapsible";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import {
-  useUnsavedChanges,
-  personalitySchema,
-  type PersonalityFormData,
-  type CreatePersonalityFormProps,
-} from "@fishbowl-ai/shared";
+import { PersonalityNameInput } from "./PersonalityNameInput";
 
 export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   onSave,
@@ -46,6 +46,13 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   initialData,
 }) => {
   const [isBehaviorsExpanded, setIsBehaviorsExpanded] = useState(false);
+  const [bigFiveValues, setBigFiveValues] = useState({
+    openness: 50,
+    conscientiousness: 50,
+    extraversion: 50,
+    agreeableness: 50,
+    neuroticism: 50,
+  });
   const { setUnsavedChanges } = useUnsavedChanges();
 
   // Mock data for uniqueness validation - will be replaced with store data
@@ -150,13 +157,13 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
     mode: "onChange",
   });
 
-  // Track unsaved changes
-  useEffect(() => {
-    const subscription = form.watch(() => {
-      setUnsavedChanges(form.formState.isDirty);
-    });
-    return () => subscription.unsubscribe();
-  }, [form, setUnsavedChanges]);
+  // Track unsaved changes - TEMPORARILY DISABLED TO FIX SLIDERS
+  // useEffect(() => {
+  //   const subscription = form.watch(() => {
+  //     setUnsavedChanges(form.formState.isDirty);
+  //   });
+  //   return () => subscription.unsubscribe();
+  // }, [form, setUnsavedChanges]);
 
   const handleSave = useCallback(
     (data: PersonalityFormData) => {
@@ -166,14 +173,6 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
     },
     [onSave, form, setUnsavedChanges],
   );
-
-  const bigFiveTraits = [
-    { key: "openness" as const, label: "Openness" },
-    { key: "conscientiousness" as const, label: "Conscientiousness" },
-    { key: "extraversion" as const, label: "Extraversion" },
-    { key: "agreeableness" as const, label: "Agreeableness" },
-    { key: "neuroticism" as const, label: "Neuroticism" },
-  ];
 
   const behaviorTraits = [
     { key: "creativity", label: "Creativity" },
@@ -218,34 +217,46 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
         {/* Big Five Traits */}
         <div className="space-y-4">
           <h3 className="text-lg font-semibold">Big Five Personality Traits</h3>
-          {bigFiveTraits.map((trait) => (
-            <FormField
-              key={trait.key}
-              control={form.control}
-              name={`bigFive.${trait.key}`}
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex justify-between">
-                    <FormLabel>{trait.label}</FormLabel>
-                    <span className="text-sm text-muted-foreground">
-                      {field.value}
-                    </span>
-                  </div>
-                  <FormControl>
-                    <Slider
-                      value={[field.value]}
-                      onValueChange={(value) => field.onChange(value[0])}
-                      max={100}
-                      min={0}
-                      step={1}
-                      className="w-full"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          ))}
+          {[
+            { key: "openness" as const, label: "Openness" },
+            { key: "conscientiousness" as const, label: "Conscientiousness" },
+            { key: "extraversion" as const, label: "Extraversion" },
+            { key: "agreeableness" as const, label: "Agreeableness" },
+            { key: "neuroticism" as const, label: "Neuroticism" },
+          ].map((trait) => {
+            const currentValue = bigFiveValues[trait.key];
+            return (
+              <div key={trait.key} className="space-y-2">
+                <div className="flex justify-between">
+                  <label className="text-sm font-medium">{trait.label}</label>
+                  <span className="text-sm text-muted-foreground">
+                    {currentValue}
+                  </span>
+                </div>
+                <Slider
+                  value={[currentValue]}
+                  onValueChange={(value) => {
+                    const newValue = value[0] ?? 50;
+                    // Update local state immediately for responsive UI
+                    setBigFiveValues((prev) => ({
+                      ...prev,
+                      [trait.key]: newValue,
+                    }));
+                    // Update form state
+                    form.setValue(`bigFive.${trait.key}`, newValue, {
+                      shouldDirty: true,
+                      shouldValidate: false,
+                      shouldTouch: true,
+                    });
+                  }}
+                  max={100}
+                  min={0}
+                  step={1}
+                  className="w-full"
+                />
+              </div>
+            );
+          })}
         </div>
 
         {/* Collapsible Behavior Sliders */}

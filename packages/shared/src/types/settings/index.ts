@@ -11,6 +11,7 @@ export * from "./TabSectionConfiguration";
 
 // Personality types
 export * from "./BigFiveTraits";
+export * from "./BigFiveSlidersProps";
 export * from "./PersonalityFormData";
 export * from "./Personality";
 export * from "./PersonalityCardProps";
