@@ -73,10 +73,10 @@ const useModalClasses = () => ({
     // Enhanced responsive behavior
     // Large screens: 80% viewport, max 1200px
     "!w-[var(--dt-modal-width-small)] h-[var(--dt-modal-height-small)] !max-w-[var(--dt-modal-max-width)] max-h-[var(--dt-modal-max-height)]",
-    // Medium screens (< 1000px): 95% width, navigation 180px
-    "max-[1000px]:w-[var(--dt-modal-width-medium)]",
-    // Small screens (< 800px): Full width content area, collapsible navigation
-    "max-[800px]:w-[var(--dt-modal-width-medium)] max-[800px]:h-[var(--dt-modal-height-mobile)]",
+    // Medium screens (tablets): 95% width, navigation 180px
+    "max-lg:w-[var(--dt-modal-width-medium)]",
+    // Small screens (mobile): Full width content area, collapsible navigation
+    "max-md:w-[var(--dt-modal-width-medium)] max-md:h-[var(--dt-modal-height-mobile)]",
     // Minimum constraints
     "min-w-[var(--dt-modal-min-width)] min-h-[var(--dt-modal-min-height)]",
     // Enhanced z-index for content above overlay
@@ -259,7 +259,7 @@ export function SettingsModal({
 
             {/* Modal body with navigation and content landmarks */}
             <div
-              className="flex-1 flex max-[799px]:flex-col min-[800px]:flex-row overflow-hidden"
+              className="flex-1 flex max-md:flex-col md:flex-row overflow-hidden"
               role="main"
               id={dialogIds.mainId}
             >

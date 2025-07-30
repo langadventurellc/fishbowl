@@ -239,6 +239,13 @@
   --animate-duration-fast: var(--dt-animation-fast);
   --animate-duration-normal: var(--dt-animation-normal);
   --animate-duration-slow: var(--dt-animation-slow);
+  
+  /* Breakpoint Extensions - Integrating Design Token Breakpoints with Tailwind */
+  --breakpoint-sm: 640px;                              /* Tailwind default sm */
+  --breakpoint-md: var(--dt-breakpoint-tablet-min);    /* 768px - Tablet and up */
+  --breakpoint-lg: var(--dt-breakpoint-desktop-min);   /* 1024px - Desktop and up */
+  --breakpoint-xl: var(--dt-breakpoint-wide-min);      /* 1280px - Wide desktop and up */
+  --breakpoint-2xl: 1536px;                            /* Tailwind default 2xl */
 }
 
 @layer base {

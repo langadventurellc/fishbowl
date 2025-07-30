@@ -1,21 +1,14 @@
 /**
- * SettingsNavigation component provides responsive navigation panel for settings modal.
+ * SettingsNavigation component provides navigation panel for settings modal.
  *
  * Features:
- * - Responsive behavior: full navigation above 800px, collapsible below
- * - Navigation width: 200px on larger screens, 180px on medium screens < 1000px
+ * - Fixed width navigation for desktop app
+ * - Navigation width: 200px on large screens, 180px on medium screens
  * - Supports keyboard navigation and accessibility
  */
 
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useCallback } from "react";
 import { cn } from "../../lib/utils";
-import { Button } from "../ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "../ui/collapsible";
 import {
   useActiveSection,
   useActiveSubTab,
@@ -71,8 +64,6 @@ export function SettingsNavigation({
   className,
   navigationId = "settings-navigation", // Default ID
 }: SettingsNavigationProps) {
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
   // Accessibility announcements
   const { announceSection } = useAccessibilityAnnouncements();
 
@@ -100,12 +91,10 @@ export function SettingsNavigation({
       className={cn(
         // Base navigation styling
         "bg-muted/50 border-r border-solid border-border flex flex-col",
-        // Desktop: exactly 200px width (≥ 1000px)
-        "min-[1000px]:w-[var(--dt-nav-width-desktop)]",
-        // Medium screens: exactly 180px width (< 1000px, ≥ 800px)
-        "min-[800px]:max-[999px]:w-[var(--dt-nav-width-medium)]",
-        // Mobile: collapsible hamburger menu (< 800px)
-        "max-[799px]:w-auto max-[799px]:border-r-0 max-[799px]:border-b",
+        // Default width for medium screens
+        "w-[var(--dt-nav-width-medium)]",
+        // Desktop: exactly 200px width (≥ 1024px)
+        "lg:w-[var(--dt-nav-width-desktop)]",
         // Padding: 10px internal padding
         "p-[var(--dt-nav-padding)]",
         // Scrollable when content exceeds height
@@ -122,45 +111,8 @@ export function SettingsNavigation({
         Navigate between different settings sections using arrow keys or Tab.
         Press Enter or Space to select a section.
       </div>
-      {/* Collapsible trigger for small screens */}
-      <div className="max-[800px]:block hidden">
-        <Collapsible open={!isCollapsed} onOpenChange={setIsCollapsed}>
-          <CollapsibleTrigger asChild>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full justify-between p-4 rounded-none"
-              aria-expanded={!isCollapsed}
-              aria-controls="navigation-content"
-            >
-              <span className="font-medium">Navigation</span>
-              {isCollapsed ? (
-                <ChevronRight className="h-4 w-4" />
-              ) : (
-                <ChevronLeft className="h-4 w-4" />
-              )}
-            </Button>
-          </CollapsibleTrigger>
-          <CollapsibleContent id="navigation-content">
-            <EnhancedNavigationList
-              sections={navigationSections}
-              activeSection={activeSection}
-              activeSubTab={activeSubTab}
-              onSectionChange={handleSectionChange}
-              onSubTabChange={setActiveSubTab}
-              isCompact={true}
-            />
-          </CollapsibleContent>
-        </Collapsible>
-      </div>
-
-      {/* Full navigation for larger screens */}
-      <div className="min-[801px]:block hidden flex-1">
-        <div className="p-4 border-b border-border">
-          <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wide">
-            Settings
-          </h3>
-        </div>
+      {/* Navigation content - always visible for desktop app */}
+      <div className="flex-1">
         <EnhancedNavigationList
           sections={navigationSections}
           activeSection={activeSection}

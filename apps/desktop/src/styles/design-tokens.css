@@ -128,12 +128,12 @@
     
     /* === BREAKPOINT TOKENS === */
     
-    /* Responsive Breakpoints */
-    --dt-breakpoint-mobile-max: 799px;
-    --dt-breakpoint-tablet-min: 800px;
-    --dt-breakpoint-tablet-max: 999px;
-    --dt-breakpoint-desktop-min: 1000px;
-    --dt-breakpoint-wide-min: 1200px;
+    /* Standardized Responsive Breakpoints - Aligned with Tailwind CSS v4 Standards */
+    --dt-breakpoint-mobile-max: 767px;    /* Max mobile width (md: 768px - 1) */
+    --dt-breakpoint-tablet-min: 768px;    /* Tablet and up (md: 768px) */
+    --dt-breakpoint-tablet-max: 1023px;   /* Max tablet width (lg: 1024px - 1) */
+    --dt-breakpoint-desktop-min: 1024px;  /* Desktop and up (lg: 1024px) */
+    --dt-breakpoint-wide-min: 1280px;     /* Wide desktop and up (xl: 1280px) */
     
     /* === ACCESSIBILITY TOKENS === */
     

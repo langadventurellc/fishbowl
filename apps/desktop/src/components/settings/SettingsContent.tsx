@@ -954,12 +954,12 @@ export function SettingsContent({
         // Base content styling
         "flex-1 overflow-y-scroll",
         // Responsive padding: 30px desktop, 20px reduced screens
-        "min-[1000px]:p-[var(--dt-content-padding-desktop)]",
-        "max-[999px]:p-[var(--dt-content-padding-mobile)]",
+        "lg:p-[var(--dt-content-padding-desktop)]",
+        "max-lg:p-[var(--dt-content-padding-mobile)]",
         // Full width when navigation is hidden/collapsed
-        "max-[799px]:w-full",
+        "max-md:w-full",
         // Takes remaining width when navigation is visible
-        "min-[800px]:flex-1",
+        "md:flex-1",
         // Background for content area
         "bg-background",
         className,
