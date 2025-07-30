@@ -1,12 +1,12 @@
 /**
- * ValidationResult interface for form field validation.
+ * ValidationResultViewModel interface for form field validation in UI components.
  *
  * Provides a standardized structure for validation results across all form components.
  *
- * @module types/validation/ValidationResult
+ * @module types/validation/ValidationResultViewModel
  */
 
-export interface ValidationResult {
+export interface ValidationResultViewModel {
   /** Whether the field value is valid */
   isValid: boolean;
   /** Array of validation error messages */

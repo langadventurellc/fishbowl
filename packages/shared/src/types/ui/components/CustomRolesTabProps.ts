@@ -4,11 +4,11 @@
  * @module types/ui/components/CustomRolesTabProps
  */
 
-import type { CustomRole } from "../../settings/CustomRole";
+import type { CustomRoleViewModel } from "../../settings/CustomRole";
 
 export interface CustomRolesTabProps {
   onCreateRole?: () => void;
-  onEditRole?: (role: CustomRole) => void;
-  onDeleteRole?: (role: CustomRole) => void;
+  onEditRole?: (role: CustomRoleViewModel) => void;
+  onDeleteRole?: (role: CustomRoleViewModel) => void;
   className?: string;
 }

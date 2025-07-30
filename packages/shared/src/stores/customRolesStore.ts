@@ -9,7 +9,7 @@
 
 import { create } from "zustand";
 import { roleSchema } from "../schemas";
-import type { CustomRole, RoleFormData } from "../types/settings";
+import type { CustomRoleViewModel, RoleFormData } from "../types/settings";
 import { customRolesPersistence } from "./customRolesPersistence";
 
 // Generate unique ID using crypto API or fallback
@@ -23,7 +23,7 @@ const generateId = (): string => {
 };
 
 interface CustomRolesState {
-  roles: CustomRole[];
+  roles: CustomRoleViewModel[];
   isLoading: boolean;
   error: string | null;
 }
@@ -32,7 +32,7 @@ interface CustomRolesActions {
   createRole: (roleData: RoleFormData) => string;
   updateRole: (id: string, roleData: RoleFormData) => void;
   deleteRole: (id: string) => void;
-  getRoleById: (id: string) => CustomRole | undefined;
+  getRoleById: (id: string) => CustomRoleViewModel | undefined;
   isRoleNameUnique: (name: string, excludeId?: string) => boolean;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -61,7 +61,7 @@ export const useCustomRolesStore = create<CustomRolesStore>()((set, get) => ({
         return "";
       }
 
-      const newRole: CustomRole = {
+      const newRole: CustomRoleViewModel = {
         id: generateId(),
         ...validatedData,
         createdAt: new Date().toISOString(),

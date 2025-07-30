@@ -1,9 +1,9 @@
 /**
- * Big Five personality trait values (0-100 range)
+ * Big Five personality trait values (0-100 range) for UI components
  *
- * @module types/settings/BigFiveTraits
+ * @module types/settings/BigFiveTraitsViewModel
  */
-export interface BigFiveTraits {
+export interface BigFiveTraitsViewModel {
   /** Openness to experience (0-100) */
   openness: number;
   /** Conscientiousness (0-100) */

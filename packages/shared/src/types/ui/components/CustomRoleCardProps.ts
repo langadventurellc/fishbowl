@@ -3,15 +3,15 @@
  *
  * @module types/ui/components/CustomRoleCardProps
  */
-import type { CustomRole } from "../../settings/CustomRole";
+import type { CustomRoleViewModel } from "../../settings/CustomRole";
 
 export interface CustomRoleCardProps {
   /** Custom role data to display */
-  role: CustomRole;
+  role: CustomRoleViewModel;
   /** Callback when edit button is clicked */
-  onEdit: (role: CustomRole) => void;
+  onEdit: (role: CustomRoleViewModel) => void;
   /** Callback when delete button is clicked */
-  onDelete: (role: CustomRole) => void;
+  onDelete: (role: CustomRoleViewModel) => void;
   /** Additional CSS classes */
   className?: string;
 }

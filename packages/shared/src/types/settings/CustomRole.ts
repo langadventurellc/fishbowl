@@ -1,14 +1,14 @@
 /**
- * Custom user-created role interface
+ * Custom user-created role interface for UI components
  *
- * @module types/settings/CustomRole
+ * @module types/settings/CustomRoleViewModel
  */
 import type { RoleFormData } from "./RoleFormData";
 
 /**
- * Custom user-created role with timestamps
+ * Custom user-created role with timestamps for UI display
  */
-export interface CustomRole extends RoleFormData {
+export interface CustomRoleViewModel extends RoleFormData {
   /** Unique identifier for the custom role */
   id: string;
   /** When the role was created */

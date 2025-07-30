@@ -7,19 +7,19 @@
  * @module stores/customRolesPersistence
  */
 
-import type { CustomRole } from "../types/settings";
+import type { CustomRoleViewModel } from "../types/settings";
 
 const STORAGE_KEY = "fishbowl-custom-roles";
 const STORAGE_VERSION = "1.0";
 
 interface StorageData {
   version: string;
-  roles: CustomRole[];
+  roles: CustomRoleViewModel[];
   lastModified: string;
 }
 
 export const customRolesPersistence = {
-  async save(roles: CustomRole[]): Promise<void> {
+  async save(roles: CustomRoleViewModel[]): Promise<void> {
     try {
       const storageData: StorageData = {
         version: STORAGE_VERSION,
@@ -35,7 +35,7 @@ export const customRolesPersistence = {
     }
   },
 
-  async load(): Promise<CustomRole[]> {
+  async load(): Promise<CustomRoleViewModel[]> {
     try {
       // eslint-disable-next-line no-undef
       const stored = localStorage.getItem(STORAGE_KEY);

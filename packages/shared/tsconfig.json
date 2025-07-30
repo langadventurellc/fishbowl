@@ -5,13 +5,18 @@
     "rootDir": "src",
     "noEmit": false,
     "baseUrl": ".",
-    "types": ["jest", "node"],
     "paths": {
       "@fishbowl-ai/ui-theme": ["../ui-theme/src"]
     }
   },
   "include": ["src"],
-  "exclude": ["node_modules", "dist"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
   "references": [
     {
       "path": "../ui-theme"

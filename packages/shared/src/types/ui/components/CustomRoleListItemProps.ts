@@ -7,11 +7,11 @@
  * @module types/ui/components/CustomRoleListItemProps
  */
 
-import type { CustomRole } from "../../settings/CustomRole";
+import type { CustomRoleViewModel } from "../../settings/CustomRole";
 
 export interface CustomRoleListItemProps {
-  role: CustomRole;
-  onEdit: (role: CustomRole) => void;
-  onDelete: (role: CustomRole) => void;
+  role: CustomRoleViewModel;
+  onEdit: (role: CustomRoleViewModel) => void;
+  onDelete: (role: CustomRoleViewModel) => void;
   className?: string;
 }

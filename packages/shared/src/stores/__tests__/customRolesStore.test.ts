@@ -7,9 +7,9 @@
  * @module stores/__tests__/customRolesStore.test
  */
 
-import { useCustomRolesStore } from "../customRolesStore";
+import type { CustomRoleViewModel, RoleFormData } from "../../types/settings";
 import { customRolesPersistence } from "../customRolesPersistence";
-import type { CustomRole, RoleFormData } from "../../types/settings";
+import { useCustomRolesStore } from "../customRolesStore";
 
 // Mock the persistence layer
 jest.mock("../customRolesPersistence", () => ({
@@ -62,7 +62,7 @@ describe("customRolesStore", () => {
     });
 
     it("should load roles on initialization", async () => {
-      const mockRoles: CustomRole[] = [
+      const mockRoles: CustomRoleViewModel[] = [
         {
           id: "test-1",
           name: "Test Role",
@@ -169,7 +169,7 @@ describe("customRolesStore", () => {
   });
 
   describe("updateRole action", () => {
-    const existingRole: CustomRole = {
+    const existingRole: CustomRoleViewModel = {
       id: "existing-1",
       name: "Original Role",
       description: "Original description",
@@ -234,7 +234,7 @@ describe("customRolesStore", () => {
     });
 
     it("should reject duplicate names when updating (excluding current role)", () => {
-      const secondRole: CustomRole = {
+      const secondRole: CustomRoleViewModel = {
         id: "existing-2",
         name: "Second Role",
         description: "Second description",
@@ -280,7 +280,7 @@ describe("customRolesStore", () => {
   });
 
   describe("deleteRole action", () => {
-    const existingRole: CustomRole = {
+    const existingRole: CustomRoleViewModel = {
       id: "existing-1",
       name: "Test Role",
       description: "Test description",
@@ -326,7 +326,7 @@ describe("customRolesStore", () => {
   });
 
   describe("getRoleById action", () => {
-    const existingRole: CustomRole = {
+    const existingRole: CustomRoleViewModel = {
       id: "existing-1",
       name: "Test Role",
       description: "Test description",
@@ -360,7 +360,7 @@ describe("customRolesStore", () => {
   });
 
   describe("isRoleNameUnique action", () => {
-    const existingRoles: CustomRole[] = [
+    const existingRoles: CustomRoleViewModel[] = [
       {
         id: "role-1",
         name: "First Role",
@@ -462,7 +462,7 @@ describe("customRolesStore", () => {
 
   describe("persistence integration", () => {
     it("should handle successful load", async () => {
-      const mockRoles: CustomRole[] = [
+      const mockRoles: CustomRoleViewModel[] = [
         {
           id: "test-1",
           name: "Test Role",

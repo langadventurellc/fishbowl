@@ -4,11 +4,11 @@
  * @module types/settings/BigFiveSlidersProps
  */
 
-import type { BigFiveTraits } from "./BigFiveTraits";
+import type { BigFiveTraitsViewModel } from "./BigFiveTraits";
 
 export interface BigFiveSlidersProps {
-  values: BigFiveTraits;
-  onChange: (trait: keyof BigFiveTraits, value: number) => void;
+  values: BigFiveTraitsViewModel;
+  onChange: (trait: keyof BigFiveTraitsViewModel, value: number) => void;
   disabled?: boolean;
   className?: string;
 }
