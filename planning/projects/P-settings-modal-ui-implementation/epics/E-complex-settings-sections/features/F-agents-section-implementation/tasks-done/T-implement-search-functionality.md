@@ -2,7 +2,7 @@
 kind: task
 id: T-implement-search-functionality
 parent: F-agents-section-implementation
-status: in-progress
+status: done
 title: Implement search functionality with debouncing and filtering
 priority: normal
 prerequisites:

@@ -20,10 +20,13 @@ import {
   type TabConfiguration,
 } from "@fishbowl-ai/shared";
 import { Loader2, Plus, Search, X } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState, useRef } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import { cn } from "../../lib/utils";
 import { announceToScreenReader } from "../../utils/announceToScreenReader";
+import { useGridNavigation } from "../../utils/gridNavigation";
+import { getSliderDescription } from "../../utils/sliderDescriptions";
+import { createSliderKeyHandler } from "../../utils/sliderKeyboardHandler";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -90,26 +93,86 @@ const mockAgents: AgentCardType[] = [
 ];
 
 /**
- * Responsive grid layout for agent cards.
+ * Responsive grid layout for agent cards with keyboard navigation.
  */
-const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => (
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-    {agents.map((agent) => (
-      <AgentCard
-        key={agent.id}
-        agent={agent}
-        onEdit={(agentId) => {
-          // TODO: Implement edit functionality
-          console.log("Edit agent:", agentId);
-        }}
-        onDelete={(agentId) => {
-          // TODO: Implement delete functionality
-          console.log("Delete agent:", agentId);
-        }}
-      />
-    ))}
-  </div>
-);
+const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => {
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Calculate columns based on screen size (matches Tailwind breakpoints)
+  const columns = window.innerWidth >= 1024 ? 2 : 1;
+
+  const { handleKeyDown } = useGridNavigation({
+    totalItems: agents.length,
+    columns,
+    onFocusChange: setFocusedIndex,
+    onActivate: (index) => {
+      const editButton = cardRefs.current[index]?.querySelector(
+        '[aria-label*="Edit"]',
+      ) as HTMLButtonElement;
+      editButton?.click();
+    },
+    announceToScreenReader,
+    getItemName: (index) => agents[index]?.name || `Agent ${index + 1}`,
+  });
+
+  const handleCardFocus = useCallback((index: number) => {
+    setFocusedIndex(index);
+  }, []);
+
+  const handleGridKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      handleKeyDown(e, focusedIndex);
+    },
+    [handleKeyDown, focusedIndex],
+  );
+
+  return (
+    <div
+      id="agents-grid"
+      ref={gridRef}
+      className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6"
+      role="grid"
+      aria-label={`Grid of ${agents.length} agents`}
+      onKeyDown={handleGridKeyDown}
+      tabIndex={-1}
+    >
+      {agents.map((agent, index) => (
+        <div
+          key={agent.id}
+          ref={(el) => {
+            cardRefs.current[index] = el;
+          }}
+          role="gridcell"
+          tabIndex={focusedIndex === index ? 0 : -1}
+          onFocus={() => handleCardFocus(index)}
+          className={cn(
+            "focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 rounded-lg",
+            focusedIndex === index && "ring-2 ring-accent ring-offset-2",
+          )}
+          aria-rowindex={Math.floor(index / columns) + 1}
+          aria-colindex={(index % columns) + 1}
+        >
+          <AgentCard
+            agent={agent}
+            onEdit={(agentId) => {
+              console.log("Edit agent:", agentId);
+              announceToScreenReader(`Editing agent ${agent.name}`, "polite");
+            }}
+            onDelete={(agentId) => {
+              console.log("Delete agent:", agentId);
+              announceToScreenReader(
+                `Deleting agent ${agent.name}`,
+                "assertive",
+              );
+            }}
+          />
+        </div>
+      ))}
+    </div>
+  );
+};
 
 /**
  * Library tab component with search functionality and agent cards display.
@@ -132,82 +195,133 @@ const LibraryTab: React.FC = () => {
 
   return (
     <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
+      {/* Skip Link for Keyboard Navigation */}
+      <a
+        href="#agents-main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded z-50 focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200"
+        onFocus={() =>
+          announceToScreenReader("Skip to agents content", "polite")
+        }
+      >
+        Skip to agents content
+      </a>
+
       {/* Search Bar with Enhanced UI */}
       <div className="space-y-2">
         <div className="relative max-w-md lg:max-w-lg xl:max-w-xl">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
+            id="agent-search-input"
+            role="searchbox"
             placeholder="Search agents..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={handleKeyDown}
             className="pl-10 pr-10 w-full"
             aria-label="Search agents by name, model, or role"
-            aria-describedby={searchTerm ? "search-results-count" : undefined}
+            aria-describedby="search-help search-results-count"
+            aria-autocomplete="list"
+            aria-expanded={searchTerm.length > 0}
+            aria-controls="agents-grid"
           />
+
+          {/* Hidden helper text for screen readers */}
+          <div id="search-help" className="sr-only">
+            Search will filter agents as you type. Use arrow keys to navigate
+            results, Enter to interact with agents.
+          </div>
 
           {/* Clear Button */}
           {searchTerm && (
-            <button
+            <Button
               onClick={clearSearch}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+              variant="ghost"
+              size="sm"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 p-0 hover:bg-transparent"
               aria-label="Clear search"
               type="button"
             >
-              <X className="h-4 w-4" />
-            </button>
+              <X className="h-4 w-4" aria-hidden="true" />
+            </Button>
           )}
 
           {/* Loading Indicator */}
           {isSearching && (
-            <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            <div
+              className="absolute right-8 top-1/2 transform -translate-y-1/2"
+              role="status"
+              aria-label="Searching agents"
+            >
+              <Loader2
+                className="h-4 w-4 animate-spin text-muted-foreground"
+                aria-hidden="true"
+              />
             </div>
           )}
         </div>
 
-        {/* Results Count */}
+        {/* Enhanced Results Count with Live Region */}
         {searchTerm && !isSearching && (
-          <p
+          <div
             id="search-results-count"
             className="text-sm text-muted-foreground"
             aria-live="polite"
+            aria-atomic="true"
+            role="status"
           >
             {resultsCount === 0
-              ? `No agents found for "${searchTerm}"`
-              : `${resultsCount} agent${resultsCount === 1 ? "" : "s"} found`}
-          </p>
+              ? `No agents found for "${searchTerm}". Try different search terms.`
+              : `${resultsCount} agent${resultsCount === 1 ? "" : "s"} found for "${searchTerm}"`}
+          </div>
         )}
       </div>
 
       {/* Content with Enhanced Empty States */}
-      {filteredAgents.length === 0 ? (
-        searchTerm ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
-              <Search className="h-8 w-8 text-muted-foreground" />
+      <main
+        id="agents-main-content"
+        role="main"
+        aria-label="Agents library content"
+      >
+        {filteredAgents.length === 0 ? (
+          searchTerm ? (
+            <div
+              className="flex flex-col items-center justify-center py-16 px-4"
+              role="status"
+            >
+              <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
+                <Search
+                  className="h-8 w-8 text-muted-foreground"
+                  aria-hidden="true"
+                />
+              </div>
+              <h3 className="text-lg font-semibold mb-2">
+                No agents found for "{searchTerm}"
+              </h3>
+              <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
+                Try adjusting your search terms or browse all agents.
+              </p>
+              <Button variant="outline" onClick={clearSearch}>
+                Clear Search
+              </Button>
             </div>
-            <h3 className="text-lg font-semibold mb-2">
-              No agents found for "{searchTerm}"
-            </h3>
-            <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
-              Try adjusting your search terms or browse all agents.
-            </p>
-            <Button variant="outline" onClick={clearSearch}>
-              Clear Search
-            </Button>
-          </div>
+          ) : (
+            <EmptyLibraryState
+              onAction={() => {
+                console.log("Create new agent");
+                announceToScreenReader(
+                  "Opening agent creation dialog",
+                  "polite",
+                );
+              }}
+            />
+          )
         ) : (
-          <EmptyLibraryState
-            onAction={() => {
-              // TODO: Implement create agent functionality
-              console.log("Create new agent");
-            }}
-          />
-        )
-      ) : (
-        <AgentGrid agents={filteredAgents} />
-      )}
+          <AgentGrid agents={filteredAgents} />
+        )}
+      </main>
 
       {/* Create Button */}
       <div className="flex justify-center pt-4">
@@ -452,18 +566,23 @@ const DefaultsTab: React.FC = () => {
         {/* Settings Controls */}
         <div className="space-y-6">
           {/* Temperature Slider */}
-          <div className="space-y-3">
+          <div
+            className="space-y-3"
+            role="group"
+            aria-labelledby="temperature-label"
+          >
             <div className="flex items-center justify-between">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Label
+                    id="temperature-label"
                     htmlFor="temperature-slider"
                     className="text-sm font-medium cursor-help"
                   >
                     Temperature
                   </Label>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent role="tooltip" id="temperature-tooltip">
                   <p>
                     Controls randomness in responses. Lower values (0.1-0.3) are
                     more focused and deterministic, higher values (1.5-2.0) are
@@ -472,8 +591,11 @@ const DefaultsTab: React.FC = () => {
                 </TooltipContent>
               </Tooltip>
               <span
+                id="temperature-value"
                 className="text-sm font-mono font-semibold text-primary"
                 aria-live="polite"
+                aria-atomic="true"
+                role="status"
               >
                 {settings.temperature.toFixed(1)}
               </span>
@@ -482,27 +604,51 @@ const DefaultsTab: React.FC = () => {
               id="temperature-slider"
               value={[settings.temperature]}
               onValueChange={handleTemperatureChange}
+              onKeyDown={createSliderKeyHandler(
+                settings.temperature,
+                0,
+                2,
+                0.1,
+                (value) => handleTemperatureChange([value]),
+                getSliderDescription.temperature,
+                announceToScreenReader,
+              )}
               min={0}
               max={2}
               step={0.1}
               className="w-full"
-              aria-label="Temperature: Controls randomness in responses"
+              aria-label="Temperature setting from 0 to 2"
+              aria-describedby="temperature-tooltip temperature-help"
+              aria-valuetext={`${settings.temperature.toFixed(1)} - ${getSliderDescription.temperature(settings.temperature)}`}
+              aria-valuemin={0}
+              aria-valuemax={2}
+              aria-valuenow={settings.temperature}
             />
+            <div id="temperature-help" className="sr-only">
+              Use arrow keys to adjust temperature. Press Home for minimum (0),
+              End for maximum (2), Page Up/Down for larger increments. Current
+              setting: {getSliderDescription.temperature(settings.temperature)}
+            </div>
           </div>
 
           {/* Max Tokens Input */}
-          <div className="space-y-3">
+          <div
+            className="space-y-3"
+            role="group"
+            aria-labelledby="max-tokens-label"
+          >
             <div className="flex items-center justify-between">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Label
+                    id="max-tokens-label"
                     htmlFor="max-tokens-input"
                     className="text-sm font-medium cursor-help"
                   >
                     Max Tokens
                   </Label>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent role="tooltip" id="max-tokens-tooltip">
                   <p>
                     Maximum length of generated responses. Typical range:
                     100-4000 tokens.
@@ -519,22 +665,34 @@ const DefaultsTab: React.FC = () => {
               max={4000}
               className="w-full"
               aria-label="Maximum tokens for responses"
+              aria-describedby="max-tokens-tooltip max-tokens-help"
+              aria-valuemin={1}
+              aria-valuemax={4000}
+              aria-valuenow={settings.maxTokens}
+              aria-valuetext={getSliderDescription.maxTokens(
+                settings.maxTokens,
+              )}
             />
+            <div id="max-tokens-help" className="sr-only">
+              Enter a number between 1 and 4000. Current setting:{" "}
+              {getSliderDescription.maxTokens(settings.maxTokens)}
+            </div>
           </div>
 
           {/* Top P Slider */}
-          <div className="space-y-3">
+          <div className="space-y-3" role="group" aria-labelledby="top-p-label">
             <div className="flex items-center justify-between">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Label
+                    id="top-p-label"
                     htmlFor="top-p-slider"
                     className="text-sm font-medium cursor-help"
                   >
                     Top P
                   </Label>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent role="tooltip" id="top-p-tooltip">
                   <p>
                     Controls diversity by limiting token selection. Lower values
                     focus on likely tokens, higher values allow more variety.
@@ -542,8 +700,11 @@ const DefaultsTab: React.FC = () => {
                 </TooltipContent>
               </Tooltip>
               <span
+                id="top-p-value"
                 className="text-sm font-mono font-semibold text-primary"
                 aria-live="polite"
+                aria-atomic="true"
+                role="status"
               >
                 {settings.topP.toFixed(2)}
               </span>
@@ -552,12 +713,31 @@ const DefaultsTab: React.FC = () => {
               id="top-p-slider"
               value={[settings.topP]}
               onValueChange={handleTopPChange}
+              onKeyDown={createSliderKeyHandler(
+                settings.topP,
+                0,
+                1,
+                0.01,
+                (value) => handleTopPChange([value]),
+                getSliderDescription.topP,
+                announceToScreenReader,
+              )}
               min={0}
               max={1}
               step={0.01}
               className="w-full"
-              aria-label="Top P: Controls diversity by limiting token selection"
+              aria-label="Top P setting from 0 to 1"
+              aria-describedby="top-p-tooltip top-p-help"
+              aria-valuetext={`${settings.topP.toFixed(2)} - ${getSliderDescription.topP(settings.topP)}`}
+              aria-valuemin={0}
+              aria-valuemax={1}
+              aria-valuenow={settings.topP}
             />
+            <div id="top-p-help" className="sr-only">
+              Use arrow keys to adjust Top P. Press Home for minimum (0), End
+              for maximum (1), Page Up/Down for larger increments. Current
+              setting: {getSliderDescription.topP(settings.topP)}
+            </div>
           </div>
 
           <Button

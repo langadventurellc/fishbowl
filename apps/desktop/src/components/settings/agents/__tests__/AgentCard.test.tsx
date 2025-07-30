@@ -68,22 +68,24 @@ describe("AgentCard Component", () => {
     it("renders edit button with proper accessibility", () => {
       render(<AgentCard {...defaultProps} />);
 
-      const editButton = screen.getByLabelText("Edit Research Assistant");
+      const editButton = screen.getByLabelText("Edit Research Assistant agent");
       expect(editButton).toBeInTheDocument();
       expect(editButton).toHaveAttribute(
         "aria-label",
-        "Edit Research Assistant",
+        "Edit Research Assistant agent",
       );
     });
 
     it("renders delete button with proper accessibility", () => {
       render(<AgentCard {...defaultProps} />);
 
-      const deleteButton = screen.getByLabelText("Delete Research Assistant");
+      const deleteButton = screen.getByLabelText(
+        "Delete Research Assistant agent",
+      );
       expect(deleteButton).toBeInTheDocument();
       expect(deleteButton).toHaveAttribute(
         "aria-label",
-        "Delete Research Assistant",
+        "Delete Research Assistant agent",
       );
     });
 
@@ -91,7 +93,7 @@ describe("AgentCard Component", () => {
       const onEdit = jest.fn();
       render(<AgentCard {...defaultProps} onEdit={onEdit} />);
 
-      const editButton = screen.getByLabelText("Edit Research Assistant");
+      const editButton = screen.getByLabelText("Edit Research Assistant agent");
       fireEvent.click(editButton);
 
       expect(onEdit).toHaveBeenCalledWith("test-agent-1");
@@ -102,7 +104,9 @@ describe("AgentCard Component", () => {
       const onDelete = jest.fn();
       render(<AgentCard {...defaultProps} onDelete={onDelete} />);
 
-      const deleteButton = screen.getByLabelText("Delete Research Assistant");
+      const deleteButton = screen.getByLabelText(
+        "Delete Research Assistant agent",
+      );
       fireEvent.click(deleteButton);
 
       expect(onDelete).toHaveBeenCalledWith("test-agent-1");
@@ -112,7 +116,7 @@ describe("AgentCard Component", () => {
     it("does not crash when onEdit is undefined", () => {
       render(<AgentCard agent={mockAgent} />);
 
-      const editButton = screen.getByLabelText("Edit Research Assistant");
+      const editButton = screen.getByLabelText("Edit Research Assistant agent");
 
       expect(() => {
         fireEvent.click(editButton);
@@ -122,7 +126,9 @@ describe("AgentCard Component", () => {
     it("does not crash when onDelete is undefined", () => {
       render(<AgentCard agent={mockAgent} />);
 
-      const deleteButton = screen.getByLabelText("Delete Research Assistant");
+      const deleteButton = screen.getByLabelText(
+        "Delete Research Assistant agent",
+      );
 
       expect(() => {
         fireEvent.click(deleteButton);
@@ -134,7 +140,7 @@ describe("AgentCard Component", () => {
     it("edit button is focusable", () => {
       render(<AgentCard {...defaultProps} />);
 
-      const editButton = screen.getByLabelText("Edit Research Assistant");
+      const editButton = screen.getByLabelText("Edit Research Assistant agent");
       editButton.focus();
 
       expect(editButton).toHaveFocus();
@@ -143,7 +149,9 @@ describe("AgentCard Component", () => {
     it("delete button is focusable", () => {
       render(<AgentCard {...defaultProps} />);
 
-      const deleteButton = screen.getByLabelText("Delete Research Assistant");
+      const deleteButton = screen.getByLabelText(
+        "Delete Research Assistant agent",
+      );
       deleteButton.focus();
 
       expect(deleteButton).toHaveFocus();
@@ -180,7 +188,9 @@ describe("AgentCard Component", () => {
       render(<AgentCard agent={differentAgent} onEdit={defaultProps.onEdit} />);
 
       expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
-      expect(screen.getByLabelText("Edit Code Reviewer")).toBeInTheDocument();
+      expect(
+        screen.getByLabelText("Edit Code Reviewer agent"),
+      ).toBeInTheDocument();
     });
 
     it("handles different models and roles", () => {
