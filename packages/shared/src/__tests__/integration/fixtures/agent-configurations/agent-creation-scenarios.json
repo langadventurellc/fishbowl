@@ -1,0 +1,301 @@
+{
+  "successScenarios": {
+    "standard_creation": {
+      "name": "Standard Business Analyst",
+      "description": "Standard agent creation with all required fields",
+      "role": "analyst",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+      "modelId": "gpt-4-turbo-preview",
+      "capabilities": ["data_analysis", "reporting", "insights"],
+      "constraints": ["data_privacy", "accuracy_required"],
+      "settings": {
+        "temperature": 0.7,
+        "maxTokens": 2048
+      },
+      "tags": ["business", "analyst"],
+      "expectedOutcome": "success",
+      "validationChecks": [
+        "all_required_fields_present",
+        "personality_id_exists",
+        "model_id_valid",
+        "capabilities_non_empty"
+      ]
+    },
+    "minimal_valid_creation": {
+      "name": "Basic Helper",
+      "role": "generalist",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440002",
+      "modelId": "gpt-3.5-turbo",
+      "capabilities": ["general_assistance"],
+      "constraints": [],
+      "settings": {},
+      "tags": [],
+      "expectedOutcome": "success",
+      "validationChecks": [
+        "minimal_required_fields_only",
+        "default_values_applied",
+        "valid_configuration_created"
+      ]
+    },
+    "complex_enterprise_creation": {
+      "name": "Enterprise Security Analyst",
+      "description": "Complex enterprise-grade agent with comprehensive configuration",
+      "role": "analyst",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440003",
+      "modelId": "gpt-4-32k",
+      "capabilities": [
+        "security_analysis",
+        "threat_assessment",
+        "compliance_checking",
+        "risk_evaluation",
+        "incident_response"
+      ],
+      "constraints": [
+        "security_clearance_required",
+        "audit_trail_mandatory",
+        "data_classification_compliance",
+        "privacy_protection",
+        "regulatory_adherence"
+      ],
+      "settings": {
+        "temperature": 0.3,
+        "maxTokens": 4096,
+        "topP": 0.85,
+        "frequencyPenalty": 0.0,
+        "presencePenalty": 0.1
+      },
+      "tags": ["enterprise", "security", "compliance", "analyst"],
+      "expectedOutcome": "success",
+      "validationChecks": [
+        "complex_configuration_handled",
+        "multiple_capabilities_validated",
+        "multiple_constraints_enforced",
+        "advanced_settings_applied"
+      ]
+    }
+  },
+  "validationFailureScenarios": {
+    "missing_required_name": {
+      "description": "Agent creation request missing required name field",
+      "role": "analyst",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+      "modelId": "gpt-4-turbo-preview",
+      "capabilities": ["analysis"],
+      "constraints": [],
+      "settings": {},
+      "tags": [],
+      "expectedOutcome": "validation_error",
+      "expectedError": {
+        "type": "ValidationError",
+        "field": "name",
+        "message": "Agent name is required"
+      },
+      "validationChecks": [
+        "name_field_validation_triggered",
+        "appropriate_error_message_provided",
+        "no_partial_creation_occurred"
+      ]
+    },
+    "invalid_personality_id": {
+      "name": "Test Agent",
+      "description": "Agent with invalid personality ID format",
+      "role": "generalist",
+      "personalityId": "invalid-uuid-format",
+      "modelId": "gpt-3.5-turbo",
+      "capabilities": ["general_assistance"],
+      "constraints": [],
+      "settings": {},
+      "tags": [],
+      "expectedOutcome": "validation_error",
+      "expectedError": {
+        "type": "ValidationError",
+        "field": "personalityId",
+        "message": "Personality ID must be a valid UUID"
+      },
+      "validationChecks": [
+        "uuid_format_validation",
+        "personality_id_rejected",
+        "clear_error_feedback_provided"
+      ]
+    },
+    "empty_capabilities": {
+      "name": "Empty Capabilities Agent",
+      "description": "Agent with empty capabilities array",
+      "role": "specialist",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+      "modelId": "gpt-4-turbo-preview",
+      "capabilities": [],
+      "constraints": ["specialized_domain"],
+      "settings": {},
+      "tags": [],
+      "expectedOutcome": "business_logic_error",
+      "expectedError": {
+        "type": "BusinessLogicError",
+        "field": "capabilities",
+        "message": "Specialist agents must have at least one capability"
+      },
+      "validationChecks": [
+        "business_rule_enforcement",
+        "role_capability_consistency",
+        "meaningful_error_guidance"
+      ]
+    }
+  },
+  "referenceValidationScenarios": {
+    "nonexistent_personality": {
+      "name": "Orphaned Personality Reference",
+      "description": "Agent referencing non-existent personality ID",
+      "role": "analyst",
+      "personalityId": "550e8400-0000-0000-0000-000000000000",
+      "modelId": "gpt-4-turbo-preview",
+      "capabilities": ["analysis"],
+      "constraints": [],
+      "settings": {},
+      "tags": [],
+      "expectedOutcome": "reference_error",
+      "expectedError": {
+        "type": "ReferenceError",
+        "field": "personalityId",
+        "message": "Referenced personality does not exist"
+      },
+      "validationChecks": [
+        "cross_service_reference_validation",
+        "personality_existence_check",
+        "referential_integrity_maintained"
+      ]
+    },
+    "invalid_model_reference": {
+      "name": "Invalid Model Reference",
+      "description": "Agent referencing unavailable model",
+      "role": "generalist",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+      "modelId": "non-existent-model-v1",
+      "capabilities": ["general_assistance"],
+      "constraints": [],
+      "settings": {},
+      "tags": [],
+      "expectedOutcome": "reference_error",
+      "expectedError": {
+        "type": "ReferenceError",
+        "field": "modelId",
+        "message": "Referenced model is not available"
+      },
+      "validationChecks": [
+        "model_availability_validation",
+        "model_service_integration",
+        "availability_status_checked"
+      ]
+    }
+  },
+  "performanceTestingScenarios": {
+    "concurrent_creation_batch": [
+      {
+        "name": "Concurrent Agent 1",
+        "role": "analyst",
+        "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+        "modelId": "gpt-4-turbo-preview",
+        "capabilities": ["analysis"],
+        "constraints": [],
+        "settings": {},
+        "tags": ["concurrent", "batch-1"]
+      },
+      {
+        "name": "Concurrent Agent 2",
+        "role": "creative-director",
+        "personalityId": "550e8400-e29b-41d4-a716-446655440002",
+        "modelId": "claude-3-sonnet",
+        "capabilities": ["creative_ideation"],
+        "constraints": [],
+        "settings": {},
+        "tags": ["concurrent", "batch-2"]
+      },
+      {
+        "name": "Concurrent Agent 3",
+        "role": "coach",
+        "personalityId": "550e8400-e29b-41d4-a716-446655440003",
+        "modelId": "gpt-4-analysis",
+        "capabilities": ["coaching"],
+        "constraints": [],
+        "settings": {},
+        "tags": ["concurrent", "batch-3"]
+      }
+    ],
+    "stress_test_config": {
+      "name": "Stress Test Agent Template",
+      "description": "Template for generating multiple agents for stress testing",
+      "role": "generalist",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440004",
+      "modelId": "gpt-3.5-turbo",
+      "capabilities": ["general_assistance"],
+      "constraints": ["performance_optimized"],
+      "settings": {
+        "temperature": 0.5,
+        "maxTokens": 1024
+      },
+      "tags": ["stress-test", "performance"],
+      "batchSize": 100,
+      "expectedPerformance": {
+        "creationTimeMs": 200,
+        "memoryUsageMB": 50,
+        "concurrentCreations": 10
+      }
+    }
+  },
+  "errorHandlingScenarios": {
+    "service_unavailable": {
+      "name": "Service Down Test Agent",
+      "description": "Testing agent creation when dependent services are unavailable",
+      "role": "analyst",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+      "modelId": "gpt-4-turbo-preview",
+      "capabilities": ["analysis"],
+      "constraints": [],
+      "settings": {},
+      "tags": ["error-testing"],
+      "simulatedErrors": {
+        "personalityServiceDown": true,
+        "modelServiceTimeout": false
+      },
+      "expectedOutcome": "service_error",
+      "expectedBehavior": "graceful_degradation_or_retry"
+    },
+    "partial_service_failure": {
+      "name": "Partial Failure Test Agent",
+      "description": "Testing resilience during partial service failures",
+      "role": "generalist",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440002",
+      "modelId": "claude-3-sonnet",
+      "capabilities": ["general_assistance"],
+      "constraints": [],
+      "settings": {},
+      "tags": ["error-testing"],
+      "simulatedErrors": {
+        "personalityServiceDown": false,
+        "modelServiceTimeout": true,
+        "validationServiceSlow": true
+      },
+      "expectedOutcome": "timeout_or_retry",
+      "expectedBehavior": "timeout_handling_with_cleanup"
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Comprehensive agent creation scenarios for BDD testing and validation",
+    "lastUpdated": "2025-07-27T00:00:00.000Z",
+    "categories": [
+      "successScenarios",
+      "validationFailureScenarios",
+      "referenceValidationScenarios",
+      "performanceTestingScenarios",
+      "errorHandlingScenarios"
+    ],
+    "testingFramework": "Jest BDD Integration Tests",
+    "usageInstructions": {
+      "successScenarios": "Use for positive test cases and feature validation",
+      "validationFailureScenarios": "Use for input validation and error handling tests",
+      "referenceValidationScenarios": "Use for cross-service integration testing",
+      "performanceTestingScenarios": "Use for load testing and performance validation",
+      "errorHandlingScenarios": "Use for resilience and error recovery testing"
+    }
+  }
+}

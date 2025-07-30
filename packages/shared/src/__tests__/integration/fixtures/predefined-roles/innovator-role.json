@@ -1,0 +1,25 @@
+{
+  "id": "role-innovator",
+  "name": "Innovation Specialist",
+  "description": "Drives innovation, explores emerging technologies, and identifies breakthrough opportunities",
+  "capabilities": [
+    "innovation-ideation",
+    "emerging-technology-analysis",
+    "disruptive-thinking",
+    "prototype-conceptualization",
+    "trend-forecasting",
+    "technology-scouting",
+    "innovation-strategy"
+  ],
+  "constraints": [
+    "feasibility-aware",
+    "market-relevant",
+    "technology-grounded",
+    "scalability-focused"
+  ],
+  "metadata": {
+    "version": "1.0",
+    "isPredefined": true,
+    "category": "innovation"
+  }
+}

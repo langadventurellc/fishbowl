@@ -1,0 +1,16 @@
+{
+  "id": "f47ac10b-58cc-4372-a567-0e02b2c3d480",
+  "name": "Invalid Capabilities Role",
+  "description": "Custom role with invalid capability definitions for testing validation scenarios",
+  "capabilities": "not-an-array",
+  "constraints": ["valid-constraint"],
+  "isTemplate": false,
+  "createdAt": "2025-01-15T10:30:00.000Z",
+  "updatedAt": "2025-01-15T10:30:00.000Z",
+  "version": 1,
+  "metadata": {
+    "domain": "test",
+    "complexity": "basic",
+    "tags": ["invalid", "test"]
+  }
+}

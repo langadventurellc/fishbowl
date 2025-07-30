@@ -2,11 +2,11 @@
 kind: feature
 id: F-personality-management-crud
 title: Personality Management CRUD Integration Tests
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-26T13:41:22.483900"
-updated: "2025-07-26T13:41:22.483900"
+updated: "2025-07-26T20:45:31.990957+00:00"
 schema_version: "1.1"
 parent: E-bdd-testing-infrastructure
 ---
@@ -16,6 +16,13 @@ parent: E-bdd-testing-infrastructure
 ## Purpose and Functionality
 
 Implement comprehensive BDD integration tests for personality management CRUD operations, focusing on Big Five personality model integration with 14 behavioral traits. These tests verify service layer coordination, data validation, and business logic enforcement across multiple components.
+
+## Related Functional Work
+
+This feature tests the functionality defined in:
+
+- **[E-data-models-and-validation](../../../E-data-models-and-validation/epic.md)**: PersonalityConfiguration interface, Zod validation schemas, and personality-specific validation rules
+- **[E-configuration-management](../../../E-configuration-management/epic.md)**: PersonalityService CRUD operations, business logic implementation, and file-based persistence layer
 
 ## Key Components to Implement
 

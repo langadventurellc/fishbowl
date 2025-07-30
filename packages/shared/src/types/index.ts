@@ -1,20 +1,24 @@
 /**
  * Main types barrel export for Fishbowl shared package.
  *
- * Re-exports all TypeScript interfaces and types organized by domain.
- * This provides clean import paths for consuming applications.
- *
  * @module types
  */
 
-// Re-export all UI types for clean imports
-export * from "./ui";
-
-// Re-export all settings types for clean imports
-export * from "./settings";
-
-// Re-export all hook types for clean imports
+export {
+  AgentCreateRequestSchema,
+  AgentSchema,
+  AgentUpdateRequestSchema,
+} from "./agent";
+export type {
+  AgentCreateRequest,
+  AgentUpdateRequest,
+  Agent as ServiceAgent,
+} from "./agent";
 export * from "./hooks";
-
-// Re-export all validation types for clean imports
+export * from "./model";
+export * from "./personality";
+export * from "./role";
+export * from "./services";
+export * from "./settings";
+export * from "./ui";
 export * from "./validation";

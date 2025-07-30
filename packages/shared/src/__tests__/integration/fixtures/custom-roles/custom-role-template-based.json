@@ -1,0 +1,32 @@
+{
+  "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
+  "name": "Creative Marketing Strategist",
+  "description": "Template-based custom role combining creative thinking with strategic marketing expertise for campaign development and brand positioning",
+  "capabilities": [
+    "creative-ideation",
+    "brand-strategy",
+    "campaign-development",
+    "market-positioning",
+    "social-media-strategy",
+    "content-planning",
+    "visual-storytelling"
+  ],
+  "constraints": [
+    "brand-guidelines-required",
+    "legal-review-required",
+    "budget-approval-needed",
+    "stakeholder-consensus-required"
+  ],
+  "isTemplate": false,
+  "templateId": "6ba7b811-9dad-11d1-80b4-00c04fd430c8",
+  "createdAt": "2025-01-20T14:45:00.000Z",
+  "updatedAt": "2025-01-22T09:15:00.000Z",
+  "version": 2,
+  "metadata": {
+    "domain": "marketing",
+    "complexity": "intermediate",
+    "tags": ["creative", "marketing", "strategy", "template-based"],
+    "templateSource": "role-creative",
+    "templateVersion": "1.0"
+  }
+}

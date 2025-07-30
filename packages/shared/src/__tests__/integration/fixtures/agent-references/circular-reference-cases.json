@@ -1,0 +1,542 @@
+{
+  "directCircularReferences": {
+    "agent_a_to_b_to_a": {
+      "description": "Direct circular reference: Agent A → Agent B → Agent A",
+      "detectionMethod": "depth_first_search_with_path_tracking",
+      "components": {
+        "agent_a": {
+          "id": "circular-agent-a-301",
+          "name": "Circular Agent A",
+          "role": "coordinator",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440101",
+          "modelId": "gpt-4-turbo-preview",
+          "capabilities": ["coordination", "delegation"],
+          "constraints": ["requires_agent_b"],
+          "dependencies": ["circular-agent-b-302"],
+          "settings": {
+            "temperature": 0.7,
+            "maxTokens": 2048
+          }
+        },
+        "agent_b": {
+          "id": "circular-agent-b-302",
+          "name": "Circular Agent B",
+          "role": "executor",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440102",
+          "modelId": "claude-3-sonnet",
+          "capabilities": ["execution", "feedback"],
+          "constraints": ["requires_agent_a"],
+          "dependencies": ["circular-agent-a-301"],
+          "settings": {
+            "temperature": 0.5,
+            "maxTokens": 1024
+          }
+        }
+      },
+      "expectedOutcome": "circular_dependency_error",
+      "expectedError": {
+        "type": "CircularDependencyError",
+        "message": "Circular dependency detected in agent configuration",
+        "circularPath": [
+          "circular-agent-a-301",
+          "circular-agent-b-302",
+          "circular-agent-a-301"
+        ],
+        "code": "CIRCULAR_DEPENDENCY"
+      },
+      "detectionAlgorithm": {
+        "algorithm": "depth_first_search",
+        "complexity": "O(V + E)",
+        "pathTracking": true,
+        "visitedSet": true
+      },
+      "validationChecks": [
+        "circular_path_detected",
+        "error_message_includes_full_path",
+        "no_partial_resolution_occurred",
+        "detection_algorithm_efficient"
+      ]
+    },
+    "personality_role_circular": {
+      "description": "Direct circular reference between personality and role requirements",
+      "components": {
+        "personality_leadership": {
+          "id": "personality-leadership-301",
+          "name": "Leadership Personality",
+          "requiredRole": "role-manager-301",
+          "traits": {
+            "assertiveness": 90,
+            "extraversion": 85
+          }
+        },
+        "role_manager": {
+          "id": "role-manager-301",
+          "name": "Manager Role",
+          "requiredPersonality": "personality-leadership-301",
+          "capabilities": ["team_management", "decision_making"]
+        }
+      },
+      "expectedOutcome": "circular_dependency_error",
+      "expectedError": {
+        "type": "CircularDependencyError",
+        "message": "Circular dependency between personality and role configuration",
+        "circularPath": [
+          "personality-leadership-301",
+          "role-manager-301",
+          "personality-leadership-301"
+        ],
+        "code": "PERSONALITY_ROLE_CIRCULAR"
+      }
+    },
+    "model_capability_circular": {
+      "description": "Circular reference between model requirements and capabilities",
+      "components": {
+        "model_advanced": {
+          "id": "model-advanced-301",
+          "name": "Advanced Reasoning Model",
+          "requiredCapability": "capability-complex-reasoning-301"
+        },
+        "capability_complex": {
+          "id": "capability-complex-reasoning-301",
+          "name": "Complex Reasoning Capability",
+          "requiredModel": "model-advanced-301"
+        }
+      },
+      "expectedOutcome": "circular_dependency_error",
+      "expectedError": {
+        "type": "CircularDependencyError",
+        "message": "Circular dependency between model and capability configuration",
+        "circularPath": [
+          "model-advanced-301",
+          "capability-complex-reasoning-301",
+          "model-advanced-301"
+        ],
+        "code": "MODEL_CAPABILITY_CIRCULAR"
+      }
+    }
+  },
+  "indirectCircularReferences": {
+    "agent_a_to_b_to_c_to_a": {
+      "description": "Indirect circular reference: A → B → C → A",
+      "detectionComplexity": "O(V + E)",
+      "components": {
+        "agent_a": {
+          "id": "indirect-circular-a-401",
+          "name": "Indirect Circular Agent A",
+          "role": "initiator",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440101",
+          "modelId": "gpt-4-turbo-preview",
+          "capabilities": ["initiation", "orchestration"],
+          "dependencies": ["indirect-circular-b-402"]
+        },
+        "agent_b": {
+          "id": "indirect-circular-b-402",
+          "name": "Indirect Circular Agent B",
+          "role": "processor",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440102",
+          "modelId": "gpt-4-turbo-preview",
+          "capabilities": ["processing", "transformation"],
+          "dependencies": ["indirect-circular-c-403"]
+        },
+        "agent_c": {
+          "id": "indirect-circular-c-403",
+          "name": "Indirect Circular Agent C",
+          "role": "finalizer",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440103",
+          "modelId": "claude-3-sonnet",
+          "capabilities": ["finalization", "feedback"],
+          "dependencies": ["indirect-circular-a-401"]
+        }
+      },
+      "expectedCircularPath": [
+        "indirect-circular-a-401",
+        "indirect-circular-b-402",
+        "indirect-circular-c-403",
+        "indirect-circular-a-401"
+      ],
+      "expectedOutcome": "circular_dependency_error",
+      "expectedError": {
+        "type": "CircularDependencyError",
+        "message": "Indirect circular dependency detected",
+        "circularPath": [
+          "indirect-circular-a-401",
+          "indirect-circular-b-402",
+          "indirect-circular-c-403",
+          "indirect-circular-a-401"
+        ],
+        "code": "INDIRECT_CIRCULAR_DEPENDENCY"
+      },
+      "detectionDepth": 3,
+      "pathLength": 4
+    },
+    "diamond_with_back_edge": {
+      "description": "Diamond pattern with back edge creating indirect circular reference",
+      "components": {
+        "diamond_root": {
+          "id": "diamond-circular-root-401",
+          "name": "Diamond Root Agent",
+          "dependencies": [
+            "diamond-circular-left-402",
+            "diamond-circular-right-403"
+          ]
+        },
+        "diamond_left": {
+          "id": "diamond-circular-left-402",
+          "name": "Diamond Left Branch",
+          "dependencies": ["diamond-circular-convergence-404"]
+        },
+        "diamond_right": {
+          "id": "diamond-circular-right-403",
+          "name": "Diamond Right Branch",
+          "dependencies": ["diamond-circular-convergence-404"]
+        },
+        "diamond_convergence": {
+          "id": "diamond-circular-convergence-404",
+          "name": "Diamond Convergence Point",
+          "dependencies": ["diamond-circular-root-401"]
+        }
+      },
+      "circularPaths": [
+        [
+          "diamond-circular-root-401",
+          "diamond-circular-left-402",
+          "diamond-circular-convergence-404",
+          "diamond-circular-root-401"
+        ],
+        [
+          "diamond-circular-root-401",
+          "diamond-circular-right-403",
+          "diamond-circular-convergence-404",
+          "diamond-circular-root-401"
+        ]
+      ],
+      "expectedOutcome": "multiple_circular_paths_detected"
+    },
+    "deep_nested_circular": {
+      "description": "Deep nested circular reference (5+ levels deep)",
+      "components": {
+        "level_1": {
+          "id": "deep-circular-level-1",
+          "dependencies": ["deep-circular-level-2"]
+        },
+        "level_2": {
+          "id": "deep-circular-level-2",
+          "dependencies": ["deep-circular-level-3"]
+        },
+        "level_3": {
+          "id": "deep-circular-level-3",
+          "dependencies": ["deep-circular-level-4"]
+        },
+        "level_4": {
+          "id": "deep-circular-level-4",
+          "dependencies": ["deep-circular-level-5"]
+        },
+        "level_5": {
+          "id": "deep-circular-level-5",
+          "dependencies": ["deep-circular-level-1"]
+        }
+      },
+      "circularDepth": 5,
+      "expectedCircularPath": [
+        "deep-circular-level-1",
+        "deep-circular-level-2",
+        "deep-circular-level-3",
+        "deep-circular-level-4",
+        "deep-circular-level-5",
+        "deep-circular-level-1"
+      ],
+      "detectionChallenges": [
+        "deep_recursion",
+        "memory_usage",
+        "stack_overflow_risk"
+      ]
+    }
+  },
+  "multiServiceCircularReferences": {
+    "cross_service_circular": {
+      "description": "Circular references spanning PersonalityService, RoleService, and ModelService boundaries",
+      "serviceInvolvement": [
+        "PersonalityService",
+        "RoleService",
+        "ModelService"
+      ],
+      "personalityDependencies": {
+        "personality-collaborative-501": {
+          "id": "550e8400-e29b-41d4-a716-446655440501",
+          "name": "Collaborative Personality",
+          "requiredRole": "role-coordinator-501",
+          "service": "PersonalityService"
+        }
+      },
+      "roleDependencies": {
+        "role-coordinator-501": {
+          "id": "role-coordinator-501",
+          "name": "Coordinator Role",
+          "requiredModel": "model-gpt4-collaborative-501",
+          "service": "RoleService"
+        }
+      },
+      "modelDependencies": {
+        "model-gpt4-collaborative-501": {
+          "id": "model-gpt4-collaborative-501",
+          "name": "GPT-4 Collaborative Model",
+          "requiredPersonality": "550e8400-e29b-41d4-a716-446655440501",
+          "service": "ModelService"
+        }
+      },
+      "expectedCircularPaths": [
+        [
+          "PersonalityService:550e8400-e29b-41d4-a716-446655440501",
+          "RoleService:role-coordinator-501",
+          "ModelService:model-gpt4-collaborative-501",
+          "PersonalityService:550e8400-e29b-41d4-a716-446655440501"
+        ]
+      ],
+      "expectedOutcome": "cross_service_circular_dependency_error",
+      "expectedError": {
+        "type": "CrossServiceCircularDependencyError",
+        "message": "Circular dependency detected across multiple services",
+        "services": ["PersonalityService", "RoleService", "ModelService"],
+        "circularPath": [
+          "PersonalityService:550e8400-e29b-41d4-a716-446655440501",
+          "RoleService:role-coordinator-501",
+          "ModelService:model-gpt4-collaborative-501",
+          "PersonalityService:550e8400-e29b-41d4-a716-446655440501"
+        ],
+        "code": "CROSS_SERVICE_CIRCULAR"
+      },
+      "serviceCoordination": {
+        "detectionStrategy": "distributed_cycle_detection",
+        "coordinationProtocol": "service_graph_merge",
+        "timeoutMs": 1000
+      }
+    },
+    "agent_template_circular": {
+      "description": "Circular reference in agent template inheritance across services",
+      "templateHierarchy": {
+        "base_template": {
+          "id": "template-base-501",
+          "name": "Base Agent Template",
+          "inheritsFrom": "template-specialized-502",
+          "service": "TemplateService"
+        },
+        "specialized_template": {
+          "id": "template-specialized-502",
+          "name": "Specialized Agent Template",
+          "inheritsFrom": "template-advanced-503",
+          "service": "TemplateService"
+        },
+        "advanced_template": {
+          "id": "template-advanced-503",
+          "name": "Advanced Agent Template",
+          "inheritsFrom": "template-base-501",
+          "service": "TemplateService"
+        }
+      },
+      "inheritanceChain": [
+        "template-base-501",
+        "template-specialized-502",
+        "template-advanced-503",
+        "template-base-501"
+      ],
+      "expectedOutcome": "template_inheritance_circular_error"
+    },
+    "configuration_override_circular": {
+      "description": "Circular reference in configuration overrides across agent hierarchy",
+      "configurationHierarchy": {
+        "parent_config": {
+          "id": "config-parent-501",
+          "name": "Parent Configuration",
+          "overriddenBy": "config-child-502"
+        },
+        "child_config": {
+          "id": "config-child-502",
+          "name": "Child Configuration",
+          "inheritsFrom": "config-grandchild-503"
+        },
+        "grandchild_config": {
+          "id": "config-grandchild-503",
+          "name": "Grandchild Configuration",
+          "overrides": "config-parent-501"
+        }
+      },
+      "overrideChain": [
+        "config-parent-501",
+        "config-child-502",
+        "config-grandchild-503",
+        "config-parent-501"
+      ]
+    }
+  },
+  "complexCircularScenarios": {
+    "multiple_intersecting_cycles": {
+      "description": "Multiple intersecting circular dependencies in single graph",
+      "cycles": [
+        {
+          "id": "cycle-1",
+          "path": ["node-a", "node-b", "node-c", "node-a"],
+          "type": "primary_cycle"
+        },
+        {
+          "id": "cycle-2",
+          "path": ["node-b", "node-d", "node-e", "node-b"],
+          "type": "secondary_cycle"
+        },
+        {
+          "id": "cycle-3",
+          "path": ["node-c", "node-d", "node-f", "node-c"],
+          "type": "tertiary_cycle"
+        }
+      ],
+      "intersectionPoints": ["node-b", "node-c", "node-d"],
+      "expectedDetection": "multiple_cycles_found",
+      "resolutionStrategy": "break_minimum_edges"
+    },
+    "conditional_circular_dependencies": {
+      "description": "Circular dependencies that exist only under certain conditions",
+      "conditions": {
+        "environment": "production",
+        "featureFlag": "advanced_orchestration_enabled",
+        "userRole": "admin"
+      },
+      "conditionalReferences": {
+        "agent_orchestrator": {
+          "id": "conditional-orchestrator-601",
+          "conditionalDependencies": {
+            "if_production": ["conditional-monitor-602"],
+            "if_development": []
+          }
+        },
+        "agent_monitor": {
+          "id": "conditional-monitor-602",
+          "conditionalDependencies": {
+            "if_advanced_enabled": ["conditional-orchestrator-601"],
+            "if_basic_mode": []
+          }
+        }
+      },
+      "expectedBehavior": "conditional_circular_detection"
+    },
+    "self_referencing_components": {
+      "description": "Components that reference themselves creating trivial cycles",
+      "selfReferencingCases": [
+        {
+          "id": "self-ref-agent-701",
+          "name": "Self-Referencing Agent",
+          "dependencies": ["self-ref-agent-701"],
+          "type": "direct_self_reference"
+        },
+        {
+          "id": "recursive-template-701",
+          "name": "Recursive Template",
+          "inheritsFrom": "recursive-template-701",
+          "type": "template_self_inheritance"
+        },
+        {
+          "id": "circular-role-701",
+          "name": "Circular Role",
+          "requiredRole": "circular-role-701",
+          "type": "role_self_requirement"
+        }
+      ],
+      "expectedOutcome": "self_reference_error",
+      "detectionTrivial": true
+    }
+  },
+  "circularReferenceResolution": {
+    "cycle_breaking_strategies": {
+      "minimum_edge_removal": {
+        "description": "Remove minimum number of edges to break all cycles",
+        "algorithm": "minimum_feedback_arc_set",
+        "complexity": "NP-complete",
+        "heuristic": "greedy_edge_removal"
+      },
+      "dependency_inversion": {
+        "description": "Use dependency inversion to break circular dependencies",
+        "technique": "interface_extraction",
+        "implementation": "bridge_pattern"
+      },
+      "lazy_initialization": {
+        "description": "Break cycles using lazy initialization patterns",
+        "technique": "deferred_resolution",
+        "implementation": "proxy_pattern"
+      }
+    },
+    "prevention_mechanisms": {
+      "layered_architecture": "Enforce architectural layers to prevent back-references",
+      "dependency_injection": "Use DI containers to manage complex dependencies",
+      "topological_ordering": "Pre-order components to detect cycles early",
+      "contract_based_design": "Use interfaces to break concrete dependencies"
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Comprehensive circular reference test cases for agent configuration dependency validation",
+    "lastUpdated": "2025-07-28T00:00:00.000Z",
+    "categories": [
+      "directCircularReferences",
+      "indirectCircularReferences",
+      "multiServiceCircularReferences",
+      "complexCircularScenarios",
+      "circularReferenceResolution"
+    ],
+    "testingFramework": "Jest BDD Integration Tests",
+    "usageInstructions": {
+      "directCircularReferences": "Use for testing basic circular dependency detection algorithms",
+      "indirectCircularReferences": "Use for testing deep path analysis and complex cycle detection",
+      "multiServiceCircularReferences": "Use for testing cross-service circular dependency detection",
+      "complexCircularScenarios": "Use for testing advanced scenarios with multiple intersecting cycles",
+      "circularReferenceResolution": "Use for testing cycle breaking and resolution strategies"
+    },
+    "dependencies": {
+      "services": [
+        "PersonalityService",
+        "RoleService",
+        "ModelService",
+        "TemplateService",
+        "DependencyResolutionService"
+      ],
+      "algorithms": [
+        "depth_first_search",
+        "tarjan_scc",
+        "cycle_detection",
+        "topological_sort"
+      ],
+      "testFramework": "Jest",
+      "mockFactories": [
+        "CircularReferenceMockFactory",
+        "DependencyGraphMockFactory",
+        "CrossServiceMockFactory"
+      ]
+    },
+    "detectionAlgorithms": {
+      "depthFirstSearch": {
+        "complexity": "O(V + E)",
+        "spaceComplexity": "O(V)",
+        "advantages": ["Simple implementation", "Path tracking"]
+      },
+      "tarjanStronglyConnectedComponents": {
+        "complexity": "O(V + E)",
+        "spaceComplexity": "O(V)",
+        "advantages": ["Finds all cycles", "Handles complex graphs"]
+      },
+      "floydWarshall": {
+        "complexity": "O(V³)",
+        "spaceComplexity": "O(V²)",
+        "advantages": ["All pairs shortest path", "Detects negative cycles"]
+      }
+    },
+    "performanceConsiderations": {
+      "maxGraphSize": 1000,
+      "detectionTimeoutMs": 5000,
+      "memoryLimitMB": 100,
+      "recursionDepthLimit": 1000
+    },
+    "errorRecoveryStrategies": {
+      "gracefulDegradation": "Continue processing non-circular components",
+      "userNotification": "Provide clear error messages with cycle paths",
+      "cycleBreaking": "Automatically resolve simple cycles where possible",
+      "alternativeResolution": "Suggest alternative dependency structures"
+    }
+  }
+}

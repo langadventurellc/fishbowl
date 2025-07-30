@@ -1,0 +1,173 @@
+{
+  "validConfigurations": {
+    "technicalAdvisor": {
+      "name": "Senior Technical Advisor",
+      "description": "A complete agent configuration for technical guidance and implementation expertise",
+      "role": "technical-advisor",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440001",
+      "modelId": "gpt-4-turbo-preview",
+      "capabilities": [
+        "technical_analysis",
+        "code_review",
+        "architecture_design",
+        "implementation_guidance"
+      ],
+      "constraints": [
+        "technical_domain_only",
+        "no_financial_advice",
+        "evidence_based_recommendations"
+      ],
+      "settings": {
+        "temperature": 0.7,
+        "maxTokens": 2048,
+        "topP": 0.9,
+        "frequencyPenalty": 0.0,
+        "presencePenalty": 0.0
+      },
+      "tags": ["technical", "advisor", "senior"]
+    },
+    "creativeDirector": {
+      "name": "Creative Innovation Leader",
+      "description": "Complete configuration for creative vision and artistic direction",
+      "role": "creative-director",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440002",
+      "modelId": "claude-3-sonnet",
+      "capabilities": [
+        "creative_ideation",
+        "artistic_direction",
+        "brand_development",
+        "visual_design_guidance"
+      ],
+      "constraints": [
+        "creative_domain_focus",
+        "brand_consistency_required",
+        "client_approval_needed"
+      ],
+      "settings": {
+        "temperature": 0.9,
+        "maxTokens": 3000,
+        "topP": 0.95,
+        "frequencyPenalty": 0.2,
+        "presencePenalty": 0.1
+      },
+      "tags": ["creative", "director", "innovation"]
+    },
+    "dataAnalyst": {
+      "name": "Senior Data Analytics Specialist",
+      "description": "Complete configuration for data-driven insights and analysis",
+      "role": "analyst",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440003",
+      "modelId": "gpt-4-analysis",
+      "capabilities": [
+        "data_analysis",
+        "statistical_modeling",
+        "pattern_recognition",
+        "insight_generation"
+      ],
+      "constraints": [
+        "data_accuracy_required",
+        "statistical_validation",
+        "privacy_compliance"
+      ],
+      "settings": {
+        "temperature": 0.3,
+        "maxTokens": 4000,
+        "topP": 0.85,
+        "frequencyPenalty": 0.0,
+        "presencePenalty": 0.0
+      },
+      "tags": ["data", "analyst", "specialist"]
+    }
+  },
+  "performanceOptimized": {
+    "fastResponse": {
+      "name": "Quick Response Agent",
+      "description": "Optimized for fast response times with minimal complexity",
+      "role": "generalist",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440004",
+      "modelId": "gpt-3.5-turbo",
+      "capabilities": ["general_assistance", "quick_responses"],
+      "constraints": ["response_time_under_2s", "concise_answers"],
+      "settings": {
+        "temperature": 0.5,
+        "maxTokens": 512,
+        "topP": 0.8
+      },
+      "tags": ["fast", "responsive", "efficient"]
+    },
+    "detailedAnalysis": {
+      "name": "Comprehensive Analysis Agent",
+      "description": "Optimized for thorough analysis with detailed responses",
+      "role": "analyst",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440005",
+      "modelId": "gpt-4-32k",
+      "capabilities": [
+        "comprehensive_analysis",
+        "detailed_reporting",
+        "multi_perspective_evaluation"
+      ],
+      "constraints": [
+        "thoroughness_required",
+        "evidence_based",
+        "structured_output"
+      ],
+      "settings": {
+        "temperature": 0.4,
+        "maxTokens": 8192,
+        "topP": 0.9,
+        "frequencyPenalty": 0.1
+      },
+      "tags": ["detailed", "comprehensive", "thorough"]
+    }
+  },
+  "crossServiceIntegration": {
+    "personalityRoleModelAlignment": {
+      "name": "Aligned Multi-Service Agent",
+      "description": "Agent demonstrating proper alignment across personality, role, and model services",
+      "role": "coach",
+      "personalityId": "550e8400-e29b-41d4-a716-446655440006",
+      "modelId": "claude-3-opus",
+      "capabilities": [
+        "coaching_guidance",
+        "personal_development",
+        "goal_achievement",
+        "motivational_support"
+      ],
+      "constraints": [
+        "positive_reinforcement",
+        "goal_oriented",
+        "evidence_based_advice"
+      ],
+      "settings": {
+        "temperature": 0.7,
+        "maxTokens": 2500,
+        "topP": 0.9,
+        "frequencyPenalty": 0.0,
+        "presencePenalty": 0.1
+      },
+      "tags": ["coaching", "aligned", "multi-service"],
+      "metadata": {
+        "personalityType": "supportive_guide",
+        "roleCategory": "coaching",
+        "modelTier": "premium",
+        "integrationComplexity": "high"
+      }
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Complete agent configuration fixtures for integration testing",
+    "lastUpdated": "2025-07-27T00:00:00.000Z",
+    "categories": [
+      "validConfigurations",
+      "performanceOptimized",
+      "crossServiceIntegration"
+    ],
+    "testingScenarios": [
+      "agent_creation_with_full_configuration",
+      "cross_service_validation",
+      "performance_optimization_testing",
+      "multi_service_coordination"
+    ]
+  }
+}

@@ -1,0 +1,479 @@
+{
+  "simpleDependencyChains": {
+    "linear_chain_a_to_c": {
+      "description": "Simple A→B→C dependency chain for basic dependency resolution testing",
+      "components": {
+        "agent_a": {
+          "id": "agent-a-550e8400-e29b-41d4-a716-446655440201",
+          "name": "Agent A - Data Collector",
+          "role": "data-collector",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440101",
+          "modelId": "gpt-3.5-turbo",
+          "capabilities": ["data_collection", "input_processing"],
+          "constraints": ["data_accuracy"],
+          "dependencies": ["agent-b-550e8400-e29b-41d4-a716-446655440202"],
+          "settings": {
+            "temperature": 0.5,
+            "maxTokens": 1024
+          }
+        },
+        "agent_b": {
+          "id": "agent-b-550e8400-e29b-41d4-a716-446655440202",
+          "name": "Agent B - Data Processor",
+          "role": "data-processor",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440102",
+          "modelId": "gpt-4-turbo-preview",
+          "capabilities": ["data_processing", "transformation", "validation"],
+          "constraints": ["processing_accuracy", "performance"],
+          "dependencies": ["agent-c-550e8400-e29b-41d4-a716-446655440203"],
+          "settings": {
+            "temperature": 0.7,
+            "maxTokens": 2048
+          }
+        },
+        "agent_c": {
+          "id": "agent-c-550e8400-e29b-41d4-a716-446655440203",
+          "name": "Agent C - Report Generator",
+          "role": "report-generator",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440103",
+          "modelId": "claude-3-sonnet",
+          "capabilities": ["report_generation", "visualization", "analysis"],
+          "constraints": ["output_quality", "formatting"],
+          "dependencies": [],
+          "settings": {
+            "temperature": 0.8,
+            "maxTokens": 3072
+          }
+        }
+      },
+      "expectedResolutionOrder": ["agent-c", "agent-b", "agent-a"],
+      "resolutionStrategy": "topological_sort",
+      "validationChecks": [
+        "linear_dependency_resolution",
+        "no_circular_dependencies",
+        "valid_resolution_order",
+        "dependency_integrity_maintained"
+      ]
+    },
+    "parallel_dependency_branches": {
+      "description": "Parallel dependency branches: A→B, A→C, B→D, C→D",
+      "components": {
+        "agent_a": {
+          "id": "parallel-agent-a",
+          "name": "Coordinator Agent",
+          "role": "coordinator",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440101",
+          "modelId": "gpt-4-turbo-preview",
+          "dependencies": ["parallel-agent-b", "parallel-agent-c"]
+        },
+        "agent_b": {
+          "id": "parallel-agent-b",
+          "name": "Branch B Agent",
+          "role": "specialist",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440102",
+          "modelId": "gpt-4-turbo-preview",
+          "dependencies": ["parallel-agent-d"]
+        },
+        "agent_c": {
+          "id": "parallel-agent-c",
+          "name": "Branch C Agent",
+          "role": "specialist",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440103",
+          "modelId": "claude-3-sonnet",
+          "dependencies": ["parallel-agent-d"]
+        },
+        "agent_d": {
+          "id": "parallel-agent-d",
+          "name": "Final Aggregator",
+          "role": "aggregator",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440104",
+          "modelId": "gpt-4-32k",
+          "dependencies": []
+        }
+      },
+      "expectedResolutionOrder": [
+        "parallel-agent-d",
+        "parallel-agent-b",
+        "parallel-agent-c",
+        "parallel-agent-a"
+      ],
+      "resolutionComplexity": "O(V + E)",
+      "parallelizationOpportunities": ["parallel-agent-b", "parallel-agent-c"]
+    },
+    "diamond_dependency_pattern": {
+      "description": "Diamond dependency pattern: A→B,C; B,C→D testing convergence resolution",
+      "components": {
+        "root_agent": {
+          "id": "diamond-root",
+          "name": "Diamond Root Agent",
+          "role": "initiator",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440101",
+          "modelId": "gpt-4-turbo-preview",
+          "dependencies": ["diamond-left", "diamond-right"]
+        },
+        "left_branch": {
+          "id": "diamond-left",
+          "name": "Left Branch Agent",
+          "role": "processor",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440102",
+          "modelId": "gpt-4-turbo-preview",
+          "dependencies": ["diamond-convergence"]
+        },
+        "right_branch": {
+          "id": "diamond-right",
+          "name": "Right Branch Agent",
+          "role": "processor",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440103",
+          "modelId": "claude-3-sonnet",
+          "dependencies": ["diamond-convergence"]
+        },
+        "convergence_point": {
+          "id": "diamond-convergence",
+          "name": "Diamond Convergence Agent",
+          "role": "aggregator",
+          "personalityId": "550e8400-e29b-41d4-a716-446655440104",
+          "modelId": "gpt-4-32k",
+          "dependencies": []
+        }
+      },
+      "expectedResolutionOrder": [
+        "diamond-convergence",
+        "diamond-left",
+        "diamond-right",
+        "diamond-root"
+      ],
+      "convergenceValidation": "single_instance_resolution"
+    }
+  },
+  "complexDependencyNetworks": {
+    "multi_service_network": {
+      "description": "Complex network spanning PersonalityService, RoleService, ModelService with interdependencies",
+      "personalityDependencies": {
+        "personality-extrovert-leader": {
+          "id": "550e8400-e29b-41d4-a716-446655440105",
+          "name": "Extroverted Leader Personality",
+          "dependencies": ["role-team-coordinator", "model-collaborative"],
+          "requiredCapabilities": ["leadership", "communication"],
+          "compatibilityMatrix": {
+            "roles": ["coordinator", "manager", "facilitator"],
+            "models": ["gpt-4-turbo-preview", "claude-3-sonnet"]
+          }
+        },
+        "personality-analytical-thinker": {
+          "id": "550e8400-e29b-41d4-a716-446655440106",
+          "name": "Analytical Thinker Personality",
+          "dependencies": ["role-data-analyst", "model-reasoning"],
+          "requiredCapabilities": ["analysis", "logical_reasoning"],
+          "compatibilityMatrix": {
+            "roles": ["analyst", "researcher", "critic"],
+            "models": ["gpt-4-32k", "claude-3-opus"]
+          }
+        }
+      },
+      "roleDependencies": {
+        "role-team-coordinator": {
+          "id": "role-coordinator-001",
+          "name": "Team Coordinator Role",
+          "dependencies": ["personality-empathetic", "model-collaborative"],
+          "requiredPersonalityTraits": ["agreeableness", "extraversion"],
+          "modelRequirements": {
+            "creativity": "high",
+            "reasoning": "medium",
+            "communication": "high"
+          }
+        },
+        "role-data-analyst": {
+          "id": "role-analyst-001",
+          "name": "Data Analyst Role",
+          "dependencies": ["personality-methodical", "model-reasoning"],
+          "requiredPersonalityTraits": ["conscientiousness", "openness"],
+          "modelRequirements": {
+            "reasoning": "high",
+            "precision": "high",
+            "creativity": "low"
+          }
+        }
+      },
+      "modelDependencies": {
+        "model-collaborative": {
+          "id": "model-gpt4-collaborative",
+          "name": "GPT-4 Collaborative Model",
+          "dependencies": ["personality-social", "role-team-oriented"],
+          "capabilities": ["dialogue", "consensus_building", "facilitation"],
+          "optimizedFor": ["group_dynamics", "communication", "empathy"]
+        },
+        "model-reasoning": {
+          "id": "model-claude3-reasoning",
+          "name": "Claude-3 Reasoning Model",
+          "dependencies": ["personality-logical", "role-analytical"],
+          "capabilities": ["logical_reasoning", "analysis", "problem_solving"],
+          "optimizedFor": [
+            "complex_analysis",
+            "structured_thinking",
+            "precision"
+          ]
+        }
+      },
+      "crossServiceResolution": {
+        "resolutionOrder": [
+          "model-collaborative",
+          "model-reasoning",
+          "personality-empathetic",
+          "personality-methodical",
+          "role-team-coordinator",
+          "role-data-analyst",
+          "personality-extrovert-leader",
+          "personality-analytical-thinker"
+        ],
+        "serviceCoordination": "parallel_with_synchronization"
+      },
+      "expectedResolutionComplexity": "O(n²)",
+      "performanceRequirements": {
+        "maxResolutionTimeMs": 1000,
+        "maxMemoryUsageMB": 100,
+        "concurrentResolutions": 5
+      }
+    },
+    "layered_enterprise_architecture": {
+      "description": "Enterprise-style layered architecture with presentation, business, and data layers",
+      "layers": {
+        "presentation_layer": {
+          "agents": [
+            {
+              "id": "ui-coordinator",
+              "name": "UI Coordinator Agent",
+              "role": "interface-manager",
+              "dependencies": ["business-logic-orchestrator"],
+              "layer": "presentation"
+            },
+            {
+              "id": "api-gateway",
+              "name": "API Gateway Agent",
+              "role": "gateway",
+              "dependencies": ["business-logic-orchestrator"],
+              "layer": "presentation"
+            }
+          ]
+        },
+        "business_layer": {
+          "agents": [
+            {
+              "id": "business-logic-orchestrator",
+              "name": "Business Logic Orchestrator",
+              "role": "orchestrator",
+              "dependencies": ["data-access-manager", "validation-service"],
+              "layer": "business"
+            },
+            {
+              "id": "validation-service",
+              "name": "Validation Service Agent",
+              "role": "validator",
+              "dependencies": ["data-access-manager"],
+              "layer": "business"
+            }
+          ]
+        },
+        "data_layer": {
+          "agents": [
+            {
+              "id": "data-access-manager",
+              "name": "Data Access Manager",
+              "role": "data-manager",
+              "dependencies": [],
+              "layer": "data"
+            }
+          ]
+        }
+      },
+      "layerConstraints": {
+        "presentation_to_business": "allowed",
+        "business_to_data": "allowed",
+        "presentation_to_data": "forbidden",
+        "skip_layer_access": "forbidden"
+      },
+      "expectedResolutionOrder": [
+        "data-access-manager",
+        "validation-service",
+        "business-logic-orchestrator",
+        "ui-coordinator",
+        "api-gateway"
+      ]
+    }
+  },
+  "performanceTestGraphs": {
+    "large_dependency_graph": {
+      "description": "Large dependency graph for performance testing (50+ nodes)",
+      "graphStructure": {
+        "nodeCount": 50,
+        "edgeCount": 75,
+        "maxDepth": 8,
+        "branchingFactor": 3
+      },
+      "generationPattern": {
+        "rootNodes": 5,
+        "intermediateNodes": 35,
+        "leafNodes": 10,
+        "crossConnections": 15
+      },
+      "performanceBenchmarks": {
+        "resolutionTimeMs": 500,
+        "memoryUsageMB": 50,
+        "cacheHitRate": 0.8,
+        "parallelization": "enabled"
+      },
+      "stressTestParameters": {
+        "concurrentResolutions": 10,
+        "cacheSize": 100,
+        "timeoutMs": 2000
+      }
+    },
+    "wide_dependency_network": {
+      "description": "Wide network with many parallel branches for concurrent resolution testing",
+      "networkStructure": {
+        "rootNode": 1,
+        "parallelBranches": 20,
+        "branchDepth": 3,
+        "convergencePoints": 5
+      },
+      "concurrencyRequirements": {
+        "maxParallelResolutions": 20,
+        "synchronizationPoints": 5,
+        "resourceContention": "managed"
+      },
+      "expectedPerformance": {
+        "parallelResolutionSpeedup": 15,
+        "resourceUtilization": 0.85,
+        "completionTimeMs": 300
+      }
+    },
+    "deep_nested_dependencies": {
+      "description": "Deep nested dependency chain for stack overflow and recursion limit testing",
+      "chainStructure": {
+        "maxDepth": 25,
+        "nodeCount": 25,
+        "linearChain": true
+      },
+      "recursionLimits": {
+        "stackDepthLimit": 30,
+        "iterationLimit": 1000,
+        "memoryLimit": "100MB"
+      },
+      "safetyMechanisms": {
+        "stackOverflowProtection": true,
+        "infiniteLoopDetection": true,
+        "gracefulDegradation": true
+      }
+    }
+  },
+  "validationTestGraphs": {
+    "dependency_integrity_validation": {
+      "description": "Graph designed to test dependency integrity validation",
+      "testScenarios": [
+        {
+          "name": "valid_complete_graph",
+          "description": "All dependencies exist and are resolvable",
+          "expectedOutcome": "success",
+          "validationChecks": [
+            "all_dependencies_exist",
+            "no_dangling_references",
+            "resolution_order_valid"
+          ]
+        },
+        {
+          "name": "missing_dependency_node",
+          "description": "Graph with missing dependency reference",
+          "missingNode": "critical-dependency-001",
+          "expectedOutcome": "dependency_missing_error",
+          "expectedError": {
+            "type": "DependencyError",
+            "message": "Required dependency 'critical-dependency-001' not found",
+            "code": "DEPENDENCY_NOT_FOUND"
+          }
+        },
+        {
+          "name": "orphaned_dependency_node",
+          "description": "Graph with node that has no incoming dependencies",
+          "orphanedNode": "isolated-node-001",
+          "expectedOutcome": "warning",
+          "expectedBehavior": "include_in_resolution_with_warning"
+        }
+      ]
+    },
+    "cross_service_dependency_validation": {
+      "description": "Validate dependencies that span multiple services",
+      "crossServiceScenarios": [
+        {
+          "agentId": "cross-service-agent-001",
+          "personalityDependency": {
+            "service": "PersonalityService",
+            "dependencyId": "550e8400-e29b-41d4-a716-446655440101"
+          },
+          "roleDependency": {
+            "service": "RoleService",
+            "dependencyId": "role-analyst-001"
+          },
+          "modelDependency": {
+            "service": "ModelService",
+            "dependencyId": "gpt-4-turbo-preview"
+          },
+          "expectedValidation": "cross_service_integrity_maintained"
+        }
+      ]
+    }
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Comprehensive dependency graph examples for agent configuration dependency resolution testing",
+    "lastUpdated": "2025-07-28T00:00:00.000Z",
+    "categories": [
+      "simpleDependencyChains",
+      "complexDependencyNetworks",
+      "performanceTestGraphs",
+      "validationTestGraphs"
+    ],
+    "testingFramework": "Jest BDD Integration Tests",
+    "usageInstructions": {
+      "simpleDependencyChains": "Use for basic dependency resolution algorithm testing",
+      "complexDependencyNetworks": "Use for cross-service dependency coordination testing",
+      "performanceTestGraphs": "Use for performance benchmarking and load testing",
+      "validationTestGraphs": "Use for dependency integrity and validation testing"
+    },
+    "dependencies": {
+      "services": [
+        "PersonalityService",
+        "RoleService",
+        "ModelService",
+        "DependencyResolutionService"
+      ],
+      "algorithms": [
+        "topological_sort",
+        "depth_first_search",
+        "parallel_resolution"
+      ],
+      "testFramework": "Jest",
+      "mockFactories": [
+        "DependencyGraphMockFactory",
+        "ResolutionServiceMockFactory",
+        "CrossServiceMockFactory"
+      ]
+    },
+    "performanceBaselines": {
+      "simpleChainResolutionMs": 50,
+      "complexNetworkResolutionMs": 500,
+      "largeGraphResolutionMs": 1000,
+      "maxMemoryUsageMB": 100
+    },
+    "algorithmComplexity": {
+      "linearChain": "O(n)",
+      "parallelBranches": "O(log n)",
+      "complexNetwork": "O(n²)",
+      "deepNested": "O(n)"
+    },
+    "graphTheoryPatterns": {
+      "topologicalSort": "Dependency resolution ordering",
+      "diamondPattern": "Convergence point resolution",
+      "layeredArchitecture": "Hierarchical dependency constraints",
+      "starPattern": "Central hub with multiple dependencies"
+    }
+  }
+}
