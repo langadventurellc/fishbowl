@@ -85,7 +85,7 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Agent name is required");
+        expect(result.error.issues[0]!.message).toBe("Agent name is required");
       }
     });
 
@@ -100,7 +100,7 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]!.message).toBe(
           "Agent name must be 50 characters or less",
         );
       }
@@ -117,7 +117,7 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Agent name is required");
+        expect(result.error.issues[0]!.message).toBe("Agent name is required");
       }
     });
 
@@ -149,7 +149,7 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]!.message).toBe(
           "Model selection is required",
         );
       }
@@ -180,7 +180,7 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Role is required");
+        expect(result.error.issues[0]!.message).toBe("Role is required");
       }
     });
 
@@ -195,7 +195,7 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe(
+        expect(result.error.issues[0]!.message).toBe(
           "Role must be 100 characters or less",
         );
       }
@@ -212,7 +212,7 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
       if (!result.success) {
-        expect(result.error.issues[0].message).toBe("Role is required");
+        expect(result.error.issues[0]!.message).toBe("Role is required");
       }
     });
 
@@ -245,7 +245,7 @@ describe("agentSchema", () => {
         const result = agentSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]!.message).toBe(
             "Temperature must be between 0 and 2",
           );
         }
@@ -262,7 +262,7 @@ describe("agentSchema", () => {
         const result = agentSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]!.message).toBe(
             "Temperature must be between 0 and 2",
           );
         }
@@ -300,7 +300,7 @@ describe("agentSchema", () => {
         const result = agentSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]!.message).toBe(
             "Max tokens must be at least 1",
           );
         }
@@ -317,7 +317,7 @@ describe("agentSchema", () => {
         const result = agentSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]!.message).toBe(
             "Max tokens must be 4000 or less",
           );
         }
@@ -334,7 +334,7 @@ describe("agentSchema", () => {
         const result = agentSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]!.message).toBe(
             "Max tokens must be a whole number",
           );
         }
@@ -372,7 +372,7 @@ describe("agentSchema", () => {
         const result = agentSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]!.message).toBe(
             "Top P must be between 0 and 1",
           );
         }
@@ -389,7 +389,7 @@ describe("agentSchema", () => {
         const result = agentSchema.safeParse(invalidData);
         expect(result.success).toBe(false);
         if (!result.success) {
-          expect(result.error.issues[0].message).toBe(
+          expect(result.error.issues[0]!.message).toBe(
             "Top P must be between 0 and 1",
           );
         }

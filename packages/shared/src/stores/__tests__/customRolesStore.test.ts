@@ -100,11 +100,11 @@ describe("customRolesStore", () => {
       const state = useCustomRolesStore.getState();
       expect(state.roles).toHaveLength(1);
       expect(state.roles[0]).toBeTruthy();
-      expect(state.roles[0].name).toBe(validRoleData.name);
-      expect(state.roles[0].description).toBe(validRoleData.description);
-      expect(state.roles[0].id).toBe(roleId);
-      expect(state.roles[0].createdAt).toBeTruthy();
-      expect(state.roles[0].updatedAt).toBeTruthy();
+      expect(state.roles[0]!.name).toBe(validRoleData.name);
+      expect(state.roles[0]!.description).toBe(validRoleData.description);
+      expect(state.roles[0]!.id).toBe(roleId);
+      expect(state.roles[0]!.createdAt).toBeTruthy();
+      expect(state.roles[0]!.updatedAt).toBeTruthy();
       expect(state.error).toBe(null);
     });
 
@@ -197,11 +197,11 @@ describe("customRolesStore", () => {
 
       const state = useCustomRolesStore.getState();
       expect(state.roles).toHaveLength(1);
-      expect(state.roles[0].id).toBe(existingRole.id);
-      expect(state.roles[0].name).toBe(updateData.name);
-      expect(state.roles[0].description).toBe(updateData.description);
-      expect(state.roles[0].createdAt).toBe(existingRole.createdAt);
-      expect(state.roles[0].updatedAt).not.toBe(existingRole.updatedAt);
+      expect(state.roles[0]!.id).toBe(existingRole.id);
+      expect(state.roles[0]!.name).toBe(updateData.name);
+      expect(state.roles[0]!.description).toBe(updateData.description);
+      expect(state.roles[0]!.createdAt).toBe(existingRole.createdAt);
+      expect(state.roles[0]!.updatedAt).not.toBe(existingRole.updatedAt);
       expect(state.error).toBe(null);
     });
 
@@ -274,7 +274,7 @@ describe("customRolesStore", () => {
       store.updateRole(existingRole.id, updateData);
 
       const state = useCustomRolesStore.getState();
-      expect(state.roles[0].description).toBe(updateData.description);
+      expect(state.roles[0]!.description).toBe(updateData.description);
       expect(state.error).toBe(null);
     });
   });
