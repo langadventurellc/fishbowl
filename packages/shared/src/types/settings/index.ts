@@ -30,6 +30,7 @@ export * from "./AgentCard";
 export * from "./AgentCardProps";
 export * from "./AgentConfiguration";
 export * from "./AgentDefaults";
+export * from "./AgentFormData";
 export * from "./AgentsSectionProps";
 export * from "./AgentTemplate";
 export * from "./TemplateCardProps";

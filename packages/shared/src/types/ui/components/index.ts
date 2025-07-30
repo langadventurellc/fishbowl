@@ -8,6 +8,8 @@
  * @module types/ui/components
  */
 
+export * from "./AgentFormModalProps";
+export * from "./AgentFormProps";
 export * from "./AgentLabelsContainerDisplayProps";
 export * from "./AgentPillProps";
 export * from "./ButtonProps";

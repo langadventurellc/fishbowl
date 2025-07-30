@@ -4,6 +4,7 @@
  * @module schemas
  */
 
+export * from "./agentSchema";
+export * from "./createApiKeysFormSchema";
 export * from "./personalitySchema";
 export * from "./roleSchema";
-export * from "./createApiKeysFormSchema";
