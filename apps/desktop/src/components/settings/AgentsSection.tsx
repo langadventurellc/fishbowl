@@ -18,6 +18,7 @@ import {
   type AgentsSectionProps,
   type AgentTemplate,
   type TabConfiguration,
+  type AgentFormData,
 } from "@fishbowl-ai/shared";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import React, { useCallback, useMemo, useState, useRef } from "react";
@@ -39,6 +40,7 @@ import {
   EmptyTemplatesState,
   TemplateCard,
 } from "./agents";
+import { AgentFormModal } from "./AgentFormModal";
 
 // Mock agent data for demonstration
 const mockAgents: AgentCardType[] = [
@@ -95,7 +97,12 @@ const mockAgents: AgentCardType[] = [
 /**
  * Responsive grid layout for agent cards with keyboard navigation.
  */
-const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => {
+interface AgentGridProps {
+  agents: AgentCardType[];
+  openEditModal: (agent: AgentCardType) => void;
+}
+
+const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const gridRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -156,9 +163,12 @@ const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => {
         >
           <AgentCard
             agent={agent}
-            onEdit={(agentId) => {
-              console.log("Edit agent:", agentId);
-              announceToScreenReader(`Editing agent ${agent.name}`, "polite");
+            onEdit={() => {
+              openEditModal(agent);
+              announceToScreenReader(
+                `Opening edit dialog for ${agent.name}`,
+                "polite",
+              );
             }}
             onDelete={(agentId) => {
               console.log("Delete agent:", agentId);
@@ -177,7 +187,15 @@ const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => {
 /**
  * Library tab component with search functionality and agent cards display.
  */
-const LibraryTab: React.FC = () => {
+interface LibraryTabProps {
+  openCreateModal: () => void;
+  openEditModal: (agent: AgentCardType) => void;
+}
+
+const LibraryTab: React.FC<LibraryTabProps> = ({
+  openCreateModal,
+  openEditModal,
+}) => {
   const [agents] = useState<AgentCardType[]>(mockAgents);
 
   const {
@@ -310,7 +328,7 @@ const LibraryTab: React.FC = () => {
           ) : (
             <EmptyLibraryState
               onAction={() => {
-                console.log("Create new agent");
+                openCreateModal();
                 announceToScreenReader(
                   "Opening agent creation dialog",
                   "polite",
@@ -319,13 +337,13 @@ const LibraryTab: React.FC = () => {
             />
           )
         ) : (
-          <AgentGrid agents={filteredAgents} />
+          <AgentGrid agents={filteredAgents} openEditModal={openEditModal} />
         )}
       </main>
 
       {/* Create Button */}
       <div className="flex justify-center pt-4">
-        <Button className="gap-2">
+        <Button className="gap-2" onClick={openCreateModal}>
           <Plus className="h-4 w-4" />
           Create New Agent
         </Button>
@@ -453,7 +471,11 @@ const mockTemplates: AgentTemplate[] = [
 /**
  * Templates tab component with pre-configured template cards in responsive grid layout.
  */
-const TemplatesTab: React.FC = () => {
+interface TemplatesTabProps {
+  openTemplateModal: (template: AgentTemplate) => void;
+}
+
+const TemplatesTab: React.FC<TemplatesTabProps> = ({ openTemplateModal }) => {
   return (
     <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
       {/* Header Section */}
@@ -479,9 +501,12 @@ const TemplatesTab: React.FC = () => {
             <TemplateCard
               key={template.id}
               template={template}
-              onUseTemplate={(templateId) => {
-                // UI-only implementation - button styled and interactive but non-functional
-                console.log("Use template:", templateId);
+              onUseTemplate={() => {
+                openTemplateModal(template);
+                announceToScreenReader(
+                  `Opening template dialog for ${template.name}`,
+                  "polite",
+                );
               }}
             />
           ))}
@@ -785,17 +810,93 @@ const DefaultsTab: React.FC = () => {
 };
 
 export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
+  // Modal state management
+  const [agentModalState, setAgentModalState] = useState<{
+    isOpen: boolean;
+    mode: "create" | "edit" | "template";
+    agent?: AgentCardType;
+    template?: AgentTemplate;
+  }>({
+    isOpen: false,
+    mode: "create",
+  });
+
+  // Modal control functions
+  const openCreateModal = useCallback(() => {
+    setAgentModalState({
+      isOpen: true,
+      mode: "create",
+    });
+  }, []);
+
+  const openEditModal = useCallback((agent: AgentCardType) => {
+    setAgentModalState({
+      isOpen: true,
+      mode: "edit",
+      agent,
+    });
+  }, []);
+
+  const openTemplateModal = useCallback((template: AgentTemplate) => {
+    setAgentModalState({
+      isOpen: true,
+      mode: "template",
+      template,
+    });
+  }, []);
+
+  const closeModal = useCallback(() => {
+    setAgentModalState({
+      isOpen: false,
+      mode: "create",
+    });
+  }, []);
+
+  // Form save handler
+  const handleAgentSave = useCallback(
+    async (data: AgentFormData) => {
+      // UI-only implementation as per project requirements
+      console.log("Agent save operation (UI-only):", {
+        mode: agentModalState.mode,
+        data,
+        timestamp: new Date().toISOString(),
+      });
+
+      // Simulate async operation
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Show user feedback
+      const actionWord =
+        agentModalState.mode === "edit"
+          ? "updated"
+          : agentModalState.mode === "template"
+            ? "created from template"
+            : "created";
+
+      announceToScreenReader(
+        `Agent ${data.name} ${actionWord} successfully`,
+        "polite",
+      );
+    },
+    [agentModalState.mode],
+  );
+
   // Tab configuration following established patterns
   const tabs: TabConfiguration[] = [
     {
       id: "library",
       label: "Library",
-      content: () => <LibraryTab />,
+      content: () => (
+        <LibraryTab
+          openCreateModal={openCreateModal}
+          openEditModal={openEditModal}
+        />
+      ),
     },
     {
       id: "templates",
       label: "Templates",
-      content: () => <TemplatesTab />,
+      content: () => <TemplatesTab openTemplateModal={openTemplateModal} />,
     },
     {
       id: "defaults",
@@ -817,6 +918,16 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
         useStore={true}
         animationDuration={200}
         className="agents-tabs"
+      />
+
+      <AgentFormModal
+        isOpen={agentModalState.isOpen}
+        onOpenChange={closeModal}
+        mode={agentModalState.mode}
+        agent={agentModalState.agent}
+        template={agentModalState.template}
+        onSave={handleAgentSave}
+        isLoading={false}
       />
     </div>
   );

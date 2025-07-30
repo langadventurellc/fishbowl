@@ -32,6 +32,11 @@ jest.mock("@fishbowl-ai/shared", () => ({
     clearSearch: jest.fn(),
     handleKeyDown: jest.fn(),
   })),
+  useUnsavedChanges: () => ({
+    hasUnsavedChanges: false,
+    setUnsavedChanges: jest.fn(),
+    clearUnsavedChanges: jest.fn(),
+  }),
 }));
 
 // Mock TabContainer to simplify testing
@@ -50,6 +55,12 @@ jest.mock("../TabContainer", () => ({
       ))}
     </div>
   ),
+}));
+
+// Mock AgentFormModal to avoid testing modal functionality
+jest.mock("../AgentFormModal", () => ({
+  AgentFormModal: ({ isOpen }: { isOpen: boolean }) =>
+    isOpen ? <div data-testid="agent-form-modal">Agent Form Modal</div> : null,
 }));
 
 describe("AgentsSection", () => {
