@@ -5,7 +5,7 @@
  */
 
 import type React from "react";
-import type { Agent } from "../core/Agent";
+import type { AgentViewModel } from "../core/AgentViewModel";
 import type { Conversation } from "../core/Conversation";
 import type { Message } from "../core/Message";
 import type { LayoutVariant } from "./LayoutVariant";
@@ -21,7 +21,7 @@ export interface ConversationLayoutDisplayProps {
    * List of agents participating in the conversation.
    * Used for agent pills, message rendering, and state display.
    */
-  agents: Agent[];
+  agents: AgentViewModel[];
 
   /**
    * List of messages in the current conversation.

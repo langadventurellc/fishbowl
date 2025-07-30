@@ -1,12 +1,12 @@
 ---
 kind: task
 id: T-rename-agent-interface-to
+status: done
 title: Rename Agent interface to AgentViewModel with backward compatibility
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-30T01:45:42.098484"
-updated: "2025-07-30T01:45:42.098484"
+updated: "2025-07-30T11:41:28.434693"
 schema_version: "1.1"
 ---
 

@@ -3,7 +3,7 @@ kind: task
 id: T-implement-lint-staged-for
 title: Implement lint-staged for conditional pre-commit hooks
 status: open
-priority: normal
+priority: low
 prerequisites: []
 created: "2025-07-26T13:38:52.058648"
 updated: "2025-07-26T13:38:52.058648"

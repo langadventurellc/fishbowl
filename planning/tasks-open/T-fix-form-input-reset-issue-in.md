@@ -3,7 +3,7 @@ kind: task
 id: T-fix-form-input-reset-issue-in
 title: Fix form input reset issue in React Hook Form implementations
 status: open
-priority: high
+priority: low
 prerequisites: []
 created: "2025-07-29T10:45:50.301685"
 updated: "2025-07-29T10:45:50.301685"
