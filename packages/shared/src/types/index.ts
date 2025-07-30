@@ -21,4 +21,3 @@ export * from "./role";
 export * from "./services";
 export * from "./settings";
 export * from "./ui";
-export * from "./validation";

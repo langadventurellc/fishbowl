@@ -2,7 +2,7 @@
 kind: task
 id: T-move-ui-focused
 title: Move UI-focused ValidationResultViewModel to types/ui directory
-status: open
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-30T01:45:24.591018"

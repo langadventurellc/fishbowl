@@ -8,18 +8,10 @@
  * @module types/ui
  */
 
-// Re-export all core data interfaces
-export * from "./core";
-
-// Re-export all component prop interfaces
 export * from "./components";
-
-// Re-export all menu component prop interfaces
-export * from "./menu";
-
-// Re-export all theme-related types
-export * from "./theme";
-
-// Re-export preview component props
-export * from "./ThemePreviewProps";
+export * from "./core";
 export * from "./FontSizePreviewProps";
+export * from "./menu";
+export * from "./theme";
+export * from "./ThemePreviewProps";
+export * from "./ValidationResultViewModel";
