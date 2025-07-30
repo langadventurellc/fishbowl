@@ -11,11 +11,11 @@
  * @module components/settings/SubNavigationTab
  */
 
+import type { SubNavigationTabProps } from "@fishbowl-ai/shared";
 import React from "react";
 import { cn } from "../../lib/utils";
+import { COMMON_FOCUS_CLASSES, getNavigationFocus } from "../../styles/focus";
 import { Button } from "../ui/button";
-import type { SubNavigationTabProps } from "@fishbowl-ai/shared";
-import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
 
 export const SubNavigationTab = React.forwardRef<
   HTMLButtonElement,
@@ -55,7 +55,7 @@ export const SubNavigationTab = React.forwardRef<
         COMMON_FOCUS_CLASSES.transition,
         getNavigationFocus(active),
         // Enhanced focus state for keyboard navigation with tighter offset for sub-tabs
-        isFocused && "ring-2 ring-accent ring-offset-1",
+        isFocused && "ring-accent ring-offset-1",
         // Active state: more prominent styling with left border
         active && [
           "bg-accent/80 text-accent-foreground",
