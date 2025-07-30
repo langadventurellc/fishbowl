@@ -119,6 +119,13 @@
     --dt-transition-colors: background-color var(--dt-animation-normal) var(--dt-easing-smooth);
     --dt-transition-transform: transform var(--dt-animation-normal) var(--dt-easing-smooth);
     
+    /* Theme Preview Animation Tokens */
+    --dt-preview-transition-duration: var(--dt-animation-normal);
+    --dt-preview-transition-easing: var(--dt-easing-smooth);
+    --dt-preview-transition: background-color var(--dt-preview-transition-duration) var(--dt-preview-transition-easing),
+                            border-color var(--dt-preview-transition-duration) var(--dt-preview-transition-easing),
+                            color var(--dt-preview-transition-duration) var(--dt-preview-transition-easing);
+    
     /* === BREAKPOINT TOKENS === */
     
     /* Responsive Breakpoints */
@@ -185,5 +192,25 @@
     font-size: var(--dt-text-micro);
     font-weight: var(--dt-font-weight-normal);
     line-height: var(--dt-line-height-compact);
+  }
+  
+  /* Theme Preview Component Styles */
+  .theme-preview {
+    width: var(--dt-preview-card-width);
+    height: var(--dt-preview-card-height);
+    background-color: var(--card);
+    border-color: var(--border);
+    color: var(--foreground);
+    transition: var(--dt-preview-transition);
+  }
+
+  .theme-preview-accent {
+    background-color: var(--accent);
+    transition: var(--dt-preview-transition);
+  }
+
+  .theme-preview-primary {
+    background-color: var(--primary);
+    transition: var(--dt-preview-transition);
   }
 }

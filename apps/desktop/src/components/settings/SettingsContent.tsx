@@ -35,7 +35,7 @@ import {
 } from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Download, Trash2, Upload } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "../../lib/utils";
 import { ApiKeysSettings } from "./ApiKeysSettings";
@@ -377,7 +377,13 @@ const GeneralSettings: React.FC = () => {
 // ThemePreview component with React.memo for performance optimization
 
 const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
-  const previewColors = useMemo(() => {
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  // Apply theme class to preview container for CSS variable resolution
+  useEffect(() => {
+    const previewElement = previewRef.current;
+    if (!previewElement) return;
+
     const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
       .matches
       ? "dark"
@@ -385,51 +391,27 @@ const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
     const effectiveTheme =
       selectedTheme === "system" ? systemTheme : selectedTheme;
 
-    return effectiveTheme === "dark"
-      ? {
-          background: "rgb(44, 40, 37)",
-          foreground: "rgb(226, 232, 240)",
-          border: "rgb(58, 54, 51)",
-          primary: "rgb(129, 140, 248)",
-          accent: "rgb(72, 68, 65)",
-        }
-      : {
-          background: "rgb(245, 245, 244)",
-          foreground: "rgb(30, 41, 59)",
-          border: "rgb(214, 211, 209)",
-          primary: "rgb(99, 102, 241)",
-          accent: "rgb(214, 211, 209)",
-        };
+    // Apply theme class directly to preview element
+    previewElement.classList.toggle("dark", effectiveTheme === "dark");
   }, [selectedTheme]);
 
   return (
     <div
-      className="w-[200px] h-[100px] border rounded-lg p-3 flex flex-col justify-between transition-colors duration-200 ease-in-out"
-      style={{
-        backgroundColor: previewColors.background,
-        borderColor: previewColors.border,
-        color: previewColors.foreground,
-      }}
+      ref={previewRef}
+      className="theme-preview border rounded-lg p-3 flex flex-col justify-between"
       aria-label="Theme preview showing background, text, and accent colors"
       role="img"
     >
       <div className="flex items-center justify-between">
         <div className="text-xs font-medium">Sample Text</div>
         <div
-          className="w-2 h-2 rounded-full transition-colors duration-200 ease-in-out"
-          style={{ backgroundColor: previewColors.accent }}
+          className="theme-preview-accent w-2 h-2 rounded-full"
           aria-hidden="true"
         />
       </div>
       <div className="flex gap-1" aria-hidden="true">
-        <div
-          className="h-1 flex-1 rounded transition-colors duration-200 ease-in-out"
-          style={{ backgroundColor: previewColors.primary }}
-        />
-        <div
-          className="h-1 flex-1 rounded opacity-50 transition-colors duration-200 ease-in-out"
-          style={{ backgroundColor: previewColors.primary }}
-        />
+        <div className="theme-preview-primary h-1 flex-1 rounded" />
+        <div className="theme-preview-primary h-1 flex-1 rounded opacity-50" />
       </div>
     </div>
   );

@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-replace-hardcoded-theme-preview
+status: done
 title: Replace hardcoded theme preview colors with design tokens
-status: open
 priority: normal
 prerequisites:
   - T-create-design-token-foundation
 created: "2025-07-30T12:58:59.328388"
-updated: "2025-07-30T12:58:59.328388"
+updated: "2025-07-30T15:37:31.787380"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Context
@@ -80,3 +81,7 @@ Replace hardcoded RGB color values in theme preview components with design token
 - Validate theme preview accessibility (sufficient contrast ratios)
 
 ### Log
+
+**2025-07-30T20:46:18.812787Z** - Successfully replaced all hardcoded RGB color values in ThemePreview component with design tokens that dynamically reference the actual theme system. The theme preview now automatically matches actual theme colors and updates when theme selection changes. Implemented CSS-based solution using custom properties for perfect color accuracy and eliminated JavaScript color duplication. All hardcoded dimensions and animations now use design token system. Updated corresponding tests to match new implementation.
+
+- filesChanged: ["apps/desktop/src/styles/design-tokens.css", "apps/desktop/src/components/settings/SettingsContent.tsx", "apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx"]
