@@ -1,14 +1,14 @@
 ---
 kind: task
 id: T-remove-ui-theme-dependency-from
+status: done
 title: Remove ui-theme dependency from shared package
-status: open
 priority: normal
-prerequisites:
-  - T-move-ui-specific-schemas-and
+prerequisites: []
 created: "2025-07-30T16:31:49.812648"
-updated: "2025-07-30T16:31:49.812648"
+updated: "2025-07-30T18:46:31.220822"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Objective
@@ -60,3 +60,7 @@ The current shared package has `@fishbowl-ai/ui-theme` as a dependency, which vi
 - Confirm business logic functions independently
 
 ### Log
+
+**2025-07-30T23:50:04.393123Z** - Successfully removed ui-theme dependency from shared package to ensure business logic is completely UI-agnostic. Investigation revealed that while the dependency existed in configuration files, it was unused in source code, making this a safe cleanup operation. Removed ui-theme from package.json dependencies and tsconfig.json configuration (path mappings and project references). All builds and quality checks pass successfully.
+
+- filesChanged: ["packages/shared/package.json", "packages/shared/tsconfig.json"]

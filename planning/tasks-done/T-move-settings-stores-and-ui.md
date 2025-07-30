@@ -2,7 +2,7 @@
 kind: task
 id: T-move-settings-stores-and-ui
 title: Move settings stores and UI state management to ui-shared
-status: open
+status: done
 priority: high
 prerequisites:
   - T-move-ui-focused-hooks-to-ui

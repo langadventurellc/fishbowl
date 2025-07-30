@@ -2,7 +2,7 @@
 kind: task
 id: T-update-build-scripts-and
 title: Update build scripts and workspace configuration
-status: open
+status: done
 priority: normal
 prerequisites:
   - T-update-desktop-app-imports-to

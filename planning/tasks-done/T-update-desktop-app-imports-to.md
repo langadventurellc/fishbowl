@@ -2,7 +2,7 @@
 kind: task
 id: T-update-desktop-app-imports-to
 title: Update desktop app imports to use both shared and ui-shared packages
-status: open
+status: done
 priority: high
 prerequisites:
   - T-remove-ui-theme-dependency-from

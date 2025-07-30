@@ -2,7 +2,7 @@
 kind: task
 id: T-move-ui-specific-schemas-and
 title: Move UI-specific schemas and validation to ui-shared
-status: open
+status: done
 priority: normal
 prerequisites:
   - T-move-settings-stores-and-ui
