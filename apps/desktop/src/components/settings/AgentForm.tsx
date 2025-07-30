@@ -28,9 +28,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import { getSliderDescription } from "../../utils/sliderDescriptions";
-import { createSliderKeyHandler } from "../../utils/sliderKeyboardHandler";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -41,31 +38,17 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Slider } from "../ui/slider";
 import { Textarea } from "../ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-
-// Helper functions for configuration descriptions
-const getTemperatureDescription = (value: number): string => {
-  if (value < 0.3) return "Very focused and deterministic";
-  if (value < 0.7) return "Moderately focused";
-  if (value < 1.0) return "Balanced creativity";
-  if (value < 1.5) return "Creative and varied";
-  return "Highly creative and unpredictable";
-};
-
-const getTopPDescription = (value: number): string => {
-  if (value < 0.5) return "Very focused token selection";
-  if (value < 0.9) return "Balanced token diversity";
-  return "High token diversity";
-};
+import {
+  ConfigurationSlider,
+  ModelSelect,
+  CharacterCounter,
+} from "./components";
+import {
+  getTemperatureDescription,
+  getTopPDescription,
+  getMaxTokensDescription,
+} from "./utils/configDescriptions";
 
 // Helper function to extract role from template description
 const extractRoleFromDescription = (description?: string): string => {
@@ -197,7 +180,7 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                 </FormControl>
                 <FormMessage />
                 <div className="text-xs text-right text-muted-foreground">
-                  {field.value.length}/50 characters
+                  <CharacterCounter current={field.value.length} max={50} />
                 </div>
               </FormItem>
             )}
@@ -216,29 +199,11 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger
-                      id="agent-model"
-                      disabled={isSubmitting || isLoading}
-                    >
-                      <SelectValue placeholder="Select an AI model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Claude 3.5 Sonnet">
-                        Claude 3.5 Sonnet
-                      </SelectItem>
-                      <SelectItem value="GPT-4">GPT-4</SelectItem>
-                      <SelectItem value="Claude 3 Haiku">
-                        Claude 3 Haiku
-                      </SelectItem>
-                      <SelectItem value="GPT-3.5 Turbo">
-                        GPT-3.5 Turbo
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <ModelSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    disabled={isSubmitting || isLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -272,7 +237,7 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                 </FormControl>
                 <FormMessage />
                 <div className="text-xs text-right text-muted-foreground">
-                  {field.value.length}/100 characters
+                  <CharacterCounter current={field.value.length} max={100} />
                 </div>
               </FormItem>
             )}
@@ -290,41 +255,17 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                     name="configuration.temperature"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center justify-between">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <FormLabel className="cursor-help">
-                                Temperature
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              Controls randomness in responses. Lower values are
-                              more focused, higher values more creative.
-                            </TooltipContent>
-                          </Tooltip>
-                          <span className="text-sm font-mono font-semibold text-primary">
-                            {field.value.toFixed(1)}
-                          </span>
-                        </div>
                         <FormControl>
-                          <Slider
-                            value={[field.value]}
-                            onValueChange={(values) =>
-                              field.onChange(values[0])
-                            }
-                            onKeyDown={createSliderKeyHandler(
-                              field.value,
-                              0,
-                              2,
-                              0.1,
-                              (value) => field.onChange(value),
-                              getSliderDescription.temperature,
-                              announceToScreenReader,
-                            )}
+                          <ConfigurationSlider
+                            label="Temperature"
+                            value={field.value}
+                            onChange={(values) => field.onChange(values[0])}
                             min={0}
                             max={2}
                             step={0.1}
-                            className="w-full"
+                            description={getTemperatureDescription(field.value)}
+                            tooltip="Controls randomness in responses. Lower values are more focused, higher values more creative."
+                            formatValue={(v) => v.toFixed(1)}
                             disabled={isSubmitting || isLoading}
                           />
                         </FormControl>
@@ -363,41 +304,17 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                     name="configuration.topP"
                     render={({ field }) => (
                       <FormItem>
-                        <div className="flex items-center justify-between">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <FormLabel className="cursor-help">
-                                Top P
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              Controls diversity by limiting token selection.
-                              Lower values focus on likely tokens.
-                            </TooltipContent>
-                          </Tooltip>
-                          <span className="text-sm font-mono font-semibold text-primary">
-                            {field.value.toFixed(2)}
-                          </span>
-                        </div>
                         <FormControl>
-                          <Slider
-                            value={[field.value]}
-                            onValueChange={(values) =>
-                              field.onChange(values[0])
-                            }
-                            onKeyDown={createSliderKeyHandler(
-                              field.value,
-                              0,
-                              1,
-                              0.01,
-                              (value) => field.onChange(value),
-                              getSliderDescription.topP,
-                              announceToScreenReader,
-                            )}
+                          <ConfigurationSlider
+                            label="Top P"
+                            value={field.value}
+                            onChange={(values) => field.onChange(values[0])}
                             min={0}
                             max={1}
                             step={0.01}
-                            className="w-full"
+                            description={getTopPDescription(field.value)}
+                            tooltip="Controls diversity by limiting token selection. Lower values focus on likely tokens."
+                            formatValue={(v) => v.toFixed(2)}
                             disabled={isSubmitting || isLoading}
                           />
                         </FormControl>
@@ -426,9 +343,9 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                       <strong>
                         Max Tokens ({form.watch("configuration.maxTokens")}):
                       </strong>{" "}
-                      ~
-                      {Math.round(form.watch("configuration.maxTokens") * 0.75)}{" "}
-                      words max
+                      {getMaxTokensDescription(
+                        form.watch("configuration.maxTokens"),
+                      )}
                     </div>
                     <div className="text-sm">
                       <strong>
@@ -460,7 +377,10 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                   <div className="flex justify-between items-center">
                     <FormMessage />
                     <div className="text-xs text-right text-muted-foreground">
-                      {field.value?.length || 0}/500 characters
+                      <CharacterCounter
+                        current={field.value?.length || 0}
+                        max={500}
+                      />
                     </div>
                   </div>
                 </FormItem>

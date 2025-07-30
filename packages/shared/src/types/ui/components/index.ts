@@ -74,3 +74,7 @@ export * from "./CustomRoleListItemProps";
 export * from "./PredefinedRoleCardProps";
 export * from "./RoleDescriptionTextareaProps";
 export * from "./CustomInstructionsTextareaProps";
+export * from "./ConfigurationSliderProps";
+export * from "./ModelSelectProps";
+export * from "./CharacterCounterProps";
+export * from "./AgentNameInputProps";
