@@ -28,7 +28,8 @@ module.exports = {
   },
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/src/$1",
-    "^(\\.{1,2}/.*)\\.js$": "$1"
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+    "^@fishbowl-ai/shared$": "<rootDir>/../shared/src/index.ts"
   },
   setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup.ts"],
   testTimeout: 30000

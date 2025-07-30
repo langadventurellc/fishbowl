@@ -4,4 +4,4 @@
  * @module data
  */
 
-export * from "./predefinedRoles";
+// predefinedRoles moved to ui-shared package

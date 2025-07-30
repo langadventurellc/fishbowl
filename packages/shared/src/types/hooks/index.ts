@@ -4,5 +4,5 @@
  * @module types/hooks
  */
 
-export * from "./EnhancedTabNavigationOptions";
-export * from "./EnhancedTabNavigationReturn";
+// EnhancedTabNavigationOptions moved to ui-shared package
+// EnhancedTabNavigationReturn moved to ui-shared package

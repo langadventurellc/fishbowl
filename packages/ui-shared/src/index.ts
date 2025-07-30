@@ -1,6 +1,36 @@
-// Core exports for Fishbowl UI-shared package
+/**
+ * UI-shared package barrel export.
+ *
+ * Re-exports all UI-related TypeScript interfaces, types, and business logic
+ * for the conversation UI system. This provides a single entry point for
+ * importing all UI-related functionality across the monorepo.
+ *
+ * @module ui-shared
+ */
 
-// Future exports will be added as UI concerns are migrated
-// from @fishbowl-ai/shared to this package
+// UI Types
+export * from "./components";
+export * from "./core";
+export * from "./FontSizePreviewProps";
+export * from "./menu";
+export * from "./settings";
+export * from "./theme";
+export * from "./ThemePreviewProps";
+export * from "./ValidationResultViewModel";
 
-export const UI_SHARED_VERSION = "0.0.0";
+// Business Logic with UI Dependencies
+export * from "./constants/behaviorData";
+export * from "./data/predefinedRoles";
+export * from "./hooks/useAgentSearch";
+export * from "./hooks/useCustomRoles";
+export * from "./hooks/useEnhancedTabNavigation";
+export * from "./schemas/createApiKeysFormSchema";
+export * from "./stores/customRolesPersistence";
+export * from "./stores/customRolesStore";
+export * from "./utils/getRoleById";
+export * from "./utils/getRolesByCategory";
+export * from "./utils/getRoleCategories";
+export * from "./utils/isPredefinedRole";
+export * from "./utils/isValidPredefinedRole";
+export * from "./types/EnhancedTabNavigationOptions";
+export * from "./types/hooks/EnhancedTabNavigationReturn";

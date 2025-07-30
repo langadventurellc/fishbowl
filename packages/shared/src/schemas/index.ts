@@ -5,6 +5,6 @@
  */
 
 export * from "./agentSchema";
-export * from "./createApiKeysFormSchema";
+// createApiKeysFormSchema moved to ui-shared package
 export * from "./personalitySchema";
 export * from "./roleSchema";

@@ -4,6 +4,6 @@
  * @module hooks
  */
 
-export * from "./useAgentSearch";
-export * from "./useEnhancedTabNavigation";
-export * from "./useCustomRoles";
+// useAgentSearch moved to ui-shared package
+// useCustomRoles moved to ui-shared package
+// useEnhancedTabNavigation moved to ui-shared package
