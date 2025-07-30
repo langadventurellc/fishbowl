@@ -205,6 +205,40 @@
   /* Custom keyframes for tab transitions */
   --keyframes-tab-fade-in: tab-fade-in 200ms ease-out;
   --keyframes-tab-fade-out: tab-fade-out 200ms ease-in;
+
+  /* === DESIGN TOKEN INTEGRATION === */
+  
+  /* Spacing Scale Extensions */
+  --spacing-nav-item: var(--dt-nav-item-padding-horizontal);
+  --spacing-content-lg: var(--dt-content-padding-desktop);
+  --spacing-content-sm: var(--dt-content-padding-mobile);
+  --spacing-modal-header: var(--dt-modal-header-padding);
+  
+  /* Size Scale Extensions */
+  --size-nav-item: var(--dt-nav-item-height);
+  --size-sub-nav-item: var(--dt-sub-nav-item-height);
+  --size-modal-header: var(--dt-modal-header-height);
+  --size-modal-footer: var(--dt-modal-footer-height);
+  --size-touch-target: var(--dt-touch-target-min);
+  
+  /* Width Scale Extensions */
+  --size-nav-desktop: var(--dt-nav-width-desktop);
+  --size-nav-medium: var(--dt-nav-width-medium);
+  --size-modal-min: var(--dt-modal-min-width);
+  --size-modal-max: var(--dt-modal-max-width);
+  
+  /* Height Scale Extensions */
+  --size-modal-min-h: var(--dt-modal-min-height);
+  --size-modal-max-h: var(--dt-modal-max-height);
+  
+  /* Border Width Extensions */
+  --border-width-nav-active: var(--dt-nav-active-border);
+  --border-width-nav-sub: var(--dt-nav-sub-active-border);
+  
+  /* Animation Duration Extensions */
+  --animate-duration-fast: var(--dt-animation-fast);
+  --animate-duration-normal: var(--dt-animation-normal);
+  --animate-duration-slow: var(--dt-animation-slow);
 }
 
 @layer base {
