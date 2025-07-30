@@ -31,17 +31,30 @@
  * @module components/settings/SettingsModal
  */
 
-import React, { useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { generateDialogAriaIds, useAccessibilityAnnouncements } from "@/utils";
 import {
   SettingsModalProps,
-  useModalState,
   useActiveSection,
+  useModalState,
   useSettingsActions,
 } from "@fishbowl-ai/shared";
-import { cn } from "@/lib/utils";
+import React, { useEffect } from "react";
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../hooks/useGlobalKeyboardShortcuts";
-import { generateDialogAriaIds, useAccessibilityAnnouncements } from "@/utils";
+import { ModalFooter } from "./ModalFooter";
+import { ModalHeader } from "./ModalHeader";
+import { SettingsContent } from "./SettingsContent";
+import { SettingsNavigation } from "./SettingsNavigation";
 
 const useModalClasses = () => ({
   overlay: cn(
@@ -58,8 +71,8 @@ const useModalClasses = () => ({
     // Remove default shadcn/ui styles that conflict with custom requirements
     "!max-w-none !gap-0 !p-0 flex flex-col",
     // Enhanced responsive behavior
-    // Large screens: 80% viewport, max 1600px
-    "!w-[80vw] h-[80vh] !max-w-[1600px] max-h-[700px]",
+    // Large screens: 80% viewport, max 1200px
+    "!w-[80vw] h-[80vh] !max-w-[1200px] max-h-[700px]",
     // Medium screens (< 1000px): 95% width, navigation 180px
     "max-[1000px]:w-[95vw]",
     // Small screens (< 800px): Full width content area, collapsible navigation
@@ -88,19 +101,6 @@ const useModalClasses = () => ({
     "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
   ),
 });
-import {
-  Dialog,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogDescription,
-  DialogHeader,
-} from "@/components/ui/dialog";
-import { SettingsNavigation } from "./SettingsNavigation";
-import { SettingsContent } from "./SettingsContent";
-import { ModalHeader } from "./ModalHeader";
-import { ModalFooter } from "./ModalFooter";
 
 /**
  * SettingsModal component for displaying application settings.
