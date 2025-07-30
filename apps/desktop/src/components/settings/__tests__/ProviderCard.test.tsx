@@ -124,10 +124,10 @@ describe("ProviderCard Component", () => {
       const toggleButton = screen.getByLabelText("Show API key");
       expect(toggleButton).toBeInTheDocument();
       expect(toggleButton).toHaveClass(
-        "min-h-[44px]",
-        "min-w-[44px]",
-        "sm:min-h-[32px]",
-        "sm:min-w-[32px]",
+        "min-h-[var(--dt-touch-min-mobile)]",
+        "min-w-[var(--dt-touch-min-mobile)]",
+        "sm:min-h-[var(--dt-touch-min-desktop)]",
+        "sm:min-w-[var(--dt-touch-min-desktop)]",
       );
     });
 
@@ -231,8 +231,8 @@ describe("ProviderCard Component", () => {
         "h-9",
         "sm:w-[80px]",
         "sm:h-10",
-        "min-h-[44px]",
-        "sm:min-h-[36px]",
+        "min-h-[var(--dt-touch-min-mobile)]",
+        "sm:min-h-[var(--dt-touch-min-desktop)]",
       );
     });
 
@@ -276,7 +276,10 @@ describe("ProviderCard Component", () => {
       expect(trigger).toBeInTheDocument();
 
       const button = trigger.closest("button");
-      expect(button).toHaveClass("min-h-[44px]", "sm:min-h-auto");
+      expect(button).toHaveClass(
+        "min-h-[var(--dt-touch-min-mobile)]",
+        "sm:min-h-auto",
+      );
     });
 
     it("displays chevron-right when collapsed", () => {

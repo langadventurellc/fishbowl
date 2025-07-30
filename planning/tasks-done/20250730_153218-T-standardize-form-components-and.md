@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-standardize-form-components-and
+status: done
 title: Standardize form components and touch targets with design tokens
-status: open
 priority: normal
 prerequisites:
   - T-create-design-token-foundation
 created: "2025-07-30T12:58:41.492407"
-updated: "2025-07-30T12:58:41.492407"
+updated: "2025-07-30T15:19:58.649769"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Context
@@ -73,3 +74,7 @@ Replace hardcoded form component sizes and touch target values with design token
 - Test form usability with keyboard navigation
 
 ### Log
+
+**2025-07-30T20:32:17.999988Z** - Successfully standardized all form components and touch targets with design tokens across 5 components. Replaced hardcoded min-width values (120px) with --dt-button-min-width token for consistent form button sizing. Replaced hardcoded touch target values (44px mobile, 32px desktop) with --dt-touch-min-mobile and --dt-touch-min-desktop tokens to ensure WCAG accessibility compliance. Simplified complex responsive touch target combinations in ProviderCard.tsx while maintaining existing behavior. Updated corresponding unit tests to use design token expectations. All quality checks and tests pass successfully with no visual regressions.
+
+- filesChanged: ["apps/desktop/src/components/settings/AgentForm.tsx", "apps/desktop/src/components/settings/FormActions.tsx", "apps/desktop/src/components/settings/CreateRoleForm.tsx", "apps/desktop/src/components/settings/SettingsContent.tsx", "apps/desktop/src/components/settings/ProviderCard.tsx", "apps/desktop/src/components/settings/__tests__/ProviderCard.test.tsx"]

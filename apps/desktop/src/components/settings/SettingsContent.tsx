@@ -274,7 +274,7 @@ const GeneralSettings: React.FC = () => {
                         className="flex flex-col space-y-2"
                         aria-describedby="defaultMode-description"
                       >
-                        <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                        <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                           <RadioGroupItem value="manual" id="mode-manual" />
                           <Label
                             htmlFor="mode-manual"
@@ -283,7 +283,7 @@ const GeneralSettings: React.FC = () => {
                             Manual
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                        <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                           <RadioGroupItem value="auto" id="mode-auto" />
                           <Label
                             htmlFor="mode-auto"
@@ -506,7 +506,7 @@ const AppearanceSettings: React.FC = () => {
               onValueChange={handleThemeChange}
               className="flex flex-col space-y-2"
             >
-              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                 <RadioGroupItem value="light" id="theme-light" />
                 <Label
                   htmlFor="theme-light"
@@ -515,7 +515,7 @@ const AppearanceSettings: React.FC = () => {
                   Light
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                 <RadioGroupItem value="dark" id="theme-dark" />
                 <Label
                   htmlFor="theme-dark"
@@ -524,7 +524,7 @@ const AppearanceSettings: React.FC = () => {
                   Dark
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                 <RadioGroupItem value="system" id="theme-system" />
                 <div className="flex flex-col flex-1 py-2">
                   <Label
@@ -565,7 +565,7 @@ const AppearanceSettings: React.FC = () => {
                 className="flex flex-col space-y-2"
                 aria-describedby="timestamps-description"
               >
-                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                   <RadioGroupItem value="always" id="timestamps-always" />
                   <Label
                     htmlFor="timestamps-always"
@@ -574,7 +574,7 @@ const AppearanceSettings: React.FC = () => {
                     Always
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                   <RadioGroupItem value="hover" id="timestamps-hover" />
                   <Label
                     htmlFor="timestamps-hover"
@@ -583,7 +583,7 @@ const AppearanceSettings: React.FC = () => {
                     On Hover
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                   <RadioGroupItem value="never" id="timestamps-never" />
                   <Label
                     htmlFor="timestamps-never"

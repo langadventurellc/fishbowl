@@ -415,7 +415,7 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                 isLoading ||
                 !form.formState.isDirty
               }
-              className="min-w-[120px]"
+              className="min-w-[var(--dt-button-min-width)]"
             >
               {isSubmitting ? (
                 <>

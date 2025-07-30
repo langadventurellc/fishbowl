@@ -131,7 +131,7 @@ export function ProviderCard({
                   // Touch-friendly sizing on mobile
                   "h-6 w-6 sm:h-8 sm:w-8",
                   // Ensure minimum 44px touch target on mobile
-                  "min-h-[44px] min-w-[44px] sm:min-h-[32px] sm:min-w-[32px]",
+                  "min-h-[var(--dt-touch-min-mobile)] min-w-[var(--dt-touch-min-mobile)] sm:min-h-[var(--dt-touch-min-desktop)] sm:min-w-[var(--dt-touch-min-desktop)]",
                 )}
                 onClick={onToggleApiKey}
                 aria-label={showApiKey ? "Hide API key" : "Show API key"}
@@ -181,7 +181,7 @@ export function ProviderCard({
                 }
                 onTest();
               }}
-              className="w-20 h-9 sm:w-[80px] sm:h-10 text-xs sm:text-sm min-h-[44px] sm:min-h-[36px]"
+              className="w-20 h-9 sm:w-[80px] sm:h-10 text-xs sm:text-sm min-h-[var(--dt-touch-min-mobile)] sm:min-h-[var(--dt-touch-min-desktop)]"
               disabled={!!errors?.apiKey || !!errors?.baseUrl || isValidating}
               aria-describedby={`${provider.id}-test-description`}
             >
@@ -208,7 +208,7 @@ export function ProviderCard({
                 className={cn(
                   "flex items-center gap-2 h-auto font-normal text-sm hover:bg-transparent",
                   // Touch-friendly sizing on mobile
-                  "p-2 sm:p-1 min-h-[44px] sm:min-h-auto",
+                  "p-2 sm:p-1 min-h-[var(--dt-touch-min-mobile)] sm:min-h-auto",
                 )}
                 aria-expanded={showAdvanced}
                 aria-controls={`${provider.id}-advanced-settings`}

@@ -162,7 +162,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
                 isLoading ||
                 !form.formState.isDirty
               }
-              className="min-w-[120px]"
+              className="min-w-[var(--dt-button-min-width)]"
             >
               {isSubmitting ? (
                 <>

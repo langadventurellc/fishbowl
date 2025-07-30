@@ -57,7 +57,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
           type="submit"
           onClick={onSave}
           disabled={!isValid || isSubmitting}
-          className="min-w-[120px]"
+          className="min-w-[var(--dt-button-min-width)]"
         >
           {isSubmitting ? (
             <>
