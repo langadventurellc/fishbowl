@@ -4,7 +4,7 @@
  * @module types/settings/BigFiveSlidersProps
  */
 
-import type { BigFiveTraitsViewModel } from "./BigFiveTraits";
+import type { BigFiveTraitsViewModel } from "./BigFiveTraitsViewModel";
 
 export interface BigFiveSlidersProps {
   values: BigFiveTraitsViewModel;

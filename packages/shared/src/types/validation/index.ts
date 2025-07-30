@@ -4,4 +4,4 @@
  * @module types/validation
  */
 
-export type { ValidationResultViewModel } from "./ValidationResult";
+export type { ValidationResultViewModel } from "./ValidationResultViewModel";

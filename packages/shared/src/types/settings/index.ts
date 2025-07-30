@@ -1,29 +1,29 @@
 // Settings types
-export * from "./generalSettings";
-export * from "./providers";
 export * from "./ApiKeysFormData";
 export * from "./ApiKeysState";
+export * from "./generalSettings";
+export * from "./providers";
 
 // Tab system types
-export * from "./TabConfiguration";
 export * from "./InteractiveTabsProps";
+export * from "./TabConfiguration";
 export * from "./TabSectionConfiguration";
 
 // Personality types
-export * from "./BigFiveTraits";
 export * from "./BigFiveSlidersProps";
-export * from "./PersonalityFormData";
+export * from "./BigFiveTraitsViewModel";
 export * from "./Personality";
 export * from "./PersonalityCardProps";
+export * from "./PersonalityFormData";
 
 // Role types
-export * from "./RoleFormData";
+export * from "./CustomRoleViewModel";
 export * from "./PredefinedRole";
-export * from "./CustomRole";
+export * from "./RoleFormData";
 
 // Behavior types
-export * from "./BehaviorTrait";
 export * from "./BehaviorGroup";
+export * from "./BehaviorTrait";
 
 // Agent types
 export * from "./AgentCard";
