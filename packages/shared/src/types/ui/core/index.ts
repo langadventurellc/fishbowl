@@ -11,4 +11,4 @@
 // Re-export all core data interfaces
 export * from "./AgentViewModel";
 export * from "./Conversation";
-export * from "./Message";
+export * from "./MessageViewModel";

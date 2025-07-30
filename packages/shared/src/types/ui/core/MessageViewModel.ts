@@ -1,10 +1,10 @@
 /**
- * Message interface for conversation UI system.
+ * MessageViewModel interface for conversation UI system.
  *
  * Represents a single message in the conversation with properties
  * for identification, content, metadata, and visual state.
  *
- * @module types/ui/core/Message
+ * @module types/ui/core/MessageViewModel
  */
 
 import { MessageType } from "./MessageType";
@@ -18,7 +18,7 @@ import { MessageType } from "./MessageType";
  *
  * @example
  * ```typescript
- * const userMessage: Message = {
+ * const userMessage: MessageViewModel = {
  *   id: "msg-123",
  *   agent: "User",
  *   role: "User",
@@ -29,7 +29,7 @@ import { MessageType } from "./MessageType";
  *   agentColor: "#6366f1"
  * };
  *
- * const agentMessage: Message = {
+ * const agentMessage: MessageViewModel = {
  *   id: "msg-124",
  *   agent: "Technical Advisor",
  *   role: "Technical Advisor",
@@ -41,7 +41,7 @@ import { MessageType } from "./MessageType";
  * };
  * ```
  */
-export interface Message {
+export interface MessageViewModel {
   /**
    * Unique identifier for the message.
    * Used for React keys, context menu targeting, and state management.

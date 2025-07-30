@@ -7,7 +7,7 @@
 import type React from "react";
 import type { AgentViewModel } from "../core/AgentViewModel";
 import type { Conversation } from "../core/Conversation";
-import type { Message } from "../core/Message";
+import type { MessageViewModel } from "../core/MessageViewModel";
 import type { LayoutVariant } from "./LayoutVariant";
 
 export interface ConversationLayoutDisplayProps {
@@ -27,7 +27,7 @@ export interface ConversationLayoutDisplayProps {
    * List of messages in the current conversation.
    * Used to render the chat area with proper message formatting.
    */
-  messages: Message[];
+  messages: MessageViewModel[];
 
   /**
    * Initial collapsed state for the sidebar.

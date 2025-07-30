@@ -8,7 +8,7 @@
  * @module types/ui/components/MessageContextMenuProps
  */
 
-import { Message } from "../core/Message";
+import { MessageViewModel } from "../core/MessageViewModel";
 
 /**
  * Props interface for the MessageContextMenu component.
@@ -54,7 +54,7 @@ export interface MessageContextMenuProps {
    * Used to determine available actions and provide context for menu items.
    * Message type and other properties may affect which menu options are shown.
    */
-  message: Message;
+  message: MessageViewModel;
 
   /**
    * Positioning preference for the menu relative to trigger element.

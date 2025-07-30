@@ -6,7 +6,7 @@
 
 import type React from "react";
 import type { AgentViewModel } from "../core/AgentViewModel";
-import type { Message } from "../core/Message";
+import type { MessageViewModel } from "../core/MessageViewModel";
 import type { LayoutVariant } from "./LayoutVariant";
 
 export interface MainContentPanelDisplayProps {
@@ -20,7 +20,7 @@ export interface MainContentPanelDisplayProps {
    * List of messages in the current conversation.
    * Used to render the chat area with proper message formatting.
    */
-  messages: Message[];
+  messages: MessageViewModel[];
 
   /**
    * Initial text content for the input field.

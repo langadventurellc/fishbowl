@@ -2,7 +2,7 @@
 kind: task
 id: T-rename-message-interface-to
 title: Rename Message interface to MessageViewModel with backward compatibility
-status: open
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-30T01:45:51.394894"

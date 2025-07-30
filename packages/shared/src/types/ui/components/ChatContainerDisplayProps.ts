@@ -5,14 +5,14 @@
  */
 
 import type React from "react";
-import type { Message } from "../core/Message";
+import type { MessageViewModel } from "../core/MessageViewModel";
 
 export interface ChatContainerDisplayProps {
   /**
    * Array of message data to display.
    * Component will automatically create MessageItem components for each message.
    */
-  messages?: Message[];
+  messages?: MessageViewModel[];
 
   /**
    * Handler for context menu actions on messages.

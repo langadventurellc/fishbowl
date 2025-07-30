@@ -7,7 +7,7 @@
  * @module types/ui/components/MessageItemProps
  */
 
-import { Message } from "../core/Message";
+import { MessageViewModel } from "../core/MessageViewModel";
 
 /**
  * Props interface for the MessageItem component.
@@ -45,7 +45,7 @@ export interface MessageItemProps {
    * The message type determines the visual styling and layout, while
    * isActive controls the context inclusion state.
    */
-  message: Message;
+  message: MessageViewModel;
 
   /**
    * Whether the message can be regenerated.
