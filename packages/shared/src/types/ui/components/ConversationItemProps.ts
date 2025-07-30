@@ -7,7 +7,7 @@
  * @module types/ui/components/ConversationItemProps
  */
 
-import { Conversation } from "../core/Conversation";
+import { ConversationViewModel } from "../core/ConversationViewModel";
 
 /**
  * Props interface for the ConversationItem component.
@@ -57,7 +57,7 @@ export interface ConversationItemProps {
    * The isActive property controls the visual highlighting to indicate
    * which conversation is currently selected and displayed.
    */
-  conversation: Conversation;
+  conversation: ConversationViewModel;
 
   /**
    * Whether the context menu is currently open for this conversation.

@@ -9,7 +9,7 @@
  */
 
 import type React from "react";
-import type { Conversation } from "../core/Conversation";
+import type { ConversationViewModel } from "../core/ConversationViewModel";
 import type { ConversationListScrollState } from "./ConversationListScrollState";
 
 /**
@@ -52,7 +52,7 @@ export interface ConversationListDisplayProps {
    *
    * Empty array will render the empty state appearance.
    */
-  conversations: Conversation[];
+  conversations: ConversationViewModel[];
 
   /**
    * Identifier of the currently active/selected conversation.

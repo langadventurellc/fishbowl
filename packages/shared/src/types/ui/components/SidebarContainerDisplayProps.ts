@@ -1,5 +1,5 @@
 import React from "react";
-import { Conversation } from "../core/Conversation";
+import { ConversationViewModel } from "../core/ConversationViewModel";
 import { SidebarWidthVariant } from "./SidebarWidthVariant";
 
 /**
@@ -58,5 +58,5 @@ export interface SidebarContainerDisplayProps {
    * When provided, renders complete sidebar content internally
    * When omitted, renders empty sidebar container
    */
-  conversations?: Conversation[];
+  conversations?: ConversationViewModel[];
 }

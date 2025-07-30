@@ -8,7 +8,7 @@
  * @module types/ui/components/ConversationContextMenuProps
  */
 
-import type { Conversation } from "../core/Conversation";
+import type { ConversationViewModel } from "../core/ConversationViewModel";
 
 /**
  * Props interface for the ConversationContextMenu component.
@@ -48,7 +48,7 @@ export interface ConversationContextMenuProps {
    * Used to provide context for menu items and determine available actions.
    * Conversation properties may affect which menu options are enabled or visible.
    */
-  conversation: Conversation;
+  conversation: ConversationViewModel;
 
   /**
    * Positioning preference for the menu relative to trigger element.

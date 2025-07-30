@@ -9,7 +9,7 @@
  */
 
 import type React from "react";
-import type { Conversation } from "../core/Conversation";
+import type { ConversationViewModel } from "../core/ConversationViewModel";
 
 /**
  * Props interface for the ConversationItemDisplay component.
@@ -63,7 +63,7 @@ export interface ConversationItemDisplayProps {
    * The isActive property from the conversation will be used alongside
    * appearanceState to determine the final visual appearance.
    */
-  conversation: Conversation;
+  conversation: ConversationViewModel;
 
   /**
    * Visual appearance state for the conversation item.

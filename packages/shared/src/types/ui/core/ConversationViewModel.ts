@@ -1,10 +1,10 @@
 /**
- * Conversation interface for conversation UI system.
+ * ConversationViewModel interface for conversation UI system.
  *
  * Represents a conversation session with metadata for
  * identification, activity tracking, and state management.
  *
- * @module types/ui/core/Conversation
+ * @module types/ui/core/ConversationViewModel
  */
 
 /**
@@ -16,13 +16,13 @@
  *
  * @example
  * ```typescript
- * const activeConversation: Conversation = {
+ * const activeConversation: ConversationViewModel = {
  *   name: "Project Planning",
  *   lastActivity: "2h ago",
  *   isActive: true  // Currently selected/viewing
  * };
  *
- * const previousConversations: Conversation[] = [
+ * const previousConversations: ConversationViewModel[] = [
  *   {
  *     name: "Creative Writing",
  *     lastActivity: "Yesterday",
@@ -36,7 +36,7 @@
  * ];
  * ```
  */
-export interface Conversation {
+export interface ConversationViewModel {
   /**
    * Display name of the conversation.
    * Used in the sidebar conversation list for identification and selection.
