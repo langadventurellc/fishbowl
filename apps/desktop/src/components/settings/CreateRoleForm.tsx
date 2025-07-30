@@ -16,14 +16,15 @@
 import {
   roleSchema,
   useUnsavedChanges,
-  type RoleFormData,
-  type CustomRole,
   type CreateRoleFormProps,
+  type CustomRoleViewModel,
+  type RoleFormData,
 } from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback, useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
@@ -31,9 +32,8 @@ import {
   FormItem,
   FormMessage,
 } from "../ui/form";
-import { Button } from "../ui/button";
-import { RoleNameInput } from "./RoleNameInput";
 import { RoleDescriptionTextarea } from "./RoleDescriptionTextarea";
+import { RoleNameInput } from "./RoleNameInput";
 
 export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
   mode,
@@ -92,7 +92,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
 
   const currentRoleId =
     isEditMode && initialData
-      ? (initialData as CustomRole & { id?: string }).id
+      ? (initialData as CustomRoleViewModel & { id?: string }).id
       : undefined;
 
   return (

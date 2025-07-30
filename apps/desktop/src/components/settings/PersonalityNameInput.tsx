@@ -12,17 +12,17 @@
  * @module components/settings/PersonalityNameInput
  */
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Check, X, AlertCircle } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
-import { useDebounce } from "../../hooks/useDebounce";
-import { announceToScreenReader } from "../../utils/announceToScreenReader";
 import type {
   PersonalityNameInputProps,
-  ValidationResult,
+  ValidationResultViewModel,
 } from "@fishbowl-ai/shared";
+import { AlertCircle, Check, X } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { useDebounce } from "../../hooks/useDebounce";
+import { announceToScreenReader } from "../../utils/announceToScreenReader";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
   value,
@@ -33,14 +33,14 @@ export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
   className,
   "aria-describedby": ariaDescribedBy,
 }) => {
-  const [validation, setValidation] = useState<ValidationResult>({
+  const [validation, setValidation] = useState<ValidationResultViewModel>({
     isValid: false,
     errors: [],
     isValidating: false,
   });
 
   const validateName = useCallback(
-    (name: string): ValidationResult => {
+    (name: string): ValidationResultViewModel => {
       const errors: string[] = [];
       const trimmedName = name.trim();
 

@@ -13,14 +13,17 @@
  * @module components/settings/RoleNameInput
  */
 
-import React, { useCallback, useEffect, useState } from "react";
-import { Check, X, AlertCircle } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
+import type {
+  RoleNameInputProps,
+  ValidationResultViewModel,
+} from "@fishbowl-ai/shared";
+import { AlertCircle, Check, X } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import type { RoleNameInputProps, ValidationResult } from "@fishbowl-ai/shared";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 
 export const RoleNameInput: React.FC<RoleNameInputProps> = ({
   value,
@@ -31,14 +34,14 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
   className,
   "aria-describedby": ariaDescribedBy,
 }) => {
-  const [validation, setValidation] = useState<ValidationResult>({
+  const [validation, setValidation] = useState<ValidationResultViewModel>({
     isValid: false,
     errors: [],
     isValidating: false,
   });
 
   const validateName = useCallback(
-    (name: string): ValidationResult => {
+    (name: string): ValidationResultViewModel => {
       const errors: string[] = [];
       const trimmedName = name.trim();
 

@@ -11,26 +11,26 @@
  * @module components/settings/RolesSection
  */
 
-import React, { useState, useCallback } from "react";
-import { cn } from "../../lib/utils";
-import { TabContainer } from "./TabContainer";
-import { PredefinedRolesTab } from "./PredefinedRolesTab";
-import { CustomRolesTab } from "./CustomRolesTab";
-import { RoleFormModal } from "./RoleFormModal";
-import { RoleDeleteDialog } from "./RoleDeleteDialog";
-import { useCustomRoles } from "@fishbowl-ai/shared";
 import type {
+  CustomRoleViewModel,
+  RoleFormData,
   RolesSectionProps,
   TabConfiguration,
-  CustomRole,
-  RoleFormData,
 } from "@fishbowl-ai/shared";
+import { useCustomRoles } from "@fishbowl-ai/shared";
+import React, { useCallback, useState } from "react";
+import { cn } from "../../lib/utils";
+import { CustomRolesTab } from "./CustomRolesTab";
+import { PredefinedRolesTab } from "./PredefinedRolesTab";
+import { RoleDeleteDialog } from "./RoleDeleteDialog";
+import { RoleFormModal } from "./RoleFormModal";
+import { TabContainer } from "./TabContainer";
 
 export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   // Modal state management - centralized to ensure only one modal open
-  const [selectedRole, setSelectedRole] = useState<CustomRole | undefined>(
-    undefined,
-  );
+  const [selectedRole, setSelectedRole] = useState<
+    CustomRoleViewModel | undefined
+  >(undefined);
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
@@ -46,14 +46,14 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     setFormModalOpen(true);
   }, []);
 
-  const handleEditRole = useCallback((role: CustomRole) => {
+  const handleEditRole = useCallback((role: CustomRoleViewModel) => {
     setFormMode("edit");
     setSelectedRole(role);
     setDeleteDialogOpen(false); // Ensure only one modal open
     setFormModalOpen(true);
   }, []);
 
-  const handleDeleteRole = useCallback((role: CustomRole) => {
+  const handleDeleteRole = useCallback((role: CustomRoleViewModel) => {
     setSelectedRole(role);
     setFormModalOpen(false); // Ensure only one modal open
     setDeleteDialogOpen(true);
@@ -79,7 +79,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   );
 
   const handleConfirmDelete = useCallback(
-    async (role: CustomRole) => {
+    async (role: CustomRoleViewModel) => {
       try {
         await deleteRole(role.id);
         setDeleteDialogOpen(false);

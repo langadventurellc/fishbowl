@@ -4,18 +4,20 @@
  * @module hooks/useRoleFormModal
  */
 
-import { useState, useCallback } from "react";
 import {
   useCustomRoles,
-  type CustomRole,
+  type CustomRoleViewModel,
   type RoleFormData,
 } from "@fishbowl-ai/shared";
+import { useCallback, useState } from "react";
 import type { UseRoleFormModalReturn } from "./types/UseRoleFormModalReturn";
 
 export function useRoleFormModal(): UseRoleFormModalReturn {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState<"create" | "edit">("create");
-  const [currentRole, setCurrentRole] = useState<CustomRole | undefined>();
+  const [currentRole, setCurrentRole] = useState<
+    CustomRoleViewModel | undefined
+  >();
   const [isLoading, setIsLoading] = useState(false);
 
   const { createRole, updateRole } = useCustomRoles();
@@ -26,7 +28,7 @@ export function useRoleFormModal(): UseRoleFormModalReturn {
     setIsOpen(true);
   }, []);
 
-  const openEditModal = useCallback((role: CustomRole) => {
+  const openEditModal = useCallback((role: CustomRoleViewModel) => {
     setMode("edit");
     setCurrentRole(role);
     setIsOpen(true);

@@ -4,13 +4,13 @@
  * @module components/settings/types/RoleFormModalProps
  */
 
-import type { RoleFormData, CustomRole } from "@fishbowl-ai/shared";
+import type { CustomRoleViewModel, RoleFormData } from "@fishbowl-ai/shared";
 
 export interface RoleFormModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   mode: "create" | "edit";
-  role?: CustomRole;
+  role?: CustomRoleViewModel;
   onSave: (data: RoleFormData) => void;
   isLoading?: boolean;
 }

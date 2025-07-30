@@ -1,10 +1,9 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import type { CustomRoleViewModel } from "@fishbowl-ai/shared";
 import "@testing-library/jest-dom";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { CustomRoleListItem } from "../CustomRoleListItem";
-import type { CustomRole } from "@fishbowl-ai/shared";
 
-const mockRole: CustomRole = {
+const mockRole: CustomRoleViewModel = {
   id: "test-role-1",
   name: "Test Developer",
   description:
@@ -111,7 +110,7 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("handles short descriptions without truncation", () => {
-    const shortDescriptionRole: CustomRole = {
+    const shortDescriptionRole: CustomRoleViewModel = {
       ...mockRole,
       description: "Short description",
     };
@@ -126,7 +125,7 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("maintains proper layout with long role names", () => {
-    const longNameRole: CustomRole = {
+    const longNameRole: CustomRoleViewModel = {
       ...mockRole,
       name: "A Very Long Role Name That Might Wrap to Multiple Lines",
     };
