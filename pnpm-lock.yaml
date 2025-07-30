@@ -291,9 +291,6 @@ importers:
 
   packages/shared:
     dependencies:
-      "@fishbowl-ai/ui-theme":
-        specifier: workspace:*
-        version: link:../ui-theme
       react:
         specifier: ^19.0.0
         version: 19.1.0
