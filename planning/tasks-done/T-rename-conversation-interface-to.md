@@ -2,7 +2,7 @@
 kind: task
 id: T-rename-conversation-interface-to
 title: Rename Conversation interface to ConversationViewModel with backward compatibility
-status: open
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-30T01:46:01.008062"

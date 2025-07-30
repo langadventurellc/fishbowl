@@ -2,7 +2,7 @@
 kind: task
 id: T-update-desktop-app-imports-to
 title: Update desktop app imports to use ViewModel naming for core UI types
-status: open
+status: done
 priority: normal
 prerequisites:
   - T-rename-agent-interface-to

@@ -1,4 +1,4 @@
-import { Agent, ThemeMode } from "@fishbowl-ai/shared";
+import { AgentViewModel, ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
 import {
   AgentPill,
@@ -44,7 +44,7 @@ export default function ComponentShowcase() {
   ];
 
   // Sample agent data for AgentPill showcase
-  const sampleAgents: Agent[] = [
+  const sampleAgents: AgentViewModel[] = [
     {
       name: "Ted",
       role: "Technical Advisor",

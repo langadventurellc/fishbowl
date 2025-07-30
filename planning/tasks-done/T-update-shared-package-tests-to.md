@@ -2,7 +2,7 @@
 kind: task
 id: T-update-shared-package-tests-to
 title: Update shared package tests to use ViewModel naming for core UI types
-status: open
+status: done
 priority: normal
 prerequisites:
   - T-rename-agent-interface-to
