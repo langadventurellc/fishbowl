@@ -2,7 +2,7 @@
 kind: task
 id: T-move-ui-focused-types-from
 title: Move UI-focused types from settings directory to types/ui
-status: open
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-30T02:04:01.416764"
