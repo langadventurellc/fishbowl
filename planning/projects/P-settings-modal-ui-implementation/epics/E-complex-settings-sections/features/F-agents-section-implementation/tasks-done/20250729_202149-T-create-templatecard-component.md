@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-templatecard-component
+parent: F-agents-section-implementation
+status: done
 title: Create TemplateCard component with Use Template button
-status: open
 priority: normal
 prerequisites:
   - T-create-agentssection-main
 created: "2025-07-29T16:17:06.714018"
-updated: "2025-07-29T16:17:06.714018"
+updated: "2025-07-29T20:11:01.932748"
 schema_version: "1.1"
-parent: F-agents-section-implementation
+worktree: null
 ---
 
 # Create TemplateCard Component with Use Template Button
@@ -122,3 +123,7 @@ interface TemplateCardProps {
 - Works with TemplatesTab parent component
 
 ### Log
+
+**2025-07-30T01:21:49.417970Z** - Implemented TemplateCard component with Use Template button following vertical layout requirements. Created reusable component that displays template information clearly with centered icon, name, model, description, and full-width primary button. Includes smooth hover animations, accessibility features, and maintains consistent height in grid layouts. All unit tests pass with comprehensive coverage.
+
+- filesChanged: ["packages/shared/src/types/settings/TemplateCardProps.ts", "packages/shared/src/types/settings/index.ts", "apps/desktop/src/components/settings/agents/TemplateCard.tsx", "apps/desktop/src/components/settings/AgentsSection.tsx", "apps/desktop/src/components/settings/agents/__tests__/TemplateCard.test.tsx"]

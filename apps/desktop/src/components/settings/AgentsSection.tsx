@@ -15,7 +15,7 @@ import React, { useState, useMemo, useCallback } from "react";
 import { cn } from "../../lib/utils";
 import { TabContainer } from "./TabContainer";
 import { AgentCard } from "./agents/AgentCard";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { TemplateCard } from "./agents/TemplateCard";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Slider } from "../ui/slider";
@@ -23,21 +23,7 @@ import { Label } from "../ui/label";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { useDebounce } from "../../hooks/useDebounce";
 import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import {
-  Search,
-  Plus,
-  BookOpen,
-  Code,
-  PenTool,
-  BarChart3,
-  Calendar,
-  Palette,
-  FileText,
-  TrendingUp,
-  Users,
-  Brain,
-  type LucideIcon,
-} from "lucide-react";
+import { Search, Plus, Users } from "lucide-react";
 import type {
   AgentsSectionProps,
   TabConfiguration,
@@ -97,20 +83,6 @@ const mockAgents: AgentCardType[] = [
     role: "Marketing and Strategy",
   },
 ];
-
-// Icon mapping for agent cards
-const iconMap: Record<string, LucideIcon> = {
-  BookOpen,
-  Code,
-  PenTool,
-  BarChart3,
-  Calendar,
-  Palette,
-  FileText,
-  TrendingUp,
-  Users,
-  Brain,
-};
 
 /**
  * Responsive grid layout for agent cards.
@@ -343,45 +315,16 @@ const TemplatesTab: React.FC = () => {
 
       {/* Templates Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {mockTemplates.map((template) => {
-          const IconComponent = iconMap[template.icon] || BookOpen;
-
-          return (
-            <Card
-              key={template.id}
-              className="hover:shadow-lg transition-all duration-200 group cursor-pointer"
-            >
-              <CardHeader className="pb-4">
-                <div className="flex items-start gap-3">
-                  <div className="p-2 bg-muted rounded-lg group-hover:bg-accent/20 transition-colors">
-                    <IconComponent className="h-8 w-8 text-muted-foreground group-hover:text-accent-foreground transition-colors" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <CardTitle className="text-base leading-tight mb-1">
-                      {template.name}
-                    </CardTitle>
-                    <p className="text-xs text-muted-foreground">
-                      {template.configuration.model}
-                    </p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm text-muted-foreground mb-4 line-clamp-3 leading-relaxed">
-                  {template.description}
-                </p>
-                <Button
-                  className="w-full"
-                  variant="outline"
-                  size="sm"
-                  aria-label={`Use ${template.name} template`}
-                >
-                  Use Template
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
+        {mockTemplates.map((template) => (
+          <TemplateCard
+            key={template.id}
+            template={template}
+            onUseTemplate={(templateId) => {
+              // UI-only implementation - button styled and interactive but non-functional
+              console.log("Use template:", templateId);
+            }}
+          />
+        ))}
       </div>
     </div>
   );

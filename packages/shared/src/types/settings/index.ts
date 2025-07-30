@@ -32,3 +32,4 @@ export * from "./AgentConfiguration";
 export * from "./AgentDefaults";
 export * from "./AgentsSectionProps";
 export * from "./AgentTemplate";
+export * from "./TemplateCardProps";
