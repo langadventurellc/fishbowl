@@ -36,7 +36,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   return (
     <Card
       className={cn(
-        "hover:shadow-md lg:hover:shadow-lg transition-all duration-200 group",
+        "hover:shadow-md lg:hover:shadow-lg transition-all duration-[var(--dt-animation-hover-transition)] group",
         "focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2",
         className,
       )}

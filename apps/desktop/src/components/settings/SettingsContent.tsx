@@ -765,7 +765,7 @@ const AdvancedSettings: React.FC = () => {
         <div className="space-y-4">
           <h2 className="text-heading-secondary mb-4">Data Management</h2>
           <div className="grid gap-4">
-            <div className="grid grid-cols-1 gap-[12px]">
+            <div className="grid grid-cols-1 gap-[var(--dt-data-management-gap)]">
               {/* Export Settings Button */}
               <div className="flex flex-col">
                 <Button

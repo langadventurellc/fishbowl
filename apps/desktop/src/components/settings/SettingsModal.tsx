@@ -63,7 +63,7 @@ const useModalClasses = () => ({
     // Smooth fade animations
     "data-[state=open]:animate-in data-[state=closed]:animate-out",
     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-    "data-[state=closed]:duration-200 data-[state=open]:duration-200",
+    "data-[state=closed]:duration-[var(--dt-animation-modal)] data-[state=open]:duration-[var(--dt-animation-modal)]",
     // Prevent layout shift
     "transition-opacity",
   ),

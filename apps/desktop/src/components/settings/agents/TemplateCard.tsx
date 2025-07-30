@@ -59,7 +59,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
   return (
     <Card
       className={cn(
-        "hover:shadow-lg transition-all duration-200 group cursor-pointer h-full flex flex-col",
+        "hover:shadow-lg transition-all duration-[var(--dt-animation-hover-transition)] group cursor-pointer h-full flex flex-col",
         className,
       )}
     >

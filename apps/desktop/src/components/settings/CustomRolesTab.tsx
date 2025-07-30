@@ -154,7 +154,7 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
         {/* Scrollable role list area */}
         <div className="flex-1 min-h-0">
           <div
-            className="max-h-[400px] overflow-y-auto space-y-4 pr-2"
+            className="max-h-[var(--dt-scrollable-list-max-height)] overflow-y-auto space-y-4 pr-[var(--dt-scrollable-container-padding-right)]"
             role="list"
             aria-label={`${sortedRoles.length} custom roles`}
             aria-describedby="custom-roles-description"

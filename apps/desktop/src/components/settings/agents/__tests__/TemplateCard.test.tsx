@@ -136,7 +136,10 @@ describe("TemplateCard Component", () => {
       const { container } = render(<TemplateCard {...defaultProps} />);
 
       const card = container.querySelector('[class*="hover:shadow-lg"]');
-      expect(card).toHaveClass("transition-all", "duration-200");
+      expect(card).toHaveClass(
+        "transition-all",
+        "duration-[var(--dt-animation-hover-transition)]",
+      );
     });
 
     it("maintains consistent height with flex layout", () => {

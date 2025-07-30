@@ -46,7 +46,7 @@ export const CustomRoleListItem = memo<CustomRoleListItemProps>(
     return (
       <Card
         className={cn(
-          "hover:shadow-sm transition-shadow duration-200",
+          "hover:shadow-sm transition-shadow duration-[var(--dt-animation-hover-transition)]",
           className,
         )}
       >

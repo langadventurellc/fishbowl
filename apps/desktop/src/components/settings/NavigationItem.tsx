@@ -95,7 +95,7 @@ export const NavigationItem = React.forwardRef<
         <div
           id={`${id}-subtabs`}
           className={cn(
-            "overflow-hidden transition-all duration-200 ease-in-out",
+            "overflow-hidden transition-all duration-[var(--dt-animation-accordion-transition)] ease-in-out",
             isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
           )}
         >

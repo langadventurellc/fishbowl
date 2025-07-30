@@ -164,7 +164,9 @@ describe("AgentCard Component", () => {
 
       const card = container.querySelector('[class*="hover:shadow-md"]');
       expect(card).toHaveClass("transition-all");
-      expect(card).toHaveClass("duration-200");
+      expect(card).toHaveClass(
+        "duration-[var(--dt-animation-hover-transition)]",
+      );
     });
 
     it("has group hover behavior for buttons", () => {

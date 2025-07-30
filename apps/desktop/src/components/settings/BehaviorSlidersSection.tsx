@@ -103,16 +103,16 @@ export const BehaviorSlidersSection: React.FC<BehaviorSlidersSectionProps> = ({
             Advanced Behavior Settings
           </span>
           {isExpanded ? (
-            <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+            <ChevronUp className="h-4 w-4 transition-transform duration-[var(--dt-animation-accordion-transition)]" />
           ) : (
-            <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+            <ChevronDown className="h-4 w-4 transition-transform duration-[var(--dt-animation-accordion-transition)]" />
           )}
         </Button>
       </CollapsibleTrigger>
 
       <CollapsibleContent
         id="behavior-sliders-content"
-        className="space-y-6 transition-all duration-200 ease-in-out"
+        className="space-y-6 transition-all duration-[var(--dt-animation-accordion-transition)] ease-in-out"
       >
         {BEHAVIOR_GROUPS.map((group) => (
           <div key={group.title} className="space-y-4">
