@@ -90,7 +90,7 @@ describe("FocusIndicators.a11y", () => {
       const activeButton = screen.getByRole("button", { name: "General" });
 
       // Active state uses multiple visual cues: color, border, and enhanced focus
-      expect(activeButton).toHaveClass("border-l-[3px]"); // Visual border
+      expect(activeButton).toHaveClass("border-l-primary"); // Visual border
       expect(activeButton).toHaveClass("focus-visible:ring-3"); // Enhanced thickness
       expect(activeButton).toHaveClass("bg-accent"); // Background change
     });

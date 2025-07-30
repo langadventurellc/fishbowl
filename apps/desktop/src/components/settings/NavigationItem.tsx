@@ -46,7 +46,7 @@ export const NavigationItem = React.forwardRef<
         variant="ghost"
         className={cn(
           // Exact specifications: 40px height, 12px horizontal padding, 4px border radius
-          "h-[40px] px-3 rounded-[4px]",
+          "h-[var(--dt-nav-item-height)] px-[var(--dt-nav-item-padding-horizontal)] rounded-[var(--dt-border-radius-small)]",
           "w-full justify-start items-center",
           // Text styling
           isCompact ? "text-xs" : "text-sm",
@@ -65,8 +65,8 @@ export const NavigationItem = React.forwardRef<
           // Active state: darker background with accent color and 3px left accent border
           active && [
             "bg-accent text-accent-foreground",
-            "border-l-[3px] border-l-primary",
-            "pl-[9px]", // Adjust left padding to account for 3px border (12px - 3px = 9px)
+            "border-l-[var(--dt-nav-active-border)] border-l-primary",
+            "pl-[calc(var(--dt-nav-item-padding-horizontal)-var(--dt-nav-active-border))]", // Adjust left padding to account for active border
           ],
           // Flex layout for icon positioning
           hasSubTabs && "justify-between",

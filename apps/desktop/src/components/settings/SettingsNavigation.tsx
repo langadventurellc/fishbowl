@@ -101,13 +101,13 @@ export function SettingsNavigation({
         // Base navigation styling
         "bg-muted/50 border-r border-solid border-border flex flex-col",
         // Desktop: exactly 200px width (≥ 1000px)
-        "min-[1000px]:w-[200px]",
+        "min-[1000px]:w-[var(--dt-nav-width-desktop)]",
         // Medium screens: exactly 180px width (< 1000px, ≥ 800px)
-        "min-[800px]:max-[999px]:w-[180px]",
+        "min-[800px]:max-[999px]:w-[var(--dt-nav-width-medium)]",
         // Mobile: collapsible hamburger menu (< 800px)
         "max-[799px]:w-auto max-[799px]:border-r-0 max-[799px]:border-b",
         // Padding: 10px internal padding
-        "p-[10px]",
+        "p-[var(--dt-nav-padding)]",
         // Scrollable when content exceeds height
         "overflow-y-auto",
         className,
@@ -240,7 +240,7 @@ const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
           {section.hasSubTabs &&
             section.subTabs &&
             activeSection === section.id && (
-              <div className="mt-2 ml-4 space-y-1">
+              <div className="mt-2 ml-4 space-y-1 pb-2">
                 {section.subTabs
                   .filter((subTab) => subTab.id)
                   .map((subTab) => {
