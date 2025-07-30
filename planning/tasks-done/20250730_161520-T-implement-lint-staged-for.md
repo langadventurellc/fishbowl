@@ -1,13 +1,14 @@
 ---
 kind: task
 id: T-implement-lint-staged-for
+status: done
 title: Implement lint-staged for conditional pre-commit hooks
-status: open
 priority: low
 prerequisites: []
 created: "2025-07-26T13:38:52.058648"
-updated: "2025-07-26T13:38:52.058648"
+updated: "2025-07-30T16:06:29.312199"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Context
@@ -68,3 +69,7 @@ Currently, the repository runs quality checks and tests on all pre-commit hooks 
 - Potentially update documentation about development workflow
 
 ### Log
+
+**2025-07-30T21:15:20.045528Z** - Successfully implemented lint-staged for conditional pre-commit hooks, optimizing development workflow efficiency. The implementation detects changed file types and runs appropriate quality checks: TypeScript/JavaScript files trigger full pipeline (lint + type-check + tests), while markdown/JSON files only run prettier formatting. This reduces hook execution time for non-code changes while maintaining all existing functionality. All tests passed and the monorepo Turbo integration works correctly.
+
+- filesChanged: ["package.json", ".husky/pre-commit", "pnpm-lock.yaml"]
