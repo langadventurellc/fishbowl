@@ -72,19 +72,19 @@ const useModalClasses = () => ({
     "!max-w-none !gap-0 !p-0 flex flex-col",
     // Enhanced responsive behavior
     // Large screens: 80% viewport, max 1200px
-    "!w-[80vw] h-[80vh] !max-w-[1200px] max-h-[700px]",
+    "!w-[var(--dt-modal-width-small)] h-[var(--dt-modal-height-small)] !max-w-[var(--dt-modal-max-width)] max-h-[var(--dt-modal-max-height)]",
     // Medium screens (< 1000px): 95% width, navigation 180px
-    "max-[1000px]:w-[95vw]",
+    "max-[1000px]:w-[var(--dt-modal-width-medium)]",
     // Small screens (< 800px): Full width content area, collapsible navigation
-    "max-[800px]:w-[95vw] max-[800px]:h-[90vh]",
+    "max-[800px]:w-[var(--dt-modal-width-medium)] max-[800px]:h-[var(--dt-modal-height-mobile)]",
     // Minimum constraints
-    "min-w-[800px] min-h-[500px]",
+    "min-w-[var(--dt-modal-min-width)] min-h-[var(--dt-modal-min-height)]",
     // Enhanced z-index for content above overlay
     "z-50",
     // Custom styling as per requirements
     "rounded-lg", // 8px border radius
-    // Custom shadow: 0 10px 25px rgba(0, 0, 0, 0.3)
-    "shadow-[0_10px_25px_rgba(0,0,0,0.3)]",
+    // Custom shadow using design token
+    "shadow-[var(--dt-shadow-modal)]",
     // Enhanced focus indicators for keyboard navigation
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
     // High contrast focus indicators

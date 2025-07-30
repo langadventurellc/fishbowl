@@ -974,8 +974,8 @@ export function SettingsContent({
         // Base content styling
         "flex-1 overflow-y-scroll",
         // Responsive padding: 30px desktop, 20px reduced screens
-        "min-[1000px]:p-[30px]",
-        "max-[999px]:p-[20px]",
+        "min-[1000px]:p-[var(--dt-content-padding-desktop)]",
+        "max-[999px]:p-[var(--dt-content-padding-mobile)]",
         // Full width when navigation is hidden/collapsed
         "max-[799px]:w-full",
         // Takes remaining width when navigation is visible
@@ -1003,7 +1003,7 @@ export function SettingsContent({
 
       {/* Content container with region role */}
       <div
-        className="max-w-[900px] mx-auto px-4 sm:px-6"
+        className="max-w-[var(--dt-content-max-width)] mx-auto px-4 sm:px-6"
         role="region"
         aria-labelledby={`${contentId}-section-title`}
       >

@@ -56,6 +56,12 @@
     --dt-card-gap: 16px;
     --dt-form-element-spacing: 4px;
     
+    /* === SHADOW TOKENS === */
+    
+    /* Modal Shadows */
+    --dt-shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.3);
+    --dt-shadow-modal-dark: 0 10px 25px rgba(0, 0, 0, 0.5);
+    
     /* === TYPOGRAPHY TOKENS === */
     
     /* Heading Sizes */

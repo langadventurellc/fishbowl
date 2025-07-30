@@ -88,16 +88,16 @@ export function ModalFooter({
   return (
     <footer
       className={cn(
-        // Exact height specification: 60px
-        "h-[60px]",
+        // Exact height specification using design token
+        "h-[var(--dt-modal-footer-height)]",
         // Background: same as header (slightly darker than content area)
         "bg-muted/30",
         // Border-top: 1px solid border color for visual separation
         "border-t border-border",
         // Layout: flex container for button alignment
         "flex items-center justify-end",
-        // Padding: 20px from modal edge as specified
-        "px-5",
+        // Padding: 20px from modal edge using design token
+        "px-[var(--dt-modal-header-padding)]",
         // Ensure footer stays at bottom
         "flex-shrink-0",
         className,
@@ -112,7 +112,7 @@ export function ModalFooter({
         buttons.
       </div>
       {/* Button container with precise spacing */}
-      <div className="flex gap-2.5">
+      <div className="flex gap-[var(--dt-button-gap)]">
         {/* Cancel Button */}
         <Button
           variant="secondary"

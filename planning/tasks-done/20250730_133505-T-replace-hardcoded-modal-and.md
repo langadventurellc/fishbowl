@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-replace-hardcoded-modal-and
+status: done
 title: Replace hardcoded modal and layout values with design tokens
-status: open
 priority: high
 prerequisites:
   - T-create-design-token-foundation
 created: "2025-07-30T12:57:50.918348"
-updated: "2025-07-30T12:57:50.918348"
+updated: "2025-07-30T13:28:41.320230"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Context
@@ -64,3 +65,7 @@ Replace the most critical hardcoded values in modal and core layout components w
 - Check accessibility of modal dimensions
 
 ### Log
+
+**2025-07-30T18:35:05.229591Z** - Successfully replaced all hardcoded modal and layout values with design tokens from the foundation system. All modal dimensions, shadows, responsive behavior, content padding, header/footer heights, and button spacing now use standardized design tokens. Implementation maintains exact visual consistency while improving maintainability and design system adherence. All quality checks and tests pass successfully.
+
+- filesChanged: ["apps/desktop/src/styles/design-tokens.css", "apps/desktop/src/components/settings/SettingsModal.tsx", "apps/desktop/src/components/settings/SettingsContent.tsx", "apps/desktop/src/components/settings/ModalHeader.tsx", "apps/desktop/src/components/settings/ModalFooter.tsx"]
