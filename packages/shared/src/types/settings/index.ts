@@ -33,3 +33,6 @@ export * from "./AgentDefaults";
 export * from "./AgentsSectionProps";
 export * from "./AgentTemplate";
 export * from "./TemplateCardProps";
+
+// Empty state types
+export * from "./EmptyStateProps";

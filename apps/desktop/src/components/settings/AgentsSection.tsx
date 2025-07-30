@@ -14,8 +14,12 @@
 import React, { useState, useMemo, useCallback } from "react";
 import { cn } from "../../lib/utils";
 import { TabContainer } from "./TabContainer";
-import { AgentCard } from "./agents/AgentCard";
-import { TemplateCard } from "./agents/TemplateCard";
+import {
+  AgentCard,
+  TemplateCard,
+  EmptyLibraryState,
+  EmptyTemplatesState,
+} from "./agents";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Slider } from "../ui/slider";
@@ -166,7 +170,16 @@ const LibraryTab: React.FC = () => {
 
       {/* Content */}
       {filteredAgents.length === 0 ? (
-        <EmptyState query={searchQuery} />
+        searchQuery ? (
+          <EmptyState query={searchQuery} />
+        ) : (
+          <EmptyLibraryState
+            onAction={() => {
+              // TODO: Implement create agent functionality
+              console.log("Create new agent");
+            }}
+          />
+        )
       ) : (
         <AgentGrid agents={filteredAgents} />
       )}
@@ -314,18 +327,27 @@ const TemplatesTab: React.FC = () => {
       </div>
 
       {/* Templates Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {mockTemplates.map((template) => (
-          <TemplateCard
-            key={template.id}
-            template={template}
-            onUseTemplate={(templateId) => {
-              // UI-only implementation - button styled and interactive but non-functional
-              console.log("Use template:", templateId);
-            }}
-          />
-        ))}
-      </div>
+      {mockTemplates.length === 0 ? (
+        <EmptyTemplatesState
+          onAction={() => {
+            // TODO: Implement browse templates functionality
+            console.log("Browse templates");
+          }}
+        />
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {mockTemplates.map((template) => (
+            <TemplateCard
+              key={template.id}
+              template={template}
+              onUseTemplate={(templateId) => {
+                // UI-only implementation - button styled and interactive but non-functional
+                console.log("Use template:", templateId);
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
