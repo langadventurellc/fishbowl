@@ -1,10 +1,10 @@
 /**
  * Configuration for tab sections in complex settings.
  *
- * @module types/settings/TabSectionConfiguration
+ * @module types/ui/settings/TabSectionConfiguration
  */
 
-import type { SettingsSubTab } from "../../stores/settings/settingsSubTab";
+import type { SettingsSubTab } from "../../../stores/settings/settingsSubTab";
 import type { TabConfiguration } from "./TabConfiguration";
 
 /**

@@ -1,9 +1,9 @@
 /**
  * Form data type for role creation and editing (derived from schema)
  *
- * @module types/settings/RoleFormData
+ * @module types/ui/settings/RoleFormData
  */
 import { z } from "zod";
-import { roleSchema } from "../../schemas";
+import { roleSchema } from "../../../schemas";
 
 export type RoleFormData = z.infer<typeof roleSchema>;

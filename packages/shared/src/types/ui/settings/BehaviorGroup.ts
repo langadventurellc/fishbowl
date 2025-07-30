@@ -3,7 +3,7 @@
  *
  * Defines the structure for grouping related behavior traits in the personality creation interface.
  *
- * @module types/settings/BehaviorGroup
+ * @module types/ui/settings/BehaviorGroup
  */
 
 import type { BehaviorTrait } from "./BehaviorTrait";

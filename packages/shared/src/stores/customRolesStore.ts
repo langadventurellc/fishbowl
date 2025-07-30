@@ -9,7 +9,7 @@
 
 import { create } from "zustand";
 import { roleSchema } from "../schemas";
-import type { CustomRoleViewModel, RoleFormData } from "../types/settings";
+import type { CustomRoleViewModel, RoleFormData } from "../types/ui/settings";
 import { customRolesPersistence } from "./customRolesPersistence";
 
 // Generate unique ID using crypto API or fallback

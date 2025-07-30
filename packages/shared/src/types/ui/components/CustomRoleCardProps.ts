@@ -3,7 +3,7 @@
  *
  * @module types/ui/components/CustomRoleCardProps
  */
-import type { CustomRoleViewModel } from "../../settings/CustomRoleViewModel";
+import type { CustomRoleViewModel } from "../settings/CustomRoleViewModel";
 
 export interface CustomRoleCardProps {
   /** Custom role data to display */

@@ -3,7 +3,7 @@
  *
  * Defines the structure for individual behavior traits used in personality creation.
  *
- * @module types/settings/BehaviorTrait
+ * @module types/ui/settings/BehaviorTrait
  */
 
 export interface BehaviorTrait {

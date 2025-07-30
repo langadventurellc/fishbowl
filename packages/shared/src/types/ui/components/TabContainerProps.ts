@@ -8,7 +8,7 @@
  */
 
 import type { SettingsSubTab } from "../../../stores/settings/settingsSubTab";
-import type { TabConfiguration } from "../../settings/TabConfiguration";
+import type { TabConfiguration } from "../../ui/settings/TabConfiguration";
 
 /**
  * Props interface for the TabContainer component.

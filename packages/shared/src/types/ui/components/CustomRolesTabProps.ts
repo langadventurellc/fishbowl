@@ -4,7 +4,7 @@
  * @module types/ui/components/CustomRolesTabProps
  */
 
-import type { CustomRoleViewModel } from "../../settings/CustomRoleViewModel";
+import type { CustomRoleViewModel } from "../settings/CustomRoleViewModel";
 
 export interface CustomRolesTabProps {
   onCreateRole?: () => void;

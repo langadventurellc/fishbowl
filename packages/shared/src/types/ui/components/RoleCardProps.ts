@@ -3,7 +3,7 @@
  *
  * @module types/ui/components/RoleCardProps
  */
-import type { PredefinedRole } from "../../settings/PredefinedRole";
+import type { PredefinedRole } from "../settings/PredefinedRole";
 
 export interface RoleCardProps {
   /** Predefined role data to display */

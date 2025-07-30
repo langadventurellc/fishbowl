@@ -1,4 +1,4 @@
-import type { AgentCard } from "../../settings/AgentCard";
+import type { AgentCard } from "../settings/AgentCard";
 
 export interface AgentNameInputProps {
   value: string;

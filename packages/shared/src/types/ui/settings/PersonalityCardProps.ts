@@ -1,7 +1,7 @@
 /**
  * Personality card component props
  *
- * @module types/settings/PersonalityCardProps
+ * @module types/ui/settings/PersonalityCardProps
  */
 import type { Personality } from "./Personality";
 

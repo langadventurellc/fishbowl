@@ -12,6 +12,7 @@ export * from "./components";
 export * from "./core";
 export * from "./FontSizePreviewProps";
 export * from "./menu";
+export * from "./settings";
 export * from "./theme";
 export * from "./ThemePreviewProps";
 export * from "./ValidationResultViewModel";

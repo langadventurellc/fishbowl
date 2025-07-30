@@ -1,7 +1,7 @@
 /**
  * Props interface for AgentsSection component.
  *
- * @module types/settings/AgentsSectionProps
+ * @module types/ui/settings/AgentsSectionProps
  */
 export interface AgentsSectionProps {
   className?: string;

@@ -1,7 +1,7 @@
 /**
  * Complete personality record with unique identifier
  *
- * @module types/settings/Personality
+ * @module types/ui/settings/Personality
  */
 import type { PersonalityFormData } from "./PersonalityFormData";
 

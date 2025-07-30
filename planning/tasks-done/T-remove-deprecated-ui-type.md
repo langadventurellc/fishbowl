@@ -2,7 +2,7 @@
 kind: task
 id: T-remove-deprecated-ui-type
 title: Remove deprecated UI type aliases after ViewModel migration
-status: open
+status: done
 priority: normal
 prerequisites:
   - T-final-validation-and

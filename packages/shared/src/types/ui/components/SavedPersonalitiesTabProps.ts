@@ -4,7 +4,7 @@
  * @module types/ui/components/SavedPersonalitiesTabProps
  */
 
-import type { Personality } from "../../settings";
+import { Personality } from "../settings";
 
 export interface SavedPersonalitiesTabProps {
   onEdit: (personality: Personality) => void;

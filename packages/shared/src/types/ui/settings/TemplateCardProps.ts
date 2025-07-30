@@ -1,7 +1,7 @@
 /**
  * Template card component props for displaying agent templates
  *
- * @module types/settings/TemplateCardProps
+ * @module types/ui/settings/TemplateCardProps
  */
 import type { AgentTemplate } from "./AgentTemplate";
 

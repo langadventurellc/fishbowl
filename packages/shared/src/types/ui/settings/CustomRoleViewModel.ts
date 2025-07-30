@@ -1,7 +1,7 @@
 /**
  * Custom user-created role interface for UI components
  *
- * @module types/settings/CustomRoleViewModel
+ * @module types/ui/settings/CustomRoleViewModel
  */
 import type { RoleFormData } from "./RoleFormData";
 

@@ -13,8 +13,8 @@
  * @module hooks/useAgentSearch
  */
 
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import type { AgentCard } from "../types/settings";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import type { AgentCard } from "../types/ui/settings";
 
 interface UseAgentSearchOptions {
   agents: AgentCard[];

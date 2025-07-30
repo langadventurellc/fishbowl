@@ -7,7 +7,7 @@
  * @module types/ui/components/CustomRoleListItemProps
  */
 
-import type { CustomRoleViewModel } from "../../settings/CustomRoleViewModel";
+import type { CustomRoleViewModel } from "../settings/CustomRoleViewModel";
 
 export interface CustomRoleListItemProps {
   role: CustomRoleViewModel;

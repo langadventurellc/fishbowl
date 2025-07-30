@@ -6,7 +6,7 @@
  * @module constants/behaviorData
  */
 
-import type { BehaviorGroup } from "../types/settings/BehaviorGroup";
+import type { BehaviorGroup } from "../types/ui/settings/BehaviorGroup";
 
 export const BEHAVIOR_GROUPS: BehaviorGroup[] = [
   {

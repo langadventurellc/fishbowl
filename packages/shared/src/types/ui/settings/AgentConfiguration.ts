@@ -2,7 +2,7 @@
  * Agent configuration interface.
  * Core settings that define agent behavior parameters.
  *
- * @module types/settings/AgentConfiguration
+ * @module types/ui/settings/AgentConfiguration
  */
 export interface AgentConfiguration {
   temperature: number;

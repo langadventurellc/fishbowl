@@ -7,7 +7,7 @@
  * @module types/ui/components/RoleNameInputProps
  */
 
-import type { CustomRoleViewModel } from "../../settings/CustomRoleViewModel";
+import type { CustomRoleViewModel } from "../settings/CustomRoleViewModel";
 
 export interface RoleNameInputProps {
   value: string;

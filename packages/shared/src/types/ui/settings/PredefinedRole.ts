@@ -1,7 +1,7 @@
 /**
  * Predefined system role interface
  *
- * @module types/settings/PredefinedRole
+ * @module types/ui/settings/PredefinedRole
  */
 
 /**

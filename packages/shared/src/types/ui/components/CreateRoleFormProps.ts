@@ -3,8 +3,8 @@
  *
  * @module types/ui/components/CreateRoleFormProps
  */
-import type { CustomRoleViewModel } from "../../settings/CustomRoleViewModel";
-import type { RoleFormData } from "../../settings/RoleFormData";
+import type { CustomRoleViewModel } from "../settings/CustomRoleViewModel";
+import type { RoleFormData } from "../settings/RoleFormData";
 
 export interface CreateRoleFormProps {
   mode: "create" | "edit";

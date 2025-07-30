@@ -2,8 +2,8 @@
  * Get all predefined roles, optionally filtered by category
  */
 
-import type { PredefinedRole } from "../types/settings/PredefinedRole";
 import { PREDEFINED_ROLES } from "../data/predefinedRoles";
+import type { PredefinedRole } from "../types/ui/settings/PredefinedRole";
 
 /**
  * Get all predefined roles, optionally filtered by category

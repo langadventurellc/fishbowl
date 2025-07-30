@@ -7,7 +7,7 @@
  * @module stores/customRolesPersistence
  */
 
-import type { CustomRoleViewModel } from "../types/settings";
+import type { CustomRoleViewModel } from "../types/ui/settings";
 
 const STORAGE_KEY = "fishbowl-custom-roles";
 const STORAGE_VERSION = "1.0";

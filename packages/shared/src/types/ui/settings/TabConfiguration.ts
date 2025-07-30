@@ -1,11 +1,11 @@
 /**
  * Configuration for a single tab in the interactive tab system.
  *
- * @module types/settings/TabConfiguration
+ * @module types/ui/settings/TabConfiguration
  */
 
 import type { ComponentType } from "react";
-import type { SettingsSubTab } from "../../stores/settings/settingsSubTab";
+import type { SettingsSubTab } from "../../../stores/settings/settingsSubTab";
 
 /**
  * Configuration for a single tab in the interactive tab system.

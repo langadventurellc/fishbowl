@@ -1,7 +1,7 @@
 /**
  * Big Five personality trait values (0-100 range) for UI components
  *
- * @module types/settings/BigFiveTraitsViewModel
+ * @module types/ui/settings/BigFiveTraitsViewModel
  */
 export interface BigFiveTraitsViewModel {
   /** Openness to experience (0-100) */

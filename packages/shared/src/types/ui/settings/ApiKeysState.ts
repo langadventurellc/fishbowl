@@ -1,7 +1,7 @@
 /**
  * Enhanced API Keys state interface with validation support
  *
- * @module types/settings/ApiKeysState
+ * @module types/ui/settings/ApiKeysState
  */
 
 import type { ProviderState } from "./providers";

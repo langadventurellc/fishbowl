@@ -1,7 +1,7 @@
 /**
  * Props interface for BigFiveSliders component
  *
- * @module types/settings/BigFiveSlidersProps
+ * @module types/ui/settings/BigFiveSlidersProps
  */
 
 import type { BigFiveTraitsViewModel } from "./BigFiveTraitsViewModel";

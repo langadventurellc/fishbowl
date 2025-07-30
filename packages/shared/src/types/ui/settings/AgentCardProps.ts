@@ -1,7 +1,7 @@
 /**
  * Agent card component props
  *
- * @module types/settings/AgentCardProps
+ * @module types/ui/settings/AgentCardProps
  */
 import type { AgentCard } from "./AgentCard";
 

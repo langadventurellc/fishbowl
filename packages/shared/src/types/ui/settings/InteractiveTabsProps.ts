@@ -1,10 +1,10 @@
 /**
  * Props for the enhanced InteractiveTabs component.
  *
- * @module types/settings/InteractiveTabsProps
+ * @module types/ui/settings/InteractiveTabsProps
  */
 
-import type { SettingsSubTab } from "../../stores/settings/settingsSubTab";
+import type { SettingsSubTab } from "../../../stores/settings/settingsSubTab";
 import type { TabConfiguration } from "./TabConfiguration";
 
 /**

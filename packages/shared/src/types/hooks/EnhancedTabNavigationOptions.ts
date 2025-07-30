@@ -7,8 +7,8 @@
  * @module types/hooks/EnhancedTabNavigationOptions
  */
 
+import { TabConfiguration } from "src/types/ui/settings";
 import type { SettingsSubTab } from "../../stores/settings/settingsSubTab";
-import type { TabConfiguration } from "../settings/TabConfiguration";
 
 /**
  * Configuration options for enhanced tab navigation.
