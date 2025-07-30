@@ -4,5 +4,6 @@
  * @module hooks
  */
 
+export * from "./useAgentSearch";
 export * from "./useEnhancedTabNavigation";
 export * from "./useCustomRoles";

@@ -11,30 +11,31 @@
  * @module components/settings/AgentsSection
  */
 
-import React, { useState, useMemo, useCallback } from "react";
+import {
+  useAgentSearch,
+  type AgentCard as AgentCardType,
+  type AgentDefaults,
+  type AgentsSectionProps,
+  type AgentTemplate,
+  type TabConfiguration,
+} from "@fishbowl-ai/shared";
+import { Loader2, Plus, Search, X } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import { useDebounce } from "../../hooks/useDebounce";
 import { cn } from "../../lib/utils";
+import { announceToScreenReader } from "../../utils/announceToScreenReader";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Slider } from "../ui/slider";
+import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
 import { TabContainer } from "./TabContainer";
 import {
   AgentCard,
-  TemplateCard,
   EmptyLibraryState,
   EmptyTemplatesState,
+  TemplateCard,
 } from "./agents";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import { Slider } from "../ui/slider";
-import { Label } from "../ui/label";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { useDebounce } from "../../hooks/useDebounce";
-import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import { Search, Plus, Users } from "lucide-react";
-import type {
-  AgentsSectionProps,
-  TabConfiguration,
-  AgentCard as AgentCardType,
-  AgentTemplate,
-  AgentDefaults,
-} from "@fishbowl-ai/shared";
 
 // Mock agent data for demonstration
 const mockAgents: AgentCardType[] = [
@@ -111,67 +112,91 @@ const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => (
 );
 
 /**
- * Empty state component with conditional messaging.
- */
-const EmptyState: React.FC<{ query: string }> = ({ query }) => (
-  <div className="flex flex-col items-center justify-center py-16 px-4">
-    <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
-      <Users className="h-8 w-8 text-muted-foreground" />
-    </div>
-    <h3 className="text-lg font-semibold mb-2">
-      {query ? `No agents found for "${query}"` : "No agents configured"}
-    </h3>
-    <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
-      {query
-        ? "Try adjusting your search terms or browse all agents."
-        : "Create your first agent to get started!"}
-    </p>
-  </div>
-);
-
-/**
  * Library tab component with search functionality and agent cards display.
  */
 const LibraryTab: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState("");
   const [agents] = useState<AgentCardType[]>(mockAgents);
 
-  // Debounced search for performance
-  const debouncedSearch = useDebounce(() => {
-    // Search logic is handled by filteredAgents useMemo
-  }, 300);
-
-  const filteredAgents = useMemo(() => {
-    if (!searchQuery.trim()) return agents;
-    const query = searchQuery.toLowerCase();
-    return agents.filter(
-      (agent) =>
-        agent.name.toLowerCase().includes(query) ||
-        agent.model.toLowerCase().includes(query) ||
-        agent.role.toLowerCase().includes(query),
-    );
-  }, [agents, searchQuery]);
+  const {
+    searchTerm,
+    setSearchTerm,
+    filteredAgents,
+    isSearching,
+    resultsCount,
+    clearSearch,
+    handleKeyDown,
+  } = useAgentSearch({
+    agents,
+    announceToScreenReader,
+  });
 
   return (
     <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
-      {/* Search Bar */}
-      <div className="relative max-w-md lg:max-w-lg xl:max-w-xl">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search agents..."
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-            debouncedSearch();
-          }}
-          className="pl-10 w-full"
-        />
+      {/* Search Bar with Enhanced UI */}
+      <div className="space-y-2">
+        <div className="relative max-w-md lg:max-w-lg xl:max-w-xl">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search agents..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={handleKeyDown}
+            className="pl-10 pr-10 w-full"
+            aria-label="Search agents by name, model, or role"
+            aria-describedby={searchTerm ? "search-results-count" : undefined}
+          />
+
+          {/* Clear Button */}
+          {searchTerm && (
+            <button
+              onClick={clearSearch}
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground transition-colors"
+              aria-label="Clear search"
+              type="button"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+
+          {/* Loading Indicator */}
+          {isSearching && (
+            <div className="absolute right-8 top-1/2 transform -translate-y-1/2">
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            </div>
+          )}
+        </div>
+
+        {/* Results Count */}
+        {searchTerm && !isSearching && (
+          <p
+            id="search-results-count"
+            className="text-sm text-muted-foreground"
+            aria-live="polite"
+          >
+            {resultsCount === 0
+              ? `No agents found for "${searchTerm}"`
+              : `${resultsCount} agent${resultsCount === 1 ? "" : "s"} found`}
+          </p>
+        )}
       </div>
 
-      {/* Content */}
+      {/* Content with Enhanced Empty States */}
       {filteredAgents.length === 0 ? (
-        searchQuery ? (
-          <EmptyState query={searchQuery} />
+        searchTerm ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
+              <Search className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold mb-2">
+              No agents found for "{searchTerm}"
+            </h3>
+            <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
+              Try adjusting your search terms or browse all agents.
+            </p>
+            <Button variant="outline" onClick={clearSearch}>
+              Clear Search
+            </Button>
+          </div>
         ) : (
           <EmptyLibraryState
             onAction={() => {

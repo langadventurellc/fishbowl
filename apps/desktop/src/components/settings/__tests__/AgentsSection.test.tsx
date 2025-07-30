@@ -14,6 +14,24 @@ jest.mock("@fishbowl-ai/shared", () => ({
     activeSubTab: "library",
     setActiveSubTab: jest.fn(),
   }),
+  useAgentSearch: jest.fn(() => ({
+    searchTerm: "",
+    setSearchTerm: jest.fn(),
+    debouncedSearchTerm: "",
+    filteredAgents: [
+      {
+        id: "1",
+        name: "Research Assistant",
+        model: "Claude 3.5 Sonnet",
+        role: "Research and Analysis",
+      },
+      { id: "2", name: "Code Reviewer", model: "GPT-4", role: "Code Analysis" },
+    ],
+    isSearching: false,
+    resultsCount: 2,
+    clearSearch: jest.fn(),
+    handleKeyDown: jest.fn(),
+  })),
 }));
 
 // Mock TabContainer to simplify testing
