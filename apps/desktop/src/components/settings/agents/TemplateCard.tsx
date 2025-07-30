@@ -63,10 +63,10 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
         className,
       )}
     >
-      <CardHeader className="pb-4 text-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="p-3 bg-muted rounded-lg group-hover:bg-accent/20 transition-colors">
-            <IconComponent className="h-8 w-8 text-muted-foreground group-hover:text-accent-foreground transition-colors" />
+      <CardHeader className="pb-4 lg:pb-6 text-center">
+        <div className="flex flex-col items-center gap-3 lg:gap-4">
+          <div className="p-3 lg:p-4 bg-muted rounded-lg group-hover:bg-accent/20 transition-colors">
+            <IconComponent className="h-8 w-8 lg:h-10 lg:w-10 text-muted-foreground group-hover:text-accent-foreground transition-colors" />
           </div>
           <div className="space-y-1">
             <CardTitle className="text-lg font-medium leading-tight">

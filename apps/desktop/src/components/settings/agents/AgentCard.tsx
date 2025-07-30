@@ -33,7 +33,12 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   };
 
   return (
-    <Card className={cn("hover:shadow-md transition-shadow group", className)}>
+    <Card
+      className={cn(
+        "hover:shadow-md lg:hover:shadow-lg transition-all duration-200 group",
+        className,
+      )}
+    >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between">
           <div>

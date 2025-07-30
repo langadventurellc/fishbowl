@@ -92,7 +92,7 @@ const mockAgents: AgentCardType[] = [
  * Responsive grid layout for agent cards.
  */
 const AgentGrid: React.FC<{ agents: AgentCardType[] }> = ({ agents }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
     {agents.map((agent) => (
       <AgentCard
         key={agent.id}
@@ -153,9 +153,9 @@ const LibraryTab: React.FC = () => {
   }, [agents, searchQuery]);
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
       {/* Search Bar */}
-      <div className="relative">
+      <div className="relative max-w-md lg:max-w-lg xl:max-w-xl">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search agents..."
@@ -164,7 +164,7 @@ const LibraryTab: React.FC = () => {
             setSearchQuery(e.target.value);
             debouncedSearch();
           }}
-          className="pl-10"
+          className="pl-10 w-full"
         />
       </div>
 
@@ -316,7 +316,7 @@ const mockTemplates: AgentTemplate[] = [
  */
 const TemplatesTab: React.FC = () => {
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
       {/* Header Section */}
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Agent Templates</h3>
@@ -335,7 +335,7 @@ const TemplatesTab: React.FC = () => {
           }}
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
           {mockTemplates.map((template) => (
             <TemplateCard
               key={template.id}
@@ -415,7 +415,7 @@ const DefaultsTab: React.FC = () => {
   }, [defaultSettings]);
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
       <div className="space-y-2">
         <h3 className="text-lg font-semibold">Agent Defaults</h3>
         <p className="text-muted-foreground">
@@ -423,7 +423,7 @@ const DefaultsTab: React.FC = () => {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-12">
         {/* Settings Controls */}
         <div className="space-y-6">
           {/* Temperature Slider */}
