@@ -40,14 +40,14 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import {
+  CharacterCounter,
   ConfigurationSlider,
   ModelSelect,
-  CharacterCounter,
 } from "./components";
 import {
+  getMaxTokensDescription,
   getTemperatureDescription,
   getTopPDescription,
-  getMaxTokensDescription,
 } from "./utils/configDescriptions";
 
 // Helper function to extract role from template description

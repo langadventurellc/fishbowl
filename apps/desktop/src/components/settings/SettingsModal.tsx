@@ -130,14 +130,45 @@ export function SettingsModal({
   const activeSection = useActiveSection();
   const { openModal, closeModal } = useSettingsActions();
 
+  // Check if there are any nested dialogs open (like AgentFormModal)
+  const [hasNestedDialog, setHasNestedDialog] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkForNestedDialogs = () => {
+      // Check if any Radix dialog content is present in the DOM
+      // Radix adds role="dialog" to dialog content elements
+      const hasDialog =
+        document.querySelector(
+          '[role="dialog"][data-state="open"]:not([data-settings-modal])',
+        ) !== null;
+      setHasNestedDialog(hasDialog);
+    };
+
+    // Check immediately and set up observer
+    checkForNestedDialogs();
+
+    // Use MutationObserver to detect when dialogs are added/removed
+    const observer = new MutationObserver(checkForNestedDialogs);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["data-radix-dialog-content"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   // Focus trap integration for modal-level focus management
+  // Disable when nested dialogs are open to avoid conflicts
   const { containerRef } = useFocusTrap({
-    isActive: open,
+    isActive: open && !hasNestedDialog,
     restoreFocus: true,
     initialFocusSelector: "[data-modal-initial-focus]",
   });
 
   // Global keyboard shortcuts for modal-wide actions
+  // Disable when nested dialogs are open to let them handle their own shortcuts
   useGlobalKeyboardShortcuts({
     shortcuts: {
       Escape: () => onOpenChange(false),
@@ -150,7 +181,7 @@ export function SettingsModal({
         console.log("Save shortcut triggered (Cmd+S)");
       },
     },
-    enabled: open,
+    enabled: open && !hasNestedDialog,
     preventDefault: true,
   });
 
@@ -206,6 +237,7 @@ export function SettingsModal({
           aria-describedby={dialogIds.descriptionId}
           aria-modal="true"
           role="dialog"
+          data-settings-modal="true"
           tabIndex={-1}
           // Additional accessibility attributes for better screen reader experience
           aria-live="polite"
@@ -221,7 +253,7 @@ export function SettingsModal({
 
           {/* Main modal content container with enhanced landmarks */}
           <div
-            className="h-full w-full flex flex-col max-h-full"
+            className="h-full w-full flex flex-col max-h-full rounded-lg overflow-hidden"
             role="application"
             aria-label="Settings application"
           >
