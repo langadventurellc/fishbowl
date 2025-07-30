@@ -1,0 +1,23 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "noEmit": false,
+    "baseUrl": ".",
+    "paths": {
+      "@fishbowl-ai/shared": ["../shared/src"],
+      "@fishbowl-ai/ui-theme": ["../ui-theme/src"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    {
+      "path": "../shared"
+    },
+    {
+      "path": "../ui-theme"
+    }
+  ]
+}

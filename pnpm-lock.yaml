@@ -326,6 +326,49 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
+  packages/ui-shared:
+    dependencies:
+      "@fishbowl-ai/shared":
+        specifier: workspace:*
+        version: link:../shared
+      "@fishbowl-ai/ui-theme":
+        specifier: workspace:*
+        version: link:../ui-theme
+      react:
+        specifier: ^19.0.0
+        version: 19.1.0
+      zod:
+        specifier: ^4.0.5
+        version: 4.0.5
+      zustand:
+        specifier: ^5.0.6
+        version: 5.0.6(@types/react@19.1.8)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
+    devDependencies:
+      "@fishbowl-ai/eslint-config":
+        specifier: workspace:*
+        version: link:../eslint-config
+      "@testing-library/react":
+        specifier: ^15.0.6
+        version: 15.0.7(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@types/jest":
+        specifier: ^30.0.0
+        version: 30.0.0
+      "@types/react":
+        specifier: ^19.0.0
+        version: 19.1.8
+      jest:
+        specifier: ^30.0.4
+        version: 30.0.4(@types/node@24.0.15)
+      jest-environment-jsdom:
+        specifier: ^30.0.4
+        version: 30.0.5
+      ts-jest:
+        specifier: ^29.1.5
+        version: 29.4.0(@babel/core@7.28.0)(@jest/transform@30.0.5)(@jest/types@30.0.5)(babel-jest@30.0.5(@babel/core@7.28.0))(jest-util@30.0.5)(jest@30.0.4(@types/node@24.0.15))(typescript@5.8.3)
+      typescript:
+        specifier: ^5.8.3
+        version: 5.8.3
+
   packages/ui-theme:
     dependencies:
       tw-animate-css:
