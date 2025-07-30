@@ -4,6 +4,6 @@
  * @module types/ui/settings/RoleFormData
  */
 import { z } from "zod";
-import { roleSchema } from "@fishbowl-ai/shared";
+import { roleSchema } from "../schemas/roleSchema";
 
 export type RoleFormData = z.infer<typeof roleSchema>;

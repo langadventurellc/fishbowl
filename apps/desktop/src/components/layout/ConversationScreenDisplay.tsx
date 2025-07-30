@@ -1,5 +1,5 @@
+import { ConversationScreenDisplayProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { ConversationScreenDisplayProps } from "@fishbowl-ai/shared";
 
 /**
  * ConversationScreenDisplay - Root container for the conversation application

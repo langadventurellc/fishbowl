@@ -18,9 +18,11 @@ import { Button } from "../ui/button";
 import { Plus, Users } from "lucide-react";
 import { CustomRoleListItem } from "./CustomRoleListItem";
 import { RoleFormModal } from "./RoleFormModal";
-import { useCustomRoles } from "@fishbowl-ai/shared";
+import {
+  useCustomRoles,
+  type CustomRolesTabProps,
+} from "@fishbowl-ai/ui-shared";
 import { useRoleFormModal } from "../../hooks/useRoleFormModal";
-import type { CustomRolesTabProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
 
 export const CustomRolesTab = memo<CustomRolesTabProps>(

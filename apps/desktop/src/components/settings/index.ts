@@ -7,22 +7,25 @@
  * @module components/settings
  */
 
+export { AgentCard } from "./agents/AgentCard";
+export { AgentsSection } from "./AgentsSection";
+export { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
+export { CustomRoleListItem } from "./CustomRoleListItem";
+export { CustomRolesTab } from "./CustomRolesTab";
+export { PredefinedRoleCard } from "./PredefinedRoleCard";
+export { PredefinedRolesTab } from "./PredefinedRolesTab";
+export { RoleDeleteDialog } from "./RoleDeleteDialog";
+export { RolesSection } from "./RolesSection";
+export * from "./SettingsContent";
 export * from "./SettingsModal";
 export * from "./SettingsNavigation";
-export * from "./SettingsContent";
 export { TabContainer } from "./TabContainer";
-export { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
-export { PredefinedRoleCard } from "./PredefinedRoleCard";
-export { CustomRoleListItem } from "./CustomRoleListItem";
-export { RoleDeleteDialog } from "./RoleDeleteDialog";
-export { CustomRolesTab } from "./CustomRolesTab";
-export { PredefinedRolesTab } from "./PredefinedRolesTab";
-export { RolesSection } from "./RolesSection";
-export { AgentsSection } from "./AgentsSection";
-export { AgentCard } from "./agents/AgentCard";
 
 // Re-export Tabs components for convenient access from settings module
-export { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+export { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 // Re-export types for TabContainer from shared package
-export type { TabConfiguration, TabContainerProps } from "@fishbowl-ai/shared";
+export type {
+  TabConfiguration,
+  TabContainerProps,
+} from "@fishbowl-ai/ui-shared";

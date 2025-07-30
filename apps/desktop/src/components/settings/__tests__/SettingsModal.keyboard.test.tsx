@@ -8,12 +8,11 @@
  * @module components/settings/__tests__/SettingsModal.keyboard.test
  */
 
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { SettingsModal } from "../SettingsModal";
 
 // Mock the shared package to control modal state
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useModalState: jest.fn(() => ({ isOpen: true })),
   useActiveSection: () => "general",
   useSettingsActions: () => ({
@@ -148,7 +147,7 @@ describe("SettingsModal Keyboard Integration", () => {
 
     test("shortcuts do not work when modal is closed", () => {
       // Mock the modal state to be closed
-      const { useModalState } = require("@fishbowl-ai/shared");
+      const { useModalState } = require("@fishbowl-ai/ui-shared");
       useModalState.mockReturnValueOnce({ isOpen: false });
 
       render(<SettingsModal open={false} onOpenChange={mockOnOpenChange} />);

@@ -19,7 +19,7 @@ import {
   type AgentTemplate,
   type TabConfiguration,
   type AgentFormData,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import React, { useCallback, useMemo, useState, useRef } from "react";
 import { useDebounce } from "../../hooks/useDebounce";

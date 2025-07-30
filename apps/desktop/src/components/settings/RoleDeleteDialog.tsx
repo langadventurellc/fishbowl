@@ -11,7 +11,9 @@
  * @module components/settings/RoleDeleteDialog
  */
 
-import React, { memo, useEffect } from "react";
+import type { RoleDeleteDialogProps } from "@fishbowl-ai/ui-shared";
+import { Loader2 } from "lucide-react";
+import { memo, useEffect } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,8 +24,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { Loader2 } from "lucide-react";
-import type { RoleDeleteDialogProps } from "@fishbowl-ai/shared";
 
 export const RoleDeleteDialog = memo<RoleDeleteDialogProps>(
   function RoleDeleteDialog({

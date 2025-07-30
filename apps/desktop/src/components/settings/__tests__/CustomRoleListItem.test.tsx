@@ -1,4 +1,4 @@
-import type { CustomRoleViewModel } from "@fishbowl-ai/shared";
+import type { CustomRoleViewModel } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { CustomRoleListItem } from "../CustomRoleListItem";

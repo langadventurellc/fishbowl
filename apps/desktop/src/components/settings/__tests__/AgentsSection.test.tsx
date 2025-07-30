@@ -3,13 +3,13 @@
  *
  * @module components/settings/__tests__/AgentsSection.test
  */
-import React from "react";
-import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/react";
+import React from "react";
 import { AgentsSection } from "../AgentsSection";
 
 // Mock shared package to avoid dependency issues
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useSettingsNavigation: () => ({
     activeSubTab: "library",
     setActiveSubTab: jest.fn(),

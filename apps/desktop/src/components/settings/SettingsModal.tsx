@@ -47,7 +47,7 @@ import {
   useActiveSection,
   useModalState,
   useSettingsActions,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import React, { useEffect } from "react";
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../hooks/useGlobalKeyboardShortcuts";

@@ -7,21 +7,21 @@
  * - Supports keyboard navigation and accessibility
  */
 
-import React, { useRef, useEffect, useCallback } from "react";
-import { cn } from "../../lib/utils";
+import { useAccessibilityAnnouncements } from "@/utils";
 import {
   useActiveSection,
   useActiveSubTab,
   useSettingsActions,
+  type EnhancedNavigationListProps,
+  type SettingsNavigationProps,
   type SettingsSection,
   type SettingsSubTab,
-  type SettingsNavigationProps,
-  type EnhancedNavigationListProps,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
+import { cn } from "../../lib/utils";
 import { NavigationItem } from "./NavigationItem";
 import { SubNavigationTab } from "./SubNavigationTab";
-import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
-import { useAccessibilityAnnouncements } from "@/utils";
 
 const navigationSections = [
   { id: "general" as const, label: "General", hasSubTabs: false },

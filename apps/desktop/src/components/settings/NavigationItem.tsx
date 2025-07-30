@@ -12,12 +12,12 @@
  * @module components/settings/NavigationItem
  */
 
-import React from "react";
+import type { NavigationItemProps } from "@fishbowl-ai/ui-shared";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import React from "react";
 import { cn } from "../../lib/utils";
+import { COMMON_FOCUS_CLASSES, getNavigationFocus } from "../../styles/focus";
 import { Button } from "../ui/button";
-import type { NavigationItemProps } from "@fishbowl-ai/shared";
-import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
 
 export const NavigationItem = React.forwardRef<
   HTMLButtonElement,

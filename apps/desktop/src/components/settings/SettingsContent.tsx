@@ -28,18 +28,18 @@ import {
   defaultGeneralSettings,
   generalSettingsSchema,
   useUnsavedChanges,
-  type GeneralSettingsFormData,
-  type ThemePreviewProps,
   type FontSizePreviewProps,
+  type GeneralSettingsFormData,
   type SettingsContentProps,
-} from "@fishbowl-ai/shared";
+  type ThemePreviewProps,
+} from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Download, Trash2, Upload } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "../../lib/utils";
-import { ApiKeysSettings } from "./ApiKeysSettings";
 import { AgentsSection } from "./AgentsSection";
+import { ApiKeysSettings } from "./ApiKeysSettings";
 import { FormErrorDisplay } from "./FormErrorDisplay";
 import { PersonalitiesSection } from "./PersonalitiesSection";
 import { RolesSection } from "./RolesSection";

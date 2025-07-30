@@ -1,8 +1,8 @@
+import type { ConfigurationSliderProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { Slider } from "../../ui/slider";
 import { Label } from "../../ui/label";
+import { Slider } from "../../ui/slider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
-import type { ConfigurationSliderProps } from "@fishbowl-ai/shared";
 
 export const ConfigurationSlider: React.FC<ConfigurationSliderProps> = ({
   label,

@@ -7,12 +7,12 @@
  * @module hooks/__tests__/useElectronIPC.test
  */
 
+import { useSettingsModal } from "@fishbowl-ai/ui-shared";
 import { renderHook } from "@testing-library/react";
 import { useElectronIPC } from "../useElectronIPC";
-import { useSettingsModal } from "@fishbowl-ai/shared";
 
 // Mock the shared package hook
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useSettingsModal: jest.fn(),
 }));
 

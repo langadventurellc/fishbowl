@@ -24,15 +24,14 @@
  * @module components/settings/ModalFooter
  */
 
-import React from "react";
-import {
-  useModalState,
-  useSettingsActions,
-  ModalFooterProps,
-} from "@fishbowl-ai/shared";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getButtonFocus, COMMON_FOCUS_CLASSES } from "@/styles/focus";
+import { COMMON_FOCUS_CLASSES, getButtonFocus } from "@/styles/focus";
+import {
+  ModalFooterProps,
+  useModalState,
+  useSettingsActions,
+} from "@fishbowl-ai/ui-shared";
 
 /**
  * ModalFooter component for settings modal action buttons.

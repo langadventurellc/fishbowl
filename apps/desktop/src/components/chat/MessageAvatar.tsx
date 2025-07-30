@@ -1,5 +1,4 @@
-import React from "react";
-import { MessageAvatarProps } from "@fishbowl-ai/shared";
+import { MessageAvatarProps } from "@fishbowl-ai/ui-shared";
 
 /**
  * MessageAvatar component displays a colored circle avatar for message sender identification.

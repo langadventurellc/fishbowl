@@ -1,5 +1,8 @@
-import { ContextMenuItem, ContextMenuDisplayProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import {
+  ContextMenuDisplayProps,
+  ContextMenuItem,
+} from "@fishbowl-ai/ui-shared";
 
 /**
  * ContextMenuDisplay Component

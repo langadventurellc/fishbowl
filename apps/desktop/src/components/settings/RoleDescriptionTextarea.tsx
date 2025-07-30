@@ -12,11 +12,11 @@
  * @module components/settings/RoleDescriptionTextarea
  */
 
-import React, { useCallback } from "react";
 import { cn } from "@/lib/utils";
-import { Textarea } from "../ui/textarea";
+import type { RoleDescriptionTextareaProps } from "@fishbowl-ai/ui-shared";
+import React, { useCallback } from "react";
 import { Label } from "../ui/label";
-import type { RoleDescriptionTextareaProps } from "@fishbowl-ai/shared";
+import { Textarea } from "../ui/textarea";
 
 export const RoleDescriptionTextarea: React.FC<
   RoleDescriptionTextareaProps

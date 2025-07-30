@@ -11,17 +11,17 @@
  * @module components/layout
  */
 
+export { AgentLabelsContainerDisplay } from "./AgentLabelsContainerDisplay";
+export { ChatContainerDisplay } from "./ChatContainerDisplay";
+export { ConversationLayoutDisplay } from "./ConversationLayoutDisplay";
 export { ConversationScreenDisplay } from "./ConversationScreenDisplay";
 export { MainContentPanelDisplay } from "./MainContentPanelDisplay";
-export { ChatContainerDisplay } from "./ChatContainerDisplay";
-export { AgentLabelsContainerDisplay } from "./AgentLabelsContainerDisplay";
-export { ConversationLayoutDisplay } from "./ConversationLayoutDisplay";
 
 // Type re-exports for convenience
 export type {
+  AgentLabelsContainerDisplayProps,
+  ChatContainerDisplayProps,
+  ConversationLayoutDisplayProps,
   ConversationScreenDisplayProps,
   MainContentPanelDisplayProps,
-  ChatContainerDisplayProps,
-  AgentLabelsContainerDisplayProps,
-  ConversationLayoutDisplayProps,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";

@@ -1,8 +1,8 @@
+import type { AgentNameInputProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 import { CharacterCounter } from "./CharacterCounter";
-import type { AgentNameInputProps } from "@fishbowl-ai/shared";
 
 export const AgentNameInput: React.FC<AgentNameInputProps> = ({
   value,

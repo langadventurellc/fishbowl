@@ -1,4 +1,4 @@
-import { SendButtonDisplayProps } from "@fishbowl-ai/shared";
+import { SendButtonDisplayProps } from "@fishbowl-ai/ui-shared";
 import { Button } from "./Button";
 
 /**

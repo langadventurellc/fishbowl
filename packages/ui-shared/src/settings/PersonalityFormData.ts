@@ -4,6 +4,6 @@
  * @module types/ui/settings/PersonalityFormData
  */
 import { z } from "zod";
-import { personalitySchema } from "@fishbowl-ai/shared";
+import { personalitySchema } from "../schemas/personalitySchema";
 
 export type PersonalityFormData = z.infer<typeof personalitySchema>;

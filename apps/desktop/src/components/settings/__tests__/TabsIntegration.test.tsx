@@ -3,13 +3,12 @@
  *
  * @module components/settings/__tests__/TabsIntegration.test
  */
-import React from "react";
-import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../index";
+import { render, screen } from "@testing-library/react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../index";
 
 // Mock shared package to avoid dependency issues
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useActiveSubTab: () => "library",
   useSettingsActions: () => ({
     setActiveSubTab: jest.fn(),

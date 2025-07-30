@@ -16,17 +16,17 @@
  * @module components/settings/TabContainer
  */
 
-import React, { useMemo, useCallback, useEffect, useState } from "react";
-import { cn } from "../../lib/utils";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
-import { COMMON_FOCUS_CLASSES } from "../../styles/focus";
 import {
   useEnhancedTabNavigation,
   useSettingsNavigation,
   type SettingsSubTab,
   type TabContainerProps,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { cn } from "../../lib/utils";
+import { COMMON_FOCUS_CLASSES } from "../../styles/focus";
 import { useAccessibilityAnnouncements } from "../../utils/useAccessibilityAnnouncements";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 /**
  * Reusable tab container component for settings sections.

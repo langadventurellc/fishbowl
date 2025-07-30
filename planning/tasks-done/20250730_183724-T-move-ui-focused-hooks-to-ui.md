@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-move-ui-focused-hooks-to-ui
+status: done
 title: Move UI-focused hooks to ui-shared package
-status: open
 priority: high
 prerequisites:
   - T-move-ui-types-and-interfaces-to
 created: "2025-07-30T16:31:13.998282"
-updated: "2025-07-30T16:31:13.998282"
+updated: "2025-07-30T17:57:51.875666"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Objective
@@ -63,3 +64,7 @@ From `packages/shared/src/hooks/`:
 - Run unit tests for moved hooks to ensure functionality
 
 ### Log
+
+**2025-07-30T23:37:24.164285Z** - Successfully moved UI-focused React hooks (useAgentSearch, useEnhancedTabNavigation, useCustomRoles) from @fishbowl-ai/shared to @fishbowl-ai/ui-shared package while maintaining proper dependencies on business logic
+
+- filesChanged: ["apps/desktop/package.json", "apps/desktop/jest.config.cjs", "apps/desktop/src/components/settings/AgentsSection.tsx", "apps/desktop/src/components/settings/TabContainer.tsx", "apps/desktop/src/components/settings/CustomRolesTab.tsx", "apps/desktop/src/components/settings/RolesSection.tsx", "apps/desktop/src/components/settings/RoleFormModal.tsx", "apps/desktop/src/hooks/useRoleFormModal.ts", "packages/ui-shared/src/types/EnhancedTabNavigationOptions.ts", "packages/ui-shared/src/constants/index.ts", "packages/ui-shared/src/data/index.ts", "packages/ui-shared/src/hooks/index.ts", "packages/ui-shared/src/schemas/index.ts", "packages/ui-shared/src/utils/index.ts", "packages/ui-shared/src/index.ts", "packages/shared/src/store/index.ts"]

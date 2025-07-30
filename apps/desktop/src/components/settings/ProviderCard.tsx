@@ -1,25 +1,25 @@
-import React from "react";
-import { Card, CardContent } from "../ui/card";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
+import type { ProviderCardProps } from "@fishbowl-ai/ui-shared";
 import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent,
-} from "../ui/collapsible";
-import {
-  Eye,
-  EyeOff,
+  AlertTriangle,
   Check,
-  X,
   ChevronDown,
   ChevronRight,
-  AlertTriangle,
+  Eye,
+  EyeOff,
   Loader2,
+  X,
 } from "lucide-react";
-import { cn } from "../../lib/utils";
+import React from "react";
 import { useIsCompactViewport } from "../../hooks";
-import type { ProviderCardProps } from "@fishbowl-ai/shared";
+import { cn } from "../../lib/utils";
+import { Button } from "../ui/button";
+import { Card, CardContent } from "../ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
+import { Input } from "../ui/input";
 
 export function ProviderCard({
   provider,

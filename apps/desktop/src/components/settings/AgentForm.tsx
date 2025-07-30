@@ -23,7 +23,7 @@ import {
   useUnsavedChanges,
   type AgentFormData,
   type AgentFormProps,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";

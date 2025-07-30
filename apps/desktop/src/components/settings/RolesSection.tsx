@@ -16,8 +16,8 @@ import type {
   RoleFormData,
   RolesSectionProps,
   TabConfiguration,
-} from "@fishbowl-ai/shared";
-import { useCustomRoles } from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
+import { useCustomRoles } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useState } from "react";
 import { cn } from "../../lib/utils";
 import { CustomRolesTab } from "./CustomRolesTab";

@@ -1,5 +1,5 @@
+import { ThemeToggleProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { ThemeToggleProps } from "@fishbowl-ai/shared";
 
 /**
  * ThemeToggle component provides a visual toggle button for light/dark theme switching.

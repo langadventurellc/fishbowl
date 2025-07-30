@@ -9,8 +9,8 @@
  * @module components/settings/FormHeader
  */
 
+import type { FormHeaderProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import type { FormHeaderProps } from "@fishbowl-ai/shared";
 
 export const FormHeader: React.FC<FormHeaderProps> = ({ isEditMode }) => {
   return (

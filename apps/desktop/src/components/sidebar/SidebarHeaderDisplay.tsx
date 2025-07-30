@@ -1,5 +1,5 @@
+import { SidebarHeaderDisplayProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { SidebarHeaderDisplayProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
 
 /**

@@ -1,5 +1,5 @@
-import { MenuTriggerDisplayProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { MenuTriggerDisplayProps } from "@fishbowl-ai/ui-shared";
 
 /**
  * MenuTriggerDisplay Component

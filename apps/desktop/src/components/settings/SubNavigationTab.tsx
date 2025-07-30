@@ -11,7 +11,7 @@
  * @module components/settings/SubNavigationTab
  */
 
-import type { SubNavigationTabProps } from "@fishbowl-ai/shared";
+import type { SubNavigationTabProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
 import { cn } from "../../lib/utils";
 import { COMMON_FOCUS_CLASSES, getNavigationFocus } from "../../styles/focus";

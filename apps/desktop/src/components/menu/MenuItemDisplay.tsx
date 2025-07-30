@@ -1,5 +1,5 @@
-import { MenuItemDisplayProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { MenuItemDisplayProps } from "@fishbowl-ai/ui-shared";
 
 /**
  * MenuItemDisplay Component

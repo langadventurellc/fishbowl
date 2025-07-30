@@ -1,6 +1,5 @@
-import React from "react";
-import { ThinkingIndicatorProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { ThinkingIndicatorProps } from "@fishbowl-ai/ui-shared";
 
 /**
  * ThinkingIndicator component displays an animated pulsing dot to indicate agent activity.

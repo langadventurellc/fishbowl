@@ -1,9 +1,9 @@
-import { MessageItemProps } from "@fishbowl-ai/shared";
+import { cn } from "@/lib/utils";
+import { MessageItemProps } from "@fishbowl-ai/ui-shared";
 import { useState } from "react";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
 import { MessageHeader } from "./MessageHeader";
-import { cn } from "@/lib/utils";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.

@@ -8,7 +8,7 @@
  */
 
 import { create } from "zustand";
-import { roleSchema } from "@fishbowl-ai/shared";
+import { roleSchema } from "../schemas/roleSchema";
 import type { CustomRoleViewModel, RoleFormData } from "../settings";
 import { customRolesPersistence } from "./customRolesPersistence";
 

@@ -14,10 +14,10 @@
  * @module components/settings/PredefinedRoleCard
  */
 
+import type { PredefinedRoleCardProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
-import type { PredefinedRoleCardProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 export const PredefinedRoleCard = React.memo<PredefinedRoleCardProps>(
   function PredefinedRoleCard({ role, className }) {

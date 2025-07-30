@@ -37,6 +37,9 @@ importers:
       "@fishbowl-ai/shared":
         specifier: workspace:*
         version: link:../../packages/shared
+      "@fishbowl-ai/ui-shared":
+        specifier: workspace:*
+        version: link:../../packages/ui-shared
       "@fishbowl-ai/ui-theme":
         specifier: workspace:*
         version: link:../../packages/ui-theme

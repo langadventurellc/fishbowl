@@ -12,10 +12,10 @@
  * @module components/settings/FormActions
  */
 
-import React from "react";
+import type { FormActionsProps } from "@fishbowl-ai/ui-shared";
 import { Loader2 } from "lucide-react";
+import React from "react";
 import { Button } from "../ui/button";
-import type { FormActionsProps } from "@fishbowl-ai/shared";
 
 export const FormActions: React.FC<FormActionsProps> = ({
   onSave,

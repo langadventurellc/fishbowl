@@ -1,6 +1,5 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { SettingsContent } from "../SettingsContent";
 
 // Mock window.matchMedia for system theme detection
@@ -19,7 +18,7 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // Mock the shared package
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useUnsavedChanges: jest.fn(() => ({
     hasUnsavedChanges: false,
     setUnsavedChanges: jest.fn(),

@@ -19,7 +19,7 @@ import {
   type CreateRoleFormProps,
   type CustomRoleViewModel,
   type RoleFormData,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";

@@ -8,8 +8,7 @@
  */
 
 import type { TabConfiguration } from "../settings/TabConfiguration";
-// SettingsSubTab is now defined in stores - temporarily using string type
-type SettingsSubTab = string;
+import type { SettingsSubTab } from "../stores/settings/settingsSubTab";
 
 /**
  * Configuration options for enhanced tab navigation.

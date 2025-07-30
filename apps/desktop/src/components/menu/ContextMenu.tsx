@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
-import { ContextMenuProps } from "@fishbowl-ai/shared";
-import { MenuTriggerDisplay } from "./";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { ContextMenuProps } from "@fishbowl-ai/ui-shared";
+import React, { useRef, useState } from "react";
+import { MenuTriggerDisplay } from "./";
 
 /**
  * Enhanced ContextMenu Component

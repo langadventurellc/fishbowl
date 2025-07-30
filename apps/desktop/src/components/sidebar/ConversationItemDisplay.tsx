@@ -8,11 +8,10 @@
  * @module components/sidebar/ConversationItemDisplay
  */
 
-import type React from "react";
-import { useState } from "react";
-import type { ConversationItemDisplayProps } from "@fishbowl-ai/shared";
-import { ConversationContextMenu } from "./ConversationContextMenu";
 import { cn } from "@/lib/utils";
+import type { ConversationItemDisplayProps } from "@fishbowl-ai/ui-shared";
+import { useState } from "react";
+import { ConversationContextMenu } from "./ConversationContextMenu";
 
 /**
  * ConversationItemDisplay component.

@@ -1,6 +1,5 @@
-import React from "react";
-import { SidebarToggleDisplayProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { SidebarToggleDisplayProps } from "@fishbowl-ai/ui-shared";
 
 /**
  * SidebarToggleDisplay component renders the visual appearance of the sidebar

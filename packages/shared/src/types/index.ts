@@ -14,7 +14,6 @@ export type {
   AgentUpdateRequest,
   Agent as ServiceAgent,
 } from "./agent";
-export * from "./hooks";
 export * from "./model";
 export * from "./personality";
 export * from "./role";

@@ -9,10 +9,9 @@
  * @module components/chat/MessageContextMenu
  */
 
-import React from "react";
-import { MessageContextMenuProps } from "@fishbowl-ai/shared";
-import { ContextMenu } from "../menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { MessageContextMenuProps } from "@fishbowl-ai/ui-shared";
+import { ContextMenu } from "../menu";
 
 /**
  * MessageContextMenu component for message-specific context menu functionality.

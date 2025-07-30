@@ -1,4 +1,4 @@
-import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/shared";
+import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/ui-shared";
 
 /**
  * Navigation section structure compatible with settings modal

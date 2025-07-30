@@ -1,8 +1,7 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import type { Personality } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { PersonalityCard } from "../PersonalityCard";
-import type { Personality } from "@fishbowl-ai/shared";
 
 const mockPersonality: Personality = {
   id: "test-personality-1",

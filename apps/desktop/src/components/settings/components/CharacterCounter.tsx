@@ -1,6 +1,6 @@
+import type { CharacterCounterProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
 import { cn } from "../../../lib/utils";
-import type { CharacterCounterProps } from "@fishbowl-ai/shared";
 
 export const CharacterCounter: React.FC<CharacterCounterProps> = ({
   current,

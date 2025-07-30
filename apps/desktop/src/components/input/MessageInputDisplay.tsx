@@ -1,8 +1,7 @@
-import React from "react";
-import { cva } from "class-variance-authority";
-import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageInputDisplayProps } from "@fishbowl-ai/shared";
+import { cn } from "@/lib/utils";
+import { MessageInputDisplayProps } from "@fishbowl-ai/ui-shared";
+import { cva } from "class-variance-authority";
 
 /**
  * MessageInputDisplay component variants using class-variance-authority.

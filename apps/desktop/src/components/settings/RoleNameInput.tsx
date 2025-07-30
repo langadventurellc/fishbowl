@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 import type {
   RoleNameInputProps,
   ValidationResultViewModel,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { AlertCircle, Check, X } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";

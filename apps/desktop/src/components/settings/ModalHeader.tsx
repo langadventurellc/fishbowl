@@ -17,13 +17,12 @@
  * @module components/settings/ModalHeader
  */
 
-import React from "react";
-import { useSettingsModal } from "@fishbowl-ai/shared";
 import { Button } from "@/components/ui/button";
-import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ModalHeaderProps } from "@fishbowl-ai/shared";
-import { getFocusClasses, COMMON_FOCUS_CLASSES } from "@/styles/focus";
+import { COMMON_FOCUS_CLASSES, getFocusClasses } from "@/styles/focus";
+import { ModalHeaderProps, useSettingsModal } from "@fishbowl-ai/ui-shared";
+import { XIcon } from "lucide-react";
+import React from "react";
 
 /**
  * ModalHeader component for settings modal.

@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { MessageHeaderProps } from "@fishbowl-ai/shared";
+import { MessageHeaderProps } from "@fishbowl-ai/ui-shared";
 import { MessageAvatar } from "./MessageAvatar";
 
 /**

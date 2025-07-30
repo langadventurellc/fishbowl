@@ -1,8 +1,8 @@
+import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
 import React, { useState } from "react";
-import { MainContentPanelDisplayProps } from "@fishbowl-ai/shared";
+import { cn } from "../../lib/utils";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
-import { cn } from "../../lib/utils";
 
 /**
  * MainContentPanelDisplay - Primary conversation interface layout component

@@ -8,8 +8,8 @@
  * @module components/sidebar/ConversationListDisplay
  */
 
+import type { ConversationListDisplayProps } from "@fishbowl-ai/ui-shared";
 import type React from "react";
-import type { ConversationListDisplayProps } from "@fishbowl-ai/shared";
 
 /**
  * ConversationListDisplay component.

@@ -12,11 +12,11 @@
  * @module components/settings/PredefinedRolesTab
  */
 
+import type { PredefinedRolesTabProps } from "@fishbowl-ai/ui-shared";
+import { PREDEFINED_ROLES } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { PredefinedRoleCard } from "./PredefinedRoleCard";
-import { PREDEFINED_ROLES } from "@fishbowl-ai/shared";
-import type { PredefinedRolesTabProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
+import { PredefinedRoleCard } from "./PredefinedRoleCard";
 
 export const PredefinedRolesTab = React.memo<PredefinedRolesTabProps>(
   function PredefinedRolesTab({ className }) {
