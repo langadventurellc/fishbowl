@@ -11,32 +11,11 @@
  * @module components/settings/SubNavigationTab
  */
 
-import React, { type KeyboardEvent } from "react";
+import React from "react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import type { SettingsSubTab } from "@fishbowl-ai/shared";
+import type { SubNavigationTabProps } from "@fishbowl-ai/shared";
 import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
-
-interface SubNavigationTabProps {
-  /** Unique sub-tab identifier */
-  id: SettingsSubTab;
-  /** Display label for the sub-tab */
-  label: string;
-  /** Whether this sub-tab is currently active */
-  active: boolean;
-  /** Click handler for sub-tab selection */
-  onClick: () => void;
-  /** Whether to use compact styling for mobile */
-  isCompact?: boolean;
-  /** Additional CSS classes */
-  className?: string;
-  /** Whether this item is focused for keyboard navigation */
-  isFocused?: boolean;
-  /** Tab index for keyboard navigation */
-  tabIndex?: number;
-  /** Keyboard event handler for navigation */
-  onKeyDown?: (event: KeyboardEvent<HTMLButtonElement>) => void;
-}
 
 export const SubNavigationTab = React.forwardRef<
   HTMLButtonElement,

@@ -197,6 +197,14 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+  
+  /* Custom transition durations for smooth animations */
+  --transition-duration-200: 200ms;
+  --transition-duration-tab: 200ms;
+  
+  /* Custom keyframes for tab transitions */
+  --keyframes-tab-fade-in: tab-fade-in 200ms ease-out;
+  --keyframes-tab-fade-out: tab-fade-out 200ms ease-in;
 }
 
 @layer base {
@@ -205,5 +213,28 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Tab transition keyframes for smooth enter/exit animations */
+  @keyframes tab-fade-in {
+    0% { 
+      opacity: 0; 
+      transform: translateY(8px); 
+    }
+    100% { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+  }
+  
+  @keyframes tab-fade-out {
+    0% { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
+    100% { 
+      opacity: 0; 
+      transform: translateY(-4px); 
+    }
   }
 }

@@ -9,3 +9,7 @@
 
 // Settings modal store
 export * from "./settings";
+
+// Custom roles store
+export { useCustomRolesStore } from "./customRolesStore";
+export { customRolesPersistence } from "./customRolesPersistence";

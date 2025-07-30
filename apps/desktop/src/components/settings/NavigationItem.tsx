@@ -12,39 +12,12 @@
  * @module components/settings/NavigationItem
  */
 
-import React, { type KeyboardEvent } from "react";
+import React from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui/button";
-import type { SettingsSection } from "@fishbowl-ai/shared";
+import type { NavigationItemProps } from "@fishbowl-ai/shared";
 import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
-
-interface NavigationItemProps {
-  /** Unique section identifier */
-  id: SettingsSection;
-  /** Display label for the navigation item */
-  label: string;
-  /** Whether this item is currently active */
-  active: boolean;
-  /** Click handler for section selection */
-  onClick: () => void;
-  /** Whether this section has sub-tabs */
-  hasSubTabs?: boolean;
-  /** Whether sub-navigation is expanded (for sections with sub-tabs) */
-  isExpanded?: boolean;
-  /** Whether to use compact styling for mobile */
-  isCompact?: boolean;
-  /** Additional CSS classes */
-  className?: string;
-  /** Children for sub-navigation rendering */
-  children?: React.ReactNode;
-  /** Whether this item is focused for keyboard navigation */
-  isFocused?: boolean;
-  /** Tab index for keyboard navigation */
-  tabIndex?: number;
-  /** Keyboard event handler for navigation */
-  onKeyDown?: (event: KeyboardEvent<HTMLButtonElement>) => void;
-}
 
 export const NavigationItem = React.forwardRef<
   HTMLButtonElement,

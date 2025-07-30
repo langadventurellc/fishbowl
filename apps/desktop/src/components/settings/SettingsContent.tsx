@@ -8,13 +8,7 @@
  * - Placeholder content for each settings section
  */
 
-import React, { useCallback, useEffect, useState, useMemo } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { cn } from "../../lib/utils";
-import { getAccessibleDescription } from "@/utils";
-import { ApiKeysSettings } from "./api-keys/ApiKeysSettings";
-import { FormErrorDisplay } from "./FormErrorDisplay";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -29,14 +23,26 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
+import { getAccessibleDescription } from "@/utils";
 import {
-  generalSettingsSchema,
-  type GeneralSettingsFormData,
   defaultGeneralSettings,
+  generalSettingsSchema,
   useUnsavedChanges,
+  type GeneralSettingsFormData,
+  type ThemePreviewProps,
+  type FontSizePreviewProps,
+  type SettingsContentProps,
 } from "@fishbowl-ai/shared";
-import { Button } from "@/components/ui/button";
-import { Download, Upload, Trash2, AlertTriangle } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertTriangle, Download, Trash2, Upload } from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { cn } from "../../lib/utils";
+import { ApiKeysSettings } from "./ApiKeysSettings";
+import { AgentsSection } from "./AgentsSection";
+import { FormErrorDisplay } from "./FormErrorDisplay";
+import { PersonalitiesSection } from "./PersonalitiesSection";
+import { RolesSection } from "./RolesSection";
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -371,9 +377,6 @@ const GeneralSettings: React.FC = () => {
 };
 
 // ThemePreview component with React.memo for performance optimization
-interface ThemePreviewProps {
-  selectedTheme: "light" | "dark" | "system";
-}
 
 const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
   const previewColors = useMemo(() => {
@@ -437,9 +440,6 @@ const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
 ThemePreview.displayName = "ThemePreview";
 
 // FontSizePreview component with React.memo for performance optimization
-interface FontSizePreviewProps {
-  fontSize: number;
-}
 
 const FontSizePreview = React.memo<FontSizePreviewProps>(({ fontSize }) => {
   return (
@@ -719,122 +719,9 @@ const AppearanceSettings: React.FC = () => {
   );
 };
 
-const AgentsSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Agents</h1>
-      <p className="text-muted-foreground mb-6">
-        Configure AI agents and their behavior settings.
-      </p>
-    </div>
-    <div className="border-b">
-      <div className="flex space-x-8">
-        {["Library", "Templates", "Defaults"].map((tab) => (
-          <div key={tab} className="py-2 px-1 border-b-2 border-transparent">
-            <span className="text-sm font-medium">{tab}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-    <div className="space-y-4">
-      <div className="h-10 bg-muted rounded border" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="border rounded-lg p-4 space-y-2">
-            <div className="h-4 bg-muted rounded" />
-            <div className="h-3 bg-muted rounded w-3/4" />
-            <div className="h-3 bg-muted rounded w-1/2" />
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-const PersonalitiesSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Personalities</h1>
-      <p className="text-muted-foreground mb-6">
-        Manage agent personalities and their characteristics.
-      </p>
-    </div>
-    <div className="border-b">
-      <div className="flex space-x-8">
-        {["Saved", "Create New"].map((tab) => (
-          <div key={tab} className="py-2 px-1 border-b-2 border-transparent">
-            <span className="text-sm font-medium">{tab}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-    <div className="space-y-6">
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Big Five Personality Traits</h2>
-        <div className="space-y-4">
-          {[
-            "Openness",
-            "Conscientiousness",
-            "Extraversion",
-            "Agreeableness",
-            "Neuroticism",
-          ].map((trait) => (
-            <div key={trait} className="space-y-2">
-              <div className="flex justify-between">
-                <label className="text-sm font-medium">{trait}</label>
-                <span className="text-sm text-muted-foreground">50%</span>
-              </div>
-              <div className="h-2 bg-muted rounded">
-                <div className="h-2 bg-primary rounded w-1/2" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const RolesSettings: React.FC = () => (
-  <div className="space-y-6">
-    <div>
-      <h1 className="text-2xl font-bold mb-2">Roles</h1>
-      <p className="text-muted-foreground mb-6">
-        Define and configure agent roles and permissions.
-      </p>
-    </div>
-    <div className="border-b">
-      <div className="flex space-x-8">
-        {["Predefined", "Custom"].map((tab) => (
-          <div key={tab} className="py-2 px-1 border-b-2 border-transparent">
-            <span className="text-sm font-medium">{tab}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-      {[
-        "Developer",
-        "Designer",
-        "Writer",
-        "Analyst",
-        "Researcher",
-        "Assistant",
-      ].map((role) => (
-        <div key={role} className="border rounded-lg p-4 space-y-2">
-          <h3 className="font-semibold">{role}</h3>
-          <p className="text-sm text-muted-foreground">
-            Role description and capabilities
-          </p>
-          <div className="flex gap-2 mt-3">
-            <div className="h-8 bg-muted rounded w-16" />
-            <div className="h-8 bg-muted rounded w-16" />
-          </div>
-        </div>
-      ))}
-    </div>
-  </div>
-);
+const PersonalitiesSettings: React.FC = () => {
+  return <PersonalitiesSection />;
+};
 
 // Helper components removed - using direct div elements for better accessibility control
 
@@ -1063,17 +950,11 @@ const sectionComponents = {
   general: GeneralSettings,
   "api-keys": ApiKeysSettings,
   appearance: AppearanceSettings,
-  agents: AgentsSettings,
+  agents: AgentsSection,
   personalities: PersonalitiesSettings,
-  roles: RolesSettings,
+  roles: RolesSection,
   advanced: AdvancedSettings,
 } as const;
-
-interface SettingsContentProps {
-  activeSection: string;
-  className?: string;
-  contentId?: string; // New prop for ARIA relationships
-}
 
 export function SettingsContent({
   activeSection,

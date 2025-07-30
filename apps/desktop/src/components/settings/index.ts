@@ -10,3 +10,19 @@
 export * from "./SettingsModal";
 export * from "./SettingsNavigation";
 export * from "./SettingsContent";
+export { TabContainer } from "./TabContainer";
+export { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
+export { PredefinedRoleCard } from "./PredefinedRoleCard";
+export { CustomRoleListItem } from "./CustomRoleListItem";
+export { RoleDeleteDialog } from "./RoleDeleteDialog";
+export { CustomRolesTab } from "./CustomRolesTab";
+export { PredefinedRolesTab } from "./PredefinedRolesTab";
+export { RolesSection } from "./RolesSection";
+export { AgentsSection } from "./AgentsSection";
+export { AgentCard } from "./agents/AgentCard";
+
+// Re-export Tabs components for convenient access from settings module
+export { Tabs, TabsList, TabsTrigger, TabsContent } from "../ui/tabs";
+
+// Re-export types for TabContainer from shared package
+export type { TabConfiguration, TabContainerProps } from "@fishbowl-ai/shared";

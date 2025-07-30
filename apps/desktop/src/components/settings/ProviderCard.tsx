@@ -19,29 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useIsCompactViewport } from "../../hooks";
-
-interface ProviderCardProps {
-  provider: {
-    id: string;
-    name: string;
-    defaultBaseUrl: string;
-  };
-  apiKey: string;
-  baseUrl: string;
-  status: "connected" | "error" | "untested";
-  showApiKey: boolean;
-  showAdvanced: boolean;
-  onApiKeyChange: (value: string) => void;
-  onBaseUrlChange: (value: string) => void;
-  onToggleApiKey: () => void;
-  onToggleAdvanced: () => void;
-  onTest: () => void;
-  errors?: {
-    apiKey?: string;
-    baseUrl?: string;
-  };
-  isValidating?: boolean;
-}
+import type { ProviderCardProps } from "@fishbowl-ai/shared";
 
 export function ProviderCard({
   provider,

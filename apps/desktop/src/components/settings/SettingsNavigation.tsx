@@ -22,18 +22,13 @@ import {
   useSettingsActions,
   type SettingsSection,
   type SettingsSubTab,
+  type SettingsNavigationProps,
+  type EnhancedNavigationListProps,
 } from "@fishbowl-ai/shared";
 import { NavigationItem } from "./NavigationItem";
 import { SubNavigationTab } from "./SubNavigationTab";
 import { useNavigationKeyboard } from "../../hooks/useNavigationKeyboard";
 import { useAccessibilityAnnouncements } from "@/utils";
-
-interface SettingsNavigationProps {
-  activeSection?: SettingsSection;
-  onSectionChange?: (section: SettingsSection) => void;
-  className?: string;
-  navigationId?: string; // New prop for ARIA relationships
-}
 
 const navigationSections = [
   { id: "general" as const, label: "General", hasSubTabs: false },
@@ -179,30 +174,6 @@ export function SettingsNavigation({
   );
 }
 
-interface EnhancedNavigationListProps {
-  sections: readonly (
-    | {
-        readonly id: SettingsSection;
-        readonly label: string;
-        readonly hasSubTabs: false;
-      }
-    | {
-        readonly id: SettingsSection;
-        readonly label: string;
-        readonly hasSubTabs: true;
-        readonly subTabs: readonly {
-          readonly id: SettingsSubTab;
-          readonly label: string;
-        }[];
-      }
-  )[];
-  activeSection: SettingsSection;
-  activeSubTab: SettingsSubTab;
-  onSectionChange: (section: SettingsSection) => void;
-  onSubTabChange: (tab: SettingsSubTab) => void;
-  isCompact: boolean;
-}
-
 const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
   sections,
   activeSection,
@@ -269,26 +240,28 @@ const EnhancedNavigationList = React.memo(function EnhancedNavigationList({
           {section.hasSubTabs &&
             section.subTabs &&
             activeSection === section.id && (
-              <>
-                {section.subTabs.map((subTab) => {
-                  // Only render if subTab.id is not null
-                  if (!subTab.id) return null;
-
-                  return (
-                    <SubNavigationTab
-                      key={subTab.id}
-                      ref={(el) => setRef(`subtab-${subTab.id}`, el)}
-                      id={subTab.id}
-                      label={subTab.label}
-                      active={activeSubTab === subTab.id}
-                      onClick={() => onSubTabChange(subTab.id)}
-                      isCompact={isCompact}
-                      isFocused={isItemFocused(subTab.id, "subtab")}
-                      tabIndex={isItemFocused(subTab.id, "subtab") ? 0 : -1}
-                    />
-                  );
-                })}
-              </>
+              <div className="mt-2 ml-4 space-y-1">
+                {section.subTabs
+                  .filter((subTab) => subTab.id)
+                  .map((subTab) => {
+                    const subTabId = subTab.id as string; // Safe assertion after filter
+                    return (
+                      <SubNavigationTab
+                        key={subTabId}
+                        ref={(el) => setRef(`subtab-${subTabId}`, el)}
+                        id={subTabId as SettingsSubTab}
+                        label={subTab.label}
+                        active={activeSubTab === subTabId}
+                        onClick={() =>
+                          onSubTabChange(subTabId as SettingsSubTab)
+                        }
+                        isCompact={isCompact}
+                        isFocused={isItemFocused(subTabId, "subtab")}
+                        tabIndex={isItemFocused(subTabId, "subtab") ? 0 : -1}
+                      />
+                    );
+                  })}
+              </div>
             )}
         </NavigationItem>
       ))}

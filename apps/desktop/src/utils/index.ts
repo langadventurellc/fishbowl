@@ -1,10 +1,11 @@
 /**
- * Barrel file for accessibility utilities.
- * Re-exports all accessibility-related functions and hooks.
+ * Barrel file for utilities.
+ * Re-exports all utility functions and hooks.
  */
 
 export { announceToScreenReader } from "./announceToScreenReader";
 export { generateDialogAriaIds } from "./generateDialogAriaIds";
 export { getAccessibleDescription } from "./getAccessibleDescription";
 export { useAccessibilityAnnouncements } from "./useAccessibilityAnnouncements";
+export { truncateDescription } from "./truncateDescription";
 export type { DialogAriaAttributes } from "./types";

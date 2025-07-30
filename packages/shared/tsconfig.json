@@ -5,7 +5,6 @@
     "rootDir": "src",
     "noEmit": false,
     "baseUrl": ".",
-    "types": ["jest", "node"],
     "paths": {
       "@fishbowl-ai/ui-theme": ["../ui-theme/src"]
     }
