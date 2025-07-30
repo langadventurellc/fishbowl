@@ -28,7 +28,7 @@ export function MenuItemDisplay({
   const getMenuItemClasses = () => {
     return cn(
       // Base menu item styles
-      "block w-full px-3 py-2 text-[13px] text-popover-foreground bg-transparent border-none rounded cursor-pointer text-left transition-colors duration-150 whitespace-nowrap overflow-hidden text-ellipsis",
+      "block w-full px-3 py-2 text-description text-popover-foreground bg-transparent border-none rounded cursor-pointer text-left transition-colors duration-150 whitespace-nowrap overflow-hidden text-ellipsis",
       // Variant-specific styling
       {
         // Normal variant with hover states (only when not disabled)

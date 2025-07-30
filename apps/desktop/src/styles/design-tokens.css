@@ -65,19 +65,27 @@
     /* === TYPOGRAPHY TOKENS === */
     
     /* Heading Sizes */
-    --dt-heading-primary: 24px;      /* Main section headings */
-    --dt-heading-secondary: 18px;    /* Subsection headings */
+    --dt-heading-primary: 24px;      /* Main section headings (General, Appearance, Advanced) */
+    --dt-heading-secondary: 18px;    /* Subsection headings (Auto Mode, Theme, etc.) */
     --dt-heading-modal-title: 18px;  /* Modal header title */
     
     /* Body Text Sizes */
     --dt-text-description: 13px;     /* Form descriptions, help text */
     --dt-text-body: 14px;           /* Default body text */
     --dt-text-small: 12px;          /* Small labels, counts */
+    --dt-text-tiny: 11px;           /* Tiny text (conversation timestamps) */
+    --dt-text-micro: 10px;          /* Micro text (sidebar toggle) */
     
     /* Font Weight Tokens */
     --dt-font-weight-heading: 600;   /* Semibold for headings */
     --dt-font-weight-title: 700;    /* Bold for main titles */
     --dt-font-weight-body: 500;     /* Medium for body text */
+    --dt-font-weight-normal: 400;   /* Normal for regular text */
+    
+    /* Line Height Tokens for Typography */
+    --dt-line-height-heading: 1.2;  /* Tight line height for headings */
+    --dt-line-height-body: 1.5;     /* Normal line height for body text */
+    --dt-line-height-compact: 1.3;  /* Compact line height for dense UI */
     
     /* === LAYOUT TOKENS === */
     
@@ -131,5 +139,51 @@
     --dt-focus-ring-enhanced: 3px;
     --dt-focus-ring-offset: 2px;
     --dt-focus-ring-offset-small: 1px;
+  }
+}
+
+/* === TYPOGRAPHY UTILITY CLASSES === */
+@layer utilities {
+  /* Semantic Typography Classes */
+  .text-heading-primary {
+    font-size: var(--dt-heading-primary);
+    font-weight: var(--dt-font-weight-title);
+    line-height: var(--dt-line-height-heading);
+  }
+  
+  .text-heading-secondary {
+    font-size: var(--dt-heading-secondary);
+    font-weight: var(--dt-font-weight-heading);
+    line-height: var(--dt-line-height-heading);
+  }
+  
+  .text-description {
+    font-size: var(--dt-text-description);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-body);
+  }
+  
+  .text-body-default {
+    font-size: var(--dt-text-body);
+    font-weight: var(--dt-font-weight-body);
+    line-height: var(--dt-line-height-body);
+  }
+  
+  .text-small-default {
+    font-size: var(--dt-text-small);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-compact);
+  }
+  
+  .text-tiny-default {
+    font-size: var(--dt-text-tiny);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-compact);
+  }
+  
+  .text-micro-default {
+    font-size: var(--dt-text-micro);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-compact);
   }
 }
