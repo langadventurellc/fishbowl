@@ -7,7 +7,7 @@
  * @module stores/__tests__/customRolesStore.test
  */
 
-import type { CustomRoleViewModel, RoleFormData } from "../../settings";
+import type { CustomRoleViewModel, RoleFormData } from "../../";
 import { customRolesPersistence } from "../customRolesPersistence";
 import { useCustomRolesStore } from "../customRolesStore";
 

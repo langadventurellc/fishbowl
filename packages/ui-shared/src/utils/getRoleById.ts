@@ -2,8 +2,8 @@
  * Retrieve a predefined role by its unique identifier
  */
 
-import { PREDEFINED_ROLES_MAP } from "../data/predefinedRoles";
-import type { PredefinedRole } from "../settings/PredefinedRole";
+import type { PredefinedRole } from "../";
+import { PREDEFINED_ROLES_MAP } from "../";
 
 /**
  * Retrieve a predefined role by its unique identifier

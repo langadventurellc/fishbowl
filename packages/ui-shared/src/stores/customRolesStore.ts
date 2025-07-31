@@ -8,8 +8,8 @@
  */
 
 import { create } from "zustand";
+import type { CustomRoleViewModel, RoleFormData } from "../";
 import { roleSchema } from "../schemas/roleSchema";
-import type { CustomRoleViewModel, RoleFormData } from "../settings";
 import { customRolesPersistence } from "./customRolesPersistence";
 
 // Generate unique ID using crypto API or fallback
