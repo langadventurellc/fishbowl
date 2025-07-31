@@ -25,13 +25,13 @@ describe("createFieldErrors", () => {
       const schema = z.object({
         name: z.string(),
         age: z.number(),
-        email: z.string().email(),
+        theme: z.enum(["light", "dark"]),
       });
 
       const result = schema.safeParse({
         name: 123,
         age: "not a number",
-        email: "invalid-email",
+        theme: "invalid-theme",
       });
       expect(result.success).toBe(false);
 
@@ -41,7 +41,7 @@ describe("createFieldErrors", () => {
 
         const nameError = fieldErrors.find((e) => e.path === "name");
         const ageError = fieldErrors.find((e) => e.path === "age");
-        const emailError = fieldErrors.find((e) => e.path === "email");
+        const themeError = fieldErrors.find((e) => e.path === "theme");
 
         expect(nameError).toEqual({
           path: "name",
@@ -51,9 +51,9 @@ describe("createFieldErrors", () => {
           path: "age",
           message: "Invalid input: expected number, received string",
         });
-        expect(emailError).toEqual({
-          path: "email",
-          message: "Invalid email address",
+        expect(themeError).toEqual({
+          path: "theme",
+          message: 'Invalid option: expected one of "light"|"dark"',
         });
       }
     });
@@ -208,20 +208,20 @@ describe("createFieldErrors", () => {
 
     it("should handle custom validation errors", () => {
       const schema = z.object({
-        password: z.string().refine((password) => password.length >= 8, {
-          message: "Password must be at least 8 characters long",
+        displayName: z.string().refine((name) => name.length >= 3, {
+          message: "Display name must be at least 3 characters long",
         }),
       });
 
-      const result = schema.safeParse({ password: "short" });
+      const result = schema.safeParse({ displayName: "ab" });
       expect(result.success).toBe(false);
 
       if (!result.success) {
         const fieldErrors = createFieldErrors(result.error);
         expect(fieldErrors).toHaveLength(1);
         expect(fieldErrors[0]).toEqual({
-          path: "password",
-          message: "Password must be at least 8 characters long",
+          path: "displayName",
+          message: "Display name must be at least 3 characters long",
         });
       }
     });

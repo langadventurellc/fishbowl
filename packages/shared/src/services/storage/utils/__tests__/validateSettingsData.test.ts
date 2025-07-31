@@ -6,7 +6,7 @@ describe("validateSettingsData", () => {
   const testSchema = z.object({
     name: z.string(),
     age: z.number(),
-    email: z.string().email(),
+    theme: z.enum(["light", "dark"]),
   });
 
   describe("successful validation", () => {
@@ -14,7 +14,7 @@ describe("validateSettingsData", () => {
       const validData = {
         name: "John Doe",
         age: 30,
-        email: "john@example.com",
+        theme: "dark" as const,
       };
       const filePath = "/path/to/settings.json";
 
@@ -34,7 +34,7 @@ describe("validateSettingsData", () => {
             name: z.string(),
             preferences: z.object({
               theme: z.enum(["light", "dark"]),
-              notifications: z.boolean(),
+              autoSave: z.boolean(),
             }),
           }),
         }),
@@ -47,7 +47,7 @@ describe("validateSettingsData", () => {
             name: "Alice",
             preferences: {
               theme: "dark" as const,
-              notifications: true,
+              autoSave: true,
             },
           },
         },
@@ -91,7 +91,7 @@ describe("validateSettingsData", () => {
       const invalidData = {
         name: 123,
         age: "not a number",
-        email: "invalid-email",
+        theme: "invalid-theme",
       };
       const filePath = "/path/to/invalid.json";
 
@@ -117,12 +117,12 @@ describe("validateSettingsData", () => {
       const invalidData = {
         name: "",
         age: -5,
-        email: "not-an-email",
+        theme: "invalid-theme",
       };
       const schema = z.object({
         name: z.string().min(1, "Name is required"),
         age: z.number().min(0, "Age must be non-negative"),
-        email: z.string().email("Invalid email format"),
+        theme: z.enum(["light", "dark"]),
       });
       const filePath = "/detailed/errors.json";
 
@@ -146,8 +146,8 @@ describe("validateSettingsData", () => {
             message: "Age must be non-negative",
           });
           expect(error.fieldErrors).toContainEqual({
-            path: "email",
-            message: "Invalid email format",
+            path: "theme",
+            message: 'Invalid option: expected one of "light"|"dark"',
           });
         }
       }
@@ -336,14 +336,14 @@ describe("validateSettingsData", () => {
 
     it("should handle custom refinements", () => {
       const schema = z.object({
-        password: z.string().refine((password) => password.length >= 8, {
-          message: "Password must be at least 8 characters long",
+        displayName: z.string().refine((name) => name.length >= 3, {
+          message: "Display name must be at least 3 characters long",
         }),
       });
 
       expect(() =>
         validateSettingsData(
-          { password: "short" },
+          { displayName: "ab" },
           schema,
           "/refine.json",
           "test",
@@ -352,12 +352,12 @@ describe("validateSettingsData", () => {
 
       expect(
         validateSettingsData(
-          { password: "longenough" },
+          { displayName: "valid_name" },
           schema,
           "/refine.json",
           "test",
         ),
-      ).toEqual({ password: "longenough" });
+      ).toEqual({ displayName: "valid_name" });
     });
 
     it("should wrap and re-throw existing SettingsValidationError", () => {

@@ -281,11 +281,6 @@ describe("deepMerge", () => {
   it("should handle complex real-world scenario", () => {
     const defaultSettings: Record<string, unknown> = {
       theme: "light",
-      notifications: {
-        email: true,
-        push: true,
-        frequency: "daily",
-      },
       features: {
         experimental: false,
         beta: false,
@@ -301,10 +296,6 @@ describe("deepMerge", () => {
 
     const userSettings: Record<string, unknown> = {
       theme: "dark",
-      notifications: {
-        push: false,
-        frequency: "weekly",
-      },
       features: {
         experimental: true,
       },
@@ -319,11 +310,6 @@ describe("deepMerge", () => {
 
     expect(result).toEqual({
       theme: "dark",
-      notifications: {
-        email: true,
-        push: false,
-        frequency: "weekly",
-      },
       features: {
         experimental: true,
         beta: false,

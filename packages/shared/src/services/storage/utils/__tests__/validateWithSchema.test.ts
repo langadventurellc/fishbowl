@@ -23,7 +23,7 @@ describe("validateWithSchema", () => {
             name: z.string(),
             settings: z.object({
               theme: z.enum(["light", "dark"]),
-              notifications: z.boolean(),
+              autoSave: z.boolean(),
             }),
           }),
         }),
@@ -36,7 +36,7 @@ describe("validateWithSchema", () => {
             name: "Alice",
             settings: {
               theme: "dark" as const,
-              notifications: true,
+              autoSave: true,
             },
           },
         },
@@ -80,10 +80,10 @@ describe("validateWithSchema", () => {
     it("should include field errors in the thrown exception", () => {
       const schema = z.object({
         name: z.string(),
-        email: z.string().email(),
+        count: z.number().positive(),
       });
 
-      const invalidData = { name: 123, email: "invalid-email" };
+      const invalidData = { name: 123, count: -5 };
 
       try {
         validateWithSchema(invalidData, schema);
@@ -97,8 +97,8 @@ describe("validateWithSchema", () => {
             message: "Invalid input: expected string, received number",
           });
           expect(error.fieldErrors).toContainEqual({
-            path: "email",
-            message: "Invalid email address",
+            path: "count",
+            message: "Too small: expected number to be >0",
           });
         }
       }
@@ -284,16 +284,16 @@ describe("validateWithSchema", () => {
 
     it("should handle custom refinements", () => {
       const schema = z.object({
-        password: z.string().refine((password) => password.length >= 8, {
-          message: "Password must be at least 8 characters long",
+        username: z.string().refine((username) => username.length >= 3, {
+          message: "Username must be at least 3 characters long",
         }),
       });
 
-      expect(() => validateWithSchema({ password: "short" }, schema)).toThrow(
+      expect(() => validateWithSchema({ username: "ab" }, schema)).toThrow(
         SettingsValidationError,
       );
-      expect(validateWithSchema({ password: "longenough" }, schema)).toEqual({
-        password: "longenough",
+      expect(validateWithSchema({ username: "valid_user" }, schema)).toEqual({
+        username: "valid_user",
       });
     });
   });
