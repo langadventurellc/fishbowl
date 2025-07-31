@@ -1,17 +1,16 @@
-// General settings types and utilities
-export type { PersistedGeneralSettings } from "./PersistedGeneralSettings";
-export type { PersistedGeneralSettingsData } from "./PersistedGeneralSettingsData";
-export { generalSettingsSchema } from "./generalSettingsSchema";
-export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
-
-// Appearance settings types and utilities
-export type { PersistedAppearanceSettings } from "./PersistedAppearanceSettings";
-export type { PersistedAppearanceSettingsData } from "./PersistedAppearanceSettingsData";
+export { advancedSettingsSchema } from "./advancedSettingsSchema";
 export { appearanceSettingsSchema } from "./appearanceSettingsSchema";
+export type { ConversationMode } from "./ConversationMode";
+export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
 export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettings";
-
-// Advanced settings types and utilities
+export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
+export { generalSettingsSchema } from "./generalSettingsSchema";
+export type { MessageSpacing } from "./MessageSpacing";
 export type { PersistedAdvancedSettings } from "./PersistedAdvancedSettings";
 export type { PersistedAdvancedSettingsData } from "./PersistedAdvancedSettingsData";
-export { advancedSettingsSchema } from "./advancedSettingsSchema";
-export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
+export type { PersistedAppearanceSettings } from "./PersistedAppearanceSettings";
+export type { PersistedAppearanceSettingsData } from "./PersistedAppearanceSettingsData";
+export type { PersistedGeneralSettings } from "./PersistedGeneralSettings";
+export type { PersistedGeneralSettingsData } from "./PersistedGeneralSettingsData";
+export type { ShowTimestamps } from "./ShowTimestamps";
+export type { ThemeMode } from "./ThemeMode";

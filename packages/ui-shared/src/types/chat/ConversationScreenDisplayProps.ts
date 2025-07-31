@@ -4,9 +4,9 @@
  * with theme support and responsive behavior.
  */
 
+import { ThemeMode } from "@fishbowl-ai/shared";
 import type React from "react";
 import { LayoutVariant } from "../components";
-import { ThemeMode } from "../theme";
 
 export interface ConversationScreenDisplayProps {
   /**

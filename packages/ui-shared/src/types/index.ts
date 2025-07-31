@@ -13,6 +13,5 @@ export * from "./MessageType";
 export * from "./MessageViewModel";
 export * from "./settings";
 export * from "./sidebar";
-export * from "./theme";
 export * from "./ThemeToggleProps";
 export * from "./ValidationResultViewModel";

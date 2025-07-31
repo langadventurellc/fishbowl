@@ -1,13 +1,8 @@
 // Types and schemas for settings persistence
+export * from "./types";
 export type {
-  PersistedGeneralSettings,
-  PersistedGeneralSettingsData,
   PersistedAppearanceSettings,
   PersistedAppearanceSettingsData,
-} from "./types/settings";
-export {
-  generalSettingsSchema,
-  createDefaultGeneralSettings,
-  appearanceSettingsSchema,
-  createDefaultAppearanceSettings,
-} from "./types/settings";
+  PersistedGeneralSettings,
+  PersistedGeneralSettingsData,
+} from "./types";

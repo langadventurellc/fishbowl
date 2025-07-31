@@ -9,7 +9,6 @@ export * from "./ConversationListDisplayProps";
 export * from "./ConversationListScrollState";
 export * from "./ConversationModeToggleDisplayProps";
 export * from "./ConversationScreenDisplayProps";
-export * from "./ConversationToggleMode";
 export * from "./InputContainerDisplayProps";
 export * from "./MainContentPanelDisplayProps";
 export * from "./MessageAvatarProps";
