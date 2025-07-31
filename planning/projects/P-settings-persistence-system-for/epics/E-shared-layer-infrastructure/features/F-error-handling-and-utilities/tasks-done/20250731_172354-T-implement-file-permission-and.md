@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-implement-file-permission-and
+parent: F-error-handling-and-utilities
+status: done
 title: Implement file permission and directory utilities
-status: open
 priority: normal
 prerequisites:
   - T-implement-path-validation-and
 created: "2025-07-31T16:20:17.675192"
-updated: "2025-07-31T16:20:17.675192"
+updated: "2025-07-31T17:07:53.216067"
 schema_version: "1.1"
-parent: F-error-handling-and-utilities
+worktree: null
 ---
 
 # Implement File Permission and Directory Utilities
@@ -161,3 +162,7 @@ Implement these utility functions working with the existing FileSystemBridge pat
 - Export from utils/index.ts barrel file
 
 ### Log
+
+**2025-07-31T22:23:54.764134Z** - Implemented comprehensive file permission and directory utilities for the persistence layer. Created 5 separate utility functions following the project's one-export-per-file pattern: ensureDirectoryExists for safe directory creation with race condition handling, checkFilePermissions for cross-platform permission checking, setFilePermissions for octal permission setting, getDirectoryStats for comprehensive directory status, and createTempFile for secure temporary file creation with cryptographically secure naming. All functions integrate with the existing FileSystemBridge abstraction, use proper path validation and sanitization, implement consistent error handling via the FileStorageError hierarchy, and handle cross-platform differences gracefully. Added comprehensive test coverage with 398 total tests passing, including edge cases for Windows vs Unix permissions, concurrent operations, security validations, and error conditions.
+
+- filesChanged: ["packages/shared/src/services/storage/utils/ensureDirectoryExists.ts", "packages/shared/src/services/storage/utils/checkFilePermissions.ts", "packages/shared/src/services/storage/utils/setFilePermissions.ts", "packages/shared/src/services/storage/utils/getDirectoryStats.ts", "packages/shared/src/services/storage/utils/createTempFile.ts", "packages/shared/src/services/storage/utils/index.ts", "packages/shared/src/services/storage/utils/__tests__/ensureDirectoryExists.test.ts", "packages/shared/src/services/storage/utils/__tests__/checkFilePermissions.test.ts", "packages/shared/src/services/storage/utils/__tests__/setFilePermissions.test.ts", "packages/shared/src/services/storage/utils/__tests__/getDirectoryStats.test.ts", "packages/shared/src/services/storage/utils/__tests__/createTempFile.test.ts"]

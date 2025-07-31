@@ -9,3 +9,10 @@ export { safeJsonParse } from "./safeJsonParse";
 export { safeJsonStringify } from "./safeJsonStringify";
 export { deepMerge } from "./deepMerge";
 export { isJsonSerializable } from "./isJsonSerializable";
+
+// File system utilities
+export { ensureDirectoryExists } from "./ensureDirectoryExists";
+export { checkFilePermissions } from "./checkFilePermissions";
+export { setFilePermissions } from "./setFilePermissions";
+export { getDirectoryStats } from "./getDirectoryStats";
+export { createTempFile } from "./createTempFile";
