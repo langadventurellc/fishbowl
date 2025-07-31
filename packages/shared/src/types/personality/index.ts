@@ -11,3 +11,6 @@ export {
 export type { PersonalityTraitName } from "./PersonalityTraitName";
 export type { BigFiveTraitName } from "./BigFiveTraitName";
 export type { BehavioralTraitName } from "./BehavioralTraitName";
+
+// Validation schemas and utilities
+export * from "./validation";

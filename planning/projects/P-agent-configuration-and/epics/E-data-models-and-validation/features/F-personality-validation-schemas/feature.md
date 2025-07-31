@@ -2,11 +2,11 @@
 kind: feature
 id: F-personality-validation-schemas
 title: Personality Validation Schemas
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-30T19:15:11.757316"
-updated: "2025-07-30T19:15:11.757316"
+updated: "2025-07-31T03:44:54.295525+00:00"
 schema_version: "1.1"
 parent: E-data-models-and-validation
 ---
