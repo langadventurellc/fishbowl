@@ -38,11 +38,11 @@ import { AlertTriangle, Download, Trash2, Upload } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "../../lib/utils";
-import { AgentsSection } from "./AgentsSection";
+import { AgentsSection } from "./agents/AgentsSection";
 import { ApiKeysSettings } from "./ApiKeysSettings";
 import { FormErrorDisplay } from "./FormErrorDisplay";
-import { PersonalitiesSection } from "./PersonalitiesSection";
-import { RolesSection } from "./RolesSection";
+import { PersonalitiesSection } from "./personalities";
+import { RolesSection } from "./roles/RolesSection";
 
 const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);

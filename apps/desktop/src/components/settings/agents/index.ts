@@ -1,4 +1,8 @@
 export { AgentCard } from "./AgentCard";
-export { TemplateCard } from "./TemplateCard";
+export { AgentForm } from "./AgentForm";
+export { AgentFormModal } from "./AgentFormModal";
+export { AgentNameInput } from "./AgentNameInput";
+export { AgentsSection } from "./AgentsSection";
 export { EmptyLibraryState } from "./EmptyLibraryState";
 export { EmptyTemplatesState } from "./EmptyTemplatesState";
+export { TemplateCard } from "./TemplateCard";
