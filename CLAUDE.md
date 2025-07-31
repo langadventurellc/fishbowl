@@ -34,10 +34,12 @@ See [Architecture Guide](docs/architecture/monorepo.md) for the overall structur
 - `pnpm quality` - Run linting, formatting, and type checks
 - `pnpm test` - Run unit tests to ensure functionality
 
+Our quality checks will not allow files that have multiple exported types such as functions or classes in a single file. And if you do that, you will have to separate them into their own files. It's much easier if you create separate files to begin with. And where it makes sense, put them in their own folder with a barrel file.
+
 **CRITICAL** When modifying shared package types or interfaces:
 
 - `pnpm build:libs` - **MUST** rebuild shared packages after adding new types/interfaces
-- Apps cannot import from `@fishbowl-ai/shared` until the shared package is built
+- Apps cannot import from `@fishbowl-ai/shared` or `@fishbowl-ai/ui-shared` until the shared package is built
 - Type errors like "Module has no exported member" indicate shared package needs rebuilding
 
 ### Commands

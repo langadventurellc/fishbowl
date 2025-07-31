@@ -8,8 +8,8 @@
  * @module types/ui/components/InputContainerDisplayProps
  */
 
+import { ConversationMode } from "@fishbowl-ai/shared";
 import { ComponentSize, LayoutVariant } from "../components";
-import { ConversationToggleMode } from "./ConversationToggleMode";
 
 /**
  * Props interface for the InputContainerDisplay component.
@@ -96,7 +96,7 @@ export interface InputContainerDisplayProps {
    * Controls the current mode and disabled state of the mode toggle.
    */
   modeToggleProps?: {
-    currentMode?: ConversationToggleMode;
+    currentMode?: ConversationMode;
     disabled?: boolean;
     className?: string;
   };

@@ -4,6 +4,8 @@
  * @module types/ui/ThemePreviewProps
  */
 
+import { ThemeMode } from "@fishbowl-ai/shared";
+
 export interface ThemePreviewProps {
-  selectedTheme: "light" | "dark" | "system";
+  selectedTheme: ThemeMode;
 }

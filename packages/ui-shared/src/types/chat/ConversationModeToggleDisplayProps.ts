@@ -8,7 +8,7 @@
  * @module types/ui/components/ConversationModeToggleDisplayProps
  */
 
-import { ConversationToggleMode } from "./ConversationToggleMode";
+import { ConversationMode } from "@fishbowl-ai/shared";
 
 /**
  * Props interface for the ConversationModeToggleDisplayProps component.
@@ -52,7 +52,7 @@ export interface ConversationModeToggleDisplayProps {
    * - **manual**: Manual mode where user controls interactions
    * - **auto**: Automatic mode with system-driven interactions
    */
-  currentMode: ConversationToggleMode;
+  currentMode: ConversationMode;
 
   /**
    * Whether the toggle appears in a disabled state.
