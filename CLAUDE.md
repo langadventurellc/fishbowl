@@ -12,6 +12,7 @@ A desktop and mobile application for creating conversations with multiple AI age
 **Shared Code:**
 
 - `packages/shared/` - Business logic, state management, types, and utilities shared between platforms
+- `packages/ui-shared/` - UI types, component props, hooks, and utilities shared between desktop and mobile
 - `packages/eslint-config/` - Shared ESLint configuration
 - `packages/ui-theme/` - Shared theme and styling utilities
 
