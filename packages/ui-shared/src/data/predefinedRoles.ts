@@ -4,7 +4,7 @@
  * @module data/predefinedRoles
  */
 
-import type { PredefinedRole } from "../settings/PredefinedRole";
+import type { PredefinedRole } from "../types/settings/PredefinedRole";
 
 /**
  * Comprehensive predefined roles based on product specification

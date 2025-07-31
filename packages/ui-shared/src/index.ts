@@ -4,17 +4,14 @@
  * @module ui-shared
  */
 
-export * from "./components";
 export * from "./constants";
-export * from "./core";
 export * from "./data";
-export * from "./FontSizePreviewProps";
 export * from "./hooks";
-export * from "./menu";
 export * from "./schemas";
-export * from "./settings";
 export * from "./stores";
 export * from "./theme";
-export * from "./ThemePreviewProps";
+export * from "./types";
+export * from "./types/settings/FontSizePreviewProps";
+export * from "./types/settings/ThemePreviewProps";
+export * from "./types/ValidationResultViewModel";
 export * from "./utils";
-export * from "./ValidationResultViewModel";
