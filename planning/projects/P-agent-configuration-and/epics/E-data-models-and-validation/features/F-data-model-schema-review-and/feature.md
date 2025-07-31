@@ -89,9 +89,9 @@ Review and enhance existing Role, Agent, and Model validation schemas to ensure 
 
 ## Testing Requirements
 
-- Validate existing integration tests still pass with enhanced schemas
+- Implement applicable BDD integration tests (in pre-existing test files)
+  - Identify applicable tests from here - `packages/shared/src/__tests__/integration/features`
 - Add missing test coverage for edge cases and boundary conditions
-- Ensure performance benchmarks are met for all schemas
 - Test cross-schema validation scenarios (agent referencing personality/role)
 - Verify error message quality and consistency
 
@@ -102,13 +102,6 @@ Review and enhance existing Role, Agent, and Model validation schemas to ensure 
 - Validate that sensitive fields are properly handled
 - Review constraint validation for security implications
 - Ensure no information leakage in error messages
-
-## Performance Requirements
-
-- All schema validations complete within existing performance budgets
-- Memory usage remains efficient for batch operations
-- Schema compilation performance is optimized
-- Error collection and reporting has minimal overhead
 
 ## Dependencies
 
