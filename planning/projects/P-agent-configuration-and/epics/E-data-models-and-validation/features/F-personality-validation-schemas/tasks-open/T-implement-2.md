@@ -62,7 +62,6 @@ Optional fields (partial updates):
 - [ ] Prevention of createdAt field modification
 - [ ] Custom error messages for invalid partial updates
 - [ ] Type inference produces correct PersonalityUpdateData type
-- [ ] Schema performance <5ms compilation
 - [ ] Unit tests cover partial update scenarios
 
 ## Technical Approach
@@ -84,7 +83,6 @@ Optional fields (partial updates):
 - Tests for id field requirement
 - Tests for template personality restrictions
 - Tests for invalid field combinations
-- Performance benchmarks
 
 ## Security Considerations
 

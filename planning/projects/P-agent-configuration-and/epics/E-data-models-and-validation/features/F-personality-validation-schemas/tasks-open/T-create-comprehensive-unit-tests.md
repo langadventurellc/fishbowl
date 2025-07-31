@@ -20,7 +20,7 @@ parent: F-personality-validation-schemas
 
 ## Purpose
 
-Implement thorough unit test coverage for all personality validation schemas to ensure correctness, boundary condition handling, and performance requirements.
+Implement thorough unit test coverage for all personality validation schemas to ensure correctness, boundary condition handling requirements.
 
 ## Context
 
@@ -68,7 +68,6 @@ For each trait (19 total):
 - [ ] Unit tests for PersonalityUpdateDataSchema with partial updates
 - [ ] Boundary condition tests for all trait ranges (0-100)
 - [ ] Business rule validation tests for template personalities
-- [ ] Performance benchmark tests (<10ms validation requirement)
 - [ ] Error aggregation and custom message tests
 - [ ] Input sanitization and XSS prevention tests
 - [ ] Test coverage >95% for all validation code
@@ -79,8 +78,7 @@ For each trait (19 total):
 2. Follow existing patterns from custom matchers and integration tests
 3. Use Jest testing framework with describe/it structure
 4. Create test data builders for valid/invalid scenarios
-5. Add performance benchmarks using Jest's timing utilities
-6. Include error message assertion tests
+5. Include error message assertion tests
 
 ## Files to Create
 
@@ -95,13 +93,5 @@ For each trait (19 total):
 - Use existing `PersonalityDataBuilder` for test data creation
 - Follow custom matcher patterns from `packages/shared/src/__tests__/integration/support/custom-matchers.ts`
 - Reference validation testing patterns from role/agent tests
-- Include performance timing with `console.time/timeEnd` or Jest benchmarks
-
-## Performance Testing
-
-- Schema compilation benchmarks (<5ms requirement)
-- Validation execution benchmarks (<10ms for typical objects)
-- Memory usage validation for repeated schema use
-- Batch validation performance for multiple personalities
 
 ### Log

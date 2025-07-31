@@ -59,7 +59,6 @@ Optional fields:
 - [ ] Input sanitization for text fields
 - [ ] Custom error messages for missing required fields
 - [ ] Type inference produces correct PersonalityCreationData type
-- [ ] Schema performance <5ms compilation
 - [ ] Unit tests cover creation scenario validation
 
 ## Technical Approach
@@ -81,6 +80,5 @@ Optional fields:
 - Tests for missing required fields
 - Tests for invalid trait values
 - Tests for input sanitization
-- Performance benchmarks
 
 ### Log

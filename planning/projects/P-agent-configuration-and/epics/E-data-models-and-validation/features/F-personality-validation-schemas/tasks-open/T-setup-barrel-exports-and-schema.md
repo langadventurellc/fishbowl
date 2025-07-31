@@ -37,7 +37,6 @@ Following existing patterns in the codebase, set up proper exports from the vali
 - Usage examples in documentation
 - Type inference examples
 - Error handling documentation
-- Performance characteristics documentation
 
 ### Export Organization
 
@@ -81,7 +80,6 @@ For each schema:
 - Purpose and use case
 - Field validation rules
 - Error handling examples
-- Performance characteristics
 - Usage examples with safeParse vs parse
 - Integration with existing interfaces
 

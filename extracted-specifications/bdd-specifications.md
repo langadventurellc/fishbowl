@@ -1,6 +1,6 @@
 # BDD Specifications
 
-Extracted: 2025-07-29T19:04:04.653Z
+Extracted: 2025-07-31T01:33:26.393Z
 
 ## Feature: Agent Configuration Creation Integration
 
