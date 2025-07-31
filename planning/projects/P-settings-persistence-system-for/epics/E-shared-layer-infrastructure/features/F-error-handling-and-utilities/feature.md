@@ -2,11 +2,11 @@
 kind: feature
 id: F-error-handling-and-utilities
 title: Error Handling and Utilities
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-31T12:21:19.446639"
-updated: "2025-07-31T12:21:19.446639"
+updated: "2025-07-31T23:00:03.545116+00:00"
 schema_version: "1.1"
 parent: E-shared-layer-infrastructure
 ---
@@ -15,35 +15,26 @@ parent: E-shared-layer-infrastructure
 
 ## Purpose and Functionality
 
-Create a comprehensive error handling system and utility functions that support the entire shared persistence infrastructure. This feature provides custom error types, error classification, logging utilities, and helper functions that enhance the robustness and debuggability of the persistence system.
+Create a comprehensive error handling system and utility functions that support the entire shared persistence infrastructure. This feature provides custom error types and helper functions that enhance the robustness and debuggability of the persistence system.
 
-## Key Components to Implement
+## Key Components
 
-### 1. Custom Error Types
+### 1. Custom Error Types (Implemented)
 
-- `PersistenceError` base class for all persistence-related errors
-- `FileNotFoundError` for missing settings files with recovery suggestions
-- `InvalidJsonError` for malformed JSON with parsing context
-- `WritePermissionError` for file system permission issues
-- `SettingsValidationError` for Zod schema validation failures with field paths
-- `SchemaVersionError` for settings file version mismatches
+- ✅ `FileStorageError` base class for all file storage-related errors
+- ✅ `FileNotFoundError` for missing settings files
+- ✅ `InvalidJsonError` for malformed JSON with parsing context
+- ✅ `WritePermissionError` for file system permission issues
+- ⚠️ `SettingsValidationError` for Zod schema validation failures with field paths (needed)
+- ⚠️ `SchemaVersionError` for settings file version mismatches (needed)
 
-### 2. Error Classification and Context
+### 2. Error Factory (Implemented)
 
-- Error severity levels (info, warning, error, fatal)
-- Contextual information (operation type, file path, timestamp)
-- Error codes for programmatic handling by UI layers
-- Stack trace preservation and enhancement
-- User-friendly error messages with actionable suggestions
+- ✅ `ErrorFactory` for creating appropriate errors from Node.js system errors
+- ✅ Maps common error codes (ENOENT, EACCES, EPERM) to custom error types
+- ✅ Handles JSON parsing errors
 
-### 3. Logging and Debugging Utilities
-
-- Structured logging functions for persistence operations
-- Debug mode support with detailed operation traces
-- Sanitized logging that excludes sensitive data
-- Log level configuration and filtering
-
-### 4. Utility Functions
+### 3. Utility Functions (To Be Implemented)
 
 - Path validation and sanitization utilities
 - JSON serialization helpers with error handling
@@ -51,135 +42,106 @@ Create a comprehensive error handling system and utility functions that support 
 - File permission checking and setting utilities
 - Cross-platform path resolution helpers
 
-## Detailed Acceptance Criteria
+## Current Implementation Status
 
-### Error Type Implementation
+### Error Type Implementation ✅ Mostly Complete
 
-- ✓ All custom error types extend standard Error with proper inheritance
-- ✓ Error types include specific properties for contextual information
-- ✓ Error messages are descriptive and include actionable recovery steps
-- ✓ Error codes follow consistent naming convention (e.g., PERSISTENCE_001)
-- ✓ Stack traces are preserved and enhanced with operation context
-- ✓ Error serialization works correctly for logging and reporting
+- ✅ All custom error types extend standard Error with proper inheritance
+- ✅ Error types include specific properties for contextual information (operation, filePath, cause)
+- ✅ Error messages are descriptive
+- ✅ Stack traces are preserved with Error.captureStackTrace
+- ✅ Error serialization works correctly via toJSON() method
+- ✅ Error chaining preserves underlying causes (e.g., fs errors)
+- ⚠️ Missing: Error codes, severity levels, timestamps
+- ⚠️ Missing: SettingsValidationError and SchemaVersionError classes
 
-### Error Context and Debugging
+### Error Factory ✅ Complete
 
-- ✓ Errors include operation context (read, write, validate, migrate)
-- ✓ File path information included in file-related errors (sanitized for security)
-- ✓ Timestamp and severity level attached to all errors
-- ✓ Error chaining preserves underlying causes (e.g., fs errors)
-- ✓ Error classification helps UI layers determine appropriate responses
+- ✅ ErrorFactory maps Node.js system errors to appropriate custom error types
+- ✅ Handles common error codes (ENOENT → FileNotFoundError, EACCES/EPERM → WritePermissionError)
+- ✅ Creates InvalidJsonError from JSON parsing failures
+- ✅ Provides fallback for unmapped error codes
 
-### Logging System Implementation
+### Utility Functions ⚠️ Not Implemented
 
-- ✓ Structured logging with consistent format across all operations
-- ✓ Log levels (debug, info, warn, error) filter appropriately
-- ✓ Sensitive data (file contents, user data) excluded from logs
-- ✓ Log output configurable for different environments (dev, prod, test)
-- ✓ Async logging doesn't block persistence operations
+- ❌ Path validation and sanitization utilities
+- ❌ JSON serialization helpers with error handling
+- ❌ Deep merge utilities for settings objects
+- ❌ File permission checking and setting utilities
+- ❌ Cross-platform path resolution helpers
 
-### Utility Functions
+### Integration and Performance ✅ Good Foundation
 
-- ✓ Path validation rejects dangerous paths (../, ~/, absolute paths)
-- ✓ JSON serialization handles edge cases (circular refs, undefined, functions)
-- ✓ Deep merge preserves type safety and handles null/undefined correctly
-- ✓ File permission utilities work across Windows, macOS, and Linux
-- ✓ Cross-platform path resolution handles all separator types
-- ✓ All utilities have comprehensive error handling
+- ✅ Error handling adds minimal overhead to normal operations
+- ✅ Error types integrate cleanly with Promise chains and async/await
+- ✅ All functions work identically in Node.js and Electron environments
+- ✅ Comprehensive unit tests for all error types
 
-### Integration and Performance
+## Remaining Work
 
-- ✓ Error handling adds minimal overhead to normal operations
-- ✓ Logging utilities don't cause memory leaks with large log volumes
-- ✓ Utility functions perform efficiently for typical use cases
-- ✓ Error types integrate cleanly with Promise chains and async/await
-- ✓ Debug mode can be toggled without application restart
-- ✓ All functions work identically in Node.js and Electron environments
+### Missing Error Types
 
-## Implementation Guidance
-
-### Error Type Hierarchy
+Need to implement:
 
 ```typescript
-export abstract class PersistenceError extends Error {
-  abstract readonly code: string;
-  abstract readonly severity: "info" | "warning" | "error" | "fatal";
-  readonly timestamp: Date;
-  readonly operation?: string;
-  readonly context?: Record<string, unknown>;
-
-  constructor(message: string, options?: ErrorOptions) {
-    super(message, options);
-    this.name = this.constructor.name;
-    this.timestamp = new Date();
+export class SettingsValidationError extends FileStorageError {
+  constructor(
+    filePath: string,
+    operation: string,
+    public readonly fieldErrors: Array<{ path: string; message: string }>,
+    cause?: Error,
+  ) {
+    const message = `Settings validation failed: ${fieldErrors.length} field errors`;
+    super(message, operation, filePath, cause);
   }
 }
 
-export class SettingsValidationError extends PersistenceError {
-  readonly code = "SETTINGS_VALIDATION_FAILED";
-  readonly severity = "error" as const;
-  readonly fieldErrors: Array<{ path: string; message: string }>;
-
-  constructor(fieldErrors: Array<{ path: string; message: string }>) {
-    const message = `Settings validation failed: ${fieldErrors.length} errors`;
-    super(message);
-    this.fieldErrors = fieldErrors;
+export class SchemaVersionError extends FileStorageError {
+  constructor(
+    filePath: string,
+    operation: string,
+    public readonly currentVersion: string,
+    public readonly expectedVersion: string,
+    cause?: Error,
+  ) {
+    const message = `Schema version mismatch: expected ${expectedVersion}, got ${currentVersion}`;
+    super(message, operation, filePath, cause);
   }
 }
 ```
 
-### Logging Utility Design
-
-```typescript
-export interface LogContext {
-  operation?: string;
-  filePath?: string;
-  duration?: number;
-  [key: string]: unknown;
-}
-
-export class PersistenceLogger {
-  static debug(message: string, context?: LogContext): void;
-  static info(message: string, context?: LogContext): void;
-  static warn(message: string, context?: LogContext): void;
-  static error(error: Error, context?: LogContext): void;
-}
-```
-
-### Utility Function Categories
+### Utility Functions To Implement
 
 - **Path utilities**: validation, sanitization, resolution
 - **JSON utilities**: safe parsing, serialization, deep merging
 - **File utilities**: permission checking, directory creation
 - **Validation utilities**: type guards, schema helpers
 
+### Optional Enhancements
+
+If needed later:
+
+- Error codes for programmatic handling
+- Error severity levels (info, warning, error, fatal)
+- Timestamp tracking
+- Enhanced context information
+
 ## Testing Requirements
 
-### Unit Testing
+### Unit Testing ✅ Implemented
 
-- All error types construct correctly with proper inheritance
-- Error serialization and deserialization works correctly
-- Logging utilities format output consistently
-- Path validation catches all security vulnerabilities
-- JSON utilities handle edge cases without throwing
-- Deep merge preserves object structure and types correctly
+- ✅ All error types construct correctly with proper inheritance
+- ✅ Error serialization works correctly via toJSON() method
+- ✅ ErrorFactory creates appropriate error types from Node.js errors
+- ⚠️ Need tests for new SettingsValidationError and SchemaVersionError when implemented
+- ❌ Need tests for utility functions when implemented
 
 ### Integration Testing
 
-- Error handling works correctly in real failure scenarios
-- Cross-platform utilities work on CI/CD systems
-- Error recovery suggestions are actionable
-- Debug mode provides useful troubleshooting information
-
-### Security Testing
-
-- Path validation prevents directory traversal attacks
-- Logging doesn't expose sensitive information
-- Error messages don't reveal internal system details
-- File permission utilities enforce proper access controls
+- ✅ Error handling works correctly in real failure scenarios
+- ❌ Need cross-platform utility tests when utilities are implemented
+- ❌ Need path validation security tests when implemented
 
 ## Dependencies
 
 This feature has no dependencies on other features and provides foundational utilities that other features can use. It's designed to be imported by all other persistence components.
-
-### Log

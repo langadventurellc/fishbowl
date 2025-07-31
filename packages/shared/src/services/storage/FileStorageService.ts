@@ -1,5 +1,5 @@
 import * as path from "path";
-import { randomUUID } from "crypto";
+import { randomBytes } from "crypto";
 import { Buffer } from "buffer";
 import { FileSystemBridge } from "./FileSystemBridge";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
@@ -7,6 +7,11 @@ import { FileStorageError } from "./errors/FileStorageError";
 import { ErrorFactory } from "./errors/ErrorFactory";
 import { SystemError } from "../../types/SystemError";
 import { FileStorageOptions } from "./FileStorageOptions";
+import {
+  validatePathStrict,
+  safeJsonStringify,
+  ensureDirectoryExists,
+} from "./utils";
 
 /**
  * Generic file storage service for JSON operations.
@@ -118,7 +123,10 @@ export class FileStorageService<T = unknown> {
     }
 
     // Check serialization size
-    const serialized = JSON.stringify(data, null, 2);
+    const serialized = safeJsonStringify(data, 2);
+    if (!serialized) {
+      throw new Error("Data is not JSON serializable");
+    }
     if (Buffer.byteLength(serialized, "utf8") > this.maxFileSizeBytes) {
       throw new Error(
         `Data size exceeds limit: ${this.maxFileSizeBytes} bytes`,
@@ -130,11 +138,7 @@ export class FileStorageService<T = unknown> {
    * Ensure directory exists, creating if necessary.
    */
   private async ensureDirectoryExists(dirPath: string): Promise<void> {
-    try {
-      await this.fs.mkdir(dirPath, { recursive: true });
-    } catch (error) {
-      throw ErrorFactory.fromNodeError(error as SystemError, "mkdir", dirPath);
-    }
+    await ensureDirectoryExists(dirPath, this.fs);
   }
 
   /**
@@ -143,15 +147,18 @@ export class FileStorageService<T = unknown> {
   private generateTempFilePath(targetPath: string): string {
     const dir = path.dirname(targetPath);
     const ext = path.extname(targetPath);
-    const uuid = randomUUID();
-    return path.join(dir, `${this.tempFilePrefix}${uuid}${ext}`);
+    const randomSuffix = randomBytes(16).toString("hex");
+    return path.join(dir, `${this.tempFilePrefix}${randomSuffix}${ext}`);
   }
 
   /**
    * Write data to temporary file with security permissions.
    */
   private async writeToTempFile<U>(tempPath: string, data: U): Promise<void> {
-    const content = JSON.stringify(data, null, 2);
+    const content = safeJsonStringify(data, 2);
+    if (!content) {
+      throw new Error("Data is not JSON serializable");
+    }
 
     try {
       await this.fs.writeFile(tempPath, content, {
@@ -179,8 +186,12 @@ export class FileStorageService<T = unknown> {
       const parsedData = JSON.parse(content);
 
       // Deep comparison of serialized forms
-      const originalSerialized = JSON.stringify(originalData, null, 2);
-      const writtenSerialized = JSON.stringify(parsedData, null, 2);
+      const originalSerialized = safeJsonStringify(originalData, 2);
+      const writtenSerialized = safeJsonStringify(parsedData, 2);
+
+      if (!originalSerialized || !writtenSerialized) {
+        throw new Error("Data validation failed: unable to serialize data");
+      }
 
       if (originalSerialized !== writtenSerialized) {
         throw new Error(
@@ -245,76 +256,23 @@ export class FileStorageService<T = unknown> {
    * @throws Error for invalid or dangerous paths
    */
   private validateAndResolvePath(filePath: string): string {
-    if (!filePath || filePath.trim() === "") {
-      throw new Error("File path cannot be empty");
-    }
-
-    // Check path length limits
-    if (filePath.length > 1000) {
-      throw new Error(
-        `Path too long: ${filePath.length} characters (max: 1000)`,
-      );
-    }
-
-    // Check for dangerous characters
-    const dangerousChars = /[<>:"|?*]/;
-    if (dangerousChars.test(filePath)) {
-      throw new Error(`Invalid characters in path: ${filePath}`);
-    }
-
-    // Check for control characters
-    for (let i = 0; i < filePath.length; i++) {
-      const charCode = filePath.charCodeAt(i);
-      if (charCode >= 0 && charCode <= 31) {
-        throw new Error(`Control character not allowed in path: ${filePath}`);
+    try {
+      validatePathStrict(filePath);
+      return path.resolve(filePath);
+    } catch (error) {
+      if (error instanceof Error) {
+        // Convert PathValidationError messages to match original format
+        let message = error.message;
+        if (message.includes("Path cannot be empty")) {
+          throw new Error("File path cannot be empty");
+        }
+        if (message.includes("Directory traversal not allowed")) {
+          throw new Error(`Dangerous path detected: ${filePath}`);
+        }
+        // Re-throw other validation errors as-is
+        throw error;
       }
+      throw error;
     }
-
-    // Normalize path to prevent traversal attacks
-    const normalized = path.normalize(filePath);
-
-    // Check for path traversal attempts
-    if (normalized.includes("..")) {
-      throw new Error(`Dangerous path detected: ${filePath}`);
-    }
-
-    // Check for home directory traversal
-    if (normalized.startsWith("~")) {
-      throw new Error(`Home directory paths not allowed: ${filePath}`);
-    }
-
-    // Check for reserved names (Windows)
-    const basename = path.basename(normalized).toLowerCase();
-    const reserved = [
-      "con",
-      "prn",
-      "aux",
-      "nul",
-      "com1",
-      "com2",
-      "com3",
-      "com4",
-      "com5",
-      "com6",
-      "com7",
-      "com8",
-      "com9",
-      "lpt1",
-      "lpt2",
-      "lpt3",
-      "lpt4",
-      "lpt5",
-      "lpt6",
-      "lpt7",
-      "lpt8",
-      "lpt9",
-    ];
-    const baseNameWithoutExt = basename.split(".")[0] || "";
-    if (reserved.includes(basename) || reserved.includes(baseNameWithoutExt)) {
-      throw new Error(`Reserved filename not allowed: ${basename}`);
-    }
-
-    // Convert to absolute path
-    return path.resolve(normalized);
   }
 }
