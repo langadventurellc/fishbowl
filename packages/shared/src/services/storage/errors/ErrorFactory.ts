@@ -2,16 +2,7 @@ import { FileStorageError } from "./FileStorageError";
 import { FileNotFoundError } from "./FileNotFoundError";
 import { InvalidJsonError } from "./InvalidJsonError";
 import { WritePermissionError } from "./WritePermissionError";
-
-/**
- * Interface for Node.js system errors with error codes.
- */
-interface SystemError extends Error {
-  code?: string;
-  errno?: number;
-  path?: string;
-  syscall?: string;
-}
+import { SystemError } from "../../../types/SystemError";
 
 /**
  * Factory for creating appropriate custom errors from Node.js system errors.
