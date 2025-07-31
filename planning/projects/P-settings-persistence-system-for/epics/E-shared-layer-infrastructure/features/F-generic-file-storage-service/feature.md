@@ -2,11 +2,11 @@
 kind: feature
 id: F-generic-file-storage-service
 title: Generic File Storage Service
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-31T12:19:41.106984"
-updated: "2025-07-31T12:19:41.106984"
+updated: "2025-07-31T20:58:21.187423+00:00"
 schema_version: "1.1"
 parent: E-shared-layer-infrastructure
 ---
