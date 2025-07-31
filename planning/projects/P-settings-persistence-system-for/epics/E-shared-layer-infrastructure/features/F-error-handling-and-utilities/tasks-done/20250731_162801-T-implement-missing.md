@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-implement-missing
+parent: F-error-handling-and-utilities
+status: done
 title: Implement missing SettingsValidationError and SchemaVersionError classes
-status: open
 priority: high
 prerequisites: []
 created: "2025-07-31T16:19:07.493757"
-updated: "2025-07-31T16:19:07.493757"
+updated: "2025-07-31T16:21:45.248410"
 schema_version: "1.1"
-parent: F-error-handling-and-utilities
+worktree: null
 ---
 
 # Implement Missing Error Types
@@ -95,3 +96,7 @@ None - this task is independent and builds on existing FileStorageError foundati
 - Reference FileStorageError.ts, InvalidJsonError.ts for implementation patterns
 
 ### Log
+
+**2025-07-31T21:28:01.819513Z** - Implemented missing SettingsValidationError and SchemaVersionError classes for the Fishbowl settings persistence system. Both classes extend FileStorageError base class and follow established patterns with proper inheritance, toJSON serialization, comprehensive test coverage, and complete TypeScript typing. SettingsValidationError includes fieldErrors array for detailed validation feedback. SchemaVersionError includes currentVersion and expectedVersion properties for schema mismatch reporting. All quality checks pass and shared package rebuilt successfully.
+
+- filesChanged: ["packages/shared/src/services/storage/errors/SettingsValidationError.ts", "packages/shared/src/services/storage/errors/SchemaVersionError.ts", "packages/shared/src/services/storage/errors/__tests__/SettingsValidationError.test.ts", "packages/shared/src/services/storage/errors/__tests__/SchemaVersionError.test.ts", "packages/shared/src/services/storage/errors/index.ts"]
