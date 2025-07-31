@@ -7,16 +7,15 @@
  * @module components/settings/__tests__/FocusIndicators.visual.test
  */
 
-import React from "react";
+import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/ui-shared";
 import { render, screen } from "@testing-library/react";
+import { ModalFooter } from "../ModalFooter";
+import { ModalHeader } from "../ModalHeader";
 import { NavigationItem } from "../NavigationItem";
 import { SubNavigationTab } from "../SubNavigationTab";
-import { ModalHeader } from "../ModalHeader";
-import { ModalFooter } from "../ModalFooter";
-import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/shared";
 
 // Mock the shared package for testing
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useSettingsModal: () => ({
     closeModal: jest.fn(),
   }),
@@ -185,8 +184,8 @@ describe("FocusIndicators.visual", () => {
 
     test("save button has primary button focus indicators when enabled", () => {
       // Override the mock to have unsaved changes, which enables the save button
-      const originalMock = require("@fishbowl-ai/shared").useModalState;
-      require("@fishbowl-ai/shared").useModalState = jest.fn(() => ({
+      const originalMock = require("@fishbowl-ai/ui-shared").useModalState;
+      require("@fishbowl-ai/ui-shared").useModalState = jest.fn(() => ({
         hasUnsavedChanges: true,
       }));
 
@@ -202,7 +201,7 @@ describe("FocusIndicators.visual", () => {
       expect(saveButton).not.toBeDisabled();
 
       // Restore original mock
-      require("@fishbowl-ai/shared").useModalState = originalMock;
+      require("@fishbowl-ai/ui-shared").useModalState = originalMock;
     });
 
     test("disabled save button doesn't show focus indicators", () => {

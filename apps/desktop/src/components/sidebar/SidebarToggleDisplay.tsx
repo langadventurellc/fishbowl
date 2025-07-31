@@ -1,6 +1,5 @@
-import React from "react";
-import { SidebarToggleDisplayProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { SidebarToggleDisplayProps } from "@fishbowl-ai/ui-shared";
 
 /**
  * SidebarToggleDisplay component renders the visual appearance of the sidebar
@@ -37,7 +36,7 @@ export function SidebarToggleDisplay({
     // Base positioning and layout
     "absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full",
     "border border-border bg-background cursor-pointer",
-    "flex items-center justify-center text-[10px] text-foreground",
+    "flex items-center justify-center text-micro-default text-foreground",
     "z-[1000] transition-[left] duration-300 ease-out shadow-sm",
     // Dynamic left positioning based on collapsed state
     isCollapsed ? "left-[-12px]" : "left-[188px]",

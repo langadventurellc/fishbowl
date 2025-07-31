@@ -7,15 +7,14 @@
  * @module components/settings/__tests__/FocusIndicators.a11y.test
  */
 
-import React from "react";
 import { render, screen } from "@testing-library/react";
+import { ModalFooter } from "../ModalFooter";
+import { ModalHeader } from "../ModalHeader";
 import { NavigationItem } from "../NavigationItem";
 import { SubNavigationTab } from "../SubNavigationTab";
-import { ModalHeader } from "../ModalHeader";
-import { ModalFooter } from "../ModalFooter";
 
 // Mock the shared package for testing
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useSettingsModal: () => ({
     closeModal: jest.fn(),
   }),
@@ -90,7 +89,7 @@ describe("FocusIndicators.a11y", () => {
       const activeButton = screen.getByRole("button", { name: "General" });
 
       // Active state uses multiple visual cues: color, border, and enhanced focus
-      expect(activeButton).toHaveClass("border-l-[3px]"); // Visual border
+      expect(activeButton).toHaveClass("border-l-primary"); // Visual border
       expect(activeButton).toHaveClass("focus-visible:ring-3"); // Enhanced thickness
       expect(activeButton).toHaveClass("bg-accent"); // Background change
     });

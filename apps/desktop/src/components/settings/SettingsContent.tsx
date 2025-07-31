@@ -28,18 +28,18 @@ import {
   defaultGeneralSettings,
   generalSettingsSchema,
   useUnsavedChanges,
-  type GeneralSettingsFormData,
-  type ThemePreviewProps,
   type FontSizePreviewProps,
+  type GeneralSettingsFormData,
   type SettingsContentProps,
-} from "@fishbowl-ai/shared";
+  type ThemePreviewProps,
+} from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertTriangle, Download, Trash2, Upload } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { cn } from "../../lib/utils";
-import { ApiKeysSettings } from "./ApiKeysSettings";
 import { AgentsSection } from "./AgentsSection";
+import { ApiKeysSettings } from "./ApiKeysSettings";
 import { FormErrorDisplay } from "./FormErrorDisplay";
 import { PersonalitiesSection } from "./PersonalitiesSection";
 import { RolesSection } from "./RolesSection";
@@ -113,7 +113,7 @@ const GeneralSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[24px] font-bold mb-[20px]">General</h1>
+        <h1 className="text-heading-primary mb-[20px]">General</h1>
         <p className="text-muted-foreground text-sm mb-6">
           Configure general application preferences and behavior.
         </p>
@@ -133,9 +133,7 @@ const GeneralSettings: React.FC = () => {
           />
 
           <div className="space-y-6">
-            <h2 className="text-[18px] font-semibold mb-4">
-              Auto Mode Settings
-            </h2>
+            <h2 className="text-heading-secondary mb-4">Auto Mode Settings</h2>
             <div className="grid gap-4">
               <FormField
                 control={form.control}
@@ -159,7 +157,7 @@ const GeneralSettings: React.FC = () => {
                         />
                         <div
                           id="responseDelay-value"
-                          className="text-[13px] text-muted-foreground mt-1"
+                          className="text-description text-muted-foreground mt-1"
                           aria-live="polite"
                           aria-atomic="true"
                           role="status"
@@ -172,7 +170,7 @@ const GeneralSettings: React.FC = () => {
                     <FormMessage />
                     <FormDescription
                       id="responseDelay-description"
-                      className="text-[13px] text-muted-foreground mt-1"
+                      className="text-description text-muted-foreground mt-1"
                     >
                       Time between agent responses in auto mode
                     </FormDescription>
@@ -200,7 +198,7 @@ const GeneralSettings: React.FC = () => {
                           className="w-full"
                         />
                         <div
-                          className="text-[13px] text-muted-foreground mt-1"
+                          className="text-description text-muted-foreground mt-1"
                           aria-live="polite"
                         >
                           {field.value === 0
@@ -210,7 +208,7 @@ const GeneralSettings: React.FC = () => {
                       </div>
                     </FormControl>
                     <FormMessage />
-                    <FormDescription className="text-[13px] text-muted-foreground mt-1">
+                    <FormDescription className="text-description text-muted-foreground mt-1">
                       Stop auto mode after this many messages (0 = unlimited)
                     </FormDescription>
                   </FormItem>
@@ -240,7 +238,7 @@ const GeneralSettings: React.FC = () => {
                           className="w-full"
                         />
                         <div
-                          className="text-[13px] text-muted-foreground mt-1"
+                          className="text-description text-muted-foreground mt-1"
                           aria-live="polite"
                         >
                           {field.value / 1000}{" "}
@@ -249,7 +247,7 @@ const GeneralSettings: React.FC = () => {
                       </div>
                     </FormControl>
                     <FormMessage />
-                    <FormDescription className="text-[13px] text-muted-foreground mt-1">
+                    <FormDescription className="text-description text-muted-foreground mt-1">
                       Maximum time to wait for agent response
                     </FormDescription>
                   </FormItem>
@@ -259,7 +257,7 @@ const GeneralSettings: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-[18px] font-semibold mb-4">
+            <h2 className="text-heading-secondary mb-4">
               Conversation Defaults
             </h2>
             <div className="grid gap-4">
@@ -276,7 +274,7 @@ const GeneralSettings: React.FC = () => {
                         className="flex flex-col space-y-2"
                         aria-describedby="defaultMode-description"
                       >
-                        <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                        <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                           <RadioGroupItem value="manual" id="mode-manual" />
                           <Label
                             htmlFor="mode-manual"
@@ -285,7 +283,7 @@ const GeneralSettings: React.FC = () => {
                             Manual
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                        <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                           <RadioGroupItem value="auto" id="mode-auto" />
                           <Label
                             htmlFor="mode-auto"
@@ -298,7 +296,7 @@ const GeneralSettings: React.FC = () => {
                     </FormControl>
                     <FormDescription
                       id="defaultMode-description"
-                      className="text-[13px] text-muted-foreground mt-1"
+                      className="text-description text-muted-foreground mt-1"
                     >
                       Default conversation mode for new conversations
                     </FormDescription>
@@ -326,14 +324,14 @@ const GeneralSettings: React.FC = () => {
                           className="w-full"
                         />
                         <div
-                          className="text-[13px] text-muted-foreground mt-1"
+                          className="text-description text-muted-foreground mt-1"
                           aria-live="polite"
                         >
                           {field.value} agent{field.value !== 1 ? "s" : ""}
                         </div>
                       </div>
                     </FormControl>
-                    <FormDescription className="text-[13px] text-muted-foreground mt-1">
+                    <FormDescription className="text-description text-muted-foreground mt-1">
                       Limit the number of agents in a conversation
                     </FormDescription>
                     <FormMessage />
@@ -344,7 +342,7 @@ const GeneralSettings: React.FC = () => {
           </div>
 
           <div className="space-y-6">
-            <h2 className="text-[18px] font-semibold mb-4">Other Settings</h2>
+            <h2 className="text-heading-secondary mb-4">Other Settings</h2>
             <div className="grid gap-4">
               <FormField
                 control={form.control}
@@ -355,7 +353,7 @@ const GeneralSettings: React.FC = () => {
                       <FormLabel className="text-base">
                         Automatically check for updates
                       </FormLabel>
-                      <FormDescription className="text-[13px] text-muted-foreground mt-1">
+                      <FormDescription className="text-description text-muted-foreground mt-1">
                         Check for new versions on startup
                       </FormDescription>
                     </div>
@@ -379,7 +377,13 @@ const GeneralSettings: React.FC = () => {
 // ThemePreview component with React.memo for performance optimization
 
 const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
-  const previewColors = useMemo(() => {
+  const previewRef = useRef<HTMLDivElement>(null);
+
+  // Apply theme class to preview container for CSS variable resolution
+  useEffect(() => {
+    const previewElement = previewRef.current;
+    if (!previewElement) return;
+
     const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
       .matches
       ? "dark"
@@ -387,51 +391,27 @@ const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
     const effectiveTheme =
       selectedTheme === "system" ? systemTheme : selectedTheme;
 
-    return effectiveTheme === "dark"
-      ? {
-          background: "rgb(44, 40, 37)",
-          foreground: "rgb(226, 232, 240)",
-          border: "rgb(58, 54, 51)",
-          primary: "rgb(129, 140, 248)",
-          accent: "rgb(72, 68, 65)",
-        }
-      : {
-          background: "rgb(245, 245, 244)",
-          foreground: "rgb(30, 41, 59)",
-          border: "rgb(214, 211, 209)",
-          primary: "rgb(99, 102, 241)",
-          accent: "rgb(214, 211, 209)",
-        };
+    // Apply theme class directly to preview element
+    previewElement.classList.toggle("dark", effectiveTheme === "dark");
   }, [selectedTheme]);
 
   return (
     <div
-      className="w-[200px] h-[100px] border rounded-lg p-3 flex flex-col justify-between transition-colors duration-200 ease-in-out"
-      style={{
-        backgroundColor: previewColors.background,
-        borderColor: previewColors.border,
-        color: previewColors.foreground,
-      }}
+      ref={previewRef}
+      className="theme-preview border rounded-lg p-3 flex flex-col justify-between"
       aria-label="Theme preview showing background, text, and accent colors"
       role="img"
     >
       <div className="flex items-center justify-between">
         <div className="text-xs font-medium">Sample Text</div>
         <div
-          className="w-2 h-2 rounded-full transition-colors duration-200 ease-in-out"
-          style={{ backgroundColor: previewColors.accent }}
+          className="theme-preview-accent w-2 h-2 rounded-full"
           aria-hidden="true"
         />
       </div>
       <div className="flex gap-1" aria-hidden="true">
-        <div
-          className="h-1 flex-1 rounded transition-colors duration-200 ease-in-out"
-          style={{ backgroundColor: previewColors.primary }}
-        />
-        <div
-          className="h-1 flex-1 rounded opacity-50 transition-colors duration-200 ease-in-out"
-          style={{ backgroundColor: previewColors.primary }}
-        />
+        <div className="theme-preview-primary h-1 flex-1 rounded" />
+        <div className="theme-preview-primary h-1 flex-1 rounded opacity-50" />
       </div>
     </div>
   );
@@ -492,7 +472,7 @@ const AppearanceSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[24px] font-bold mb-[20px]">Appearance</h1>
+        <h1 className="text-heading-primary mb-[20px]">Appearance</h1>
         <p className="text-muted-foreground text-sm mb-6">
           Customize the appearance and theme of the application
         </p>
@@ -501,14 +481,14 @@ const AppearanceSettings: React.FC = () => {
       <div className="space-y-6">
         {/* Theme Selection Group */}
         <div className="space-y-4">
-          <h2 className="text-[18px] font-semibold mb-4">Theme</h2>
+          <h2 className="text-heading-secondary mb-4">Theme</h2>
           <div className="grid gap-4">
             <RadioGroup
               value={selectedTheme}
               onValueChange={handleThemeChange}
               className="flex flex-col space-y-2"
             >
-              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                 <RadioGroupItem value="light" id="theme-light" />
                 <Label
                   htmlFor="theme-light"
@@ -517,7 +497,7 @@ const AppearanceSettings: React.FC = () => {
                   Light
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                 <RadioGroupItem value="dark" id="theme-dark" />
                 <Label
                   htmlFor="theme-dark"
@@ -526,7 +506,7 @@ const AppearanceSettings: React.FC = () => {
                   Dark
                 </Label>
               </div>
-              <div className="flex items-center space-x-2 min-h-[44px] py-1">
+              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                 <RadioGroupItem value="system" id="theme-system" />
                 <div className="flex flex-col flex-1 py-2">
                   <Label
@@ -546,7 +526,7 @@ const AppearanceSettings: React.FC = () => {
 
         {/* Theme Preview Area */}
         <div className="space-y-4">
-          <h2 className="text-[18px] font-semibold mb-4">Preview</h2>
+          <h2 className="text-heading-secondary mb-4">Preview</h2>
           <div className="grid gap-4">
             <ThemePreview selectedTheme={selectedTheme} />
           </div>
@@ -554,7 +534,7 @@ const AppearanceSettings: React.FC = () => {
 
         {/* Display Settings Group */}
         <div className="space-y-4">
-          <h2 className="text-[18px] font-semibold mb-4">Display Settings</h2>
+          <h2 className="text-heading-secondary mb-4">Display Settings</h2>
           <div className="grid gap-6">
             {/* Message Timestamps Control */}
             <div className="space-y-3">
@@ -567,7 +547,7 @@ const AppearanceSettings: React.FC = () => {
                 className="flex flex-col space-y-2"
                 aria-describedby="timestamps-description"
               >
-                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                   <RadioGroupItem value="always" id="timestamps-always" />
                   <Label
                     htmlFor="timestamps-always"
@@ -576,7 +556,7 @@ const AppearanceSettings: React.FC = () => {
                     Always
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                   <RadioGroupItem value="hover" id="timestamps-hover" />
                   <Label
                     htmlFor="timestamps-hover"
@@ -585,7 +565,7 @@ const AppearanceSettings: React.FC = () => {
                     On Hover
                   </Label>
                 </div>
-                <div className="flex items-center space-x-2 min-h-[44px] py-1">
+                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                   <RadioGroupItem value="never" id="timestamps-never" />
                   <Label
                     htmlFor="timestamps-never"
@@ -597,7 +577,7 @@ const AppearanceSettings: React.FC = () => {
               </RadioGroup>
               <div
                 id="timestamps-description"
-                className="text-[13px] text-muted-foreground mt-1"
+                className="text-description text-muted-foreground mt-1"
               >
                 Control when message timestamps are displayed
               </div>
@@ -608,7 +588,7 @@ const AppearanceSettings: React.FC = () => {
               <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                 <div className="space-y-0.5">
                   <Label className="text-base">Show last activity time</Label>
-                  <div className="text-[13px] text-muted-foreground">
+                  <div className="text-description text-muted-foreground">
                     Display the last activity time for each conversation
                   </div>
                 </div>
@@ -622,7 +602,7 @@ const AppearanceSettings: React.FC = () => {
               <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                 <div className="space-y-0.5">
                   <Label className="text-base">Compact conversation list</Label>
-                  <div className="text-[13px] text-muted-foreground">
+                  <div className="text-description text-muted-foreground">
                     Use a more compact layout for the conversation list
                   </div>
                 </div>
@@ -638,7 +618,7 @@ const AppearanceSettings: React.FC = () => {
 
         {/* Chat Display Group */}
         <div className="space-y-4">
-          <h2 className="text-[18px] font-semibold mb-4">Chat Display</h2>
+          <h2 className="text-heading-secondary mb-4">Chat Display</h2>
           <div className="grid gap-6">
             {/* Font Size Slider Control */}
             <div className="space-y-3">
@@ -661,7 +641,7 @@ const AppearanceSettings: React.FC = () => {
               {/* Font Size Preview */}
               <FontSizePreview fontSize={fontSize[0] || 14} />
 
-              <div className="text-[13px] text-muted-foreground">
+              <div className="text-description text-muted-foreground">
                 Adjust the font size for chat messages
               </div>
             </div>
@@ -707,7 +687,7 @@ const AppearanceSettings: React.FC = () => {
               </RadioGroup>
               <div
                 id="spacing-description"
-                className="text-[13px] text-muted-foreground"
+                className="text-description text-muted-foreground"
               >
                 Control the spacing between chat messages
               </div>
@@ -764,7 +744,7 @@ const AdvancedSettings: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-[24px] font-bold mb-[20px]">Advanced Settings</h1>
+        <h1 className="text-heading-primary mb-[20px]">Advanced Settings</h1>
         <p className="text-muted-foreground text-sm mb-6">
           Advanced configuration options for power users.
         </p>
@@ -783,9 +763,9 @@ const AdvancedSettings: React.FC = () => {
       </div>
       <div className="space-y-6">
         <div className="space-y-4">
-          <h2 className="text-[18px] font-semibold mb-4">Data Management</h2>
+          <h2 className="text-heading-secondary mb-4">Data Management</h2>
           <div className="grid gap-4">
-            <div className="grid grid-cols-1 gap-[12px]">
+            <div className="grid grid-cols-1 gap-[var(--dt-data-management-gap)]">
               {/* Export Settings Button */}
               <div className="flex flex-col">
                 <Button
@@ -801,7 +781,7 @@ const AdvancedSettings: React.FC = () => {
                 </Button>
                 <div
                   id="export-help-text"
-                  className="text-[13px] text-muted-foreground mt-2"
+                  className="text-description text-muted-foreground mt-2"
                 >
                   Downloads a JSON file containing all your application settings
                 </div>
@@ -833,7 +813,7 @@ const AdvancedSettings: React.FC = () => {
                 />
                 <div
                   id="import-help-text"
-                  className="text-[13px] text-muted-foreground mt-2"
+                  className="text-description text-muted-foreground mt-2"
                 >
                   Import settings from a JSON file
                 </div>
@@ -860,7 +840,7 @@ const AdvancedSettings: React.FC = () => {
                 <div
                   id="clear-warning"
                   role="alert"
-                  className="text-[13px] text-destructive mt-2"
+                  className="text-description text-destructive mt-2"
                 >
                   This cannot be undone
                 </div>
@@ -869,7 +849,7 @@ const AdvancedSettings: React.FC = () => {
           </div>
         </div>
         <div className="space-y-4">
-          <h2 className="text-[18px] font-semibold mb-4">Developer Options</h2>
+          <h2 className="text-heading-secondary mb-4">Developer Options</h2>
           <div className="grid gap-6">
             {/* Debug Mode Toggle with enhanced accessibility */}
             <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
@@ -879,7 +859,7 @@ const AdvancedSettings: React.FC = () => {
                 </Label>
                 <div
                   id="debug-help"
-                  className="text-[13px] text-muted-foreground"
+                  className="text-description text-muted-foreground"
                 >
                   Show detailed logs in developer console
                 </div>
@@ -901,14 +881,14 @@ const AdvancedSettings: React.FC = () => {
                 </Label>
                 <div
                   id="experimental-help"
-                  className="text-[13px] text-muted-foreground"
+                  className="text-description text-muted-foreground"
                 >
                   Access features currently in development
                 </div>
                 <div
                   id="experimental-warning"
                   role="alert"
-                  className="text-[13px] text-amber-600 dark:text-amber-400 flex items-center gap-1"
+                  className="text-description text-amber-600 dark:text-amber-400 flex items-center gap-1"
                 >
                   <AlertTriangle className="h-4 w-4" aria-hidden="true" />
                   May cause instability
@@ -974,12 +954,12 @@ export function SettingsContent({
         // Base content styling
         "flex-1 overflow-y-scroll",
         // Responsive padding: 30px desktop, 20px reduced screens
-        "min-[1000px]:p-[30px]",
-        "max-[999px]:p-[20px]",
+        "lg:p-[var(--dt-content-padding-desktop)]",
+        "max-lg:p-[var(--dt-content-padding-mobile)]",
         // Full width when navigation is hidden/collapsed
-        "max-[799px]:w-full",
+        "max-md:w-full",
         // Takes remaining width when navigation is visible
-        "min-[800px]:flex-1",
+        "md:flex-1",
         // Background for content area
         "bg-background",
         className,
@@ -1003,7 +983,7 @@ export function SettingsContent({
 
       {/* Content container with region role */}
       <div
-        className="max-w-[900px] mx-auto px-4 sm:px-6"
+        className="max-w-[var(--dt-content-max-width)] mx-auto px-4 sm:px-6"
         role="region"
         aria-labelledby={`${contentId}-section-title`}
       >

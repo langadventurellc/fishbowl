@@ -17,13 +17,12 @@
  * @module components/settings/ModalHeader
  */
 
-import React from "react";
-import { useSettingsModal } from "@fishbowl-ai/shared";
 import { Button } from "@/components/ui/button";
-import { XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ModalHeaderProps } from "@fishbowl-ai/shared";
-import { getFocusClasses, COMMON_FOCUS_CLASSES } from "@/styles/focus";
+import { COMMON_FOCUS_CLASSES, getFocusClasses } from "@/styles/focus";
+import { ModalHeaderProps, useSettingsModal } from "@fishbowl-ai/ui-shared";
+import { XIcon } from "lucide-react";
+import React from "react";
 
 /**
  * ModalHeader component for settings modal.
@@ -70,14 +69,14 @@ export function ModalHeader({
   return (
     <header
       className={cn(
-        // Exact height specification: 50px
-        "h-[50px]",
+        // Exact height specification using design token
+        "h-[var(--dt-modal-header-height)]",
         // Background slightly darker than content area for visual hierarchy
         "bg-background/95 border-b border-border/50",
         // Layout: flex with space between for title and close button
         "flex items-center justify-between",
-        // Padding: 20px horizontal as specified
-        "px-5",
+        // Padding: 20px horizontal using design token
+        "px-[var(--dt-modal-header-padding)]",
         // Ensure proper z-index for header layering
         "relative z-10",
         // Custom className for additional styling

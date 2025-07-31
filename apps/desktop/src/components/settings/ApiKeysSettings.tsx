@@ -1,13 +1,13 @@
 import {
   PROVIDERS,
+  createApiKeysFormSchema,
   createInitialProviderState,
   validateProviderData,
-  createApiKeysFormSchema,
-  type ProviderFormData,
-  type ProviderState,
   type ApiKeysFormData,
   type ApiKeysState,
-} from "@fishbowl-ai/shared";
+  type ProviderFormData,
+  type ProviderState,
+} from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";

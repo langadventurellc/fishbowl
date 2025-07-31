@@ -11,11 +11,11 @@
  * @module components/settings/SubNavigationTab
  */
 
+import type { SubNavigationTabProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
 import { cn } from "../../lib/utils";
+import { COMMON_FOCUS_CLASSES, getNavigationFocus } from "../../styles/focus";
 import { Button } from "../ui/button";
-import type { SubNavigationTabProps } from "@fishbowl-ai/shared";
-import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
 
 export const SubNavigationTab = React.forwardRef<
   HTMLButtonElement,
@@ -40,8 +40,8 @@ export const SubNavigationTab = React.forwardRef<
       variant="ghost"
       className={cn(
         // Smaller dimensions for sub-level navigation
-        "h-[32px] px-3 rounded-[4px]",
-        "w-full justify-start",
+        "h-[var(--dt-sub-nav-item-height)] px-[var(--dt-nav-item-padding-horizontal)] rounded-[var(--dt-border-radius-small)]",
+        "w-[calc(100%-4px)] justify-start", // Reduce width to account for focus ring overflow
         // Smaller text for visual hierarchy
         isCompact ? "text-xs" : "text-sm",
         "font-normal", // Less emphasis than main navigation
@@ -55,12 +55,12 @@ export const SubNavigationTab = React.forwardRef<
         COMMON_FOCUS_CLASSES.transition,
         getNavigationFocus(active),
         // Enhanced focus state for keyboard navigation with tighter offset for sub-tabs
-        isFocused && "ring-2 ring-accent ring-offset-1",
+        isFocused && "ring-accent ring-offset-1",
         // Active state: more prominent styling with left border
         active && [
           "bg-accent/80 text-accent-foreground",
-          "border-l-[2px] border-l-primary", // Thinner border than main nav
-          "pl-[10px]", // Adjust padding for 2px border (12px - 2px = 10px)
+          "border-l-[var(--dt-nav-sub-active-border)] border-l-primary", // Thinner border than main nav
+          "pl-[calc(var(--dt-nav-item-padding-horizontal)-var(--dt-nav-sub-active-border))]", // Adjust padding for sub-nav border
           "font-medium", // More emphasis when active
         ],
         className,

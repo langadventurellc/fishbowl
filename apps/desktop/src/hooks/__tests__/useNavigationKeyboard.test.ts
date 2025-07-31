@@ -1,7 +1,7 @@
-import { renderHook, act } from "@testing-library/react";
-import { useNavigationKeyboard } from "../useNavigationKeyboard";
+import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/ui-shared";
+import { act, renderHook } from "@testing-library/react";
 import type { NavigationKeyboardOptions } from "../types/NavigationKeyboardOptions";
-import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/shared";
+import { useNavigationKeyboard } from "../useNavigationKeyboard";
 
 // Mock keyboard events helper
 const createKeyboardEvent = (

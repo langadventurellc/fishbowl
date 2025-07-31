@@ -1,9 +1,9 @@
-import { SidebarContainerDisplayProps } from "@fishbowl-ai/shared";
+import { SidebarContainerDisplayProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
+import { cn } from "../../lib/utils";
 import { Button } from "../input/Button";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
-import { cn } from "../../lib/utils";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper

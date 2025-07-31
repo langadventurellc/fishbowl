@@ -1,8 +1,8 @@
+import { AgentLabelsContainerDisplayProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { AgentLabelsContainerDisplayProps } from "@fishbowl-ai/shared";
+import { cn } from "../../lib/utils";
 import { AgentPill } from "../chat";
 import { Button } from "../input";
-import { cn } from "../../lib/utils";
 
 /**
  * AgentLabelsContainerDisplay - Horizontal agent labels bar layout component

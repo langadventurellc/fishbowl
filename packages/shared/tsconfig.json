@@ -5,15 +5,9 @@
     "rootDir": "src",
     "noEmit": false,
     "baseUrl": ".",
-    "paths": {
-      "@fishbowl-ai/ui-theme": ["../ui-theme/src"]
-    }
+    "paths": {}
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"],
-  "references": [
-    {
-      "path": "../ui-theme"
-    }
-  ]
+  "references": []
 }

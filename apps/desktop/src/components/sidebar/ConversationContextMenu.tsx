@@ -9,10 +9,9 @@
  * @module components/sidebar/ConversationContextMenu
  */
 
-import React from "react";
-import { ConversationContextMenuProps } from "@fishbowl-ai/shared";
-import { ContextMenu } from "../menu";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { ConversationContextMenuProps } from "@fishbowl-ai/ui-shared";
+import { ContextMenu } from "../menu";
 
 /**
  * ConversationContextMenu component for conversation-specific context menu functionality.

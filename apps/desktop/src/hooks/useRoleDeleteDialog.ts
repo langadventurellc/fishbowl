@@ -10,27 +10,29 @@
  * @module hooks/useRoleDeleteDialog
  */
 
+import type { CustomRoleViewModel } from "@fishbowl-ai/ui-shared";
+import { useCustomRolesStore } from "@fishbowl-ai/ui-shared";
 import { useCallback, useState } from "react";
-import { useCustomRolesStore } from "@fishbowl-ai/shared";
-import type { CustomRole } from "@fishbowl-ai/shared";
 
 interface UseRoleDeleteDialogReturn {
   isOpen: boolean;
-  selectedRole: CustomRole | null;
+  selectedRole: CustomRoleViewModel | null;
   isLoading: boolean;
-  openDialog: (role: CustomRole) => void;
+  openDialog: (role: CustomRoleViewModel) => void;
   closeDialog: () => void;
-  confirmDelete: (role: CustomRole) => Promise<void>;
+  confirmDelete: (role: CustomRoleViewModel) => Promise<void>;
 }
 
 export function useRoleDeleteDialog(): UseRoleDeleteDialogReturn {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<CustomRole | null>(null);
+  const [selectedRole, setSelectedRole] = useState<CustomRoleViewModel | null>(
+    null,
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   const { deleteRole } = useCustomRolesStore();
 
-  const openDialog = useCallback((role: CustomRole) => {
+  const openDialog = useCallback((role: CustomRoleViewModel) => {
     setSelectedRole(role);
     setIsOpen(true);
   }, []);
@@ -42,7 +44,7 @@ export function useRoleDeleteDialog(): UseRoleDeleteDialogReturn {
   }, [isLoading]);
 
   const confirmDelete = useCallback(
-    async (role: CustomRole) => {
+    async (role: CustomRoleViewModel) => {
       setIsLoading(true);
       try {
         deleteRole(role.id);

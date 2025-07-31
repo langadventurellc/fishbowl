@@ -10,19 +10,19 @@
  * @module components/settings/PersonalitiesSection
  */
 
-import React, { useCallback } from "react";
-import { TabContainer } from "./TabContainer";
-import { SavedPersonalitiesTab } from "./SavedPersonalitiesTab";
-import { CreatePersonalityForm } from "./CreatePersonalityForm";
-import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
 import {
   useSettingsNavigation,
   useUnsavedChanges,
-  type TabConfiguration,
+  type PersonalitiesSectionProps,
   type Personality,
   type PersonalityFormData,
-  type PersonalitiesSectionProps,
-} from "@fishbowl-ai/shared";
+  type TabConfiguration,
+} from "@fishbowl-ai/ui-shared";
+import React, { useCallback } from "react";
+import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
+import { CreatePersonalityForm } from "./CreatePersonalityForm";
+import { SavedPersonalitiesTab } from "./SavedPersonalitiesTab";
+import { TabContainer } from "./TabContainer";
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
   const { activeSubTab } = useSettingsNavigation();

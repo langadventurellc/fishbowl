@@ -12,24 +12,24 @@
  * @module components/settings/agents/TemplateCard
  */
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { Button } from "../../ui/button";
-import { cn } from "../../../lib/utils";
+import type { TemplateCardProps } from "@fishbowl-ai/ui-shared";
 import {
-  BookOpen,
-  Code,
-  PenTool,
   BarChart3,
+  BookOpen,
+  Brain,
   Calendar,
-  Palette,
+  Code,
   FileText,
+  Palette,
+  PenTool,
   TrendingUp,
   Users,
-  Brain,
   type LucideIcon,
 } from "lucide-react";
-import type { TemplateCardProps } from "@fishbowl-ai/shared";
+import React from "react";
+import { cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 
 // Icon mapping for template icons
 const iconMap: Record<string, LucideIcon> = {
@@ -59,7 +59,7 @@ export const TemplateCard: React.FC<TemplateCardProps> = ({
   return (
     <Card
       className={cn(
-        "hover:shadow-lg transition-all duration-200 group cursor-pointer h-full flex flex-col",
+        "hover:shadow-lg transition-all duration-[var(--dt-animation-hover-transition)] group cursor-pointer h-full flex flex-col",
         className,
       )}
     >

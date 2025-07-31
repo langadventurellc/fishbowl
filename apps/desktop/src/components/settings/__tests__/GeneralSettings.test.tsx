@@ -1,10 +1,9 @@
-import React from "react";
-import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { render, screen } from "@testing-library/react";
 import { SettingsContent } from "../SettingsContent";
 
 // Mock the shared package
-jest.mock("@fishbowl-ai/shared", () => {
+jest.mock("@fishbowl-ai/ui-shared", () => {
   const { z } = require("zod");
 
   const mockSchema = z.object({

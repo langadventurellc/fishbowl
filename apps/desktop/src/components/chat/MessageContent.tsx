@@ -1,6 +1,6 @@
-import { MessageContentProps } from "@fishbowl-ai/shared";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { MessageContentProps } from "@fishbowl-ai/ui-shared";
+import { useState } from "react";
 
 /**
  * MessageContent component displays message text with proper formatting and typography.

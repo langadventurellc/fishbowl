@@ -5,4 +5,4 @@
  */
 
 export * from "./roles";
-export * from "./behaviorData";
+// behaviorData moved to ui-shared package

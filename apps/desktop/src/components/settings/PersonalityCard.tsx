@@ -12,11 +12,11 @@
  * @module components/settings/PersonalityCard
  */
 
+import type { Personality, PersonalityCardProps } from "@fishbowl-ai/ui-shared";
+import { Copy, Edit } from "lucide-react";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Button } from "../ui/button";
-import { Edit, Copy } from "lucide-react";
-import type { Personality, PersonalityCardProps } from "@fishbowl-ai/shared";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 export const PersonalityCard: React.FC<PersonalityCardProps> = ({
   personality,

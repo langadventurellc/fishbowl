@@ -1,3 +1,4 @@
+import type { ModelSelectProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
 import {
   Select,
@@ -7,7 +8,6 @@ import {
   SelectValue,
 } from "../../ui/select";
 import { AVAILABLE_MODELS } from "../constants/models";
-import type { ModelSelectProps } from "@fishbowl-ai/shared";
 
 export const ModelSelect: React.FC<ModelSelectProps> = ({
   value,

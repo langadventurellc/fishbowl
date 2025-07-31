@@ -11,13 +11,16 @@
  * @module components/settings/BigFiveSliders
  */
 
-import React, { useCallback } from "react";
-import { Slider } from "../ui/slider";
-import { Label } from "../ui/label";
 import { cn } from "@/lib/utils";
+import type {
+  BigFiveSlidersProps,
+  BigFiveTraitsViewModel,
+} from "@fishbowl-ai/ui-shared";
+import React, { useCallback } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
 import { announceToScreenReader } from "../../utils/announceToScreenReader";
-import type { BigFiveTraits, BigFiveSlidersProps } from "@fishbowl-ai/shared";
+import { Label } from "../ui/label";
+import { Slider } from "../ui/slider";
 
 const BIG_FIVE_TRAITS = {
   openness: {
@@ -50,13 +53,13 @@ export const BigFiveSliders: React.FC<BigFiveSlidersProps> = ({
 }) => {
   // Debounced screen reader announcements only
   const debouncedAnnouncement = useDebounce((...args: unknown[]) => {
-    const [trait, value] = args as [keyof BigFiveTraits, number];
+    const [trait, value] = args as [keyof BigFiveTraitsViewModel, number];
     const traitInfo = BIG_FIVE_TRAITS[trait];
     announceToScreenReader(`${traitInfo.label} set to ${value}`, "polite");
   }, 300);
 
   const handleSliderChange = useCallback(
-    (trait: keyof BigFiveTraits) => {
+    (trait: keyof BigFiveTraitsViewModel) => {
       return (values: number[]) => {
         const newValue = values[0] ?? 50;
         // Immediate onChange for form updates
@@ -72,54 +75,54 @@ export const BigFiveSliders: React.FC<BigFiveSlidersProps> = ({
     <div className={cn("space-y-6", className)}>
       <h3 className="text-lg font-semibold">Big Five Personality Traits</h3>
 
-      {(Object.keys(BIG_FIVE_TRAITS) as Array<keyof BigFiveTraits>).map(
-        (trait) => {
-          const traitInfo = BIG_FIVE_TRAITS[trait];
-          const currentValue = values[trait];
+      {(
+        Object.keys(BIG_FIVE_TRAITS) as Array<keyof BigFiveTraitsViewModel>
+      ).map((trait) => {
+        const traitInfo = BIG_FIVE_TRAITS[trait];
+        const currentValue = values[trait];
 
-          return (
-            <div key={trait} className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label
-                  htmlFor={`big-five-${trait}`}
-                  className="text-sm font-medium"
-                  title={traitInfo.description}
-                >
-                  {traitInfo.label}
-                </Label>
-                <span
-                  className="text-sm font-mono font-semibold text-primary"
-                  aria-live="polite"
-                  aria-label={`Current ${traitInfo.label} value`}
-                >
-                  {currentValue}
-                </span>
-              </div>
-
-              <Slider
-                id={`big-five-${trait}`}
-                value={[Number(currentValue) || 50]}
-                onValueChange={handleSliderChange(trait)}
-                min={0}
-                max={100}
-                step={1}
-                disabled={disabled}
-                className="w-full"
-                aria-label={`${traitInfo.label}: ${traitInfo.description}`}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-valuenow={currentValue}
-                aria-valuetext={`${currentValue} out of 100`}
-              />
-
-              {/* Optional description tooltip */}
-              <p className="text-xs text-muted-foreground">
-                {traitInfo.description}
-              </p>
+        return (
+          <div key={trait} className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label
+                htmlFor={`big-five-${trait}`}
+                className="text-sm font-medium"
+                title={traitInfo.description}
+              >
+                {traitInfo.label}
+              </Label>
+              <span
+                className="text-sm font-mono font-semibold text-primary"
+                aria-live="polite"
+                aria-label={`Current ${traitInfo.label} value`}
+              >
+                {currentValue}
+              </span>
             </div>
-          );
-        },
-      )}
+
+            <Slider
+              id={`big-five-${trait}`}
+              value={[Number(currentValue) || 50]}
+              onValueChange={handleSliderChange(trait)}
+              min={0}
+              max={100}
+              step={1}
+              disabled={disabled}
+              className="w-full"
+              aria-label={`${traitInfo.label}: ${traitInfo.description}`}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={currentValue}
+              aria-valuetext={`${currentValue} out of 100`}
+            />
+
+            {/* Optional description tooltip */}
+            <p className="text-xs text-muted-foreground">
+              {traitInfo.description}
+            </p>
+          </div>
+        );
+      })}
     </div>
   );
 };

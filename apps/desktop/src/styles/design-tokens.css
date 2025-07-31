@@ -1,0 +1,244 @@
+/**
+ * Design Token Foundation System for Fishbowl Desktop Application
+ * 
+ * Organized token categories:
+ * - Spacing tokens (modal dimensions, padding, margins, gaps)
+ * - Typography tokens (heading sizes, description text)
+ * - Layout tokens (navigation widths, content constraints)
+ * - Animation tokens (durations, easing)
+ * - Breakpoint tokens (responsive design)
+ * - Touch target tokens (accessibility minimums)
+ */
+
+@layer theme {
+  :root {
+    /* === SPACING TOKENS === */
+
+    /* Modal and Container Dimensions */
+    --dt-modal-width-small: 80vw;
+    --dt-modal-width-medium: 95vw;
+    --dt-modal-height-small: 80vh;
+    --dt-modal-height-mobile: 90vh;
+    --dt-modal-max-width: 1200px;
+    --dt-modal-max-height: 700px;
+    --dt-modal-min-width: 800px;
+    --dt-modal-min-height: 500px;
+
+    /* Navigation Dimensions */
+    --dt-nav-width-desktop: 200px;
+    --dt-nav-width-medium: 180px;
+    --dt-nav-padding: 10px;
+
+    /* Component Heights */
+    --dt-nav-item-height: 40px;
+    --dt-sub-nav-item-height: 32px;
+    --dt-modal-header-height: 50px;
+    --dt-modal-footer-height: 60px;
+    --dt-touch-target-min: 44px;
+    --dt-touch-target-desktop: 32px;
+
+    /* Padding and Margins */
+    --dt-content-padding-desktop: 30px;
+    --dt-content-padding-mobile: 20px;
+    --dt-nav-item-padding-horizontal: 12px;
+    --dt-modal-header-padding: 20px;
+    --dt-button-gap: 10px;
+    --dt-form-section-margin: 20px;
+
+    /* Border and Accent Sizes */
+    --dt-nav-active-border: 3px;
+    --dt-nav-sub-active-border: 2px;
+    --dt-border-radius-small: 4px;
+    --dt-border-radius-default: 8px;
+
+    /* Grid and Layout Spacing */
+    --dt-grid-gap: 12px;
+    --dt-card-gap: 16px;
+    --dt-form-element-spacing: 4px;
+
+    /* === SHADOW TOKENS === */
+
+    /* Modal Shadows */
+    --dt-shadow-modal: 0 10px 25px rgba(0, 0, 0, 0.3);
+    --dt-shadow-modal-dark: 0 10px 25px rgba(0, 0, 0, 0.5);
+
+    /* === TYPOGRAPHY TOKENS === */
+
+    /* Heading Sizes */
+    --dt-heading-primary: 24px; /* Main section headings (General, Appearance, Advanced) */
+    --dt-heading-secondary: 18px; /* Subsection headings (Auto Mode, Theme, etc.) */
+    --dt-heading-modal-title: 18px; /* Modal header title */
+
+    /* Body Text Sizes */
+    --dt-text-description: 13px; /* Form descriptions, help text */
+    --dt-text-body: 14px; /* Default body text */
+    --dt-text-small: 12px; /* Small labels, counts */
+    --dt-text-tiny: 11px; /* Tiny text (conversation timestamps) */
+    --dt-text-micro: 10px; /* Micro text (sidebar toggle) */
+
+    /* Font Weight Tokens */
+    --dt-font-weight-heading: 600; /* Semibold for headings */
+    --dt-font-weight-title: 700; /* Bold for main titles */
+    --dt-font-weight-body: 500; /* Medium for body text */
+    --dt-font-weight-normal: 400; /* Normal for regular text */
+
+    /* Line Height Tokens for Typography */
+    --dt-line-height-heading: 1.2; /* Tight line height for headings */
+    --dt-line-height-body: 1.5; /* Normal line height for body text */
+    --dt-line-height-compact: 1.3; /* Compact line height for dense UI */
+
+    /* === LAYOUT TOKENS === */
+
+    /* Content Constraints */
+    --dt-content-max-width: 900px;
+    --dt-form-max-width: 600px;
+    --dt-list-max-height: 400px;
+    --dt-modal-content-max-height: 85vh;
+
+    /* Scrollable Container Tokens */
+    --dt-scrollable-list-max-height: 400px;
+    --dt-scrollable-container-padding-right: 8px;
+
+    /* Grid and Layout Spacing */
+    --dt-grid-gap-small: 12px;
+    --dt-grid-gap-medium: 16px;
+    --dt-data-management-gap: 12px;
+
+    /* Responsive Container Widths */
+    --dt-button-min-width: 120px;
+    --dt-input-standard-width: 200px;
+    --dt-preview-card-width: 200px;
+    --dt-preview-card-height: 100px;
+
+    /* === ANIMATION TOKENS === */
+
+    /* Duration Tokens */
+    --dt-animation-fast: 150ms;
+    --dt-animation-normal: 200ms;
+    --dt-animation-slow: 300ms;
+    --dt-animation-modal: 200ms;
+
+    /* Component-specific Animation Durations */
+    --dt-animation-tab-transition: 200ms;
+    --dt-animation-hover-transition: 200ms;
+    --dt-animation-focus-transition: 200ms;
+    --dt-animation-accordion-transition: 200ms;
+
+    /* Easing Functions */
+    --dt-easing-smooth: ease-in-out;
+    --dt-easing-enter: ease-out;
+    --dt-easing-exit: ease-in;
+
+    /* Transition Combinations */
+    --dt-transition-all: all var(--dt-animation-normal) var(--dt-easing-smooth);
+    --dt-transition-colors: background-color var(--dt-animation-normal)
+      var(--dt-easing-smooth);
+    --dt-transition-transform: transform var(--dt-animation-normal)
+      var(--dt-easing-smooth);
+    --dt-transition-shadow: box-shadow var(--dt-animation-normal)
+      var(--dt-easing-smooth);
+    --dt-transition-opacity: opacity var(--dt-animation-normal)
+      var(--dt-easing-smooth);
+
+    /* Skip Link Transitions */
+    --dt-transition-skip-link: all var(--dt-animation-normal);
+
+    /* Theme Preview Animation Tokens */
+    --dt-preview-transition-duration: var(--dt-animation-normal);
+    --dt-preview-transition-easing: var(--dt-easing-smooth);
+    --dt-preview-transition:
+      background-color var(--dt-preview-transition-duration)
+        var(--dt-preview-transition-easing),
+      border-color var(--dt-preview-transition-duration)
+        var(--dt-preview-transition-easing),
+      color var(--dt-preview-transition-duration)
+        var(--dt-preview-transition-easing);
+
+    /* === BREAKPOINT TOKENS === */
+
+    /* Standardized Responsive Breakpoints - Aligned with Tailwind CSS v4 Standards */
+    --dt-breakpoint-mobile-max: 767px; /* Max mobile width (md: 768px - 1) */
+    --dt-breakpoint-tablet-min: 768px; /* Tablet and up (md: 768px) */
+    --dt-breakpoint-tablet-max: 1023px; /* Max tablet width (lg: 1024px - 1) */
+    --dt-breakpoint-desktop-min: 1024px; /* Desktop and up (lg: 1024px) */
+    --dt-breakpoint-wide-min: 1280px; /* Wide desktop and up (xl: 1280px) */
+
+    /* === ACCESSIBILITY TOKENS === */
+
+    /* Touch Target Minimums */
+    --dt-touch-min-mobile: 44px;
+    --dt-touch-min-desktop: 32px;
+
+    /* Focus Ring Sizes */
+    --dt-focus-ring-width: 2px;
+    --dt-focus-ring-enhanced: 3px;
+    --dt-focus-ring-offset: 2px;
+    --dt-focus-ring-offset-small: 1px;
+  }
+}
+
+/* === TYPOGRAPHY UTILITY CLASSES === */
+@layer utilities {
+  /* Semantic Typography Classes */
+  .text-heading-primary {
+    font-size: var(--dt-heading-primary);
+    font-weight: var(--dt-font-weight-title);
+    line-height: var(--dt-line-height-heading);
+  }
+
+  .text-heading-secondary {
+    font-size: var(--dt-heading-secondary);
+    font-weight: var(--dt-font-weight-heading);
+    line-height: var(--dt-line-height-heading);
+  }
+
+  .text-description {
+    font-size: var(--dt-text-description);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-body);
+  }
+
+  .text-body-default {
+    font-size: var(--dt-text-body);
+    font-weight: var(--dt-font-weight-body);
+    line-height: var(--dt-line-height-body);
+  }
+
+  .text-small-default {
+    font-size: var(--dt-text-small);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-compact);
+  }
+
+  .text-tiny-default {
+    font-size: var(--dt-text-tiny);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-compact);
+  }
+
+  .text-micro-default {
+    font-size: var(--dt-text-micro);
+    font-weight: var(--dt-font-weight-normal);
+    line-height: var(--dt-line-height-compact);
+  }
+
+  /* Theme Preview Component Styles */
+  .theme-preview {
+    width: var(--dt-preview-card-width);
+    height: var(--dt-preview-card-height);
+    background-color: var(--card);
+    border-color: var(--border);
+    color: var(--foreground);
+    transition: var(--dt-preview-transition);
+  }
+
+  .theme-preview-accent {
+    background-color: var(--accent);
+    transition: var(--dt-preview-transition);
+  }
+
+  .theme-preview-primary {
+    background-color: var(--primary);
+    transition: var(--dt-preview-transition);
+  }
+}

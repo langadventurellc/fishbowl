@@ -14,6 +14,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@fishbowl-ai/shared$': '<rootDir>/../../packages/shared/src/index.ts',
+    '^@fishbowl-ai/ui-shared$': '<rootDir>/../../packages/ui-shared/src/index.ts',
     '^@fishbowl-ai/ui-theme$': '<rootDir>/../../packages/ui-theme/src/index.ts',
   },
   extensionsToTreatAsEsm: ['.ts', '.tsx'],

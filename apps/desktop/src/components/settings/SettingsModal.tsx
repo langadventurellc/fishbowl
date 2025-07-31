@@ -31,17 +31,30 @@
  * @module components/settings/SettingsModal
  */
 
-import React, { useEffect } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { cn } from "@/lib/utils";
+import { generateDialogAriaIds, useAccessibilityAnnouncements } from "@/utils";
 import {
   SettingsModalProps,
-  useModalState,
   useActiveSection,
+  useModalState,
   useSettingsActions,
-} from "@fishbowl-ai/shared";
-import { cn } from "@/lib/utils";
+} from "@fishbowl-ai/ui-shared";
+import React, { useEffect } from "react";
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../hooks/useGlobalKeyboardShortcuts";
-import { generateDialogAriaIds, useAccessibilityAnnouncements } from "@/utils";
+import { ModalFooter } from "./ModalFooter";
+import { ModalHeader } from "./ModalHeader";
+import { SettingsContent } from "./SettingsContent";
+import { SettingsNavigation } from "./SettingsNavigation";
 
 const useModalClasses = () => ({
   overlay: cn(
@@ -50,7 +63,7 @@ const useModalClasses = () => ({
     // Smooth fade animations
     "data-[state=open]:animate-in data-[state=closed]:animate-out",
     "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-    "data-[state=closed]:duration-200 data-[state=open]:duration-200",
+    "data-[state=closed]:duration-[var(--dt-animation-modal)] data-[state=open]:duration-[var(--dt-animation-modal)]",
     // Prevent layout shift
     "transition-opacity",
   ),
@@ -58,20 +71,20 @@ const useModalClasses = () => ({
     // Remove default shadcn/ui styles that conflict with custom requirements
     "!max-w-none !gap-0 !p-0 flex flex-col",
     // Enhanced responsive behavior
-    // Large screens: 80% viewport, max 1600px
-    "!w-[80vw] h-[80vh] !max-w-[1600px] max-h-[700px]",
-    // Medium screens (< 1000px): 95% width, navigation 180px
-    "max-[1000px]:w-[95vw]",
-    // Small screens (< 800px): Full width content area, collapsible navigation
-    "max-[800px]:w-[95vw] max-[800px]:h-[90vh]",
+    // Large screens: 80% viewport, max 1200px
+    "!w-[var(--dt-modal-width-small)] h-[var(--dt-modal-height-small)] !max-w-[var(--dt-modal-max-width)] max-h-[var(--dt-modal-max-height)]",
+    // Medium screens (tablets): 95% width, navigation 180px
+    "max-lg:w-[var(--dt-modal-width-medium)]",
+    // Small screens (mobile): Full width content area, collapsible navigation
+    "max-md:w-[var(--dt-modal-width-medium)] max-md:h-[var(--dt-modal-height-mobile)]",
     // Minimum constraints
-    "min-w-[800px] min-h-[500px]",
+    "min-w-[var(--dt-modal-min-width)] min-h-[var(--dt-modal-min-height)]",
     // Enhanced z-index for content above overlay
     "z-50",
     // Custom styling as per requirements
     "rounded-lg", // 8px border radius
-    // Custom shadow: 0 10px 25px rgba(0, 0, 0, 0.3)
-    "shadow-[0_10px_25px_rgba(0,0,0,0.3)]",
+    // Custom shadow using design token
+    "shadow-[var(--dt-shadow-modal)]",
     // Enhanced focus indicators for keyboard navigation
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
     // High contrast focus indicators
@@ -88,19 +101,6 @@ const useModalClasses = () => ({
     "[&_[role=menuitem]:focus-visible]:ring-2 [&_[role=menuitem]:focus-visible]:ring-ring [&_[role=menuitem]:focus-visible]:ring-offset-2",
   ),
 });
-import {
-  Dialog,
-  DialogContent,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogDescription,
-  DialogHeader,
-} from "@/components/ui/dialog";
-import { SettingsNavigation } from "./SettingsNavigation";
-import { SettingsContent } from "./SettingsContent";
-import { ModalHeader } from "./ModalHeader";
-import { ModalFooter } from "./ModalFooter";
 
 /**
  * SettingsModal component for displaying application settings.
@@ -130,14 +130,42 @@ export function SettingsModal({
   const activeSection = useActiveSection();
   const { openModal, closeModal } = useSettingsActions();
 
+  // Check if there are any nested dialogs open (like AgentFormModal)
+  const [hasNestedDialog, setHasNestedDialog] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkForNestedDialogs = () => {
+      // Check if any Radix dialog content is present in the DOM
+      // Look for the agent-form-modal class specifically
+      const hasDialog = document.querySelector(".agent-form-modal") !== null;
+      setHasNestedDialog(hasDialog);
+    };
+
+    // Check immediately and set up observer
+    checkForNestedDialogs();
+
+    // Use MutationObserver to detect when dialogs are added/removed
+    const observer = new MutationObserver(checkForNestedDialogs);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   // Focus trap integration for modal-level focus management
+  // Disable when nested dialogs are open to avoid conflicts
   const { containerRef } = useFocusTrap({
-    isActive: open,
+    isActive: open && !hasNestedDialog,
     restoreFocus: true,
     initialFocusSelector: "[data-modal-initial-focus]",
   });
 
   // Global keyboard shortcuts for modal-wide actions
+  // Disable when nested dialogs are open to let them handle their own shortcuts
   useGlobalKeyboardShortcuts({
     shortcuts: {
       Escape: () => onOpenChange(false),
@@ -150,7 +178,7 @@ export function SettingsModal({
         console.log("Save shortcut triggered (Cmd+S)");
       },
     },
-    enabled: open,
+    enabled: open && !hasNestedDialog,
     preventDefault: true,
   });
 
@@ -206,6 +234,7 @@ export function SettingsModal({
           aria-describedby={dialogIds.descriptionId}
           aria-modal="true"
           role="dialog"
+          data-settings-modal="true"
           tabIndex={-1}
           // Additional accessibility attributes for better screen reader experience
           aria-live="polite"
@@ -221,7 +250,7 @@ export function SettingsModal({
 
           {/* Main modal content container with enhanced landmarks */}
           <div
-            className="h-full w-full flex flex-col max-h-full"
+            className="h-full w-full flex flex-col max-h-full rounded-lg overflow-hidden"
             role="application"
             aria-label="Settings application"
           >
@@ -230,7 +259,7 @@ export function SettingsModal({
 
             {/* Modal body with navigation and content landmarks */}
             <div
-              className="flex-1 flex max-[799px]:flex-col min-[800px]:flex-row overflow-hidden"
+              className="flex-1 flex max-md:flex-col md:flex-row overflow-hidden"
               role="main"
               id={dialogIds.mainId}
             >

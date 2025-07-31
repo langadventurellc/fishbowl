@@ -8,7 +8,7 @@ import {
   useCustomRoles,
   type CustomRoleViewModel,
   type RoleFormData,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { useCallback, useState } from "react";
 import type { UseRoleFormModalReturn } from "./types/UseRoleFormModalReturn";
 

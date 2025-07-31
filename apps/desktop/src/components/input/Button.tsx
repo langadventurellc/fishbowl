@@ -1,8 +1,8 @@
-import React from "react";
-import { Loader2 } from "lucide-react";
-import { ButtonProps } from "@fishbowl-ai/shared";
-import { Button as ShadcnButton } from "../ui/button";
 import { cn } from "@/lib/utils";
+import { ButtonProps } from "@fishbowl-ai/ui-shared";
+import { Loader2 } from "lucide-react";
+import React from "react";
+import { Button as ShadcnButton } from "../ui/button";
 
 /**
  * Button component wrapper around shadcn/ui Button while preserving all custom variants.

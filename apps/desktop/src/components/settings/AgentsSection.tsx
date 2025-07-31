@@ -19,7 +19,7 @@ import {
   type AgentTemplate,
   type TabConfiguration,
   type AgentFormData,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { Loader2, Plus, Search, X } from "lucide-react";
 import React, { useCallback, useMemo, useState, useRef } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -216,7 +216,7 @@ const LibraryTab: React.FC<LibraryTabProps> = ({
       {/* Skip Link for Keyboard Navigation */}
       <a
         href="#agents-main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded z-50 focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-200"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary text-primary-foreground px-4 py-2 rounded z-50 focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-all duration-[var(--dt-animation-focus-transition)]"
         onFocus={() =>
           announceToScreenReader("Skip to agents content", "polite")
         }

@@ -1,10 +1,9 @@
-import React from "react";
-import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { InputContainerDisplayProps } from "@fishbowl-ai/shared";
+import { InputContainerDisplayProps } from "@fishbowl-ai/ui-shared";
+import { cva } from "class-variance-authority";
+import { ConversationModeToggleDisplay } from "./ConversationModeToggleDisplay";
 import { MessageInputDisplay } from "./MessageInputDisplay";
 import { SendButtonDisplay } from "./SendButtonDisplay";
-import { ConversationModeToggleDisplay } from "./ConversationModeToggleDisplay";
 
 /**
  * InputContainerDisplay component variants using class-variance-authority.

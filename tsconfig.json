@@ -35,6 +35,9 @@
       "path": "./packages/ui-theme"
     },
     {
+      "path": "./packages/ui-shared"
+    },
+    {
       "path": "./apps/desktop"
     },
     {

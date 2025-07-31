@@ -8,11 +8,10 @@
  * @module components/sidebar/ConversationItemDisplay
  */
 
-import type React from "react";
-import { useState } from "react";
-import type { ConversationItemDisplayProps } from "@fishbowl-ai/shared";
-import { ConversationContextMenu } from "./ConversationContextMenu";
 import { cn } from "@/lib/utils";
+import type { ConversationItemDisplayProps } from "@fishbowl-ai/ui-shared";
+import { useState } from "react";
+import { ConversationContextMenu } from "./ConversationContextMenu";
 
 /**
  * ConversationItemDisplay component.
@@ -63,7 +62,7 @@ export function ConversationItemDisplay({
   return (
     <div
       className={cn(
-        "relative px-3 py-2 pr-8 rounded-md cursor-pointer mb-1 text-[13px] transition-all duration-150 ease-out flex flex-col z-[1]",
+        "relative px-3 py-2 pr-8 rounded-md cursor-pointer mb-1 text-description transition-all duration-150 ease-out flex flex-col z-[1]",
         "hover:bg-sidebar-primary/8 hover:translate-x-0.5 hover:shadow-sm",
         getStateClasses(appearanceState),
         className,
@@ -115,7 +114,7 @@ export function ConversationItemDisplay({
       </div>
 
       {/* Last activity timestamp */}
-      <div className="text-[11px] opacity-70 leading-tight overflow-hidden text-ellipsis whitespace-nowrap">
+      <div className="text-tiny-default opacity-70 leading-tight overflow-hidden text-ellipsis whitespace-nowrap">
         {conversation.lastActivity}
       </div>
     </div>

@@ -1,6 +1,5 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { SettingsContent } from "../SettingsContent";
 
 // Mock window.matchMedia for system theme detection
@@ -19,7 +18,7 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // Mock the shared package
-jest.mock("@fishbowl-ai/shared", () => ({
+jest.mock("@fishbowl-ai/ui-shared", () => ({
   useUnsavedChanges: jest.fn(() => ({
     hasUnsavedChanges: false,
     setUnsavedChanges: jest.fn(),
@@ -98,7 +97,7 @@ describe("AppearanceSettings Component", () => {
     render(<SettingsContent activeSection="appearance" />);
 
     const previewArea = screen.getByLabelText(/Theme preview/);
-    expect(previewArea).toHaveClass("w-[200px]", "h-[100px]");
+    expect(previewArea).toHaveClass("theme-preview");
   });
 
   it("maintains proper accessibility attributes", () => {
@@ -272,24 +271,20 @@ describe("AppearanceSettings Component", () => {
       const lightOption = screen.getByLabelText("Light");
       const previewArea = screen.getByLabelText(/Theme preview/);
 
-      // Verify initial state (system theme - assuming light for test)
-      expect(previewArea).toHaveStyle({
-        backgroundColor: "rgb(245, 245, 244)",
-      });
+      // Verify initial state - check theme-preview class is applied
+      expect(previewArea).toHaveClass("theme-preview");
 
       // Change to dark theme
       fireEvent.click(darkOption);
 
-      // Verify immediate update to dark theme colors
-      expect(previewArea).toHaveStyle({ backgroundColor: "rgb(44, 40, 37)" });
+      // Verify dark theme class is applied
+      expect(previewArea).toHaveClass("dark");
 
       // Change to light theme
       fireEvent.click(lightOption);
 
-      // Verify immediate update to light theme colors
-      expect(previewArea).toHaveStyle({
-        backgroundColor: "rgb(245, 245, 244)",
-      });
+      // Verify dark theme class is removed
+      expect(previewArea).not.toHaveClass("dark");
     });
 
     it("renders theme preview with enhanced ARIA accessibility", () => {
@@ -309,12 +304,17 @@ describe("AppearanceSettings Component", () => {
 
       const previewArea = screen.getByLabelText(/Theme preview/);
 
-      // Verify transition classes are present
-      expect(previewArea).toHaveClass(
-        "transition-colors",
-        "duration-200",
-        "ease-in-out",
+      // Verify theme-preview class is present (transitions handled via CSS)
+      expect(previewArea).toHaveClass("theme-preview");
+
+      // Verify accent and primary elements are properly structured
+      const accentElement = previewArea.querySelector(".theme-preview-accent");
+      const primaryElements = previewArea.querySelectorAll(
+        ".theme-preview-primary",
       );
+
+      expect(accentElement).toBeInTheDocument();
+      expect(primaryElements).toHaveLength(2);
     });
 
     it("renders font size preview with correct sample text", () => {
@@ -439,8 +439,8 @@ describe("AppearanceSettings Component", () => {
       // Verify system option is selected by default
       expect(systemOption).toBeChecked();
 
-      // Verify dark theme colors are applied for system theme
-      expect(previewArea).toHaveStyle({ backgroundColor: "rgb(44, 40, 37)" });
+      // Verify dark theme class is applied for system theme
+      expect(previewArea).toHaveClass("dark");
     });
 
     it("prevents excessive re-renders with React.memo optimization", () => {
@@ -484,13 +484,8 @@ describe("AppearanceSettings Component", () => {
         .getByText("This is how your messages will appear")
         .closest(".mt-4");
 
-      // Theme preview should have exact dimensions
-      expect(themePreview).toHaveClass(
-        "w-[200px]",
-        "h-[100px]",
-        "border",
-        "rounded-lg",
-      );
+      // Theme preview should use design token classes
+      expect(themePreview).toHaveClass("theme-preview", "border", "rounded-lg");
 
       // Font preview container should have proper styling
       expect(fontPreviewContainer).toHaveClass(

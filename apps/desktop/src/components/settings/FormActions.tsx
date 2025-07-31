@@ -12,10 +12,10 @@
  * @module components/settings/FormActions
  */
 
-import React from "react";
+import type { FormActionsProps } from "@fishbowl-ai/ui-shared";
 import { Loader2 } from "lucide-react";
+import React from "react";
 import { Button } from "../ui/button";
-import type { FormActionsProps } from "@fishbowl-ai/shared";
 
 export const FormActions: React.FC<FormActionsProps> = ({
   onSave,
@@ -57,7 +57,7 @@ export const FormActions: React.FC<FormActionsProps> = ({
           type="submit"
           onClick={onSave}
           disabled={!isValid || isSubmitting}
-          className="min-w-[120px]"
+          className="min-w-[var(--dt-button-min-width)]"
         >
           {isSubmitting ? (
             <>

@@ -1,6 +1,5 @@
-import React from "react";
-import { AgentPillProps } from "@fishbowl-ai/shared";
 import { cn } from "@/lib/utils";
+import { AgentPillProps } from "@fishbowl-ai/ui-shared";
 
 /**
  * AgentPill component displays agent information in a pill-shaped container.

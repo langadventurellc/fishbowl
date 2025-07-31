@@ -12,10 +12,10 @@
  * @module components/settings/CustomInstructionsTextarea
  */
 
-import React, { useCallback } from "react";
 import { cn } from "@/lib/utils";
+import type { CustomInstructionsTextareaProps } from "@fishbowl-ai/ui-shared";
+import React, { useCallback } from "react";
 import { Textarea } from "../ui/textarea";
-import type { CustomInstructionsTextareaProps } from "@fishbowl-ai/shared";
 
 export const CustomInstructionsTextarea: React.FC<
   CustomInstructionsTextareaProps

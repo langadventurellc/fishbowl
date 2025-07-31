@@ -5,9 +5,9 @@
  * Uses simple styling consistent with the project's design system.
  */
 
-import React from "react";
+import type { FormErrorDisplayProps } from "@fishbowl-ai/ui-shared";
 import { AlertTriangle, XCircle } from "lucide-react";
-import type { FormErrorDisplayProps } from "@fishbowl-ai/shared";
+import React from "react";
 
 export const FormErrorDisplay: React.FC<FormErrorDisplayProps> = ({
   error,

@@ -1,8 +1,8 @@
+import { ConversationLayoutDisplayProps } from "@fishbowl-ai/ui-shared";
 import React, { useState } from "react";
-import { ConversationLayoutDisplayProps } from "@fishbowl-ai/shared";
+import { cn } from "../../lib/utils";
 import { SidebarContainerDisplay, SidebarToggleDisplay } from "../sidebar";
 import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
-import { cn } from "../../lib/utils";
 
 /**
  * ConversationLayoutDisplay - Complete conversation interface layout component

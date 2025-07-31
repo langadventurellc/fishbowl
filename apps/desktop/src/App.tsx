@@ -1,10 +1,10 @@
+import { useSettingsModal } from "@fishbowl-ai/ui-shared";
 import { HashRouter, Route, Routes } from "react-router-dom";
+import { SettingsModal } from "./components/settings/SettingsModal";
+import { useElectronIPC } from "./hooks/useElectronIPC";
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/showcase/ComponentShowcase";
 import LayoutShowcase from "./pages/showcase/LayoutShowcase";
-import { useElectronIPC } from "./hooks/useElectronIPC";
-import { SettingsModal } from "./components/settings/SettingsModal";
-import { useSettingsModal } from "@fishbowl-ai/shared";
 
 export default function App() {
   // Initialize IPC integration for settings modal

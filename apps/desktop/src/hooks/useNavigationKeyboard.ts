@@ -1,9 +1,9 @@
-import { useMemo, useCallback } from "react";
-import { useKeyboardNavigation } from "./useKeyboardNavigation";
+import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/ui-shared";
+import { useCallback, useMemo } from "react";
+import type { FlatNavigationItem } from "./types/FlatNavigationItem";
 import type { NavigationKeyboardOptions } from "./types/NavigationKeyboardOptions";
 import type { NavigationKeyboardReturn } from "./types/NavigationKeyboardReturn";
-import type { FlatNavigationItem } from "./types/FlatNavigationItem";
-import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/shared";
+import { useKeyboardNavigation } from "./useKeyboardNavigation";
 
 /**
  * Custom hook for settings modal navigation keyboard handling.

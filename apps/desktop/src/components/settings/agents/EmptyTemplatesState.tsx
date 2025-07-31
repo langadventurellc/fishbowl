@@ -11,11 +11,11 @@
  * @module components/settings/agents/EmptyTemplatesState
  */
 
-import React from "react";
-import { Button } from "../../ui/button";
-import { cn } from "../../../lib/utils";
+import type { EmptyStateProps } from "@fishbowl-ai/ui-shared";
 import { Sparkles } from "lucide-react";
-import type { EmptyStateProps } from "@fishbowl-ai/shared";
+import React from "react";
+import { cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
 
 export const EmptyTemplatesState: React.FC<EmptyStateProps> = ({
   onAction,

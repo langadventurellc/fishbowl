@@ -11,13 +11,13 @@
  * @module components/settings/agents/AgentCard
  */
 
+import type { AgentCardProps } from "@fishbowl-ai/ui-shared";
+import { Edit, Trash2 } from "lucide-react";
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
-import { Button } from "../../ui/button";
 import { cn } from "../../../lib/utils";
 import { FOCUS_STYLES } from "../../../styles/focus";
-import { Edit, Trash2 } from "lucide-react";
-import type { AgentCardProps } from "@fishbowl-ai/shared";
+import { Button } from "../../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 
 export const AgentCard: React.FC<AgentCardProps> = ({
   agent,
@@ -36,7 +36,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   return (
     <Card
       className={cn(
-        "hover:shadow-md lg:hover:shadow-lg transition-all duration-200 group",
+        "hover:shadow-md lg:hover:shadow-lg transition-all duration-[var(--dt-animation-hover-transition)] group",
         "focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2",
         className,
       )}

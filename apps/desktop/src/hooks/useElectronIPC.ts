@@ -8,8 +8,8 @@
  * @module hooks/useElectronIPC
  */
 
+import { useSettingsModal } from "@fishbowl-ai/ui-shared";
 import { useEffect, useRef } from "react";
-import { useSettingsModal } from "@fishbowl-ai/shared";
 
 /**
  * Hook that integrates Electron IPC events with the settings modal store.

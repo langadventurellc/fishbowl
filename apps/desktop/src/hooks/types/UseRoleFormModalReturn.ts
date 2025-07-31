@@ -4,7 +4,7 @@
  * @module hooks/types/UseRoleFormModalReturn
  */
 
-import type { CustomRoleViewModel, RoleFormData } from "@fishbowl-ai/shared";
+import type { CustomRoleViewModel, RoleFormData } from "@fishbowl-ai/ui-shared";
 
 export interface UseRoleFormModalReturn {
   isOpen: boolean;

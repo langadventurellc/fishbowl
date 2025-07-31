@@ -23,7 +23,7 @@ import {
   useUnsavedChanges,
   type AgentFormData,
   type AgentFormProps,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
@@ -40,14 +40,14 @@ import {
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
 import {
+  CharacterCounter,
   ConfigurationSlider,
   ModelSelect,
-  CharacterCounter,
 } from "./components";
 import {
+  getMaxTokensDescription,
   getTemperatureDescription,
   getTopPDescription,
-  getMaxTokensDescription,
 } from "./utils/configDescriptions";
 
 // Helper function to extract role from template description
@@ -415,7 +415,7 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                 isLoading ||
                 !form.formState.isDirty
               }
-              className="min-w-[120px]"
+              className="min-w-[var(--dt-button-min-width)]"
             >
               {isSubmitting ? (
                 <>

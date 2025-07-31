@@ -15,23 +15,23 @@
  * @module components/settings/BehaviorSlidersSection
  */
 
-import React, { useState, useCallback } from "react";
-import { ChevronUp, ChevronDown } from "lucide-react";
-import { Button } from "../ui/button";
-import { Slider } from "../ui/slider";
-import { Label } from "../ui/label";
-import {
-  Collapsible,
-  CollapsibleTrigger,
-  CollapsibleContent,
-} from "../ui/collapsible";
 import { cn } from "@/lib/utils";
-import { useDebounce } from "../../hooks/useDebounce";
-import { announceToScreenReader } from "../../utils/announceToScreenReader";
 import {
   type BehaviorSlidersSectionProps,
   BEHAVIOR_GROUPS,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { useDebounce } from "../../hooks/useDebounce";
+import { announceToScreenReader } from "../../utils/announceToScreenReader";
+import { Button } from "../ui/button";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../ui/collapsible";
+import { Label } from "../ui/label";
+import { Slider } from "../ui/slider";
 
 export const BehaviorSlidersSection: React.FC<BehaviorSlidersSectionProps> = ({
   values,
@@ -103,16 +103,16 @@ export const BehaviorSlidersSection: React.FC<BehaviorSlidersSectionProps> = ({
             Advanced Behavior Settings
           </span>
           {isExpanded ? (
-            <ChevronUp className="h-4 w-4 transition-transform duration-200" />
+            <ChevronUp className="h-4 w-4 transition-transform duration-[var(--dt-animation-accordion-transition)]" />
           ) : (
-            <ChevronDown className="h-4 w-4 transition-transform duration-200" />
+            <ChevronDown className="h-4 w-4 transition-transform duration-[var(--dt-animation-accordion-transition)]" />
           )}
         </Button>
       </CollapsibleTrigger>
 
       <CollapsibleContent
         id="behavior-sliders-content"
-        className="space-y-6 transition-all duration-200 ease-in-out"
+        className="space-y-6 transition-all duration-[var(--dt-animation-accordion-transition)] ease-in-out"
       >
         {BEHAVIOR_GROUPS.map((group) => (
           <div key={group.title} className="space-y-4">

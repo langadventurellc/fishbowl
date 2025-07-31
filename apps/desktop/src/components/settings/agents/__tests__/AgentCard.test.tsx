@@ -1,8 +1,7 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import type { AgentCard as AgentCardType } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { AgentCard } from "../AgentCard";
-import type { AgentCard as AgentCardType } from "@fishbowl-ai/shared";
 
 const mockAgent: AgentCardType = {
   id: "test-agent-1",
@@ -164,7 +163,9 @@ describe("AgentCard Component", () => {
 
       const card = container.querySelector('[class*="hover:shadow-md"]');
       expect(card).toHaveClass("transition-all");
-      expect(card).toHaveClass("duration-200");
+      expect(card).toHaveClass(
+        "duration-[var(--dt-animation-hover-transition)]",
+      );
     });
 
     it("has group hover behavior for buttons", () => {

@@ -12,7 +12,13 @@
  * @module components/settings/RoleFormModal
  */
 
+import {
+  useCustomRoles,
+  useUnsavedChanges,
+  type RoleFormData,
+} from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useEffect } from "react";
+import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
 import {
   Dialog,
   DialogContent,
@@ -21,12 +27,6 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { CreateRoleForm } from "./CreateRoleForm";
-import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
-import {
-  useUnsavedChanges,
-  useCustomRoles,
-  type RoleFormData,
-} from "@fishbowl-ai/shared";
 import type { RoleFormModalProps } from "./types/RoleFormModalProps";
 
 export const RoleFormModal: React.FC<RoleFormModalProps> = ({

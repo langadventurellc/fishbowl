@@ -1,7 +1,7 @@
+import { ChatContainerDisplayProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { ChatContainerDisplayProps } from "@fishbowl-ai/shared";
-import { MessageItem } from "../chat/MessageItem";
 import { cn } from "../../lib/utils";
+import { MessageItem } from "../chat/MessageItem";
 
 /**
  * ChatContainerDisplay - Scrollable messages area layout component

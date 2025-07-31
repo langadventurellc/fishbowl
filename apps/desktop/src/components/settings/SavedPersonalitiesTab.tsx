@@ -11,13 +11,13 @@
  * @module components/settings/SavedPersonalitiesTab
  */
 
-import React from "react";
-import { User } from "lucide-react";
-import { PersonalityCard } from "./PersonalityCard";
 import type {
   Personality,
   SavedPersonalitiesTabProps,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
+import { User } from "lucide-react";
+import React from "react";
+import { PersonalityCard } from "./PersonalityCard";
 
 export const SavedPersonalitiesTab: React.FC<SavedPersonalitiesTabProps> = ({
   onEdit,

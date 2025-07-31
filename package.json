@@ -35,6 +35,17 @@
     "db:migrate": "turbo run db:migrate",
     "prepare": "husky"
   },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx}": [
+      "prettier --write"
+    ],
+    "*.{md,json,yml,yaml}": [
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "prettier --write"
+    ]
+  },
   "keywords": [],
   "author": "LangAdventure LLC",
   "license": "GPL-3.0-only",
@@ -48,6 +59,7 @@
     "@types/node": "^24.0.15",
     "eslint": "^9.31.0",
     "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
     "turbo": "^2.5.5",
     "typescript": "^5.8.3"

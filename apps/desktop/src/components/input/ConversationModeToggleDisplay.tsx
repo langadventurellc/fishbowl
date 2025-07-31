@@ -1,7 +1,6 @@
-import React from "react";
-import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { ConversationModeToggleDisplayProps } from "@fishbowl-ai/shared";
+import { ConversationModeToggleDisplayProps } from "@fishbowl-ai/ui-shared";
+import { cva } from "class-variance-authority";
 
 /**
  * ConversationModeToggleDisplay component variants using class-variance-authority.

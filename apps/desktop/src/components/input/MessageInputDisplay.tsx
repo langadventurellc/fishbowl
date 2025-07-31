@@ -1,8 +1,7 @@
-import React from "react";
-import { cva } from "class-variance-authority";
-import { cn } from "@/lib/utils";
 import { Textarea } from "@/components/ui/textarea";
-import { MessageInputDisplayProps } from "@fishbowl-ai/shared";
+import { cn } from "@/lib/utils";
+import { MessageInputDisplayProps } from "@fishbowl-ai/ui-shared";
+import { cva } from "class-variance-authority";
 
 /**
  * MessageInputDisplay component variants using class-variance-authority.
@@ -11,7 +10,7 @@ import { MessageInputDisplayProps } from "@fishbowl-ai/shared";
 const messageInputVariants = cva("", {
   variants: {
     size: {
-      small: "min-h-8 max-h-[120px] px-3 py-2 text-[13px]",
+      small: "min-h-8 max-h-[120px] px-3 py-2 text-description",
       medium: "min-h-10 max-h-[180px] px-3 py-3 text-sm",
       large: "min-h-12 max-h-[240px] px-4 py-4 text-base",
     },

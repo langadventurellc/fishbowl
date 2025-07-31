@@ -14,10 +14,10 @@
  * @module components/settings/PredefinedRoleCard
  */
 
+import type { PredefinedRoleCardProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { Card, CardHeader, CardTitle, CardDescription } from "../ui/card";
-import type { PredefinedRoleCardProps } from "@fishbowl-ai/shared";
 import { cn } from "../../lib/utils";
+import { Card, CardDescription, CardHeader, CardTitle } from "../ui/card";
 
 export const PredefinedRoleCard = React.memo<PredefinedRoleCardProps>(
   function PredefinedRoleCard({ role, className }) {
@@ -25,7 +25,7 @@ export const PredefinedRoleCard = React.memo<PredefinedRoleCardProps>(
       <Card
         className={cn(
           // Base card styling
-          "group cursor-pointer hover:shadow-md transition-all duration-200 ease-in-out",
+          "group cursor-pointer hover:shadow-md transition-all duration-[var(--dt-animation-hover-transition)] ease-in-out",
           // Hover elevation and scale effects
           "hover:scale-[1.02] hover:-translate-y-1",
           // Focus styling for accessibility
@@ -61,7 +61,7 @@ export const PredefinedRoleCard = React.memo<PredefinedRoleCardProps>(
           </div>
 
           {/* Hover "View Details" Indication */}
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out mt-1">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-[var(--dt-animation-hover-transition)] ease-in-out mt-1">
             <span className="text-xs text-accent font-medium">
               View Details
             </span>

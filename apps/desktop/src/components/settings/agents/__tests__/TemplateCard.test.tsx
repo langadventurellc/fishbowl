@@ -1,8 +1,7 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import type { AgentTemplate } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { TemplateCard } from "../TemplateCard";
-import type { AgentTemplate } from "@fishbowl-ai/shared";
 
 const mockTemplate: AgentTemplate = {
   id: "test-template-1",
@@ -136,7 +135,10 @@ describe("TemplateCard Component", () => {
       const { container } = render(<TemplateCard {...defaultProps} />);
 
       const card = container.querySelector('[class*="hover:shadow-lg"]');
-      expect(card).toHaveClass("transition-all", "duration-200");
+      expect(card).toHaveClass(
+        "transition-all",
+        "duration-[var(--dt-animation-hover-transition)]",
+      );
     });
 
     it("maintains consistent height with flex layout", () => {

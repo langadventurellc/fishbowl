@@ -13,7 +13,13 @@
  * @module components/settings/AgentFormModal
  */
 
+import {
+  useUnsavedChanges,
+  type AgentFormData,
+  type AgentFormModalProps,
+} from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useEffect } from "react";
+import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
 import {
   Dialog,
   DialogContent,
@@ -22,12 +28,6 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { AgentForm } from "./AgentForm";
-import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
-import {
-  useUnsavedChanges,
-  type AgentFormData,
-  type AgentFormModalProps,
-} from "@fishbowl-ai/shared";
 
 export const AgentFormModal: React.FC<AgentFormModalProps> = ({
   isOpen,

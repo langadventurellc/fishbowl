@@ -1,0 +1,41 @@
+{
+  "name": "@fishbowl-ai/ui-shared",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest",
+    "test:unit": "jest --passWithNoTests",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@fishbowl-ai/shared": "workspace:*",
+    "@fishbowl-ai/ui-theme": "workspace:*",
+    "zod": "^4.0.5",
+    "zustand": "^5.0.6"
+  },
+  "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
+    "@testing-library/react": "^15.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.0.0",
+    "jest": "^30.0.4",
+    "jest-environment-jsdom": "^30.0.4",
+    "ts-jest": "^29.1.5",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

@@ -12,12 +12,12 @@
  * @module components/settings/NavigationItem
  */
 
-import React from "react";
+import type { NavigationItemProps } from "@fishbowl-ai/ui-shared";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import React from "react";
 import { cn } from "../../lib/utils";
+import { COMMON_FOCUS_CLASSES, getNavigationFocus } from "../../styles/focus";
 import { Button } from "../ui/button";
-import type { NavigationItemProps } from "@fishbowl-ai/shared";
-import { getNavigationFocus, COMMON_FOCUS_CLASSES } from "../../styles/focus";
 
 export const NavigationItem = React.forwardRef<
   HTMLButtonElement,
@@ -46,7 +46,7 @@ export const NavigationItem = React.forwardRef<
         variant="ghost"
         className={cn(
           // Exact specifications: 40px height, 12px horizontal padding, 4px border radius
-          "h-[40px] px-3 rounded-[4px]",
+          "h-[var(--dt-nav-item-height)] px-[var(--dt-nav-item-padding-horizontal)] rounded-[var(--dt-border-radius-small)]",
           "w-full justify-start items-center",
           // Text styling
           isCompact ? "text-xs" : "text-sm",
@@ -65,8 +65,8 @@ export const NavigationItem = React.forwardRef<
           // Active state: darker background with accent color and 3px left accent border
           active && [
             "bg-accent text-accent-foreground",
-            "border-l-[3px] border-l-primary",
-            "pl-[9px]", // Adjust left padding to account for 3px border (12px - 3px = 9px)
+            "border-l-[var(--dt-nav-active-border)] border-l-primary",
+            "pl-[calc(var(--dt-nav-item-padding-horizontal)-var(--dt-nav-active-border))]", // Adjust left padding to account for active border
           ],
           // Flex layout for icon positioning
           hasSubTabs && "justify-between",
@@ -95,7 +95,7 @@ export const NavigationItem = React.forwardRef<
         <div
           id={`${id}-subtabs`}
           className={cn(
-            "overflow-hidden transition-all duration-200 ease-in-out",
+            "overflow-hidden transition-all duration-[var(--dt-animation-accordion-transition)] ease-in-out",
             isExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0",
           )}
         >

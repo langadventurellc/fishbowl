@@ -19,10 +19,11 @@ import {
   useUnsavedChanges,
   type CreatePersonalityFormProps,
   type PersonalityFormData,
-} from "@fishbowl-ai/shared";
+} from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDebounce } from "../../hooks/useDebounce";
 import {
   Form,
   FormControl,
@@ -33,10 +34,9 @@ import {
 import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
 import { BigFiveSliders } from "./BigFiveSliders";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
-import { PersonalityNameInput } from "./PersonalityNameInput";
-import { FormHeader } from "./FormHeader";
 import { FormActions } from "./FormActions";
-import { useDebounce } from "../../hooks/useDebounce";
+import { FormHeader } from "./FormHeader";
+import { PersonalityNameInput } from "./PersonalityNameInput";
 
 export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   onSave,
