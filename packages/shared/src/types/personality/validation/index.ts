@@ -12,7 +12,8 @@ export * from "./utils";
 // Schema exports
 export * from "./BigFiveTraitsSchema";
 export * from "./BehavioralTraitsSchema";
+export * from "./PersonalityConfigurationSchema";
+export * from "./PersonalityCreationDataSchema";
 
 // Future schema exports will be added here:
-// export * from './PersonalityCreationDataSchema';
 // export * from './PersonalityUpdateDataSchema';

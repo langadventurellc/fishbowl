@@ -11,3 +11,6 @@ export { createUuidValidator } from "./createUuidValidator";
 export { createNameValidator } from "./createNameValidator";
 export { createOptionalDescriptionValidator } from "./createOptionalDescriptionValidator";
 export { createCustomInstructionsValidator } from "./createCustomInstructionsValidator";
+
+// String sanitization utilities
+export { sanitizeString } from "./sanitizeString";
