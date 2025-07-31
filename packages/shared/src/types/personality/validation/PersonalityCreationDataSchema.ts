@@ -16,10 +16,6 @@
 
 import { z } from "zod";
 import { PersonalityConfigurationSchema } from "./PersonalityConfigurationSchema";
-import { createNameValidator } from "./utils/createNameValidator";
-import { createOptionalDescriptionValidator } from "./utils/createOptionalDescriptionValidator";
-import { createCustomInstructionsValidator } from "./utils/createCustomInstructionsValidator";
-import { sanitizeString } from "./utils/sanitizeString";
 
 /**
  * Personality Creation Data validation schema
@@ -27,7 +23,8 @@ import { sanitizeString } from "./utils/sanitizeString";
  * Validates PersonalityCreationData = Omit<PersonalityConfiguration, "id" | "createdAt" | "updatedAt">
  *
  * This schema omits the generated fields (id, createdAt, updatedAt) from the full
- * PersonalityConfigurationSchema and adds input sanitization transforms for text fields.
+ * PersonalityConfigurationSchema. Input sanitization is automatically applied by the
+ * individual field validators for XSS protection.
  *
  * Required fields:
  * - name: Non-empty string, max 100 characters (with sanitization)
@@ -70,18 +67,7 @@ export const PersonalityCreationDataSchema =
     id: true,
     createdAt: true,
     updatedAt: true,
-  })
-    .extend({
-      // Override string fields with sanitization transforms
-      name: createNameValidator().transform(sanitizeString),
-      description: createOptionalDescriptionValidator().transform((str) =>
-        str ? sanitizeString(str) : str,
-      ),
-      customInstructions: createCustomInstructionsValidator().transform(
-        (str) => (str ? sanitizeString(str) : str),
-      ),
-    })
-    .strict();
+  }).strict();
 
 /**
  * Type inference from PersonalityCreationDataSchema
