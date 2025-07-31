@@ -103,7 +103,6 @@ graph TD
 
 ### Performance Standards
 
-- ✓ Mapping operations complete in < 5ms
 - ✓ No unnecessary object cloning
 - ✓ Efficient transformation algorithms
 - ✓ Minimal memory allocation

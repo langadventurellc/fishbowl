@@ -127,8 +127,6 @@ graph TD
 
 ### Performance Standards
 
-- ✓ Modal opens in < 100ms with loaded data
-- ✓ Save operations complete in < 200ms
 - ✓ No blocking UI operations
 - ✓ Efficient IPC communication
 

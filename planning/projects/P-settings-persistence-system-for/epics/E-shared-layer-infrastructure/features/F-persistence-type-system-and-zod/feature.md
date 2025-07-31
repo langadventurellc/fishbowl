@@ -58,9 +58,7 @@ Establish the foundational type definitions and validation schemas for the setti
 
 ### Performance Requirements
 
-- ✓ Schema validation completes within 10ms for typical settings object
-- ✓ Memory footprint of schema definitions under 100KB
-- ✓ Default value generation has no performance impact on validation
+- None
 
 ### Security Validation
 
@@ -124,7 +122,6 @@ const generalSettingsSchema = z.object({
 ### Integration Testing
 
 - Schemas work with actual JSON serialization/deserialization
-- Performance benchmarks meet response time requirements
 - Cross-platform compatibility (Node.js vs browser)
 
 ## Dependencies

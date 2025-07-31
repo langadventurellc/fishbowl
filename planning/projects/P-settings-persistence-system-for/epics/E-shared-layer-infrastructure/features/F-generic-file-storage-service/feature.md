@@ -72,9 +72,6 @@ Implement a robust, generic file storage service that provides async JSON read/w
 
 ### Performance Requirements
 
-- ✓ Read operations complete within 50ms for files under 1MB
-- ✓ Write operations complete within 100ms for files under 1MB
-- ✓ Memory usage remains constant regardless of number of operations
 - ✓ No memory leaks from unclosed file handles or temporary files
 
 ### Cross-Platform Compatibility
@@ -152,7 +149,6 @@ export class FileStorageService<T = unknown> {
 ### Integration Testing
 
 - Works with actual file system operations
-- Performance benchmarks meet response time requirements
 - Cross-platform compatibility on CI/CD systems
 - Memory usage remains stable under repeated operations
 - Handles concurrent access patterns safely

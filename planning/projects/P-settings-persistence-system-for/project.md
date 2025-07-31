@@ -184,8 +184,6 @@ graph TD
 ### Performance
 
 - File operations should not block the UI
-- Settings should load quickly on modal open (< 100ms)
-- Save operations should complete quickly (< 200ms)
 
 ### Security
 

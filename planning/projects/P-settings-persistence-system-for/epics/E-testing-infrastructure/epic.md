@@ -179,7 +179,6 @@ graph TD
 - Parallel test execution
 - Test result reporting
 - Coverage tracking
-- Performance benchmarks
 
 ## Dependencies
 
@@ -228,11 +227,7 @@ As a project maintainer, I want to:
 
 ### Performance
 
-- Unit tests complete in < 5 seconds
-- Integration tests complete in < 30 seconds
-- E2E tests complete in < 2 minutes
 - Parallel execution supported
-- Minimal test overhead
 
 ### Maintainability
 

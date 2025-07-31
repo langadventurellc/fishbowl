@@ -78,11 +78,7 @@ Implement the high-level repository pattern that coordinates between the file st
 
 ### Performance Requirements
 
-- ✓ `loadSettings()` completes within 100ms for typical settings file
-- ✓ `saveSettings()` completes within 150ms including validation
 - ✓ `getDefaultSettings()` returns immediately (no I/O operations)
-- ✓ Memory usage remains constant regardless of settings file size
-- ✓ No performance degradation with repeated load/save cycles
 
 ### Error Handling and Recovery
 
@@ -156,7 +152,6 @@ export class SettingsRepository implements SettingsRepositoryInterface {
 ### Integration Testing
 
 - Repository works with actual file system through FileStorageService
-- Performance benchmarks meet response time requirements
 - Concurrent access scenarios handled safely
 - Error recovery works with real file system failures
 - Memory usage remains stable under repeated operations
