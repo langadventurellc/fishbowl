@@ -1,0 +1,16 @@
+/**
+ * @fileoverview Personality Validation Barrel Exports
+ *
+ * Centralized exports for personality validation utilities and constants.
+ * Future schema files will be exported from here as they are implemented.
+ */
+
+// Validation utilities and constants
+export * from "./constants";
+export * from "./utils";
+
+// Future schema exports will be added here:
+// export * from './PersonalityCreationDataSchema';
+// export * from './PersonalityUpdateDataSchema';
+// export * from './BigFiveTraitsSchema';
+// export * from './BehavioralTraitsSchema';
