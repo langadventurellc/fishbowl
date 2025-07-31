@@ -1,4 +1,5 @@
-import { AgentViewModel, ThemeMode } from "@fishbowl-ai/ui-shared";
+import { ThemeMode } from "@fishbowl-ai/shared";
+import { AgentViewModel } from "@fishbowl-ai/ui-shared";
 import { useState } from "react";
 import {
   AgentPill,

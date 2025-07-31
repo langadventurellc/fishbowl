@@ -32,6 +32,7 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,md,json}\" --log-level silent",
     "quality": "pnpm lint && pnpm format && pnpm type-check",
     "clean": "turbo run clean && rm -rf node_modules",
+    "clean:turbo": "rm -rf .turbo packages/*/.turbo apps/*/.turbo tests/*/.turbo",
     "db:migrate": "turbo run db:migrate",
     "prepare": "husky"
   },
