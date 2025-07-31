@@ -3,7 +3,16 @@
  */
 
 import { PREDEFINED_ROLES, PREDEFINED_ROLES_MAP } from "../predefinedRoles";
-import { ROLE_VALIDATION } from "@fishbowl-ai/shared";
+const ROLE_VALIDATION = {
+  /** Maximum length for role names */
+  MAX_NAME_LENGTH: 50,
+  /** Minimum length for role names */
+  MIN_NAME_LENGTH: 2,
+  /** Maximum length for role descriptions */
+  MAX_DESCRIPTION_LENGTH: 200,
+  /** Minimum length for role descriptions */
+  MIN_DESCRIPTION_LENGTH: 1,
+} as const;
 
 describe("Predefined Roles Data", () => {
   describe("PREDEFINED_ROLES", () => {
