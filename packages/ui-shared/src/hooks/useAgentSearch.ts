@@ -14,7 +14,7 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { AgentCard } from "../";
+import { AgentCard } from "../types/settings/AgentCard";
 
 interface UseAgentSearchOptions {
   agents: AgentCard[];

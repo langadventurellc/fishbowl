@@ -9,7 +9,6 @@ export * from "./data";
 export * from "./hooks";
 export * from "./schemas";
 export * from "./stores";
-export * from "./theme";
 export * from "./types";
 export * from "./types/settings/FontSizePreviewProps";
 export * from "./types/settings/ThemePreviewProps";

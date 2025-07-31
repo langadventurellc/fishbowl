@@ -8,7 +8,7 @@
  * @module types/ui/components/MessageInputDisplayProps
  */
 
-import { ComponentSize } from "src/types/components";
+import { ComponentSize } from "../components";
 
 /**
  * Props interface for the MessageInputDisplay component.

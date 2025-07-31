@@ -4,7 +4,7 @@
  * @module types/ui/components/CreatePersonalityFormProps
  */
 
-import type { PersonalityFormData } from "../settings";
+import { PersonalityFormData } from "./PersonalityFormData";
 
 export interface CreatePersonalityFormProps {
   onSave: (data: PersonalityFormData) => void;

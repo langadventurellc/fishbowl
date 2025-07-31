@@ -5,7 +5,8 @@
  */
 
 import { z } from "zod";
-import { PROVIDERS, createProviderFormSchema } from "../";
+import { PROVIDERS } from "../types/settings/providers/providersConfig";
+import { createProviderFormSchema } from "../types/settings/providers/validation";
 
 export const createApiKeysFormSchema = () => {
   const providerSchemas = Object.values(PROVIDERS).reduce(

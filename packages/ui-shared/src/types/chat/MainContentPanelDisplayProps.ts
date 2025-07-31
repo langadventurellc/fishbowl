@@ -5,9 +5,9 @@
  */
 
 import type React from "react";
-import { AgentViewModel } from "src/types/AgentViewModel";
-import { LayoutVariant } from "src/types/components";
-import { MessageViewModel } from "src/types/MessageViewModel";
+import { AgentViewModel } from "../AgentViewModel";
+import { LayoutVariant } from "../components";
+import { MessageViewModel } from "../MessageViewModel";
 
 export interface MainContentPanelDisplayProps {
   /**

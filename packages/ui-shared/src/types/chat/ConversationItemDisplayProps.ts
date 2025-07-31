@@ -9,7 +9,7 @@
  */
 
 import type React from "react";
-import { ConversationViewModel } from "src/types/ConversationViewModel";
+import { ConversationViewModel } from "../ConversationViewModel";
 
 /**
  * Props interface for the ConversationItemDisplay component.

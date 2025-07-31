@@ -7,7 +7,7 @@
  * @module components/settings/__tests__/FocusIndicators.visual.test
  */
 
-import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/ui-shared";
+import type { SettingsSection, SettingsSubTab } from "@fishbowl-ai/ui-shared/";
 import { render, screen } from "@testing-library/react";
 import { ModalFooter } from "../ModalFooter";
 import { ModalHeader } from "../ModalHeader";

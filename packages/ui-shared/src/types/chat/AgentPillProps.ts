@@ -7,7 +7,7 @@
  * @module types/ui/components/AgentPillProps
  */
 
-import { AgentViewModel } from "src/types/AgentViewModel";
+import { AgentViewModel } from "../AgentViewModel";
 
 /**
  * Props interface for the AgentPill component.

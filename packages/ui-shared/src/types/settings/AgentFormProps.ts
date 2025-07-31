@@ -3,8 +3,9 @@
  *
  * @module types/ui/components/AgentFormProps
  */
-import type { AgentCard, AgentTemplate } from "../settings";
+import { AgentCard } from "./AgentCard";
 import type { AgentFormData } from "./AgentFormData";
+import { AgentTemplate } from "./AgentTemplate";
 
 export interface AgentFormProps {
   mode: "create" | "edit" | "template";

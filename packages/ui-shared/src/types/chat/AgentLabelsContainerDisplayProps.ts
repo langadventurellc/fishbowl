@@ -5,7 +5,7 @@
  */
 
 import type React from "react";
-import { AgentViewModel } from "src/types/AgentViewModel";
+import { AgentViewModel } from "../AgentViewModel";
 
 export interface AgentLabelsContainerDisplayProps {
   /**

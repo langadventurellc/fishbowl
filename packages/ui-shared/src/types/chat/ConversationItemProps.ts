@@ -7,7 +7,7 @@
  * @module types/ui/components/ConversationItemProps
  */
 
-import { ConversationViewModel } from "src/types/ConversationViewModel";
+import { ConversationViewModel } from "../ConversationViewModel";
 
 /**
  * Props interface for the ConversationItem component.

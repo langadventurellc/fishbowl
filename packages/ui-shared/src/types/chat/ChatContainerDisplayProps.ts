@@ -5,7 +5,7 @@
  */
 
 import type React from "react";
-import { MessageViewModel } from "src/types/MessageViewModel";
+import { MessageViewModel } from "../MessageViewModel";
 
 export interface ChatContainerDisplayProps {
   /**

@@ -8,7 +8,7 @@
  * @module types/ui/components/ConversationContextMenuProps
  */
 
-import { ConversationViewModel } from "src/types/ConversationViewModel";
+import { ConversationViewModel } from "../ConversationViewModel";
 
 /**
  * Props interface for the ConversationContextMenu component.

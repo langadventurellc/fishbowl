@@ -7,7 +7,7 @@
  * @module types/ui/components/MessageItemProps
  */
 
-import { MessageViewModel } from "src/types/MessageViewModel";
+import { MessageViewModel } from "../MessageViewModel";
 
 /**
  * Props interface for the MessageItem component.

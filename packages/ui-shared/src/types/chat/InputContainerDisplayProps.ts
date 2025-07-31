@@ -8,8 +8,8 @@
  * @module types/ui/components/InputContainerDisplayProps
  */
 
-import { ConversationToggleMode } from "src/types/chat/ConversationToggleMode";
-import { ComponentSize, LayoutVariant } from "src/types/components";
+import { ComponentSize, LayoutVariant } from "../components";
+import { ConversationToggleMode } from "./ConversationToggleMode";
 
 /**
  * Props interface for the InputContainerDisplay component.

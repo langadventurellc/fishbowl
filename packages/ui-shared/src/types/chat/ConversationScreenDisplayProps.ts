@@ -5,8 +5,8 @@
  */
 
 import type React from "react";
-import { ThemeMode } from "src/theme";
-import { LayoutVariant } from "src/types/components";
+import { LayoutVariant } from "../components";
+import { ThemeMode } from "../theme";
 
 export interface ConversationScreenDisplayProps {
   /**

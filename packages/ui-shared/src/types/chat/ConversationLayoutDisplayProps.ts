@@ -5,10 +5,10 @@
  */
 
 import type React from "react";
-import { AgentViewModel } from "src/types/AgentViewModel";
-import { LayoutVariant } from "src/types/components";
-import { ConversationViewModel } from "src/types/ConversationViewModel";
-import { MessageViewModel } from "src/types/MessageViewModel";
+import { AgentViewModel } from "../AgentViewModel";
+import { LayoutVariant } from "../components";
+import { ConversationViewModel } from "../ConversationViewModel";
+import { MessageViewModel } from "../MessageViewModel";
 
 export interface ConversationLayoutDisplayProps {
   /**

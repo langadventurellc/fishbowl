@@ -8,7 +8,7 @@
  * @module types/ui/components/MessageContextMenuProps
  */
 
-import { MessageViewModel } from "src/types/MessageViewModel";
+import { MessageViewModel } from "../MessageViewModel";
 
 /**
  * Props interface for the MessageContextMenu component.

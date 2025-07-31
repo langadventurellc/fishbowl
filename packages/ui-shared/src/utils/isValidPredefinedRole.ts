@@ -2,7 +2,7 @@
  * Validate that a role object matches the predefined role structure
  */
 
-import type { PredefinedRole } from "../";
+import { PredefinedRole } from "../types/settings/PredefinedRole";
 
 /**
  * Validate that a role object matches the predefined role structure

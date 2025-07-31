@@ -1,5 +1,5 @@
 import React from "react";
-import { ConversationViewModel } from "src/types/ConversationViewModel";
+import { ConversationViewModel } from "../ConversationViewModel";
 import { SidebarWidthVariant } from "./SidebarWidthVariant";
 
 /**

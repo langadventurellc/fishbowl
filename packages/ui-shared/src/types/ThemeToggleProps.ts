@@ -7,7 +7,7 @@
  * @module types/ui/components/ThemeToggleProps
  */
 
-import { ThemeMode } from "../theme/ThemeMode";
+import { ThemeMode } from "./theme/ThemeMode";
 
 /**
  * Props interface for the ThemeToggle component.

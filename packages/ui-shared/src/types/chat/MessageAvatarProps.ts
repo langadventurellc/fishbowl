@@ -7,7 +7,7 @@
  * @module types/ui/components/MessageAvatarProps
  */
 
-import { ComponentSize } from "src/types/components";
+import { ComponentSize } from "../components";
 
 /**
  * Props interface for the MessageAvatar component.

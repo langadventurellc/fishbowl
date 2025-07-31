@@ -8,7 +8,7 @@
  * @module types/ui/components/ConversationModeToggleDisplayProps
  */
 
-import { ConversationToggleMode } from "src/types/chat/ConversationToggleMode";
+import { ConversationToggleMode } from "./ConversationToggleMode";
 
 /**
  * Props interface for the ConversationModeToggleDisplayProps component.

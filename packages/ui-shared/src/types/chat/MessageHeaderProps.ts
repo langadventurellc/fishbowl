@@ -7,7 +7,7 @@
  * @module types/ui/components/MessageHeaderProps
  */
 
-import { MessageType } from "src/types/MessageType";
+import { MessageType } from "../MessageType";
 
 /**
  * Props interface for the MessageHeader component.

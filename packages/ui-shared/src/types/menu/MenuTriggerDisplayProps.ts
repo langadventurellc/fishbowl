@@ -1,4 +1,4 @@
-import { ComponentSize } from "src/types/components";
+import { ComponentSize } from "../components";
 import { MenuTriggerPosition } from "./MenuTriggerPosition";
 import { MenuTriggerVariant } from "./MenuTriggerVariant";
 
