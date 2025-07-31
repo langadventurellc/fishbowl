@@ -1,6 +1,7 @@
 import * as path from "path";
 import { FileStorageService } from "../FileStorageService";
 import { FileSystemBridge } from "../FileSystemBridge";
+import { WriteFileOptions } from "../WriteFileOptions";
 import {
   FileNotFoundError,
   InvalidJsonError,
@@ -10,7 +11,14 @@ import {
 // Mock implementation for testing
 class MockFileSystemBridge implements FileSystemBridge {
   private files: Map<string, string> = new Map();
+  private directories: Set<string> = new Set();
   private shouldThrowError: Error | null = null;
+  private writeOperations: Array<{
+    path: string;
+    content: string;
+    options?: WriteFileOptions;
+  }> = [];
+  private renameOperations: Array<{ oldPath: string; newPath: string }> = [];
 
   setFileContent(path: string, content: string): void {
     this.files.set(path, content);
@@ -22,7 +30,26 @@ class MockFileSystemBridge implements FileSystemBridge {
 
   clear(): void {
     this.files.clear();
+    this.directories.clear();
     this.shouldThrowError = null;
+    this.writeOperations = [];
+    this.renameOperations = [];
+  }
+
+  getWriteOperations(): Array<{
+    path: string;
+    content: string;
+    options?: WriteFileOptions;
+  }> {
+    return [...this.writeOperations];
+  }
+
+  getRenameOperations(): Array<{ oldPath: string; newPath: string }> {
+    return [...this.renameOperations];
+  }
+
+  fileExists(path: string): boolean {
+    return this.files.has(path);
   }
 
   async readFile(path: string, _encoding: string): Promise<string> {
@@ -41,24 +68,71 @@ class MockFileSystemBridge implements FileSystemBridge {
     return this.files.get(path)!;
   }
 
-  async writeFile(): Promise<void> {
-    // Not needed for read functionality tests
-    throw new Error("writeFile not implemented in mock");
+  async writeFile(
+    path: string,
+    content: string,
+    options?: WriteFileOptions,
+  ): Promise<void> {
+    if (this.shouldThrowError) {
+      throw this.shouldThrowError;
+    }
+
+    this.writeOperations.push({ path, content, options });
+    this.files.set(path, content);
   }
 
-  async mkdir(): Promise<void> {
-    // Not needed for read functionality tests
-    throw new Error("mkdir not implemented in mock");
+  async mkdir(path: string, options?: { recursive?: boolean }): Promise<void> {
+    if (this.shouldThrowError) {
+      throw this.shouldThrowError;
+    }
+
+    if (options?.recursive) {
+      // Add all parent directories
+      const parts = path.split("/").filter((p) => p);
+      let currentPath = "";
+      for (const part of parts) {
+        currentPath = currentPath ? `${currentPath}/${part}` : `/${part}`;
+        this.directories.add(currentPath);
+      }
+    } else {
+      this.directories.add(path);
+    }
   }
 
-  async unlink(): Promise<void> {
-    // Not needed for read functionality tests
-    throw new Error("unlink not implemented in mock");
+  async unlink(path: string): Promise<void> {
+    if (this.shouldThrowError) {
+      throw this.shouldThrowError;
+    }
+
+    if (!this.files.has(path)) {
+      const error = new Error(
+        `ENOENT: no such file or directory, unlink '${path}'`,
+      ) as Error & { code: string };
+      error.code = "ENOENT";
+      throw error;
+    }
+
+    this.files.delete(path);
   }
 
-  async rename(): Promise<void> {
-    // Not needed for read functionality tests
-    throw new Error("rename not implemented in mock");
+  async rename(oldPath: string, newPath: string): Promise<void> {
+    if (this.shouldThrowError) {
+      throw this.shouldThrowError;
+    }
+
+    this.renameOperations.push({ oldPath, newPath });
+
+    if (!this.files.has(oldPath)) {
+      const error = new Error(
+        `ENOENT: no such file or directory, rename '${oldPath}' -> '${newPath}'`,
+      ) as Error & { code: string };
+      error.code = "ENOENT";
+      throw error;
+    }
+
+    const content = this.files.get(oldPath)!;
+    this.files.delete(oldPath);
+    this.files.set(newPath, content);
   }
 }
 
@@ -439,6 +513,364 @@ describe("FileStorageService", () => {
       expect(typeof result2).toBe("number");
       expect(result1).toBe("hello");
       expect(result2).toBe(42);
+    });
+  });
+
+  describe("writeJsonFile", () => {
+    describe("successful writes", () => {
+      it("should successfully write and read back data", async () => {
+        const testData = { name: "test", value: 42 };
+        const filePath = "/test/write.json";
+        const absolutePath = path.resolve(filePath);
+
+        await service.writeJsonFile(filePath, testData);
+
+        // Verify atomic write sequence
+        const renameOps = mockFs.getRenameOperations();
+        expect(renameOps).toHaveLength(1);
+        expect(renameOps[0]?.newPath).toBe(absolutePath);
+        expect(renameOps[0]?.oldPath).toMatch(/\.tmp-.*\.json$/);
+
+        // Verify data integrity
+        const result = await service.readJsonFile(filePath);
+        expect(result).toEqual(testData);
+      });
+
+      it("should handle generic typing correctly", async () => {
+        interface TestData {
+          id: number;
+          name: string;
+        }
+
+        const testData: TestData = { id: 1, name: "test" };
+        const filePath = "/test/typed-write.json";
+
+        await service.writeJsonFile<TestData>(filePath, testData);
+
+        const result = await service.readJsonFile<TestData>(filePath);
+        expect(result.id).toBe(1);
+        expect(result.name).toBe("test");
+      });
+
+      it("should create parent directories", async () => {
+        const testData = { nested: true };
+        const filePath = "/deep/nested/directory/test.json";
+
+        await service.writeJsonFile(filePath, testData);
+
+        const result = await service.readJsonFile(filePath);
+        expect(result).toEqual(testData);
+      });
+
+      it("should write pretty-formatted JSON", async () => {
+        const testData = { nested: { object: { with: "data" } } };
+        const filePath = "/test/pretty.json";
+
+        await service.writeJsonFile(filePath, testData);
+
+        const writeOps = mockFs.getWriteOperations();
+        const tempFileWrite = writeOps.find((op) => op.path.includes(".tmp-"));
+        expect(tempFileWrite?.content).toContain("\n");
+        expect(tempFileWrite?.content).toContain("  ");
+        expect(JSON.parse(tempFileWrite?.content || "")).toEqual(testData);
+      });
+
+      it("should set correct file permissions", async () => {
+        const testData = { secure: true };
+        const filePath = "/test/secure.json";
+
+        await service.writeJsonFile(filePath, testData);
+
+        const writeOps = mockFs.getWriteOperations();
+        const tempFileWrite = writeOps.find((op) => op.path.includes(".tmp-"));
+        expect(tempFileWrite?.options?.mode).toBe(0o600);
+      });
+    });
+
+    describe("atomic write behavior", () => {
+      it("should use temporary file and atomic rename", async () => {
+        const testData = { atomic: true };
+        const filePath = "/test/atomic.json";
+        const absolutePath = path.resolve(filePath);
+
+        await service.writeJsonFile(filePath, testData);
+
+        const writeOps = mockFs.getWriteOperations();
+        const renameOps = mockFs.getRenameOperations();
+
+        // Should write to temp file first
+        expect(writeOps).toHaveLength(1);
+        expect(writeOps[0]?.path).toMatch(/\.tmp-.*\.json$/);
+        expect(writeOps[0]?.path).not.toBe(absolutePath);
+
+        // Should rename temp file to target
+        expect(renameOps).toHaveLength(1);
+        expect(renameOps[0]?.oldPath).toBe(writeOps[0]?.path);
+        expect(renameOps[0]?.newPath).toBe(absolutePath);
+      });
+
+      it("should clean up temp file on write failure", async () => {
+        const testData = { cleanup: true };
+        const filePath = "/test/cleanup.json";
+
+        // Mock write failure
+        const writeError = new Error("Disk full") as Error & { code: string };
+        writeError.code = "ENOSPC";
+        mockFs.setShouldThrowError(writeError);
+
+        await expect(
+          service.writeJsonFile(filePath, testData),
+        ).rejects.toThrow();
+
+        // Should attempt cleanup (unlink would be called but might fail too)
+        mockFs.setShouldThrowError(null);
+      });
+
+      it("should validate written data before rename", async () => {
+        const testData = { validation: "test" };
+        const filePath = "/test/validate.json";
+
+        await service.writeJsonFile(filePath, testData);
+
+        // Should read back temp file for validation
+        const writeOps = mockFs.getWriteOperations();
+        expect(writeOps).toHaveLength(1);
+
+        // Data should match exactly
+        const writtenContent = writeOps[0]?.content || "";
+        const parsedContent = JSON.parse(writtenContent);
+        expect(parsedContent).toEqual(testData);
+      });
+    });
+
+    describe("security features", () => {
+      it("should reject oversized data", async () => {
+        const service = new FileStorageService(mockFs, {
+          maxFileSizeBytes: 100,
+        });
+        const largeData = { data: "x".repeat(200) };
+        const filePath = "/test/large.json";
+
+        await expect(
+          service.writeJsonFile(filePath, largeData),
+        ).rejects.toThrow("Data size exceeds limit");
+      });
+
+      it("should reject undefined data", async () => {
+        const filePath = "/test/undefined.json";
+
+        await expect(
+          service.writeJsonFile(filePath, undefined),
+        ).rejects.toThrow("Data cannot be undefined");
+      });
+
+      it("should reject dangerous paths", async () => {
+        const testData = { danger: true };
+        const dangerousPaths = [
+          "../../../etc/passwd",
+          "~/secret.json",
+          "config/../../../admin.json",
+        ];
+
+        for (const dangerousPath of dangerousPaths) {
+          await expect(
+            service.writeJsonFile(dangerousPath, testData),
+          ).rejects.toThrow();
+        }
+      });
+
+      it("should reject paths with invalid characters", async () => {
+        const testData = { invalid: true };
+        const invalidPaths = [
+          "/test/file<script>.json",
+          "/test/file|pipe.json",
+          "/test/file?.json",
+        ];
+
+        for (const invalidPath of invalidPaths) {
+          await expect(
+            service.writeJsonFile(invalidPath, testData),
+          ).rejects.toThrow("Invalid characters in path");
+        }
+      });
+
+      it("should reject reserved filenames", async () => {
+        const testData = { reserved: true };
+        const reservedPaths = [
+          "/test/con.json",
+          "/test/prn.json",
+          "/test/aux.json",
+          "/test/com1.json",
+        ];
+
+        for (const reservedPath of reservedPaths) {
+          await expect(
+            service.writeJsonFile(reservedPath, testData),
+          ).rejects.toThrow("Reserved filename not allowed");
+        }
+      });
+
+      it("should reject paths that are too long", async () => {
+        const testData = { long: true };
+        const longPath = "/test/" + "a".repeat(1000) + ".json";
+
+        await expect(service.writeJsonFile(longPath, testData)).rejects.toThrow(
+          "Path too long",
+        );
+      });
+    });
+
+    describe("error handling", () => {
+      it("should handle mkdir failures", async () => {
+        const testData = { mkdir: "fail" };
+        const filePath = "/deep/nested/fail.json";
+
+        const mkdirError = new Error("Permission denied") as Error & {
+          code: string;
+        };
+        mkdirError.code = "EACCES";
+        mockFs.setShouldThrowError(mkdirError);
+
+        await expect(service.writeJsonFile(filePath, testData)).rejects.toThrow(
+          WritePermissionError,
+        );
+      });
+
+      it("should handle write failures", async () => {
+        const testData = { write: "fail" };
+        const filePath = "/test/write-fail.json";
+
+        const writeError = new Error("No space left") as Error & {
+          code: string;
+        };
+        writeError.code = "ENOSPC";
+        mockFs.setShouldThrowError(writeError);
+
+        await expect(
+          service.writeJsonFile(filePath, testData),
+        ).rejects.toThrow();
+      });
+
+      it("should handle rename failures", async () => {
+        const testData = { rename: "fail" };
+        const filePath = "/test/rename-fail.json";
+
+        // Create a special mock that fails only on rename
+        const renameFailMock = new MockFileSystemBridge();
+        renameFailMock.rename = async () => {
+          const renameError = new Error("Cross-device link") as Error & {
+            code: string;
+          };
+          renameError.code = "EXDEV";
+          throw renameError;
+        };
+
+        const failService = new FileStorageService(renameFailMock);
+
+        await expect(
+          failService.writeJsonFile(filePath, testData),
+        ).rejects.toThrow();
+      });
+    });
+
+    describe("configuration options", () => {
+      it("should use custom file size limit", async () => {
+        const customService = new FileStorageService(mockFs, {
+          maxFileSizeBytes: 50,
+        });
+        const testData = { data: "x".repeat(100) };
+        const filePath = "/test/custom-size.json";
+
+        await expect(
+          customService.writeJsonFile(filePath, testData),
+        ).rejects.toThrow("Data size exceeds limit: 50 bytes");
+      });
+
+      it("should use custom file permissions", async () => {
+        const customService = new FileStorageService(mockFs, {
+          filePermissions: 0o644,
+        });
+        const testData = { permissions: "custom" };
+        const filePath = "/test/custom-perms.json";
+
+        await customService.writeJsonFile(filePath, testData);
+
+        const writeOps = mockFs.getWriteOperations();
+        const tempFileWrite = writeOps.find((op) => op.path.includes(".tmp-"));
+        expect(tempFileWrite?.options?.mode).toBe(0o644);
+      });
+
+      it("should use custom temp file prefix", async () => {
+        const customService = new FileStorageService(mockFs, {
+          tempFilePrefix: ".custom-temp-",
+        });
+        const testData = { prefix: "custom" };
+        const filePath = "/test/custom-prefix.json";
+
+        await customService.writeJsonFile(filePath, testData);
+
+        const writeOps = mockFs.getWriteOperations();
+        expect(writeOps[0]?.path).toMatch(/\.custom-temp-.*\.json$/);
+      });
+    });
+
+    describe("data integrity", () => {
+      it("should handle complex nested objects", async () => {
+        const complexData = {
+          users: [
+            { id: 1, name: "Alice", settings: { theme: "dark", lang: "en" } },
+            { id: 2, name: "Bob", settings: { theme: "light", lang: "fr" } },
+          ],
+          metadata: {
+            version: "1.0.0",
+            lastUpdated: "2025-01-01T00:00:00Z",
+            features: ["auth", "persistence", "themes"],
+          },
+        };
+        const filePath = "/test/complex-write.json";
+
+        await service.writeJsonFile(filePath, complexData);
+
+        const result = await service.readJsonFile(filePath);
+        expect(result).toEqual(complexData);
+      });
+
+      it("should handle JSON with special characters", async () => {
+        const specialData = {
+          unicode: "Hello 世界 🌍",
+          emoji: "🚀💻📁",
+          special: "\"quotes\" and 'apostrophes' and \\backslashes\\",
+          newlines: "Line 1\nLine 2\nLine 3",
+        };
+        const filePath = "/test/special-write.json";
+
+        await service.writeJsonFile(filePath, specialData);
+
+        const result = await service.readJsonFile(filePath);
+        expect(result).toEqual(specialData);
+      });
+
+      it("should maintain type safety through write/read cycle", async () => {
+        interface Config {
+          theme: "light" | "dark";
+          autoSave: boolean;
+          maxHistory: number;
+        }
+
+        const configData: Config = {
+          theme: "dark",
+          autoSave: true,
+          maxHistory: 50,
+        };
+        const filePath = "/test/config-write.json";
+
+        await service.writeJsonFile<Config>(filePath, configData);
+
+        const result = await service.readJsonFile<Config>(filePath);
+        expect(result.theme).toBe("dark");
+        expect(result.autoSave).toBe(true);
+        expect(result.maxHistory).toBe(50);
+      });
     });
   });
 });
