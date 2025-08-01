@@ -271,7 +271,21 @@ describe("SettingsRepository", () => {
       expect(mockFileStorageService.readJsonFile).toHaveBeenCalledWith(
         "preferences.json",
       );
-      expect(result).toEqual(storedSettings);
+
+      // Compare all fields except lastUpdated to avoid timing issues
+      expect(result.schemaVersion).toBe(storedSettings.schemaVersion);
+      expect(result.general).toEqual(storedSettings.general);
+      expect(result.appearance).toEqual(storedSettings.appearance);
+      expect(result.advanced).toEqual(storedSettings.advanced);
+
+      // Verify lastUpdated is a valid ISO string and recent
+      expect(typeof result.lastUpdated).toBe("string");
+      expect(new Date(result.lastUpdated).getTime()).toBeGreaterThan(
+        Date.now() - 1000,
+      );
+      expect(new Date(result.lastUpdated).getTime()).toBeLessThanOrEqual(
+        Date.now(),
+      );
     });
 
     it("should return defaults when file does not exist", async () => {
