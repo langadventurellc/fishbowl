@@ -12,3 +12,5 @@ export {
 export { useEnhancedTabNavigation } from "./useEnhancedTabNavigation/useEnhancedTabNavigation";
 export { useSettingsMapper } from "./useSettingsMapper";
 export type { UseSettingsMapperReturn } from "./UseSettingsMapperReturn";
+export { useSettingsValidation } from "./useSettingsValidation";
+export type { UseSettingsValidationReturn } from "./UseSettingsValidationReturn";
