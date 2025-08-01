@@ -1,32 +1,42 @@
 /**
- * Reconstruct nested structure from flat key-value pairs
- * @param obj - Flat object with dot-notation keys
+ * Reconstruct nested object from flat key-value pairs
+ * @param flat - Flat object with dot-notation keys
+ * @param separator - Key separator (default: '.')
  * @returns Nested object structure
  */
-export function unflattenObject(
-  obj: Record<string, unknown>,
-): Record<string, unknown> {
+export function unflattenObject<T = Record<string, unknown>>(
+  flat: Record<string, unknown>,
+  separator = ".",
+): T {
   const result: Record<string, unknown> = {};
 
-  for (const key in obj) {
-    const keys = key.split(".");
-    let current: Record<string, unknown> = result;
+  for (const [key, value] of Object.entries(flat)) {
+    const keys = key.split(separator);
+    let current = result;
 
-    for (let i = 0; i < keys.length - 1; i++) {
+    for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
-      if (k && !(k in current)) {
-        current[k] = {};
+
+      // Skip empty keys or undefined
+      if (!k) {
+        continue;
       }
-      if (k) {
+
+      // Security: Prevent prototype pollution
+      if (k === "__proto__" || k === "constructor" || k === "prototype") {
+        continue;
+      }
+
+      if (i === keys.length - 1) {
+        current[k] = value;
+      } else {
+        if (!current[k] || typeof current[k] !== "object") {
+          current[k] = {};
+        }
         current = current[k] as Record<string, unknown>;
       }
     }
-
-    const lastKey = keys[keys.length - 1];
-    if (lastKey) {
-      current[lastKey] = obj[key];
-    }
   }
 
-  return result;
+  return result as T;
 }

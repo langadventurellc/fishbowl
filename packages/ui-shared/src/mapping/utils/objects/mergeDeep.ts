@@ -1,40 +1,48 @@
 /**
- * Deep merge objects with type safety
- * @param target - Target object
- * @param sources - Source objects to merge
- * @returns Merged object
+ * Deep merge objects with type safety and immutability
+ * @param target - Base object
+ * @param sources - Objects to merge into target
+ * @returns New merged object (target unchanged)
  */
-export function mergeDeep<T extends object>(
+export function mergeDeep<T extends Record<string, unknown>>(
   target: T,
-  ...sources: Partial<T>[]
+  ...sources: Record<string, unknown>[]
 ): T {
-  if (!sources.length) return target;
+  if (!sources.length) return { ...target };
 
-  const source = sources[0];
   const result = { ...target };
 
-  for (const key in source) {
-    const targetValue = result[key];
-    const sourceValue = source[key];
+  for (const source of sources) {
+    if (!source || typeof source !== "object") continue;
 
-    if (sourceValue === undefined) continue;
+    for (const [key, value] of Object.entries(source)) {
+      // Security: Prevent prototype pollution
+      if (key === "__proto__" || key === "constructor" || key === "prototype") {
+        continue;
+      }
 
-    if (
-      targetValue &&
-      typeof targetValue === "object" &&
-      !Array.isArray(targetValue) &&
-      sourceValue &&
-      typeof sourceValue === "object" &&
-      !Array.isArray(sourceValue)
-    ) {
-      result[key] = mergeDeep(
-        targetValue as T[Extract<keyof T, string>] & object,
-        sourceValue as Partial<T[Extract<keyof T, string>] & object>,
-      ) as T[Extract<keyof T, string>];
-    } else {
-      result[key] = sourceValue as T[Extract<keyof T, string>];
+      const targetValue = result[key as keyof T];
+
+      if (value === null || value === undefined) {
+        result[key as keyof T] = value as T[keyof T];
+      } else if (
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        !(value instanceof Date) &&
+        typeof targetValue === "object" &&
+        targetValue !== null &&
+        !Array.isArray(targetValue) &&
+        !(targetValue instanceof Date)
+      ) {
+        result[key as keyof T] = mergeDeep(
+          targetValue as Record<string, unknown>,
+          value as Record<string, unknown>,
+        ) as T[keyof T];
+      } else {
+        result[key as keyof T] = value as T[keyof T];
+      }
     }
   }
 
-  return sources.length > 1 ? mergeDeep(result, ...sources.slice(1)) : result;
+  return result;
 }
