@@ -10,3 +10,5 @@ export {
   useCustomRoles,
 } from "./useCustomRoles";
 export { useEnhancedTabNavigation } from "./useEnhancedTabNavigation/useEnhancedTabNavigation";
+export { useSettingsMapper } from "./useSettingsMapper";
+export type { UseSettingsMapperReturn } from "./UseSettingsMapperReturn";
