@@ -75,6 +75,7 @@
       "Bash(npx detox build:*)",
       "Bash(pnpm -w run dev:mobile)",
       "Bash(npx expo start:*)",
+      "Bash(npx lint-staged:*)",
       "Bash(EXPO_USE_COMMUNITY_AUTOLINKING=1 NODE_ENV=development ./gradlew assembleDebug -x lint)",
       "Bash(EXPO_USE_COMMUNITY_AUTOLINKING=1 NODE_ENV=development ./gradlew assembleAndroidTest -DtestBuildType=debug)",
       "Bash(pnpm:*)",
