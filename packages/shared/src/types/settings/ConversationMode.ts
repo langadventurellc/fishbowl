@@ -8,3 +8,11 @@
  */
 
 export type ConversationMode = "manual" | "auto";
+
+/**
+ * Const array of all valid ConversationMode values for runtime validation
+ */
+export const CONVERSATION_MODE_OPTIONS: readonly ConversationMode[] = [
+  "manual",
+  "auto",
+] as const;

@@ -6,6 +6,7 @@ export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
 export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettings";
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
 export type { ConversationMode } from "./ConversationMode";
+export { CONVERSATION_MODE_OPTIONS } from "./ConversationMode";
 export type { MessageSpacing } from "./MessageSpacing";
 export { MESSAGE_SPACING_OPTIONS } from "./MessageSpacing";
 export type { PersistedAdvancedSettings } from "./PersistedAdvancedSettings";

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ConversationMode } from "./ConversationMode";
+import { CONVERSATION_MODE_OPTIONS } from "./ConversationMode";
 
 /**
  * Zod schema for validating persisted general settings data.
@@ -37,7 +37,7 @@ export const generalSettingsSchema = z
 
     // Conversation Defaults with strict enum validation
     defaultMode: z
-      .enum(["manual", "auto"] as const satisfies readonly ConversationMode[], {
+      .enum(CONVERSATION_MODE_OPTIONS, {
         message: "Default mode must be either 'manual' or 'auto'",
       })
       .default("manual"),
