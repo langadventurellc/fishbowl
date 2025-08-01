@@ -2,11 +2,11 @@
 kind: feature
 id: F-common-mapping-utilities
 title: Common Mapping Utilities
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-07-31T22:03:33.191777"
-updated: "2025-07-31T22:03:33.191777"
+updated: "2025-08-01T15:46:33.073003+00:00"
 schema_version: "1.1"
 parent: E-ui-shared-type-mapping
 ---
