@@ -10,6 +10,7 @@ export * from "./AgentsSectionProps";
 export * from "./AgentTemplate";
 export * from "./ApiKeysFormData";
 export * from "./ApiKeysState";
+export * from "./appearanceSettings";
 export * from "./BehaviorGroup";
 export * from "./BehaviorSlidersSectionProps";
 export * from "./BehaviorTrait";
