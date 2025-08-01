@@ -2,11 +2,11 @@
 kind: feature
 id: F-appearance-settings-type-mapping
 title: Appearance Settings Type Mapping
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-31T22:02:17.348150"
-updated: "2025-07-31T22:02:17.348150"
+updated: "2025-08-01T18:28:01.967282+00:00"
 schema_version: "1.1"
 parent: E-ui-shared-type-mapping
 ---
