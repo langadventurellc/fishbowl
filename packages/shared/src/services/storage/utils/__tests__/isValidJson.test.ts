@@ -1,4 +1,4 @@
-import { isValidJson } from "../isValidJson.js";
+import { isValidJson } from "../isValidJson";
 
 describe("isValidJson", () => {
   describe("valid JSON strings", () => {

@@ -1,4 +1,4 @@
-import { safeJsonParse } from "../safeJsonParse.js";
+import { safeJsonParse } from "../safeJsonParse";
 
 describe("safeJsonParse", () => {
   it("should parse valid JSON", () => {

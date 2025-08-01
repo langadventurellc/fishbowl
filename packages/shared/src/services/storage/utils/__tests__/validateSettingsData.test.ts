@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { validateSettingsData } from "../validateSettingsData.js";
-import { SettingsValidationError } from "../../errors/SettingsValidationError.js";
+import { SettingsValidationError } from "../../errors/SettingsValidationError";
+import { validateSettingsData } from "../validateSettingsData";
 
 describe("validateSettingsData", () => {
   const testSchema = z.object({

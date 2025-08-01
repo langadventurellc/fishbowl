@@ -1,4 +1,4 @@
-import { isJsonSerializable } from "../isJsonSerializable.js";
+import { isJsonSerializable } from "../isJsonSerializable";
 
 describe("isJsonSerializable", () => {
   it("should return true for serializable primitives", () => {

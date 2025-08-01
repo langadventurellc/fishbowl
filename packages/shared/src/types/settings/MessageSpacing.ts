@@ -8,3 +8,12 @@
  */
 
 export type MessageSpacing = "compact" | "normal" | "relaxed";
+
+/**
+ * Const array of all valid MessageSpacing values for runtime validation
+ */
+export const MESSAGE_SPACING_OPTIONS: readonly MessageSpacing[] = [
+  "compact",
+  "normal",
+  "relaxed",
+] as const;

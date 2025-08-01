@@ -1,4 +1,4 @@
-import { isValidSchemaVersion } from "../isValidSchemaVersion.js";
+import { isValidSchemaVersion } from "../isValidSchemaVersion";
 
 describe("isValidSchemaVersion", () => {
   describe("valid schema versions", () => {

@@ -8,3 +8,12 @@
  */
 
 export type ShowTimestamps = "always" | "hover" | "never";
+
+/**
+ * Const array of all valid ShowTimestamps values for runtime validation
+ */
+export const SHOW_TIMESTAMPS_OPTIONS: readonly ShowTimestamps[] = [
+  "always",
+  "hover",
+  "never",
+] as const;

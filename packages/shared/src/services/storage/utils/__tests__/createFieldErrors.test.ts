@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createFieldErrors } from "../createFieldErrors.js";
+import { createFieldErrors } from "../createFieldErrors";
 
 describe("createFieldErrors", () => {
   describe("basic field error creation", () => {

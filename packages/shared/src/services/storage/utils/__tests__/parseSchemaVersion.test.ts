@@ -1,4 +1,4 @@
-import { parseSchemaVersion } from "../parseSchemaVersion.js";
+import { parseSchemaVersion } from "../parseSchemaVersion";
 
 describe("parseSchemaVersion", () => {
   describe("valid version parsing", () => {

@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { SettingsValidationError } from "../errors/SettingsValidationError.js";
-import { createFieldErrors } from "./createFieldErrors.js";
+import { SettingsValidationError } from "../errors/SettingsValidationError";
+import { createFieldErrors } from "./createFieldErrors";
 
 /**
  * Validate data against a Zod schema with enhanced error handling

@@ -8,3 +8,12 @@
  */
 
 export type ThemeMode = "light" | "dark" | "system";
+
+/**
+ * Const array of all valid ThemeMode values for runtime validation
+ */
+export const THEME_MODES: readonly ThemeMode[] = [
+  "light",
+  "dark",
+  "system",
+] as const;
