@@ -1,5 +1,5 @@
 import * as path from "path";
-import { randomBytes } from "crypto";
+import { randomBytesHex } from "../../utils/randomBytesHex";
 import { Buffer } from "buffer";
 import { FileSystemBridge } from "./FileSystemBridge";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
@@ -91,7 +91,7 @@ export class FileStorageService<T = unknown> {
     await this.ensureDirectoryExists(path.dirname(absolutePath));
 
     // Generate temporary file path
-    const tempPath = this.generateTempFilePath(absolutePath);
+    const tempPath = await this.generateTempFilePath(absolutePath);
 
     try {
       // Atomic write sequence
@@ -144,10 +144,10 @@ export class FileStorageService<T = unknown> {
   /**
    * Generate secure temporary file path.
    */
-  private generateTempFilePath(targetPath: string): string {
+  private async generateTempFilePath(targetPath: string): Promise<string> {
     const dir = path.dirname(targetPath);
     const ext = path.extname(targetPath);
-    const randomSuffix = randomBytes(16).toString("hex");
+    const randomSuffix = await randomBytesHex(16);
     return path.join(dir, `${this.tempFilePrefix}${randomSuffix}${ext}`);
   }
 

@@ -1,5 +1,5 @@
 import * as path from "path";
-import { randomBytes } from "crypto";
+import { randomBytesHex } from "../../../utils/randomBytesHex";
 import { FileSystemBridge } from "../FileSystemBridge";
 import { PathValidationError } from "./PathValidationError";
 import { ErrorFactory } from "../errors/ErrorFactory";
@@ -37,7 +37,7 @@ export async function createTempFile(
   await ensureDirectoryExists(sanitizedBase, fs);
 
   // Generate cryptographically secure random name
-  const randomSuffix = randomBytes(16).toString("hex");
+  const randomSuffix = await randomBytesHex(16);
   const tempFileName = `${prefix}${randomSuffix}.tmp`;
   const tempFilePath = path.join(sanitizedBase, tempFileName);
 
