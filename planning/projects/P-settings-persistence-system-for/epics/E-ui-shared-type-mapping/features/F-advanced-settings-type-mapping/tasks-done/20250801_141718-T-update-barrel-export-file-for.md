@@ -1,16 +1,17 @@
 ---
 kind: task
 id: T-update-barrel-export-file-for
+parent: F-advanced-settings-type-mapping
+status: done
 title: Update barrel export file for advanced settings mapping functions
-status: open
 priority: normal
 prerequisites:
   - T-implement-2
   - T-implement-3
 created: "2025-08-01T13:31:52.165897"
-updated: "2025-08-01T13:31:52.165897"
+updated: "2025-08-01T14:16:38.109042"
 schema_version: "1.1"
-parent: F-advanced-settings-type-mapping
+worktree: null
 ---
 
 # Update barrel export file for advanced settings mapping functions
@@ -111,3 +112,7 @@ This is a simple organizational task that enables clean imports for the new adva
 - Maintain separation of concerns with clean public API
 
 ### Log
+
+**2025-08-01T19:17:18.514090Z** - Updated barrel export file for advanced settings mapping functions. The index.ts file now exports both mapAdvancedSettingsUIToPersistence and mapAdvancedSettingsPersistenceToUI functions, maintaining consistency with existing general and appearance settings exports. All functions are properly exported and accessible via clean import paths from the ui-shared package. No additional changes were needed as the exports were already correctly configured during the previous task implementation.
+
+- filesChanged: ["packages/ui-shared/src/mapping/settings/index.ts"]

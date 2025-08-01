@@ -2,11 +2,11 @@
 kind: feature
 id: F-advanced-settings-type-mapping
 title: Advanced Settings Type Mapping
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-31T22:02:52.508053"
-updated: "2025-07-31T22:02:52.508053"
+updated: "2025-08-01T19:17:18.520636+00:00"
 schema_version: "1.1"
 parent: E-ui-shared-type-mapping
 ---
