@@ -54,7 +54,20 @@ describe("SettingsRepository", () => {
 
       const result = repository.validateSettings(validSettings);
 
-      expect(result).toEqual(validSettings);
+      // Compare all fields except lastUpdated to avoid timing issues
+      expect(result.schemaVersion).toBe(validSettings.schemaVersion);
+      expect(result.general).toEqual(validSettings.general);
+      expect(result.appearance).toEqual(validSettings.appearance);
+      expect(result.advanced).toEqual(validSettings.advanced);
+
+      // Verify lastUpdated is a valid ISO string and within reasonable time range
+      expect(typeof result.lastUpdated).toBe("string");
+      expect(new Date(result.lastUpdated).getTime()).toBeGreaterThan(
+        Date.now() - 1000,
+      );
+      expect(new Date(result.lastUpdated).getTime()).toBeLessThanOrEqual(
+        Date.now(),
+      );
     });
 
     it("should apply defaults for missing fields", () => {
