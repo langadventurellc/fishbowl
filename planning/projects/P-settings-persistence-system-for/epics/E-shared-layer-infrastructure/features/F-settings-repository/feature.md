@@ -2,13 +2,13 @@
 kind: feature
 id: F-settings-repository
 title: Settings Repository
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-persistence-type-system-and-zod
   - F-generic-file-storage-service
 created: "2025-07-31T12:20:35.045093"
-updated: "2025-07-31T12:20:35.045093"
+updated: "2025-08-01T01:41:33.792217+00:00"
 schema_version: "1.1"
 parent: E-shared-layer-infrastructure
 ---
