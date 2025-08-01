@@ -30,7 +30,7 @@ Create barrel export files and comprehensive documentation for the integration h
 ```
 packages/ui-shared/src/
 ├── hooks/index.ts (update)
-├── interfaces/index.ts (create)
+├── settings/persistence/index.ts (create)
 ├── utils/settings/index.ts (create)
 └── docs/
     └── settings-integration.md (create)
@@ -57,7 +57,7 @@ export type {
 } from "./useSettingsPersistence";
 ```
 
-### Task 2: Create interfaces/index.ts
+### Task 2: Create settings/persistence/index.ts
 
 ```typescript
 // Settings persistence interfaces
@@ -169,7 +169,7 @@ Create simple tests to verify exports:
 ## Acceptance Criteria
 
 - ✓ All hooks exported from hooks/index.ts
-- ✓ All interfaces exported from interfaces/index.ts
+- ✓ All interfaces exported from settings/persistence/index.ts
 - ✓ All utilities exported from utils/settings/index.ts
 - ✓ Comprehensive documentation created
 - ✓ Export tests verify availability
