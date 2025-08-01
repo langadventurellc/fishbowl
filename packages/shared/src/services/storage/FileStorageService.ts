@@ -1,6 +1,6 @@
 import * as path from "path";
 import { randomBytesHex } from "../../utils/randomBytesHex";
-import { Buffer } from "buffer";
+import { getByteLength } from "../../utils/getByteLength";
 import { FileSystemBridge } from "./FileSystemBridge";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
 import { FileStorageError } from "./errors/FileStorageError";
@@ -85,7 +85,7 @@ export class FileStorageService<T = unknown> {
     const absolutePath = this.validateAndResolvePath(filePath);
 
     // Validate input data
-    this.validateWriteInput(data);
+    await this.validateWriteInput(data);
 
     // Ensure parent directory exists
     await this.ensureDirectoryExists(path.dirname(absolutePath));
@@ -117,7 +117,7 @@ export class FileStorageService<T = unknown> {
   /**
    * Validate input data for write operations.
    */
-  private validateWriteInput<U>(data: U): void {
+  private async validateWriteInput<U>(data: U): Promise<void> {
     if (data === undefined) {
       throw new Error("Data cannot be undefined");
     }
@@ -127,7 +127,8 @@ export class FileStorageService<T = unknown> {
     if (!serialized) {
       throw new Error("Data is not JSON serializable");
     }
-    if (Buffer.byteLength(serialized, "utf8") > this.maxFileSizeBytes) {
+    const byteLength = await getByteLength(serialized);
+    if (byteLength > this.maxFileSizeBytes) {
       throw new Error(
         `Data size exceeds limit: ${this.maxFileSizeBytes} bytes`,
       );
