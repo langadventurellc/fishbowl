@@ -1,6 +1,6 @@
-import { mapAdvancedSettingsUIToPersistence } from "../mapAdvancedSettingsUIToPersistence";
-import type { AdvancedSettingsFormData } from "../../../types/settings/advancedSettings";
 import type { PersistedAdvancedSettingsData } from "@fishbowl-ai/shared";
+import type { AdvancedSettingsFormData } from "../../../types/settings/advancedSettings";
+import { mapAdvancedSettingsUIToPersistence } from "../mapAdvancedSettingsUIToPersistence";
 
 describe("mapAdvancedSettingsUIToPersistence", () => {
   describe("successful mapping", () => {
@@ -13,7 +13,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
       expect(result).toEqual<PersistedAdvancedSettingsData>({
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: true,
       });
     });
@@ -27,7 +27,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
       expect(result).toEqual<PersistedAdvancedSettingsData>({
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: false,
       });
     });
@@ -41,7 +41,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
       expect(result).toEqual<PersistedAdvancedSettingsData>({
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: false,
       });
     });
@@ -56,7 +56,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
 
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
-      expect(result.debugMode).toBe(true);
+      expect(result.debugLogging).toBe(true);
       expect(result.experimentalFeatures).toBe(false);
     });
 
@@ -68,7 +68,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
 
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
-      expect(result.debugMode).toBe(true);
+      expect(result.debugLogging).toBe(true);
       expect(result.experimentalFeatures).toBe(false);
     });
 
@@ -91,7 +91,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
         } as AdvancedSettingsFormData;
 
         const result = mapAdvancedSettingsUIToPersistence(uiData);
-        expect(result.debugMode).toBe(expected);
+        expect(result.debugLogging).toBe(expected);
       });
     });
 
@@ -111,7 +111,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
         } as AdvancedSettingsFormData;
 
         const result = mapAdvancedSettingsUIToPersistence(uiData);
-        expect(result.debugMode).toBe(expected);
+        expect(result.debugLogging).toBe(expected);
       });
     });
 
@@ -134,7 +134,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
         } as AdvancedSettingsFormData;
 
         const result = mapAdvancedSettingsUIToPersistence(uiData);
-        expect(result.debugMode).toBe(expected);
+        expect(result.debugLogging).toBe(expected);
       });
     });
   });
@@ -149,7 +149,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
       expect(result).toEqual<PersistedAdvancedSettingsData>({
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: false,
       });
     });
@@ -163,7 +163,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
       expect(result).toEqual<PersistedAdvancedSettingsData>({
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: false,
       });
     });
@@ -184,33 +184,8 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
         } as AdvancedSettingsFormData;
 
         const result = mapAdvancedSettingsUIToPersistence(uiData);
-        expect(result.debugMode).toBe(expected);
+        expect(result.debugLogging).toBe(expected);
       });
-    });
-  });
-
-  describe("field name mapping", () => {
-    it("should correctly map debugLogging to debugMode", () => {
-      const uiData: AdvancedSettingsFormData = {
-        debugLogging: true,
-        experimentalFeatures: false,
-      };
-
-      const result = mapAdvancedSettingsUIToPersistence(uiData);
-
-      expect(result).toHaveProperty("debugMode", true);
-      expect(result).not.toHaveProperty("debugLogging");
-    });
-
-    it("should preserve experimentalFeatures field name", () => {
-      const uiData: AdvancedSettingsFormData = {
-        debugLogging: false,
-        experimentalFeatures: true,
-      };
-
-      const result = mapAdvancedSettingsUIToPersistence(uiData);
-
-      expect(result).toHaveProperty("experimentalFeatures", true);
     });
   });
 
@@ -234,9 +209,9 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
       const result = mapAdvancedSettingsUIToPersistence(uiData);
 
       // Schema validation should ensure all required fields are present
-      expect(result).toHaveProperty("debugMode");
+      expect(result).toHaveProperty("debugLogging");
       expect(result).toHaveProperty("experimentalFeatures");
-      expect(typeof result.debugMode).toBe("boolean");
+      expect(typeof result.debugLogging).toBe("boolean");
       expect(typeof result.experimentalFeatures).toBe("boolean");
     });
   });
@@ -252,7 +227,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
         } as AdvancedSettingsFormData;
 
         const result = mapAdvancedSettingsUIToPersistence(uiData);
-        expect(result.debugMode).toBe(false);
+        expect(result.debugLogging).toBe(false);
         expect(result.experimentalFeatures).toBe(false);
       });
     });
@@ -274,8 +249,8 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
 
         const result = mapAdvancedSettingsUIToPersistence(uiData);
         // All of these should coerce to true via Boolean() since they're truthy objects
-        expect(result.debugMode).toBe(true);
-        expect(typeof result.debugMode).toBe("boolean");
+        expect(result.debugLogging).toBe(true);
+        expect(typeof result.debugLogging).toBe("boolean");
       });
     });
   });
@@ -291,7 +266,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
         mapAdvancedSettingsUIToPersistence(uiData);
 
       // TypeScript ensures these properties exist and are the correct type
-      expect(typeof result.debugMode).toBe("boolean");
+      expect(typeof result.debugLogging).toBe("boolean");
       expect(typeof result.experimentalFeatures).toBe("boolean");
     });
 
@@ -305,7 +280,7 @@ describe("mapAdvancedSettingsUIToPersistence", () => {
 
       // Verify the result has all expected properties
       expect(Object.keys(result)).toEqual(
-        expect.arrayContaining(["debugMode", "experimentalFeatures"]),
+        expect.arrayContaining(["debugLogging", "experimentalFeatures"]),
       );
       expect(Object.keys(result)).toHaveLength(2);
     });

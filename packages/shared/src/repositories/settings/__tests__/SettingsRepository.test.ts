@@ -1,11 +1,11 @@
-import { SettingsRepository } from "../SettingsRepository";
-import { FileStorageService } from "../../../services/storage/FileStorageService";
 import {
   FileStorageError,
   SettingsValidationError,
 } from "../../../services/storage/errors";
+import { FileStorageService } from "../../../services/storage/FileStorageService";
 import { createDefaultPersistedSettings } from "../../../types/settings/createDefaultPersistedSettings";
 import type { PersistedSettingsData } from "../../../types/settings/PersistedSettingsData";
+import { SettingsRepository } from "../SettingsRepository";
 
 // Mock FileStorageService
 jest.mock("../../../services/storage/FileStorageService");
@@ -83,7 +83,7 @@ describe("SettingsRepository", () => {
       expect(result.general).toHaveProperty("responseDelay");
       expect(result.general).toHaveProperty("checkUpdates");
       expect(result.appearance).toHaveProperty("theme");
-      expect(result.advanced).toHaveProperty("debugMode");
+      expect(result.advanced).toHaveProperty("debugLogging");
       expect(result).toHaveProperty("lastUpdated");
     });
 
@@ -214,7 +214,7 @@ describe("SettingsRepository", () => {
       const defaults = createDefaultPersistedSettings();
       expect(result.general.checkUpdates).toBe(defaults.general.checkUpdates);
       expect(result.appearance.theme).toBe(defaults.appearance.theme);
-      expect(result.advanced.debugMode).toBe(defaults.advanced.debugMode);
+      expect(result.advanced.debugLogging).toBe(defaults.advanced.debugLogging);
     });
 
     it("should handle partial nested objects correctly", () => {

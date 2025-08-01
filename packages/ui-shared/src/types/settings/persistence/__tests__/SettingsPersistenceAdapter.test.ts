@@ -1,5 +1,5 @@
-import type { SettingsPersistenceAdapter } from "../SettingsPersistenceAdapter";
 import type { PersistedSettingsData } from "@fishbowl-ai/shared";
+import type { SettingsPersistenceAdapter } from "../SettingsPersistenceAdapter";
 
 describe("SettingsPersistenceAdapter", () => {
   describe("Interface Contract", () => {
@@ -37,7 +37,7 @@ describe("SettingsPersistenceAdapter", () => {
           messageSpacing: "normal",
         },
         advanced: {
-          debugMode: false,
+          debugLogging: false,
           experimentalFeatures: false,
         },
       };

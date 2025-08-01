@@ -3,19 +3,19 @@ import { advancedSettingsSchema } from "../advancedSettingsSchema";
 
 describe("advancedSettingsSchema", () => {
   describe("valid boolean combinations", () => {
-    it("should accept true for debugMode", () => {
-      const result = advancedSettingsSchema.parse({ debugMode: true });
-      expect(result.debugMode).toBe(true);
+    it("should accept true for debugLogging", () => {
+      const result = advancedSettingsSchema.parse({ debugLogging: true });
+      expect(result.debugLogging).toBe(true);
     });
 
-    it("should accept false for debugMode", () => {
-      const result = advancedSettingsSchema.parse({ debugMode: false });
-      expect(result.debugMode).toBe(false);
+    it("should accept false for debugLogging", () => {
+      const result = advancedSettingsSchema.parse({ debugLogging: false });
+      expect(result.debugLogging).toBe(false);
     });
 
-    it("should default to false for debugMode when undefined", () => {
+    it("should default to false for debugLogging when undefined", () => {
       const result = advancedSettingsSchema.parse({});
-      expect(result.debugMode).toBe(false);
+      expect(result.debugLogging).toBe(false);
     });
 
     it("should accept true for experimentalFeatures", () => {
@@ -39,9 +39,9 @@ describe("advancedSettingsSchema", () => {
   });
 
   describe("boolean validation", () => {
-    it("should reject non-boolean values for debugMode", () => {
+    it("should reject non-boolean values for debugLogging", () => {
       expect(() => {
-        advancedSettingsSchema.parse({ debugMode: "true" });
+        advancedSettingsSchema.parse({ debugLogging: "true" });
       }).toThrow("Debug mode must be true or false");
     });
 
@@ -51,9 +51,9 @@ describe("advancedSettingsSchema", () => {
       }).toThrow("Experimental features must be true or false");
     });
 
-    it("should reject numeric values for debugMode", () => {
+    it("should reject numeric values for debugLogging", () => {
       expect(() => {
-        advancedSettingsSchema.parse({ debugMode: 1 });
+        advancedSettingsSchema.parse({ debugLogging: 1 });
       }).toThrow("Debug mode must be true or false");
     });
 
@@ -68,17 +68,17 @@ describe("advancedSettingsSchema", () => {
     it("should apply all default values for empty object", () => {
       const result = advancedSettingsSchema.parse({});
       expect(result).toEqual({
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: false,
       });
     });
 
     it("should apply defaults for missing fields in partial object", () => {
       const result = advancedSettingsSchema.parse({
-        debugMode: true,
+        debugLogging: true,
       });
       expect(result).toEqual({
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: false,
       });
     });
@@ -93,13 +93,13 @@ describe("advancedSettingsSchema", () => {
   describe("security validation", () => {
     it("should default both settings to false for security", () => {
       const result = advancedSettingsSchema.parse({});
-      expect(result.debugMode).toBe(false);
+      expect(result.debugLogging).toBe(false);
       expect(result.experimentalFeatures).toBe(false);
     });
 
     it("should require explicit opt-in for debug mode", () => {
-      const result = advancedSettingsSchema.parse({ debugMode: undefined });
-      expect(result.debugMode).toBe(false);
+      const result = advancedSettingsSchema.parse({ debugLogging: undefined });
+      expect(result.debugLogging).toBe(false);
     });
 
     it("should require explicit opt-in for experimental features", () => {
@@ -139,7 +139,7 @@ describe("advancedSettingsSchema", () => {
   describe("complete valid settings object", () => {
     it("should validate a complete valid advanced settings object", () => {
       const validSettings = {
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: false,
       };
 
@@ -153,7 +153,7 @@ describe("advancedSettingsSchema", () => {
       type InferredType = z.infer<typeof advancedSettingsSchema>;
 
       const testObject: InferredType = {
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: false,
       };
 

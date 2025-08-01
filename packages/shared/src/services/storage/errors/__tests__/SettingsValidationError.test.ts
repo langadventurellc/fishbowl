@@ -1,5 +1,5 @@
-import { SettingsValidationError } from "../SettingsValidationError";
 import { FileStorageError } from "../FileStorageError";
+import { SettingsValidationError } from "../SettingsValidationError";
 
 describe("SettingsValidationError", () => {
   describe("constructor", () => {
@@ -107,7 +107,7 @@ describe("SettingsValidationError", () => {
       const fieldErrors = [
         { path: "appearance.theme", message: "Must be 'light' or 'dark'" },
         { path: "general.language", message: "Invalid language code" },
-        { path: "advanced.debugMode", message: "Must be boolean" },
+        { path: "advanced.debugLogging", message: "Must be boolean" },
       ];
 
       const error = new SettingsValidationError(

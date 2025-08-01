@@ -1,13 +1,13 @@
-import type { AdvancedSettingsFormData } from "../../types/settings/advancedSettings";
 import type { PersistedAdvancedSettingsData } from "@fishbowl-ai/shared";
 import { advancedSettingsSchema } from "@fishbowl-ai/shared";
+import type { AdvancedSettingsFormData } from "../../types/settings/advancedSettings";
 import { coerceBoolean } from "../utils/transformers";
 
 /**
  * Maps Advanced Settings from UI form data to persistence format.
  *
  * This function transforms the UI representation of advanced settings into the format
- * expected by the persistence layer. It handles field name mapping (debugLogging → debugMode)
+ * expected by the persistence layer. It handles field name mapping (debugLogging → debugLogging)
  * and ensures all boolean values are properly coerced with security-focused defaults.
  *
  * @param uiData - The advanced settings data from the UI form
@@ -23,7 +23,7 @@ import { coerceBoolean } from "../utils/transformers";
  * };
  *
  * const persistedSettings = mapAdvancedSettingsUIToPersistence(uiSettings);
- * // Returns: { debugMode: true, experimentalFeatures: false }
+ * // Returns: { debugLogging: true, experimentalFeatures: false }
  * ```
  */
 export function mapAdvancedSettingsUIToPersistence(
@@ -31,7 +31,7 @@ export function mapAdvancedSettingsUIToPersistence(
 ): PersistedAdvancedSettingsData {
   // Map UI fields to persistence format with field name transformation
   const mapped: PersistedAdvancedSettingsData = {
-    debugMode: coerceBoolean(uiData.debugLogging),
+    debugLogging: coerceBoolean(uiData.debugLogging),
     experimentalFeatures: coerceBoolean(uiData.experimentalFeatures),
   };
 

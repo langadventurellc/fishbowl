@@ -9,7 +9,7 @@ describe("persistedSettingsSchema", () => {
       const validSettings = {
         general: { responseDelay: 2000 },
         appearance: { theme: "dark" as const },
-        advanced: { debugMode: true },
+        advanced: { debugLogging: true },
       };
 
       const result = persistedSettingsSchema.safeParse(validSettings);
@@ -195,7 +195,7 @@ describe("persistedSettingsSchema", () => {
         schemaVersion: "1.0.0",
         general: { responseDelay: 2500 },
         appearance: { theme: "dark" as const },
-        advanced: { debugMode: true },
+        advanced: { debugLogging: true },
         lastUpdated: "2024-01-15T14:30:22.456Z",
       };
 

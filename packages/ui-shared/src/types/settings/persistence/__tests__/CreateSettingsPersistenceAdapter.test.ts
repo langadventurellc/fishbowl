@@ -40,11 +40,11 @@ describe("CreateSettingsPersistenceAdapter", () => {
       config?: SettingsPersistenceConfig,
     ) => {
       // Factory could use config to customize the adapter
-      const debugMode = config?.debug ?? false;
+      const debugLogging = config?.debug ?? false;
 
       return {
         save: jest.fn().mockImplementation(async () => {
-          if (debugMode) {
+          if (debugLogging) {
             console.log("Debug: Saving settings");
           }
         }),

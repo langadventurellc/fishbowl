@@ -13,7 +13,7 @@ import { z } from "zod";
 export const advancedSettingsSchema = z
   .object({
     // Developer Options with security default
-    debugMode: z
+    debugLogging: z
       .boolean({ message: "Debug mode must be true or false" })
       .default(false),
 

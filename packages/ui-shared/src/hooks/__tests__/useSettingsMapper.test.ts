@@ -7,11 +7,11 @@
  * @module hooks/__tests__/useSettingsMapper.test
  */
 
-import { renderHook } from "@testing-library/react";
-import { useSettingsMapper } from "../useSettingsMapper";
-import type { SettingsFormData } from "../../types/settings/combined/SettingsFormData";
 import type { PersistedSettingsData } from "@fishbowl-ai/shared";
 import { CURRENT_SCHEMA_VERSION } from "@fishbowl-ai/shared";
+import { renderHook } from "@testing-library/react";
+import type { SettingsFormData } from "../../types/settings/combined/SettingsFormData";
+import { useSettingsMapper } from "../useSettingsMapper";
 
 describe("useSettingsMapper", () => {
   const mockFormData: SettingsFormData = {
@@ -57,7 +57,7 @@ describe("useSettingsMapper", () => {
       messageSpacing: "normal",
     },
     advanced: {
-      debugMode: false,
+      debugLogging: false,
       experimentalFeatures: false,
     },
   };
@@ -91,7 +91,7 @@ describe("useSettingsMapper", () => {
         general: mockFormData.general,
         appearance: mockFormData.appearance,
         advanced: {
-          debugMode: mockFormData.advanced.debugLogging,
+          debugLogging: mockFormData.advanced.debugLogging,
           experimentalFeatures: mockFormData.advanced.experimentalFeatures,
         },
       });
@@ -133,7 +133,7 @@ describe("useSettingsMapper", () => {
         general: mockPersistedData.general,
         appearance: mockPersistedData.appearance,
         advanced: {
-          debugLogging: mockPersistedData.advanced.debugMode,
+          debugLogging: mockPersistedData.advanced.debugLogging,
           experimentalFeatures: mockPersistedData.advanced.experimentalFeatures,
         },
       });
@@ -295,30 +295,6 @@ describe("useSettingsMapper", () => {
       expect(formData.general).toBeDefined();
       expect(formData.appearance).toBeDefined();
       expect(formData.advanced).toBeDefined();
-    });
-
-    it("should handle field name transformations correctly", () => {
-      const { result } = renderHook(() => useSettingsMapper());
-
-      const formDataWithDebugLogging: SettingsFormData = {
-        ...mockFormData,
-        advanced: {
-          debugLogging: true,
-          experimentalFeatures: false,
-        },
-      };
-
-      // Map to persistence (debugLogging -> debugMode)
-      const persistedData = result.current.mapToPersistence(
-        formDataWithDebugLogging,
-      );
-      expect(persistedData.advanced).toHaveProperty("debugMode", true);
-      expect(persistedData.advanced).not.toHaveProperty("debugLogging");
-
-      // Map back to UI (debugMode -> debugLogging)
-      const convertedFormData = result.current.mapToUI(persistedData);
-      expect(convertedFormData.advanced).toHaveProperty("debugLogging", true);
-      expect(convertedFormData.advanced).not.toHaveProperty("debugMode");
     });
 
     it("should maintain atomic operations across all categories", () => {
