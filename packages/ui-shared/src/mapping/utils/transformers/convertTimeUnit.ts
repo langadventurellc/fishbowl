@@ -1,10 +1,10 @@
-type TimeUnit = "ms" | "s";
+import type { TimeUnit } from "./TimeUnit";
 
 /**
  * Convert time values between milliseconds and seconds
  * @param value - Time value to convert
- * @param from - Source unit
- * @param to - Target unit
+ * @param from - Source time unit
+ * @param to - Target time unit
  * @returns Converted time value
  */
 export function convertTimeUnit(
@@ -12,13 +12,18 @@ export function convertTimeUnit(
   from: TimeUnit,
   to: TimeUnit,
 ): number {
-  if (from === to) return value;
+  if (from === to) {
+    return value;
+  }
 
   if (from === "ms" && to === "s") {
     return value / 1000;
-  } else if (from === "s" && to === "ms") {
+  }
+
+  if (from === "s" && to === "ms") {
     return value * 1000;
   }
 
-  return value;
+  // This should never be reached due to TypeScript exhaustiveness checking
+  throw new Error(`Unexpected time unit: ${from}`);
 }

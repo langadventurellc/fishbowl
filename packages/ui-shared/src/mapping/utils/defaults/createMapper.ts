@@ -1,5 +1,5 @@
-import { MappingResult } from "../MappingResult";
-import { MappingError } from "../MappingError";
+import { MappingResult } from "../errors/MappingResult";
+import { MappingError } from "../errors/MappingError";
 
 /**
  * Factory for creating type-safe mappers with optional validation
