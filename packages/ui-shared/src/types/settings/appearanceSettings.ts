@@ -1,8 +1,8 @@
 import { z } from "zod";
-import type {
-  ThemeMode,
-  ShowTimestamps,
-  MessageSpacing,
+import {
+  THEME_MODES,
+  SHOW_TIMESTAMPS_OPTIONS,
+  MESSAGE_SPACING_OPTIONS,
 } from "@fishbowl-ai/shared";
 
 /**
@@ -11,20 +11,14 @@ import type {
  */
 export const appearanceSettingsSchema = z.object({
   // Theme selection
-  theme: z.enum(
-    ["light", "dark", "system"] as const satisfies readonly ThemeMode[],
-    {
-      message: "Theme must be light, dark, or system",
-    },
-  ),
+  theme: z.enum(THEME_MODES, {
+    message: "Theme must be light, dark, or system",
+  }),
 
   // Timestamp display preferences
-  showTimestamps: z.enum(
-    ["always", "hover", "never"] as const satisfies readonly ShowTimestamps[],
-    {
-      message: "Show timestamps must be always, hover, or never",
-    },
-  ),
+  showTimestamps: z.enum(SHOW_TIMESTAMPS_OPTIONS, {
+    message: "Show timestamps must be always, hover, or never",
+  }),
 
   // Activity time display toggle
   showActivityTime: z.boolean({
@@ -44,16 +38,9 @@ export const appearanceSettingsSchema = z.object({
     .int("Font size must be a whole number"),
 
   // Message spacing preferences
-  messageSpacing: z.enum(
-    [
-      "compact",
-      "normal",
-      "relaxed",
-    ] as const satisfies readonly MessageSpacing[],
-    {
-      message: "Message spacing must be compact, normal, or relaxed",
-    },
-  ),
+  messageSpacing: z.enum(MESSAGE_SPACING_OPTIONS, {
+    message: "Message spacing must be compact, normal, or relaxed",
+  }),
 });
 
 export type AppearanceSettingsFormData = z.infer<
