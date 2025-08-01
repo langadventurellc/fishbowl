@@ -10,16 +10,18 @@ import { z } from "zod";
  * - Security consideration: both options default false for stability
  * - Schema evolution support for future advanced options
  */
-export const advancedSettingsSchema = z.object({
-  // Developer Options with security default
-  debugMode: z
-    .boolean({ message: "Debug mode must be true or false" })
-    .default(false),
+export const advancedSettingsSchema = z
+  .object({
+    // Developer Options with security default
+    debugMode: z
+      .boolean({ message: "Debug mode must be true or false" })
+      .default(false),
 
-  // Experimental Features with security default
-  experimentalFeatures: z
-    .boolean({
-      message: "Experimental features must be true or false",
-    })
-    .default(false),
-});
+    // Experimental Features with security default
+    experimentalFeatures: z
+      .boolean({
+        message: "Experimental features must be true or false",
+      })
+      .default(false),
+  })
+  .passthrough(); // Allow unknown fields for schema evolution

@@ -10,6 +10,7 @@ import {
   WritePermissionError,
 } from "../../services/storage/errors";
 import { ZodError } from "zod";
+import { CURRENT_SCHEMA_VERSION } from "../../types/settings/persistedSettingsSchema";
 
 /**
  * Repository for settings persistence operations.
@@ -131,27 +132,130 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    */
   validateSettings(settings: unknown): PersistedSettings {
     try {
-      const result = persistedSettingsSchema.parse(settings);
-      return result;
-    } catch (error) {
-      if (error instanceof ZodError) {
+      // First ensure we have an object structure (not array, null, or primitive)
+      if (
+        !settings ||
+        typeof settings !== "object" ||
+        Array.isArray(settings)
+      ) {
         throw new SettingsValidationError(
           SettingsRepository.SETTINGS_FILE_NAME,
           "validation",
-          error.issues.map((issue) => ({
-            path: issue.path.join("."),
-            message: issue.message,
-          })),
-          error,
+          [{ path: "root", message: "Settings must be an object" }],
+          new Error("Invalid settings format"),
         );
       }
 
+      // Check for schema version mismatch and warn if needed
+      this.handleSchemaVersionMismatch(settings);
+
+      // Ensure all required fields are present with defaults
+      const completeSettings = this.ensureCompleteSettings(settings);
+
+      // Validate with Zod schema using safeParse for better error handling
+      const result = persistedSettingsSchema.safeParse(completeSettings);
+
+      if (!result.success) {
+        const fieldErrors = this.formatZodErrors(result.error);
+        throw new SettingsValidationError(
+          SettingsRepository.SETTINGS_FILE_NAME,
+          "validation",
+          fieldErrors,
+          result.error,
+        );
+      }
+
+      return result.data;
+    } catch (error) {
+      // Re-throw SettingsValidationError as-is
+      if (error instanceof SettingsValidationError) {
+        throw error;
+      }
+
+      // Wrap other errors
       throw new SettingsValidationError(
         SettingsRepository.SETTINGS_FILE_NAME,
         "validation",
-        [{ path: "", message: "Unknown validation error" }],
+        [
+          {
+            path: "root",
+            message:
+              error instanceof Error
+                ? error.message
+                : "Unexpected validation error",
+          },
+        ],
         error as Error,
       );
+    }
+  }
+
+  /**
+   * Ensures settings have all required fields filled with defaults.
+   * Uses deep merge to combine partial settings with complete defaults.
+   *
+   * @param partialSettings Partial settings data to merge with defaults
+   * @returns Complete settings with all fields populated
+   */
+  private ensureCompleteSettings(partialSettings: unknown): PersistedSettings {
+    const defaults = this.getDefaultSettings();
+
+    // Handle non-object input by returning defaults
+    if (!partialSettings || typeof partialSettings !== "object") {
+      return defaults;
+    }
+
+    // Deep merge partial settings with defaults
+    const merged = deepMerge(
+      defaults as unknown as Record<string, unknown>,
+      partialSettings as Record<string, unknown>,
+    ) as unknown as PersistedSettings;
+
+    // Ensure timestamps are updated
+    merged.lastUpdated = new Date().toISOString();
+
+    return merged;
+  }
+
+  /**
+   * Formats Zod validation errors into user-friendly field error messages.
+   *
+   * @param zodError Zod validation error with detailed issues
+   * @returns Array of formatted field errors with paths and messages
+   */
+  private formatZodErrors(
+    zodError: ZodError,
+  ): Array<{ path: string; message: string }> {
+    return zodError.issues.map((issue) => {
+      const path = issue.path.join(".");
+      const message = issue.message;
+
+      return {
+        path: path || "root",
+        message,
+      };
+    });
+  }
+
+  /**
+   * Handles schema version mismatches by logging warnings.
+   * Prepares for future migration logic without failing validation.
+   *
+   * @param settings Settings object to check for version
+   */
+  private handleSchemaVersionMismatch(settings: unknown): void {
+    if (
+      settings &&
+      typeof settings === "object" &&
+      "schemaVersion" in settings
+    ) {
+      const dataVersion = (settings as Record<string, unknown>).schemaVersion;
+      if (dataVersion && dataVersion !== CURRENT_SCHEMA_VERSION) {
+        console.warn(
+          `Settings schema version mismatch. Current: ${CURRENT_SCHEMA_VERSION}, Data: ${dataVersion}. ` +
+            "Migration may be needed in the future.",
+        );
+      }
     }
   }
 

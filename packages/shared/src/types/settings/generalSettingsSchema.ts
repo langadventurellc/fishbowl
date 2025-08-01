@@ -54,6 +54,7 @@ export const generalSettingsSchema = z
       .boolean({ message: "Update check must be true or false" })
       .default(true),
   })
+  .passthrough() // Allow unknown fields for schema evolution
   .superRefine((data, ctx) => {
     // Cross-field validation: ensure response delay is reasonable relative to wait time
     if (data.responseDelay >= data.maximumWaitTime) {

@@ -107,6 +107,145 @@ describe("SettingsRepository", () => {
         }
       }
     });
+
+    it("should throw error for non-object input", () => {
+      expect(() => repository.validateSettings(null)).toThrow(
+        SettingsValidationError,
+      );
+      expect(() => repository.validateSettings("string")).toThrow(
+        SettingsValidationError,
+      );
+      expect(() => repository.validateSettings(123)).toThrow(
+        SettingsValidationError,
+      );
+      expect(() => repository.validateSettings([])).toThrow(
+        SettingsValidationError,
+      );
+    });
+
+    it("should preserve unknown fields during validation", () => {
+      const settingsWithUnknown = {
+        ...createDefaultPersistedSettings(),
+        customField: "preserved",
+        general: {
+          ...createDefaultPersistedSettings().general,
+          unknownProp: "keepme",
+        },
+      };
+
+      const result = repository.validateSettings(settingsWithUnknown);
+
+      expect((result as unknown as Record<string, unknown>).customField).toBe(
+        "preserved",
+      );
+      expect(
+        (result.general as unknown as Record<string, unknown>).unknownProp,
+      ).toBe("keepme");
+    });
+
+    it("should update lastUpdated timestamp during validation", () => {
+      const settings = createDefaultPersistedSettings();
+      const oldTimestamp = "2023-01-01T00:00:00.000Z";
+      settings.lastUpdated = oldTimestamp;
+
+      const before = new Date().toISOString();
+      const result = repository.validateSettings(settings);
+      const after = new Date().toISOString();
+
+      expect(result.lastUpdated).not.toBe(oldTimestamp);
+      expect(result.lastUpdated >= before && result.lastUpdated <= after).toBe(
+        true,
+      );
+    });
+
+    it("should handle schema version mismatch with warning", () => {
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      const settingsWithOldVersion = {
+        ...createDefaultPersistedSettings(),
+        schemaVersion: "0.9.0",
+      };
+
+      const result = repository.validateSettings(settingsWithOldVersion);
+
+      expect(warnSpy).toHaveBeenCalledWith(
+        expect.stringContaining("Settings schema version mismatch"),
+      );
+      expect(result).toBeDefined(); // Should not fail validation
+
+      warnSpy.mockRestore();
+    });
+
+    it("should not warn for matching schema version", () => {
+      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+      const settingsWithCurrentVersion = createDefaultPersistedSettings();
+
+      repository.validateSettings(settingsWithCurrentVersion);
+
+      expect(warnSpy).not.toHaveBeenCalled();
+
+      warnSpy.mockRestore();
+    });
+
+    it("should handle empty input by returning complete defaults", () => {
+      const result = repository.validateSettings({});
+
+      expect(result).toHaveProperty("schemaVersion");
+      expect(result).toHaveProperty("general");
+      expect(result).toHaveProperty("appearance");
+      expect(result).toHaveProperty("advanced");
+      expect(result).toHaveProperty("lastUpdated");
+
+      // Should have all default values
+      const defaults = createDefaultPersistedSettings();
+      expect(result.general.checkUpdates).toBe(defaults.general.checkUpdates);
+      expect(result.appearance.theme).toBe(defaults.appearance.theme);
+      expect(result.advanced.debugMode).toBe(defaults.advanced.debugMode);
+    });
+
+    it("should handle partial nested objects correctly", () => {
+      const partialSettings = {
+        general: {
+          responseDelay: 5000, // Only one field
+        },
+        appearance: {
+          theme: "dark" as const, // Only one field
+        },
+        // advanced is completely missing
+      };
+
+      const result = repository.validateSettings(partialSettings);
+
+      // Should have provided values
+      expect(result.general.responseDelay).toBe(5000);
+      expect(result.appearance.theme).toBe("dark");
+
+      // Should have defaults for missing values
+      const defaults = createDefaultPersistedSettings();
+      expect(result.general.checkUpdates).toBe(defaults.general.checkUpdates);
+      expect(result.appearance.fontSize).toBe(defaults.appearance.fontSize);
+      expect(result.advanced).toEqual(defaults.advanced);
+    });
+
+    it("should wrap unexpected errors in SettingsValidationError", () => {
+      // Mock console.warn to throw an error to simulate unexpected error
+      const originalWarn = console.warn;
+      console.warn = () => {
+        throw new Error("Unexpected error");
+      };
+
+      try {
+        repository.validateSettings({ schemaVersion: "old" });
+      } catch (error) {
+        expect(error).toBeInstanceOf(SettingsValidationError);
+        expect((error as SettingsValidationError).fieldErrors[0]?.message).toBe(
+          "Unexpected error",
+        );
+      } finally {
+        console.warn = originalWarn;
+      }
+    });
   });
 
   describe("loadSettings", () => {
