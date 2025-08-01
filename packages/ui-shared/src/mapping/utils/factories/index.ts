@@ -1,2 +1,2 @@
 // Re-export factory functions
-export { createMapper } from "../createMapper";
+// Note: createMapper has been moved to defaults/createMapper

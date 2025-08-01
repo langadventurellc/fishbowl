@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-implement-generic-mapping
+parent: F-common-mapping-utilities
+status: done
 title: Implement generic mapping helpers with unit tests
-status: open
 priority: normal
 prerequisites:
   - T-create-mapping-utilities
 created: "2025-07-31T22:16:47.560932"
-updated: "2025-07-31T22:16:47.560932"
+updated: "2025-07-31T22:37:50.120848"
 schema_version: "1.1"
-parent: F-common-mapping-utilities
+worktree: null
 ---
 
 # Implement generic mapping helpers with unit tests
@@ -172,3 +173,23 @@ Create comprehensive test file: `packages/ui-shared/src/mapping/utils/__tests__/
 - Modify: `packages/ui-shared/src/mapping/utils/index.ts` (add exports)
 
 ### Log
+
+**2025-08-01T03:53:24.036205Z** - Implemented generic mapping helper functions with comprehensive unit tests and security measures.
+
+Created three core mapping utilities:
+
+- applyDefaults: Merges partial objects with defaults, including prototype pollution protection
+- mapWithDefaults: Creates mappers that apply defaults before transformation
+- createMapper: Factory for type-safe mappers with validation and error handling
+
+All functions follow the codebase's strict one-export-per-file pattern and are properly organized in the defaults/ subdirectory with barrel exports. Implementation includes comprehensive error handling using existing MappingResult and MappingError types.
+
+Security features:
+
+- Prototype pollution prevention by filtering dangerous keys (**proto**, constructor, prototype)
+- Input validation support in createMapper
+- Safe error handling with proper error wrapping
+
+All tests pass with 100% coverage including edge cases for null/undefined values, validation failures, and security scenarios.
+
+- filesChanged: ["packages/ui-shared/src/mapping/utils/defaults/applyDefaults.ts", "packages/ui-shared/src/mapping/utils/defaults/mapWithDefaults.ts", "packages/ui-shared/src/mapping/utils/defaults/createMapper.ts", "packages/ui-shared/src/mapping/utils/defaults/index.ts", "packages/ui-shared/src/mapping/utils/defaults/__tests__/applyDefaults.test.ts", "packages/ui-shared/src/mapping/utils/defaults/__tests__/mapWithDefaults.test.ts", "packages/ui-shared/src/mapping/utils/defaults/__tests__/createMapper.test.ts", "packages/ui-shared/src/mapping/index.ts", "packages/ui-shared/src/mapping/utils/factories/index.ts"]
