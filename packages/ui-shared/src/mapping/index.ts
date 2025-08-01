@@ -1,5 +1,11 @@
 // Export all mapping utilities
-export * from "./utils/defaults";
-export * from "./utils/transformers";
-export * from "./utils/objects";
-export * from "./utils/errors";
+export * from "./utils";
+
+// Convenience exports for most commonly used utilities
+export {
+  applyDefaults,
+  convertTimeUnit,
+  normalizeEnum,
+  createMappingError,
+  wrapMapper,
+} from "./utils";

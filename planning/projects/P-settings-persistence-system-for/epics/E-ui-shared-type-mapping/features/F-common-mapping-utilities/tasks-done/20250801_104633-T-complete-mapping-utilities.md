@@ -1,8 +1,9 @@
 ---
 kind: task
 id: T-complete-mapping-utilities
+parent: F-common-mapping-utilities
+status: done
 title: Complete mapping utilities integration and export system
-status: open
 priority: normal
 prerequisites:
   - T-implement-generic-mapping
@@ -10,9 +11,9 @@ prerequisites:
   - T-implement-nested-object
   - T-implement-error-handling
 created: "2025-07-31T22:18:58.025268"
-updated: "2025-07-31T22:18:58.025268"
+updated: "2025-08-01T01:31:24.564754"
 schema_version: "1.1"
-parent: F-common-mapping-utilities
+worktree: null
 ---
 
 # Complete mapping utilities integration and export system
@@ -240,3 +241,7 @@ if (isError(result)) {
 - Update: JSDoc documentation throughout all utility files
 
 ### Log
+
+**2025-08-01T15:46:33.066080Z** - Completed mapping utilities integration and export system with comprehensive API surface, type exports, and practical usage examples. All utilities are now properly exported from central locations with clean API design, comprehensive JSDoc documentation, and real-world examples demonstrating settings mapping workflows, error handling patterns, utility composition, and type-safe transformations. The implementation provides convenience exports for commonly used utilities (applyDefaults, convertTimeUnit, normalizeEnum, createMappingError, wrapMapper) and defines common mapper types (Mapper<T,U> and SafeMapper<T,U>). All quality checks pass and TypeScript compilation succeeds.
+
+- filesChanged: ["packages/ui-shared/src/mapping/index.ts", "packages/ui-shared/src/mapping/utils/index.ts", "packages/ui-shared/src/mapping/utils/examples.ts"]
