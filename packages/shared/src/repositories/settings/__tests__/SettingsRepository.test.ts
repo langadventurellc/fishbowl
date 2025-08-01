@@ -5,7 +5,7 @@ import {
   SettingsValidationError,
 } from "../../../services/storage/errors";
 import { createDefaultPersistedSettings } from "../../../types/settings/createDefaultPersistedSettings";
-import type { PersistedSettings } from "../../../types/settings/PersistedSettings";
+import type { PersistedSettingsData } from "../../../types/settings/PersistedSettingsData";
 
 // Mock FileStorageService
 jest.mock("../../../services/storage/FileStorageService");
@@ -352,7 +352,7 @@ describe("SettingsRepository", () => {
         general: {
           responseDelay: 3000,
         },
-      } as Partial<PersistedSettings>;
+      } as Partial<PersistedSettingsData>;
 
       await repository.saveSettings(partialUpdate);
 
@@ -375,12 +375,12 @@ describe("SettingsRepository", () => {
         general: {
           responseDelay: 5000,
         },
-      } as Partial<PersistedSettings>;
+      } as Partial<PersistedSettingsData>;
 
       await repository.saveSettings(partialUpdate);
 
       const savedSettings = mockFileStorageService.writeJsonFile.mock
-        .calls[0]?.[1] as PersistedSettings;
+        .calls[0]?.[1] as PersistedSettingsData;
       const savedTime = new Date(savedSettings.lastUpdated).getTime();
 
       expect(savedTime).toBeGreaterThanOrEqual(beforeTime);
@@ -395,12 +395,12 @@ describe("SettingsRepository", () => {
         appearance: {
           theme: "dark" as const,
         },
-      } as Partial<PersistedSettings>;
+      } as Partial<PersistedSettingsData>;
 
       await repository.saveSettings(partialUpdate);
 
       const savedSettings = mockFileStorageService.writeJsonFile.mock
-        .calls[0]?.[1] as PersistedSettings;
+        .calls[0]?.[1] as PersistedSettingsData;
 
       expect(savedSettings.general.responseDelay).toBe(4000);
       expect(savedSettings.general.checkUpdates).toBe(
@@ -417,7 +417,7 @@ describe("SettingsRepository", () => {
         general: {
           maximumMessages: -5, // Invalid: should be positive
         },
-      } as Partial<PersistedSettings>;
+      } as Partial<PersistedSettingsData>;
 
       await expect(repository.saveSettings(invalidUpdate)).rejects.toThrow(
         SettingsValidationError,
@@ -440,7 +440,7 @@ describe("SettingsRepository", () => {
           general: {
             responseDelay: 1500,
           },
-        } as Partial<PersistedSettings>),
+        } as Partial<PersistedSettingsData>),
       ).rejects.toThrow("Write failed");
     });
 
@@ -458,7 +458,7 @@ describe("SettingsRepository", () => {
           general: {
             responseDelay: 2500,
           },
-        } as Partial<PersistedSettings>),
+        } as Partial<PersistedSettingsData>),
       ).rejects.toThrow(SettingsValidationError);
     });
   });
@@ -491,11 +491,11 @@ describe("SettingsRepository", () => {
       await repository.saveSettings({
         general: { responseDelay: 3000 },
         appearance: { theme: "dark" },
-      } as Partial<PersistedSettings>);
+      } as Partial<PersistedSettingsData>);
 
       // Verify the write was called with merged data
       const savedData = mockFileStorageService.writeJsonFile.mock
-        .calls[1]?.[1] as PersistedSettings; // Index 1 because first call was saving defaults
+        .calls[1]?.[1] as PersistedSettingsData; // Index 1 because first call was saving defaults
       expect(savedData.general.responseDelay).toBe(3000);
       expect(savedData.appearance.theme).toBe("dark");
       expect(savedData.general.checkUpdates).toBe(true); // Preserved from defaults

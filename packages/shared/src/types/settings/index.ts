@@ -22,7 +22,6 @@ export { THEME_MODES } from "./ThemeMode";
 
 // Master settings exports
 export { createDefaultPersistedSettings } from "./createDefaultPersistedSettings";
-export type { PersistedSettings } from "./PersistedSettings";
 export type { PersistedSettingsData } from "./PersistedSettingsData";
 export type { PersistedSettingsUpdate } from "./PersistedSettingsUpdate";
 export {
