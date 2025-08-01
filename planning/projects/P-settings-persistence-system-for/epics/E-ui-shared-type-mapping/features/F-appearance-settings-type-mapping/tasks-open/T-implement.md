@@ -1,0 +1,156 @@
+---
+kind: task
+id: T-implement
+title: Implement mapAppearanceSettingsUIToPersistence function with unit tests
+status: open
+priority: high
+prerequisites:
+  - T-create-1
+created: "2025-08-01T12:46:50.247065"
+updated: "2025-08-01T12:46:50.247065"
+schema_version: "1.1"
+parent: F-appearance-settings-type-mapping
+---
+
+# Implement mapAppearanceSettingsUIToPersistence function with unit tests
+
+## Purpose
+
+Create the mapping function that converts AppearanceSettingsFormData to PersistedAppearanceSettingsData, following the one-export-per-file pattern established in the codebase.
+
+## Implementation Details
+
+### File Location
+
+Create: `packages/ui-shared/src/mapping/settings/mapAppearanceSettingsUIToPersistence.ts`
+
+### Required Imports
+
+```typescript
+import type { AppearanceSettingsFormData } from "../../types/settings/appearanceSettings";
+import type { PersistedAppearanceSettingsData } from "@fishbowl-ai/shared";
+import { defaultAppearanceSettings } from "../../types/settings/appearanceSettings";
+import { mapWithDefaults } from "../utils/defaults";
+import { normalizeEnum, clampNumber } from "../utils/transformers";
+```
+
+### Function Implementation
+
+```typescript
+/**
+ * Converts AppearanceSettingsFormData to PersistedAppearanceSettingsData
+ *
+ * @param uiData - Appearance settings data from UI forms
+ * @returns Converted data ready for persistence
+ *
+ * @example
+ * const persistedData = mapAppearanceSettingsUIToPersistence({
+ *   theme: "dark",
+ *   showTimestamps: "always",
+ *   showActivityTime: true,
+ *   compactList: false,
+ *   fontSize: 16,
+ *   messageSpacing: "normal"
+ * });
+ */
+export function mapAppearanceSettingsUIToPersistence(
+  uiData: AppearanceSettingsFormData,
+): PersistedAppearanceSettingsData;
+```
+
+## Technical Approach
+
+### Field Mapping Strategy
+
+Since the feature specification indicates field names and types should match between UI and persistence layers:
+
+1. **Direct Field Mapping**: Most fields map directly between UI and persistence
+2. **Enum Validation**: Use `normalizeEnum` utility for safe enum conversions:
+   - theme: "light" | "dark" | "system"
+   - showTimestamps: "always" | "hover" | "never"
+   - messageSpacing: "compact" | "normal" | "relaxed"
+3. **Numeric Validation**: Use `clampNumber` to ensure fontSize stays within 12-20 range
+4. **Default Handling**: Use `mapWithDefaults` utility to ensure complete data
+
+### Implementation Steps
+
+1. Use `mapWithDefaults` to combine mapping with default value injection
+2. Apply `normalizeEnum` for all enum fields with appropriate fallbacks
+3. Use `clampNumber` for fontSize to enforce 12-20 range
+4. Maintain type safety throughout the conversion
+5. Handle edge cases (null, undefined, partial objects)
+
+## Unit Testing Requirements
+
+Create: `packages/ui-shared/src/mapping/settings/__tests__/mapAppearanceSettingsUIToPersistence.test.ts`
+
+### Test Coverage
+
+1. **Successful mapping** - Verify all fields map correctly with valid data
+2. **Missing fields handling** - Apply defaults when fields are missing
+3. **Invalid enum values** - Handle gracefully with fallback values
+4. **FontSize boundary testing** - Test values below 12, above 20, and edge cases
+5. **Edge cases** - Test with null, undefined, empty objects
+6. **Type coercion** - Ensure proper handling of type mismatches
+7. **Performance** - Verify mapping completes in < 1ms
+
+### Test Structure Example
+
+```typescript
+describe("mapAppearanceSettingsUIToPersistence", () => {
+  it("should map all valid fields correctly", () => {
+    // Test valid data conversion
+  });
+
+  it("should apply defaults for missing fields", () => {
+    // Test default value application
+  });
+
+  it("should handle invalid enum values with fallbacks", () => {
+    // Test enum validation and fallbacks
+  });
+
+  it("should clamp fontSize to valid range", () => {
+    // Test fontSize boundary enforcement
+  });
+});
+```
+
+## Acceptance Criteria
+
+- ✓ Function in separate file with single export following project conventions
+- ✓ Correctly converts all AppearanceSettingsFormData fields to persistence format
+- ✓ Uses `normalizeEnum` utility for safe enum conversions with fallbacks
+- ✓ Uses `clampNumber` to enforce fontSize bounds (12-20)
+- ✓ Uses `mapWithDefaults` for consistent default handling
+- ✓ Handles missing, null, and undefined values gracefully
+- ✓ Maintains full TypeScript type safety
+- ✓ Pure function with no side effects
+- ✓ Mapping operation completes in < 1ms
+- ✓ JSDoc documentation with examples and usage
+- ✓ Unit tests achieve 100% code coverage
+- ✓ All tests pass and quality checks are clean
+
+## Integration Requirements
+
+- Import and use common mapping utilities from F-common-mapping-utilities
+- Ensure compatibility with PersistedAppearanceSettingsData structure
+- Follow established patterns from general settings mapper
+- Export function for use by UI components
+
+## Dependencies
+
+- AppearanceSettingsFormData type (from T-create-1)
+- PersistedAppearanceSettingsData from @fishbowl-ai/shared
+- Common mapping utilities (normalizeEnum, clampNumber, mapWithDefaults)
+- Jest for unit testing
+
+## Security Considerations
+
+- Validate enum values against allowed options using utilities
+- Ensure fontSize clamping prevents invalid values
+- No dynamic property access to prevent injection
+- Safe type coercion using utility functions
+- No sensitive data in error messages
+
+### Log
