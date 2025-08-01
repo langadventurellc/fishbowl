@@ -1,4 +1,4 @@
-import { safeJsonStringify } from "../safeJsonStringify.js";
+import { safeJsonStringify } from "../safeJsonStringify";
 
 describe("safeJsonStringify", () => {
   it("should stringify valid objects", () => {

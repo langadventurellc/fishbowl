@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-export-general-settings-mapper
+parent: F-general-settings-type-mapping
+status: done
 title: Export general settings mapper functions from ui-shared package index
-status: open
 priority: normal
 prerequisites:
   - T-implement-generalsettingsmapper
 created: "2025-08-01T12:16:41.393679"
-updated: "2025-08-01T12:16:41.393679"
+updated: "2025-08-01T12:33:52.172142"
 schema_version: "1.1"
-parent: F-general-settings-type-mapping
+worktree: null
 ---
 
 # Export general settings mapper functions from ui-shared package index
@@ -93,3 +94,7 @@ Add a simple test to verify the exports are available:
 This task depends on the generalSettingsMapper module being implemented first, which provides the functions to export.
 
 ### Log
+
+**2025-08-01T17:43:20.218261Z** - Successfully exported general settings mapper functions from ui-shared package. Added export of settings mappers to the mapping index.ts file which makes both mapGeneralSettingsUIToPersistence and mapGeneralSettingsPersistenceToUI functions available through the main ui-shared package export. The ui-shared package was rebuilt and all tests pass. Desktop and mobile applications can now import these functions using: import { mapGeneralSettingsUIToPersistence, mapGeneralSettingsPersistenceToUI } from '@fishbowl-ai/ui-shared'
+
+- filesChanged: ["packages/ui-shared/src/mapping/index.ts"]

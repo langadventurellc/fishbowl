@@ -1,4 +1,4 @@
-import { isValidSchemaVersion } from "./isValidSchemaVersion.js";
+import { isValidSchemaVersion } from "./isValidSchemaVersion";
 
 /**
  * Parse semantic version string into components

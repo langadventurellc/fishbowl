@@ -2,11 +2,11 @@
 kind: feature
 id: F-general-settings-type-mapping
 title: General Settings Type Mapping
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-07-31T22:01:40.624558"
-updated: "2025-07-31T22:01:40.624558"
+updated: "2025-08-01T17:43:20.222784+00:00"
 schema_version: "1.1"
 parent: E-ui-shared-type-mapping
 ---

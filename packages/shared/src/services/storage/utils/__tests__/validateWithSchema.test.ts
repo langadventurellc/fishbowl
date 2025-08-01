@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { validateWithSchema } from "../validateWithSchema.js";
-import { SettingsValidationError } from "../../errors/SettingsValidationError.js";
+import { SettingsValidationError } from "../../errors/SettingsValidationError";
+import { validateWithSchema } from "../validateWithSchema";
 
 describe("validateWithSchema", () => {
   describe("successful validation", () => {
