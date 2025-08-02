@@ -5,7 +5,7 @@
   "author": "LangAdventure LLC",
   "private": true,
   "type": "module",
-  "main": "dist-electron/main.js",
+  "main": "dist-electron/electron/main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/langadventurellc/fishbowl.git",
@@ -14,10 +14,10 @@
   "scripts": {
     "dev": "concurrently \"pnpm dev:renderer\" \"pnpm dev:main\"",
     "dev:renderer": "vite",
-    "dev:main": "wait-on http://localhost:5173 && nodemon --exec \"tsc --project tsconfig.electron.json && vite build --config vite.preload.config.ts && VITE_DEV_SERVER_URL=http://localhost:5173 electron .\" --ext ts --watch src/electron",
+    "dev:main": "wait-on http://localhost:5173 && nodemon --exec \"vite build --config vite.main.config.ts && vite build --config vite.preload.config.ts && VITE_DEV_SERVER_URL=http://localhost:5173 electron .\" --ext ts --watch src/electron",
     "build": "npm run build:renderer && npm run build:main && electron-builder --publish=never",
     "build:renderer": "tsc && vite build",
-    "build:main": "tsc --project tsconfig.electron.json && vite build --config vite.preload.config.ts",
+    "build:main": "vite build --config vite.main.config.ts && vite build --config vite.preload.config.ts",
     "preview": "vite preview",
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
