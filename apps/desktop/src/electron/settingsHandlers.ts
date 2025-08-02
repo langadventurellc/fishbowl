@@ -7,7 +7,7 @@ import {
   type SettingsResetRequest,
   type SettingsResetResponse,
   type PersistedSettingsData,
-} from "../shared/ipc/index.js";
+} from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
 
 // Placeholder settings data for development/testing
