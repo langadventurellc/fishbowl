@@ -1,3 +1,11 @@
-// Placeholder for future config exports
-// Example: export { createDefaultConfig } from "./createDefaultConfig";
-// Example: export { validateConfig } from "./validateConfig";
+export type { LoggerConfig } from "./LogConfig";
+export type { TransportConfig } from "./TransportConfig";
+export type { LogFilterConfig } from "./LogFilterConfig";
+export type { LogConfigValidator } from "./LogConfigValidator";
+export { getDefaultConfig } from "./getDefaultConfig";
+export { mergeConfig } from "./defaultConfig";
+export { productionConfig } from "./productionConfig";
+export { developmentConfig } from "./developmentConfig";
+export { testConfig } from "./testConfig";
+export { ConfigValidator } from "./configValidator";
+export { defaultValidator } from "./defaultValidator";
