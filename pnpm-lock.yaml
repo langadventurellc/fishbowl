@@ -291,6 +291,9 @@ importers:
 
   packages/shared:
     dependencies:
+      loglevel:
+        specifier: ^1.9.1
+        version: 1.9.2
       react:
         specifier: ^19.0.0
         version: 19.1.0
@@ -8300,6 +8303,13 @@ packages:
         integrity: sha512-/3ER20CTTbahrCrpYfPn7Xavv9diBROZpoXGVZDWMw4b/X4uuUwAC0ki85tgsdMRONURyIJbcOvS94QsUBYPbQ==,
       }
     hasBin: true
+
+  loglevel@1.9.2:
+    resolution:
+      {
+        integrity: sha512-HgMmCqIJSAKqo68l0rS2AanEWfkxaZ5wNiEFb5ggm08lDs9Xl2KxBlX3PTcaD2chBM1gXAYf491/M2Rv8Jwayg==,
+      }
+    engines: { node: ">= 0.6.0" }
 
   loose-envify@1.4.0:
     resolution:
@@ -18048,6 +18058,8 @@ snapshots:
       ansi-fragments: 0.2.1
       dayjs: 1.11.13
       yargs: 15.4.1
+
+  loglevel@1.9.2: {}
 
   loose-envify@1.4.0:
     dependencies:
