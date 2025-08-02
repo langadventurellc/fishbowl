@@ -13,7 +13,59 @@ import { convertLogLevel } from "./convertLogLevel";
 import { createTransport } from "./createTransport";
 
 /**
- * Creates a structured logger synchronously (without device info gathering)
+ * Creates a structured logger synchronously without device info gathering.
+ *
+ * This function provides faster logger initialization by skipping async device info
+ * collection. Use this when you need immediate logger availability or when device
+ * info is not required for your use case.
+ *
+ * @example
+ * ```typescript
+ * // Basic synchronous logger
+ * const logger = createLoggerSync();
+ * logger.info('Application starting...');
+ *
+ * // With configuration
+ * const logger = createLoggerSync({
+ *   config: {
+ *     name: 'startup-service',
+ *     level: 'debug'
+ *   }
+ * });
+ *
+ * // For testing or development
+ * const testLogger = createLoggerSync({
+ *   config: {
+ *     name: 'test',
+ *     level: 'trace',
+ *     includeDeviceInfo: false
+ *   }
+ * });
+ *
+ * // In error handlers where you need immediate logging
+ * const errorLogger = createLoggerSync({
+ *   context: { component: 'error-handler' }
+ * });
+ * errorLogger.error('Unhandled exception', error);
+ * ```
+ *
+ * @param options - Configuration options for the logger
+ * @param options.config - Logger configuration including name, level, transports
+ * @param options.context - Initial context data to include with all log entries
+ *
+ * @returns A configured StructuredLogger instance (immediately available)
+ *
+ * @remarks
+ * The sync version:
+ * - Does not include device info (CPU, memory, etc.) in context
+ * - Still includes process info (PID, platform, Node version)
+ * - Still includes session ID and platform detection
+ * - Is suitable for performance-critical startup paths
+ *
+ * @see {@link createLogger} for async logger creation with full device info
+ * @see {@link StructuredLogger} for the logger interface documentation
+ *
+ * @since 1.0.0
  */
 export function createLoggerSync(
   options: CreateLoggerOptions = {},

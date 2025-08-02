@@ -14,7 +14,52 @@ import { convertLogLevel } from "./convertLogLevel";
 import { createTransport } from "./createTransport";
 
 /**
- * Creates a structured logger with async device info gathering
+ * Creates a structured logger with comprehensive context and async device info gathering.
+ *
+ * This is the recommended way to create loggers in the Fishbowl application as it provides
+ * the most complete context information including device info, platform detection, and
+ * process metadata.
+ *
+ * @example
+ * ```typescript
+ * // Basic usage
+ * const logger = await createLogger();
+ * logger.info('Hello world');
+ *
+ * // With configuration
+ * const logger = await createLogger({
+ *   config: {
+ *     name: 'user-service',
+ *     level: 'debug',
+ *     includeDeviceInfo: true
+ *   }
+ * });
+ *
+ * // With custom context
+ * const logger = await createLogger({
+ *   context: {
+ *     userId: '123',
+ *     requestId: 'req-456'
+ *   }
+ * });
+ *
+ * // Create child logger with additional context
+ * const childLogger = logger.child({ component: 'auth' });
+ * childLogger.info('User login attempt', { email: 'user@example.com' });
+ * ```
+ *
+ * @param options - Configuration options for the logger
+ * @param options.config - Logger configuration including name, level, transports
+ * @param options.context - Initial context data to include with all log entries
+ *
+ * @returns Promise that resolves to a configured StructuredLogger instance
+ *
+ * @throws Will log warnings (not throw) if device info gathering fails
+ *
+ * @see {@link createLoggerSync} for synchronous logger creation
+ * @see {@link StructuredLogger} for the logger interface documentation
+ *
+ * @since 1.0.0
  */
 export async function createLogger(
   options: CreateLoggerOptions = {},
