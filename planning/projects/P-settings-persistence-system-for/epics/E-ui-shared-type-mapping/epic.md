@@ -2,7 +2,7 @@
 kind: epic
 id: E-ui-shared-type-mapping
 title: UI-Shared Type Mapping
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - E-shared-layer-infrastructure
