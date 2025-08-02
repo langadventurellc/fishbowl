@@ -2,6 +2,7 @@
 import { app, BrowserWindow, shell, ipcMain, globalShortcut } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { setupSettingsHandlers } from "./settingsHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -97,6 +98,9 @@ function openSettingsModal(): void {
 
 app.whenReady().then(async () => {
   createMainWindow();
+
+  // Setup IPC handlers
+  setupSettingsHandlers();
 
   // Setup application menu after window creation
   const { setupApplicationMenu } = await import("./setupApplicationMenu.js");
