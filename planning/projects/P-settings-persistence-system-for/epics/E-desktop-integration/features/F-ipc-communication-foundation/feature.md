@@ -2,11 +2,11 @@
 kind: feature
 id: F-ipc-communication-foundation
 title: IPC Communication Foundation
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-08-01T19:50:54.465175"
-updated: "2025-08-01T19:50:54.465175"
+updated: "2025-08-02T02:37:58.188095+00:00"
 schema_version: "1.1"
 parent: E-desktop-integration
 ---
