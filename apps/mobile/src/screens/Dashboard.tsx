@@ -1,7 +1,24 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Platform } from "react-native";
+
+// Simple logging for mobile to avoid Node.js compatibility issues
+const logger = {
+  info: (message: string, data?: Record<string, unknown>) => {
+    console.log(`[INFO] ${message}`, data ? JSON.stringify(data) : "");
+  },
+  debug: (message: string, data?: Record<string, unknown>) => {
+    console.log(`[DEBUG] ${message}`, data ? JSON.stringify(data) : "");
+  },
+};
 
 export function Dashboard() {
+  React.useEffect(() => {
+    logger.info("Dashboard screen mounted", {
+      platform: Platform.OS,
+      platformVersion: Platform.Version,
+      timestamp: new Date().toISOString(),
+    });
+  }, []);
   return (
     <View style={styles.container} testID="Dashboard.container">
       <Text style={styles.title} testID="Dashboard.title">

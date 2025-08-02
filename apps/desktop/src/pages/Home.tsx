@@ -1,7 +1,30 @@
 import { Link } from "react-router-dom";
+import React from "react";
+
+// Simple logging for renderer process to avoid Node.js compatibility issues
+const logger = {
+  info: (message: string, data?: Record<string, unknown>) => {
+    console.log(`[INFO] ${message}`, data ? JSON.stringify(data) : "");
+  },
+  debug: (message: string, data?: Record<string, unknown>) => {
+    console.log(`[DEBUG] ${message}`, data ? JSON.stringify(data) : "");
+  },
+};
 
 export default function Home() {
   const electronAPI = window?.electronAPI;
+
+  React.useEffect(() => {
+    logger.info("Home page rendered", {
+      electronIntegration: !!electronAPI,
+      platform: electronAPI?.platform,
+      electronVersion: electronAPI?.versions?.electron,
+    });
+  }, [electronAPI]);
+
+  const handleLinkClick = (destination: string) => {
+    logger.debug("Navigation link clicked", { destination });
+  };
 
   return (
     <div
@@ -44,6 +67,7 @@ export default function Home() {
       >
         <Link
           to="/showcase/components"
+          onClick={() => handleLinkClick("/showcase/components")}
           style={{
             fontSize: "1.1rem",
             padding: "12px 24px",
@@ -60,6 +84,7 @@ export default function Home() {
 
         <Link
           to="/showcase/layout"
+          onClick={() => handleLinkClick("/showcase/layout")}
           style={{
             fontSize: "1.1rem",
             padding: "12px 24px",

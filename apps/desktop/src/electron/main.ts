@@ -7,6 +7,7 @@ import {
   SettingsRepository,
   FileStorageService,
   NodeFileSystemBridge,
+  createLogger,
 } from "@fishbowl-ai/shared";
 import "./getSettingsRepository.js"; // Initialize the global setter
 
@@ -36,6 +37,9 @@ if (process.env.CI) {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+// Create main process logger (will be initialized in app.whenReady)
+let mainLogger: Awaited<ReturnType<typeof createLogger>> | null = null;
 
 function createMainWindow(): void {
   mainWindow = new BrowserWindow({
@@ -103,7 +107,32 @@ function openSettingsModal(): void {
 }
 
 app.whenReady().then(async () => {
+  // Initialize logger first
+  try {
+    mainLogger = await createLogger({
+      config: { name: "desktop-main", level: "info" },
+      context: {
+        platform: "desktop",
+        metadata: { process: "main", pid: process.pid },
+      },
+    });
+    mainLogger.info("Electron main process starting", {
+      platform: process.platform,
+      nodeVersion: process.versions.node,
+      electronVersion: process.versions.electron,
+    });
+  } catch (error) {
+    console.error("Failed to initialize logger:", error);
+  }
+
   createMainWindow();
+
+  // Log window creation
+  mainLogger?.info("Main window created", {
+    width: 1200,
+    height: 800,
+    title: "Fishbowl",
+  });
 
   // Initialize settings repository
   try {
@@ -124,8 +153,15 @@ app.whenReady().then(async () => {
     }
 
     console.log("Settings repository initialized successfully");
+    mainLogger?.debug("Settings repository initialized", {
+      storageType: "FileStorage",
+    });
   } catch (error) {
     console.error("Failed to initialize settings repository:", error);
+    mainLogger?.error(
+      "Failed to initialize settings repository",
+      error as Error,
+    );
     // Continue app startup even if settings fail to initialize
   }
 
