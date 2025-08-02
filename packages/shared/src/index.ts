@@ -1,3 +1,4 @@
 // Export all types and schemas for settings persistence
 export * from "./types";
 export * from "./services";
+export * from "./repositories";

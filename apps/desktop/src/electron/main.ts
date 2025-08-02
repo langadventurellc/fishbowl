@@ -3,6 +3,12 @@ import { app, BrowserWindow, shell, ipcMain, globalShortcut } from "electron";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import { setupSettingsHandlers } from "./settingsHandlers.js";
+import {
+  SettingsRepository,
+  FileStorageService,
+  NodeFileSystemBridge,
+} from "@fishbowl-ai/shared";
+import "./getSettingsRepository.js"; // Initialize the global setter
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -98,6 +104,30 @@ function openSettingsModal(): void {
 
 app.whenReady().then(async () => {
   createMainWindow();
+
+  // Initialize settings repository
+  try {
+    // Create file storage service with filesystem bridge
+    const fileSystemBridge = new NodeFileSystemBridge();
+    const fileStorage = new FileStorageService(fileSystemBridge);
+
+    // Create repository
+    const repository = new SettingsRepository(fileStorage);
+
+    // Set repository using global setter from getSettingsRepository.ts
+    interface GlobalWithSettings {
+      __setSettingsRepository?: (repository: SettingsRepository) => void;
+    }
+    const globalWithSettings = globalThis as GlobalWithSettings;
+    if (globalWithSettings.__setSettingsRepository) {
+      globalWithSettings.__setSettingsRepository(repository);
+    }
+
+    console.log("Settings repository initialized successfully");
+  } catch (error) {
+    console.error("Failed to initialize settings repository:", error);
+    // Continue app startup even if settings fail to initialize
+  }
 
   // Setup IPC handlers
   setupSettingsHandlers();
