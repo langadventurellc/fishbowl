@@ -1,3 +1,5 @@
+import type { SerializableError } from "./types";
+
 /**
  * Base response type for all IPC operations
  *
@@ -7,8 +9,5 @@
 export interface IPCResponse<T = unknown> {
   success: boolean;
   data?: T;
-  error?: {
-    message: string;
-    code: string;
-  };
+  error?: SerializableError;
 }

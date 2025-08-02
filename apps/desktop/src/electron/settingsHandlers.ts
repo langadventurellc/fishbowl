@@ -8,6 +8,7 @@ import {
   type SettingsResetResponse,
   type PersistedSettingsData,
 } from "../shared/ipc/index.js";
+import { serializeError } from "./utils/errorSerialization";
 
 // Placeholder settings data for development/testing
 const placeholderSettings: PersistedSettingsData = {
@@ -37,23 +38,6 @@ const placeholderSettings: PersistedSettingsData = {
 
 // In-memory settings store for placeholder implementation
 let currentSettings: PersistedSettingsData = { ...placeholderSettings };
-
-/**
- * Serializes an error object for safe IPC transport
- * Ensures error objects can be properly serialized across process boundaries
- */
-function serializeError(error: unknown): { message: string; code: string } {
-  if (error instanceof Error) {
-    return {
-      message: error.message,
-      code: error.name || "UnknownError",
-    };
-  }
-  return {
-    message: String(error),
-    code: "UnknownError",
-  };
-}
 
 /**
  * Sets up IPC handlers for settings operations

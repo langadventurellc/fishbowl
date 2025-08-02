@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-error-serialization
+parent: F-ipc-communication-foundation
+status: done
 title: Create error serialization utility for IPC boundary
-status: open
 priority: normal
 prerequisites:
   - T-create-ipc-channel-constants-and
 created: "2025-08-01T20:02:44.537528"
-updated: "2025-08-01T20:02:44.537528"
+updated: "2025-08-01T21:08:20.545377"
 schema_version: "1.1"
-parent: F-ipc-communication-foundation
+worktree: null
 ---
 
 # Create Error Serialization Utility for IPC Boundary
@@ -145,3 +146,7 @@ This utility will be used in the IPC handlers like:
 ```
 
 ### Log
+
+**2025-08-02T02:21:09.961673Z** - Implemented comprehensive error serialization utility for IPC boundary with robust error handling, security sanitization, and full test coverage. The utility handles different error types (standard JavaScript errors, Node.js system errors, custom FileStorageError subclasses), sanitizes sensitive information from error messages, and includes stack traces only in development mode. All quality checks pass.
+
+- filesChanged: ["apps/desktop/src/electron/utils/errorSerialization.ts", "apps/desktop/src/shared/ipc/types.ts", "apps/desktop/src/shared/ipc/base.ts", "apps/desktop/src/shared/ipc/index.ts", "apps/desktop/src/electron/settingsHandlers.ts", "apps/desktop/src/electron/utils/__tests__/errorSerialization.test.ts"]

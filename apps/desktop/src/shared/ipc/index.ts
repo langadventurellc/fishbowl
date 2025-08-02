@@ -10,6 +10,7 @@ export { SETTINGS_CHANNELS } from "./constants";
 
 // Base types
 export type { IPCResponse } from "./base";
+export type { SerializableError } from "./types";
 
 // Request types
 export type { SettingsLoadRequest } from "./load";
