@@ -1,3 +1,3 @@
-// Placeholder for future formatter exports
-// Example: export { JsonFormatter } from "./JsonFormatter";
-// Example: export { PrettyFormatter } from "./PrettyFormatter";
+export { ConsoleFormatter } from "./ConsoleFormatter";
+export { SimpleFormatter } from "./SimpleFormatter";
+export type { ConsoleFormatterOptions } from "./ConsoleFormatterOptions";

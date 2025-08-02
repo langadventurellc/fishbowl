@@ -1,3 +1,2 @@
-// Placeholder for future transport exports
-// Example: export { ConsoleTransport } from "./ConsoleTransport";
-// Example: export { FileTransport } from "./FileTransport";
+export { ConsoleTransport } from "./ConsoleTransport";
+export type { ConsoleTransportOptions } from "./ConsoleTransportOptions";
