@@ -160,7 +160,7 @@ describe("customRolesStore", () => {
       store.createRole(validRoleData);
 
       // Wait for async save to complete
-      // eslint-disable-next-line no-undef
+
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       const state = useCustomRolesStore.getState();

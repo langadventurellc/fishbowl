@@ -27,7 +27,6 @@ export const customRolesPersistence = {
         lastModified: new Date().toISOString(),
       };
 
-      // eslint-disable-next-line no-undef
       localStorage.setItem(STORAGE_KEY, JSON.stringify(storageData));
     } catch (error) {
       console.error("Failed to save custom roles:", error);
@@ -37,7 +36,6 @@ export const customRolesPersistence = {
 
   async load(): Promise<CustomRoleViewModel[]> {
     try {
-      // eslint-disable-next-line no-undef
       const stored = localStorage.getItem(STORAGE_KEY);
 
       if (!stored) {
@@ -70,7 +68,6 @@ export const customRolesPersistence = {
 
   async clear(): Promise<void> {
     try {
-      // eslint-disable-next-line no-undef
       localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
       console.error("Failed to clear custom roles:", error);
