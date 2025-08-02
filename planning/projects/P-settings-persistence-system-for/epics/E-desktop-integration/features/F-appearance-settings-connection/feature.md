@@ -81,7 +81,7 @@ Connect the Appearance Settings UI component to the settings persistence system,
 ```typescript
 export const AppearanceSettings: React.FC = () => {
   const { setUnsavedChanges } = useUnsavedChanges();
-  const { settings, saveSettings, isLoading } = useSettingsContext();
+  const { settings, saveSettings, isLoading } = useDesktopSettingsPersistence();
 
   const form = useForm<AppearanceSettingsFormData>({
     resolver: zodResolver(appearanceSettingsSchema),
@@ -147,7 +147,7 @@ export function SettingsModal() {
     isLoading,
     error,
     saveSettings
-  } = useSettingsPersistence({
+  } = useDesktopSettingsPersistence({
     adapter: desktopSettingsAdapter
   });
 

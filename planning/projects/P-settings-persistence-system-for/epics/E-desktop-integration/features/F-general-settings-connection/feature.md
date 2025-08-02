@@ -22,7 +22,7 @@ Connect the General Settings UI component to the settings persistence system, en
 
 ### 1. GeneralSettings Component Integration
 
-- Modify `GeneralSettings.tsx` to use `useSettingsPersistence` hook
+- Modify `GeneralSettings.tsx` to use `useDesktopSettingsPersistence` hook
 - Pass `desktopSettingsAdapter` to the hook
 - Replace TODO comment with actual persistence logic
 - Load settings data into form on component mount
@@ -72,7 +72,7 @@ Connect the General Settings UI component to the settings persistence system, en
 
 ### Integration Requirements
 
-- ✓ Uses useSettingsPersistence hook correctly
+- ✓ Uses useDesktopSettingsPersistence hook correctly
 - ✓ Integrates with desktop settings adapter
 - ✓ Works with existing form validation
 - ✓ Maintains compatibility with unsaved changes tracking
@@ -90,7 +90,7 @@ export const GeneralSettings: React.FC = () => {
     isLoading,
     error,
     saveSettings
-  } = useSettingsPersistence({
+  } = useDesktopSettingsPersistence({
     adapter: desktopSettingsAdapter,
     onError: (error) => {
       setSubmitError(error.message);
@@ -147,12 +147,12 @@ export function App() {
 ## Dependencies
 
 - **F-settings-state-integration**: Uses desktop settings adapter
-- **@fishbowl-ai/ui-shared**: Uses useSettingsPersistence hook and types
+- **@fishbowl-ai/ui-shared**: Uses useDesktopSettingsPersistence hook and types
 
 ## Implementation Guidance
 
 1. Start by creating a simple loading component for general settings
-2. Integrate useSettingsPersistence hook into GeneralSettings
+2. Integrate useDesktopSettingsPersistence hook into GeneralSettings
 3. Update form to use loaded settings as default values
 4. Modify onSubmit to save through persistence
 5. Test full save/load cycle with app restart

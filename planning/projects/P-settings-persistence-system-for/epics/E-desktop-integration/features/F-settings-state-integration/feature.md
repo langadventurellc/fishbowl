@@ -2,7 +2,7 @@
 kind: feature
 id: F-settings-state-integration
 title: Settings State Integration
-status: in-progress
+status: done
 priority: high
 prerequisites:
   - F-ipc-communication-foundation
@@ -38,7 +38,7 @@ Create the bridge between the IPC communication layer and the settings persisten
 
 - Configure settings file path in userData directory
 - Use `app.getPath('userData')` for cross-platform compatibility
-- Set filename as `settings.json`
+- Set filename as `preferences.json`
 - Ensure proper file permissions and directory creation
 
 ### 4. IPC Handler Implementation
@@ -62,7 +62,7 @@ Create the bridge between the IPC communication layer and the settings persisten
 
 ### Integration Requirements
 
-- ✓ Adapter integrates with useSettingsPersistence hook
+- ✓ Adapter integrates with useDesktopSettingsPersistence hook
 - ✓ Works with existing type mappers from ui-shared
 - ✓ Compatible with PersistedSettingsData format
 - ✓ Maintains atomic operation semantics
@@ -111,7 +111,7 @@ export const desktopSettingsAdapter: SettingsPersistenceAdapter = {
 let settingsRepository: SettingsRepository;
 
 app.whenReady().then(() => {
-  const settingsPath = path.join(app.getPath("userData"), "settings.json");
+  const settingsPath = path.join(app.getPath("userData"), "preferences.json");
   const fileStorage = new FileStorage(settingsPath);
   settingsRepository = new SettingsRepository(fileStorage);
 });

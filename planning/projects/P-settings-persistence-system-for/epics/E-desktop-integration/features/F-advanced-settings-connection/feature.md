@@ -81,7 +81,7 @@ Connect the Advanced Settings UI component to the settings persistence system, c
 ```typescript
 export const AdvancedSettings: React.FC = () => {
   const { setUnsavedChanges } = useUnsavedChanges();
-  const { settings, saveSettings, isLoading } = useSettingsContext();
+  const { settings, saveSettings, isLoading } = useDesktopSettingsPersistence();
   const [requiresRestart, setRequiresRestart] = useState(false);
 
   const form = useForm<AdvancedSettingsFormData>({

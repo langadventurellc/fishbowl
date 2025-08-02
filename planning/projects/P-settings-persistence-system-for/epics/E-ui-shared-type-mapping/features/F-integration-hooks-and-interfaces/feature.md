@@ -31,7 +31,7 @@ Create comprehensive React hooks and TypeScript interfaces that provide a clean,
 
 ### 2. Atomic Operation Hooks
 
-- `useSettingsPersistence`: Main hook for atomic save/load operations
+- `useDesktopSettingsPersistence`: Main hook for atomic save/load operations
 - `useSettingsMapper`: Hook providing bidirectional mapping functions
 - `useSettingsValidation`: Hook for complete settings validation
 
@@ -99,7 +99,7 @@ export interface SettingsFormData {
   advanced: AdvancedSettingsFormData;
 }
 
-// packages/ui-shared/src/hooks/useSettingsPersistence.ts
+// packages/ui-shared/src/hooks/useDesktopSettingsPersistence.ts
 export interface UseSettingsPersistenceOptions {
   adapter: SettingsPersistenceAdapter;
   onError?: (error: SettingsError) => void;
@@ -114,7 +114,7 @@ export interface UseSettingsPersistenceReturn {
   resetSettings: () => Promise<void>;
 }
 
-export function useSettingsPersistence(
+export function useDesktopSettingsPersistence(
   options: UseSettingsPersistenceOptions,
 ): UseSettingsPersistenceReturn;
 
