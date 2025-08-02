@@ -15,7 +15,7 @@ test.describe("Feature: Application Startup", () => {
     // Given - Fresh application state
     const electronPath = path.join(
       __dirname,
-      "../../../../apps/desktop/dist-electron/main.js",
+      "../../../../apps/desktop/dist-electron/electron/main.js",
     );
 
     // Prepare launch args with no-sandbox for CI
