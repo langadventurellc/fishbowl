@@ -27,18 +27,15 @@ export class FishbowlApp {
       videoDir = "test-results/videos",
     } = options;
 
-    // Path to the main Electron app file
-    const electronPath = path.resolve(
-      __dirname,
-      "../../../apps/desktop/dist-electron/main.js",
-    );
+    // Path to the desktop app directory - let Electron find main from package.json
+    const appPath = path.resolve(__dirname, "../../../apps/desktop");
 
     const launchOptions: {
       args: string[];
       timeout: number;
       recordVideo?: { dir: string };
     } = {
-      args: [electronPath],
+      args: [appPath],
       timeout,
     };
 

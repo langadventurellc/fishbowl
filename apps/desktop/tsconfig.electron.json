@@ -12,11 +12,11 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": false,
     "outDir": "./dist-electron",
-    "rootDir": "./src/electron",
+    "rootDir": "./src",
     "baseUrl": ".",
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
-  "include": ["src/electron/**/*"],
+  "include": ["src/electron/**/*", "src/shared/**/*"],
   "exclude": [
     "node_modules",
     "dist",
