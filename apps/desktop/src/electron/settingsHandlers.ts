@@ -6,42 +6,14 @@ import {
   type SettingsSaveResponse,
   type SettingsResetRequest,
   type SettingsResetResponse,
-  type PersistedSettingsData,
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
-
-// Placeholder settings data for development/testing
-const placeholderSettings: PersistedSettingsData = {
-  schemaVersion: "1.0.0",
-  general: {
-    responseDelay: 2000,
-    maximumMessages: 50,
-    maximumWaitTime: 30000,
-    defaultMode: "manual",
-    maximumAgents: 4,
-    checkUpdates: true,
-  },
-  appearance: {
-    theme: "system",
-    showTimestamps: "hover",
-    showActivityTime: true,
-    compactList: false,
-    fontSize: 14,
-    messageSpacing: "normal",
-  },
-  advanced: {
-    debugLogging: false,
-    experimentalFeatures: false,
-  },
-  lastUpdated: new Date().toISOString(),
-};
-
-// In-memory settings store for placeholder implementation
-let currentSettings: PersistedSettingsData = { ...placeholderSettings };
+import { getSettingsRepository } from "./getSettingsRepository";
+import { PersistedSettingsData } from "@fishbowl-ai/shared";
 
 /**
  * Sets up IPC handlers for settings operations
- * Registers handlers for load, save, and reset operations using placeholder logic
+ * Registers handlers for load, save, and reset operations using SettingsRepository
  */
 export function setupSettingsHandlers(): void {
   // Handler for loading settings
@@ -51,8 +23,8 @@ export function setupSettingsHandlers(): void {
       try {
         console.log("Loading settings");
 
-        // Placeholder: Return current in-memory settings
-        const settings = currentSettings;
+        const repository = getSettingsRepository();
+        const settings = await repository.loadSettings();
 
         console.log("Settings loaded successfully");
         return { success: true, data: settings };
@@ -73,12 +45,8 @@ export function setupSettingsHandlers(): void {
       try {
         console.log("Saving settings", { section: request.section });
 
-        // Placeholder: Update in-memory settings
-        // Simple merge for placeholder - merge all provided settings
-        currentSettings = {
-          ...currentSettings,
-          ...request.settings,
-        };
+        const repository = getSettingsRepository();
+        await repository.saveSettings(request.settings);
 
         console.log("Settings saved successfully", {
           section: request.section,
@@ -101,14 +69,18 @@ export function setupSettingsHandlers(): void {
       try {
         console.log("Resetting settings", { section: request?.section });
 
-        // Placeholder: Reset to default settings
-        // Simple reset for placeholder - always reset all settings
-        currentSettings = { ...placeholderSettings };
+        const repository = getSettingsRepository();
+
+        // Reset by saving empty object (repository will merge with defaults)
+        await repository.saveSettings({} as PersistedSettingsData);
+
+        // Load and return the reset settings
+        const settings = await repository.loadSettings();
 
         console.log("Settings reset successfully", {
           section: request?.section,
         });
-        return { success: true, data: currentSettings };
+        return { success: true, data: settings };
       } catch (error) {
         console.error("Failed to reset settings", error);
         return { success: false, error: serializeError(error) };
