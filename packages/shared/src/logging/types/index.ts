@@ -1,5 +1,6 @@
 // Logging type exports
 export type { LogContext } from "./LogContext";
+export type { DeviceInfo } from "./DeviceInfo";
 export type { ErrorInfo } from "./ErrorInfo";
 export type { LogEntry } from "./LogEntry";
 export type { Formatter } from "./Formatter";

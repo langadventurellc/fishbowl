@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-create-device-info-utility-with
+status: done
 title: Create device info utility with unit tests
-status: open
 priority: normal
 prerequisites:
   - T-implement-platform-detection
 created: "2025-08-02T11:51:23.688058"
-updated: "2025-08-02T11:51:23.688058"
+updated: "2025-08-02T13:22:15.610927"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Create device info utility with unit tests
@@ -495,3 +496,7 @@ export { getDeviceInfo } from "./deviceInfo";
 - Verify all platform-specific branches are covered
 
 ### Log
+
+**2025-08-02T18:46:08.391939Z** - Fixed test mocking issues for getCachedDeviceInfo utility tests. The main problem was jest.resetModules() clearing the mock state while module-level cache variables persisted. Solved by removing jest.resetModules() and using forceRefresh parameter in tests to ensure clean state between test runs. All tests now pass and quality checks are green.
+
+- filesChanged: ["packages/shared/src/logging/utils/__tests__/getCachedDeviceInfo.test.ts"]
