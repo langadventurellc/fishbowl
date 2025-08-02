@@ -1,3 +1,6 @@
-// Placeholder for future utility exports
-// Example: export { createErrorInfo } from "./createErrorInfo";
-// Example: export { sanitizeLogData } from "./sanitizeLogData";
+// Platform detection utilities
+export type { PlatformType } from "./platformTypes";
+export type { PlatformInfo } from "./PlatformInfo";
+export { detectPlatform } from "./detectPlatform";
+export { getPlatform } from "./getPlatform";
+export { resetPlatformCache } from "./resetPlatformCache";
