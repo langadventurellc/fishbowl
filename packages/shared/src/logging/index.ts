@@ -4,3 +4,4 @@ export * from "./formatters";
 export * from "./transports";
 export * from "./utils";
 export * from "./config";
+export { StructuredLogger } from "./StructuredLogger";
