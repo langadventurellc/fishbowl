@@ -1,5 +1,5 @@
 import type { SettingsRepositoryInterface } from "./SettingsRepositoryInterface";
-import type { PersistedSettings } from "../../types/settings/PersistedSettings";
+import type { PersistedSettingsData } from "../../types/settings/PersistedSettingsData";
 import { FileStorageService } from "../../services/storage/FileStorageService";
 import { createDefaultPersistedSettings } from "../../types/settings/createDefaultPersistedSettings";
 import { persistedSettingsSchema } from "../../types/settings/persistedSettingsSchema";
@@ -37,7 +37,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    * @throws FileStorageError for file system issues
    * @throws SettingsValidationError for validation failures
    */
-  async loadSettings(): Promise<PersistedSettings> {
+  async loadSettings(): Promise<PersistedSettingsData> {
     try {
       const rawSettings = await this.fileStorageService.readJsonFile<unknown>(
         SettingsRepository.SETTINGS_FILE_NAME,
@@ -69,7 +69,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    * @throws FileStorageError for file system issues
    * @throws SettingsValidationError for validation failures
    */
-  async saveSettings(settings: Partial<PersistedSettings>): Promise<void> {
+  async saveSettings(settings: Partial<PersistedSettingsData>): Promise<void> {
     try {
       // Load current settings (creates defaults if missing)
       const currentSettings = await this.loadSettings();
@@ -78,7 +78,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
       const mergedSettings = deepMerge(
         currentSettings as unknown as Record<string, unknown>,
         settings as unknown as Partial<Record<string, unknown>>,
-      ) as unknown as PersistedSettings;
+      ) as unknown as PersistedSettingsData;
 
       // Update lastUpdated timestamp
       const settingsWithTimestamp = {
@@ -118,7 +118,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    *
    * @returns Complete default settings object
    */
-  getDefaultSettings(): PersistedSettings {
+  getDefaultSettings(): PersistedSettingsData {
     return createDefaultPersistedSettings();
   }
 
@@ -130,7 +130,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    * @returns Validated and typed settings object
    * @throws SettingsValidationError for validation failures
    */
-  validateSettings(settings: unknown): PersistedSettings {
+  validateSettings(settings: unknown): PersistedSettingsData {
     try {
       // First ensure we have an object structure (not array, null, or primitive)
       if (
@@ -197,7 +197,9 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    * @param partialSettings Partial settings data to merge with defaults
    * @returns Complete settings with all fields populated
    */
-  private ensureCompleteSettings(partialSettings: unknown): PersistedSettings {
+  private ensureCompleteSettings(
+    partialSettings: unknown,
+  ): PersistedSettingsData {
     const defaults = this.getDefaultSettings();
 
     // Handle non-object input by returning defaults
@@ -209,7 +211,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
     const merged = deepMerge(
       defaults as unknown as Record<string, unknown>,
       partialSettings as Record<string, unknown>,
-    ) as unknown as PersistedSettings;
+    ) as unknown as PersistedSettingsData;
 
     // Ensure timestamps are updated
     merged.lastUpdated = new Date().toISOString();
@@ -265,7 +267,9 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    *
    * @param defaults Default settings to save
    */
-  private async saveDefaultsToFile(defaults: PersistedSettings): Promise<void> {
+  private async saveDefaultsToFile(
+    defaults: PersistedSettingsData,
+  ): Promise<void> {
     try {
       await this.fileStorageService.writeJsonFile(
         SettingsRepository.SETTINGS_FILE_NAME,

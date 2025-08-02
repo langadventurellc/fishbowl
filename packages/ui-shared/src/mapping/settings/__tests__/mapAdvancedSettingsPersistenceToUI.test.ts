@@ -1,14 +1,14 @@
-import { mapAdvancedSettingsPersistenceToUI } from "../mapAdvancedSettingsPersistenceToUI";
-import { mapAdvancedSettingsUIToPersistence } from "../mapAdvancedSettingsUIToPersistence";
 import type { PersistedAdvancedSettingsData } from "@fishbowl-ai/shared";
 import type { AdvancedSettingsFormData } from "../../../types/settings/advancedSettings";
 import { defaultAdvancedSettings } from "../../../types/settings/advancedSettings";
+import { mapAdvancedSettingsPersistenceToUI } from "../mapAdvancedSettingsPersistenceToUI";
+import { mapAdvancedSettingsUIToPersistence } from "../mapAdvancedSettingsUIToPersistence";
 
 describe("mapAdvancedSettingsPersistenceToUI", () => {
   describe("successful mapping", () => {
     it("should map all fields correctly with valid data", () => {
       const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: true,
       };
 
@@ -22,7 +22,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
     it("should map false values correctly", () => {
       const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: false,
       };
 
@@ -36,7 +36,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
     it("should map mixed boolean values correctly", () => {
       const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: false,
       };
 
@@ -52,7 +52,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
   describe("default value handling", () => {
     it("should apply defaults for missing fields", () => {
       const partialData = {
-        debugMode: true,
+        debugLogging: true,
       } as unknown as PersistedAdvancedSettingsData;
 
       const result = mapAdvancedSettingsPersistenceToUI(partialData);
@@ -73,7 +73,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
     it("should handle null/undefined values with defaults", () => {
       const nullishData = {
-        debugMode: null,
+        debugLogging: null,
         experimentalFeatures: undefined,
       } as unknown as PersistedAdvancedSettingsData;
 
@@ -84,7 +84,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
     it("should use defaults for all undefined fields", () => {
       const undefinedData = {
-        debugMode: undefined,
+        debugLogging: undefined,
         experimentalFeatures: undefined,
       } as unknown as PersistedAdvancedSettingsData;
 
@@ -100,7 +100,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
   describe("boolean coercion", () => {
     it("should coerce string boolean values correctly", () => {
       const stringBoolean = {
-        debugMode: "true" as unknown,
+        debugLogging: "true" as unknown,
         experimentalFeatures: "false" as unknown,
       } as PersistedAdvancedSettingsData;
 
@@ -112,7 +112,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
     it("should coerce numeric boolean values correctly", () => {
       const numericBoolean = {
-        debugMode: 1 as unknown,
+        debugLogging: 1 as unknown,
         experimentalFeatures: 0 as unknown,
       } as PersistedAdvancedSettingsData;
 
@@ -136,7 +136,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
       testCases.forEach(({ input, expected }) => {
         const persistedData = {
-          debugMode: input as unknown,
+          debugLogging: input as unknown,
           experimentalFeatures: false,
         } as PersistedAdvancedSettingsData;
 
@@ -156,7 +156,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
       testCases.forEach(({ input, expected }) => {
         const persistedData = {
-          debugMode: input as unknown,
+          debugLogging: input as unknown,
           experimentalFeatures: false,
         } as PersistedAdvancedSettingsData;
 
@@ -179,7 +179,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
       testCases.forEach(({ input, expected }) => {
         const persistedData = {
-          debugMode: input as unknown,
+          debugLogging: input as unknown,
           experimentalFeatures: false,
         } as PersistedAdvancedSettingsData;
 
@@ -201,7 +201,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
       testCases.forEach(({ input, expected }) => {
         const persistedData = {
-          debugMode: input as unknown,
+          debugLogging: input as unknown,
           experimentalFeatures: false,
         } as PersistedAdvancedSettingsData;
 
@@ -221,7 +221,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
       dangerousInputs.forEach((dangerousValue) => {
         const persistedData = {
-          debugMode: dangerousValue as unknown,
+          debugLogging: dangerousValue as unknown,
           experimentalFeatures: false,
         } as PersistedAdvancedSettingsData;
 
@@ -230,31 +230,6 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
         expect(result.debugLogging).toBe(true);
         expect(typeof result.debugLogging).toBe("boolean");
       });
-    });
-  });
-
-  describe("field name mapping", () => {
-    it("should correctly map debugMode to debugLogging", () => {
-      const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: true,
-        experimentalFeatures: false,
-      };
-
-      const result = mapAdvancedSettingsPersistenceToUI(persistedData);
-
-      expect(result).toHaveProperty("debugLogging", true);
-      expect(result).not.toHaveProperty("debugMode");
-    });
-
-    it("should preserve experimentalFeatures field name", () => {
-      const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: false,
-        experimentalFeatures: true,
-      };
-
-      const result = mapAdvancedSettingsPersistenceToUI(persistedData);
-
-      expect(result).toHaveProperty("experimentalFeatures", true);
     });
   });
 
@@ -314,7 +289,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
       falsyInputs.forEach((falsyValue) => {
         const persistedData = {
-          debugMode: falsyValue as unknown,
+          debugLogging: falsyValue as unknown,
           experimentalFeatures: falsyValue as unknown,
         } as PersistedAdvancedSettingsData;
 
@@ -338,7 +313,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
   describe("type safety", () => {
     it("should maintain TypeScript type safety", () => {
       const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: true,
       };
 
@@ -352,7 +327,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
     it("should return a complete AdvancedSettingsFormData object", () => {
       const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: true,
       };
 
@@ -369,7 +344,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
   describe("functional purity", () => {
     it("should not modify the input data", () => {
       const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: false,
       };
 
@@ -381,7 +356,7 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
 
     it("should return a new object instance", () => {
       const persistedData: PersistedAdvancedSettingsData = {
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: false,
       };
 
@@ -396,12 +371,12 @@ describe("mapAdvancedSettingsPersistenceToUI", () => {
   describe("boundary testing", () => {
     it("should handle boolean boundary values correctly", () => {
       const trueBoundary: PersistedAdvancedSettingsData = {
-        debugMode: true,
+        debugLogging: true,
         experimentalFeatures: true,
       };
 
       const falseBoundary: PersistedAdvancedSettingsData = {
-        debugMode: false,
+        debugLogging: false,
         experimentalFeatures: false,
       };
 

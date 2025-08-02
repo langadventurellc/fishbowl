@@ -9,7 +9,7 @@
  */
 export interface PersistedAdvancedSettings {
   // Developer Options
-  debugMode: boolean; // Enable debug logging in developer console
+  debugLogging: boolean; // Enable debug logging in developer console
 
   // Experimental Features
   experimentalFeatures: boolean; // Access to features in development with instability risk

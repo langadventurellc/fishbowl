@@ -15,9 +15,7 @@ import { customRolesPersistence } from "./customRolesPersistence";
 
 // Generate unique ID using crypto API or fallback
 const generateId = (): string => {
-  // eslint-disable-next-line no-undef
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
-    // eslint-disable-next-line no-undef
     return crypto.randomUUID();
   }
   return Date.now().toString(36) + Math.random().toString(36).substr(2);

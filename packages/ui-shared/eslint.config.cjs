@@ -1,4 +1,4 @@
-const baseConfig = require("@fishbowl-ai/eslint-config");
+const baseConfig = require("@fishbowl-ai/eslint-config/react");
 
 module.exports = [
   ...baseConfig,

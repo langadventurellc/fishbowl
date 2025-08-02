@@ -1,5 +1,5 @@
-import type { AdvancedSettingsFormData } from "../../types/settings/advancedSettings";
 import type { PersistedAdvancedSettingsData } from "@fishbowl-ai/shared";
+import type { AdvancedSettingsFormData } from "../../types/settings/advancedSettings";
 import { defaultAdvancedSettings } from "../../types/settings/advancedSettings";
 import { applyDefaults } from "../utils/defaults";
 import { coerceBoolean } from "../utils/transformers";
@@ -9,7 +9,7 @@ import { coerceBoolean } from "../utils/transformers";
  *
  * This function transforms persisted advanced settings into the format expected
  * by the UI forms. It applies defaults for any missing fields, handles field name
- * mapping (debugMode → debugLogging), and ensures all boolean values are properly
+ * mapping (debugLogging → debugLogging), and ensures all boolean values are properly
  * coerced with security-focused defaults.
  *
  * @param persistedData - The advanced settings data from persistence
@@ -18,7 +18,7 @@ import { coerceBoolean } from "../utils/transformers";
  * @example
  * ```typescript
  * const persistedSettings: PersistedAdvancedSettingsData = {
- *   debugMode: true,
+ *   debugLogging: true,
  *   experimentalFeatures: false
  * };
  *
@@ -30,7 +30,7 @@ import { coerceBoolean } from "../utils/transformers";
  * ```typescript
  * // With partial data (missing fields will use defaults)
  * const partialSettings: Partial<PersistedAdvancedSettingsData> = {
- *   debugMode: true
+ *   debugLogging: true
  * };
  *
  * const uiSettings = mapAdvancedSettingsPersistenceToUI(partialSettings as PersistedAdvancedSettingsData);
@@ -43,12 +43,12 @@ export function mapAdvancedSettingsPersistenceToUI(
   // Transform the data with validation and coercion, only including defined and non-null values
   const transformed: Partial<AdvancedSettingsFormData> = {};
 
-  // Map debugMode to debugLogging with boolean coercion
+  // Map debugLogging to debugLogging with boolean coercion
   if (
-    persistedData.debugMode !== undefined &&
-    persistedData.debugMode !== null
+    persistedData.debugLogging !== undefined &&
+    persistedData.debugLogging !== null
   ) {
-    transformed.debugLogging = coerceBoolean(persistedData.debugMode);
+    transformed.debugLogging = coerceBoolean(persistedData.debugLogging);
   }
 
   // Map experimentalFeatures directly with boolean coercion

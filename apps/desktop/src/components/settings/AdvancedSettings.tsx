@@ -5,7 +5,7 @@ import React, { useState } from "react";
 
 export const AdvancedSettings: React.FC = () => {
   // Developer Options state management
-  const [debugMode, setDebugMode] = useState(false);
+  const [debugLogging, setDebugMode] = useState(false);
   const [experimentalFeatures, setExperimentalFeatures] = useState(false);
 
   // Loading states for accessibility announcements
@@ -44,7 +44,7 @@ export const AdvancedSettings: React.FC = () => {
               </div>
               <Switch
                 id="debug-mode"
-                checked={debugMode}
+                checked={debugLogging}
                 onCheckedChange={setDebugMode}
                 aria-describedby="debug-help"
                 aria-label="Toggle debug logging on or off"

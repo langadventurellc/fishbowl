@@ -2,7 +2,7 @@
 kind: feature
 id: F-integration-hooks-and-interfaces
 title: Integration Hooks and Interfaces
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-general-settings-type-mapping
@@ -10,7 +10,7 @@ prerequisites:
   - F-advanced-settings-type-mapping
   - F-common-mapping-utilities
 created: "2025-07-31T22:04:13.786942"
-updated: "2025-07-31T22:04:13.786942"
+updated: "2025-08-02T00:19:20.208141+00:00"
 schema_version: "1.1"
 parent: E-ui-shared-type-mapping
 ---

@@ -1,4 +1,4 @@
-import type { PersistedSettings } from "../../types/settings/PersistedSettings";
+import type { PersistedSettingsData } from "../../types/settings/PersistedSettingsData";
 
 /**
  * Interface for settings repository operations.
@@ -16,7 +16,7 @@ export interface SettingsRepositoryInterface {
    * @throws FileStorageError for file system issues
    * @throws SettingsValidationError for validation failures
    */
-  loadSettings(): Promise<PersistedSettings>;
+  loadSettings(): Promise<PersistedSettingsData>;
 
   /**
    * Save partial settings updates to storage with validation.
@@ -27,7 +27,7 @@ export interface SettingsRepositoryInterface {
    * @throws FileStorageError for file system issues
    * @throws SettingsValidationError for validation failures
    */
-  saveSettings(settings: Partial<PersistedSettings>): Promise<void>;
+  saveSettings(settings: Partial<PersistedSettingsData>): Promise<void>;
 
   /**
    * Get default settings without I/O operations.
@@ -35,7 +35,7 @@ export interface SettingsRepositoryInterface {
    *
    * @returns Complete default settings object
    */
-  getDefaultSettings(): PersistedSettings;
+  getDefaultSettings(): PersistedSettingsData;
 
   /**
    * Validate and parse unknown data into typed settings.
@@ -45,5 +45,5 @@ export interface SettingsRepositoryInterface {
    * @returns Validated and typed settings object
    * @throws SettingsValidationError for validation failures
    */
-  validateSettings(settings: unknown): PersistedSettings;
+  validateSettings(settings: unknown): PersistedSettingsData;
 }
