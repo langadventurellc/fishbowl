@@ -1,32 +1,34 @@
 import { SettingsRepository } from "@fishbowl-ai/shared";
 
-// Repository instance shared from main.ts
-let settingsRepository: SettingsRepository | null = null;
-
-// Function to set repository from main.ts (called during initialization)
-// This is not exported to avoid multiple exports lint error
-function setRepository(repository: SettingsRepository): void {
-  settingsRepository = repository;
-}
+// Repository instance shared across the application
+let repository: SettingsRepository | null = null;
 
 /**
- * Get the settings repository instance.
- * Used by IPC handlers and other main process components.
- *
- * @returns The settings repository instance
- * @throws {Error} If repository is not initialized
+ * Settings repository manager providing get and set functionality.
+ * Eliminates the need for globalThis pattern while maintaining single export.
  */
-export function getSettingsRepository(): SettingsRepository {
-  if (!settingsRepository) {
-    throw new Error("Settings repository not initialized");
-  }
-  return settingsRepository;
-}
+export const settingsRepositoryManager = {
+  /**
+   * Set the settings repository instance.
+   * Called during application initialization in main.ts.
+   *
+   * @param repo The settings repository instance to set
+   */
+  set(repo: SettingsRepository): void {
+    repository = repo;
+  },
 
-// Make setRepository available to main.ts without exporting it
-// This avoids the multiple exports linting error
-interface GlobalWithSettings {
-  __setSettingsRepository?: (repository: SettingsRepository) => void;
-}
-
-(globalThis as GlobalWithSettings).__setSettingsRepository = setRepository;
+  /**
+   * Get the settings repository instance.
+   * Used by IPC handlers and other main process components.
+   *
+   * @returns The settings repository instance
+   * @throws {Error} If repository is not initialized
+   */
+  get(): SettingsRepository {
+    if (!repository) {
+      throw new Error("Settings repository not initialized");
+    }
+    return repository;
+  },
+};

@@ -8,7 +8,7 @@ import {
   type SettingsResetResponse,
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
-import { getSettingsRepository } from "./getSettingsRepository";
+import { settingsRepositoryManager } from "./getSettingsRepository";
 import { PersistedSettingsData, createLoggerSync } from "@fishbowl-ai/shared";
 
 const logger = createLoggerSync({
@@ -27,7 +27,7 @@ export function setupSettingsHandlers(): void {
       try {
         logger.debug("Loading settings");
 
-        const repository = getSettingsRepository();
+        const repository = settingsRepositoryManager.get();
         const settings = await repository.loadSettings();
 
         logger.debug("Settings loaded successfully");
@@ -49,7 +49,7 @@ export function setupSettingsHandlers(): void {
       try {
         logger.debug("Saving settings", { section: request.section });
 
-        const repository = getSettingsRepository();
+        const repository = settingsRepositoryManager.get();
         await repository.saveSettings(request.settings);
 
         logger.debug("Settings saved successfully", {
@@ -73,7 +73,7 @@ export function setupSettingsHandlers(): void {
       try {
         logger.debug("Resetting settings", { section: request?.section });
 
-        const repository = getSettingsRepository();
+        const repository = settingsRepositoryManager.get();
 
         // Reset by saving empty object (repository will merge with defaults)
         await repository.saveSettings({} as PersistedSettingsData);

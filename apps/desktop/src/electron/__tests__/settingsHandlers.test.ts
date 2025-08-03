@@ -9,7 +9,7 @@ import {
   type SettingsResetResponse,
 } from "../../shared/ipc/index";
 import { serializeError } from "../utils/errorSerialization";
-import { getSettingsRepository } from "../getSettingsRepository";
+import { settingsRepositoryManager } from "../getSettingsRepository";
 import { PersistedSettingsData } from "@fishbowl-ai/shared";
 
 // Mock electron
@@ -19,9 +19,11 @@ jest.mock("electron", () => ({
   },
 }));
 
-// Mock getSettingsRepository module
+// Mock settingsRepositoryManager module
 jest.mock("../getSettingsRepository", () => ({
-  getSettingsRepository: jest.fn(),
+  settingsRepositoryManager: {
+    get: jest.fn(),
+  },
 }));
 
 // Mock errorSerialization
@@ -55,7 +57,9 @@ describe("settingsHandlers", () => {
       subscribe: jest.fn(),
     };
 
-    (getSettingsRepository as jest.Mock).mockReturnValue(mockRepository);
+    (settingsRepositoryManager.get as jest.Mock).mockReturnValue(
+      mockRepository,
+    );
   });
 
   describe("setupSettingsHandlers", () => {
@@ -137,7 +141,7 @@ describe("settingsHandlers", () => {
 
     it("should handle repository not initialized error", async () => {
       const error = new Error("Settings repository not initialized");
-      (getSettingsRepository as jest.Mock).mockImplementation(() => {
+      (settingsRepositoryManager.get as jest.Mock).mockImplementation(() => {
         throw error;
       });
 
@@ -250,7 +254,7 @@ describe("settingsHandlers", () => {
 
     it("should handle repository not initialized error during save", async () => {
       const error = new Error("Settings repository not initialized");
-      (getSettingsRepository as jest.Mock).mockImplementation(() => {
+      (settingsRepositoryManager.get as jest.Mock).mockImplementation(() => {
         throw error;
       });
 
@@ -402,7 +406,7 @@ describe("settingsHandlers", () => {
 
     it("should handle repository not initialized error during reset", async () => {
       const error = new Error("Settings repository not initialized");
-      (getSettingsRepository as jest.Mock).mockImplementation(() => {
+      (settingsRepositoryManager.get as jest.Mock).mockImplementation(() => {
         throw error;
       });
 
