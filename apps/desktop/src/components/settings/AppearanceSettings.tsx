@@ -97,6 +97,7 @@ export const AppearanceSettings: React.FC = () => {
   const { setUnsavedChanges: _setUnsavedChanges } = useUnsavedChanges();
   const adapter = useSettingsPersistenceAdapter();
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const hasInitialized = useRef(false);
 
   const onError = useCallback((error: Error) => {
     setSubmitError(error.message);
@@ -118,6 +119,15 @@ export const AppearanceSettings: React.FC = () => {
     defaultValues: settings?.appearance || defaultAppearanceSettings,
     mode: "onChange",
   });
+
+  // Reset form when settings are loaded (only on initial load)
+  useEffect(() => {
+    if (settings?.appearance && !hasInitialized.current) {
+      form.reset(settings.appearance);
+      hasInitialized.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings?.appearance]);
 
   // Apply theme changes immediately using form value
   const watchedTheme = form.watch("theme");
