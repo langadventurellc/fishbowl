@@ -24,6 +24,11 @@ import { Button } from "../../ui/button";
 import { Card } from "../../ui/card";
 import { CustomRoleListItem } from "./CustomRoleListItem";
 import { RoleFormModal } from "./RoleFormModal";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "CustomRolesTab", level: "info" },
+});
 
 export const CustomRolesTab = memo<CustomRolesTabProps>(
   function CustomRolesTab({
@@ -58,7 +63,7 @@ export const CustomRolesTab = memo<CustomRolesTabProps>(
       onDeleteRole ||
       (() => {
         // Internal delete logic - just a placeholder for now
-        console.log("Internal delete not implemented");
+        logger.info("Internal delete not implemented");
       });
 
     // Sort roles chronologically (newest first)

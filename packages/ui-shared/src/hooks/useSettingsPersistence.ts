@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { defaultAdvancedSettings } from "../types/settings/advancedSettings";
+import { defaultAppearanceSettings } from "../types/settings/appearanceSettings";
 import type { SettingsFormData } from "../types/settings/combined/SettingsFormData";
+import { defaultGeneralSettings } from "../types/settings/generalSettings";
 import { SettingsError } from "../utils/settings/SettingsError";
 import { SettingsErrorCode } from "../utils/settings/SettingsErrorCode";
 import { createSettingsError } from "../utils/settings/createSettingsError";
 import { transformPersistenceError } from "../utils/settings/transformPersistenceError";
-import { useSettingsMapper } from "./useSettingsMapper";
-import { useSettingsValidation } from "./useSettingsValidation";
-import { defaultGeneralSettings } from "../types/settings/generalSettings";
-import { defaultAppearanceSettings } from "../types/settings/appearanceSettings";
-import { defaultAdvancedSettings } from "../types/settings/advancedSettings";
 import type { UseSettingsPersistenceOptions } from "./UseSettingsPersistenceOptions";
 import type { UseSettingsPersistenceReturn } from "./UseSettingsPersistenceReturn";
+import { useSettingsMapper } from "./useSettingsMapper";
+import { useSettingsValidation } from "./useSettingsValidation";
 
 /**
  * Hook for managing settings persistence with atomic operations
@@ -254,7 +254,8 @@ export function useSettingsPersistence(
     return () => {
       mounted = false;
     };
-  }, []); // Empty dependency array - only run once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally empty to run only once on mount
 
   return {
     settings,

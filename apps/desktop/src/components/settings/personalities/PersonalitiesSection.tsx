@@ -23,6 +23,11 @@ import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { TabContainer } from "../TabContainer";
 import { CreatePersonalityForm } from "./CreatePersonalityForm";
 import { SavedPersonalitiesTab } from "./SavedPersonalitiesTab";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "PersonalitiesSection", level: "info" },
+});
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
   const { activeSubTab } = useSettingsNavigation();
@@ -32,22 +37,28 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
   const handleEditPersonality = useCallback((personality: Personality) => {
     // Switch to Create New tab with pre-filled data for editing
     // This will be implemented when the form component is ready
-    console.log("Edit personality:", personality);
+    logger.info("Edit personality requested", {
+      personalityId: personality.id,
+      personalityName: personality.name,
+    });
   }, []);
 
   const handleClonePersonality = useCallback((personality: Personality) => {
     // Switch to Create New tab with cloned data
-    console.log("Clone personality:", personality);
+    logger.info("Clone personality requested", {
+      personalityId: personality.id,
+      personalityName: personality.name,
+    });
   }, []);
 
   const handleSavePersonality = useCallback((data: PersonalityFormData) => {
     // Save personality and switch back to Saved tab
-    console.log("Save personality:", data);
+    logger.info("Save personality requested", { personalityName: data.name });
   }, []);
 
   const handleCancelEditing = useCallback(() => {
     // Cancel editing and return to previous tab or Saved tab
-    console.log("Cancel editing");
+    logger.info("Cancel editing requested");
   }, []);
 
   const handleTabChange = useCallback(async () => {

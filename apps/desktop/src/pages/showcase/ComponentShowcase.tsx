@@ -1,6 +1,10 @@
-import { ThemeMode } from "@fishbowl-ai/shared";
+import { ThemeMode, createLoggerSync } from "@fishbowl-ai/shared";
 import { AgentViewModel } from "@fishbowl-ai/ui-shared";
 import { useState } from "react";
+
+const logger = createLoggerSync({
+  config: { name: "ComponentShowcase", level: "info" },
+});
 import {
   AgentPill,
   MessageAvatar,
@@ -250,25 +254,25 @@ export default function ComponentShowcase() {
                 <span style={styles.agentPillLabel}>Button Variants:</span>
                 <Button
                   variant="primary"
-                  onClick={() => console.log("Primary clicked")}
+                  onClick={() => logger.info("Primary clicked")}
                 >
                   Send
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => console.log("Secondary clicked")}
+                  onClick={() => logger.info("Secondary clicked")}
                 >
                   Cancel
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => console.log("Ghost clicked")}
+                  onClick={() => logger.info("Ghost clicked")}
                 >
                   Copy
                 </Button>
                 <Button
                   variant="toggle"
-                  onClick={() => console.log("Toggle clicked")}
+                  onClick={() => logger.info("Toggle clicked")}
                 >
                   ✓
                 </Button>
@@ -279,21 +283,21 @@ export default function ComponentShowcase() {
                 <Button
                   variant="primary"
                   size="small"
-                  onClick={() => console.log("Small clicked")}
+                  onClick={() => logger.info("Small clicked")}
                 >
                   Small
                 </Button>
                 <Button
                   variant="primary"
                   size="medium"
-                  onClick={() => console.log("Medium clicked")}
+                  onClick={() => logger.info("Medium clicked")}
                 >
                   Medium
                 </Button>
                 <Button
                   variant="primary"
                   size="large"
-                  onClick={() => console.log("Large clicked")}
+                  onClick={() => logger.info("Large clicked")}
                 >
                   Large
                 </Button>
@@ -304,21 +308,21 @@ export default function ComponentShowcase() {
                 <Button
                   variant="secondary"
                   disabled
-                  onClick={() => console.log("Disabled clicked")}
+                  onClick={() => logger.info("Disabled clicked")}
                 >
                   Disabled
                 </Button>
                 <Button
                   variant="secondary"
                   loading
-                  onClick={() => console.log("Loading clicked")}
+                  onClick={() => logger.info("Loading clicked")}
                 >
                   Loading
                 </Button>
                 <Button
                   variant="ghost"
                   icon="📁"
-                  onClick={() => console.log("Icon clicked")}
+                  onClick={() => logger.info("Icon clicked")}
                 >
                   With Icon
                 </Button>
@@ -329,27 +333,27 @@ export default function ComponentShowcase() {
                 <Button
                   variant="primary"
                   icon="📤"
-                  onClick={() => console.log("Send message")}
+                  onClick={() => logger.info("Send message")}
                 >
                   Send Message
                 </Button>
                 <Button
                   variant="ghost"
                   icon="📋"
-                  onClick={() => console.log("Copy text")}
+                  onClick={() => logger.info("Copy text")}
                 >
                   Copy
                 </Button>
                 <Button
                   variant="secondary"
-                  onClick={() => console.log("Save draft")}
+                  onClick={() => logger.info("Save draft")}
                 >
                   Save Draft
                 </Button>
                 <Button
                   variant="toggle"
                   size="small"
-                  onClick={() => console.log("Toggle sidebar")}
+                  onClick={() => logger.info("Toggle sidebar")}
                 >
                   ⚙️
                 </Button>
@@ -1309,7 +1313,7 @@ export default function ComponentShowcase() {
                     key={index}
                     agent={agent}
                     onClick={(agentName) =>
-                      console.log(`Clicked: ${agentName}`)
+                      logger.info(`Clicked: ${agentName}`)
                     }
                   />
                 ))}
@@ -2079,7 +2083,7 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                   currentTheme={currentTheme}
                   onToggle={(newTheme) => {
                     setCurrentTheme(newTheme);
-                    console.log(`Theme switched to: ${newTheme}`);
+                    logger.info(`Theme switched to: ${newTheme}`);
                   }}
                 />
                 <span
@@ -2097,7 +2101,7 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                 <ThemeToggle
                   currentTheme="light"
                   onToggle={(theme) =>
-                    console.log(`Light toggle clicked: ${theme}`)
+                    logger.info(`Light toggle clicked: ${theme}`)
                   }
                 />
               </div>
@@ -2107,7 +2111,7 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                 <ThemeToggle
                   currentTheme="dark"
                   onToggle={(theme) =>
-                    console.log(`Dark toggle clicked: ${theme}`)
+                    logger.info(`Dark toggle clicked: ${theme}`)
                   }
                 />
               </div>

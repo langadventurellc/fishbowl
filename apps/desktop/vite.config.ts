@@ -10,10 +10,6 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
-      "@fishbowl-ai/shared": path.resolve(
-        __dirname,
-        "../../packages/shared/src",
-      ),
       "@fishbowl-ai/ui-theme": path.resolve(
         __dirname,
         "../../packages/ui-theme/src",

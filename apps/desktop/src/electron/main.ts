@@ -125,6 +125,7 @@ app.whenReady().then(async () => {
       electronVersion: process.versions.electron,
     });
   } catch (error) {
+    // Cannot use structured logger here since logger initialization failed
     console.error("Failed to initialize logger:", error);
   }
 
@@ -155,16 +156,14 @@ app.whenReady().then(async () => {
       globalWithSettings.__setSettingsRepository(repository);
     }
 
-    console.log("Settings repository initialized successfully");
-    mainLogger?.debug("Settings repository initialized", {
+    mainLogger?.info("Settings repository initialized successfully", {
       storageType: "FileStorage",
     });
   } catch (error) {
-    console.error("Failed to initialize settings repository:", error);
     mainLogger?.error(
       "Failed to initialize settings repository",
       error as Error,
-    );
+    ) || console.error("Failed to initialize settings repository:", error);
     // Continue app startup even if settings fail to initialize
   }
 

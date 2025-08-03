@@ -41,6 +41,11 @@ import {
   TemplateCard,
 } from "./";
 import { AgentFormModal } from "./AgentFormModal";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "AgentsSection", level: "info" },
+});
 
 // Mock agent data for demonstration
 const mockAgents: AgentCardType[] = [
@@ -171,7 +176,7 @@ const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
               );
             }}
             onDelete={(agentId) => {
-              console.log("Delete agent:", agentId);
+              logger.info("Delete agent requested", { agentId });
               announceToScreenReader(
                 `Deleting agent ${agent.name}`,
                 "assertive",
@@ -492,7 +497,7 @@ const TemplatesTab: React.FC<TemplatesTabProps> = ({ openTemplateModal }) => {
         <EmptyTemplatesState
           onAction={() => {
             // TODO: Implement browse templates functionality
-            console.log("Browse templates");
+            logger.info("Browse templates action triggered");
           }}
         />
       ) : (
@@ -856,9 +861,9 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
   const handleAgentSave = useCallback(
     async (data: AgentFormData) => {
       // UI-only implementation as per project requirements
-      console.log("Agent save operation (UI-only):", {
+      logger.info("Agent save operation (UI-only)", {
         mode: agentModalState.mode,
-        data,
+        agentName: data.name,
         timestamp: new Date().toISOString(),
       });
 

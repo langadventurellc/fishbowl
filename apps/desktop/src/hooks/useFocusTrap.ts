@@ -10,8 +10,13 @@
  */
 
 import { useRef, useEffect, useCallback } from "react";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import type { FocusTrapOptions } from "./types/FocusTrapOptions";
 import type { FocusTrapReturn } from "./types/FocusTrapReturn";
+
+const logger = createLoggerSync({
+  config: { name: "useFocusTrap", level: "info" },
+});
 
 /**
  * Selector for finding focusable elements within a container.
@@ -88,7 +93,7 @@ export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
         );
       });
     } catch {
-      console.warn("Error finding focusable elements");
+      logger.warn("Error finding focusable elements");
       return [];
     }
   }, []);
@@ -107,7 +112,7 @@ export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
     if (containerRef.current?.contains(element)) {
       initialFocusRef.current = element;
     } else {
-      console.warn(
+      logger.warn(
         "Initial focus element is not within the focus trap container",
       );
     }
@@ -191,7 +196,9 @@ export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
           elementToFocus =
             containerRef.current.querySelector(initialFocusSelector);
         } catch {
-          console.warn("Invalid initial focus selector:", initialFocusSelector);
+          logger.warn("Invalid initial focus selector", {
+            selector: initialFocusSelector,
+          });
         }
       }
       // Priority 3: First focusable element
@@ -204,7 +211,7 @@ export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
         try {
           elementToFocus.focus();
         } catch {
-          console.warn("Failed to set initial focus");
+          logger.warn("Failed to set initial focus");
         }
       }
     };
@@ -228,7 +235,7 @@ export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
             previousFocusRef.current.focus();
           }
         } catch {
-          console.warn("Failed to restore focus");
+          logger.warn("Failed to restore focus");
         }
         previousFocusRef.current = null;
       }

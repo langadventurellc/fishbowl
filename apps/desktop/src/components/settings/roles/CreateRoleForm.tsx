@@ -34,6 +34,11 @@ import {
 } from "../../ui/form";
 import { RoleDescriptionTextarea } from "./RoleDescriptionTextarea";
 import { RoleNameInput } from "./RoleNameInput";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "CreateRoleForm", level: "info" },
+});
 
 export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
   mode,
@@ -70,7 +75,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
         form.reset(data);
         setUnsavedChanges(false);
       } catch (error) {
-        console.error("Failed to save role:", error);
+        logger.error("Failed to save role", error as Error);
         // Error handling could be enhanced with toast notifications
       } finally {
         setIsSubmitting(false);

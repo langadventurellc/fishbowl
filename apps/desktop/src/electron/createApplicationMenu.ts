@@ -8,7 +8,12 @@
  */
 
 import { Menu, MenuItemConstructorOptions, app } from "electron";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { openSettingsModal } from "./main.js";
+
+const logger = createLoggerSync({
+  config: { name: "createApplicationMenu", level: "info" },
+});
 
 /**
  * Creates the application menu with platform-specific Settings placement
@@ -72,7 +77,7 @@ export function createApplicationMenu(): Menu {
           accelerator: isMac ? "Cmd+N" : "Ctrl+N",
           click: () => {
             // TODO: Implement new conversation functionality
-            console.log("New conversation requested");
+            logger.info("New conversation requested");
           },
         },
         { type: "separator" as const },
@@ -137,7 +142,7 @@ export function createApplicationMenu(): Menu {
           label: "About Fishbowl",
           click: () => {
             // TODO: Implement about dialog
-            console.log("About dialog requested");
+            logger.info("About dialog requested");
           },
         },
         {

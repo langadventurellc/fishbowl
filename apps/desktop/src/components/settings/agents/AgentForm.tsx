@@ -43,6 +43,11 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "AgentForm", level: "info" },
+});
 
 // Helper function to extract role from template description
 const extractRoleFromDescription = (description?: string): string => {
@@ -113,7 +118,7 @@ export const AgentForm: React.FC<AgentFormProps> = ({
         form.reset(data);
         setUnsavedChanges(false);
       } catch (error) {
-        console.error("Failed to save agent:", error);
+        logger.error("Failed to save agent", error as Error);
         // Error handling could be enhanced with toast notifications
       } finally {
         setIsSubmitting(false);

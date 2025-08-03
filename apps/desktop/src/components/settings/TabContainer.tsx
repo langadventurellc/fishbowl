@@ -22,7 +22,12 @@ import {
   type SettingsSubTab,
   type TabContainerProps,
 } from "@fishbowl-ai/ui-shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+
+const logger = createLoggerSync({
+  config: { name: "TabContainer", level: "info" },
+});
 import { cn } from "../../lib/utils";
 import { COMMON_FOCUS_CLASSES } from "../../styles/focus";
 import { useAccessibilityAnnouncements } from "../../utils/useAccessibilityAnnouncements";
@@ -73,12 +78,12 @@ export const TabContainer = React.memo(function TabContainer({
   useEffect(() => {
     if (!useStore) {
       if (propActiveTab === undefined) {
-        console.warn(
+        logger.warn(
           "TabContainer: activeTab prop is required when useStore=false",
         );
       }
       if (propOnTabChange === undefined) {
-        console.warn(
+        logger.warn(
           "TabContainer: onTabChange prop is required when useStore=false",
         );
       }

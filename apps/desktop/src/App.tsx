@@ -8,26 +8,15 @@ import { setupTestHelpers } from "./utils/testHelpers";
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/showcase/ComponentShowcase";
 import LayoutShowcase from "./pages/showcase/LayoutShowcase";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 
-// Simple logging for renderer process to avoid Node.js compatibility issues
-const logger = {
-  info: (message: string, data?: Record<string, unknown>) => {
-    console.log(`[INFO] ${message}`, data ? JSON.stringify(data) : "");
+// Initialize structured logger for renderer process
+const logger = createLoggerSync({
+  config: {
+    name: "desktop-renderer",
+    level: "debug",
   },
-  debug: (message: string, data?: Record<string, unknown>) => {
-    console.log(`[DEBUG] ${message}`, data ? JSON.stringify(data) : "");
-  },
-  warn: (message: string, data?: Record<string, unknown>) => {
-    console.warn(`[WARN] ${message}`, data ? JSON.stringify(data) : "");
-  },
-  error: (message: string, error?: Error, data?: Record<string, unknown>) => {
-    console.error(
-      `[ERROR] ${message}`,
-      error,
-      data ? JSON.stringify(data) : "",
-    );
-  },
-};
+});
 
 export default function App() {
   // Initialize IPC integration for settings modal
@@ -38,7 +27,7 @@ export default function App() {
 
   // Log app initialization and setup test helpers
   React.useEffect(() => {
-    logger.info("Desktop app initialized", {
+    logger.info("Desktop app initialized with structured logger", {
       routes: ["/", "/showcase/components", "/showcase/layout"],
       platform: window?.electronAPI?.platform,
     });

@@ -24,7 +24,15 @@ import { useSettingsPersistenceAdapter } from "../../contexts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { FormErrorDisplay } from "./FormErrorDisplay";
+
+const logger = createLoggerSync({
+  config: {
+    name: "general-settings",
+    level: "info",
+  },
+});
 
 export const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -81,14 +89,17 @@ export const GeneralSettings: React.FC = () => {
         form.reset(validatedData); // Reset dirty state
 
         // Success feedback (could use toast notification in the future)
-        console.log("Settings saved successfully");
+        logger.info("Settings saved successfully");
       } catch (error) {
         if (error instanceof Error) {
           setSubmitError(error.message);
         } else {
           setSubmitError("Failed to save settings");
         }
-        console.error("Failed to save general settings:", error);
+        logger.error(
+          "Failed to save general settings",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
     },
     [form, setUnsavedChanges, settings, saveSettings],

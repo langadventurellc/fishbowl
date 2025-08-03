@@ -56,7 +56,4 @@ export function setupTestHelpers(): void {
   // Expose globally for Playwright tests
   (window as Window & { __TEST_HELPERS__?: TestHelpers }).__TEST_HELPERS__ =
     testHelpers;
-
-  // Debug logging
-  console.log("[TEST] Test helpers exposed globally");
 }
