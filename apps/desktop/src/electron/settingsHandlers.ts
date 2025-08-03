@@ -9,7 +9,11 @@ import {
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
 import { getSettingsRepository } from "./getSettingsRepository";
-import { PersistedSettingsData } from "@fishbowl-ai/shared";
+import { PersistedSettingsData, createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  context: { metadata: { component: "settingsHandlers" } },
+});
 
 /**
  * Sets up IPC handlers for settings operations
@@ -21,15 +25,15 @@ export function setupSettingsHandlers(): void {
     SETTINGS_CHANNELS.LOAD,
     async (_event): Promise<SettingsLoadResponse> => {
       try {
-        console.log("Loading settings");
+        logger.debug("Loading settings");
 
         const repository = getSettingsRepository();
         const settings = await repository.loadSettings();
 
-        console.log("Settings loaded successfully");
+        logger.debug("Settings loaded successfully");
         return { success: true, data: settings };
       } catch (error) {
-        console.error("Failed to load settings", error);
+        logger.error("Failed to load settings", error as Error);
         return { success: false, error: serializeError(error) };
       }
     },
@@ -43,17 +47,17 @@ export function setupSettingsHandlers(): void {
       request: SettingsSaveRequest,
     ): Promise<SettingsSaveResponse> => {
       try {
-        console.log("Saving settings", { section: request.section });
+        logger.debug("Saving settings", { section: request.section });
 
         const repository = getSettingsRepository();
         await repository.saveSettings(request.settings);
 
-        console.log("Settings saved successfully", {
+        logger.debug("Settings saved successfully", {
           section: request.section,
         });
         return { success: true };
       } catch (error) {
-        console.error("Failed to save settings", error);
+        logger.error("Failed to save settings", error as Error);
         return { success: false, error: serializeError(error) };
       }
     },
@@ -67,7 +71,7 @@ export function setupSettingsHandlers(): void {
       request?: SettingsResetRequest,
     ): Promise<SettingsResetResponse> => {
       try {
-        console.log("Resetting settings", { section: request?.section });
+        logger.debug("Resetting settings", { section: request?.section });
 
         const repository = getSettingsRepository();
 
@@ -77,16 +81,16 @@ export function setupSettingsHandlers(): void {
         // Load and return the reset settings
         const settings = await repository.loadSettings();
 
-        console.log("Settings reset successfully", {
+        logger.debug("Settings reset successfully", {
           section: request?.section,
         });
         return { success: true, data: settings };
       } catch (error) {
-        console.error("Failed to reset settings", error);
+        logger.error("Failed to reset settings", error as Error);
         return { success: false, error: serializeError(error) };
       }
     },
   );
 
-  console.log("Settings IPC handlers initialized");
+  logger.info("Settings IPC handlers initialized");
 }

@@ -8,9 +8,14 @@
  */
 
 import { CustomRoleViewModel } from "../types/settings/CustomRoleViewModel";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 
 const STORAGE_KEY = "fishbowl-custom-roles";
 const STORAGE_VERSION = "1.0";
+
+const logger = createLoggerSync({
+  context: { metadata: { component: "customRolesPersistence" } },
+});
 
 interface StorageData {
   version: string;
@@ -29,7 +34,7 @@ export const customRolesPersistence = {
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(storageData));
     } catch (error) {
-      console.error("Failed to save custom roles:", error);
+      logger.error("Failed to save custom roles", error as Error);
       throw new Error("Unable to save custom roles to storage");
     }
   },
@@ -46,7 +51,7 @@ export const customRolesPersistence = {
 
       // Handle version migration if needed
       if (parsedData.version !== STORAGE_VERSION) {
-        console.warn(
+        logger.warn(
           `Custom roles data version mismatch. Expected ${STORAGE_VERSION}, got ${parsedData.version}`,
         );
         // Perform migration logic here if needed in the future
@@ -59,7 +64,7 @@ export const customRolesPersistence = {
 
       return parsedData.roles;
     } catch (error) {
-      console.error("Failed to load custom roles:", error);
+      logger.error("Failed to load custom roles", error as Error);
 
       // Return empty array on error but don't throw to prevent app crashes
       return [];
@@ -70,7 +75,7 @@ export const customRolesPersistence = {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
-      console.error("Failed to clear custom roles:", error);
+      logger.error("Failed to clear custom roles", error as Error);
       throw new Error("Unable to clear custom roles storage");
     }
   },

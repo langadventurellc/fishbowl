@@ -11,6 +11,7 @@ import {
 } from "../../services/storage/errors";
 import { ZodError } from "zod";
 import { CURRENT_SCHEMA_VERSION } from "../../types/settings/persistedSettingsSchema";
+import { createLoggerSync } from "../../logging/createLoggerSync";
 
 /**
  * Repository for settings persistence operations.
@@ -21,6 +22,9 @@ import { CURRENT_SCHEMA_VERSION } from "../../types/settings/persistedSettingsSc
  */
 export class SettingsRepository implements SettingsRepositoryInterface {
   private static readonly SETTINGS_FILE_NAME = "preferences.json";
+  private readonly logger = createLoggerSync({
+    context: { metadata: { component: "SettingsRepository" } },
+  });
 
   /**
    * Create settings repository with file storage dependency.
@@ -253,7 +257,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
     ) {
       const dataVersion = (settings as Record<string, unknown>).schemaVersion;
       if (dataVersion && dataVersion !== CURRENT_SCHEMA_VERSION) {
-        console.warn(
+        this.logger.warn(
           `Settings schema version mismatch. Current: ${CURRENT_SCHEMA_VERSION}, Data: ${dataVersion}. ` +
             "Migration may be needed in the future.",
         );
@@ -277,7 +281,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
       );
     } catch (error) {
       // Log but don't throw - application can still work with in-memory defaults
-      console.warn("Failed to save default settings to file:", error);
+      this.logger.warn("Failed to save default settings to file", { error });
     }
   }
 }

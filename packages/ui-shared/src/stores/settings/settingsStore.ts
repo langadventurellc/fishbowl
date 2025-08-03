@@ -13,6 +13,11 @@ import type { SettingsModalStore } from "./settingsModalStore";
 import type { SettingsSection } from "./settingsSection";
 import type { SettingsSubTab } from "./settingsSubTab";
 import { defaultSettingsModalState } from "./defaultSettingsModalState";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  context: { metadata: { component: "settingsStore" } },
+});
 
 /**
  * Maximum number of entries allowed in navigation history.
@@ -122,7 +127,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
 
       // Validate section if provided
       if (section && !isValidSection(section)) {
-        console.warn(`Invalid section provided to openModal: ${section}`);
+        logger.warn(`Invalid section provided to openModal: ${section}`);
         return;
       }
 
@@ -148,9 +153,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
     setActiveSection: (section: SettingsSection) => {
       // Validate section
       if (!isValidSection(section)) {
-        console.warn(
-          `Invalid section provided to setActiveSection: ${section}`,
-        );
+        logger.warn(`Invalid section provided to setActiveSection: ${section}`);
         return;
       }
 
@@ -165,7 +168,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
     setActiveSubTab: (tab: SettingsSubTab) => {
       // Validate sub-tab
       if (!isValidSubTab(tab)) {
-        console.warn(`Invalid sub-tab provided to setActiveSubTab: ${tab}`);
+        logger.warn(`Invalid sub-tab provided to setActiveSubTab: ${tab}`);
         return;
       }
 
@@ -179,7 +182,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
 
       // Handle empty history gracefully
       if (navigationHistory.length <= 1) {
-        console.info("No previous section in navigation history");
+        logger.info("No previous section in navigation history");
         return;
       }
 
