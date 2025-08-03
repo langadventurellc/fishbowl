@@ -2,28 +2,28 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   install-dependencies:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      
+          node-version: "22"
+
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
-      
+
       - name: Get pnpm store directory
         shell: bash
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      
+
       - name: Setup pnpm cache
         uses: actions/cache@v4
         with:
@@ -31,10 +31,10 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Cache dependencies
         uses: actions/cache/save@v4
         with:
@@ -50,15 +50,15 @@ jobs:
     needs: install-dependencies
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      
+          node-version: "22"
+
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
-      
+
       - name: Restore dependencies
         uses: actions/cache/restore@v4
         with:
@@ -69,10 +69,10 @@ jobs:
             tests/*/node_modules
           key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
           fail-on-cache-miss: true
-      
+
       - name: Build dependencies
         run: pnpm build:libs
-      
+
       - name: Run quality checks
         run: pnpm quality
 
@@ -81,15 +81,15 @@ jobs:
     needs: install-dependencies
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      
+          node-version: "22"
+
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
-      
+
       - name: Restore dependencies
         uses: actions/cache/restore@v4
         with:
@@ -100,7 +100,7 @@ jobs:
             tests/*/node_modules
           key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
           fail-on-cache-miss: true
-      
+
       - name: Run unit tests
         run: pnpm test:unit
 
@@ -109,15 +109,15 @@ jobs:
     needs: [install-dependencies, quality-checks, test-unit]
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      
+          node-version: "22"
+
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
-      
+
       - name: Restore dependencies
         uses: actions/cache/restore@v4
         with:
@@ -128,25 +128,25 @@ jobs:
             tests/*/node_modules
           key: ${{ runner.os }}-deps-${{ hashFiles('**/pnpm-lock.yaml') }}
           fail-on-cache-miss: true
-      
+
       - name: Install system dependencies for Electron
         run: |
           sudo apt-get update
           sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2t64 xvfb
-      
-      - name: Install Playwright browsers  
+
+      - name: Install Playwright browsers
         run: pnpm --filter=@fishbowl-ai/desktop-e2e-tests exec playwright install --with-deps
-      
+
       - name: Reinstall Electron to ensure clean binary
         run: |
           pnpm --filter=@fishbowl-ai/desktop exec npm rebuild electron
           pnpm --filter=@fishbowl-ai/desktop exec electron --version --no-sandbox
-      
+
       - name: Run E2E tests
         env:
           CI: true
         run: pnpm test:e2e:desktop:headless
-      
+
       - name: Upload E2E test results
         uses: actions/upload-artifact@v4
         if: always()
@@ -154,7 +154,7 @@ jobs:
           name: e2e-test-results
           path: tests/desktop/test-results/
           retention-days: 30
-      
+
       - name: Upload E2E test report
         uses: actions/upload-artifact@v4
         if: always()
@@ -168,19 +168,19 @@ jobs:
     needs: [install-dependencies, quality-checks, test-unit]
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-      
+          node-version: "22"
+
       - name: Install pnpm
         run: npm install -g pnpm@10.13.1
-      
+
       - name: Get pnpm store directory
         shell: bash
         run: echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-      
+
       - name: Setup pnpm cache
         uses: actions/cache@v4
         with:
@@ -188,26 +188,26 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      
+
       - name: Build dependencies
         run: pnpm build:libs
-      
+
       - name: Setup iOS Simulator
         run: |
           xcrun simctl create "iPhone 15" "iPhone 15" "iOS17.5"
           xcrun simctl boot "iPhone 15"
-      
+
       - name: Build mobile app for testing
         run: pnpm prebuild:mobile
-      
+
       - name: Run mobile E2E tests
         env:
           CI: true
-        run: pnpm test:e2e:mobile:headless
-      
+        run: pnpm test:e2e:mobile:headless:nobuild
+
       - name: Upload mobile E2E test results
         uses: actions/upload-artifact@v4
         if: always()
