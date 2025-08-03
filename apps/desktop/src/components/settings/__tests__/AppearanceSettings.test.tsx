@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
+import React from "react";
 import { SettingsContent } from "../SettingsContent";
+import { SettingsProvider } from "../../../contexts";
 
 // Mock window.matchMedia for system theme detection
 Object.defineProperty(window, "matchMedia", {
@@ -18,19 +20,76 @@ Object.defineProperty(window, "matchMedia", {
 });
 
 // Mock the shared package
-jest.mock("@fishbowl-ai/ui-shared", () => ({
-  useUnsavedChanges: jest.fn(() => ({
-    hasUnsavedChanges: false,
-    setUnsavedChanges: jest.fn(),
-  })),
-}));
+jest.mock("@fishbowl-ai/ui-shared", () => {
+  const { z } = require("zod");
+
+  const mockSchema = z.object({
+    theme: z.enum(["light", "dark", "system"]),
+    showTimestamps: z.enum(["always", "hover", "never"]),
+    showActivityTime: z.boolean(),
+    compactList: z.boolean(),
+    fontSize: z.number().min(12).max(20),
+    messageSpacing: z.enum(["compact", "normal", "relaxed"]),
+  });
+
+  return {
+    useUnsavedChanges: jest.fn(() => ({
+      hasUnsavedChanges: false,
+      setUnsavedChanges: jest.fn(),
+    })),
+    useSettingsPersistence: jest.fn(() => ({
+      settings: {
+        appearance: {
+          theme: "system",
+          showTimestamps: "hover",
+          showActivityTime: true,
+          compactList: false,
+          fontSize: 14,
+          messageSpacing: "normal",
+        },
+      },
+      saveSettings: jest.fn(),
+      isLoading: false,
+      error: null,
+    })),
+    defaultAppearanceSettings: {
+      theme: "system",
+      showTimestamps: "hover",
+      showActivityTime: true,
+      compactList: false,
+      fontSize: 14,
+      messageSpacing: "normal",
+    },
+    appearanceSettingsSchema: mockSchema,
+  };
+});
 
 // Mock the utils function
 jest.mock("@/utils", () => ({
   getAccessibleDescription: jest.fn().mockReturnValue("Test description"),
+  applyTheme: jest.fn(),
+}));
+
+// Mock the desktop adapter
+jest.mock("../../../adapters/desktopSettingsAdapter", () => ({
+  desktopSettingsAdapter: {
+    save: jest.fn(),
+    load: jest.fn(),
+    reset: jest.fn(),
+  },
+}));
+
+// Mock form error display
+jest.mock("../FormErrorDisplay", () => ({
+  FormErrorDisplay: ({ error }: { error: string | null }) =>
+    error ? <div data-testid="form-error">{error}</div> : null,
 }));
 
 describe("AppearanceSettings Component", () => {
+  const renderWithProvider = (ui: React.ReactElement) => {
+    return render(<SettingsProvider>{ui}</SettingsProvider>);
+  };
+
   beforeEach(() => {
     // Clear any previous mocks
     jest.clearAllMocks();
@@ -38,7 +97,7 @@ describe("AppearanceSettings Component", () => {
 
   it("renders appearance settings without errors", () => {
     expect(() => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
     }).not.toThrow();
 
     expect(screen.getByText("Appearance")).toBeInTheDocument();
@@ -48,7 +107,7 @@ describe("AppearanceSettings Component", () => {
   });
 
   it("renders theme selection options", () => {
-    render(<SettingsContent activeSection="appearance" />);
+    renderWithProvider(<SettingsContent activeSection="appearance" />);
 
     expect(screen.getByText("Theme")).toBeInTheDocument();
     expect(screen.getByLabelText("Light")).toBeInTheDocument();
@@ -57,13 +116,13 @@ describe("AppearanceSettings Component", () => {
   });
 
   it("displays system theme helper text", () => {
-    render(<SettingsContent activeSection="appearance" />);
+    renderWithProvider(<SettingsContent activeSection="appearance" />);
 
     expect(screen.getByText("Use your system preference")).toBeInTheDocument();
   });
 
   it("renders theme preview area", () => {
-    render(<SettingsContent activeSection="appearance" />);
+    renderWithProvider(<SettingsContent activeSection="appearance" />);
 
     expect(screen.getByText("Preview")).toBeInTheDocument();
     expect(screen.getByText("Sample Text")).toBeInTheDocument();
@@ -71,7 +130,7 @@ describe("AppearanceSettings Component", () => {
   });
 
   it("updates theme selection on user interaction", () => {
-    render(<SettingsContent activeSection="appearance" />);
+    renderWithProvider(<SettingsContent activeSection="appearance" />);
 
     const darkOption = screen.getByLabelText("Dark");
     const lightOption = screen.getByLabelText("Light");
@@ -94,14 +153,14 @@ describe("AppearanceSettings Component", () => {
   });
 
   it("renders theme preview with correct dimensions", () => {
-    render(<SettingsContent activeSection="appearance" />);
+    renderWithProvider(<SettingsContent activeSection="appearance" />);
 
     const previewArea = screen.getByLabelText(/Theme preview/);
     expect(previewArea).toHaveClass("theme-preview");
   });
 
   it("maintains proper accessibility attributes", () => {
-    render(<SettingsContent activeSection="appearance" />);
+    renderWithProvider(<SettingsContent activeSection="appearance" />);
 
     // Check radio group accessibility - shadcn/ui uses button elements with proper ARIA
     const lightRadio = screen.getByLabelText("Light");
@@ -121,7 +180,7 @@ describe("AppearanceSettings Component", () => {
   });
 
   it("displays proper visual hierarchy", () => {
-    render(<SettingsContent activeSection="appearance" />);
+    renderWithProvider(<SettingsContent activeSection="appearance" />);
 
     // Check main title styling
     const mainTitle = screen.getByText("Appearance");
@@ -138,7 +197,7 @@ describe("AppearanceSettings Component", () => {
 
   describe("Display Settings Section", () => {
     it("renders display settings section", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       expect(screen.getByText("Display Settings")).toBeInTheDocument();
       expect(screen.getByText("Show Timestamps")).toBeInTheDocument();
@@ -147,7 +206,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("renders timestamp radio group with correct options", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       expect(screen.getByLabelText("Always")).toBeInTheDocument();
       expect(screen.getByLabelText("On Hover")).toBeInTheDocument();
@@ -158,7 +217,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("updates timestamp selection on user interaction", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const alwaysOption = screen.getByLabelText("Always");
       const hoverOption = screen.getByLabelText("On Hover");
@@ -181,7 +240,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("renders toggle switches with proper initial states", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       // Find switches by their associated labels
       const activityTimeLabel = screen.getByText("Show last activity time");
@@ -199,7 +258,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("updates toggle switches on user interaction", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       // Test that switches are rendered and can be interacted with
       const activityTimeLabel = screen.getByText("Show last activity time");
@@ -218,7 +277,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("displays helper text for all controls", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       expect(
         screen.getByText("Control when message timestamps are displayed"),
@@ -234,7 +293,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("maintains proper accessibility for display settings", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       // Check radio group accessibility for timestamp options
       const alwaysRadio = screen.getByLabelText("Always");
@@ -265,7 +324,7 @@ describe("AppearanceSettings Component", () => {
 
   describe("Live Preview Functionality", () => {
     it("updates theme preview immediately when theme selection changes", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const darkOption = screen.getByLabelText("Dark");
       const lightOption = screen.getByLabelText("Light");
@@ -288,7 +347,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("renders theme preview with enhanced ARIA accessibility", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewArea = screen.getByLabelText(/Theme preview/);
 
@@ -300,7 +359,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("applies smooth transitions to theme preview", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewArea = screen.getByLabelText(/Theme preview/);
 
@@ -318,7 +377,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("renders font size preview with correct sample text", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewText = screen.getByText(
         "This is how your messages will appear",
@@ -329,7 +388,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("updates font size preview in real-time as slider moves", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewText = screen.getByText(
         "This is how your messages will appear",
@@ -348,7 +407,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("maintains proper line height in font size preview", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewText = screen.getByText(
         "This is how your messages will appear",
@@ -359,7 +418,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("applies smooth transitions to font size preview", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewText = screen.getByText(
         "This is how your messages will appear",
@@ -374,7 +433,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("renders font size preview with accessible label", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewText = screen.getByText(
         "This is how your messages will appear",
@@ -388,7 +447,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("positions font size preview correctly below slider", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewContainer = screen
         .getByText("This is how your messages will appear")
@@ -405,7 +464,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("displays font size value correctly in preview label", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const previewText = screen.getByText(
         "This is how your messages will appear",
@@ -431,7 +490,7 @@ describe("AppearanceSettings Component", () => {
         dispatchEvent: jest.fn(),
       }));
 
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const systemOption = screen.getByLabelText("System");
       const previewArea = screen.getByLabelText(/Theme preview/);
@@ -444,7 +503,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("prevents excessive re-renders with React.memo optimization", () => {
-      const { rerender } = render(
+      const { rerender } = renderWithProvider(
         <SettingsContent activeSection="appearance" />,
       );
 
@@ -458,7 +517,11 @@ describe("AppearanceSettings Component", () => {
       expect(previewText).toBeInTheDocument();
 
       // Re-render with same props should not cause issues
-      rerender(<SettingsContent activeSection="appearance" />);
+      rerender(
+        <SettingsProvider>
+          <SettingsContent activeSection="appearance" />
+        </SettingsProvider>,
+      );
 
       // Components should still be present and functional
       expect(previewArea).toBeInTheDocument();
@@ -466,7 +529,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("displays chat display section with font size controls", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       expect(screen.getByText("Chat Display")).toBeInTheDocument();
       expect(screen.getByText("Message Font Size")).toBeInTheDocument();
@@ -477,7 +540,7 @@ describe("AppearanceSettings Component", () => {
     });
 
     it("maintains consistent styling for preview areas", () => {
-      render(<SettingsContent activeSection="appearance" />);
+      renderWithProvider(<SettingsContent activeSection="appearance" />);
 
       const themePreview = screen.getByLabelText(/Theme preview/);
       const fontPreviewContainer = screen
