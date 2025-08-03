@@ -21,7 +21,8 @@ import { createLoggerSync } from "../../logging/createLoggerSync";
  * Handles schema validation, default value application, and atomic updates.
  */
 export class SettingsRepository implements SettingsRepositoryInterface {
-  private static readonly SETTINGS_FILE_NAME = "preferences.json";
+  private static readonly DEFAULT_SETTINGS_FILE_NAME = "preferences.json";
+  private readonly settingsFilePath: string;
   private readonly logger = createLoggerSync({
     context: { metadata: { component: "SettingsRepository" } },
   });
@@ -30,8 +31,15 @@ export class SettingsRepository implements SettingsRepositoryInterface {
    * Create settings repository with file storage dependency.
    *
    * @param fileStorageService File storage service for JSON operations
+   * @param settingsFilePath Optional custom path for settings file (defaults to "preferences.json")
    */
-  constructor(private fileStorageService: FileStorageService) {}
+  constructor(
+    private fileStorageService: FileStorageService,
+    settingsFilePath?: string,
+  ) {
+    this.settingsFilePath =
+      settingsFilePath ?? SettingsRepository.DEFAULT_SETTINGS_FILE_NAME;
+  }
 
   /**
    * Load settings from storage with validation and defaults applied.
@@ -44,7 +52,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
   async loadSettings(): Promise<PersistedSettingsData> {
     try {
       const rawSettings = await this.fileStorageService.readJsonFile<unknown>(
-        SettingsRepository.SETTINGS_FILE_NAME,
+        this.settingsFilePath,
       );
 
       return this.validateSettings(rawSettings);
@@ -95,7 +103,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
 
       // Save atomically
       await this.fileStorageService.writeJsonFile(
-        SettingsRepository.SETTINGS_FILE_NAME,
+        this.settingsFilePath,
         validatedSettings,
       );
     } catch (error) {
@@ -109,7 +117,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
 
       // Wrap unexpected errors
       throw new WritePermissionError(
-        SettingsRepository.SETTINGS_FILE_NAME,
+        this.settingsFilePath,
         "writeJsonFile",
         error as Error,
       );
@@ -143,7 +151,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
         Array.isArray(settings)
       ) {
         throw new SettingsValidationError(
-          SettingsRepository.SETTINGS_FILE_NAME,
+          this.settingsFilePath,
           "validation",
           [{ path: "root", message: "Settings must be an object" }],
           new Error("Invalid settings format"),
@@ -162,7 +170,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
       if (!result.success) {
         const fieldErrors = this.formatZodErrors(result.error);
         throw new SettingsValidationError(
-          SettingsRepository.SETTINGS_FILE_NAME,
+          this.settingsFilePath,
           "validation",
           fieldErrors,
           result.error,
@@ -178,7 +186,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
 
       // Wrap other errors
       throw new SettingsValidationError(
-        SettingsRepository.SETTINGS_FILE_NAME,
+        this.settingsFilePath,
         "validation",
         [
           {
@@ -276,7 +284,7 @@ export class SettingsRepository implements SettingsRepositoryInterface {
   ): Promise<void> {
     try {
       await this.fileStorageService.writeJsonFile(
-        SettingsRepository.SETTINGS_FILE_NAME,
+        this.settingsFilePath,
         defaults,
       );
     } catch (error) {

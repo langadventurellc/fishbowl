@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-fix-settings-persistence-to-use
+status: done
 title:
   Fix settings persistence to use Electron userData directory instead of working
   directory
-status: open
 priority: normal
 prerequisites: []
 created: "2025-08-03T00:35:34.731787"
-updated: "2025-08-03T00:35:34.731787"
+updated: "2025-08-03T10:34:48.051500"
 schema_version: "1.1"
+worktree: null
 ---
 
 ## Problem
@@ -133,3 +134,7 @@ This will need to be changed to use the Electron app's userData directory path i
 1-2 hours for implementation and testing.
 
 ### Log
+
+**2025-08-03T15:58:03.236115Z** - Fixed settings persistence to use Electron userData directory instead of working directory. Modified SettingsRepository to accept custom file path, updated main.ts to use app.getPath("userData"), added comprehensive unit tests, and fixed E2E tests. All tests now pass and the application correctly saves settings to the platform-specific userData directory, resolving file permission issues and following Electron best practices.
+
+- filesChanged: ["packages/shared/src/repositories/settings/SettingsRepository.ts", "apps/desktop/src/electron/main.ts", "packages/shared/src/repositories/settings/__tests__/SettingsRepository.test.ts", "tests/desktop/features/general-settings.spec.ts"]

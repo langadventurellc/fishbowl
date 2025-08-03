@@ -517,4 +517,60 @@ describe("SettingsRepository", () => {
       expect(savedData.general.checkUpdates).toBe(true); // Preserved from defaults
     });
   });
+
+  describe("constructor with custom settings file path", () => {
+    it("should use custom file path when provided", async () => {
+      const customPath = "/custom/path/settings.json";
+      const customRepository = new SettingsRepository(
+        mockFileStorageService,
+        customPath,
+      );
+
+      // Mock readJsonFile to return valid settings
+      const mockSettings = createDefaultPersistedSettings();
+      mockFileStorageService.readJsonFile.mockResolvedValue(mockSettings);
+
+      await customRepository.loadSettings();
+
+      expect(mockFileStorageService.readJsonFile).toHaveBeenCalledWith(
+        customPath,
+      );
+    });
+
+    it("should use default file name when no custom path provided", async () => {
+      const defaultRepository = new SettingsRepository(mockFileStorageService);
+
+      // Mock readJsonFile to return valid settings
+      const mockSettings = createDefaultPersistedSettings();
+      mockFileStorageService.readJsonFile.mockResolvedValue(mockSettings);
+
+      await defaultRepository.loadSettings();
+
+      expect(mockFileStorageService.readJsonFile).toHaveBeenCalledWith(
+        "preferences.json",
+      );
+    });
+
+    it("should save to custom file path when provided", async () => {
+      const customPath = "/custom/path/settings.json";
+      const customRepository = new SettingsRepository(
+        mockFileStorageService,
+        customPath,
+      );
+
+      // Mock readJsonFile to return valid settings for the merge operation
+      const mockSettings = createDefaultPersistedSettings();
+      mockFileStorageService.readJsonFile.mockResolvedValue(mockSettings);
+
+      const partialSettings = {
+        general: { checkUpdates: false },
+      } as Partial<PersistedSettingsData>;
+      await customRepository.saveSettings(partialSettings);
+
+      expect(mockFileStorageService.writeJsonFile).toHaveBeenCalledWith(
+        customPath,
+        expect.any(Object),
+      );
+    });
+  });
 });
