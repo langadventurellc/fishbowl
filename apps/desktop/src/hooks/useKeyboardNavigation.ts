@@ -1,8 +1,8 @@
 import {
-  useState,
   useCallback,
   useEffect,
   useMemo,
+  useState,
   type KeyboardEvent,
 } from "react";
 import type { KeyboardNavigationOptions } from "./types/KeyboardNavigationOptions";
