@@ -183,9 +183,12 @@ export const GeneralSettings: React.FC = () => {
                           max={30}
                           step={1}
                           value={[field.value / 1000]} // Convert ms to seconds for slider
-                          onValueChange={(value) =>
-                            field.onChange((value[0] || 1) * 1000)
-                          } // Convert seconds to ms
+                          onValueChange={(value) => {
+                            const newValue = (value[0] || 1) * 1000;
+                            field.onChange(newValue);
+                            // Directly set unsaved changes to true
+                            setUnsavedChanges(true);
+                          }} // Convert seconds to ms
                           className="w-full"
                           aria-describedby="responseDelay-description responseDelay-value"
                           aria-label="Response delay in seconds"

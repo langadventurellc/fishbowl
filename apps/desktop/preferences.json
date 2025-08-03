@@ -1,7 +1,7 @@
 {
   "schemaVersion": "1.0.0",
   "general": {
-    "responseDelay": 5000,
+    "responseDelay": 8000,
     "maximumMessages": 48,
     "maximumWaitTime": 31000,
     "defaultMode": "manual",
@@ -20,5 +20,5 @@
     "debugLogging": false,
     "experimentalFeatures": false
   },
-  "lastUpdated": "2025-08-03T03:07:53.030Z"
+  "lastUpdated": "2025-08-03T03:17:19.282Z"
 }
