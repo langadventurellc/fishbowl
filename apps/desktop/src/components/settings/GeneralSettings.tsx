@@ -15,9 +15,12 @@ import { Switch } from "@/components/ui/switch";
 import {
   defaultGeneralSettings,
   generalSettingsSchema,
+  useSettingsPersistence,
   useUnsavedChanges,
   type GeneralSettingsFormData,
+  type SettingsFormData,
 } from "@fishbowl-ai/ui-shared";
+import { desktopSettingsAdapter } from "../../adapters/desktopSettingsAdapter";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -27,12 +30,27 @@ export const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const { setUnsavedChanges } = useUnsavedChanges();
 
+  // Initialize settings persistence
+  const { settings, saveSettings, isLoading } = useSettingsPersistence({
+    adapter: desktopSettingsAdapter,
+    onError: (error: Error) => {
+      setSubmitError(error.message);
+    },
+  });
+
   // Initialize form with default values and validation
   const form = useForm<GeneralSettingsFormData>({
     resolver: zodResolver(generalSettingsSchema),
-    defaultValues: defaultGeneralSettings,
+    defaultValues: settings?.general || defaultGeneralSettings,
     mode: "onChange", // Enable real-time validation
   });
+
+  // Reset form when settings are loaded
+  useEffect(() => {
+    if (settings?.general) {
+      form.reset(settings.general);
+    }
+  }, [settings, form]);
 
   // Enhanced form submission with error handling
   const onSubmit = useCallback(
@@ -43,11 +61,14 @@ export const GeneralSettings: React.FC = () => {
         // Validate data one more time
         const validatedData = generalSettingsSchema.parse(data);
 
-        // Log form data for verification during development
-        console.log("General Settings submitted:", validatedData);
+        // Create updated settings object with new general settings
+        const updatedSettings = {
+          ...settings,
+          general: validatedData,
+        } as SettingsFormData;
 
-        // TODO: Integrate with settings store/persistence layer
-        // This will be connected to the settings system in future tasks
+        // Save through persistence adapter
+        await saveSettings(updatedSettings);
 
         // Mark as saved
         setUnsavedChanges(false);
@@ -64,7 +85,7 @@ export const GeneralSettings: React.FC = () => {
         console.error("Failed to save general settings:", error);
       }
     },
-    [form, setUnsavedChanges],
+    [form, setUnsavedChanges, settings, saveSettings],
   );
 
   // Track unsaved changes
@@ -88,6 +109,20 @@ export const GeneralSettings: React.FC = () => {
       window.removeEventListener("settings-save", handleSave);
     };
   }, [form, onSubmit]);
+
+  // Show loading state while settings are being loaded
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-heading-primary mb-[20px]">General</h1>
+          <p className="text-muted-foreground text-sm mb-6">
+            Loading settings...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
