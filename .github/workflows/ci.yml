@@ -206,7 +206,7 @@ jobs:
       - name: Run mobile E2E tests
         env:
           CI: true
-        run: cd apps/mobile && pnpm test:e2e:mobile:headless:nobuild
+        run: cd apps/mobile && pnpm test:e2e:headless:nobuild
 
       - name: Upload mobile E2E test results
         uses: actions/upload-artifact@v4
