@@ -1,3 +1,23 @@
+import { createLoggerSync } from "../logging/createLoggerSync";
+
+// Lazy logger creation to avoid process access in browser context
+let logger: ReturnType<typeof createLoggerSync> | null = null;
+const getLogger = () => {
+  if (!logger) {
+    try {
+      logger = createLoggerSync({
+        context: { metadata: { component: "getByteLength" } },
+      });
+    } catch {
+      // Fallback to console in browser contexts where logger creation fails
+      logger = {
+        warn: console.warn.bind(console),
+      } as ReturnType<typeof createLoggerSync>;
+    }
+  }
+  return logger;
+};
+
 /**
  * Cross-platform utility to get byte length of a string.
  * Uses Buffer.byteLength in Node.js, TextEncoder in browsers/React Native.
@@ -19,7 +39,7 @@ export async function getByteLength(str: string): Promise<number> {
   }
 
   // Fallback for older environments (less accurate for non-ASCII)
-  console.warn(
+  getLogger().warn(
     "Using fallback byte length calculation - may be inaccurate for non-ASCII characters",
   );
   return str.length;

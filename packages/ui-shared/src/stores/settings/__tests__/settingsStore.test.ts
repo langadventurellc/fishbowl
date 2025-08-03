@@ -7,23 +7,28 @@
  * @module stores/settings/__tests__/settingsStore.test
  */
 
+// Mock the createLoggerSync function to return a mock logger
+const mockLoggerWarn = jest.fn();
+const mockLoggerInfo = jest.fn();
+jest.mock("@fishbowl-ai/shared", () => ({
+  ...jest.requireActual("@fishbowl-ai/shared"),
+  createLoggerSync: jest.fn(() => ({
+    warn: mockLoggerWarn,
+    info: mockLoggerInfo,
+  })),
+}));
+
 import { useSettingsModalStore } from "../settingsStore";
 import { defaultSettingsModalState } from "../defaultSettingsModalState";
 import type { SettingsSection, SettingsSubTab } from "../index";
-
-// Mock console methods to test validation warnings
-const mockConsoleWarn = jest.fn();
-const mockConsoleInfo = jest.fn();
 
 beforeEach(() => {
   // Reset store to defaults before each test
   useSettingsModalStore.getState().resetToDefaults();
 
-  // Reset console mocks
-  mockConsoleWarn.mockClear();
-  mockConsoleInfo.mockClear();
-  jest.spyOn(console, "warn").mockImplementation(mockConsoleWarn);
-  jest.spyOn(console, "info").mockImplementation(mockConsoleInfo);
+  // Reset logger mocks
+  mockLoggerWarn.mockClear();
+  mockLoggerInfo.mockClear();
 });
 
 afterEach(() => {
@@ -91,7 +96,7 @@ describe("settingsStore", () => {
 
       store.openModal("invalid-section" as SettingsSection);
 
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
+      expect(mockLoggerWarn).toHaveBeenCalledWith(
         "Invalid section provided to openModal: invalid-section",
       );
 
@@ -138,7 +143,7 @@ describe("settingsStore", () => {
 
       store.setActiveSection("invalid-section" as SettingsSection);
 
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
+      expect(mockLoggerWarn).toHaveBeenCalledWith(
         "Invalid section provided to setActiveSection: invalid-section",
       );
 
@@ -162,7 +167,7 @@ describe("settingsStore", () => {
 
       store.setActiveSubTab("invalid-tab" as SettingsSubTab);
 
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
+      expect(mockLoggerWarn).toHaveBeenCalledWith(
         "Invalid sub-tab provided to setActiveSubTab: invalid-tab",
       );
 
@@ -192,7 +197,7 @@ describe("settingsStore", () => {
 
       store.navigateBack();
 
-      expect(mockConsoleInfo).toHaveBeenCalledWith(
+      expect(mockLoggerInfo).toHaveBeenCalledWith(
         "No previous section in navigation history",
       );
 

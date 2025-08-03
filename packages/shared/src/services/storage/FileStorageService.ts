@@ -12,6 +12,7 @@ import {
   safeJsonStringify,
   ensureDirectoryExists,
 } from "./utils";
+import { createLoggerSync } from "../../logging/createLoggerSync";
 
 /**
  * Generic file storage service for JSON operations.
@@ -23,6 +24,9 @@ export class FileStorageService<T = unknown> {
   private readonly maxFileSizeBytes: number;
   private readonly filePermissions: number;
   private readonly tempFilePrefix: string;
+  private readonly logger = createLoggerSync({
+    context: { metadata: { component: "FileStorageService" } },
+  });
 
   constructor(
     private fs: FileSystemBridge = new NodeFileSystemBridge(),
@@ -244,7 +248,7 @@ export class FileStorageService<T = unknown> {
       const systemError = error as SystemError;
       if (systemError.code !== "ENOENT") {
         // Log but don't throw - cleanup should be best effort
-        console.warn(`Failed to cleanup temp file ${tempPath}:`, error);
+        this.logger.warn(`Failed to cleanup temp file ${tempPath}`, { error });
       }
     }
   }

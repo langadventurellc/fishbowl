@@ -1,3 +1,23 @@
+import { createLoggerSync } from "../logging/createLoggerSync";
+
+// Lazy logger creation to avoid process access in browser context
+let logger: ReturnType<typeof createLoggerSync> | null = null;
+const getLogger = () => {
+  if (!logger) {
+    try {
+      logger = createLoggerSync({
+        context: { metadata: { component: "randomBytes" } },
+      });
+    } catch {
+      // Fallback to console in browser contexts where logger creation fails
+      logger = {
+        warn: console.warn.bind(console),
+      } as ReturnType<typeof createLoggerSync>;
+    }
+  }
+  return logger;
+};
+
 /**
  * Generate cryptographically secure random bytes.
  * Uses Node.js crypto in Node environments, Web Crypto API in browsers/React Native.
@@ -19,7 +39,7 @@ export async function randomBytes(size: number): Promise<Uint8Array> {
   }
 
   // Fallback to Math.random (not cryptographically secure)
-  console.warn("Using Math.random fallback - not cryptographically secure");
+  getLogger().warn("Using Math.random fallback - not cryptographically secure");
   const bytes = new Uint8Array(size);
   for (let i = 0; i < size; i++) {
     bytes[i] = Math.floor(Math.random() * 256);

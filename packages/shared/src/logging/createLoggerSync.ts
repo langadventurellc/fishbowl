@@ -1,0 +1,131 @@
+import { StructuredLogger } from "./StructuredLogger";
+import type {
+  LogContext,
+  StructuredLogger as IStructuredLogger,
+  Transport,
+  LogConfig,
+} from "./types";
+import type { CreateLoggerOptions } from "./CreateLoggerOptions";
+import { ConsoleTransport } from "./transports/ConsoleTransport";
+import { SimpleFormatter } from "./formatters";
+import { getDefaultConfig, mergeConfig } from "./config";
+import { convertLogLevel } from "./convertLogLevel";
+import { createTransport } from "./createTransport";
+
+/**
+ * Creates a structured logger synchronously without device info gathering.
+ *
+ * This function provides faster logger initialization by skipping async device info
+ * collection. Use this when you need immediate logger availability or when device
+ * info is not required for your use case.
+ *
+ * @example
+ * ```typescript
+ * // Basic synchronous logger
+ * const logger = createLoggerSync();
+ * logger.info('Application starting...');
+ *
+ * // With configuration
+ * const logger = createLoggerSync({
+ *   config: {
+ *     name: 'startup-service',
+ *     level: 'debug'
+ *   }
+ * });
+ *
+ * // For testing or development
+ * const testLogger = createLoggerSync({
+ *   config: {
+ *     name: 'test',
+ *     level: 'trace',
+ *     includeDeviceInfo: false
+ *   }
+ * });
+ *
+ * // In error handlers where you need immediate logging
+ * const errorLogger = createLoggerSync({
+ *   context: { component: 'error-handler' }
+ * });
+ * errorLogger.error('Unhandled exception', error);
+ * ```
+ *
+ * @param options - Configuration options for the logger
+ * @param options.config - Logger configuration including name, level, transports
+ * @param options.context - Initial context data to include with all log entries
+ *
+ * @returns A configured StructuredLogger instance (immediately available)
+ *
+ * @remarks
+ * The sync version:
+ * - Does not include device info (CPU, memory, etc.) in context
+ * - Still includes process info (PID, platform, Node version)
+ * - Still includes session ID and platform detection
+ * - Is suitable for performance-critical startup paths
+ *
+ * @see {@link createLogger} for async logger creation with full device info
+ * @see {@link StructuredLogger} for the logger interface documentation
+ *
+ * @since 1.0.0
+ */
+export function createLoggerSync(
+  options: CreateLoggerOptions = {},
+): IStructuredLogger {
+  // Get default config and merge with user options
+  const defaultConfig = getDefaultConfig();
+  const config = mergeConfig(defaultConfig, options.config || {});
+
+  // Initialize transports based on configuration
+  const transports: Transport[] = [];
+
+  // Create transports from config
+  if (config.transports) {
+    for (const transportConfig of config.transports) {
+      const transport = createTransport(transportConfig);
+      if (transport) {
+        transports.push(transport);
+      }
+    }
+  } else {
+    // Default to console transport if none specified
+    const formatter = new SimpleFormatter();
+    transports.push(new ConsoleTransport({ formatter }));
+  }
+
+  // Build initial context (skip device info in sync version)
+  let context: LogContext = {
+    ...options.context,
+  };
+
+  // Add global context if provided
+  if (config.globalContext) {
+    Object.assign(context, {
+      metadata: { ...context.metadata, ...config.globalContext },
+    });
+  }
+
+  // Add metadata for process info (synchronous)
+  context = {
+    ...context,
+    metadata: {
+      ...context.metadata,
+      process: {
+        pid: process.pid,
+        ppid: process.ppid,
+        version: process.version,
+        platform: process.platform,
+        nodeVersion: process.versions.node,
+      },
+    },
+  };
+
+  // Convert LoggerConfig to LogConfig for StructuredLogger
+  const logConfig: LogConfig = {
+    level: convertLogLevel(config.level),
+    namespace: config.name,
+    context,
+    transports,
+  };
+
+  // Create and return the logger
+  return new StructuredLogger(logConfig);
+}

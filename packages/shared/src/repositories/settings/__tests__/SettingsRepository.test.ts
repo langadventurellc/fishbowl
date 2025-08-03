@@ -172,7 +172,13 @@ describe("SettingsRepository", () => {
     });
 
     it("should handle schema version mismatch with warning", () => {
-      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+      // Spy on logger.warn by accessing the private logger instance
+      const warnSpy = jest
+        .spyOn(
+          (repository as unknown as { logger: { warn: () => void } }).logger,
+          "warn",
+        )
+        .mockImplementation(() => {});
 
       const settingsWithOldVersion = {
         ...createDefaultPersistedSettings(),
@@ -190,7 +196,12 @@ describe("SettingsRepository", () => {
     });
 
     it("should not warn for matching schema version", () => {
-      const warnSpy = jest.spyOn(console, "warn").mockImplementation(() => {});
+      const warnSpy = jest
+        .spyOn(
+          (repository as unknown as { logger: { warn: () => void } }).logger,
+          "warn",
+        )
+        .mockImplementation(() => {});
 
       const settingsWithCurrentVersion = createDefaultPersistedSettings();
 
@@ -242,11 +253,14 @@ describe("SettingsRepository", () => {
     });
 
     it("should wrap unexpected errors in SettingsValidationError", () => {
-      // Mock console.warn to throw an error to simulate unexpected error
-      const originalWarn = console.warn;
-      console.warn = () => {
-        throw new Error("Unexpected error");
-      };
+      // Mock logger.warn to throw an error to simulate unexpected error
+      const originalWarn = (
+        repository as unknown as { logger: { warn: () => void } }
+      ).logger.warn;
+      (repository as unknown as { logger: { warn: () => void } }).logger.warn =
+        () => {
+          throw new Error("Unexpected error");
+        };
 
       try {
         repository.validateSettings({ schemaVersion: "old" });
@@ -256,7 +270,9 @@ describe("SettingsRepository", () => {
           "Unexpected error",
         );
       } finally {
-        console.warn = originalWarn;
+        (
+          repository as unknown as { logger: { warn: () => void } }
+        ).logger.warn = originalWarn;
       }
     });
   });

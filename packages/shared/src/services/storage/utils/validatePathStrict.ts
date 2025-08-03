@@ -1,6 +1,31 @@
 import * as path from "path";
 import { PathValidationError } from "./PathValidationError";
 
+const reserved = [
+  "con",
+  "prn",
+  "aux",
+  "nul",
+  "com1",
+  "com2",
+  "com3",
+  "com4",
+  "com5",
+  "com6",
+  "com7",
+  "com8",
+  "com9",
+  "lpt1",
+  "lpt2",
+  "lpt3",
+  "lpt4",
+  "lpt5",
+  "lpt6",
+  "lpt7",
+  "lpt8",
+  "lpt9",
+];
+
 /**
  * Validates a file path and throws detailed errors for invalid paths.
  *
@@ -76,30 +101,6 @@ export function validatePathStrict(filePath: string): void {
 
   // Check for Windows reserved names
   const basename = path.basename(normalized).toLowerCase();
-  const reserved = [
-    "con",
-    "prn",
-    "aux",
-    "nul",
-    "com1",
-    "com2",
-    "com3",
-    "com4",
-    "com5",
-    "com6",
-    "com7",
-    "com8",
-    "com9",
-    "lpt1",
-    "lpt2",
-    "lpt3",
-    "lpt4",
-    "lpt5",
-    "lpt6",
-    "lpt7",
-    "lpt8",
-    "lpt9",
-  ];
   const baseNameWithoutExt = basename.split(".")[0] || "";
   if (reserved.includes(basename) || reserved.includes(baseNameWithoutExt)) {
     throw new PathValidationError(

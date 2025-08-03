@@ -7,6 +7,7 @@ import {
   SettingsRepository,
   FileStorageService,
   NodeFileSystemBridge,
+  createLogger,
 } from "@fishbowl-ai/shared";
 import "./getSettingsRepository.js"; // Initialize the global setter
 
@@ -17,7 +18,7 @@ process.env.APP_ROOT = path.join(__dirname, "../..");
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
 export const RENDERER_DIST = path.join(process.env.APP_ROOT, "dist");
 
-// Debug logging for production builds
+// Debug logging for production builds - using console since logger not yet initialized
 console.log("APP_ROOT:", process.env.APP_ROOT);
 console.log("MAIN_DIST:", MAIN_DIST);
 console.log("RENDERER_DIST:", RENDERER_DIST);
@@ -36,6 +37,9 @@ if (process.env.CI) {
 }
 
 let mainWindow: BrowserWindow | null = null;
+
+// Create main process logger (will be initialized in app.whenReady)
+let mainLogger: Awaited<ReturnType<typeof createLogger>> | null = null;
 
 function createMainWindow(): void {
   mainWindow = new BrowserWindow({
@@ -90,20 +94,48 @@ function openSettingsModal(): void {
 
       // Debug logging for development
       if (process.env.NODE_ENV === "development") {
-        console.log("Settings modal IPC message sent successfully");
+        mainLogger?.debug("Settings modal IPC message sent successfully");
       }
     } catch (error) {
-      console.error("Failed to send open-settings IPC message:", error);
+      mainLogger?.error(
+        "Failed to send open-settings IPC message",
+        error as Error,
+      );
     }
   } else {
-    console.warn(
+    mainLogger?.warn(
       "Cannot open settings: main window not available or destroyed",
     );
   }
 }
 
 app.whenReady().then(async () => {
+  // Initialize logger first
+  try {
+    mainLogger = await createLogger({
+      config: { name: "desktop-main", level: "info" },
+      context: {
+        platform: "desktop",
+        metadata: { process: "main", pid: process.pid },
+      },
+    });
+    mainLogger.info("Electron main process starting", {
+      platform: process.platform,
+      nodeVersion: process.versions.node,
+      electronVersion: process.versions.electron,
+    });
+  } catch (error) {
+    console.error("Failed to initialize logger:", error);
+  }
+
   createMainWindow();
+
+  // Log window creation
+  mainLogger?.info("Main window created", {
+    width: 1200,
+    height: 800,
+    title: "Fishbowl",
+  });
 
   // Initialize settings repository
   try {
@@ -124,8 +156,15 @@ app.whenReady().then(async () => {
     }
 
     console.log("Settings repository initialized successfully");
+    mainLogger?.debug("Settings repository initialized", {
+      storageType: "FileStorage",
+    });
   } catch (error) {
     console.error("Failed to initialize settings repository:", error);
+    mainLogger?.error(
+      "Failed to initialize settings repository",
+      error as Error,
+    );
     // Continue app startup even if settings fail to initialize
   }
 
