@@ -2,7 +2,14 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import {
   type FontSizePreviewProps,
   type ThemePreviewProps,
@@ -85,11 +92,6 @@ const FontSizePreview = React.memo<FontSizePreviewProps>(({ fontSize }) => {
 FontSizePreview.displayName = "FontSizePreview";
 
 export const AppearanceSettings: React.FC = () => {
-  // Keep existing state for now (will be removed in subsequent tasks)
-  const [selectedTheme, setSelectedTheme] = useState<
-    "light" | "dark" | "system"
-  >("system");
-
   // Local state management for display settings
   const [showTimestamps, setShowTimestamps] = useState<
     "always" | "hover" | "never"
@@ -129,15 +131,13 @@ export const AppearanceSettings: React.FC = () => {
     mode: "onChange",
   });
 
-  // Apply theme changes immediately (existing functionality)
+  // Apply theme changes immediately using form value
+  const watchedTheme = form.watch("theme");
   useEffect(() => {
-    applyTheme(selectedTheme);
-  }, [selectedTheme]);
-
-  // Optimized event handlers with useCallback
-  const handleThemeChange = useCallback((value: string) => {
-    setSelectedTheme(value as "light" | "dark" | "system");
-  }, []);
+    if (watchedTheme) {
+      applyTheme(watchedTheme);
+    }
+  }, [watchedTheme]);
 
   const handleFontSizeChange = useCallback((value: number[]) => {
     setFontSize(value);
@@ -166,44 +166,56 @@ export const AppearanceSettings: React.FC = () => {
             <div className="space-y-4">
               <h2 className="text-heading-secondary mb-4">Theme</h2>
               <div className="grid gap-4">
-                <RadioGroup
-                  value={selectedTheme}
-                  onValueChange={handleThemeChange}
-                  className="flex flex-col space-y-2"
-                >
-                  <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                    <RadioGroupItem value="light" id="theme-light" />
-                    <Label
-                      htmlFor="theme-light"
-                      className="text-sm font-normal flex-1 py-2 cursor-pointer"
-                    >
-                      Light
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                    <RadioGroupItem value="dark" id="theme-dark" />
-                    <Label
-                      htmlFor="theme-dark"
-                      className="text-sm font-normal flex-1 py-2 cursor-pointer"
-                    >
-                      Dark
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                    <RadioGroupItem value="system" id="theme-system" />
-                    <div className="flex flex-col flex-1 py-2">
-                      <Label
-                        htmlFor="theme-system"
-                        className="text-sm font-normal cursor-pointer"
-                      >
-                        System
-                      </Label>
-                      <span className="text-xs text-muted-foreground mt-1">
-                        Use your system preference
-                      </span>
-                    </div>
-                  </div>
-                </RadioGroup>
+                <FormField
+                  control={form.control}
+                  name="theme"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Theme</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          className="flex flex-col space-y-2"
+                        >
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem value="light" id="theme-light" />
+                            <Label
+                              htmlFor="theme-light"
+                              className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                            >
+                              Light
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem value="dark" id="theme-dark" />
+                            <Label
+                              htmlFor="theme-dark"
+                              className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                            >
+                              Dark
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem value="system" id="theme-system" />
+                            <div className="flex flex-col flex-1 py-2">
+                              <Label
+                                htmlFor="theme-system"
+                                className="text-sm font-normal cursor-pointer"
+                              >
+                                System
+                              </Label>
+                              <span className="text-xs text-muted-foreground mt-1">
+                                Use your system preference
+                              </span>
+                            </div>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
             </div>
 
@@ -211,7 +223,7 @@ export const AppearanceSettings: React.FC = () => {
             <div className="space-y-4">
               <h2 className="text-heading-secondary mb-4">Preview</h2>
               <div className="grid gap-4">
-                <ThemePreview selectedTheme={selectedTheme} />
+                <ThemePreview selectedTheme={form.watch("theme")} />
               </div>
             </div>
 

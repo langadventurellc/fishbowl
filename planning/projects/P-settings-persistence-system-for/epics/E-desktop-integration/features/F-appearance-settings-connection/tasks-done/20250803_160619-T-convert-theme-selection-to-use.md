@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-convert-theme-selection-to-use
+parent: F-appearance-settings-connection
+status: done
 title: Convert theme selection to use form fields with real-time application and tests
-status: open
 priority: high
 prerequisites:
   - T-update-appearancesettings
 created: "2025-08-03T15:00:23.247663"
-updated: "2025-08-03T15:00:23.247663"
+updated: "2025-08-03T15:58:04.248025"
 schema_version: "1.1"
-parent: F-appearance-settings-connection
+worktree: null
 ---
 
 # Convert theme selection to use form fields with real-time application and tests
@@ -162,3 +163,32 @@ it('should apply theme immediately when changed', async () => {
 - Verify smooth UI transitions
 
 ### Log
+
+**2025-08-03T21:06:19.347958Z** - Successfully converted theme selection from local state to FormField components with real-time theme application.
+
+**Key Changes:**
+
+- Removed local state management (selectedTheme, setSelectedTheme, handleThemeChange)
+- Converted RadioGroup to FormField with proper form control integration
+- Added real-time theme application using form.watch("theme") and useEffect with applyTheme
+- Updated ThemePreview to use form.watch("theme") instead of local state
+- Added comprehensive unit tests for form integration and real-time theme application
+
+**Implementation Details:**
+
+- Theme changes apply immediately when selected using form.watch() pattern
+- All three theme options (light, dark, system) work correctly with form validation
+- FormField includes proper FormLabel, FormControl, and FormMessage components
+- ThemePreview receives theme value directly from form state for immediate updates
+- Form system automatically tracks unsaved changes when theme is modified
+
+**Testing:**
+
+- All existing tests continue to pass (34/34)
+- Added 9 new comprehensive tests for Form Field Integration covering real-time application, validation, and form state management
+- Tests verify applyTheme is called immediately on theme changes
+- Tests confirm smooth UI behavior without errors during rapid theme changes
+
+The implementation ensures users see immediate visual feedback when changing themes while maintaining proper form validation and state management.
+
+- filesChanged: ["apps/desktop/src/components/settings/AppearanceSettings.tsx", "apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx"]
