@@ -1,6 +1,16 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import { SettingsContent } from "../SettingsContent";
+import { GeneralSettings } from "../GeneralSettings";
+import { SettingsProvider } from "../../../contexts";
+
+// Mock the desktop adapter
+jest.mock("../../../adapters/desktopSettingsAdapter", () => ({
+  desktopSettingsAdapter: {
+    save: jest.fn(),
+    load: jest.fn(),
+    reset: jest.fn(),
+  },
+}));
 
 // Mock the shared package
 jest.mock("@fishbowl-ai/ui-shared", () => {
@@ -29,6 +39,24 @@ jest.mock("@fishbowl-ai/ui-shared", () => {
       hasUnsavedChanges: false,
       setUnsavedChanges: jest.fn(),
     })),
+    useSettingsPersistence: jest.fn(() => ({
+      settings: {
+        general: {
+          responseDelay: 3000,
+          maximumMessages: 75,
+          maximumWaitTime: 45000,
+          defaultMode: "auto",
+          maximumAgents: 6,
+          checkUpdates: false,
+        },
+        appearance: {},
+        advanced: {},
+      },
+      saveSettings: jest.fn(),
+      isLoading: false,
+      error: null,
+    })),
+    SettingsFormData: {} as any,
   };
 });
 
@@ -37,40 +65,98 @@ jest.mock("@/utils", () => ({
   getAccessibleDescription: jest.fn().mockReturnValue("Test description"),
 }));
 
-describe("GeneralSettings Form Foundation", () => {
+describe("GeneralSettings Persistence Integration", () => {
   beforeEach(() => {
-    // Clear any previous console logs
     jest.clearAllMocks();
   });
 
-  it("renders form structure without errors", () => {
-    expect(() => {
-      render(<SettingsContent activeSection="general" />);
-    }).not.toThrow();
+  it("displays loading state when settings are loading", async () => {
+    const { useSettingsPersistence } = require("@fishbowl-ai/ui-shared");
+    useSettingsPersistence.mockReturnValue({
+      settings: null,
+      saveSettings: jest.fn(),
+      isLoading: true,
+      error: null,
+    });
 
+    render(
+      <SettingsProvider>
+        <GeneralSettings />
+      </SettingsProvider>,
+    );
+
+    expect(screen.getByText("Loading settings...")).toBeInTheDocument();
+  });
+
+  it("integrates with useSettingsPersistence hook correctly", async () => {
+    const mockSaveSettings = jest.fn();
+    const { useSettingsPersistence } = require("@fishbowl-ai/ui-shared");
+
+    useSettingsPersistence.mockReturnValue({
+      settings: {
+        general: {
+          responseDelay: 3000,
+          maximumMessages: 75,
+          maximumWaitTime: 45000,
+          defaultMode: "auto",
+          maximumAgents: 6,
+          checkUpdates: false,
+        },
+        appearance: {},
+        advanced: {},
+      },
+      saveSettings: mockSaveSettings,
+      isLoading: false,
+      error: null,
+    });
+
+    render(
+      <SettingsProvider>
+        <GeneralSettings />
+      </SettingsProvider>,
+    );
+
+    // Verify the component rendered successfully
     expect(screen.getByText("General")).toBeInTheDocument();
-    expect(screen.getByText("Auto Mode Settings")).toBeInTheDocument();
-    expect(screen.getByText("Conversation Defaults")).toBeInTheDocument();
-    expect(screen.getByText("Other Settings")).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Configure general application preferences and behavior.",
+      ),
+    ).toBeInTheDocument();
   });
 
-  it("creates form infrastructure successfully", () => {
-    render(<SettingsContent activeSection="general" />);
+  it("uses persistence hook correctly", async () => {
+    const mockSaveSettings = jest.fn().mockResolvedValue(undefined);
+    const { useSettingsPersistence } = require("@fishbowl-ai/ui-shared");
 
-    // Check that form wrapper exists
-    const forms = document.querySelectorAll("form");
-    expect(forms.length).toBeGreaterThan(0);
-  });
+    useSettingsPersistence.mockReturnValue({
+      settings: {
+        general: {
+          responseDelay: 2000,
+          maximumMessages: 50,
+          maximumWaitTime: 30000,
+          defaultMode: "manual",
+          maximumAgents: 5,
+          checkUpdates: true,
+        },
+        appearance: {},
+        advanced: {},
+      },
+      saveSettings: mockSaveSettings,
+      isLoading: false,
+      error: null,
+    });
 
-  it("maintains visual structure and styling", () => {
-    render(<SettingsContent activeSection="general" />);
+    render(
+      <SettingsProvider>
+        <GeneralSettings />
+      </SettingsProvider>,
+    );
 
-    // Check that the general text is rendered (indicating structure is maintained)
-    const title = screen.getByText("General");
-    expect(title).toBeInTheDocument();
-
-    // Check that the main container has proper styling structure
-    const main = document.querySelector('main[role="main"]');
-    expect(main).toBeInTheDocument();
+    // Verify persistence hook was called with correct adapter
+    expect(useSettingsPersistence).toHaveBeenCalledWith({
+      adapter: expect.any(Object),
+      onError: expect.any(Function),
+    });
   });
 });

@@ -1,16 +1,16 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { defaultAdvancedSettings } from "../types/settings/advancedSettings";
+import { defaultAppearanceSettings } from "../types/settings/appearanceSettings";
 import type { SettingsFormData } from "../types/settings/combined/SettingsFormData";
+import { defaultGeneralSettings } from "../types/settings/generalSettings";
 import { SettingsError } from "../utils/settings/SettingsError";
 import { SettingsErrorCode } from "../utils/settings/SettingsErrorCode";
 import { createSettingsError } from "../utils/settings/createSettingsError";
 import { transformPersistenceError } from "../utils/settings/transformPersistenceError";
-import { useSettingsMapper } from "./useSettingsMapper";
-import { useSettingsValidation } from "./useSettingsValidation";
-import { defaultGeneralSettings } from "../types/settings/generalSettings";
-import { defaultAppearanceSettings } from "../types/settings/appearanceSettings";
-import { defaultAdvancedSettings } from "../types/settings/advancedSettings";
 import type { UseSettingsPersistenceOptions } from "./UseSettingsPersistenceOptions";
 import type { UseSettingsPersistenceReturn } from "./UseSettingsPersistenceReturn";
+import { useSettingsMapper } from "./useSettingsMapper";
+import { useSettingsValidation } from "./useSettingsValidation";
 
 /**
  * Hook for managing settings persistence with atomic operations
@@ -60,12 +60,12 @@ export function useSettingsPersistence(
 
   // State management
   const [settings, setSettings] = useState<SettingsFormData | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // Start with true since we need to load
   const [error, setError] = useState<SettingsError | null>(null);
 
   // Get mapper and validator functions
-  const { mapToPersistence, mapToUI } = useSettingsMapper();
-  const { validateSettings } = useSettingsValidation();
+  const mapperHooks = useSettingsMapper();
+  const validationHooks = useSettingsValidation();
 
   // Helper to handle errors consistently
   const handleError = useCallback(
@@ -98,10 +98,10 @@ export function useSettingsPersistence(
 
       if (persistedData) {
         // Map to UI format
-        const formData = mapToUI(persistedData);
+        const formData = mapperHooks.mapToUI(persistedData);
 
         // Validate loaded data
-        const validation = validateSettings(formData);
+        const validation = validationHooks.validateSettings(formData);
         if (!validation.isValid) {
           throw createSettingsError(
             "Loaded settings contain invalid data",
@@ -125,7 +125,7 @@ export function useSettingsPersistence(
     } finally {
       setIsLoading(false);
     }
-  }, [adapter, mapToUI, validateSettings, handleError]);
+  }, [adapter, mapperHooks, validationHooks, handleError]);
 
   /**
    * Saves settings to storage atomically
@@ -138,7 +138,7 @@ export function useSettingsPersistence(
 
       try {
         // Validate before saving
-        const validation = validateSettings(formData);
+        const validation = validationHooks.validateSettings(formData);
         if (!validation.isValid) {
           throw createSettingsError(
             "Cannot save invalid settings",
@@ -148,7 +148,7 @@ export function useSettingsPersistence(
         }
 
         // Map to persistence format
-        const persistedData = mapToPersistence(formData);
+        const persistedData = mapperHooks.mapToPersistence(formData);
 
         // Save atomically
         await adapter.save(persistedData);
@@ -163,7 +163,7 @@ export function useSettingsPersistence(
         setIsLoading(false);
       }
     },
-    [adapter, mapToPersistence, validateSettings, handleError],
+    [adapter, mapperHooks, validationHooks, handleError],
   );
 
   /**
@@ -192,10 +192,70 @@ export function useSettingsPersistence(
     }
   }, [adapter, handleError]);
 
-  // Load settings on mount
+  // Load settings only once on mount
   useEffect(() => {
-    loadSettings();
-  }, [loadSettings]);
+    let mounted = true;
+
+    const performInitialLoad = async () => {
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        const persistedData = await adapter.load();
+
+        if (!mounted) return;
+
+        if (persistedData) {
+          // Map to UI format
+          const formData = mapperHooks.mapToUI(persistedData);
+
+          // Validate loaded data
+          const validation = validationHooks.validateSettings(formData);
+          if (!validation.isValid) {
+            throw createSettingsError(
+              "Loaded settings contain invalid data",
+              SettingsErrorCode.VALIDATION_FAILED,
+              { errors: validation.errors },
+            );
+          }
+
+          setSettings(formData);
+        } else {
+          // No saved settings, use defaults
+          const defaultSettings: SettingsFormData = {
+            general: defaultGeneralSettings,
+            appearance: defaultAppearanceSettings,
+            advanced: defaultAdvancedSettings,
+          };
+          setSettings(defaultSettings);
+        }
+      } catch (err) {
+        if (!mounted) return;
+
+        const settingsError =
+          err instanceof SettingsError
+            ? err
+            : createSettingsError(
+                transformPersistenceError(err),
+                SettingsErrorCode.PERSISTENCE_FAILED,
+              );
+
+        setError(settingsError);
+        onError?.(settingsError);
+      } finally {
+        if (mounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    performInitialLoad();
+
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally empty to run only once on mount
 
   return {
     settings,

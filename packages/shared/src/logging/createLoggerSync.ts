@@ -103,17 +103,20 @@ export function createLoggerSync(
     });
   }
 
-  // Add metadata for process info (synchronous)
+  // Add metadata for process info (synchronous, with safe fallbacks for renderer)
   context = {
     ...context,
     metadata: {
       ...context.metadata,
       process: {
-        pid: process.pid,
-        ppid: process.ppid,
-        version: process.version,
-        platform: process.platform,
-        nodeVersion: process.versions.node,
+        pid: typeof process !== "undefined" ? process.pid : undefined,
+        ppid: typeof process !== "undefined" ? process.ppid : undefined,
+        version: typeof process !== "undefined" ? process.version : undefined,
+        platform: typeof process !== "undefined" ? process.platform : "unknown",
+        nodeVersion:
+          typeof process !== "undefined" && process.versions
+            ? process.versions.node
+            : undefined,
       },
     },
   };

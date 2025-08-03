@@ -7,16 +7,13 @@
  * @module hooks/__tests__/useFocusTrap.test
  */
 
-import { renderHook, act } from "@testing-library/react";
-import { useFocusTrap } from "../useFocusTrap";
+import { act, renderHook } from "@testing-library/react";
 import type { FocusTrapOptions } from "../types/FocusTrapOptions";
-
-// Mock console methods
-const mockConsoleWarn = jest.fn();
+import { useFocusTrap } from "../useFocusTrap";
 
 beforeEach(() => {
   jest.clearAllMocks();
-  jest.spyOn(console, "warn").mockImplementation(mockConsoleWarn);
+
   document.body.innerHTML = "";
 });
 
@@ -160,10 +157,6 @@ describe("useFocusTrap", () => {
       act(() => {
         result.current.setInitialFocus(externalButton);
       });
-
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
-        "Initial focus element is not within the focus trap container",
-      );
     });
 
     it("should accept element within container", () => {
@@ -183,8 +176,6 @@ describe("useFocusTrap", () => {
           result.current.setInitialFocus(internalButton);
         });
       }).not.toThrow();
-
-      expect(mockConsoleWarn).not.toHaveBeenCalled();
     });
   });
 

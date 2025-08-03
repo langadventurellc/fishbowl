@@ -27,6 +27,10 @@ A desktop and mobile application for creating conversations with multiple AI age
 
 See [Architecture Guide](docs/architecture/monorepo.md) for the overall structure and guidelines.
 
+### Logging
+
+Use the `logger` utility from `@fishbowl-ai/shared` for consistent logging across the application. See `packages/shared/src/logging/README.md` for usage details.
+
 ### Quality checks
 
 **IMPORTANT** Run the following commands to ensure code quality after every change. Fix all issues as soon as possible.

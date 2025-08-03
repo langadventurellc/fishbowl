@@ -1,15 +1,13 @@
 import { Link } from "react-router-dom";
 import React from "react";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 
-// Simple logging for renderer process to avoid Node.js compatibility issues
-const logger = {
-  info: (message: string, data?: Record<string, unknown>) => {
-    console.log(`[INFO] ${message}`, data ? JSON.stringify(data) : "");
+const logger = createLoggerSync({
+  config: {
+    name: "home-page",
+    level: "debug",
   },
-  debug: (message: string, data?: Record<string, unknown>) => {
-    console.log(`[DEBUG] ${message}`, data ? JSON.stringify(data) : "");
-  },
-};
+});
 
 export default function Home() {
   const electronAPI = window?.electronAPI;

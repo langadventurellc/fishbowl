@@ -9,7 +9,12 @@
  */
 
 import { useSettingsModal } from "@fishbowl-ai/ui-shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { useEffect, useRef } from "react";
+
+const logger = createLoggerSync({
+  config: { name: "useElectronIPC", level: "info" },
+});
 
 /**
  * Hook that integrates Electron IPC events with the settings modal store.
@@ -38,7 +43,7 @@ export function useElectronIPC(): void {
       !window.electronAPI?.onOpenSettings ||
       typeof window.electronAPI.onOpenSettings !== "function"
     ) {
-      console.info("Not running in Electron environment, skipping IPC setup");
+      logger.info("Not running in Electron environment, skipping IPC setup");
       return;
     }
 
@@ -49,18 +54,24 @@ export function useElectronIPC(): void {
           // Open settings modal with default section ("general")
           openModal();
         } catch (error) {
-          console.error("Error opening settings modal via IPC:", error);
+          logger.error(
+            "Error opening settings modal via IPC:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
         }
       });
 
       // Store cleanup function for component unmount
       cleanupRef.current = cleanup;
 
-      console.debug(
+      logger.debug(
         "IPC event listener for settings modal registered successfully",
       );
     } catch (error) {
-      console.error("Failed to set up IPC event listener:", error);
+      logger.error(
+        "Failed to set up IPC event listener:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
     }
 
     // Cleanup function called on component unmount
@@ -69,9 +80,12 @@ export function useElectronIPC(): void {
         try {
           cleanupRef.current();
           cleanupRef.current = null;
-          console.debug("IPC event listener cleanup completed");
+          logger.debug("IPC event listener cleanup completed");
         } catch (error) {
-          console.error("Error during IPC cleanup:", error);
+          logger.error(
+            "Error during IPC cleanup:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
         }
       }
     };

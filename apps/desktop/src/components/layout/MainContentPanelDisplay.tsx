@@ -1,5 +1,10 @@
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import React, { useState } from "react";
+
+const logger = createLoggerSync({
+  config: { name: "MainContentPanelDisplay", level: "info" },
+});
 import { cn } from "../../lib/utils";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
@@ -33,7 +38,7 @@ export const MainContentPanelDisplay: React.FC<
       {/* Agent Labels Container */}
       <AgentLabelsContainerDisplay
         agents={agents}
-        onAddAgent={() => console.log("Demo: Adding new agent")}
+        onAddAgent={() => logger.info("Demo: Adding new agent")}
       />
 
       {/* Chat Container */}

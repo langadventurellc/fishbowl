@@ -25,6 +25,11 @@ import { CustomRolesTab } from "./CustomRolesTab";
 import { PredefinedRolesTab } from "./PredefinedRolesTab";
 import { RoleDeleteDialog } from "./RoleDeleteDialog";
 import { RoleFormModal } from "./RoleFormModal";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "RolesSection", level: "info" },
+});
 
 export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   // Modal state management - centralized to ensure only one modal open
@@ -72,7 +77,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         setSelectedRole(undefined);
       } catch (error) {
         // Error handling - modal stays open for retry
-        console.error("Failed to save role:", error);
+        logger.error("Failed to save role", error as Error);
       }
     },
     [formMode, selectedRole, createRole, updateRole],
@@ -86,7 +91,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         setSelectedRole(undefined);
       } catch (error) {
         // Error handling - dialog stays open for retry
-        console.error("Failed to delete role:", error);
+        logger.error("Failed to delete role", error as Error);
       }
     },
     [deleteRole],

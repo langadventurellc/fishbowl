@@ -49,6 +49,11 @@ import {
   useSettingsActions,
 } from "@fishbowl-ai/ui-shared";
 import React, { useEffect } from "react";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "SettingsModal", level: "info" },
+});
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../hooks/useGlobalKeyboardShortcuts";
 import { ModalFooter } from "./ModalFooter";
@@ -171,11 +176,11 @@ export function SettingsModal({
       Escape: () => onOpenChange(false),
       "Ctrl+S": () => {
         // TODO: Implement save functionality when Save button logic is added
-        console.log("Save shortcut triggered (Ctrl+S)");
+        logger.info("Save shortcut triggered", { shortcut: "Ctrl+S" });
       },
       "Meta+S": () => {
         // TODO: Implement save functionality when Save button logic is added
-        console.log("Save shortcut triggered (Cmd+S)");
+        logger.info("Save shortcut triggered", { shortcut: "Cmd+S" });
       },
     },
     enabled: open && !hasNestedDialog,
@@ -235,6 +240,7 @@ export function SettingsModal({
           aria-modal="true"
           role="dialog"
           data-settings-modal="true"
+          data-testid="settings-modal"
           tabIndex={-1}
           // Additional accessibility attributes for better screen reader experience
           aria-live="polite"

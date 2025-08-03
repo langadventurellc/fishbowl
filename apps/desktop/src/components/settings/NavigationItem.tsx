@@ -77,6 +77,7 @@ export const NavigationItem = React.forwardRef<
         aria-current={active ? "page" : undefined}
         aria-expanded={hasSubTabs ? isExpanded : undefined}
         aria-controls={hasSubTabs ? `${id}-subtabs` : undefined}
+        data-testid={`nav-${id}`}
       >
         <span className="text-left">{label}</span>
         {hasSubTabs && (

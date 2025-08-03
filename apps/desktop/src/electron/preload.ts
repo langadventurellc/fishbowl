@@ -1,5 +1,8 @@
 import { contextBridge, ipcRenderer } from "electron";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import type { ElectronAPI } from "../types/electron";
+
+const logger = createLoggerSync({ config: { name: "preload", level: "info" } });
 import { SETTINGS_CHANNELS } from "../shared/ipc/constants";
 import type {
   SettingsLoadResponse,
@@ -24,7 +27,10 @@ const electronAPI: ElectronAPI = {
         try {
           callback();
         } catch (error) {
-          console.error("Error in settings callback:", error);
+          logger.error(
+            "Error in settings callback:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
         }
       };
 
@@ -36,11 +42,17 @@ const electronAPI: ElectronAPI = {
         try {
           ipcRenderer.removeListener("open-settings", wrappedCallback);
         } catch (error) {
-          console.error("Error removing IPC listener:", error);
+          logger.error(
+            "Error removing IPC listener:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
         }
       };
     } catch (error) {
-      console.error("Error setting up IPC listener:", error);
+      logger.error(
+        "Error setting up IPC listener:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
       // Return no-op cleanup function if setup fails
       return () => {};
     }
@@ -49,9 +61,9 @@ const electronAPI: ElectronAPI = {
     try {
       ipcRenderer.removeAllListeners(channel);
     } catch (error) {
-      console.error(
-        `Error removing all listeners for channel ${channel}:`,
-        error,
+      logger.error(
+        `Error removing all listeners for channel ${channel}`,
+        error instanceof Error ? error : new Error(String(error)),
       );
     }
   },
@@ -66,7 +78,10 @@ const electronAPI: ElectronAPI = {
         }
         return response.data!;
       } catch (error) {
-        console.error("Error loading settings:", error);
+        logger.error(
+          "Error loading settings:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         throw error instanceof Error
           ? error
           : new Error("Failed to communicate with main process");
@@ -86,7 +101,10 @@ const electronAPI: ElectronAPI = {
           throw new Error(response.error?.message || "Failed to save settings");
         }
       } catch (error) {
-        console.error("Error saving settings:", error);
+        logger.error(
+          "Error saving settings:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         throw error instanceof Error
           ? error
           : new Error("Failed to communicate with main process");
@@ -104,7 +122,10 @@ const electronAPI: ElectronAPI = {
         }
         return response.data!;
       } catch (error) {
-        console.error("Error resetting settings:", error);
+        logger.error(
+          "Error resetting settings:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         throw error instanceof Error
           ? error
           : new Error("Failed to communicate with main process");

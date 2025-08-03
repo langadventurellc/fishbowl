@@ -2,12 +2,12 @@
 kind: feature
 id: F-general-settings-connection
 title: General Settings Connection
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-settings-state-integration
 created: "2025-08-01T19:52:30.219427"
-updated: "2025-08-01T19:52:30.219427"
+updated: "2025-08-03T05:36:29.821473+00:00"
 schema_version: "1.1"
 parent: E-desktop-integration
 ---

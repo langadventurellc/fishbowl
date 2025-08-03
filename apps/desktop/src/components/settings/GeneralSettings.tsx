@@ -15,24 +15,56 @@ import { Switch } from "@/components/ui/switch";
 import {
   defaultGeneralSettings,
   generalSettingsSchema,
+  useSettingsPersistence,
   useUnsavedChanges,
   type GeneralSettingsFormData,
+  type SettingsFormData,
 } from "@fishbowl-ai/ui-shared";
+import { useSettingsPersistenceAdapter } from "../../contexts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { FormErrorDisplay } from "./FormErrorDisplay";
+
+const logger = createLoggerSync({
+  config: {
+    name: "general-settings",
+    level: "info",
+  },
+});
 
 export const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const { setUnsavedChanges } = useUnsavedChanges();
 
+  // Get the adapter from context
+  const adapter = useSettingsPersistenceAdapter();
+
+  // Memoize the onError callback to prevent re-renders
+  const onError = useCallback((error: Error) => {
+    setSubmitError(error.message);
+  }, []);
+
+  // Initialize settings persistence
+  const { settings, saveSettings, isLoading, error } = useSettingsPersistence({
+    adapter,
+    onError,
+  });
+
   // Initialize form with default values and validation
   const form = useForm<GeneralSettingsFormData>({
     resolver: zodResolver(generalSettingsSchema),
-    defaultValues: defaultGeneralSettings,
+    defaultValues: settings?.general || defaultGeneralSettings,
     mode: "onChange", // Enable real-time validation
   });
+
+  // Reset form when settings are loaded
+  useEffect(() => {
+    if (settings?.general) {
+      form.reset(settings.general);
+    }
+  }, [settings?.general, form]);
 
   // Enhanced form submission with error handling
   const onSubmit = useCallback(
@@ -43,28 +75,34 @@ export const GeneralSettings: React.FC = () => {
         // Validate data one more time
         const validatedData = generalSettingsSchema.parse(data);
 
-        // Log form data for verification during development
-        console.log("General Settings submitted:", validatedData);
+        // Create updated settings object with new general settings
+        const updatedSettings = {
+          ...settings,
+          general: validatedData,
+        } as SettingsFormData;
 
-        // TODO: Integrate with settings store/persistence layer
-        // This will be connected to the settings system in future tasks
+        // Save through persistence adapter
+        await saveSettings(updatedSettings);
 
         // Mark as saved
         setUnsavedChanges(false);
         form.reset(validatedData); // Reset dirty state
 
         // Success feedback (could use toast notification in the future)
-        console.log("Settings saved successfully");
+        logger.info("Settings saved successfully");
       } catch (error) {
         if (error instanceof Error) {
           setSubmitError(error.message);
         } else {
           setSubmitError("Failed to save settings");
         }
-        console.error("Failed to save general settings:", error);
+        logger.error(
+          "Failed to save general settings",
+          error instanceof Error ? error : new Error(String(error)),
+        );
       }
     },
-    [form, setUnsavedChanges],
+    [form, setUnsavedChanges, settings, saveSettings],
   );
 
   // Track unsaved changes
@@ -89,6 +127,38 @@ export const GeneralSettings: React.FC = () => {
     };
   }, [form, onSubmit]);
 
+  // Show loading state while settings are being loaded
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-heading-primary mb-[20px]">General</h1>
+          <p className="text-muted-foreground text-sm mb-6">
+            Loading settings...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if settings failed to load
+  if (error && !settings) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-heading-primary mb-[20px]">General</h1>
+          <p className="text-destructive text-sm mb-6">
+            Failed to load settings: {error.message}
+          </p>
+          <p className="text-muted-foreground text-sm mb-6">
+            Using default settings. Your changes will still be saved.
+          </p>
+        </div>
+        {/* Render the form with default settings */}
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -99,7 +169,11 @@ export const GeneralSettings: React.FC = () => {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+          data-testid="general-settings-form"
+        >
           {/* Hidden submit button for accessibility */}
           <button type="submit" className="sr-only" aria-hidden="true">
             Save Settings
@@ -127,9 +201,12 @@ export const GeneralSettings: React.FC = () => {
                           max={30}
                           step={1}
                           value={[field.value / 1000]} // Convert ms to seconds for slider
-                          onValueChange={(value) =>
-                            field.onChange((value[0] || 1) * 1000)
-                          } // Convert seconds to ms
+                          onValueChange={(value) => {
+                            const newValue = (value[0] || 1) * 1000;
+                            field.onChange(newValue);
+                            // Directly set unsaved changes to true
+                            setUnsavedChanges(true);
+                          }} // Convert seconds to ms
                           className="w-full"
                           aria-describedby="responseDelay-description responseDelay-value"
                           aria-label="Response delay in seconds"
@@ -170,11 +247,15 @@ export const GeneralSettings: React.FC = () => {
                           min={0}
                           max={500}
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value) || 0)
-                          }
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value) || 0;
+                            field.onChange(value);
+                            // Directly set unsaved changes to true
+                            setUnsavedChanges(true);
+                          }}
                           onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
                           className="w-full"
+                          data-testid="maximum-messages-input"
                         />
                         <div
                           className="text-description text-muted-foreground mt-1"
@@ -252,6 +333,7 @@ export const GeneralSettings: React.FC = () => {
                         value={field.value}
                         className="flex flex-col space-y-2"
                         aria-describedby="defaultMode-description"
+                        data-testid="default-mode-radio-group"
                       >
                         <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                           <RadioGroupItem value="manual" id="mode-manual" />
@@ -339,7 +421,12 @@ export const GeneralSettings: React.FC = () => {
                     <FormControl>
                       <Switch
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(value) => {
+                          field.onChange(value);
+                          // Directly set unsaved changes to true
+                          setUnsavedChanges(true);
+                        }}
+                        data-testid="check-updates-switch"
                       />
                     </FormControl>
                   </FormItem>

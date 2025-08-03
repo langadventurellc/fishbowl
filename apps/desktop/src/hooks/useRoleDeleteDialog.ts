@@ -12,7 +12,12 @@
 
 import type { CustomRoleViewModel } from "@fishbowl-ai/ui-shared";
 import { useCustomRolesStore } from "@fishbowl-ai/ui-shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { useCallback, useState } from "react";
+
+const logger = createLoggerSync({
+  config: { name: "useRoleDeleteDialog", level: "info" },
+});
 
 interface UseRoleDeleteDialogReturn {
   isOpen: boolean;
@@ -52,7 +57,10 @@ export function useRoleDeleteDialog(): UseRoleDeleteDialogReturn {
         setIsOpen(false);
         setSelectedRole(null);
       } catch (error) {
-        console.error("Failed to delete role:", error);
+        logger.error(
+          "Failed to delete role:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
         // Keep dialog open on error for retry
       } finally {
         setIsLoading(false);

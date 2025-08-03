@@ -37,6 +37,11 @@ import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
 import { BigFiveSliders } from "./BigFiveSliders";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 import { PersonalityNameInput } from "./PersonalityNameInput";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+
+const logger = createLoggerSync({
+  config: { name: "CreatePersonalityForm", level: "info" },
+});
 
 export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   onSave,
@@ -184,8 +189,8 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
           );
           // Clean up old drafts (keep only 3 most recent)
           cleanupOldDrafts();
-        } catch (error) {
-          console.warn("Failed to save draft:", error);
+        } catch {
+          logger.warn("Failed to save draft");
         }
       }
     },
@@ -209,8 +214,8 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
           .slice(0, -3)
           .forEach((key) => localStorage.removeItem(key));
       }
-    } catch (error) {
-      console.warn("Failed to cleanup old drafts:", error);
+    } catch {
+      logger.warn("Failed to cleanup old drafts");
     }
   };
 
@@ -244,13 +249,13 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
               const draftData = JSON.parse(savedDraft);
               if (draftData && !draftData.isEditMode) {
                 // For now, just log that a draft exists - in production you might show a dialog
-                console.log("Draft available for recovery:", draftData);
+                logger.info("Draft available for recovery", { draftData });
               }
             }
           }
         }
-      } catch (error) {
-        console.warn("Failed to recover draft:", error);
+      } catch {
+        logger.warn("Failed to recover draft");
       }
     }
   }, [initialData]);
@@ -282,12 +287,12 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
               key.startsWith("personality-draft-"),
             );
             keys.forEach((key) => localStorage.removeItem(key));
-          } catch (error) {
-            console.warn("Failed to clear drafts:", error);
+          } catch {
+            logger.warn("Failed to clear drafts");
           }
         }
       } catch (error) {
-        console.error("Failed to save personality:", error);
+        logger.error("Failed to save personality", error as Error);
         // Error handling could be enhanced with toast notifications
       } finally {
         setIsSubmitting(false);

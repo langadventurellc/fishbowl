@@ -1,5 +1,10 @@
 import { SidebarContainerDisplayProps } from "@fishbowl-ai/ui-shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import React from "react";
+
+const logger = createLoggerSync({
+  config: { name: "SidebarContainerDisplay", level: "info" },
+});
 import { cn } from "../../lib/utils";
 import { Button } from "../input/Button";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
@@ -83,7 +88,7 @@ export function SidebarContainerDisplay({
         <Button
           variant="primary"
           size="small"
-          onClick={() => console.log("Demo: New conversation")}
+          onClick={() => logger.info("Demo: New conversation")}
           aria-label="Create new conversation"
         >
           New Conversation

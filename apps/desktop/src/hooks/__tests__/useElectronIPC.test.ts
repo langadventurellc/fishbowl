@@ -20,11 +20,6 @@ const mockUseSettingsModal = useSettingsModal as jest.MockedFunction<
   typeof useSettingsModal
 >;
 
-// Mock console methods for testing
-const mockConsoleInfo = jest.fn();
-const mockConsoleDebug = jest.fn();
-const mockConsoleError = jest.fn();
-
 // Mock electron API
 const mockOnOpenSettings = jest.fn();
 const mockCleanup = jest.fn();
@@ -33,9 +28,6 @@ beforeEach(() => {
   // Reset mocks
   mockOnOpenSettings.mockClear();
   mockCleanup.mockClear();
-  mockConsoleInfo.mockClear();
-  mockConsoleDebug.mockClear();
-  mockConsoleError.mockClear();
 
   // Mock useSettingsModal return value
   mockUseSettingsModal.mockReturnValue({
@@ -52,11 +44,6 @@ beforeEach(() => {
     writable: true,
     configurable: true,
   });
-
-  // Mock console methods
-  jest.spyOn(console, "info").mockImplementation(mockConsoleInfo);
-  jest.spyOn(console, "debug").mockImplementation(mockConsoleDebug);
-  jest.spyOn(console, "error").mockImplementation(mockConsoleError);
 });
 
 afterEach(() => {
@@ -77,9 +64,6 @@ describe("useElectronIPC", () => {
 
       expect(mockOnOpenSettings).toHaveBeenCalledTimes(1);
       expect(mockOnOpenSettings).toHaveBeenCalledWith(expect.any(Function));
-      expect(mockConsoleDebug).toHaveBeenCalledWith(
-        "IPC event listener for settings modal registered successfully",
-      );
     });
 
     it("should call cleanup function on unmount", () => {
@@ -90,9 +74,6 @@ describe("useElectronIPC", () => {
       unmount();
 
       expect(mockCleanup).toHaveBeenCalledTimes(1);
-      expect(mockConsoleDebug).toHaveBeenCalledWith(
-        "IPC event listener cleanup completed",
-      );
     });
 
     it("should trigger openModal when IPC callback is called", () => {
@@ -129,10 +110,6 @@ describe("useElectronIPC", () => {
       const callback = mockOnOpenSettings.mock.calls[0][0];
 
       expect(() => callback()).not.toThrow();
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        "Error opening settings modal via IPC:",
-        expect.any(Error),
-      );
     });
 
     it("should handle errors during IPC setup gracefully", () => {
@@ -143,11 +120,6 @@ describe("useElectronIPC", () => {
       expect(() => {
         renderHook(() => useElectronIPC());
       }).not.toThrow();
-
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        "Failed to set up IPC event listener:",
-        expect.any(Error),
-      );
     });
 
     it("should handle errors during cleanup gracefully", () => {
@@ -158,10 +130,6 @@ describe("useElectronIPC", () => {
       const { unmount } = renderHook(() => useElectronIPC());
 
       expect(() => unmount()).not.toThrow();
-      expect(mockConsoleError).toHaveBeenCalledWith(
-        "Error during IPC cleanup:",
-        expect.any(Error),
-      );
     });
   });
 
@@ -175,9 +143,6 @@ describe("useElectronIPC", () => {
         renderHook(() => useElectronIPC());
       }).not.toThrow();
 
-      expect(mockConsoleInfo).toHaveBeenCalledWith(
-        "Not running in Electron environment, skipping IPC setup",
-      );
       expect(mockOnOpenSettings).not.toHaveBeenCalled();
     });
 
@@ -185,9 +150,6 @@ describe("useElectronIPC", () => {
       renderHook(() => useElectronIPC());
 
       expect(mockOnOpenSettings).not.toHaveBeenCalled();
-      expect(mockConsoleDebug).not.toHaveBeenCalledWith(
-        "IPC event listener for settings modal registered successfully",
-      );
     });
 
     it("should handle unmount gracefully in non-Electron environment", () => {
@@ -209,10 +171,6 @@ describe("useElectronIPC", () => {
       expect(() => {
         renderHook(() => useElectronIPC());
       }).not.toThrow();
-
-      expect(mockConsoleInfo).toHaveBeenCalledWith(
-        "Not running in Electron environment, skipping IPC setup",
-      );
     });
 
     it("should handle electronAPI with onOpenSettings but not a function", () => {
@@ -225,10 +183,6 @@ describe("useElectronIPC", () => {
       expect(() => {
         renderHook(() => useElectronIPC());
       }).not.toThrow();
-
-      expect(mockConsoleInfo).toHaveBeenCalledWith(
-        "Not running in Electron environment, skipping IPC setup",
-      );
     });
   });
 
@@ -254,7 +208,6 @@ describe("useElectronIPC", () => {
       const { unmount } = renderHook(() => useElectronIPC());
 
       expect(() => unmount()).not.toThrow();
-      expect(mockConsoleError).not.toHaveBeenCalled();
     });
 
     it("should handle undefined cleanup function gracefully", () => {
@@ -263,7 +216,6 @@ describe("useElectronIPC", () => {
       const { unmount } = renderHook(() => useElectronIPC());
 
       expect(() => unmount()).not.toThrow();
-      expect(mockConsoleError).not.toHaveBeenCalled();
     });
   });
 

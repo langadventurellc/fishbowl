@@ -8,7 +8,12 @@
  */
 
 import { globalShortcut } from "electron";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { openSettingsModal } from "./main.js";
+
+const logger = createLoggerSync({
+  config: { name: "registerGlobalShortcuts", level: "info" },
+});
 
 /**
  * Registers all global keyboard shortcuts for the application.
@@ -27,18 +32,21 @@ export function registerGlobalShortcuts(): void {
 
       // Debug logging for development
       if (process.env.NODE_ENV === "development") {
-        console.log(`Global shortcut ${settingsShortcut} triggered`);
+        logger.debug(`Global shortcut ${settingsShortcut} triggered`);
       }
     });
 
     if (!registered) {
-      console.warn(`Failed to register global shortcut: ${settingsShortcut}`);
+      logger.warn(`Failed to register global shortcut: ${settingsShortcut}`);
     } else if (process.env.NODE_ENV === "development") {
-      console.log(`Global shortcut registered: ${settingsShortcut}`);
+      logger.debug(`Global shortcut registered: ${settingsShortcut}`);
     }
 
     // Additional shortcuts can be registered here in the future
   } catch (error) {
-    console.error("Failed to register global shortcuts:", error);
+    logger.error(
+      "Failed to register global shortcuts:",
+      error instanceof Error ? error : new Error(String(error)),
+    );
   }
 }

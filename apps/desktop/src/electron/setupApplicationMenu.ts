@@ -7,7 +7,12 @@
  */
 
 import { Menu } from "electron";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { createApplicationMenu } from "./createApplicationMenu.js";
+
+const logger = createLoggerSync({
+  config: { name: "setupApplicationMenu", level: "info" },
+});
 
 /**
  * Sets up the application menu for the current platform.
@@ -20,10 +25,13 @@ export function setupApplicationMenu(): void {
 
     // Debug logging for development
     if (process.env.NODE_ENV === "development") {
-      console.log("Application menu configured successfully");
+      logger.debug("Application menu configured successfully");
     }
   } catch (error) {
-    console.error("Failed to setup application menu:", error);
+    logger.error(
+      "Failed to setup application menu:",
+      error instanceof Error ? error : new Error(String(error)),
+    );
 
     // Fallback to default menu to prevent complete menu loss
     Menu.setApplicationMenu(null);
