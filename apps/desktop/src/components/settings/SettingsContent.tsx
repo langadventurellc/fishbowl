@@ -5,11 +5,17 @@
  * - Responsive padding that adjusts based on screen size
  * - Full width on mobile when navigation is collapsed
  * - Maximum content width constraint for readability
- * - Placeholder content for each settings section
+ * - Centralized form management and settings persistence
+ * - Loading and error state management for all settings sections
  */
 
+import React, { useCallback } from "react";
 import { getAccessibleDescription } from "@/utils";
-import { type SettingsContentProps } from "@fishbowl-ai/ui-shared";
+import {
+  type SettingsContentProps,
+  useSettingsPersistence,
+} from "@fishbowl-ai/ui-shared";
+import { useSettingsPersistenceAdapter } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { AdvancedSettings } from "./AdvancedSettings";
 import { AgentsSection } from "./agents/AgentsSection";
@@ -35,6 +41,25 @@ export function SettingsContent({
   className,
   contentId = "settings-content",
 }: SettingsContentProps) {
+  // Get persistence adapter
+  const adapter = useSettingsPersistenceAdapter();
+
+  // Error handler for persistence operations
+  const onError = useCallback((error: Error) => {
+    console.error("Settings persistence error:", error);
+  }, []);
+
+  // Initialize centralized settings persistence
+  const {
+    settings: _settings,
+    saveSettings: _saveSettings,
+    isLoading: _isLoading,
+    error: _error,
+  } = useSettingsPersistence({
+    adapter,
+    onError,
+  });
+
   const Component =
     sectionComponents[activeSection as keyof typeof sectionComponents] ||
     DefaultSettings;
