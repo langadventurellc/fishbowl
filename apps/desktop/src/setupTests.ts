@@ -7,9 +7,15 @@
 
 import "@testing-library/jest-dom";
 
+// Polyfill TextEncoder/TextDecoder for Node.js environment
+if (typeof global.TextEncoder === "undefined") {
+  const { TextEncoder, TextDecoder } = require("util");
+  global.TextEncoder = TextEncoder;
+  global.TextDecoder = TextDecoder;
+}
+
 // Mock ResizeObserver for tests
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-(global as any).ResizeObserver = class ResizeObserver {
+globalThis.ResizeObserver = class ResizeObserver {
   observe() {
     // Mock implementation
   }

@@ -3,9 +3,28 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
 import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import {
   type FontSizePreviewProps,
   type ThemePreviewProps,
+  defaultAppearanceSettings,
+  appearanceSettingsSchema,
+  useSettingsPersistence,
+  useUnsavedChanges,
+  type AppearanceSettingsFormData,
+  type SettingsFormData,
 } from "@fishbowl-ai/ui-shared";
+import { useSettingsPersistenceAdapter } from "../../contexts";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { applyTheme } from "@/utils";
+import { FormErrorDisplay } from "./FormErrorDisplay";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
 const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
@@ -74,259 +93,409 @@ const FontSizePreview = React.memo<FontSizePreviewProps>(({ fontSize }) => {
 FontSizePreview.displayName = "FontSizePreview";
 
 export const AppearanceSettings: React.FC = () => {
-  // Local state management for theme selection
-  const [selectedTheme, setSelectedTheme] = useState<
-    "light" | "dark" | "system"
-  >("system");
+  // Add persistence hooks
+  const { setUnsavedChanges: _setUnsavedChanges } = useUnsavedChanges();
+  const adapter = useSettingsPersistenceAdapter();
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const hasInitialized = useRef(false);
 
-  // Local state management for display settings
-  const [showTimestamps, setShowTimestamps] = useState<
-    "always" | "hover" | "never"
-  >("hover");
-  const [showActivityTime, setShowActivityTime] = useState(true);
-  const [compactList, setCompactList] = useState(false);
-
-  // Local state management for chat display settings
-  const [fontSize, setFontSize] = useState<number[]>([14]);
-  const [messageSpacing, setMessageSpacing] = useState<
-    "compact" | "normal" | "relaxed"
-  >("normal");
-
-  // Optimized event handlers with useCallback
-  const handleThemeChange = useCallback((value: string) => {
-    setSelectedTheme(value as "light" | "dark" | "system");
+  const onError = useCallback((error: Error) => {
+    setSubmitError(error.message);
   }, []);
 
-  const handleFontSizeChange = useCallback((value: number[]) => {
-    setFontSize(value);
-  }, []);
+  const {
+    settings,
+    saveSettings: _saveSettings,
+    isLoading,
+    error,
+  } = useSettingsPersistence({
+    adapter,
+    onError,
+  });
+
+  // Initialize form
+  const form = useForm<AppearanceSettingsFormData>({
+    resolver: zodResolver(appearanceSettingsSchema),
+    defaultValues: settings?.appearance || defaultAppearanceSettings,
+    mode: "onChange",
+  });
+
+  // Reset form when settings are loaded (only on initial load)
+  useEffect(() => {
+    if (settings?.appearance && !hasInitialized.current) {
+      form.reset(settings.appearance);
+      hasInitialized.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings?.appearance]);
+
+  // Apply theme changes immediately using form value
+  const watchedTheme = form.watch("theme");
+  useEffect(() => {
+    if (watchedTheme) {
+      applyTheme(watchedTheme);
+    }
+  }, [watchedTheme]);
+
+  // Form submission handler
+  const onSubmit = useCallback(
+    async (data: AppearanceSettingsFormData) => {
+      setSubmitError(null);
+
+      try {
+        const validatedData = appearanceSettingsSchema.parse(data);
+
+        const updatedSettings = {
+          ...settings,
+          appearance: validatedData,
+        } as SettingsFormData;
+
+        await _saveSettings(updatedSettings);
+        _setUnsavedChanges(false);
+        form.reset(validatedData);
+      } catch (error) {
+        if (error instanceof Error) {
+          setSubmitError(error.message);
+        } else {
+          setSubmitError("Failed to save settings");
+        }
+      }
+    },
+    [form, _setUnsavedChanges, settings, _saveSettings],
+  );
+
+  // Track form changes for unsaved state
+  useEffect(() => {
+    const subscription = form.watch(() => {
+      _setUnsavedChanges(true);
+    });
+    return () => subscription.unsubscribe();
+  }, [form, _setUnsavedChanges]);
+
+  // Handle global save events
+  useEffect(() => {
+    const handleSave = () => {
+      form.handleSubmit(onSubmit)();
+    };
+
+    window.addEventListener("settings-save", handleSave);
+    return () => {
+      window.removeEventListener("settings-save", handleSave);
+    };
+  }, [form, onSubmit]);
+
+  // Add loading state
+  if (isLoading) {
+    return <div>Loading appearance settings...</div>;
+  }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-heading-primary mb-[20px]">Appearance</h1>
-        <p className="text-muted-foreground text-sm mb-6">
-          Customize the appearance and theme of the application
-        </p>
-      </div>
-
-      <div className="space-y-6">
-        {/* Theme Selection Group */}
-        <div className="space-y-4">
-          <h2 className="text-heading-secondary mb-4">Theme</h2>
-          <div className="grid gap-4">
-            <RadioGroup
-              value={selectedTheme}
-              onValueChange={handleThemeChange}
-              className="flex flex-col space-y-2"
-            >
-              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                <RadioGroupItem value="light" id="theme-light" />
-                <Label
-                  htmlFor="theme-light"
-                  className="text-sm font-normal flex-1 py-2 cursor-pointer"
-                >
-                  Light
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                <RadioGroupItem value="dark" id="theme-dark" />
-                <Label
-                  htmlFor="theme-dark"
-                  className="text-sm font-normal flex-1 py-2 cursor-pointer"
-                >
-                  Dark
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                <RadioGroupItem value="system" id="theme-system" />
-                <div className="flex flex-col flex-1 py-2">
-                  <Label
-                    htmlFor="theme-system"
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    System
-                  </Label>
-                  <span className="text-xs text-muted-foreground mt-1">
-                    Use your system preference
-                  </span>
-                </div>
-              </div>
-            </RadioGroup>
+    <Form {...form}>
+      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
+        {error && <FormErrorDisplay error={error.message} />}
+        {submitError && <FormErrorDisplay error={submitError} />}
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-heading-primary mb-[20px]">Appearance</h1>
+            <p className="text-muted-foreground text-sm mb-6">
+              Customize the appearance and theme of the application
+            </p>
           </div>
-        </div>
 
-        {/* Theme Preview Area */}
-        <div className="space-y-4">
-          <h2 className="text-heading-secondary mb-4">Preview</h2>
-          <div className="grid gap-4">
-            <ThemePreview selectedTheme={selectedTheme} />
-          </div>
-        </div>
-
-        {/* Display Settings Group */}
-        <div className="space-y-4">
-          <h2 className="text-heading-secondary mb-4">Display Settings</h2>
-          <div className="grid gap-6">
-            {/* Message Timestamps Control */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Show Timestamps</Label>
-              <RadioGroup
-                value={showTimestamps}
-                onValueChange={(value) =>
-                  setShowTimestamps(value as "always" | "hover" | "never")
-                }
-                className="flex flex-col space-y-2"
-                aria-describedby="timestamps-description"
-              >
-                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                  <RadioGroupItem value="always" id="timestamps-always" />
-                  <Label
-                    htmlFor="timestamps-always"
-                    className="text-sm font-normal flex-1 py-2 cursor-pointer"
-                  >
-                    Always
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                  <RadioGroupItem value="hover" id="timestamps-hover" />
-                  <Label
-                    htmlFor="timestamps-hover"
-                    className="text-sm font-normal flex-1 py-2 cursor-pointer"
-                  >
-                    On Hover
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
-                  <RadioGroupItem value="never" id="timestamps-never" />
-                  <Label
-                    htmlFor="timestamps-never"
-                    className="text-sm font-normal flex-1 py-2 cursor-pointer"
-                  >
-                    Never
-                  </Label>
-                </div>
-              </RadioGroup>
-              <div
-                id="timestamps-description"
-                className="text-description text-muted-foreground mt-1"
-              >
-                Control when message timestamps are displayed
-              </div>
-            </div>
-
-            {/* Conversation List Toggle Controls */}
+          <div className="space-y-6">
+            {/* Theme Selection Group */}
             <div className="space-y-4">
-              <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Show last activity time</Label>
-                  <div className="text-description text-muted-foreground">
-                    Display the last activity time for each conversation
-                  </div>
-                </div>
-                <Switch
-                  checked={showActivityTime}
-                  onCheckedChange={setShowActivityTime}
-                  aria-describedby="activity-time-description"
+              <h2 className="text-heading-secondary mb-4">Theme</h2>
+              <div className="grid gap-4">
+                <FormField
+                  control={form.control}
+                  name="theme"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Theme</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          className="flex flex-col space-y-2"
+                        >
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem value="light" id="theme-light" />
+                            <Label
+                              htmlFor="theme-light"
+                              className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                            >
+                              Light
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem value="dark" id="theme-dark" />
+                            <Label
+                              htmlFor="theme-dark"
+                              className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                            >
+                              Dark
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem value="system" id="theme-system" />
+                            <div className="flex flex-col flex-1 py-2">
+                              <Label
+                                htmlFor="theme-system"
+                                className="text-sm font-normal cursor-pointer"
+                              >
+                                System
+                              </Label>
+                              <span className="text-xs text-muted-foreground mt-1">
+                                Use your system preference
+                              </span>
+                            </div>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
+            </div>
 
-              <div className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
-                <div className="space-y-0.5">
-                  <Label className="text-base">Compact conversation list</Label>
-                  <div className="text-description text-muted-foreground">
-                    Use a more compact layout for the conversation list
-                  </div>
+            {/* Theme Preview Area */}
+            <div className="space-y-4">
+              <h2 className="text-heading-secondary mb-4">Preview</h2>
+              <div className="grid gap-4">
+                <ThemePreview selectedTheme={form.watch("theme")} />
+              </div>
+            </div>
+
+            {/* Display Settings Group */}
+            <div className="space-y-4">
+              <h2 className="text-heading-secondary mb-4">Display Settings</h2>
+              <div className="grid gap-6">
+                {/* Message Timestamps Control */}
+                <FormField
+                  control={form.control}
+                  name="showTimestamps"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Show Timestamps</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          className="flex flex-col space-y-2"
+                          aria-describedby="timestamps-description"
+                        >
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem
+                              value="always"
+                              id="timestamps-always"
+                            />
+                            <Label
+                              htmlFor="timestamps-always"
+                              className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                            >
+                              Always
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem
+                              value="hover"
+                              id="timestamps-hover"
+                            />
+                            <Label
+                              htmlFor="timestamps-hover"
+                              className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                            >
+                              On Hover
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
+                            <RadioGroupItem
+                              value="never"
+                              id="timestamps-never"
+                            />
+                            <Label
+                              htmlFor="timestamps-never"
+                              className="text-sm font-normal flex-1 py-2 cursor-pointer"
+                            >
+                              Never
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <div
+                        id="timestamps-description"
+                        className="text-description text-muted-foreground mt-1"
+                      >
+                        Control when message timestamps are displayed
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Conversation List Toggle Controls */}
+                <div className="space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="showActivityTime"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Show last activity time
+                          </FormLabel>
+                          <div className="text-description text-muted-foreground">
+                            Display the last activity time for each conversation
+                          </div>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            aria-describedby="activity-time-description"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="compactList"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                        <div className="space-y-0.5">
+                          <FormLabel className="text-base">
+                            Compact conversation list
+                          </FormLabel>
+                          <div className="text-description text-muted-foreground">
+                            Use a more compact layout for the conversation list
+                          </div>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                            aria-describedby="compact-list-description"
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                 </div>
-                <Switch
-                  checked={compactList}
-                  onCheckedChange={setCompactList}
-                  aria-describedby="compact-list-description"
+              </div>
+            </div>
+
+            {/* Chat Display Group */}
+            <div className="space-y-4">
+              <h2 className="text-heading-secondary mb-4">Chat Display</h2>
+              <div className="grid gap-6">
+                {/* Font Size Slider Control */}
+                <FormField
+                  control={form.control}
+                  name="fontSize"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <FormLabel className="text-sm font-medium">
+                          Message Font Size
+                        </FormLabel>
+                        <span className="text-sm text-muted-foreground">
+                          {field.value}px
+                        </span>
+                      </div>
+                      <FormControl>
+                        <Slider
+                          value={[field.value]}
+                          onValueChange={(value) => field.onChange(value[0])}
+                          min={12}
+                          max={18}
+                          step={1}
+                          className="w-full"
+                          aria-label="Message font size"
+                        />
+                      </FormControl>
+
+                      {/* Font Size Preview */}
+                      <FontSizePreview fontSize={field.value || 14} />
+
+                      <div className="text-description text-muted-foreground">
+                        Adjust the font size for chat messages
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Message Spacing Radio Group */}
+                <FormField
+                  control={form.control}
+                  name="messageSpacing"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>Message Spacing</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          className="flex flex-row space-x-6"
+                          aria-describedby="spacing-description"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="compact"
+                              id="spacing-compact"
+                            />
+                            <Label
+                              htmlFor="spacing-compact"
+                              className="text-sm font-normal cursor-pointer"
+                            >
+                              Compact
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="normal"
+                              id="spacing-normal"
+                            />
+                            <Label
+                              htmlFor="spacing-normal"
+                              className="text-sm font-normal cursor-pointer"
+                            >
+                              Normal
+                            </Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem
+                              value="relaxed"
+                              id="spacing-relaxed"
+                            />
+                            <Label
+                              htmlFor="spacing-relaxed"
+                              className="text-sm font-normal cursor-pointer"
+                            >
+                              Relaxed
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <div
+                        id="spacing-description"
+                        className="text-description text-muted-foreground"
+                      >
+                        Control the spacing between chat messages
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
                 />
               </div>
             </div>
           </div>
         </div>
-
-        {/* Chat Display Group */}
-        <div className="space-y-4">
-          <h2 className="text-heading-secondary mb-4">Chat Display</h2>
-          <div className="grid gap-6">
-            {/* Font Size Slider Control */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label className="text-sm font-medium">Message Font Size</Label>
-                <span className="text-sm text-muted-foreground">
-                  {fontSize[0]}px
-                </span>
-              </div>
-              <Slider
-                value={fontSize}
-                onValueChange={handleFontSizeChange}
-                min={12}
-                max={18}
-                step={1}
-                className="w-full"
-                aria-label="Message font size"
-              />
-
-              {/* Font Size Preview */}
-              <FontSizePreview fontSize={fontSize[0] || 14} />
-
-              <div className="text-description text-muted-foreground">
-                Adjust the font size for chat messages
-              </div>
-            </div>
-
-            {/* Message Spacing Radio Group */}
-            <div className="space-y-3">
-              <Label className="text-sm font-medium">Message Spacing</Label>
-              <RadioGroup
-                value={messageSpacing}
-                onValueChange={(value) =>
-                  setMessageSpacing(value as "compact" | "normal" | "relaxed")
-                }
-                className="flex flex-row space-x-6"
-                aria-describedby="spacing-description"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="compact" id="spacing-compact" />
-                  <Label
-                    htmlFor="spacing-compact"
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    Compact
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="normal" id="spacing-normal" />
-                  <Label
-                    htmlFor="spacing-normal"
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    Normal
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="relaxed" id="spacing-relaxed" />
-                  <Label
-                    htmlFor="spacing-relaxed"
-                    className="text-sm font-normal cursor-pointer"
-                  >
-                    Relaxed
-                  </Label>
-                </div>
-              </RadioGroup>
-              <div
-                id="spacing-description"
-                className="text-description text-muted-foreground"
-              >
-                Control the spacing between chat messages
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+      </form>
+    </Form>
   );
 };

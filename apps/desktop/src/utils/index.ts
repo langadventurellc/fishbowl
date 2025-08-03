@@ -4,6 +4,7 @@
  */
 
 export { announceToScreenReader } from "./announceToScreenReader";
+export { applyTheme } from "./applyTheme";
 export { generateDialogAriaIds } from "./generateDialogAriaIds";
 export { getAccessibleDescription } from "./getAccessibleDescription";
 export { useAccessibilityAnnouncements } from "./useAccessibilityAnnouncements";

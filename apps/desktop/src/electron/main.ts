@@ -1,15 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { app, BrowserWindow, shell, ipcMain, globalShortcut } from "electron";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
-import { setupSettingsHandlers } from "./settingsHandlers.js";
 import {
-  SettingsRepository,
+  createLogger,
   FileStorageService,
   NodeFileSystemBridge,
-  createLogger,
+  SettingsRepository,
 } from "@fishbowl-ai/shared";
+import { app, BrowserWindow, globalShortcut, shell } from "electron";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
+import { setupSettingsHandlers } from "./settingsHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
