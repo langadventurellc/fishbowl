@@ -4,6 +4,7 @@ import React from "react";
 import { SettingsModal } from "./components/settings/SettingsModal";
 import { SettingsProvider } from "./contexts";
 import { useElectronIPC } from "./hooks/useElectronIPC";
+import { setupTestHelpers } from "./utils/testHelpers";
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/showcase/ComponentShowcase";
 import LayoutShowcase from "./pages/showcase/LayoutShowcase";
@@ -35,12 +36,15 @@ export default function App() {
   // Get settings modal state for rendering
   const { isOpen, closeModal } = useSettingsModal();
 
-  // Log app initialization
+  // Log app initialization and setup test helpers
   React.useEffect(() => {
     logger.info("Desktop app initialized", {
       routes: ["/", "/showcase/components", "/showcase/layout"],
       platform: window?.electronAPI?.platform,
     });
+
+    // Setup test helpers for E2E testing
+    setupTestHelpers();
   }, []);
 
   // Log settings modal state changes

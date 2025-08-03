@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-add-desktop-end-to-end-tests-for
+parent: F-general-settings-connection
+status: done
 title: Add desktop end-to-end tests for general settings modal
-status: open
 priority: normal
 prerequisites:
   - T-create-settings-context-provider
 created: "2025-08-02T22:28:38.383166"
-updated: "2025-08-02T22:28:38.383166"
+updated: "2025-08-02T22:47:47.576594"
 schema_version: "1.1"
-parent: F-general-settings-connection
+worktree: null
 ---
 
 # Add Desktop End-to-End Tests for General Settings Modal
@@ -250,3 +251,7 @@ test.describe("General Settings Modal", () => {
 - Follow established patterns for desktop E2E tests in the repository
 
 ### Log
+
+**2025-08-03T05:36:29.816527Z** - Successfully implemented comprehensive desktop E2E tests for general settings modal. Created test-specific global helpers that expose settings modal store actions directly to Playwright tests, bypassing the main process IPC limitation. Added all necessary test IDs to form components and updated tests to use real form fields. Fixed settings file path resolution and switch toggle logic. All test scenarios now pass including modal opening, save functionality, settings persistence, cancel/discard changes, form interactions, and accessibility.
+
+- filesChanged: ["apps/desktop/src/utils/testHelpers.ts", "apps/desktop/src/App.tsx", "apps/desktop/src/components/settings/GeneralSettings.tsx", "apps/desktop/src/components/settings/ModalHeader.tsx", "tests/desktop/features/general-settings.spec.ts", "tests/desktop/features/simple-modal-test.spec.ts"]

@@ -158,7 +158,11 @@ export const GeneralSettings: React.FC = () => {
       </div>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6"
+          data-testid="general-settings-form"
+        >
           {/* Hidden submit button for accessibility */}
           <button type="submit" className="sr-only" aria-hidden="true">
             Save Settings
@@ -232,11 +236,15 @@ export const GeneralSettings: React.FC = () => {
                           min={0}
                           max={500}
                           {...field}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value) || 0)
-                          }
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value) || 0;
+                            field.onChange(value);
+                            // Directly set unsaved changes to true
+                            setUnsavedChanges(true);
+                          }}
                           onWheel={(e) => e.currentTarget.blur()} // Prevent scroll wheel changes
                           className="w-full"
+                          data-testid="maximum-messages-input"
                         />
                         <div
                           className="text-description text-muted-foreground mt-1"
@@ -314,6 +322,7 @@ export const GeneralSettings: React.FC = () => {
                         value={field.value}
                         className="flex flex-col space-y-2"
                         aria-describedby="defaultMode-description"
+                        data-testid="default-mode-radio-group"
                       >
                         <div className="flex items-center space-x-2 min-h-[var(--dt-touch-min-mobile)] py-1">
                           <RadioGroupItem value="manual" id="mode-manual" />
@@ -401,7 +410,12 @@ export const GeneralSettings: React.FC = () => {
                     <FormControl>
                       <Switch
                         checked={field.value}
-                        onCheckedChange={field.onChange}
+                        onCheckedChange={(value) => {
+                          field.onChange(value);
+                          // Directly set unsaved changes to true
+                          setUnsavedChanges(true);
+                        }}
+                        data-testid="check-updates-switch"
                       />
                     </FormControl>
                   </FormItem>

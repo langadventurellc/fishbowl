@@ -235,6 +235,7 @@ export function SettingsModal({
           aria-modal="true"
           role="dialog"
           data-settings-modal="true"
+          data-testid="settings-modal"
           tabIndex={-1}
           // Additional accessibility attributes for better screen reader experience
           aria-live="polite"

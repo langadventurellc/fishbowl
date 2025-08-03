@@ -120,6 +120,7 @@ export function ModalFooter({
           aria-describedby="cancel-button-description"
           aria-keyshortcuts="Escape"
           type="button"
+          data-testid="cancel-button"
           className={cn(
             COMMON_FOCUS_CLASSES.removeOutline,
             COMMON_FOCUS_CLASSES.backgroundOffset,
@@ -144,6 +145,7 @@ export function ModalFooter({
           aria-describedby="save-button-description"
           aria-keyshortcuts="Control+S Meta+S"
           type="button"
+          data-testid="save-button"
           className={cn(
             COMMON_FOCUS_CLASSES.removeOutline,
             COMMON_FOCUS_CLASSES.backgroundOffset,
