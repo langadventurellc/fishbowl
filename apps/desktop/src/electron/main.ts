@@ -9,7 +9,7 @@ import {
   NodeFileSystemBridge,
   createLogger,
 } from "@fishbowl-ai/shared";
-import "./getSettingsRepository.js"; // Initialize the global setter
+import { settingsRepositoryManager } from "./getSettingsRepository.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -140,24 +140,23 @@ app.whenReady().then(async () => {
 
   // Initialize settings repository
   try {
+    // Get the userData directory for settings persistence
+    const userDataPath = app.getPath("userData");
+    const settingsFilePath = path.join(userDataPath, "preferences.json");
+
     // Create file storage service with filesystem bridge
     const fileSystemBridge = new NodeFileSystemBridge();
     const fileStorage = new FileStorageService(fileSystemBridge);
 
-    // Create repository
-    const repository = new SettingsRepository(fileStorage);
+    // Create repository with userData directory path
+    const repository = new SettingsRepository(fileStorage, settingsFilePath);
 
-    // Set repository using global setter from getSettingsRepository.ts
-    interface GlobalWithSettings {
-      __setSettingsRepository?: (repository: SettingsRepository) => void;
-    }
-    const globalWithSettings = globalThis as GlobalWithSettings;
-    if (globalWithSettings.__setSettingsRepository) {
-      globalWithSettings.__setSettingsRepository(repository);
-    }
+    // Set repository using settings manager
+    settingsRepositoryManager.set(repository);
 
     mainLogger?.info("Settings repository initialized successfully", {
       storageType: "FileStorage",
+      settingsPath: settingsFilePath,
     });
   } catch (error) {
     mainLogger?.error(

@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
   // Reporter configuration
   reporter: [
     ["list"],
-    ["html", { outputFolder: "playwright-report" }],
+    ["html", { open: "never" }],
     ["junit", { outputFile: "test-results/junit.xml" }],
   ],
 
