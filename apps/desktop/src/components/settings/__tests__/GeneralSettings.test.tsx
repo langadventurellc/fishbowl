@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
 import { GeneralSettings } from "../GeneralSettings";
+import { SettingsProvider } from "../../../contexts";
 
 // Mock the desktop adapter
 jest.mock("../../../adapters/desktopSettingsAdapter", () => ({
@@ -78,7 +79,11 @@ describe("GeneralSettings Persistence Integration", () => {
       error: null,
     });
 
-    render(<GeneralSettings />);
+    render(
+      <SettingsProvider>
+        <GeneralSettings />
+      </SettingsProvider>,
+    );
 
     expect(screen.getByText("Loading settings...")).toBeInTheDocument();
   });
@@ -105,7 +110,11 @@ describe("GeneralSettings Persistence Integration", () => {
       error: null,
     });
 
-    render(<GeneralSettings />);
+    render(
+      <SettingsProvider>
+        <GeneralSettings />
+      </SettingsProvider>,
+    );
 
     // Verify the component rendered successfully
     expect(screen.getByText("General")).toBeInTheDocument();
@@ -138,7 +147,11 @@ describe("GeneralSettings Persistence Integration", () => {
       error: null,
     });
 
-    render(<GeneralSettings />);
+    render(
+      <SettingsProvider>
+        <GeneralSettings />
+      </SettingsProvider>,
+    );
 
     // Verify persistence hook was called with correct adapter
     expect(useSettingsPersistence).toHaveBeenCalledWith({

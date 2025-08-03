@@ -20,7 +20,7 @@ import {
   type GeneralSettingsFormData,
   type SettingsFormData,
 } from "@fishbowl-ai/ui-shared";
-import { desktopSettingsAdapter } from "../../adapters/desktopSettingsAdapter";
+import { useSettingsPersistenceAdapter } from "../../contexts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -30,6 +30,9 @@ export const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const { setUnsavedChanges } = useUnsavedChanges();
 
+  // Get the adapter from context
+  const adapter = useSettingsPersistenceAdapter();
+
   // Memoize the onError callback to prevent re-renders
   const onError = useCallback((error: Error) => {
     setSubmitError(error.message);
@@ -37,7 +40,7 @@ export const GeneralSettings: React.FC = () => {
 
   // Initialize settings persistence
   const { settings, saveSettings, isLoading, error } = useSettingsPersistence({
-    adapter: desktopSettingsAdapter,
+    adapter,
     onError,
   });
 

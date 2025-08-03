@@ -2,6 +2,7 @@ import { useSettingsModal } from "@fishbowl-ai/ui-shared";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import React from "react";
 import { SettingsModal } from "./components/settings/SettingsModal";
+import { SettingsProvider } from "./contexts";
 import { useElectronIPC } from "./hooks/useElectronIPC";
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/showcase/ComponentShowcase";
@@ -48,7 +49,7 @@ export default function App() {
   }, [isOpen]);
 
   return (
-    <>
+    <SettingsProvider>
       <HashRouter>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -59,6 +60,6 @@ export default function App() {
 
       {/* Settings Modal - rendered globally */}
       <SettingsModal open={isOpen} onOpenChange={closeModal} />
-    </>
+    </SettingsProvider>
   );
 }
