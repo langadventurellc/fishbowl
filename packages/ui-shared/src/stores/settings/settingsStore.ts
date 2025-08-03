@@ -15,9 +15,24 @@ import type { SettingsSubTab } from "./settingsSubTab";
 import { defaultSettingsModalState } from "./defaultSettingsModalState";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 
-const logger = createLoggerSync({
-  context: { metadata: { component: "settingsStore" } },
-});
+// Lazy logger creation to avoid process access in browser context
+let logger: ReturnType<typeof createLoggerSync> | null = null;
+const getLogger = () => {
+  if (!logger) {
+    try {
+      logger = createLoggerSync({
+        context: { metadata: { component: "settingsStore" } },
+      });
+    } catch {
+      // Fallback to console in browser contexts where logger creation fails
+      logger = {
+        warn: console.warn.bind(console),
+        info: console.info.bind(console),
+      } as ReturnType<typeof createLoggerSync>;
+    }
+  }
+  return logger;
+};
 
 /**
  * Maximum number of entries allowed in navigation history.
@@ -127,7 +142,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
 
       // Validate section if provided
       if (section && !isValidSection(section)) {
-        logger.warn(`Invalid section provided to openModal: ${section}`);
+        getLogger().warn(`Invalid section provided to openModal: ${section}`);
         return;
       }
 
@@ -153,7 +168,9 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
     setActiveSection: (section: SettingsSection) => {
       // Validate section
       if (!isValidSection(section)) {
-        logger.warn(`Invalid section provided to setActiveSection: ${section}`);
+        getLogger().warn(
+          `Invalid section provided to setActiveSection: ${section}`,
+        );
         return;
       }
 
@@ -168,7 +185,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
     setActiveSubTab: (tab: SettingsSubTab) => {
       // Validate sub-tab
       if (!isValidSubTab(tab)) {
-        logger.warn(`Invalid sub-tab provided to setActiveSubTab: ${tab}`);
+        getLogger().warn(`Invalid sub-tab provided to setActiveSubTab: ${tab}`);
         return;
       }
 
@@ -182,7 +199,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
 
       // Handle empty history gracefully
       if (navigationHistory.length <= 1) {
-        logger.info("No previous section in navigation history");
+        getLogger().info("No previous section in navigation history");
         return;
       }
 
