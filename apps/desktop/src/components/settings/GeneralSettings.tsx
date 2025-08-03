@@ -30,12 +30,15 @@ export const GeneralSettings: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const { setUnsavedChanges } = useUnsavedChanges();
 
+  // Memoize the onError callback to prevent re-renders
+  const onError = useCallback((error: Error) => {
+    setSubmitError(error.message);
+  }, []);
+
   // Initialize settings persistence
-  const { settings, saveSettings, isLoading } = useSettingsPersistence({
+  const { settings, saveSettings, isLoading, error } = useSettingsPersistence({
     adapter: desktopSettingsAdapter,
-    onError: (error: Error) => {
-      setSubmitError(error.message);
-    },
+    onError,
   });
 
   // Initialize form with default values and validation
@@ -50,7 +53,7 @@ export const GeneralSettings: React.FC = () => {
     if (settings?.general) {
       form.reset(settings.general);
     }
-  }, [settings, form]);
+  }, [settings?.general, form]);
 
   // Enhanced form submission with error handling
   const onSubmit = useCallback(
@@ -120,6 +123,24 @@ export const GeneralSettings: React.FC = () => {
             Loading settings...
           </p>
         </div>
+      </div>
+    );
+  }
+
+  // Show error state if settings failed to load
+  if (error && !settings) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-heading-primary mb-[20px]">General</h1>
+          <p className="text-destructive text-sm mb-6">
+            Failed to load settings: {error.message}
+          </p>
+          <p className="text-muted-foreground text-sm mb-6">
+            Using default settings. Your changes will still be saved.
+          </p>
+        </div>
+        {/* Render the form with default settings */}
       </div>
     );
   }

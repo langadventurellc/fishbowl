@@ -1,0 +1,24 @@
+{
+  "schemaVersion": "1.0.0",
+  "general": {
+    "responseDelay": 5000,
+    "maximumMessages": 48,
+    "maximumWaitTime": 31000,
+    "defaultMode": "manual",
+    "maximumAgents": 4,
+    "checkUpdates": true
+  },
+  "appearance": {
+    "theme": "system",
+    "showTimestamps": "hover",
+    "showActivityTime": true,
+    "compactList": false,
+    "fontSize": 14,
+    "messageSpacing": "normal"
+  },
+  "advanced": {
+    "debugLogging": false,
+    "experimentalFeatures": false
+  },
+  "lastUpdated": "2025-08-03T03:07:53.030Z"
+}
