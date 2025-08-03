@@ -2,7 +2,7 @@
 kind: feature
 id: F-appearance-settings-connection
 title: Appearance Settings Connection
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-general-settings-connection
