@@ -25,9 +25,9 @@ import {
 import { LlmConfigModalProps } from "./LlmConfigModalProps";
 
 const llmConfigSchema = z.object({
-  customName: z.string().min(1, "Custom name is required"),
-  apiKey: z.string().min(1, "API key is required"),
-  baseUrl: z.string().url("Must be a valid URL"),
+  customName: z.string(),
+  apiKey: z.string(),
+  baseUrl: z.string(),
   useAuthHeader: z.boolean(),
 });
 
