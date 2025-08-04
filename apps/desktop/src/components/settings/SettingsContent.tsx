@@ -108,74 +108,95 @@ export function SettingsContent({
   }, [formsAreDirty, setUnsavedChanges]);
 
   // Unified save handler that validates and saves all forms atomically
-  const handleUnifiedSave = useCallback(async (): Promise<void> => {
-    if (!settings) {
-      logger.warn("No settings available for saving");
-      return;
-    }
+  // Validates all forms and returns validation results
+  const validateAllForms = useCallback(async () => {
+    const [generalValid, appearanceValid, advancedValid] = await Promise.all([
+      generalForm.trigger(),
+      appearanceForm.trigger(),
+      advancedForm.trigger(),
+    ]);
 
-    try {
-      // Trigger validation on all forms
-      const [generalValid, appearanceValid, advancedValid] = await Promise.all([
-        generalForm.trigger(),
-        appearanceForm.trigger(),
-        advancedForm.trigger(),
-      ]);
+    return {
+      generalValid,
+      appearanceValid,
+      advancedValid,
+      allValid: generalValid && appearanceValid && advancedValid,
+    };
+  }, [generalForm, appearanceForm, advancedForm]);
+  // Handles validation errors by focusing on the first error field
+  const handleValidationErrors = useCallback(
+    (validationResults: {
+      generalValid: boolean;
+      appearanceValid: boolean;
+      advancedValid: boolean;
+    }) => {
+      const { generalValid, appearanceValid, advancedValid } =
+        validationResults;
 
-      // Check if all forms are valid
-      if (!generalValid || !appearanceValid || !advancedValid) {
-        // Find first form with errors and focus first error field
-        if (!generalValid && generalForm.formState.errors) {
-          const firstErrorField = Object.keys(generalForm.formState.errors)[0];
-          if (firstErrorField) {
-            generalForm.setFocus(
-              firstErrorField as keyof GeneralSettingsFormData,
-            );
-          }
-        } else if (!appearanceValid && appearanceForm.formState.errors) {
-          const firstErrorField = Object.keys(
-            appearanceForm.formState.errors,
-          )[0];
-          if (firstErrorField) {
-            appearanceForm.setFocus(
-              firstErrorField as keyof AppearanceSettingsFormData,
-            );
-          }
-        } else if (!advancedValid && advancedForm.formState.errors) {
-          const firstErrorField = Object.keys(advancedForm.formState.errors)[0];
-          if (firstErrorField) {
-            advancedForm.setFocus(
-              firstErrorField as keyof AdvancedSettingsFormData,
-            );
-          }
+      // Find first form with errors and focus first error field
+      if (!generalValid && generalForm.formState.errors) {
+        const firstErrorField = Object.keys(generalForm.formState.errors)[0];
+        if (firstErrorField) {
+          generalForm.setFocus(
+            firstErrorField as keyof GeneralSettingsFormData,
+          );
         }
-
-        logger.warn("Validation failed for forms", {
-          generalValid,
-          appearanceValid,
-          advancedValid,
-          generalErrors: generalForm.formState.errors,
-          appearanceErrors: appearanceForm.formState.errors,
-          advancedErrors: advancedForm.formState.errors,
-        });
-        return;
+      } else if (!appearanceValid && appearanceForm.formState.errors) {
+        const firstErrorField = Object.keys(appearanceForm.formState.errors)[0];
+        if (firstErrorField) {
+          appearanceForm.setFocus(
+            firstErrorField as keyof AppearanceSettingsFormData,
+          );
+        }
+      } else if (!advancedValid && advancedForm.formState.errors) {
+        const firstErrorField = Object.keys(advancedForm.formState.errors)[0];
+        if (firstErrorField) {
+          advancedForm.setFocus(
+            firstErrorField as keyof AdvancedSettingsFormData,
+          );
+        }
       }
 
-      // Get validated data from forms
-      const generalData = generalForm.getValues();
-      const appearanceData = appearanceForm.getValues();
-      const advancedData = advancedForm.getValues();
+      logger.warn("Validation failed for forms", {
+        generalValid,
+        appearanceValid,
+        advancedValid,
+        generalErrors: generalForm.formState.errors,
+        appearanceErrors: appearanceForm.formState.errors,
+        advancedErrors: advancedForm.formState.errors,
+      });
+    },
+    [generalForm, appearanceForm, advancedForm],
+  );
+  // Collects form data and saves settings
+  const saveValidatedSettings = useCallback(async () => {
+    // Get validated data from forms
+    const generalData = generalForm.getValues();
+    const appearanceData = appearanceForm.getValues();
+    const advancedData = advancedForm.getValues();
 
-      // Update existing settings with form data
-      const updatedSettings = {
-        ...settings,
-        general: generalData,
-        appearance: appearanceData,
-        advanced: advancedData,
-      };
+    // Update existing settings with form data
+    const updatedSettings = {
+      ...settings,
+      general: generalData,
+      appearance: appearanceData,
+      advanced: advancedData,
+    };
 
-      // Save the updated settings atomically
-      await _saveSettings(updatedSettings);
+    // Save the updated settings atomically
+    await _saveSettings(updatedSettings);
+
+    return { generalData, appearanceData, advancedData };
+  }, [generalForm, appearanceForm, advancedForm, settings, _saveSettings]);
+
+  // Resets all forms to pristine state after successful save
+  const resetFormsAfterSave = useCallback(
+    (data: {
+      generalData: GeneralSettingsFormData;
+      appearanceData: AppearanceSettingsFormData;
+      advancedData: AdvancedSettingsFormData;
+    }) => {
+      const { generalData, appearanceData, advancedData } = data;
 
       // Reset form states to mark as pristine after successful save
       generalForm.reset(generalData);
@@ -184,6 +205,30 @@ export function SettingsContent({
 
       // Reset unsaved changes state to disable save button
       setUnsavedChanges(false);
+    },
+    [generalForm, appearanceForm, advancedForm, setUnsavedChanges],
+  );
+  const handleUnifiedSave = useCallback(async (): Promise<void> => {
+    if (!settings) {
+      logger.warn("No settings available for saving");
+      return;
+    }
+
+    try {
+      // Validate all forms
+      const validationResults = await validateAllForms();
+
+      // If validation fails, handle errors and return early
+      if (!validationResults.allValid) {
+        handleValidationErrors(validationResults);
+        return;
+      }
+
+      // Save the validated settings and get the data
+      const savedData = await saveValidatedSettings();
+
+      // Reset forms to pristine state after successful save
+      resetFormsAfterSave(savedData);
 
       logger.info("Settings saved successfully via unified handler");
     } catch (error) {
@@ -193,12 +238,11 @@ export function SettingsContent({
       );
     }
   }, [
-    generalForm,
-    appearanceForm,
-    advancedForm,
     settings,
-    _saveSettings,
-    setUnsavedChanges,
+    validateAllForms,
+    handleValidationErrors,
+    saveValidatedSettings,
+    resetFormsAfterSave,
   ]);
 
   // Add event listener for settings-save event from ModalFooter
