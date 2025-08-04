@@ -19,6 +19,9 @@ import {
   type GeneralSettingsFormData,
   generalSettingsSchema,
   defaultGeneralSettings,
+  type AppearanceSettingsFormData,
+  appearanceSettingsSchema,
+  defaultAppearanceSettings,
 } from "@fishbowl-ai/ui-shared";
 import { useSettingsPersistenceAdapter } from "../../contexts";
 import { cn } from "../../lib/utils";
@@ -33,7 +36,6 @@ import { RolesSection } from "./roles/RolesSection";
 
 const sectionComponents = {
   "api-keys": ApiKeysSettings,
-  appearance: AppearanceSettings,
   agents: AgentsSection,
   personalities: PersonalitiesSection,
   roles: RolesSection,
@@ -71,8 +73,16 @@ export function SettingsContent({
     mode: "onChange",
   });
 
-  // Use ref to track if form has been initialized to prevent infinite loops
+  // Create form instance for AppearanceSettings
+  const appearanceForm = useForm<AppearanceSettingsFormData>({
+    resolver: zodResolver(appearanceSettingsSchema),
+    defaultValues: settings?.appearance || defaultAppearanceSettings,
+    mode: "onChange",
+  });
+
+  // Use ref to track if forms have been initialized to prevent infinite loops
   const hasInitializedForm = useRef(false);
+  const hasInitializedAppearanceForm = useRef(false);
 
   // Reset form when settings are loaded, but only for general section
   useEffect(() => {
@@ -91,6 +101,23 @@ export function SettingsContent({
     }
   }, [activeSection, settings?.general]); // Remove generalForm from dependencies
 
+  // Reset appearance form when settings are loaded, but only for appearance section
+  useEffect(() => {
+    if (
+      activeSection === "appearance" &&
+      settings?.appearance &&
+      !hasInitializedAppearanceForm.current
+    ) {
+      appearanceForm.reset(settings.appearance);
+      hasInitializedAppearanceForm.current = true;
+    }
+
+    // Reset the flag when switching away from appearance section
+    if (activeSection !== "appearance") {
+      hasInitializedAppearanceForm.current = false;
+    }
+  }, [activeSection, settings?.appearance]); // Remove appearanceForm from dependencies
+
   // Get the component for the active section
   const getActiveComponent = () => {
     if (activeSection === "general") {
@@ -101,6 +128,10 @@ export function SettingsContent({
           error={error}
         />
       );
+    }
+
+    if (activeSection === "appearance") {
+      return <AppearanceSettings form={appearanceForm} />;
     }
 
     const Component =
