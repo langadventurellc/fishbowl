@@ -167,9 +167,35 @@ test.describe("Feature: Appearance Settings Persistence", () => {
     test("saves and loads timestamp display setting", async () => {
       await openAppearanceSettings();
 
-      // Change timestamp setting to "hover"
-      await window.locator("#timestamps-hover").click();
-      await expect(window.locator("#timestamps-hover")).toBeChecked();
+      // First, determine what the current setting is and change to a different one
+      const isAlwaysChecked = await window
+        .locator("#timestamps-always")
+        .isChecked();
+      const isHoverChecked = await window
+        .locator("#timestamps-hover")
+        .isChecked();
+
+      let targetSelector: string;
+      let expectedSavedValue: string;
+
+      // Choose a different setting than what's currently selected
+      if (isAlwaysChecked) {
+        targetSelector = "#timestamps-hover";
+        expectedSavedValue = "hover";
+      } else if (isHoverChecked) {
+        targetSelector = "#timestamps-never";
+        expectedSavedValue = "never";
+      } else {
+        targetSelector = "#timestamps-always";
+        expectedSavedValue = "always";
+      }
+
+      // Change to the target setting
+      await window.locator(targetSelector).click();
+      await expect(window.locator(targetSelector)).toBeChecked();
+
+      // Wait for form to register change and enable save button
+      await window.waitForTimeout(200);
 
       // Save changes
       const saveButton = window.locator('[data-testid="save-button"]');
@@ -183,7 +209,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
       if (actualSettingsPath) {
         const settingsContent = await readFile(actualSettingsPath, "utf-8");
         const settings = JSON.parse(settingsContent);
-        expect(settings.appearance?.showTimestamps).toBe("hover");
+        expect(settings.appearance?.showTimestamps).toBe(expectedSavedValue);
       }
 
       // Reopen and verify persistence
@@ -194,7 +220,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
       });
 
       await openAppearanceSettings();
-      await expect(window.locator("#timestamps-hover")).toBeChecked();
+      await expect(window.locator(targetSelector)).toBeChecked();
     });
 
     test("saves and loads activity time switch", async () => {
