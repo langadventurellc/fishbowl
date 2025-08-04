@@ -8,6 +8,7 @@ export const SETTINGS_CHANNELS = {
   LOAD: "settings:load",
   SAVE: "settings:save",
   RESET: "settings:reset",
+  SET_DEBUG_LOGGING: "settings:setDebugLogging",
 } as const;
 
 /**

@@ -2,12 +2,12 @@
 kind: feature
 id: F-advanced-settings-connection
 title: Advanced Settings Connection
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-appearance-settings-connection
 created: "2025-08-01T19:54:11.730921"
-updated: "2025-08-01T19:54:11.730921"
+updated: "2025-08-04T14:06:02.185983+00:00"
 schema_version: "1.1"
 parent: E-desktop-integration
 ---

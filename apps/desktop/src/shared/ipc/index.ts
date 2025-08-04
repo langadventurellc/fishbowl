@@ -21,6 +21,7 @@ export type { SettingsResetRequest } from "./reset";
 export type { SettingsLoadResponse } from "./loadResponse";
 export type { SettingsSaveResponse } from "./saveResponse";
 export type { SettingsResetResponse } from "./resetResponse";
+export type { SettingsSetDebugLoggingResponse } from "./setDebugLoggingResponse";
 
 // Data types
 export type { PersistedSettingsData } from "./data";

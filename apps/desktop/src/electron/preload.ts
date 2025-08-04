@@ -131,6 +131,19 @@ const electronAPI: ElectronAPI = {
           : new Error("Failed to communicate with main process");
       }
     },
+    setDebugLogging: async (enabled: boolean): Promise<void> => {
+      try {
+        await ipcRenderer.invoke(SETTINGS_CHANNELS.SET_DEBUG_LOGGING, enabled);
+      } catch (error) {
+        logger.error(
+          "Error setting debug logging:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
   },
 };
 

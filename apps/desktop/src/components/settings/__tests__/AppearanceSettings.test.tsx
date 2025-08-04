@@ -41,6 +41,11 @@ jest.mock("@fishbowl-ai/ui-shared", () => {
     checkUpdates: z.boolean(),
   });
 
+  const mockAdvancedSchema = z.object({
+    debugLogging: z.boolean(),
+    experimentalFeatures: z.boolean(),
+  });
+
   return {
     useUnsavedChanges: jest.fn(() => ({
       hasUnsavedChanges: false,
@@ -73,6 +78,10 @@ jest.mock("@fishbowl-ai/ui-shared", () => {
           fontSize: 14,
           messageSpacing: "normal",
         },
+        advanced: {
+          debugLogging: false,
+          experimentalFeatures: false,
+        },
       },
       saveSettings: jest.fn(),
       isLoading: false,
@@ -94,8 +103,13 @@ jest.mock("@fishbowl-ai/ui-shared", () => {
       maximumAgents: 5,
       checkUpdates: true,
     },
+    defaultAdvancedSettings: {
+      debugLogging: false,
+      experimentalFeatures: false,
+    },
     appearanceSettingsSchema: mockAppearanceSchema,
     generalSettingsSchema: mockGeneralSchema,
+    advancedSettingsSchema: mockAdvancedSchema,
   };
 });
 
