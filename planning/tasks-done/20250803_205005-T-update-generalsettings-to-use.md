@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-update-generalsettings-to-use
+status: done
 title: Update GeneralSettings to use prop-based form
-status: open
 priority: normal
 prerequisites:
   - T-refactor-settingscontent-to
 created: "2025-08-03T16:46:40.529673"
-updated: "2025-08-03T16:46:40.529673"
+updated: "2025-08-03T20:29:23.117803"
 schema_version: "1.1"
+worktree: null
 ---
 
 Refactor GeneralSettings component to receive form instance as a prop instead of managing its own form and persistence.
@@ -58,3 +59,18 @@ As part of the form state lifting solution, GeneralSettings needs to be converte
 - Ensure no console errors or warnings
 
 ### Log
+
+**2025-08-04T01:50:05.982136Z** - Successfully refactored GeneralSettings component to receive form instance as a prop instead of managing its own form and persistence. This enables centralized form management where all settings can be saved together from the SettingsContent component regardless of which tab is active.
+
+Key changes implemented:
+
+- Created GeneralSettingsProps interface in desktop app to define component props
+- Removed local useForm hook, useSettingsPersistence hook, and settings-save event listener from GeneralSettings
+- Updated SettingsContent to create and manage the form instance for GeneralSettings
+- Fixed infinite render loop by properly managing form reset logic with useRef
+- Updated all component tests to provide form mock as prop and fixed slider component test assertions
+- All form fields continue to work correctly with validation and field behavior preserved
+
+The component now focuses solely on rendering form fields while the parent SettingsContent handles form lifecycle, persistence, and state management. This sets the foundation for unified settings saving across all tabs.
+
+- filesChanged: ["apps/desktop/src/types/GeneralSettingsProps.ts", "apps/desktop/src/components/settings/GeneralSettings.tsx", "apps/desktop/src/components/settings/SettingsContent.tsx", "apps/desktop/src/components/settings/__tests__/GeneralSettings.test.tsx", "apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx"]

@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-update-appearancesettings-to-use
+status: done
 title: Update AppearanceSettings to use prop-based form
-status: open
 priority: normal
 prerequisites:
   - T-refactor-settingscontent-to
 created: "2025-08-03T16:46:51.379364"
-updated: "2025-08-03T16:46:51.379364"
+updated: "2025-08-03T20:54:43.624324"
 schema_version: "1.1"
+worktree: null
 ---
 
 Refactor AppearanceSettings component to receive form instance as a prop instead of managing its own form and persistence.
@@ -59,3 +60,19 @@ As part of the form state lifting solution, AppearanceSettings needs to be conve
 - Ensure no console errors or warnings
 
 ### Log
+
+**2025-08-04T02:03:41.711069Z** - Successfully refactored AppearanceSettings component to receive form instance as a prop instead of managing its own form and persistence. This enables centralized form management where all settings can be saved together from the SettingsContent component regardless of which tab is active.
+
+Key changes implemented:
+
+- Created AppearanceSettingsProps interface in desktop app to define component props
+- Removed local useForm hook, useSettingsPersistence hook, and settings-save event listener from AppearanceSettings
+- Updated SettingsContent to create and manage the form instance for AppearanceSettings with proper initialization using useRef pattern to prevent infinite loops
+- Removed AppearanceSettings from sectionComponents object and handled it explicitly in getActiveComponent
+- All form fields continue to work correctly with theme switching still applying immediately via applyTheme utility
+- Theme and font size preview functionality preserved and working correctly
+- All existing tests pass without modification (they test through SettingsContent integration)
+
+The component now focuses solely on rendering form fields while the parent SettingsContent handles form lifecycle, persistence, and state management. This completes the form state lifting solution alongside the previously completed GeneralSettings refactor.
+
+- filesChanged: ["apps/desktop/src/types/AppearanceSettingsProps.ts", "apps/desktop/src/components/settings/AppearanceSettings.tsx", "apps/desktop/src/components/settings/SettingsContent.tsx"]

@@ -160,6 +160,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()(
         isOpen: false,
         activeSubTab: null,
         navigationHistory: [],
+        hasUnsavedChanges: false, // Reset unsaved changes when closing modal
         // Preserve lastOpenedSection for next open
       });
     },

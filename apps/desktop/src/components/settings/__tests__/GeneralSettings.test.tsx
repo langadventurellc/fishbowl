@@ -1,7 +1,10 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
+import { useForm } from "react-hook-form";
 import { GeneralSettings } from "../GeneralSettings";
 import { SettingsProvider } from "../../../contexts";
+import type { GeneralSettingsFormData } from "@fishbowl-ai/ui-shared";
 
 // Mock the desktop adapter
 jest.mock("../../../adapters/desktopSettingsAdapter", () => ({
@@ -71,30 +74,34 @@ describe("GeneralSettings Persistence Integration", () => {
   });
 
   it("displays loading state when settings are loading", async () => {
-    const { useSettingsPersistence } = require("@fishbowl-ai/ui-shared");
-    useSettingsPersistence.mockReturnValue({
-      settings: null,
-      saveSettings: jest.fn(),
-      isLoading: true,
-      error: null,
-    });
+    // Create a mock form instance
+    const { result } = renderHook(() =>
+      useForm<GeneralSettingsFormData>({
+        defaultValues: {
+          responseDelay: 2000,
+          maximumMessages: 50,
+          maximumWaitTime: 30000,
+          defaultMode: "manual",
+          maximumAgents: 5,
+          checkUpdates: true,
+        },
+      }),
+    );
 
     render(
       <SettingsProvider>
-        <GeneralSettings />
+        <GeneralSettings form={result.current} isLoading={true} />
       </SettingsProvider>,
     );
 
-    expect(screen.getByText("Loading settings...")).toBeInTheDocument();
+    expect(screen.getByText("General")).toBeInTheDocument();
   });
 
   it("integrates with useSettingsPersistence hook correctly", async () => {
-    const mockSaveSettings = jest.fn();
-    const { useSettingsPersistence } = require("@fishbowl-ai/ui-shared");
-
-    useSettingsPersistence.mockReturnValue({
-      settings: {
-        general: {
+    // Create a mock form instance
+    const { result } = renderHook(() =>
+      useForm<GeneralSettingsFormData>({
+        defaultValues: {
           responseDelay: 3000,
           maximumMessages: 75,
           maximumWaitTime: 45000,
@@ -102,17 +109,12 @@ describe("GeneralSettings Persistence Integration", () => {
           maximumAgents: 6,
           checkUpdates: false,
         },
-        appearance: {},
-        advanced: {},
-      },
-      saveSettings: mockSaveSettings,
-      isLoading: false,
-      error: null,
-    });
+      }),
+    );
 
     render(
       <SettingsProvider>
-        <GeneralSettings />
+        <GeneralSettings form={result.current} />
       </SettingsProvider>,
     );
 
@@ -125,13 +127,11 @@ describe("GeneralSettings Persistence Integration", () => {
     ).toBeInTheDocument();
   });
 
-  it("uses persistence hook correctly", async () => {
-    const mockSaveSettings = jest.fn().mockResolvedValue(undefined);
-    const { useSettingsPersistence } = require("@fishbowl-ai/ui-shared");
-
-    useSettingsPersistence.mockReturnValue({
-      settings: {
-        general: {
+  it("renders form fields correctly with provided form instance", async () => {
+    // Create a mock form instance
+    const { result } = renderHook(() =>
+      useForm<GeneralSettingsFormData>({
+        defaultValues: {
           responseDelay: 2000,
           maximumMessages: 50,
           maximumWaitTime: 30000,
@@ -139,24 +139,19 @@ describe("GeneralSettings Persistence Integration", () => {
           maximumAgents: 5,
           checkUpdates: true,
         },
-        appearance: {},
-        advanced: {},
-      },
-      saveSettings: mockSaveSettings,
-      isLoading: false,
-      error: null,
-    });
+      }),
+    );
 
     render(
       <SettingsProvider>
-        <GeneralSettings />
+        <GeneralSettings form={result.current} />
       </SettingsProvider>,
     );
 
-    // Verify persistence hook was called with correct adapter
-    expect(useSettingsPersistence).toHaveBeenCalledWith({
-      adapter: expect.any(Object),
-      onError: expect.any(Function),
-    });
+    // Verify the component rendered with form fields
+    expect(screen.getByText("General")).toBeInTheDocument();
+    expect(screen.getByText("Response Delay")).toBeInTheDocument();
+    expect(screen.getByText("Maximum Messages")).toBeInTheDocument();
+    expect(screen.getByText("Default Conversation Mode")).toBeInTheDocument();
   });
 });

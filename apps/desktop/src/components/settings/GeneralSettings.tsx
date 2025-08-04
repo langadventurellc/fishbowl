@@ -12,152 +12,16 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Slider } from "@/components/ui/slider";
 import { Switch } from "@/components/ui/switch";
-import {
-  defaultGeneralSettings,
-  generalSettingsSchema,
-  useSettingsPersistence,
-  useUnsavedChanges,
-  type GeneralSettingsFormData,
-  type SettingsFormData,
-} from "@fishbowl-ai/ui-shared";
-import { useSettingsPersistenceAdapter } from "../../contexts";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-import { FormErrorDisplay } from "./FormErrorDisplay";
+import { useUnsavedChanges } from "@fishbowl-ai/ui-shared";
+import React from "react";
+import type { GeneralSettingsProps } from "../../types/GeneralSettingsProps";
 
-const logger = createLoggerSync({
-  config: {
-    name: "general-settings",
-    level: "info",
-  },
-});
-
-export const GeneralSettings: React.FC = () => {
-  const [submitError, setSubmitError] = useState<string | null>(null);
+export const GeneralSettings: React.FC<GeneralSettingsProps> = ({
+  form,
+  isLoading: _isLoading = false,
+  error: _error = null,
+}) => {
   const { setUnsavedChanges } = useUnsavedChanges();
-
-  // Get the adapter from context
-  const adapter = useSettingsPersistenceAdapter();
-
-  // Memoize the onError callback to prevent re-renders
-  const onError = useCallback((error: Error) => {
-    setSubmitError(error.message);
-  }, []);
-
-  // Initialize settings persistence
-  const { settings, saveSettings, isLoading, error } = useSettingsPersistence({
-    adapter,
-    onError,
-  });
-
-  // Initialize form with default values and validation
-  const form = useForm<GeneralSettingsFormData>({
-    resolver: zodResolver(generalSettingsSchema),
-    defaultValues: settings?.general || defaultGeneralSettings,
-    mode: "onChange", // Enable real-time validation
-  });
-
-  // Reset form when settings are loaded
-  useEffect(() => {
-    if (settings?.general) {
-      form.reset(settings.general);
-    }
-  }, [settings?.general, form]);
-
-  // Enhanced form submission with error handling
-  const onSubmit = useCallback(
-    async (data: GeneralSettingsFormData) => {
-      setSubmitError(null);
-
-      try {
-        // Validate data one more time
-        const validatedData = generalSettingsSchema.parse(data);
-
-        // Create updated settings object with new general settings
-        const updatedSettings = {
-          ...settings,
-          general: validatedData,
-        } as SettingsFormData;
-
-        // Save through persistence adapter
-        await saveSettings(updatedSettings);
-
-        // Mark as saved
-        setUnsavedChanges(false);
-        form.reset(validatedData); // Reset dirty state
-
-        // Success feedback (could use toast notification in the future)
-        logger.info("Settings saved successfully");
-      } catch (error) {
-        if (error instanceof Error) {
-          setSubmitError(error.message);
-        } else {
-          setSubmitError("Failed to save settings");
-        }
-        logger.error(
-          "Failed to save general settings",
-          error instanceof Error ? error : new Error(String(error)),
-        );
-      }
-    },
-    [form, setUnsavedChanges, settings, saveSettings],
-  );
-
-  // Track unsaved changes
-  useEffect(() => {
-    const subscription = form.watch(() => {
-      setUnsavedChanges(form.formState.isDirty);
-    });
-    return () => subscription.unsubscribe();
-  }, [form, setUnsavedChanges]);
-
-  // Add form submission trigger for modal footer
-  useEffect(() => {
-    const handleSave = () => {
-      form.handleSubmit(onSubmit)();
-    };
-
-    // Register global save handler
-    window.addEventListener("settings-save", handleSave);
-
-    return () => {
-      window.removeEventListener("settings-save", handleSave);
-    };
-  }, [form, onSubmit]);
-
-  // Show loading state while settings are being loaded
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-heading-primary mb-[20px]">General</h1>
-          <p className="text-muted-foreground text-sm mb-6">
-            Loading settings...
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show error state if settings failed to load
-  if (error && !settings) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-heading-primary mb-[20px]">General</h1>
-          <p className="text-destructive text-sm mb-6">
-            Failed to load settings: {error.message}
-          </p>
-          <p className="text-muted-foreground text-sm mb-6">
-            Using default settings. Your changes will still be saved.
-          </p>
-        </div>
-        {/* Render the form with default settings */}
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">
@@ -169,22 +33,7 @@ export const GeneralSettings: React.FC = () => {
       </div>
 
       <Form {...form}>
-        <form
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="space-y-6"
-          data-testid="general-settings-form"
-        >
-          {/* Hidden submit button for accessibility */}
-          <button type="submit" className="sr-only" aria-hidden="true">
-            Save Settings
-          </button>
-
-          {/* Display submission error */}
-          <FormErrorDisplay
-            error={submitError}
-            onDismiss={() => setSubmitError(null)}
-          />
-
+        <div className="space-y-6" data-testid="general-settings-form">
           <div className="space-y-6">
             <h2 className="text-heading-secondary mb-4">Auto Mode Settings</h2>
             <div className="grid gap-4">
@@ -434,7 +283,7 @@ export const GeneralSettings: React.FC = () => {
               />
             </div>
           </div>
-        </form>
+        </div>
       </Form>
     </div>
   );

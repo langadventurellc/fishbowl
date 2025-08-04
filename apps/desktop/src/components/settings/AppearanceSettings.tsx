@@ -13,19 +13,11 @@ import {
 import {
   type FontSizePreviewProps,
   type ThemePreviewProps,
-  defaultAppearanceSettings,
-  appearanceSettingsSchema,
-  useSettingsPersistence,
   useUnsavedChanges,
-  type AppearanceSettingsFormData,
-  type SettingsFormData,
 } from "@fishbowl-ai/ui-shared";
-import { useSettingsPersistenceAdapter } from "../../contexts";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { applyTheme } from "@/utils";
-import { FormErrorDisplay } from "./FormErrorDisplay";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import type { AppearanceSettingsProps } from "@/types/AppearanceSettingsProps";
+import React, { useEffect, useRef } from "react";
 
 const ThemePreview = React.memo<ThemePreviewProps>(({ selectedTheme }) => {
   const previewRef = useRef<HTMLDivElement>(null);
@@ -92,42 +84,11 @@ const FontSizePreview = React.memo<FontSizePreviewProps>(({ fontSize }) => {
 
 FontSizePreview.displayName = "FontSizePreview";
 
-export const AppearanceSettings: React.FC = () => {
-  // Add persistence hooks
-  const { setUnsavedChanges: _setUnsavedChanges } = useUnsavedChanges();
-  const adapter = useSettingsPersistenceAdapter();
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const hasInitialized = useRef(false);
-
-  const onError = useCallback((error: Error) => {
-    setSubmitError(error.message);
-  }, []);
-
-  const {
-    settings,
-    saveSettings: _saveSettings,
-    isLoading,
-    error,
-  } = useSettingsPersistence({
-    adapter,
-    onError,
-  });
-
-  // Initialize form
-  const form = useForm<AppearanceSettingsFormData>({
-    resolver: zodResolver(appearanceSettingsSchema),
-    defaultValues: settings?.appearance || defaultAppearanceSettings,
-    mode: "onChange",
-  });
-
-  // Reset form when settings are loaded (only on initial load)
-  useEffect(() => {
-    if (settings?.appearance && !hasInitialized.current) {
-      form.reset(settings.appearance);
-      hasInitialized.current = true;
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings?.appearance]);
+export const AppearanceSettings: React.FC<AppearanceSettingsProps> = ({
+  form,
+}) => {
+  const { setUnsavedChanges } = useUnsavedChanges();
+  const hasInitializedTracking = useRef(false);
 
   // Apply theme changes immediately using form value
   const watchedTheme = form.watch("theme");
@@ -137,63 +98,22 @@ export const AppearanceSettings: React.FC = () => {
     }
   }, [watchedTheme]);
 
-  // Form submission handler
-  const onSubmit = useCallback(
-    async (data: AppearanceSettingsFormData) => {
-      setSubmitError(null);
-
-      try {
-        const validatedData = appearanceSettingsSchema.parse(data);
-
-        const updatedSettings = {
-          ...settings,
-          appearance: validatedData,
-        } as SettingsFormData;
-
-        await _saveSettings(updatedSettings);
-        _setUnsavedChanges(false);
-        form.reset(validatedData);
-      } catch (error) {
-        if (error instanceof Error) {
-          setSubmitError(error.message);
-        } else {
-          setSubmitError("Failed to save settings");
-        }
-      }
-    },
-    [form, _setUnsavedChanges, settings, _saveSettings],
-  );
-
-  // Track form changes for unsaved state
+  // Track form changes for unsaved state, but only after initial render
   useEffect(() => {
     const subscription = form.watch(() => {
-      _setUnsavedChanges(true);
+      // Skip the first trigger to avoid setting unsaved changes on initial form setup
+      if (!hasInitializedTracking.current) {
+        hasInitializedTracking.current = true;
+        return;
+      }
+      setUnsavedChanges(true);
     });
     return () => subscription.unsubscribe();
-  }, [form, _setUnsavedChanges]);
-
-  // Handle global save events
-  useEffect(() => {
-    const handleSave = () => {
-      form.handleSubmit(onSubmit)();
-    };
-
-    window.addEventListener("settings-save", handleSave);
-    return () => {
-      window.removeEventListener("settings-save", handleSave);
-    };
-  }, [form, onSubmit]);
-
-  // Add loading state
-  if (isLoading) {
-    return <div>Loading appearance settings...</div>;
-  }
+  }, [form, setUnsavedChanges]);
 
   return (
     <Form {...form}>
-      <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-        {error && <FormErrorDisplay error={error.message} />}
-        {submitError && <FormErrorDisplay error={submitError} />}
+      <div className="space-y-6">
         <div className="space-y-6">
           <div>
             <h1 className="text-heading-primary mb-[20px]">Appearance</h1>
@@ -495,7 +415,7 @@ export const AppearanceSettings: React.FC = () => {
             </div>
           </div>
         </div>
-      </form>
+      </div>
     </Form>
   );
 };
