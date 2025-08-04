@@ -25,10 +25,10 @@ import { useSettingsPersistenceAdapter } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { AdvancedSettings } from "./AdvancedSettings";
 import { AgentsSection } from "./agents/AgentsSection";
-import { ApiKeysSettings } from "./ApiKeysSettings";
 import { AppearanceSettings } from "./AppearanceSettings";
 import { DefaultSettings } from "./DefaultSettings";
 import { GeneralSettings } from "./GeneralSettings";
+import { LlmSetupSection } from "./LlmSetupSection";
 import { PersonalitiesSection } from "./personalities";
 import { RolesSection } from "./roles/RolesSection";
 
@@ -37,7 +37,7 @@ const logger = createLoggerSync({
 });
 
 const sectionComponents = {
-  "llm-setup": ApiKeysSettings,
+  "llm-setup": LlmSetupSection,
   agents: AgentsSection,
   personalities: PersonalitiesSection,
   roles: RolesSection,
