@@ -65,7 +65,7 @@ describe("Settings Store React Hooks", () => {
       expect(result.current.isOpen).toBe(false);
 
       act(() => {
-        result.current.openModal("api-keys");
+        result.current.openModal("llm-setup");
       });
 
       expect(result.current.isOpen).toBe(true);
@@ -117,11 +117,11 @@ describe("Settings Store React Hooks", () => {
       expect(result.current.canNavigateBack).toBe(false);
 
       act(() => {
-        result.current.setActiveSection("api-keys");
+        result.current.setActiveSection("llm-setup");
       });
 
-      expect(result.current.activeSection).toBe("api-keys");
-      // After one navigation, history should be ["api-keys"], length = 1, so canNavigateBack is false
+      expect(result.current.activeSection).toBe("llm-setup");
+      // After one navigation, history should be ["llm-setup"], length = 1, so canNavigateBack is false
       expect(result.current.canNavigateBack).toBe(false);
 
       act(() => {
@@ -129,14 +129,14 @@ describe("Settings Store React Hooks", () => {
       });
 
       expect(result.current.activeSection).toBe("appearance");
-      // After two navigations, history should be ["api-keys", "appearance"], length = 2, so canNavigateBack is true
+      // After two navigations, history should be ["llm-setup", "appearance"], length = 2, so canNavigateBack is true
       expect(result.current.canNavigateBack).toBe(true);
 
       act(() => {
         result.current.navigateBack();
       });
 
-      expect(result.current.activeSection).toBe("api-keys");
+      expect(result.current.activeSection).toBe("llm-setup");
     });
 
     it("should handle sub-tab navigation", () => {
@@ -181,7 +181,7 @@ describe("Settings Store React Hooks", () => {
 
       // Change store state
       act(() => {
-        useSettingsModalStore.getState().openModal("api-keys");
+        useSettingsModalStore.getState().openModal("llm-setup");
       });
 
       rerender();
@@ -203,10 +203,10 @@ describe("Settings Store React Hooks", () => {
       expect(result.current).toBe("general");
 
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
       });
 
-      expect(result.current).toBe("api-keys");
+      expect(result.current).toBe("llm-setup");
     });
 
     it("should have correct TypeScript type", () => {
@@ -291,10 +291,10 @@ describe("Settings Store React Hooks", () => {
       expect(result.current).toBe("general");
 
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
       });
 
-      expect(result.current).toBe("api-keys");
+      expect(result.current).toBe("llm-setup");
     });
 
     it("should work with computed selectors", () => {
@@ -305,7 +305,7 @@ describe("Settings Store React Hooks", () => {
       expect(result.current).toBe(true);
 
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
       });
 
       expect(result.current).toBe(false);
@@ -354,7 +354,7 @@ describe("Settings Store React Hooks", () => {
       expect(result.current.isOnDefaultSection).toBe(true);
 
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
       });
 
       expect(result.current.isOnDefaultSection).toBe(false);
@@ -372,7 +372,7 @@ describe("Settings Store React Hooks", () => {
       expect(result.current.canNavigateBack).toBe(false);
 
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
       });
 
       // After one navigation, history length = 1, so canNavigateBack is false
@@ -409,7 +409,7 @@ describe("Settings Store React Hooks", () => {
 
       // Open modal but no unsaved changes
       act(() => {
-        useSettingsModalStore.getState().openModal("api-keys");
+        useSettingsModalStore.getState().openModal("llm-setup");
       });
 
       expect(result.current.shouldWarnOnClose).toBe(false);
@@ -442,11 +442,11 @@ describe("Settings Store React Hooks", () => {
 
       // Change activeSection - should re-render
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
       });
 
       expect(renderCount).toBe(2);
-      expect(result.current).toBe("api-keys");
+      expect(result.current).toBe("llm-setup");
 
       // Change unrelated state - should NOT re-render
       act(() => {
@@ -501,12 +501,12 @@ describe("Settings Store React Hooks", () => {
 
       // Change section - only section hook should re-render
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
       });
 
       expect(modalRenderCount).toBe(1); // Should not re-render
       expect(sectionRenderCount).toBe(2); // Should re-render
-      expect(sectionResult.current).toBe("api-keys");
+      expect(sectionResult.current).toBe("llm-setup");
 
       // Open modal - only modal hook should re-render
       act(() => {
@@ -528,7 +528,7 @@ describe("Settings Store React Hooks", () => {
 
       // Test subscription to state changes
       act(() => {
-        useSettingsModalStore.getState().openModal("api-keys");
+        useSettingsModalStore.getState().openModal("llm-setup");
       });
 
       expect(result.current.isOpen).toBe(true);
@@ -553,7 +553,7 @@ describe("Settings Store React Hooks", () => {
 
       // Rapidly change state multiple times
       act(() => {
-        useSettingsModalStore.getState().setActiveSection("api-keys");
+        useSettingsModalStore.getState().setActiveSection("llm-setup");
         useSettingsModalStore.getState().setActiveSection("appearance");
         useSettingsModalStore.getState().setActiveSection("agents");
         useSettingsModalStore.getState().setActiveSubTab("templates");

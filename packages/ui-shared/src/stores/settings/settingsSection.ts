@@ -8,7 +8,7 @@
  */
 export type SettingsSection =
   | "general"
-  | "api-keys"
+  | "llm-setup"
   | "appearance"
   | "agents"
   | "personalities"

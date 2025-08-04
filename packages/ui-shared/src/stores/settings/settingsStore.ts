@@ -46,7 +46,7 @@ const MAX_NAVIGATION_HISTORY = 50;
  */
 const VALID_SECTIONS: readonly SettingsSection[] = [
   "general",
-  "api-keys",
+  "llm-setup",
   "appearance",
   "agents",
   "personalities",
@@ -124,8 +124,8 @@ function addToHistory(
  *   const openModal = useSettingsModalStore(state => state.openModal);
  *
  *   return (
- *     <button onClick={() => openModal('api-keys')}>
- *       Open API Keys Settings
+ *     <button onClick={() => openModal('llm-setup')}>
+ *       Open LLM Setup Settings
  *     </button>
  *   );
  * }

@@ -37,7 +37,7 @@ const logger = createLoggerSync({
 });
 
 const sectionComponents = {
-  "api-keys": ApiKeysSettings,
+  "llm-setup": ApiKeysSettings,
   agents: AgentsSection,
   personalities: PersonalitiesSection,
   roles: RolesSection,

@@ -24,8 +24,8 @@ export interface SettingsModalActions {
    * // Open modal to general section (default)
    * openModal();
    *
-   * // Open modal directly to API keys section
-   * openModal('api-keys');
+   * // Open modal directly to LLM setup section
+   * openModal('llm-setup');
    * ```
    */
   openModal: (section?: SettingsSection) => void;

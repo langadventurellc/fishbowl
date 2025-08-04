@@ -33,7 +33,7 @@ jest.mock("../SettingsNavigation", () => ({
   SettingsNavigation: () => (
     <nav data-testid="settings-navigation">
       <button data-testid="nav-general">General</button>
-      <button data-testid="nav-api-keys">API Keys</button>
+      <button data-testid="nav-llm-setup">API Keys</button>
       <button data-testid="nav-appearance">Appearance</button>
     </nav>
   ),

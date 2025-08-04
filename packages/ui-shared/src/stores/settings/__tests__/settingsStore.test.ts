@@ -81,14 +81,14 @@ describe("settingsStore", () => {
     it("should open modal with specified section", () => {
       const store = useSettingsModalStore.getState();
 
-      store.openModal("api-keys");
+      store.openModal("llm-setup");
 
       const state = useSettingsModalStore.getState();
       expect(state.isOpen).toBe(true);
-      expect(state.activeSection).toBe("api-keys");
+      expect(state.activeSection).toBe("llm-setup");
       expect(state.activeSubTab).toBe(null);
-      expect(state.navigationHistory).toEqual(["api-keys"]);
-      expect(state.lastOpenedSection).toBe("api-keys");
+      expect(state.navigationHistory).toEqual(["llm-setup"]);
+      expect(state.lastOpenedSection).toBe("llm-setup");
     });
 
     it("should warn and not update state for invalid section", () => {
@@ -181,15 +181,15 @@ describe("settingsStore", () => {
       const store = useSettingsModalStore.getState();
 
       // Build some history
-      store.setActiveSection("api-keys");
+      store.setActiveSection("llm-setup");
       store.setActiveSection("appearance");
 
       // Navigate back
       store.navigateBack();
 
       const state = useSettingsModalStore.getState();
-      expect(state.activeSection).toBe("api-keys");
-      expect(state.navigationHistory).toEqual(["api-keys"]);
+      expect(state.activeSection).toBe("llm-setup");
+      expect(state.navigationHistory).toEqual(["llm-setup"]);
     });
 
     it("should handle empty history gracefully", () => {
