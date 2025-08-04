@@ -122,7 +122,7 @@ export function SettingsModal({
   onOpenChange,
   children,
   title = "Settings",
-  description = "Configure application settings including general preferences, API keys, appearance, agents, personalities, roles, and advanced options.",
+  description = "Configure application settings including general preferences, LLM setup, appearance, agents, personalities, roles, and advanced options.",
 }: SettingsModalProps) {
   // Generate consistent ARIA IDs using accessibility utilities
   const dialogIds = generateDialogAriaIds("settings-modal");

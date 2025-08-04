@@ -17,7 +17,11 @@ const createKeyboardEvent = (
 describe("useNavigationKeyboard", () => {
   const mockSections = [
     { id: "general" as SettingsSection, label: "General", hasSubTabs: false },
-    { id: "api-keys" as SettingsSection, label: "API Keys", hasSubTabs: false },
+    {
+      id: "llm-setup" as SettingsSection,
+      label: "LLM Setup",
+      hasSubTabs: false,
+    },
     {
       id: "agents" as SettingsSection,
       label: "Agents",
@@ -59,9 +63,9 @@ describe("useNavigationKeyboard", () => {
         label: "General",
       });
       expect(flatItems[1]).toEqual({
-        id: "api-keys",
+        id: "llm-setup",
         type: "section",
-        label: "API Keys",
+        label: "LLM Setup",
       });
       expect(flatItems[2]).toEqual({
         id: "agents",
@@ -108,7 +112,7 @@ describe("useNavigationKeyboard", () => {
       );
 
       expect(result.current.isItemFocused("general", "section")).toBe(true);
-      expect(result.current.isItemFocused("api-keys", "section")).toBe(false);
+      expect(result.current.isItemFocused("llm-setup", "section")).toBe(false);
     });
 
     it("should identify focused sub-tab correctly", () => {
@@ -149,7 +153,7 @@ describe("useNavigationKeyboard", () => {
         result.current.handleKeyDown(event);
       });
 
-      expect(mockOnSectionChange).toHaveBeenCalledWith("api-keys");
+      expect(mockOnSectionChange).toHaveBeenCalledWith("llm-setup");
       expect(mockOnSubTabChange).not.toHaveBeenCalled();
     });
 

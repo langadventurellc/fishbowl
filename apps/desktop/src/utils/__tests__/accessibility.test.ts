@@ -160,8 +160,8 @@ describe("Accessibility Utils", () => {
     test("returns appropriate description for known sections", () => {
       const descriptions = {
         general: "Configure general application preferences and basic settings",
-        "api-keys":
-          "Manage API keys for AI model providers and external services",
+        "llm-setup":
+          "Manage LLM configurations for AI model providers and external services",
         appearance:
           "Customize visual appearance, themes, and display preferences",
         agents: "Configure AI agents, their roles, and behavior settings",

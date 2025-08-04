@@ -12,7 +12,7 @@
  *   const { isOpen, openModal, closeModal } = useSettingsModal();
  *
  *   return (
- *     <button onClick={() => openModal('api-keys')}>
+ *     <button onClick={() => openModal('llm-setup')}>
  *       {isOpen ? 'Close' : 'Open'} Settings
  *     </button>
  *   );
