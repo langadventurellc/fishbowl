@@ -43,6 +43,7 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   isOpen,
   onOpenChange,
   provider,
+  mode = "add",
   initialData,
   onSave,
 }) => {
@@ -79,10 +80,15 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
 
   const handleSave = useCallback(
     (data: LlmConfigFormData) => {
-      onSave(data);
+      // Include ID when editing
+      const saveData =
+        mode === "edit" && initialData?.id
+          ? { ...data, id: initialData.id }
+          : data;
+      onSave(saveData);
       onOpenChange(false);
     },
-    [onSave, onOpenChange],
+    [onSave, onOpenChange, mode, initialData?.id],
   );
 
   const handleCancel = useCallback(() => {
@@ -115,14 +121,21 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
 
   const providerName = provider === "openai" ? "OpenAI" : "Anthropic";
 
+  // Generate dynamic modal title based on mode
+  const modalTitle =
+    mode === "edit" && initialData?.customName
+      ? `Edit ${initialData.customName}`
+      : "Setup LLM API";
+
   // Announce modal open to screen readers
   useEffect(() => {
     if (isOpen) {
+      const action = mode === "edit" ? "Edit" : "Configure";
       announceStateChange(
-        `Configure ${providerName} dialog opened. Fill in the form fields and press Control S to save or Escape to cancel.`,
+        `${action} ${providerName} dialog opened. Fill in the form fields and press Control S to save or Escape to cancel.`,
       );
     }
-  }, [isOpen, providerName, announceStateChange]);
+  }, [isOpen, providerName, mode, announceStateChange]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -135,9 +148,7 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         aria-modal="true"
       >
         <DialogHeader>
-          <DialogTitle id={ariaIds.titleId}>
-            Configure {providerName}
-          </DialogTitle>
+          <DialogTitle id={ariaIds.titleId}>{modalTitle}</DialogTitle>
           <DialogDescription id={ariaIds.descriptionId}>
             Set up your {providerName} API configuration. Press Escape to cancel
             or Ctrl+S (Cmd+S on Mac) to save.

@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-update-modal-for-edit-mode-with
+parent: F-dynamic-api-management
+status: done
 title: Update modal for edit mode with pre-filled data
-status: open
 priority: normal
 prerequisites:
   - T-implement-local-state-management
 created: "2025-08-04T13:37:06.165617"
-updated: "2025-08-04T13:37:06.165617"
+updated: "2025-08-04T14:16:53.359456"
 schema_version: "1.1"
-parent: F-dynamic-api-management
+worktree: null
 ---
 
 ## Context
@@ -76,3 +77,7 @@ The LlmConfigModal needs to support both add and edit modes. When editing, the m
 - `apps/desktop/src/components/settings/LlmSetupSection.tsx`
 
 ### Log
+
+**2025-08-04T19:25:15.377105Z** - Updated LlmConfigModal to support edit mode with pre-filled data. Added mode prop to distinguish between add/edit modes, implemented dynamic modal titles, and ensured configuration ID is passed through when saving edits. Form fields now pre-populate correctly when editing existing configurations. Parent component properly manages editing state and passes the necessary props to the modal.
+
+- filesChanged: ["packages/ui-shared/src/types/settings/LlmConfigModalProps.ts", "apps/desktop/src/components/settings/llm-setup/LlmConfigModal.tsx", "apps/desktop/src/components/settings/LlmSetupSection.tsx"]

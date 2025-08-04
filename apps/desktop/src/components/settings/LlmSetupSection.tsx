@@ -47,13 +47,13 @@ export function LlmSetupSection({ className }: { className?: string }) {
   // Modal state
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
-    mode: "create" | "edit";
+    mode: "add" | "edit";
     provider: "openai" | "anthropic";
     editingId?: string;
-    initialData?: LlmConfigData;
+    initialData?: LlmConfigData & { id?: string };
   }>({
     isOpen: false,
-    mode: "create",
+    mode: "add",
     provider: "openai",
   });
 
@@ -71,7 +71,7 @@ export function LlmSetupSection({ className }: { className?: string }) {
     (provider: "openai" | "anthropic") => {
       setModalState({
         isOpen: true,
-        mode: "create",
+        mode: "add",
         provider,
       });
     },
@@ -80,7 +80,7 @@ export function LlmSetupSection({ className }: { className?: string }) {
 
   // Handle saving API configuration
   const handleSaveApi = useCallback(
-    (data: LlmConfigData) => {
+    (data: LlmConfigData & { id?: string }) => {
       if (modalState.mode === "edit" && modalState.editingId) {
         // Update existing API
         setConfiguredApis((prev) =>
@@ -112,6 +112,7 @@ export function LlmSetupSection({ className }: { className?: string }) {
       provider: api.provider,
       editingId: api.id,
       initialData: {
+        id: api.id,
         customName: api.customName,
         apiKey: api.apiKey,
         baseUrl: api.baseUrl,
@@ -178,6 +179,7 @@ export function LlmSetupSection({ className }: { className?: string }) {
           setModalState((prev) => ({ ...prev, isOpen: open }))
         }
         provider={modalState.provider}
+        mode={modalState.mode}
         initialData={modalState.initialData}
         onSave={handleSaveApi}
       />
