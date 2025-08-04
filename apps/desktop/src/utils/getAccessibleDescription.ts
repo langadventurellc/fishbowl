@@ -8,7 +8,8 @@ export function getAccessibleDescription(
 ): string {
   const descriptions: Record<string, string> = {
     general: "Configure general application preferences and basic settings",
-    "llm-setup": "Manage API keys for AI model providers and external services",
+    "llm-setup":
+      "Manage LLM configurations for AI model providers and external services",
     appearance: "Customize visual appearance, themes, and display preferences",
     agents: "Configure AI agents, their roles, and behavior settings",
     personalities:

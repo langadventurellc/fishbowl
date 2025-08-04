@@ -23,7 +23,7 @@ const httpsUrlSchema = z
   }, "URL must have a valid hostname");
 
 /**
- * API Key validation schema with provider-specific rules.
+ * LLM key validation schema with provider-specific rules.
  * Validates against the provider's specific requirements.
  */
 const createApiKeySchema = (provider: ProviderConfig) =>
