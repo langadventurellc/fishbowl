@@ -1,30 +1,26 @@
 /**
  * SettingsContent component provides responsive content area for settings modal.
- *
- * Features:
- * - Responsive padding that adjusts based on screen size
- * - Full width on mobile when navigation is collapsed
- * - Maximum content width constraint for readability
- * - Centralized form management and settings persistence
- * - Loading and error state management for all settings sections
  */
 
-import React, { useCallback, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import { getAccessibleDescription } from "@/utils";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import {
-  type SettingsContentProps,
-  useSettingsPersistence,
-  type GeneralSettingsFormData,
-  generalSettingsSchema,
-  defaultGeneralSettings,
+  type AdvancedSettingsFormData,
+  advancedSettingsSchema,
   type AppearanceSettingsFormData,
   appearanceSettingsSchema,
+  defaultAdvancedSettings,
   defaultAppearanceSettings,
+  defaultGeneralSettings,
+  type GeneralSettingsFormData,
+  generalSettingsSchema,
+  type SettingsContentProps,
   useSettingsActions,
+  useSettingsPersistence,
 } from "@fishbowl-ai/ui-shared";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useCallback, useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
 import { useSettingsPersistenceAdapter } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { AdvancedSettings } from "./AdvancedSettings";
@@ -45,7 +41,6 @@ const sectionComponents = {
   agents: AgentsSection,
   personalities: PersonalitiesSection,
   roles: RolesSection,
-  advanced: AdvancedSettings,
 } as const;
 
 export function SettingsContent({
@@ -89,13 +84,23 @@ export function SettingsContent({
     mode: "onChange",
   });
 
+  // Create form instance for AdvancedSettings
+  const advancedForm = useForm<AdvancedSettingsFormData>({
+    resolver: zodResolver(advancedSettingsSchema),
+    defaultValues: settings?.advanced || defaultAdvancedSettings,
+    mode: "onChange",
+  });
+
   // Use ref to track if forms have been initialized to prevent infinite loops
   const hasInitializedForm = useRef(false);
   const hasInitializedAppearanceForm = useRef(false);
+  const hasInitializedAdvancedForm = useRef(false);
 
   // Track form dirty state to update unsaved changes
   const formsAreDirty =
-    generalForm.formState.isDirty || appearanceForm.formState.isDirty;
+    generalForm.formState.isDirty ||
+    appearanceForm.formState.isDirty ||
+    advancedForm.formState.isDirty;
 
   // Update unsaved changes state when forms become dirty or clean
   useEffect(() => {
@@ -111,13 +116,14 @@ export function SettingsContent({
 
     try {
       // Trigger validation on all forms
-      const [generalValid, appearanceValid] = await Promise.all([
+      const [generalValid, appearanceValid, advancedValid] = await Promise.all([
         generalForm.trigger(),
         appearanceForm.trigger(),
+        advancedForm.trigger(),
       ]);
 
       // Check if all forms are valid
-      if (!generalValid || !appearanceValid) {
+      if (!generalValid || !appearanceValid || !advancedValid) {
         // Find first form with errors and focus first error field
         if (!generalValid && generalForm.formState.errors) {
           const firstErrorField = Object.keys(generalForm.formState.errors)[0];
@@ -135,13 +141,22 @@ export function SettingsContent({
               firstErrorField as keyof AppearanceSettingsFormData,
             );
           }
+        } else if (!advancedValid && advancedForm.formState.errors) {
+          const firstErrorField = Object.keys(advancedForm.formState.errors)[0];
+          if (firstErrorField) {
+            advancedForm.setFocus(
+              firstErrorField as keyof AdvancedSettingsFormData,
+            );
+          }
         }
 
         logger.warn("Validation failed for forms", {
           generalValid,
           appearanceValid,
+          advancedValid,
           generalErrors: generalForm.formState.errors,
           appearanceErrors: appearanceForm.formState.errors,
+          advancedErrors: advancedForm.formState.errors,
         });
         return;
       }
@@ -149,12 +164,14 @@ export function SettingsContent({
       // Get validated data from forms
       const generalData = generalForm.getValues();
       const appearanceData = appearanceForm.getValues();
+      const advancedData = advancedForm.getValues();
 
       // Update existing settings with form data
       const updatedSettings = {
         ...settings,
         general: generalData,
         appearance: appearanceData,
+        advanced: advancedData,
       };
 
       // Save the updated settings atomically
@@ -163,6 +180,7 @@ export function SettingsContent({
       // Reset form states to mark as pristine after successful save
       generalForm.reset(generalData);
       appearanceForm.reset(appearanceData);
+      advancedForm.reset(advancedData);
 
       // Reset unsaved changes state to disable save button
       setUnsavedChanges(false);
@@ -174,7 +192,14 @@ export function SettingsContent({
         error as Error,
       );
     }
-  }, [generalForm, appearanceForm, settings, _saveSettings, setUnsavedChanges]);
+  }, [
+    generalForm,
+    appearanceForm,
+    advancedForm,
+    settings,
+    _saveSettings,
+    setUnsavedChanges,
+  ]);
 
   // Add event listener for settings-save event from ModalFooter
   useEffect(() => {
@@ -222,6 +247,23 @@ export function SettingsContent({
     }
   }, [activeSection, settings?.appearance]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Reset advanced form when settings are loaded, but only for advanced section
+  useEffect(() => {
+    if (
+      activeSection === "advanced" &&
+      settings?.advanced &&
+      !hasInitializedAdvancedForm.current
+    ) {
+      advancedForm.reset(settings.advanced);
+      hasInitializedAdvancedForm.current = true;
+    }
+
+    // Reset the flag when switching away from advanced section
+    if (activeSection !== "advanced") {
+      hasInitializedAdvancedForm.current = false;
+    }
+  }, [activeSection, settings?.advanced]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Get the component for the active section
   const getActiveComponent = () => {
     if (activeSection === "general") {
@@ -236,6 +278,16 @@ export function SettingsContent({
 
     if (activeSection === "appearance") {
       return <AppearanceSettings form={appearanceForm} />;
+    }
+
+    if (activeSection === "advanced") {
+      return (
+        <AdvancedSettings
+          form={advancedForm}
+          isLoading={isLoading}
+          error={error}
+        />
+      );
     }
 
     const Component =

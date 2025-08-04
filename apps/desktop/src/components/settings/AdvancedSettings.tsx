@@ -1,15 +1,16 @@
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { AlertTriangle } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
+import type { AdvancedSettingsProps } from "../../types/AdvancedSettingsProps";
 
-export const AdvancedSettings: React.FC = () => {
-  // Developer Options state management
-  const [debugLogging, setDebugMode] = useState(false);
-  const [experimentalFeatures, setExperimentalFeatures] = useState(false);
-
-  // Loading states for accessibility announcements
-  const [isClearing] = useState(false);
+export const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
+  form,
+  isLoading = false,
+}) => {
+  // Watch form values for controlled components
+  const debugLogging = form.watch("debugLogging");
+  const experimentalFeatures = form.watch("experimentalFeatures");
 
   return (
     <div className="space-y-6">
@@ -22,7 +23,7 @@ export const AdvancedSettings: React.FC = () => {
 
       {/* Live regions for screen reader announcements */}
       <div role="status" aria-live="polite" className="sr-only">
-        {isClearing && "Clearing conversations..."}
+        {isLoading && "Loading advanced settings..."}
       </div>
 
       <div className="space-y-6">
@@ -45,7 +46,9 @@ export const AdvancedSettings: React.FC = () => {
               <Switch
                 id="debug-mode"
                 checked={debugLogging}
-                onCheckedChange={setDebugMode}
+                onCheckedChange={(value) =>
+                  form.setValue("debugLogging", value)
+                }
                 aria-describedby="debug-help"
                 aria-label="Toggle debug logging on or off"
               />
@@ -75,7 +78,9 @@ export const AdvancedSettings: React.FC = () => {
               <Switch
                 id="experimental-features"
                 checked={experimentalFeatures}
-                onCheckedChange={setExperimentalFeatures}
+                onCheckedChange={(value) =>
+                  form.setValue("experimentalFeatures", value)
+                }
                 aria-describedby="experimental-help experimental-warning"
                 aria-label="Toggle experimental features with instability risk"
               />
