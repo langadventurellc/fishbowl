@@ -6,6 +6,7 @@ import {
   type SettingsSaveResponse,
   type SettingsResetRequest,
   type SettingsResetResponse,
+  type SettingsSetDebugLoggingResponse,
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
 import { settingsRepositoryManager } from "./getSettingsRepository";
@@ -95,7 +96,10 @@ export function setupSettingsHandlers(): void {
   // Handler for setting debug logging immediately
   ipcMain.handle(
     SETTINGS_CHANNELS.SET_DEBUG_LOGGING,
-    async (_event, enabled: boolean): Promise<void> => {
+    async (
+      _event,
+      enabled: boolean,
+    ): Promise<SettingsSetDebugLoggingResponse> => {
       try {
         logger.debug("Setting debug logging", { enabled });
 
@@ -104,9 +108,10 @@ export function setupSettingsHandlers(): void {
         logger.setLevel(newLevel);
 
         logger.info(`Debug logging ${enabled ? "enabled" : "disabled"}`);
+        return { success: true };
       } catch (error) {
         logger.error("Failed to set debug logging", error as Error);
-        throw error;
+        return { success: false, error: serializeError(error) };
       }
     },
   );
