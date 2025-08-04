@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-remove-old-api-keys-types-and
+parent: F-integration-and-cleanup
+status: done
 title: Remove old API Keys types and schemas from ui-shared
-status: open
 priority: high
 prerequisites:
   - T-remove-old-api-keys-components
 created: "2025-08-04T14:44:13.477995"
-updated: "2025-08-04T14:44:13.477995"
+updated: "2025-08-04T15:08:36.152591"
 schema_version: "1.1"
-parent: F-integration-and-cleanup
+worktree: null
 ---
 
 ## Task Overview
@@ -62,3 +63,7 @@ Remove all old API Keys related types and schemas from the ui-shared package. Th
 This task depends on T-remove-old-api-keys-components because we need to ensure the desktop components are removed first to avoid import errors during the cleanup process.
 
 ### Log
+
+**2025-08-04T20:19:12.089836Z** - Successfully removed all old API Keys types and schemas from ui-shared package. Deleted 4 files (ApiKeysState.ts, ApiKeysFormData.ts, ProviderCardProps.ts, createApiKeysFormSchema.ts) and cleaned up their exports from index files. Rebuilt libs and verified no remaining references. All quality checks pass.
+
+- filesChanged: ["packages/ui-shared/src/types/settings/index.ts", "packages/ui-shared/src/schemas/index.ts"]
