@@ -2,7 +2,7 @@
 kind: feature
 id: F-code-migration-and-setup
 title: Code Migration and Setup
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-08-04T11:07:33.463812"
