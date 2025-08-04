@@ -8,8 +8,9 @@
 export { EmptyLlmState } from "./EmptyLlmState";
 export type { EmptyLlmStateProps } from "./EmptyLlmState";
 
-// TODO: Export LlmConfigModal when implemented
-// export { LlmConfigModal } from "./LlmConfigModal";
+export { LlmConfigModal } from "./LlmConfigModal";
+export type { LlmConfigModalProps } from "./LlmConfigModalProps";
+export type { LlmConfigData } from "./LlmConfigData";
 
 // TODO: Export LlmProviderCard when implemented
 // export { LlmProviderCard } from "./LlmProviderCard";
