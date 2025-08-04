@@ -46,6 +46,15 @@ jest.mock("@fishbowl-ai/ui-shared", () => {
       hasUnsavedChanges: false,
       setUnsavedChanges: jest.fn(),
     })),
+    useSettingsActions: jest.fn(() => ({
+      setUnsavedChanges: jest.fn(),
+      closeModal: jest.fn(),
+      openModal: jest.fn(),
+      setActiveSection: jest.fn(),
+      setActiveSubTab: jest.fn(),
+      resetToDefaults: jest.fn(),
+      navigateBack: jest.fn(),
+    })),
     useSettingsPersistence: jest.fn(() => ({
       settings: {
         general: {
