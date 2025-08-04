@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-implement-runtime-application-of
+parent: F-advanced-settings-connection
+status: done
 title: Implement runtime application of debug logging settings
-status: open
 priority: high
 prerequisites:
   - T-refactor-advancedsettings
 created: "2025-08-03T23:05:55.217593"
-updated: "2025-08-03T23:05:55.217593"
+updated: "2025-08-03T23:48:44.030905"
 schema_version: "1.1"
-parent: F-advanced-settings-connection
+worktree: null
 ---
 
 # Implement Runtime Application of Debug Logging Settings
@@ -92,3 +93,17 @@ useEffect(() => {
 - Integration test with actual Electron IPC
 
 ### Log
+
+**2025-08-04T04:56:56.010102Z** - Implemented runtime application of debug logging settings. Debug logging now toggles immediately when changed in advanced settings without requiring app restart.
+
+Key implementation details:
+
+- Added useEffect with form.watch to AdvancedSettings component to detect changes to debugLogging field
+- Added setDebugLogging method to electronAPI interface and preload.ts implementation
+- Implemented settings:setDebugLogging IPC handler that updates logger level dynamically (debug vs info)
+- Used optional chaining for graceful handling when electronAPI unavailable
+- All quality checks passing (lint, format, type-check)
+
+The logger level changes immediately when toggled, making debug logs appear/disappear in console without restart.
+
+- filesChanged: ["apps/desktop/src/components/settings/AdvancedSettings.tsx", "apps/desktop/src/types/electron.d.ts", "apps/desktop/src/electron/preload.ts", "apps/desktop/src/shared/ipc/constants.ts", "apps/desktop/src/electron/settingsHandlers.ts"]

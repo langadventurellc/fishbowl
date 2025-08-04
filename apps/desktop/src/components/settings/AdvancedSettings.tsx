@@ -8,7 +8,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useUnsavedChanges } from "@fishbowl-ai/ui-shared";
 import { AlertTriangle } from "lucide-react";
-import React from "react";
+import React, { useEffect } from "react";
 import type { AdvancedSettingsProps } from "../../types/AdvancedSettingsProps";
 
 export const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
@@ -17,6 +17,16 @@ export const AdvancedSettings: React.FC<AdvancedSettingsProps> = ({
   error: _error = null,
 }) => {
   const { setUnsavedChanges } = useUnsavedChanges();
+
+  // Apply debug logging immediately when toggled
+  useEffect(() => {
+    const subscription = form.watch((value, { name }) => {
+      if (name === "debugLogging" && value.debugLogging !== undefined) {
+        window.electronAPI?.settings?.setDebugLogging?.(value.debugLogging);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [form]);
 
   return (
     <div className="space-y-6">

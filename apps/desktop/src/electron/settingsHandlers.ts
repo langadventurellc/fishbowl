@@ -92,5 +92,24 @@ export function setupSettingsHandlers(): void {
     },
   );
 
+  // Handler for setting debug logging immediately
+  ipcMain.handle(
+    SETTINGS_CHANNELS.SET_DEBUG_LOGGING,
+    async (_event, enabled: boolean): Promise<void> => {
+      try {
+        logger.debug("Setting debug logging", { enabled });
+
+        // Update logger level based on debug setting
+        const newLevel = enabled ? "debug" : "info";
+        logger.setLevel(newLevel);
+
+        logger.info(`Debug logging ${enabled ? "enabled" : "disabled"}`);
+      } catch (error) {
+        logger.error("Failed to set debug logging", error as Error);
+        throw error;
+      }
+    },
+  );
+
   logger.info("Settings IPC handlers initialized");
 }

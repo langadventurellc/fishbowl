@@ -45,6 +45,12 @@ export interface ElectronAPI {
      * @returns Promise resolving to reset settings data
      */
     reset: () => Promise<import("@fishbowl-ai/shared").PersistedSettingsData>;
+    /**
+     * Apply debug logging setting immediately without requiring restart.
+     * @param enabled - Whether debug logging should be enabled
+     * @returns Promise resolving when debug logging has been applied
+     */
+    setDebugLogging: (enabled: boolean) => Promise<void>;
   };
 }
 
