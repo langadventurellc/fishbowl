@@ -1,8 +1,17 @@
-import React, { useState, useCallback, useEffect, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Eye, EyeOff } from "lucide-react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useFocusTrap } from "../../../hooks/useFocusTrap";
+import { useGlobalKeyboardShortcuts } from "../../../hooks/useGlobalKeyboardShortcuts";
+import {
+  generateDialogAriaIds,
+  useAccessibilityAnnouncements,
+} from "../../../utils";
+import { Button } from "../../ui/button";
+import { Checkbox } from "../../ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -11,9 +20,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
-import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
-import { Checkbox } from "../../ui/checkbox";
 import {
   Form,
   FormControl,
@@ -22,13 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "../../ui/form";
-import { LlmConfigModalProps } from "./LlmConfigModalProps";
-import { useFocusTrap } from "../../../hooks/useFocusTrap";
-import { useGlobalKeyboardShortcuts } from "../../../hooks/useGlobalKeyboardShortcuts";
-import {
-  generateDialogAriaIds,
-  useAccessibilityAnnouncements,
-} from "../../../utils";
+import { Input } from "../../ui/input";
 
 const llmConfigSchema = z.object({
   customName: z.string(),

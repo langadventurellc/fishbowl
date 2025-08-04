@@ -22,12 +22,9 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../ui/alert-dialog";
-import {
-  EmptyLlmState,
-  LlmConfigModal,
-  LlmProviderCard,
-  type LlmConfigData,
-} from "./llm-setup";
+import { EmptyLlmState, LlmConfigModal, LlmProviderCard } from "./llm-setup";
+import type { LlmConfigData } from "@fishbowl-ai/ui-shared";
+import { generateId } from "../../utils/generateId";
 
 interface LlmProviderConfig extends LlmConfigData {
   id: string;
@@ -95,7 +92,7 @@ export function LlmSetupSection({ className }: { className?: string }) {
         // Add new API
         const newApi: LlmProviderConfig = {
           ...data,
-          id: `${modalState.provider}-${Date.now()}`,
+          id: generateId(),
           provider: modalState.provider,
         };
         setConfiguredApis((prev) => [...prev, newApi]);

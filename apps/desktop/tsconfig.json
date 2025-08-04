@@ -21,7 +21,12 @@
     },
     "types": ["node", "jest", "@testing-library/jest-dom"]
   },
-  "include": ["src", "src/types/electron.d.ts"],
+  "include": [
+    "src",
+    "src/types/electron.d.ts",
+    "../../packages/ui-shared/src/types/settings/LlmConfigModalProps.ts",
+    "../../packages/ui-shared/src/types/settings/LlmConfigData.ts"
+  ],
   "exclude": ["node_modules", "dist", "dist-electron"],
   "references": [
     {

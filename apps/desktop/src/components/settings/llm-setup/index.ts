@@ -9,8 +9,5 @@ export { EmptyLlmState } from "./EmptyLlmState";
 export type { EmptyLlmStateProps } from "./EmptyLlmState";
 
 export { LlmConfigModal } from "./LlmConfigModal";
-export type { LlmConfigModalProps } from "./LlmConfigModalProps";
-export type { LlmConfigData } from "./LlmConfigData";
 
 export { LlmProviderCard } from "./LlmProviderCard";
-export type { LlmProviderCardProps } from "./LlmProviderCard";

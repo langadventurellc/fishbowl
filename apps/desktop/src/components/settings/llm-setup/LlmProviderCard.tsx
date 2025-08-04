@@ -15,17 +15,7 @@ import { Edit2, Trash2 } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
 import { Card, CardContent } from "../../ui/card";
-
-export interface LlmProviderCardProps {
-  api: {
-    id: string;
-    customName: string;
-    provider: "openai" | "anthropic";
-  };
-  onEdit: () => void;
-  onDelete: () => void;
-  className?: string;
-}
+import type { LlmProviderCardProps } from "@fishbowl-ai/ui-shared";
 
 export const LlmProviderCard: React.FC<LlmProviderCardProps> = ({
   api,
