@@ -73,21 +73,13 @@ llm-setup/
 - [ ] Saving in modal adds to configured APIs list
 - [ ] Component manages all UI state locally
 - [ ] Barrel export created for clean imports
-- [ ] Unit tests cover state transitions
 - [ ] TypeScript types for all data structures
 - [ ] Component integrates smoothly with SettingsContent
 - [ ] Follows existing section component patterns
 
 ## Testing Requirements
 
-Create unit tests that verify:
-
-- Initial render shows empty state
-- Button click opens modal
-- Modal save updates state
-- Modal cancel doesn't change state
-- Provider selection flows through correctly
-- Component mounting/unmounting
+No tests!
 
 ## Integration Points
 

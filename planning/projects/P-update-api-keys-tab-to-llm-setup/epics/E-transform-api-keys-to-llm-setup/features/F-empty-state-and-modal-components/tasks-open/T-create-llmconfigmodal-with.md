@@ -67,20 +67,12 @@ interface LlmConfigModalProps {
 - [ ] Smooth 200ms transitions for open/close
 - [ ] Focus moves to modal when opened
 - [ ] Focus returns to trigger button when closed
-- [ ] Unit tests cover open/close behavior and button clicks
 - [ ] TypeScript interfaces properly defined
 - [ ] Component follows existing modal patterns
 
 ## Testing Requirements
 
-Create unit tests that verify:
-
-- Modal renders with correct title based on provider
-- Save button calls onSave with form data
-- Cancel button calls onOpenChange(false)
-- Modal stacking behavior (z-index)
-- Focus management
-- Accessibility attributes
+No tests!
 
 ## Dependencies
 

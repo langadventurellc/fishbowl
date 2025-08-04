@@ -67,25 +67,10 @@ Implement keyboard shortcuts (Ctrl/Cmd+S to save, Escape to close) and comprehen
 - [ ] All form fields have proper labels
 - [ ] API key toggle announces visibility state
 - [ ] Modal has complete ARIA attributes
-- [ ] Unit tests cover keyboard shortcuts
-- [ ] Unit tests verify focus management
-- [ ] Screen reader testing passes
 
 ## Testing Requirements
 
-Create unit tests that verify:
-
-- Escape key handler calls onOpenChange(false)
-- Ctrl/Cmd+S triggers form submission
-- Focus management on open/close
-- ARIA attributes are present
-- Keyboard navigation works correctly
-- Live regions for announcements
-
-Create integration tests for:
-
-- Full keyboard navigation flow
-- Screen reader compatibility
+No tests!
 
 ## Dependencies
 

@@ -72,20 +72,12 @@ interface LlmConfigFormData {
 - [ ] Checkbox for auth header works correctly
 - [ ] Form submission passes all field values to onSave
 - [ ] No validation errors (accept any input)
-- [ ] Unit tests cover all form interactions
 - [ ] Accessibility: proper labels and ARIA attributes
 - [ ] Show/hide toggle has screen reader announcements
 
 ## Testing Requirements
 
-Create unit tests that verify:
-
-- Form renders all fields correctly
-- Password visibility toggle works
-- Default values are set based on provider
-- Form submission includes all field values
-- Accessibility attributes on all inputs
-- Toggle button keyboard accessibility
+No tests!
 
 ## Security Considerations
 

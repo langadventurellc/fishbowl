@@ -5,14 +5,11 @@
  * configuration including empty states, modals, and provider cards.
  */
 
-// TODO: Export EmptyLlmState when implemented
-// export { EmptyLlmState } from "./EmptyLlmState";
+export { EmptyLlmState } from "./EmptyLlmState";
+export type { EmptyLlmStateProps } from "./EmptyLlmState";
 
 // TODO: Export LlmConfigModal when implemented
 // export { LlmConfigModal } from "./LlmConfigModal";
 
 // TODO: Export LlmProviderCard when implemented
 // export { LlmProviderCard } from "./LlmProviderCard";
-
-// Temporary export to satisfy module requirements
-export {};
