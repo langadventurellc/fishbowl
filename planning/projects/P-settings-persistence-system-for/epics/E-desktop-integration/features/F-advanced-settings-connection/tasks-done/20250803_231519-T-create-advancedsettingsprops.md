@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-create-advancedsettingsprops
+parent: F-advanced-settings-connection
+status: done
 title: Create AdvancedSettingsProps type definition
-status: open
 priority: high
 prerequisites: []
 created: "2025-08-03T23:04:45.173321"
-updated: "2025-08-03T23:04:45.173321"
+updated: "2025-08-03T23:10:21.372452"
 schema_version: "1.1"
-parent: F-advanced-settings-connection
+worktree: null
 ---
 
 # Create AdvancedSettingsProps Type Definition
@@ -58,3 +59,7 @@ export interface AdvancedSettingsProps {
 - Ensure TypeScript compilation succeeds with the new type
 
 ### Log
+
+**2025-08-04T04:15:19.631267Z** - Implemented AdvancedSettingsProps type definition following the established pattern from GeneralSettingsProps and AppearanceSettingsProps. The type includes UseFormReturn from react-hook-form, references AdvancedSettingsFormData from ui-shared package, and provides optional isLoading and error props for centralized form management. Created comprehensive unit tests to verify type exports correctly. All quality checks (linting, formatting, type-checking) and unit tests pass successfully.
+
+- filesChanged: ["apps/desktop/src/types/AdvancedSettingsProps.ts", "apps/desktop/src/types/__tests__/AdvancedSettingsProps.test.ts"]
