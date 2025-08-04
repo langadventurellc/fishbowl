@@ -12,5 +12,5 @@ export { LlmConfigModal } from "./LlmConfigModal";
 export type { LlmConfigModalProps } from "./LlmConfigModalProps";
 export type { LlmConfigData } from "./LlmConfigData";
 
-// TODO: Export LlmProviderCard when implemented
-// export { LlmProviderCard } from "./LlmProviderCard";
+export { LlmProviderCard } from "./LlmProviderCard";
+export type { LlmProviderCardProps } from "./LlmProviderCard";
