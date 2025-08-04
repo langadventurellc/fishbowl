@@ -12,6 +12,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { getAccessibleDescription } from "@/utils";
 import {
   type SettingsContentProps,
@@ -33,6 +34,10 @@ import { DefaultSettings } from "./DefaultSettings";
 import { GeneralSettings } from "./GeneralSettings";
 import { PersonalitiesSection } from "./personalities";
 import { RolesSection } from "./roles/RolesSection";
+
+const logger = createLoggerSync({
+  config: { name: "SettingsContent", level: "info" },
+});
 
 const sectionComponents = {
   "api-keys": ApiKeysSettings,
@@ -84,6 +89,92 @@ export function SettingsContent({
   const hasInitializedForm = useRef(false);
   const hasInitializedAppearanceForm = useRef(false);
 
+  // Note: Unsaved changes tracking can be implemented here if needed
+  // const hasUnsavedChanges = generalForm.formState.isDirty || appearanceForm.formState.isDirty;
+
+  // Unified save handler that validates and saves all forms atomically
+  const handleUnifiedSave = useCallback(async (): Promise<void> => {
+    if (!settings) {
+      logger.warn("No settings available for saving");
+      return;
+    }
+
+    try {
+      // Trigger validation on all forms
+      const [generalValid, appearanceValid] = await Promise.all([
+        generalForm.trigger(),
+        appearanceForm.trigger(),
+      ]);
+
+      // Check if all forms are valid
+      if (!generalValid || !appearanceValid) {
+        // Find first form with errors and focus first error field
+        if (!generalValid && generalForm.formState.errors) {
+          const firstErrorField = Object.keys(generalForm.formState.errors)[0];
+          if (firstErrorField) {
+            generalForm.setFocus(
+              firstErrorField as keyof GeneralSettingsFormData,
+            );
+          }
+        } else if (!appearanceValid && appearanceForm.formState.errors) {
+          const firstErrorField = Object.keys(
+            appearanceForm.formState.errors,
+          )[0];
+          if (firstErrorField) {
+            appearanceForm.setFocus(
+              firstErrorField as keyof AppearanceSettingsFormData,
+            );
+          }
+        }
+
+        logger.warn("Validation failed for forms", {
+          generalValid,
+          appearanceValid,
+          generalErrors: generalForm.formState.errors,
+          appearanceErrors: appearanceForm.formState.errors,
+        });
+        return;
+      }
+
+      // Get validated data from forms
+      const generalData = generalForm.getValues();
+      const appearanceData = appearanceForm.getValues();
+
+      // Update existing settings with form data
+      const updatedSettings = {
+        ...settings,
+        general: generalData,
+        appearance: appearanceData,
+      };
+
+      // Save the updated settings atomically
+      await _saveSettings(updatedSettings);
+
+      // Reset form states to mark as pristine after successful save
+      generalForm.reset(generalData);
+      appearanceForm.reset(appearanceData);
+
+      logger.info("Settings saved successfully via unified handler");
+    } catch (error) {
+      logger.error(
+        "Failed to save settings via unified handler",
+        error as Error,
+      );
+    }
+  }, [generalForm, appearanceForm, settings, _saveSettings]);
+
+  // Add event listener for settings-save event from ModalFooter
+  useEffect(() => {
+    const handleSettingsSave = () => {
+      handleUnifiedSave();
+    };
+
+    window.addEventListener("settings-save", handleSettingsSave);
+    return () => {
+      window.removeEventListener("settings-save", handleSettingsSave);
+    };
+  }, [handleUnifiedSave]);
+
   // Reset form when settings are loaded, but only for general section
   useEffect(() => {
     if (
@@ -99,7 +190,7 @@ export function SettingsContent({
     if (activeSection !== "general") {
       hasInitializedForm.current = false;
     }
-  }, [activeSection, settings?.general]); // Remove generalForm from dependencies
+  }, [activeSection, settings?.general]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Reset appearance form when settings are loaded, but only for appearance section
   useEffect(() => {
@@ -116,7 +207,7 @@ export function SettingsContent({
     if (activeSection !== "appearance") {
       hasInitializedAppearanceForm.current = false;
     }
-  }, [activeSection, settings?.appearance]); // Remove appearanceForm from dependencies
+  }, [activeSection, settings?.appearance]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get the component for the active section
   const getActiveComponent = () => {
