@@ -23,6 +23,7 @@ import {
   type AppearanceSettingsFormData,
   appearanceSettingsSchema,
   defaultAppearanceSettings,
+  useSettingsActions,
 } from "@fishbowl-ai/ui-shared";
 import { useSettingsPersistenceAdapter } from "../../contexts";
 import { cn } from "../../lib/utils";
@@ -54,6 +55,9 @@ export function SettingsContent({
 }: SettingsContentProps) {
   // Get persistence adapter
   const adapter = useSettingsPersistenceAdapter();
+
+  // Get settings actions for state management
+  const { setUnsavedChanges } = useSettingsActions();
 
   // Error handler for persistence operations
   const onError = useCallback((error: Error) => {
@@ -89,8 +93,14 @@ export function SettingsContent({
   const hasInitializedForm = useRef(false);
   const hasInitializedAppearanceForm = useRef(false);
 
-  // Note: Unsaved changes tracking can be implemented here if needed
-  // const hasUnsavedChanges = generalForm.formState.isDirty || appearanceForm.formState.isDirty;
+  // Track form dirty state to update unsaved changes
+  const formsAreDirty =
+    generalForm.formState.isDirty || appearanceForm.formState.isDirty;
+
+  // Update unsaved changes state when forms become dirty or clean
+  useEffect(() => {
+    setUnsavedChanges(formsAreDirty);
+  }, [formsAreDirty, setUnsavedChanges]);
 
   // Unified save handler that validates and saves all forms atomically
   const handleUnifiedSave = useCallback(async (): Promise<void> => {
@@ -154,6 +164,9 @@ export function SettingsContent({
       generalForm.reset(generalData);
       appearanceForm.reset(appearanceData);
 
+      // Reset unsaved changes state to disable save button
+      setUnsavedChanges(false);
+
       logger.info("Settings saved successfully via unified handler");
     } catch (error) {
       logger.error(
@@ -161,7 +174,7 @@ export function SettingsContent({
         error as Error,
       );
     }
-  }, [generalForm, appearanceForm, settings, _saveSettings]);
+  }, [generalForm, appearanceForm, settings, _saveSettings, setUnsavedChanges]);
 
   // Add event listener for settings-save event from ModalFooter
   useEffect(() => {
