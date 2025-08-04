@@ -1,16 +1,17 @@
 ---
 kind: task
 id: T-refactor-advancedsettings
+parent: F-advanced-settings-connection
+status: done
 title: Refactor AdvancedSettings component to use form props pattern
-status: open
 priority: high
 prerequisites:
   - T-create-advancedsettingsprops
   - T-update-settingscontent-to-create
 created: "2025-08-03T23:05:35.408107"
-updated: "2025-08-03T23:05:35.408107"
+updated: "2025-08-03T23:38:40.340104"
 schema_version: "1.1"
-parent: F-advanced-settings-connection
+worktree: null
 ---
 
 # Refactor AdvancedSettings Component to Use Form Props Pattern
@@ -178,3 +179,7 @@ return (
 - Test that form validation works correctly
 
 ### Log
+
+**2025-08-04T04:43:43.989661Z** - Successfully refactored AdvancedSettings component to use react-hook-form FormField pattern, matching the established pattern from GeneralSettings and AppearanceSettings. Removed local state management with useState hooks and replaced with form prop integration. All form fields now use the FormField pattern with proper unsaved changes tracking. Component maintains all accessibility features and warnings for experimental features. All quality checks and tests pass.
+
+- filesChanged: ["apps/desktop/src/components/settings/AdvancedSettings.tsx"]
