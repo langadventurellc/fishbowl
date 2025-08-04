@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-update-llmprovidercard-component
+parent: F-dynamic-api-management
+status: done
 title: Update LlmProviderCard component with edit and delete actions
-status: open
 priority: high
 prerequisites: []
 created: "2025-08-04T13:36:29.051178"
-updated: "2025-08-04T13:36:29.051178"
+updated: "2025-08-04T14:02:19.361282"
 schema_version: "1.1"
-parent: F-dynamic-api-management
+worktree: null
 ---
 
 ## Context
@@ -69,3 +70,7 @@ interface LlmProviderCardProps {
 - Update: `apps/desktop/src/components/settings/llm-setup/LlmProviderCard.tsx`
 
 ### Log
+
+**2025-08-04T19:09:00.025880Z** - Updated LlmProviderCard component with edit and delete actions using ghost button variants to follow existing ProviderCard design patterns. Component now displays custom name prominently with provider type below in muted styling, and includes properly positioned Edit (Pencil) and Delete (Trash) buttons with appropriate hover states and accessibility features. All acceptance criteria met and quality checks passed.
+
+- filesChanged: ["apps/desktop/src/components/settings/llm-setup/LlmProviderCard.tsx"]

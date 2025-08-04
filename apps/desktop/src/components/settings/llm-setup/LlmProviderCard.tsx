@@ -34,7 +34,7 @@ export const LlmProviderCard: React.FC<LlmProviderCardProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={onEdit}
             className="gap-2"
@@ -44,7 +44,7 @@ export const LlmProviderCard: React.FC<LlmProviderCardProps> = ({
             Edit
           </Button>
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
             onClick={onDelete}
             className="gap-2 text-destructive hover:text-destructive"
