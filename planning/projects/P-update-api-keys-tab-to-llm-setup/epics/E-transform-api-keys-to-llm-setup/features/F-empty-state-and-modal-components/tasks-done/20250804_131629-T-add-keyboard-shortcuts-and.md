@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-add-keyboard-shortcuts-and
+parent: F-empty-state-and-modal-components
+status: done
 title: Add keyboard shortcuts and accessibility features
-status: open
 priority: normal
 prerequisites:
   - T-implement-form-fields-with-react
 created: "2025-08-04T12:15:17.788772"
-updated: "2025-08-04T12:15:17.788772"
+updated: "2025-08-04T13:09:55.325502"
 schema_version: "1.1"
-parent: F-empty-state-and-modal-components
+worktree: null
 ---
 
 ## Context
@@ -77,3 +78,7 @@ No tests!
 This task depends on T-implement-form-fields-with-react being completed first to have the full form structure ready.
 
 ### Log
+
+**2025-08-04T18:16:29.341307Z** - Implemented comprehensive keyboard shortcuts and accessibility features for LlmConfigModal component. Added Escape key handling and Ctrl/Cmd+S save shortcuts using useGlobalKeyboardShortcuts hook. Implemented focus management with useFocusTrap for proper focus containment, initial focus placement on first form field, and focus restoration. Added complete ARIA attributes including role="dialog", aria-modal, aria-labelledby, and aria-describedby. Enhanced API key toggle button with screen reader announcements and aria-pressed state. Added modal open announcements to inform users of available shortcuts. Included aria-live region for future form error announcements. All quality checks pass and implementation follows existing accessibility patterns.
+
+- filesChanged: ["apps/desktop/src/components/settings/llm-setup/LlmConfigModal.tsx"]
