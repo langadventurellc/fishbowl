@@ -1,14 +1,15 @@
 ---
 kind: task
 id: T-create-e2e-tests-for-advanced
+parent: F-advanced-settings-connection
+status: done
 title: Create e2e tests for Advanced Settings persistence
-status: open
 priority: normal
 prerequisites: []
 created: "2025-08-04T00:03:51.187419"
-updated: "2025-08-04T00:03:51.187419"
+updated: "2025-08-04T08:53:34.640347"
 schema_version: "1.1"
-parent: F-advanced-settings-connection
+worktree: null
 ---
 
 # Create End-to-End Tests for Advanced Settings Persistence
@@ -43,6 +44,7 @@ Follow the exact pattern from `tests/desktop/features/appearance-settings.spec.t
    - Navigate to Advanced tab by clicking "Advanced" navigation item
 
 2. **Test Categories**:
+
    ```typescript
    test.describe("Feature: Advanced Settings Persistence", () => {
      // Setup and teardown following appearance-settings pattern
@@ -267,3 +269,7 @@ The Advanced Settings component already has the required test IDs:
 - Clean up test artifacts to prevent accumulation
 
 ### Log
+
+**2025-08-04T14:06:02.157028Z** - Implemented comprehensive E2E tests for Advanced Settings persistence functionality. Created 3 test scenarios covering debug logging toggle, experimental features toggle, and multiple settings persistence. Tests verify both file persistence (preferences.json) and UI state restoration across modal close/reopen cycles. Fixed state reset issue between tests using window.reload() approach. All tests pass consistently and integrate seamlessly with existing E2E test suite.
+
+- filesChanged: ["tests/desktop/features/advanced-settings.spec.ts"]
