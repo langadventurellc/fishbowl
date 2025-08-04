@@ -1,16 +1,17 @@
 ---
 kind: task
 id: T-polish-card-layout-and
+parent: F-dynamic-api-management
+status: done
 title: Polish card layout and interaction states
-status: open
 priority: low
 prerequisites:
   - T-update-llmprovidercard-component
   - T-implement-dynamic-display
 created: "2025-08-04T13:38:38.728422"
-updated: "2025-08-04T13:38:38.728422"
+updated: "2025-08-04T14:35:53.853892"
 schema_version: "1.1"
-parent: F-dynamic-api-management
+worktree: null
 ---
 
 ## Context
@@ -101,3 +102,7 @@ Final polish pass to ensure the LlmProviderCard components have proper styling, 
 - Test on mobile viewport sizes
 
 ### Log
+
+**2025-08-04T19:38:38.828596Z** - Polished LlmProviderCard layout and interaction states. Updated card padding to p-4, implemented proper text truncation with min-w-0 and truncate classes, changed text sizing to text-base, converted buttons to icon-only variants with proper touch targets, added destructive hover state for delete button, and improved spacing. All quality checks pass and component now matches design specifications exactly.
+
+- filesChanged: ["apps/desktop/src/components/settings/llm-setup/LlmProviderCard.tsx"]

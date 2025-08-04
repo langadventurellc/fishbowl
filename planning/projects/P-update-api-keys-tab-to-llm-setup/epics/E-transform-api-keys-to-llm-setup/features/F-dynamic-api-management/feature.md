@@ -2,12 +2,12 @@
 kind: feature
 id: F-dynamic-api-management
 title: Dynamic API Management
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-empty-state-and-modal-components
 created: "2025-08-04T11:08:37.796558"
-updated: "2025-08-04T11:08:37.796558"
+updated: "2025-08-04T19:38:38.835245+00:00"
 schema_version: "1.1"
 parent: E-transform-api-keys-to-llm-setup
 ---

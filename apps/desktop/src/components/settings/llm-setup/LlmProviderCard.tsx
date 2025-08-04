@@ -10,12 +10,12 @@
  * @module components/settings/llm-setup/LlmProviderCard
  */
 
-import React from "react";
+import type { LlmProviderCardProps } from "@fishbowl-ai/ui-shared";
 import { Edit2, Trash2 } from "lucide-react";
+import React from "react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
 import { Card, CardContent } from "../../ui/card";
-import type { LlmProviderCardProps } from "@fishbowl-ai/ui-shared";
 
 export const LlmProviderCard: React.FC<LlmProviderCardProps> = ({
   api,
@@ -27,31 +27,28 @@ export const LlmProviderCard: React.FC<LlmProviderCardProps> = ({
 
   return (
     <Card className={cn("w-full", className)}>
-      <CardContent className="flex items-center justify-between p-6">
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold">{api.customName}</h3>
+      <CardContent className="p-4 flex items-center justify-between">
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base font-semibold truncate">{api.customName}</h3>
           <p className="text-sm text-muted-foreground">{providerName}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 ml-4">
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={onEdit}
-            className="gap-2"
             aria-label={`Edit ${api.customName} configuration`}
           >
             <Edit2 className="h-4 w-4" />
-            Edit
           </Button>
           <Button
             variant="ghost"
-            size="sm"
+            size="icon"
             onClick={onDelete}
-            className="gap-2 text-destructive hover:text-destructive"
+            className="hover:bg-destructive/10"
             aria-label={`Delete ${api.customName} configuration`}
           >
             <Trash2 className="h-4 w-4" />
-            Delete
           </Button>
         </div>
       </CardContent>
