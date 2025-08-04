@@ -25,7 +25,7 @@ import { SubNavigationTab } from "./SubNavigationTab";
 
 const navigationSections = [
   { id: "general" as const, label: "General", hasSubTabs: false },
-  { id: "llm-setup" as const, label: "API Keys", hasSubTabs: false },
+  { id: "llm-setup" as const, label: "LLM Setup", hasSubTabs: false },
   { id: "appearance" as const, label: "Appearance", hasSubTabs: false },
   {
     id: "agents" as const,

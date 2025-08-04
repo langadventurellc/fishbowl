@@ -19,7 +19,7 @@ describe("useNavigationKeyboard", () => {
     { id: "general" as SettingsSection, label: "General", hasSubTabs: false },
     {
       id: "llm-setup" as SettingsSection,
-      label: "API Keys",
+      label: "LLM Setup",
       hasSubTabs: false,
     },
     {
@@ -65,7 +65,7 @@ describe("useNavigationKeyboard", () => {
       expect(flatItems[1]).toEqual({
         id: "llm-setup",
         type: "section",
-        label: "API Keys",
+        label: "LLM Setup",
       });
       expect(flatItems[2]).toEqual({
         id: "agents",
