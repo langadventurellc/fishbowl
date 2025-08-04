@@ -9,11 +9,16 @@
  * - Loading and error state management for all settings sections
  */
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { getAccessibleDescription } from "@/utils";
 import {
   type SettingsContentProps,
   useSettingsPersistence,
+  type GeneralSettingsFormData,
+  generalSettingsSchema,
+  defaultGeneralSettings,
 } from "@fishbowl-ai/ui-shared";
 import { useSettingsPersistenceAdapter } from "../../contexts";
 import { cn } from "../../lib/utils";
@@ -27,7 +32,6 @@ import { PersonalitiesSection } from "./personalities";
 import { RolesSection } from "./roles/RolesSection";
 
 const sectionComponents = {
-  general: GeneralSettings,
   "api-keys": ApiKeysSettings,
   appearance: AppearanceSettings,
   agents: AgentsSection,
@@ -51,18 +55,59 @@ export function SettingsContent({
 
   // Initialize centralized settings persistence
   const {
-    settings: _settings,
+    settings,
     saveSettings: _saveSettings,
-    isLoading: _isLoading,
-    error: _error,
+    isLoading,
+    error,
   } = useSettingsPersistence({
     adapter,
     onError,
   });
 
-  const Component =
-    sectionComponents[activeSection as keyof typeof sectionComponents] ||
-    DefaultSettings;
+  // Create form instance for GeneralSettings
+  const generalForm = useForm<GeneralSettingsFormData>({
+    resolver: zodResolver(generalSettingsSchema),
+    defaultValues: settings?.general || defaultGeneralSettings,
+    mode: "onChange",
+  });
+
+  // Use ref to track if form has been initialized to prevent infinite loops
+  const hasInitializedForm = useRef(false);
+
+  // Reset form when settings are loaded, but only for general section
+  useEffect(() => {
+    if (
+      activeSection === "general" &&
+      settings?.general &&
+      !hasInitializedForm.current
+    ) {
+      generalForm.reset(settings.general);
+      hasInitializedForm.current = true;
+    }
+
+    // Reset the flag when switching away from general section
+    if (activeSection !== "general") {
+      hasInitializedForm.current = false;
+    }
+  }, [activeSection, settings?.general]); // Remove generalForm from dependencies
+
+  // Get the component for the active section
+  const getActiveComponent = () => {
+    if (activeSection === "general") {
+      return (
+        <GeneralSettings
+          form={generalForm}
+          isLoading={isLoading}
+          error={error}
+        />
+      );
+    }
+
+    const Component =
+      sectionComponents[activeSection as keyof typeof sectionComponents] ||
+      DefaultSettings;
+    return <Component />;
+  };
 
   // Get accessible description for current section
   const sectionDescription = getAccessibleDescription(activeSection);
@@ -117,7 +162,7 @@ export function SettingsContent({
           aria-labelledby={`${contentId}-section-title`}
           aria-describedby={`${contentId}-description`}
         >
-          <Component />
+          {getActiveComponent()}
         </div>
       </div>
     </main>

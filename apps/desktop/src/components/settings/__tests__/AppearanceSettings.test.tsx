@@ -23,13 +23,22 @@ Object.defineProperty(window, "matchMedia", {
 jest.mock("@fishbowl-ai/ui-shared", () => {
   const { z } = require("zod");
 
-  const mockSchema = z.object({
+  const mockAppearanceSchema = z.object({
     theme: z.enum(["light", "dark", "system"]),
     showTimestamps: z.enum(["always", "hover", "never"]),
     showActivityTime: z.boolean(),
     compactList: z.boolean(),
     fontSize: z.number().min(12).max(20),
     messageSpacing: z.enum(["compact", "normal", "relaxed"]),
+  });
+
+  const mockGeneralSchema = z.object({
+    responseDelay: z.number().min(1000).max(30000),
+    maximumMessages: z.number().min(0).max(500),
+    maximumWaitTime: z.number().min(5000).max(120000),
+    defaultMode: z.enum(["manual", "auto"]),
+    maximumAgents: z.number().min(1).max(8),
+    checkUpdates: z.boolean(),
   });
 
   return {
@@ -39,6 +48,14 @@ jest.mock("@fishbowl-ai/ui-shared", () => {
     })),
     useSettingsPersistence: jest.fn(() => ({
       settings: {
+        general: {
+          responseDelay: 2000,
+          maximumMessages: 50,
+          maximumWaitTime: 30000,
+          defaultMode: "manual",
+          maximumAgents: 5,
+          checkUpdates: true,
+        },
         appearance: {
           theme: "system",
           showTimestamps: "hover",
@@ -60,7 +77,16 @@ jest.mock("@fishbowl-ai/ui-shared", () => {
       fontSize: 14,
       messageSpacing: "normal",
     },
-    appearanceSettingsSchema: mockSchema,
+    defaultGeneralSettings: {
+      responseDelay: 2000,
+      maximumMessages: 50,
+      maximumWaitTime: 30000,
+      defaultMode: "manual",
+      maximumAgents: 5,
+      checkUpdates: true,
+    },
+    appearanceSettingsSchema: mockAppearanceSchema,
+    generalSettingsSchema: mockGeneralSchema,
   };
 });
 
