@@ -22,3 +22,9 @@ export * from "./LlmConfigurationError";
 
 // Type guards
 export * from "./validationTypeGuards";
+
+// Helper functions
+export * from "./createValidResult";
+export * from "./createInvalidResult";
+export * from "./createFieldError";
+export * from "./getDefaultErrorMessage";

@@ -2,11 +2,11 @@
 kind: feature
 id: F-core-type-definitions
 title: Core Type Definitions
-status: in-progress
+status: done
 priority: normal
 prerequisites: []
 created: "2025-08-04T19:37:15.740105"
-updated: "2025-08-04T19:37:15.740105"
+updated: "2025-08-05T06:16:52.575677+00:00"
 schema_version: "1.1"
 parent: E-configuration-infrastructure
 ---

@@ -1,12 +1,25 @@
 /**
- * @deprecated This file is being refactored to follow one-export-per-file rule.
- * Import individual types from their respective files instead.
+ * Provider type utilities and helpers.
+ *
+ * Provides branded types, type constructors, and type guards for
+ * working with LLM provider configurations.
  *
  * @module types/llm-providers/provider
  */
 
-// Types have been moved to separate files to follow linting rules:
-// - LlmProviderId -> LlmProviderId.ts
-// - LlmProviderMetadata -> LlmProviderMetadata.ts
-// - LlmProviderConfiguration -> LlmProviderConfiguration.ts
-// - LlmProviderDefinition -> LlmProviderDefinition.ts
+// Branded types
+export * from "./ProviderId";
+export * from "./InstanceId";
+
+// Type constructors
+export * from "./createProviderId";
+export * from "./createInstanceId";
+
+// Type guards
+export * from "./isValidProvider";
+
+// Re-export existing types for backward compatibility
+export * from "./LlmProviderId";
+export * from "./LlmProviderMetadata";
+export * from "./LlmProviderConfiguration";
+export * from "./LlmProviderDefinition";

@@ -15,3 +15,12 @@ export * from "./TypedConfigurationValues";
 export * from "./LlmProviderInstance";
 export * from "./LlmProviderInstanceUpdate";
 export * from "./LlmProviderInstanceData";
+
+// Legacy compatibility types
+export * from "./LegacyLlmConfigData";
+
+// Helper functions
+export * from "./createEmptyValues";
+export * from "./isConfigurationComplete";
+export * from "./toLegacyFormat";
+export * from "./generateInstanceId";

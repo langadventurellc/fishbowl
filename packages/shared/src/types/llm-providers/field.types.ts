@@ -22,3 +22,9 @@ export * from "./fieldTypeGuards";
 
 // Utility types
 export * from "./FieldValueType";
+export * from "./ExtractFieldIds";
+export * from "./GetFieldById";
+
+// Helper functions
+export * from "./isRequiredField";
+export * from "./getFieldDefaultValue";
