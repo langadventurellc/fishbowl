@@ -1,16 +1,17 @@
 ---
 kind: task
 id: T-create-runtime-configuration-and
+parent: F-core-type-definitions
+status: done
 title: Create runtime configuration and value types
-status: open
 priority: normal
 prerequisites:
   - T-create-provider-metadata-and
   - T-create-field-configuration-types
 created: "2025-08-04T19:47:14.325245"
-updated: "2025-08-04T19:47:14.325245"
+updated: "2025-08-05T00:10:39.430199"
 schema_version: "1.1"
-parent: F-core-type-definitions
+worktree: null
 ---
 
 ## Task Description
@@ -119,3 +120,7 @@ Implement runtime configuration types in `configuration.types.ts` that represent
 `packages/shared/src/types/llm-providers/configuration.types.ts`
 
 ### Log
+
+**2025-08-05T05:19:47.661681Z** - Implemented comprehensive runtime configuration and value types for LLM provider instances. Created branded type for configuration IDs, storage interface for field values, type-safe utility for extracting field types, and complete provider instance management interfaces. All types include comprehensive JSDoc documentation and follow the project's one-export-per-file rule. Implementation supports type-safe field value extraction, partial updates, and full CRUD operations on provider configurations.
+
+- filesChanged: ["packages/shared/src/types/llm-providers/LlmConfigurationId.ts", "packages/shared/src/types/llm-providers/LlmConfigurationValues.ts", "packages/shared/src/types/llm-providers/TypedConfigurationValues.ts", "packages/shared/src/types/llm-providers/LlmProviderInstance.ts", "packages/shared/src/types/llm-providers/LlmProviderInstanceUpdate.ts", "packages/shared/src/types/llm-providers/LlmProviderInstanceData.ts", "packages/shared/src/types/llm-providers/configuration.types.ts"]

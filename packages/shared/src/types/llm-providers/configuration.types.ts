@@ -1,9 +1,17 @@
 /**
  * Runtime configuration types for LLM provider instances.
  *
- * Defines types for storing and managing provider configurations at runtime.
+ * Barrel export for all runtime configuration types.
  *
  * @module types/llm-providers/configuration
  */
 
-// Type definitions will be added in subsequent tasks
+// Configuration types
+export * from "./LlmConfigurationId";
+export * from "./LlmConfigurationValues";
+export * from "./TypedConfigurationValues";
+
+// Provider instance types
+export * from "./LlmProviderInstance";
+export * from "./LlmProviderInstanceUpdate";
+export * from "./LlmProviderInstanceData";
