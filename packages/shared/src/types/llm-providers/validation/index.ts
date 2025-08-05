@@ -37,8 +37,16 @@ export * from "./CheckboxFieldSchema";
 export * from "./LlmFieldConfigSchema";
 export * from "./LlmFieldConfigSchemaWithRefinements";
 
+// Provider validation schemas
+export * from "./LlmProviderMetadataSchema";
+export * from "./LlmProviderConfigurationSchema";
+export * from "./LlmProviderConfigSchema";
+
 // Type inference exports
 export * from "./InferredTextField";
 export * from "./InferredSecureTextField";
 export * from "./InferredCheckboxField";
 export * from "./InferredLlmFieldConfig";
+export * from "./InferredLlmProviderMetadata";
+export * from "./InferredLlmProviderConfiguration";
+export * from "./InferredLlmProviderConfig";
