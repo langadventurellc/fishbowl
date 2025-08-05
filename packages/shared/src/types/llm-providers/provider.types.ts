@@ -1,9 +1,12 @@
 /**
- * Core provider interfaces for LLM provider configurations.
- *
- * Defines the structure for provider metadata, models, and configuration.
+ * @deprecated This file is being refactored to follow one-export-per-file rule.
+ * Import individual types from their respective files instead.
  *
  * @module types/llm-providers/provider
  */
 
-// Type definitions will be added in subsequent tasks
+// Types have been moved to separate files to follow linting rules:
+// - LlmProviderId -> LlmProviderId.ts
+// - LlmProviderMetadata -> LlmProviderMetadata.ts
+// - LlmProviderConfiguration -> LlmProviderConfiguration.ts
+// - LlmProviderDefinition -> LlmProviderDefinition.ts

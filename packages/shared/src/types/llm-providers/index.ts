@@ -7,7 +7,10 @@
  */
 
 // Provider types
-export * from "./provider.types";
+export * from "./LlmProviderId";
+export * from "./LlmProviderMetadata";
+export * from "./LlmProviderConfiguration";
+export * from "./LlmProviderDefinition";
 
 // Field configuration types
 export * from "./field.types";
