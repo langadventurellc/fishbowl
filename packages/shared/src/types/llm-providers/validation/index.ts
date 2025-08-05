@@ -61,3 +61,15 @@ export * from "./InferredLlmProviderMetadata";
 export * from "./InferredLlmProviderConfiguration";
 export * from "./InferredLlmProviderConfig";
 export * from "./InferredLlmProvidersFile";
+
+// Schema utilities
+export * from "./assertProviderConfig";
+export * from "./assertFieldConfig";
+export * from "./assertProvidersFile";
+export * from "./extendFieldSchema";
+export * from "./createProviderSchema";
+export * from "./applyFieldDefaults";
+export * from "./getFieldTypeDefault";
+export * from "./getEnhancedFieldDefault";
+export * from "./isSchemaVersionCompatible";
+export * from "./migrateSchema";
