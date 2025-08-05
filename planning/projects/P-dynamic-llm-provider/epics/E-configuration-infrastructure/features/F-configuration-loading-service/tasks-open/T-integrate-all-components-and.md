@@ -7,7 +7,6 @@ priority: high
 prerequisites:
   - T-create-llmconfigurationloader
   - T-implement-configurationcache-for
-  - T-build-configurationfilewatcher
   - T-create-configuration-validation
   - T-build-retry-logic-and-resilience
 created: "2025-08-05T17:40:37.296418"
@@ -18,7 +17,7 @@ parent: F-configuration-loading-service
 
 ## Context
 
-Integrate all configuration loading components into a cohesive service with a clean public API. This includes wiring together the cache, validation, file watching, error handling, and resilience layers into the main `LlmConfigurationLoader` service.
+Integrate all configuration loading components into a cohesive service with a clean public API. This includes wiring together the cache, validation, error handling, and resilience layers into the main `LlmConfigurationLoader` service.
 
 **Note: Integration and performance tests are not to be created for this task.**
 
@@ -29,7 +28,6 @@ Integrate all configuration loading components into a cohesive service with a cl
 ```typescript
 export class LlmConfigurationLoader {
   private cache: ConfigurationCache;
-  private watcher?: ConfigurationWatcher;
   private validator: ConfigurationValidator;
   private resilienceLayer: ResilienceLayer;
   private fileStorage: FileStorageService;
@@ -48,10 +46,6 @@ export class LlmConfigurationLoader {
       mode: this.getEnvironmentMode(),
     });
     this.resilienceLayer = new ResilienceLayer(options.resilience);
-
-    if (options.enableHotReload && isDevelopment()) {
-      this.setupFileWatcher();
-    }
   }
 
   // Public API Methods
@@ -98,7 +92,6 @@ export interface ConfigurationStatus {
   lastLoaded: Date | null;
   providerCount: number;
   hasValidationErrors: boolean;
-  isWatching: boolean;
   cacheSize: number;
   filePath: string;
   fileExists: boolean;
@@ -118,7 +111,6 @@ export interface ConfigurationStatus {
    async initialize(): Promise<void> {
      try {
        await this.loadConfiguration();
-       await this.startFileWatcher();
        this.isInitialized = true;
        this.logger.info('Configuration loader initialized successfully');
      } catch (error) {
@@ -157,24 +149,8 @@ export interface ConfigurationStatus {
    ```
 
 3. **Hot-Reload Integration**:
-   ```typescript
-   private setupFileWatcher(): void {
-     this.watcher = WatcherFactory.createWatcher(this.filePath, {
-       debounceMs: 500,
-       validateOnChange: true
-     });
 
-     this.watcher.on('change', async () => {
-       try {
-         await this.reload();
-         this.logger.info('Configuration reloaded successfully');
-       } catch (error) {
-         this.logger.error('Hot-reload failed', { error });
-         // Continue using cached configuration
-       }
-     });
-   }
-   ```
+not doing
 
 ### Public API Service Factory
 
@@ -217,7 +193,6 @@ export { ConfigurationService } from "./ConfigurationService";
 // Core components
 export * from "./cache";
 export * from "./validation";
-export * from "./watchers";
 export * from "./errors";
 export * from "./resilience";
 
@@ -226,7 +201,6 @@ export type {
   LoaderOptions,
   ConfigurationStatus,
   ValidationOptions,
-  WatcherOptions,
   ResilienceOptions,
 } from "./types";
 ```
@@ -261,7 +235,6 @@ export interface LoaderMetrics {
 - ✓ Configuration status provides comprehensive health information
 - ✓ Service factory supports both singleton and multi-instance patterns
 - ✓ Logging provides detailed operational visibility
-- ✓ Disposal properly cleans up all resources and watchers
 - ✓ Unit tests verify complete integration scenarios
 
 ## Testing Requirements

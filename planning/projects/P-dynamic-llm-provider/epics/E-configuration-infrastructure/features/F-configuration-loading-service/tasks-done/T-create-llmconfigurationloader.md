@@ -1,14 +1,14 @@
 ---
 kind: task
 id: T-create-llmconfigurationloader
+parent: F-configuration-loading-service
+status: done
 title: Create LlmConfigurationLoader service class with initialization and basic loading
-status: open
 priority: high
 prerequisites: []
 created: "2025-08-05T17:37:51.161172"
-updated: "2025-08-05T17:37:51.161172"
+updated: "2025-08-05T17:51:12.793730"
 schema_version: "1.1"
-parent: F-configuration-loading-service
 ---
 
 ## Context
