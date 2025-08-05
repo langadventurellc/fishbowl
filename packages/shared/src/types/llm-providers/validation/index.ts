@@ -32,6 +32,14 @@ export * from "./validateProvidersFile";
 export * from "./createEmptyProvidersFile";
 export * from "./isValidProvidersFile";
 
+// Zod error utilities
+export * from "./mapZodCodeToErrorCode";
+export * from "./formatZodMessage";
+export * from "./zodToFieldErrors";
+export * from "./formatFieldPath";
+export * from "./getFieldFromPath";
+export * from "./buildValidationResult";
+
 // Field validation schemas
 export * from "./BaseFieldConfigSchema";
 export * from "./TextFieldSchema";

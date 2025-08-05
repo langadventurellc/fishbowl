@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-create-error-formatting-and
+parent: F-json-schema-and-validation
+status: done
 title: Create error formatting and validation message utilities
-status: open
 priority: normal
 prerequisites:
   - T-create-runtime-configuration
 created: "2025-08-05T01:33:51.672697"
-updated: "2025-08-05T01:33:51.672697"
+updated: "2025-08-05T13:07:02.603460"
 schema_version: "1.1"
-parent: F-json-schema-and-validation
+worktree: null
 ---
 
 ## Task: Create error formatting and validation message utilities
@@ -189,3 +190,7 @@ Create `packages/shared/src/types/llm-providers/validation/__tests__/zodErrorUti
 - Pattern: `packages/shared/src/services/storage/utils/createFieldErrors.ts`
 
 ### Log
+
+**2025-08-05T18:38:38.627833Z** - Implemented utilities for formatting Zod validation errors into user-friendly messages that integrate with the existing validation error system. Created separate files following project conventions (one export per file) and comprehensive test coverage. All utilities provide field-specific error messages using field labels instead of IDs, with proper error code mapping and support for nested field paths.
+
+- filesChanged: ["packages/shared/src/types/llm-providers/validation/mapZodCodeToErrorCode.ts", "packages/shared/src/types/llm-providers/validation/formatZodMessage.ts", "packages/shared/src/types/llm-providers/validation/zodToFieldErrors.ts", "packages/shared/src/types/llm-providers/validation/formatFieldPath.ts", "packages/shared/src/types/llm-providers/validation/getFieldFromPath.ts", "packages/shared/src/types/llm-providers/validation/buildValidationResult.ts", "packages/shared/src/types/llm-providers/validation/index.ts", "packages/shared/src/types/llm-providers/validation/__tests__/zodErrorUtils.test.ts"]
