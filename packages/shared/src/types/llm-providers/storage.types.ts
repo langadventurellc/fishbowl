@@ -6,4 +6,5 @@
  * @module types/llm-providers/storage
  */
 
-// Type definitions will be added in subsequent tasks
+// Storage interfaces split into separate files per linting requirements
+// See individual files: LlmStorageBridge.ts, LlmSecureStorageBridge.ts, etc.

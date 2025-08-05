@@ -19,7 +19,12 @@ export * from "./field.types";
 export * from "./configuration.types";
 
 // Storage interfaces
-export * from "./storage.types";
+export * from "./LlmStorageBridge";
+export * from "./LlmSecureStorageBridge";
+export * from "./LlmStorageEvents";
+export * from "./LlmStorageOptions";
+export * from "./LlmStorageFactory";
+export * from "./LlmStorageMigration";
 
 // Validation types
 export * from "./validation.types";
