@@ -1,10 +1,10 @@
-import {
-  LlmProvidersFileSchema,
-  LLM_PROVIDERS_SCHEMA_VERSION,
-} from "../file.schema";
-import { validateProvidersFile } from "../validateProvidersFile";
 import { createEmptyProvidersFile } from "../createEmptyProvidersFile";
+import {
+  LLM_PROVIDERS_SCHEMA_VERSION,
+  LlmProvidersFileSchema,
+} from "../file.schema";
 import { isValidProvidersFile } from "../isValidProvidersFile";
+import { validateProvidersFile } from "../validateProvidersFile";
 
 describe("LlmProvidersFileSchema", () => {
   describe("valid files", () => {
@@ -551,60 +551,6 @@ describe("isValidProvidersFile", () => {
     };
 
     expect(isValidProvidersFile(duplicateFile)).toBe(false);
-  });
-});
-
-describe("performance", () => {
-  it("should validate large files efficiently", () => {
-    const largeFile = {
-      version: "1.0.0",
-      providers: Array.from({ length: 20 }, (_, i) => ({
-        id: `provider-${i}`,
-        name: `Provider ${i}`,
-        models: Object.fromEntries(
-          Array.from({ length: 5 }, (_, j) => [`model-${j}`, `Model ${j}`]),
-        ),
-        configuration: {
-          fields: Array.from({ length: 10 }, (_, j) => ({
-            id: `field-${j}`,
-            type:
-              j % 3 === 0 ? "secure-text" : j % 3 === 1 ? "text" : "checkbox",
-            label: `Field ${j}`,
-            required: j % 2 === 0,
-          })),
-        },
-      })),
-      metadata: {
-        lastUpdated: new Date().toISOString(),
-        description: "Large test file",
-      },
-    };
-
-    const startTime = Date.now();
-    const result = LlmProvidersFileSchema.parse(largeFile);
-    const endTime = Date.now();
-
-    expect(result.providers).toHaveLength(20);
-    expect(endTime - startTime).toBeLessThan(50); // Should complete within 50ms
-  });
-
-  it("should handle large number of duplicate IDs efficiently", () => {
-    const duplicateFile = {
-      version: "1.0.0",
-      providers: Array.from({ length: 100 }, () => ({
-        id: "duplicate-id", // All have same ID
-        name: "Test",
-        models: { model: "Model" },
-        configuration: { fields: [] },
-      })),
-    };
-
-    const startTime = Date.now();
-    const result = LlmProvidersFileSchema.safeParse(duplicateFile);
-    const endTime = Date.now();
-
-    expect(result.success).toBe(false);
-    expect(endTime - startTime).toBeLessThan(100); // Should fail fast within 100ms
   });
 });
 

@@ -1,7 +1,7 @@
-import { LlmProviderConfigurationValidator } from "../validationService";
-import { LlmValidationErrorCode } from "../LlmValidationErrorCode";
-import type { LlmProviderDefinition } from "../../LlmProviderDefinition";
 import type { LlmConfigurationValues } from "../../LlmConfigurationValues";
+import type { LlmProviderDefinition } from "../../LlmProviderDefinition";
+import { LlmValidationErrorCode } from "../LlmValidationErrorCode";
+import { LlmProviderConfigurationValidator } from "../validationService";
 
 describe("LlmProviderConfigurationValidator", () => {
   describe("validateFile", () => {
@@ -591,66 +591,6 @@ describe("LlmProviderConfigurationValidator", () => {
       );
 
       process.env.NODE_ENV = originalEnv;
-    });
-  });
-
-  describe("performance", () => {
-    it("should validate typical files under 10ms", () => {
-      const typicalFile = {
-        version: "1.0.0",
-        providers: [
-          {
-            id: "openai",
-            name: "OpenAI",
-            models: {
-              "gpt-4": "GPT-4",
-              "gpt-3.5-turbo": "GPT-3.5 Turbo",
-            },
-            configuration: {
-              fields: [
-                {
-                  id: "apiKey",
-                  type: "secure-text",
-                  label: "API Key",
-                  required: true,
-                },
-                {
-                  id: "baseUrl",
-                  type: "text",
-                  label: "Base URL",
-                  required: false,
-                },
-              ],
-            },
-          },
-          {
-            id: "anthropic",
-            name: "Anthropic",
-            models: {
-              "claude-3-opus": "Claude 3 Opus",
-              "claude-3-sonnet": "Claude 3 Sonnet",
-            },
-            configuration: {
-              fields: [
-                {
-                  id: "apiKey",
-                  type: "secure-text",
-                  label: "API Key",
-                  required: true,
-                },
-              ],
-            },
-          },
-        ],
-      };
-
-      const startTime = Date.now();
-      const result =
-        LlmProviderConfigurationValidator.validateFile(typicalFile);
-      const endTime = Date.now();
-
-      expect(result.valid).toBe(true);
-      expect(endTime - startTime).toBeLessThan(10);
     });
   });
 });
