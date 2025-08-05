@@ -1,9 +1,11 @@
 /**
- * Validation error types for configuration validation.
+ * Validation type definitions for LLM provider configurations.
  *
- * Defines error structures for field and configuration validation.
+ * Provides comprehensive error handling types for field validation,
+ * configuration validation, and runtime error management.
  *
+ * @fileoverview Validation types for LLM provider system
  * @module types/llm-providers/validation
  */
 
-// Type definitions will be added in subsequent tasks
+export * from "./validation";
