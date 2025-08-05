@@ -81,3 +81,6 @@ export * from "./getFieldTypeDefault";
 export * from "./getEnhancedFieldDefault";
 export * from "./isSchemaVersionCompatible";
 export * from "./migrateSchema";
+
+// Validation service
+export * from "./validationService";
