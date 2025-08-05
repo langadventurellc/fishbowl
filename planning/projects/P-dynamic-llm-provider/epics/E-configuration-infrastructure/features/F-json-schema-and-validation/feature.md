@@ -2,12 +2,12 @@
 kind: feature
 id: F-json-schema-and-validation
 title: JSON Schema and Validation
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-core-type-definitions
 created: "2025-08-04T19:37:51.058909"
-updated: "2025-08-04T19:37:51.058909"
+updated: "2025-08-05T21:12:45.877439+00:00"
 schema_version: "1.1"
 parent: E-configuration-infrastructure
 ---
