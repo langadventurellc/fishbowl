@@ -46,6 +46,12 @@ export * from "./LlmProviderConfigurationSchema";
 export * from "./LlmProviderConfigSchema";
 export * from "./file.schema";
 
+// Runtime configuration validation
+export * from "./ConfigurationValueSchemas";
+export * from "./validateFieldValue";
+export * from "./validateConfigurationValues";
+export * from "./validatePartialConfigurationValues";
+
 // Type inference exports
 export * from "./InferredTextField";
 export * from "./InferredSecureTextField";
