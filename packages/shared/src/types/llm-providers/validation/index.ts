@@ -28,6 +28,9 @@ export * from "./createValidResult";
 export * from "./createInvalidResult";
 export * from "./createFieldError";
 export * from "./getDefaultErrorMessage";
+export * from "./validateProvidersFile";
+export * from "./createEmptyProvidersFile";
+export * from "./isValidProvidersFile";
 
 // Field validation schemas
 export * from "./BaseFieldConfigSchema";
@@ -41,6 +44,7 @@ export * from "./LlmFieldConfigSchemaWithRefinements";
 export * from "./LlmProviderMetadataSchema";
 export * from "./LlmProviderConfigurationSchema";
 export * from "./LlmProviderConfigSchema";
+export * from "./file.schema";
 
 // Type inference exports
 export * from "./InferredTextField";
@@ -50,3 +54,4 @@ export * from "./InferredLlmFieldConfig";
 export * from "./InferredLlmProviderMetadata";
 export * from "./InferredLlmProviderConfiguration";
 export * from "./InferredLlmProviderConfig";
+export * from "./InferredLlmProvidersFile";
