@@ -35,8 +35,6 @@ export const getDefaultErrorMessage = (
       "Field value contains insecure content",
     [LlmValidationErrorCode.ENCRYPTION_FAILED]:
       "Failed to encrypt secure field",
-    [LlmValidationErrorCode.WEAK_PASSWORD]:
-      "Password does not meet strength requirements",
   };
   return messages[code] || "Validation error";
 };

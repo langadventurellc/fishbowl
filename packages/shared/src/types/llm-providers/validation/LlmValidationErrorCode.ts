@@ -42,6 +42,4 @@ export enum LlmValidationErrorCode {
   INSECURE_VALUE = "INSECURE_VALUE",
   /** Failed to encrypt secure field */
   ENCRYPTION_FAILED = "ENCRYPTION_FAILED",
-  /** Password does not meet strength requirements */
-  WEAK_PASSWORD = "WEAK_PASSWORD",
 }

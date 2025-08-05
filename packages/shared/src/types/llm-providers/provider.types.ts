@@ -8,18 +8,18 @@
  */
 
 // Branded types
-export * from "./ProviderId";
 export * from "./InstanceId";
+export * from "./ProviderId";
 
 // Type constructors
-export * from "./createProviderId";
 export * from "./createInstanceId";
+export * from "./createProviderId";
 
 // Type guards
 export * from "./isValidProvider";
 
 // Re-export existing types for backward compatibility
-export * from "./LlmProviderId";
-export * from "./LlmProviderMetadata";
 export * from "./LlmProviderConfiguration";
 export * from "./LlmProviderDefinition";
+export * from "./LlmProviderId";
+export * from "./LlmProviderMetadata";
