@@ -85,4 +85,8 @@ export * from "./isSchemaVersionCompatible";
 export * from "./validationService";
 
 // Field validators
-export * from "./fieldValidators";
+export * from "./BaseFieldValidator";
+export * from "./CheckboxFieldValidator";
+export * from "./FieldValidatorFactory";
+export * from "./SecureTextFieldValidator";
+export * from "./TextFieldValidator";

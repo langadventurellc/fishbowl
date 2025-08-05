@@ -1,14 +1,14 @@
 import {
-  TextFieldValidator,
-  SecureTextFieldValidator,
   CheckboxFieldValidator,
   FieldValidatorFactory,
-} from "../fieldValidators";
-import { LlmValidationErrorCode } from "../LlmValidationErrorCode";
-import type { TextField } from "../../TextField";
-import type { SecureTextField } from "../../SecureTextField";
+  SecureTextFieldValidator,
+  TextFieldValidator,
+} from "../";
 import type { CheckboxField } from "../../CheckboxField";
 import type { LlmFieldConfig } from "../../LlmFieldConfig";
+import type { SecureTextField } from "../../SecureTextField";
+import type { TextField } from "../../TextField";
+import { LlmValidationErrorCode } from "../LlmValidationErrorCode";
 
 describe("FieldValidators", () => {
   describe("TextFieldValidator", () => {
