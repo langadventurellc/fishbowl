@@ -2,10 +2,12 @@ import { validateProvidersFile } from "../../../types/llm-providers/validation/v
 import { FileStorageService } from "../../storage/FileStorageService";
 import { FileNotFoundError } from "../../storage/errors/FileNotFoundError";
 import { LlmConfigurationLoader } from "../LlmConfigurationLoader";
+import { ConfigurationValidator } from "../validation/ConfigurationValidator";
 
 // Mock dependencies
 jest.mock("../../storage/FileStorageService");
 jest.mock("../../../types/llm-providers/validation/validateProvidersFile");
+jest.mock("../validation/ConfigurationValidator");
 
 const MockFileStorageService = FileStorageService as jest.MockedClass<
   typeof FileStorageService
@@ -13,9 +15,13 @@ const MockFileStorageService = FileStorageService as jest.MockedClass<
 const mockValidateProvidersFile = validateProvidersFile as jest.MockedFunction<
   typeof validateProvidersFile
 >;
+const MockConfigurationValidator = ConfigurationValidator as jest.MockedClass<
+  typeof ConfigurationValidator
+>;
 
 describe("LlmConfigurationLoader", () => {
   let mockFileStorage: jest.Mocked<FileStorageService>;
+  let mockValidator: jest.Mocked<ConfigurationValidator>;
   let loader: LlmConfigurationLoader;
 
   const mockValidConfig = {
@@ -51,6 +57,13 @@ describe("LlmConfigurationLoader", () => {
     } as unknown as jest.Mocked<FileStorageService>;
     MockFileStorageService.mockImplementation(() => mockFileStorage);
 
+    // Mock ConfigurationValidator
+    mockValidator = {
+      validateConfigurationFile: jest.fn(),
+      createUserFriendlyError: jest.fn(),
+    } as unknown as jest.Mocked<ConfigurationValidator>;
+    MockConfigurationValidator.mockImplementation(() => mockValidator);
+
     // Mock validateProvidersFile to return success by default
     mockValidateProvidersFile.mockReturnValue({
       success: true,
@@ -71,7 +84,10 @@ describe("LlmConfigurationLoader", () => {
     it("should create loader with default options", () => {
       loader = new LlmConfigurationLoader("test-config.json");
 
+      // FileStorageService should be called once for the loader
+      // ConfigurationValidator should be created with default options
       expect(MockFileStorageService).toHaveBeenCalledTimes(1);
+      expect(MockConfigurationValidator).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -81,23 +97,40 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should load configuration on first initialization", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
 
-      expect(mockFileStorage.readJsonFile).toHaveBeenCalledWith(
+      expect(mockValidator.validateConfigurationFile).toHaveBeenCalledWith(
         "test-config.json",
       );
-      expect(mockValidateProvidersFile).toHaveBeenCalledWith(mockValidConfig);
     });
 
     it("should skip loading on subsequent initialization calls", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result for first call
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       await loader.initialize();
 
-      expect(mockFileStorage.readJsonFile).toHaveBeenCalledTimes(1);
+      expect(mockValidator.validateConfigurationFile).toHaveBeenCalledTimes(1);
     });
 
     it("should handle missing file gracefully", async () => {
@@ -105,7 +138,11 @@ describe("LlmConfigurationLoader", () => {
         "test-config.json",
         "read",
       );
-      mockFileStorage.readJsonFile.mockRejectedValue(fileNotFoundError);
+
+      // Mock validator to return error result for missing file
+      mockValidator.validateConfigurationFile.mockRejectedValue(
+        fileNotFoundError,
+      );
 
       await loader.initialize();
       const providers = await loader.getProviders();
@@ -126,7 +163,16 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should return providers from loaded configuration", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       const providers = await loader.getProviders();
@@ -136,10 +182,16 @@ describe("LlmConfigurationLoader", () => {
 
     it("should return empty array when no providers loaded", async () => {
       const emptyConfig = { version: "1.0.0", providers: [] };
-      mockFileStorage.readJsonFile.mockResolvedValue(emptyConfig);
-      mockValidateProvidersFile.mockReturnValue({
-        success: true,
+
+      // Mock successful validation result with empty providers
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
         data: emptyConfig,
+        metadata: {
+          providerCount: 0,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
       });
 
       await loader.initialize();
@@ -161,7 +213,16 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should return specific provider by ID", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       const provider = await loader.getProvider("openai");
@@ -170,7 +231,16 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should return undefined for non-existent provider", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       const provider = await loader.getProvider("nonexistent");
@@ -191,7 +261,16 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should return models for existing provider", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       const models = await loader.getModelsForProvider("openai");
@@ -200,7 +279,16 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should return empty object for non-existent provider", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       const models = await loader.getModelsForProvider("nonexistent");
@@ -215,7 +303,16 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should reload configuration from file", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock initial successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
 
@@ -232,10 +329,15 @@ describe("LlmConfigurationLoader", () => {
         ],
       };
 
-      mockFileStorage.readJsonFile.mockResolvedValue(updatedConfig);
-      mockValidateProvidersFile.mockReturnValue({
-        success: true,
+      // Mock updated validation result for reload
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
         data: updatedConfig,
+        metadata: {
+          providerCount: 2,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
       });
 
       await loader.reload();
@@ -249,7 +351,17 @@ describe("LlmConfigurationLoader", () => {
   describe("dispose", () => {
     it("should clear cache when disposed", async () => {
       loader = new LlmConfigurationLoader("test-config.json");
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       const providersBeforeDispose = await loader.getProviders();
@@ -270,15 +382,24 @@ describe("LlmConfigurationLoader", () => {
     });
 
     it("should use cache for repeated operations", async () => {
-      mockFileStorage.readJsonFile.mockResolvedValue(mockValidConfig);
+      // Mock successful validation result
+      mockValidator.validateConfigurationFile.mockResolvedValue({
+        isValid: true,
+        data: mockValidConfig,
+        metadata: {
+          providerCount: 1,
+          schemaVersion: "1.0.0",
+          validationDuration: 10,
+        },
+      });
 
       await loader.initialize();
       await loader.getProviders();
       await loader.getProvider("openai");
       await loader.getModelsForProvider("openai");
 
-      // File should only be read once during initialization
-      expect(mockFileStorage.readJsonFile).toHaveBeenCalledTimes(1);
+      // Validator should only be called once during initialization
+      expect(mockValidator.validateConfigurationFile).toHaveBeenCalledTimes(1);
     });
   });
 });

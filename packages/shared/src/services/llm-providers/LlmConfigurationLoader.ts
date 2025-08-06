@@ -1,13 +1,13 @@
-import { ZodError } from "zod";
 import { createLoggerSync } from "../../logging/createLoggerSync";
 import type { LlmProviderDefinition } from "../../types/llm-providers/LlmProviderDefinition";
-import { validateProvidersFile } from "../../types/llm-providers/validation/validateProvidersFile";
+import type { InferredLlmProvidersFile } from "../../types/llm-providers/validation/InferredLlmProvidersFile";
 import { FileStorageService } from "../storage/FileStorageService";
 import { FileNotFoundError } from "../storage/errors/FileNotFoundError";
 import { ConfigurationCache } from "./cache/ConfigurationCache";
 import { ConfigurationLoadError } from "./errors/ConfigurationLoadError";
-import type { ValidationErrorDetail } from "./errors/ValidationErrorDetail";
 import type { LoaderOptions } from "./types/LoaderOptions";
+import { ConfigurationValidator } from "./validation/ConfigurationValidator";
+import type { ValidationOptions } from "./validation/ValidationOptions";
 
 /**
  * Service for loading and managing LLM provider configurations from JSON files.
@@ -16,6 +16,7 @@ import type { LoaderOptions } from "./types/LoaderOptions";
 export class LlmConfigurationLoader {
   private cache: ConfigurationCache;
   private fileStorage: FileStorageService;
+  private validator: ConfigurationValidator;
   private isInitialized: boolean = false;
   private readonly logger = createLoggerSync({
     context: { metadata: { component: "LlmConfigurationLoader" } },
@@ -27,6 +28,16 @@ export class LlmConfigurationLoader {
   ) {
     this.fileStorage = new FileStorageService();
     this.cache = new ConfigurationCache(options.cacheEnabled ?? true);
+
+    const validationOptions: ValidationOptions = {
+      mode: this.isDevelopment() ? "development" : "production",
+      includeStackTrace: this.isDevelopment(),
+      includeRawData: this.isDevelopment(),
+      maxErrorCount: 20,
+      enableWarnings: true,
+    };
+
+    this.validator = new ConfigurationValidator(validationOptions);
   }
 
   /**
@@ -108,27 +119,48 @@ export class LlmConfigurationLoader {
         return;
       }
 
-      // Read file
-      const rawData = await this.fileStorage.readJsonFile(this.filePath);
+      // Use new validator for comprehensive validation
+      const validationResult = await this.validator.validateConfigurationFile(
+        this.filePath,
+      );
 
-      // Validate with detailed errors
-      const validationResult = validateProvidersFile(rawData);
+      if (!validationResult.isValid) {
+        const errorMessage = this.isDevelopment()
+          ? this.validator.createUserFriendlyError(validationResult.errors)
+          : "Invalid configuration file format";
 
-      if (!validationResult.success) {
         throw new ConfigurationLoadError(
-          "Invalid configuration file format",
+          errorMessage,
           this.filePath,
-          this.formatValidationErrors(validationResult.error),
+          validationResult.errors?.map((e) => ({
+            path: e.path,
+            message: e.message,
+            code: e.code,
+          })),
         );
       }
 
+      // Log warnings if present
+      if (validationResult.warnings && validationResult.warnings.length > 0) {
+        validationResult.warnings.forEach((warning) => {
+          this.logger.warn(`Configuration warning: ${warning.message}`, {
+            type: warning.type,
+            path: warning.path,
+          });
+        });
+      }
+
       // Cache validated data
-      this.cache.set(this.filePath, validationResult.data);
+      this.cache.set(
+        this.filePath,
+        validationResult.data as InferredLlmProvidersFile,
+      );
 
       const loadTime = Date.now() - startTime;
       this.logger.info(`Configuration loaded in ${loadTime}ms`, {
-        providers: validationResult.data.providers.length,
-        version: validationResult.data.version,
+        providers: validationResult.metadata?.providerCount,
+        version: validationResult.metadata?.schemaVersion,
+        warnings: validationResult.warnings?.length || 0,
       });
     } catch (error) {
       if (error instanceof FileNotFoundError) {
@@ -157,17 +189,6 @@ export class LlmConfigurationLoader {
     } catch (error) {
       this.logger.error("Failed to reload configuration", error as Error);
     }
-  }
-
-  /**
-   * Convert Zod validation errors to structured format.
-   */
-  private formatValidationErrors(zodError: ZodError): ValidationErrorDetail[] {
-    return zodError.issues.map((issue) => ({
-      path: issue.path.join("."),
-      message: issue.message,
-      code: issue.code,
-    }));
   }
 
   /**
