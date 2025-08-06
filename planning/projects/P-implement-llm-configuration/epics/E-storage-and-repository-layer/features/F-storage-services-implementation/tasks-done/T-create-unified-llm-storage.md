@@ -2,7 +2,7 @@
 kind: task
 id: T-create-unified-llm-storage
 title: Create unified LLM storage service with shared architecture
-status: completed
+status: done
 priority: normal
 prerequisites:
   - T-implement-llmsecurestorage-class
