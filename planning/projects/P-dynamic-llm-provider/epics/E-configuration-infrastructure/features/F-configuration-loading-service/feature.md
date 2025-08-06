@@ -2,13 +2,13 @@
 kind: feature
 id: F-configuration-loading-service
 title: Configuration Loading Service
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-core-type-definitions
   - F-json-schema-and-validation
 created: "2025-08-04T19:38:37.835082"
-updated: "2025-08-04T19:38:37.835082"
+updated: "2025-08-06T08:30:07.755552+00:00"
 schema_version: "1.1"
 parent: E-configuration-infrastructure
 ---
