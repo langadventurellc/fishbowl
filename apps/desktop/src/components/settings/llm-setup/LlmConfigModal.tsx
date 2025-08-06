@@ -1,7 +1,6 @@
 import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
@@ -11,7 +10,6 @@ import {
   useAccessibilityAnnouncements,
 } from "../../../utils";
 import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +27,8 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import { OpenAiProviderFields } from "./OpenAiProviderFields";
+import { AnthropicProviderFields } from "./AnthropicProviderFields";
 
 const llmConfigSchema = z.object({
   customName: z.string(),
@@ -37,7 +37,7 @@ const llmConfigSchema = z.object({
   useAuthHeader: z.boolean(),
 });
 
-type LlmConfigFormData = z.infer<typeof llmConfigSchema>;
+export type LlmConfigFormData = z.infer<typeof llmConfigSchema>;
 
 export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   isOpen,
@@ -47,8 +47,6 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   initialData,
   onSave,
 }) => {
-  const [showApiKey, setShowApiKey] = useState(false);
-
   // Generate consistent ARIA IDs
   const ariaIds = generateDialogAriaIds(`llm-config-modal-${provider}`);
 
@@ -115,7 +113,6 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
         useAuthHeader: initialData?.useAuthHeader || false,
       });
-      setShowApiKey(false);
     }
   }, [isOpen, provider, initialData, form, getDefaultBaseUrl]);
 
@@ -167,7 +164,7 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g., My ChatGPT API"
+                      placeholder={`e.g., My ${providerName} API`}
                       autoComplete="off"
                     />
                   </FormControl>
@@ -176,98 +173,12 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
               )}
             />
 
-            {/* API Key Field */}
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>API Key</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        type={showApiKey ? "text" : "password"}
-                        placeholder="Enter your API key"
-                        className="pr-10"
-                        autoComplete="off"
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                        spellCheck="false"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-transparent h-8 w-8"
-                        onClick={() => {
-                          const newState = !showApiKey;
-                          setShowApiKey(newState);
-                          announceStateChange(
-                            newState
-                              ? "API key is now visible"
-                              : "API key is now hidden",
-                          );
-                        }}
-                        aria-label={
-                          showApiKey ? "Hide API key" : "Show API key"
-                        }
-                        aria-pressed={showApiKey}
-                      >
-                        {showApiKey ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Base URL Field */}
-            <FormField
-              control={form.control}
-              name="baseUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Base URL</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="url"
-                      placeholder={getDefaultBaseUrl}
-                      autoComplete="url"
-                      autoCapitalize="none"
-                      autoCorrect="off"
-                      spellCheck="false"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Authorization Header Checkbox */}
-            <FormField
-              control={form.control}
-              name="useAuthHeader"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Send API key in authorization header</FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
+            {/* Provider-specific fields */}
+            {provider === "openai" ? (
+              <OpenAiProviderFields control={form.control} />
+            ) : (
+              <AnthropicProviderFields control={form.control} />
+            )}
 
             <DialogFooter>
               <Button type="button" variant="ghost" onClick={handleCancel}>

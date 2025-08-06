@@ -28,7 +28,7 @@ import { AgentsSection } from "./agents/AgentsSection";
 import { AppearanceSettings } from "./AppearanceSettings";
 import { DefaultSettings } from "./DefaultSettings";
 import { GeneralSettings } from "./GeneralSettings";
-import { LlmSetupSection } from "./LlmSetupSection";
+import { LlmSetupSection } from "./llm-setup";
 import { PersonalitiesSection } from "./personalities";
 import { RolesSection } from "./roles/RolesSection";
 

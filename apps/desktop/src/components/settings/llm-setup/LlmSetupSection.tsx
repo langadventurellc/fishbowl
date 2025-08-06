@@ -9,9 +9,11 @@
  *
  * @module components/settings/LlmSetupSection
  */
-import React, { useState, useCallback } from "react";
-import { cn } from "../../lib/utils";
-import { Button } from "../ui/button";
+import type { LlmConfigData } from "@fishbowl-ai/ui-shared";
+import { useCallback, useState } from "react";
+import { EmptyLlmState, LlmConfigModal, LlmProviderCard } from ".";
+import { cn } from "../../../lib/utils";
+import { generateId } from "../../../utils/generateId";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -21,10 +23,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "../ui/alert-dialog";
-import { EmptyLlmState, LlmConfigModal, LlmProviderCard } from "./llm-setup";
-import type { LlmConfigData } from "@fishbowl-ai/ui-shared";
-import { generateId } from "../../utils/generateId";
+} from "../../ui/alert-dialog";
+import { Button } from "../../ui/button";
 
 interface LlmProviderConfig extends LlmConfigData {
   id: string;
