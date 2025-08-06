@@ -11,7 +11,6 @@ import type { ValidationOptions } from "./validation/ValidationOptions";
 import { ResilienceLayer } from "./resilience/ResilienceLayer";
 import type { ConfigurationStatus } from "./types/ConfigurationStatus";
 import type { ResilienceMetrics } from "./resilience/ResilienceMetrics";
-import { CircuitState } from "./resilience/CircuitState";
 
 /**
  * Service for loading and managing LLM provider configurations from JSON files.
@@ -171,8 +170,8 @@ export class LlmConfigurationLoader {
       fileExists: true, // TODO: Add fileExists check when available
       resilience: {
         retryCount: metrics.retryAttempts,
-        circuitBreakerState: CircuitState.CLOSED, // TODO: Get actual circuit breaker state
-        hasFallback: false, // TODO: Check fallback availability
+        circuitBreakerState: this.resilienceLayer.getCircuitBreakerState(),
+        hasFallback: this.resilienceLayer.hasFallback(this.filePath),
       },
       cache: {
         isValid: this.cache.isValid(),

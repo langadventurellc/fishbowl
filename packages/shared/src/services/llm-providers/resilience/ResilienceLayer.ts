@@ -5,6 +5,7 @@ import { RetryHandler } from "./RetryHandler";
 import { CircuitBreaker } from "./CircuitBreaker";
 import { FallbackManager } from "./FallbackManager";
 import { ErrorClassifier } from "./ErrorClassifier";
+import { CircuitState } from "./CircuitState";
 import type { ResilienceOptions } from "./ResilienceOptions";
 import type { ResilienceMetrics } from "./ResilienceMetrics";
 
@@ -96,6 +97,14 @@ export class ResilienceLayer {
 
   getMetrics(): ResilienceMetrics {
     return { ...this.metrics };
+  }
+
+  getCircuitBreakerState(): CircuitState {
+    return this.circuitBreaker.getState();
+  }
+
+  hasFallback(filePath: string): boolean {
+    return this.fallbackManager.hasFallback(filePath);
   }
 
   resetMetrics(): void {
