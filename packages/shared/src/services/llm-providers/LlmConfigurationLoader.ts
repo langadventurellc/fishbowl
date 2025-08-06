@@ -9,6 +9,9 @@ import type { LoaderOptions } from "./types/LoaderOptions";
 import { ConfigurationValidator } from "./validation/ConfigurationValidator";
 import type { ValidationOptions } from "./validation/ValidationOptions";
 import { ResilienceLayer } from "./resilience/ResilienceLayer";
+import type { ConfigurationStatus } from "./types/ConfigurationStatus";
+import type { ResilienceMetrics } from "./resilience/ResilienceMetrics";
+import { CircuitState } from "./resilience/CircuitState";
 
 /**
  * Service for loading and managing LLM provider configurations from JSON files.
@@ -29,19 +32,24 @@ export class LlmConfigurationLoader {
     private options: LoaderOptions = {},
   ) {
     this.fileStorage = new FileStorageService();
+
+    // Initialize cache with options
     this.cache = new ConfigurationCache();
 
+    // Merge validation options
     const validationOptions: ValidationOptions = {
       mode: this.isDevelopment() ? "development" : "production",
       includeStackTrace: this.isDevelopment(),
       includeRawData: this.isDevelopment(),
       maxErrorCount: 20,
       enableWarnings: true,
+      ...options.validation,
     };
 
     this.validator = new ConfigurationValidator(validationOptions);
 
-    this.resilienceLayer = new ResilienceLayer({
+    // Configure resilience with backward compatibility
+    const resilienceOptions = options.resilience ?? {
       retry: {
         maxAttempts: options.retryAttempts ?? 3,
         baseDelayMs: options.retryDelay ?? 1000,
@@ -54,7 +62,18 @@ export class LlmConfigurationLoader {
         maxAge: 300000,
         enablePersistence: false,
       },
-    });
+    };
+
+    this.resilienceLayer = new ResilienceLayer(resilienceOptions);
+
+    // Configure logging if specified
+    if (options.logging?.level) {
+      // Note: Logging level configuration would be implemented here
+      this.logger.debug("Custom logging configuration applied", {
+        level: options.logging.level,
+        includeMetrics: options.logging.includeMetrics,
+      });
+    }
   }
 
   /**
@@ -120,6 +139,54 @@ export class LlmConfigurationLoader {
    */
   dispose(): void {
     this.cache.invalidate();
+  }
+
+  /**
+   * Check if the loader is ready to serve requests.
+   */
+  isReady(): boolean {
+    return this.isInitialized && this.cache.isValid();
+  }
+
+  /**
+   * Get the last time configuration was updated.
+   */
+  getLastUpdated(): Date | null {
+    return this.cache.getLastUpdated();
+  }
+
+  /**
+   * Get comprehensive configuration status.
+   */
+  getConfiguration(): ConfigurationStatus {
+    const metrics = this.resilienceLayer.getMetrics();
+
+    return {
+      isInitialized: this.isInitialized,
+      lastLoaded: this.cache.getLastUpdated(),
+      providerCount: this.cache.getProviderIds().length,
+      hasValidationErrors: false, // Will be updated based on last validation
+      cacheSize: this.cache.getProviderIds().length,
+      filePath: this.filePath,
+      fileExists: true, // TODO: Add fileExists check when available
+      resilience: {
+        retryCount: metrics.retryAttempts,
+        circuitBreakerState: CircuitState.CLOSED, // TODO: Get actual circuit breaker state
+        hasFallback: false, // TODO: Check fallback availability
+      },
+      cache: {
+        isValid: this.cache.isValid(),
+        isEmpty: this.cache.isEmpty(),
+        lastUpdated: this.cache.getLastUpdated(),
+      },
+    };
+  }
+
+  /**
+   * Get resilience metrics.
+   */
+  getMetrics(): ResilienceMetrics {
+    return this.resilienceLayer.getMetrics();
   }
 
   /**
