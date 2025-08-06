@@ -1,49 +1,108 @@
-import type { InferredLlmProvidersFile } from "../../../types/llm-providers/validation/InferredLlmProvidersFile";
+import type { LlmProviderDefinition } from "../../../types/llm-providers/LlmProviderDefinition";
+import { createLoggerSync } from "../../../logging/createLoggerSync";
+import type { StructuredLogger } from "../../../logging/types/StructuredLogger";
 
 /**
- * In-memory cache for LLM provider configurations.
- * Provides fast access to validated configuration data.
+ * In-memory cache for LLM provider configurations with enhanced provider-level operations.
+ * Provides O(1) lookups, staleness management, and atomic updates.
  */
 export class ConfigurationCache {
-  private cache: Map<string, InferredLlmProvidersFile> = new Map();
+  private providers: Map<string, LlmProviderDefinition> = new Map();
+  private lastUpdated: Date | null = null;
+  private isStale: boolean = true;
+  private readonly logger: StructuredLogger;
 
-  constructor(private enabled: boolean = true) {}
-
-  /**
-   * Check if a configuration is cached for the given key.
-   */
-  has(key: string): boolean {
-    return this.enabled && this.cache.has(key);
+  constructor() {
+    this.logger = createLoggerSync({
+      context: { metadata: { component: "ConfigurationCache" } },
+    });
   }
 
   /**
-   * Get cached configuration for the given key.
+   * Set providers in cache atomically
    */
-  get(key: string): InferredLlmProvidersFile | undefined {
-    if (!this.enabled) return undefined;
-    return this.cache.get(key);
+  set(providers: LlmProviderDefinition[]): void {
+    this.logger.debug("Setting cache with providers", {
+      count: providers.length,
+    });
+
+    // Atomic update - clear and rebuild
+    this.providers.clear();
+    providers.forEach((provider) => {
+      this.providers.set(provider.id, provider);
+    });
+
+    this.lastUpdated = new Date();
+    this.isStale = false;
   }
 
   /**
-   * Store configuration in cache for the given key.
+   * Get all providers from cache
    */
-  set(key: string, value: InferredLlmProvidersFile): void {
-    if (this.enabled) {
-      this.cache.set(key, value);
+  get(): LlmProviderDefinition[] | null {
+    if (this.isEmpty() || !this.isValid()) {
+      return null;
     }
+    return Array.from(this.providers.values());
   }
 
   /**
-   * Clear all cached configurations.
+   * Get specific provider by ID with O(1) lookup
    */
-  clear(): void {
-    this.cache.clear();
+  getProvider(id: string): LlmProviderDefinition | undefined {
+    return this.providers.get(id);
   }
 
   /**
-   * Remove cached configuration for specific key.
+   * Invalidate cache and mark as stale
    */
-  invalidate(key: string): void {
-    this.cache.delete(key);
+  invalidate(): void {
+    this.logger.debug("Invalidating cache");
+    this.providers.clear();
+    this.isStale = true;
+    this.lastUpdated = null;
+  }
+
+  /**
+   * Check if cache is valid (not stale and has data)
+   */
+  isValid(): boolean {
+    return !this.isStale && this.providers.size > 0;
+  }
+
+  /**
+   * Check if cache is empty
+   */
+  isEmpty(): boolean {
+    return this.providers.size === 0;
+  }
+
+  /**
+   * Get last update timestamp
+   */
+  getLastUpdated(): Date | null {
+    return this.lastUpdated;
+  }
+
+  /**
+   * Extract models for a specific provider
+   */
+  getModelsForProvider(providerId: string): Record<string, string> {
+    const provider = this.providers.get(providerId);
+    return provider?.models ?? {};
+  }
+
+  /**
+   * Get all provider IDs
+   */
+  getProviderIds(): string[] {
+    return Array.from(this.providers.keys());
+  }
+
+  /**
+   * Check if provider exists in cache
+   */
+  hasProvider(id: string): boolean {
+    return this.providers.has(id);
   }
 }

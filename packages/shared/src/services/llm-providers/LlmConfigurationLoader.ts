@@ -24,10 +24,10 @@ export class LlmConfigurationLoader {
 
   constructor(
     private filePath: string,
-    options: LoaderOptions = {},
+    _options: LoaderOptions = {},
   ) {
     this.fileStorage = new FileStorageService();
-    this.cache = new ConfigurationCache(options.cacheEnabled ?? true);
+    this.cache = new ConfigurationCache();
 
     const validationOptions: ValidationOptions = {
       mode: this.isDevelopment() ? "development" : "production",
@@ -64,8 +64,7 @@ export class LlmConfigurationLoader {
    */
   async getProviders(): Promise<LlmProviderDefinition[]> {
     this.ensureInitialized();
-    const config = this.cache.get(this.filePath);
-    return config?.providers ?? [];
+    return this.cache.get() ?? [];
   }
 
   /**
@@ -95,7 +94,7 @@ export class LlmConfigurationLoader {
    */
   async reload(): Promise<void> {
     this.logger.debug("Reloading configuration");
-    this.cache.invalidate(this.filePath);
+    this.cache.invalidate();
     await this.loadConfiguration();
   }
 
@@ -103,7 +102,7 @@ export class LlmConfigurationLoader {
    * Clean up resources when done with the loader.
    */
   dispose(): void {
-    this.cache.clear();
+    this.cache.invalidate();
   }
 
   /**
@@ -114,7 +113,7 @@ export class LlmConfigurationLoader {
       const startTime = Date.now();
 
       // Check cache first
-      if (this.cache.has(this.filePath)) {
+      if (this.cache.isValid()) {
         this.logger.debug("Using cached configuration");
         return;
       }
@@ -151,10 +150,8 @@ export class LlmConfigurationLoader {
       }
 
       // Cache validated data
-      this.cache.set(
-        this.filePath,
-        validationResult.data as InferredLlmProvidersFile,
-      );
+      const providersFile = validationResult.data as InferredLlmProvidersFile;
+      this.cache.set(providersFile.providers);
 
       const loadTime = Date.now() - startTime;
       this.logger.info(`Configuration loaded in ${loadTime}ms`, {
@@ -168,10 +165,7 @@ export class LlmConfigurationLoader {
         this.logger.warn(
           "Configuration file not found, using empty provider list",
         );
-        this.cache.set(this.filePath, {
-          version: "1.0.0",
-          providers: [],
-        });
+        this.cache.set([]);
         return;
       }
 
