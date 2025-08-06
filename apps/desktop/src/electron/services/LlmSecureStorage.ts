@@ -1,7 +1,8 @@
-import { createLoggerSync } from "@fishbowl-ai/shared";
+import {
+  createLoggerSync,
+  type SecureStorageInterface,
+} from "@fishbowl-ai/shared";
 import { safeStorage } from "electron";
-import type { SecureStorageInterface } from "../../types/llmStorage";
-import { StorageError } from "../../types/llmStorage";
 
 /**
  * Secure storage service using Electron's safeStorage API.
@@ -37,21 +38,18 @@ export class LlmSecureStorage implements SecureStorageInterface {
   store(id: string, apiKey: string): void {
     // Validate inputs
     if (!id || typeof id !== "string") {
-      throw new StorageError("Invalid ID provided", "INVALID_INPUT");
+      throw new Error("Invalid ID provided");
     }
 
     if (!apiKey || typeof apiKey !== "string") {
-      throw new StorageError("Invalid API key provided", "INVALID_INPUT");
+      throw new Error("Invalid API key provided");
     }
 
     const storageKey = this.getStorageKey(id);
 
     try {
       if (!this.isAvailable()) {
-        throw new StorageError(
-          "Secure storage is not available on this system",
-          "STORAGE_UNAVAILABLE",
-        );
+        throw new Error("Secure storage is not available on this system");
       }
 
       // Encrypt the API key
@@ -69,15 +67,12 @@ export class LlmSecureStorage implements SecureStorageInterface {
 
       this.logger.debug("API key stored successfully", { id });
     } catch (error) {
-      if (error instanceof StorageError) {
+      if (error instanceof Error) {
         throw error;
       }
 
       this.logger.error("Failed to store API key", error as Error);
-      throw new StorageError(
-        "Failed to encrypt and store API key",
-        "ENCRYPTION_FAILED",
-      );
+      throw new Error("Failed to encrypt and store API key");
     }
   }
 
@@ -126,7 +121,7 @@ export class LlmSecureStorage implements SecureStorageInterface {
       return decryptedApiKey;
     } catch (error) {
       this.logger.error("Failed to decrypt API key", error as Error);
-      throw new StorageError("Failed to decrypt API key", "DECRYPTION_FAILED");
+      throw new Error("Failed to decrypt API key");
     }
   }
 
@@ -157,7 +152,7 @@ export class LlmSecureStorage implements SecureStorageInterface {
       this.logger.debug("API key deletion attempted", { id, deleted });
     } catch (error) {
       this.logger.error("Failed to delete API key", error as Error);
-      throw new StorageError("Failed to delete API key", "DELETION_FAILED");
+      throw new Error("Failed to delete API key");
     }
   }
 

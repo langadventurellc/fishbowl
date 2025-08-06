@@ -1,6 +1,6 @@
 /**
  * Configuration metadata for LLM providers.
- * Stored in JSON file alongside encrypted API keys.
+ * Stored in JSON file alongside encrypted API keys in secure storage.
  */
 export interface LlmConfigMetadata {
   /** Unique identifier linking to secure storage */

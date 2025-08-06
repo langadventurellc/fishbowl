@@ -1,6 +1,5 @@
 import { safeStorage } from "electron";
 import { LlmSecureStorage } from "../LlmSecureStorage";
-import { StorageError } from "../../../types/llmStorage";
 
 // Mock electron
 jest.mock("electron", () => ({
@@ -81,38 +80,30 @@ describe("LlmSecureStorage", () => {
       );
     });
 
-    it("should throw StorageError for invalid ID", () => {
-      expect(() => storage.store("", "api-key")).toThrow(StorageError);
-      expect(() => storage.store(null as any, "api-key")).toThrow(StorageError);
+    it("should throw Error for invalid ID", () => {
+      expect(() => storage.store("", "api-key")).toThrow(Error);
+      expect(() => storage.store(null as any, "api-key")).toThrow(Error);
     });
 
-    it("should throw StorageError for invalid API key", () => {
-      expect(() => storage.store("id", "")).toThrow(StorageError);
-      expect(() => storage.store("id", null as any)).toThrow(StorageError);
+    it("should throw Error for invalid API key", () => {
+      expect(() => storage.store("id", "")).toThrow(Error);
+      expect(() => storage.store("id", null as any)).toThrow(Error);
     });
 
-    it("should throw StorageError when encryption is not available", () => {
+    it("should throw Error when encryption is not available", () => {
       (safeStorage.isEncryptionAvailable as jest.Mock).mockReturnValue(false);
 
       expect(() => storage.store("id", "api-key")).toThrow(
-        new StorageError(
-          "Secure storage is not available on this system",
-          "STORAGE_UNAVAILABLE",
-        ),
+        "Secure storage is not available on this system",
       );
     });
 
-    it("should throw StorageError when encryption fails", () => {
+    it("should throw Error when encryption fails", () => {
       (safeStorage.encryptString as jest.Mock).mockImplementation(() => {
         throw new Error("Encryption failed");
       });
 
-      expect(() => storage.store("id", "api-key")).toThrow(
-        new StorageError(
-          "Failed to encrypt and store API key",
-          "ENCRYPTION_FAILED",
-        ),
-      );
+      expect(() => storage.store("id", "api-key")).toThrow("Encryption failed");
     });
   });
 
@@ -168,7 +159,7 @@ describe("LlmSecureStorage", () => {
       });
 
       expect(() => storage.retrieve("test-id")).toThrow(
-        new StorageError("Failed to decrypt API key", "DECRYPTION_FAILED"),
+        "Failed to decrypt API key",
       );
     });
   });

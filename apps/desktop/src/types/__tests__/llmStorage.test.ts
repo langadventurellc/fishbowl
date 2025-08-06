@@ -2,29 +2,9 @@ import type {
   LlmConfigMetadata,
   SecureStorageInterface,
   StorageResult,
-} from "../llmStorage";
-import { StorageError } from "../llmStorage";
+} from "@fishbowl-ai/shared";
 
 describe("llmStorage types", () => {
-  describe("StorageError", () => {
-    test("should create error instance with code", () => {
-      const error = new StorageError("Encryption failed", "ENCRYPTION_FAILED");
-
-      expect(error).toBeInstanceOf(Error);
-      expect(error).toBeInstanceOf(StorageError);
-      expect(error.message).toBe("Encryption failed");
-      expect(error.code).toBe("ENCRYPTION_FAILED");
-      expect(error.name).toBe("StorageError");
-    });
-
-    test("should maintain stack trace", () => {
-      const error = new StorageError("Test error", "TEST_CODE");
-
-      expect(error.stack).toBeDefined();
-      expect(error.stack).toContain("StorageError");
-    });
-  });
-
   describe("LlmConfigMetadata interface", () => {
     test("should be implementable with required fields", () => {
       const metadata: LlmConfigMetadata = {

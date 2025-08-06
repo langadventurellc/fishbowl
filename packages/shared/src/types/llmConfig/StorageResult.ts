@@ -1,6 +1,6 @@
 /**
  * Generic result type for storage operations.
- * Provides consistent response format across all operations.
+ * Provides consistent response format across all LLM storage operations.
  */
 export interface StorageResult<T> {
   /** Indicates whether the operation succeeded */
