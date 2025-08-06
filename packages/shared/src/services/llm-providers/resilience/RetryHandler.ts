@@ -1,6 +1,6 @@
-import { setTimeout } from "node:timers/promises";
 import { createLoggerSync } from "../../../logging/createLoggerSync";
 import type { StructuredLogger } from "../../../logging/types/StructuredLogger";
+import { delay } from "../../../utils/delay";
 import type { RetryOptions } from "./RetryOptions";
 import type { RetryContext } from "./RetryContext";
 
@@ -68,7 +68,7 @@ export class RetryHandler {
   }
 
   private async delay(ms: number): Promise<void> {
-    return setTimeout(ms);
+    return delay(ms);
   }
 
   private calculateBackoff(attempt: number): number {
