@@ -4,10 +4,13 @@ import {
   LlmConfigRepository,
   FileStorageService,
   NodeFileSystemBridge,
+  type LlmConfig,
+  type LlmConfigInput,
   type LlmConfigMetadata,
   type StorageResult,
   createLoggerSync,
 } from "@fishbowl-ai/shared";
+import { ZodError } from "zod";
 import { LlmSecureStorage } from "./LlmSecureStorage";
 
 /**
@@ -61,7 +64,28 @@ export class LlmStorageService {
     config: Omit<LlmConfigMetadata, "id" | "createdAt" | "updatedAt">,
     apiKey: string,
   ): Promise<StorageResult<string>> {
-    return await this.repository.saveConfiguration(config, apiKey);
+    try {
+      const input: LlmConfigInput = {
+        customName: config.customName,
+        provider: config.provider,
+        apiKey,
+        baseUrl: config.baseUrl,
+        authHeaderType: config.authHeaderType,
+      };
+
+      const createdConfig = await this.repository.create(input);
+
+      this.logger.debug("LLM configuration saved successfully", {
+        configId: createdConfig.id,
+        provider: createdConfig.provider,
+      });
+
+      return { success: true, data: createdConfig.id };
+    } catch (error) {
+      const message = this.extractErrorMessage(error);
+      this.logger.error("Failed to save LLM configuration", error as Error);
+      return { success: false, error: message };
+    }
   }
 
   /**
@@ -78,7 +102,35 @@ export class LlmStorageService {
     updates: Partial<Omit<LlmConfigMetadata, "id" | "createdAt">>,
     newApiKey?: string,
   ): Promise<StorageResult<void>> {
-    return await this.repository.updateConfiguration(id, updates, newApiKey);
+    try {
+      const input: Partial<LlmConfigInput> = {
+        customName: updates.customName,
+        provider: updates.provider,
+        baseUrl: updates.baseUrl,
+        authHeaderType: updates.authHeaderType,
+        apiKey: newApiKey,
+      };
+
+      // Remove undefined values
+      Object.keys(input).forEach((key) => {
+        if (input[key as keyof LlmConfigInput] === undefined) {
+          delete input[key as keyof LlmConfigInput];
+        }
+      });
+
+      await this.repository.update(id, input);
+
+      this.logger.debug("LLM configuration updated successfully", {
+        configId: id,
+        hasNewApiKey: !!newApiKey,
+      });
+
+      return { success: true };
+    } catch (error) {
+      const message = this.extractErrorMessage(error);
+      this.logger.error("Failed to update LLM configuration", error as Error);
+      return { success: false, error: message };
+    }
   }
 
   /**
@@ -90,7 +142,24 @@ export class LlmStorageService {
   async getConfiguration(
     id: string,
   ): Promise<StorageResult<LlmConfigMetadata | null>> {
-    return await this.repository.getConfiguration(id);
+    try {
+      const config = await this.repository.read(id);
+
+      if (!config) {
+        return { success: true, data: null };
+      }
+
+      // Remove API key to return only metadata
+      const { apiKey: _apiKey, ...metadata } = config;
+
+      this.logger.debug("LLM configuration retrieved", { configId: id });
+
+      return { success: true, data: metadata };
+    } catch (error) {
+      const message = this.extractErrorMessage(error);
+      this.logger.error("Failed to get LLM configuration", error as Error);
+      return { success: false, error: message };
+    }
   }
 
   /**
@@ -99,7 +168,17 @@ export class LlmStorageService {
    * @returns Promise resolving to all configurations or error
    */
   async getAllConfigurations(): Promise<StorageResult<LlmConfigMetadata[]>> {
-    return await this.repository.getAllConfigurations();
+    try {
+      const configs = await this.repository.list();
+
+      this.logger.debug("Loaded LLM configurations", { count: configs.length });
+
+      return { success: true, data: configs };
+    } catch (error) {
+      const message = this.extractErrorMessage(error);
+      this.logger.error("Failed to load LLM configurations", error as Error);
+      return { success: false, error: message };
+    }
   }
 
   /**
@@ -110,7 +189,69 @@ export class LlmStorageService {
    * @returns Promise resolving to success/error result
    */
   async deleteConfiguration(id: string): Promise<StorageResult<void>> {
-    return await this.repository.deleteConfiguration(id);
+    try {
+      await this.repository.delete(id);
+
+      this.logger.debug("LLM configuration deleted successfully", {
+        configId: id,
+      });
+
+      return { success: true };
+    } catch (error) {
+      const message = this.extractErrorMessage(error);
+      this.logger.error("Failed to delete LLM configuration", error as Error);
+      return { success: false, error: message };
+    }
+  }
+
+  /**
+   * Get complete configuration with decrypted API key (for internal use only).
+   * This method should not be exposed via IPC for security reasons.
+   *
+   * @param id Configuration ID to retrieve
+   * @returns Promise resolving to complete config or error
+   */
+  async getCompleteConfiguration(
+    id: string,
+  ): Promise<StorageResult<LlmConfig | null>> {
+    try {
+      const config = await this.repository.read(id);
+
+      if (config) {
+        this.logger.debug("Complete LLM configuration retrieved", {
+          configId: id,
+        });
+      }
+
+      return { success: true, data: config };
+    } catch (error) {
+      const message = this.extractErrorMessage(error);
+      this.logger.error(
+        "Failed to get complete LLM configuration",
+        error as Error,
+      );
+      return { success: false, error: message };
+    }
+  }
+
+  /**
+   * Check if a configuration exists.
+   *
+   * @param id Configuration ID to check
+   * @returns Promise resolving to existence check result
+   */
+  async configurationExists(id: string): Promise<StorageResult<boolean>> {
+    try {
+      const exists = await this.repository.exists(id);
+      return { success: true, data: exists };
+    } catch (error) {
+      const message = this.extractErrorMessage(error);
+      this.logger.error(
+        "Failed to check configuration existence",
+        error as Error,
+      );
+      return { success: false, error: message };
+    }
   }
 
   /**
@@ -120,5 +261,26 @@ export class LlmStorageService {
    */
   isSecureStorageAvailable(): boolean {
     return this.repository.isSecureStorageAvailable();
+  }
+
+  /**
+   * Extract error message from various error types.
+   * Handles Zod validation errors specially to provide detailed feedback.
+   */
+  private extractErrorMessage(error: unknown): string {
+    if (error instanceof ZodError) {
+      // Format Zod validation errors
+      const issues = error.issues.map((issue) => {
+        const path = issue.path.join(".");
+        return path ? `${path}: ${issue.message}` : issue.message;
+      });
+      return `Validation failed: ${issues.join(", ")}`;
+    }
+
+    if (error instanceof Error) {
+      return error.message;
+    }
+
+    return "Unknown error occurred";
   }
 }
