@@ -141,17 +141,22 @@ describe("LlmConfigService", () => {
   describe("read()", () => {
     it("should retrieve existing configuration", async () => {
       const config = createValidConfig();
+
+      // Initialize cache with the config
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: [config],
+      });
       mockStorageService.getCompleteConfiguration.mockResolvedValue({
         success: true,
         data: config,
       });
+      await service.initialize();
 
       const result = await service.read("test-uuid-123");
 
       expect(result).toEqual(config);
-      expect(mockStorageService.getCompleteConfiguration).toHaveBeenCalledWith(
-        "test-uuid-123",
-      );
+      // Storage should NOT be called for reads after initialization - we read from cache
     });
 
     it("should return null for non-existent configuration", async () => {
@@ -172,15 +177,16 @@ describe("LlmConfigService", () => {
       );
     });
 
-    it("should handle storage errors", async () => {
-      mockStorageService.getCompleteConfiguration.mockResolvedValue({
+    it("should handle storage errors during initialization gracefully", async () => {
+      // Mock storage failure during initialization
+      mockStorageService.getAllConfigurations.mockResolvedValue({
         success: false,
         error: "Storage error",
       });
 
-      await expect(service.read("test-id")).rejects.toThrow(
-        ConfigOperationError,
-      );
+      // read() should work with empty cache after failed initialization
+      const result = await service.read("test-id");
+      expect(result).toBeNull();
     });
   });
 
@@ -228,13 +234,7 @@ describe("LlmConfigService", () => {
         customName: "Other Config",
       };
 
-      // First call to read() - return existing config
-      mockStorageService.getCompleteConfiguration.mockResolvedValueOnce({
-        success: true,
-        data: existing1,
-      });
-
-      // Second call to list() - return both configs
+      // Initialize cache with both configs
       mockStorageService.getAllConfigurations.mockResolvedValue({
         success: true,
         data: [existing1, existing2],
@@ -247,6 +247,7 @@ describe("LlmConfigService", () => {
         success: true,
         data: existing2,
       });
+      await service.initialize();
 
       await expect(
         service.update("test-uuid-123", { customName: "Other Config" }),
@@ -301,10 +302,19 @@ describe("LlmConfigService", () => {
   describe("delete()", () => {
     it("should delete existing configuration", async () => {
       const config = createValidConfig();
+
+      // Initialize cache with the config
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: [config],
+      });
       mockStorageService.getCompleteConfiguration.mockResolvedValue({
         success: true,
         data: config,
       });
+      await service.initialize();
+
+      // Mock successful deletion
       mockStorageService.deleteConfiguration.mockResolvedValue({
         success: true,
       });
@@ -317,21 +327,33 @@ describe("LlmConfigService", () => {
     });
 
     it("should handle deletion of non-existent configuration gracefully", async () => {
-      mockStorageService.getCompleteConfiguration.mockResolvedValue({
+      // Initialize service cache first
+      mockStorageService.getAllConfigurations.mockResolvedValue({
         success: true,
-        data: null,
+        data: [],
       });
+      await service.initialize();
 
+      // Now delete a non-existent config - should not call storage since not in cache
       await expect(service.delete("non-existent")).resolves.not.toThrow();
       expect(mockStorageService.deleteConfiguration).not.toHaveBeenCalled();
     });
 
     it("should handle storage failures", async () => {
       const config = createValidConfig();
+
+      // Initialize service cache with the config
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: [config],
+      });
       mockStorageService.getCompleteConfiguration.mockResolvedValue({
         success: true,
         data: config,
       });
+      await service.initialize();
+
+      // Mock storage failure
       mockStorageService.deleteConfiguration.mockResolvedValue({
         success: false,
         error: "Delete failed",
@@ -372,13 +394,16 @@ describe("LlmConfigService", () => {
       expect(result).toEqual([]);
     });
 
-    it("should handle storage failures", async () => {
+    it("should handle storage failures during initialization", async () => {
+      // Mock storage failure during initialization - service should continue with empty cache
       mockStorageService.getAllConfigurations.mockResolvedValue({
         success: false,
         error: "List failed",
       });
 
-      await expect(service.list()).rejects.toThrow(ConfigOperationError);
+      // list() should return empty array from cache, not throw
+      const result = await service.list();
+      expect(result).toEqual([]);
     });
 
     it("should skip incomplete configurations", async () => {
@@ -645,9 +670,16 @@ describe("LlmConfigService", () => {
 
     it("should wrap unexpected errors in ConfigOperationError", async () => {
       const input = createValidInput();
-      mockStorageService.getAllConfigurations.mockRejectedValue(
-        new Error("Unexpected error"),
-      );
+
+      // Initialize cache successfully first
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: [],
+      });
+      await service.initialize();
+
+      // Then cause repository.create to throw an unexpected error
+      mockRepository.create.mockRejectedValue(new Error("Unexpected error"));
 
       const error = await service.create(input).catch((e) => e);
 

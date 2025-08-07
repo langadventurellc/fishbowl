@@ -79,12 +79,14 @@ export class LlmConfigService implements LlmConfigServiceInterface {
    */
   async create(input: LlmConfigInput): Promise<LlmConfig> {
     try {
+      await this.ensureInitialized();
+
       // Generate unique ID using crypto.randomUUID()
       const id = randomUUID();
 
-      // Check for duplicate names
-      const existing = await this.list();
-      const duplicateName = existing.find(
+      // Check cache for duplicate names (more efficient than storage call)
+      const configs = Array.from(this.cache.values());
+      const duplicateName = configs.find(
         (cfg) => cfg.customName === input.customName,
       );
 
@@ -103,6 +105,9 @@ export class LlmConfigService implements LlmConfigServiceInterface {
         createdAt: now,
         updatedAt: now,
       };
+
+      // Update cache with new configuration
+      this.cache.set(finalConfig.id, finalConfig);
 
       this.logger.info("LLM configuration created successfully", {
         id,
@@ -132,33 +137,25 @@ export class LlmConfigService implements LlmConfigServiceInterface {
    */
   async read(id: string): Promise<LlmConfig | null> {
     try {
-      this.logger.debug("Reading LLM configuration", { id });
+      await this.ensureInitialized();
 
-      // Validate ID format
+      this.logger.debug("Reading LLM configuration from cache", { id });
+
+      // Validate ID format (keep existing validation)
       if (!id || typeof id !== "string") {
         throw new InvalidConfigError("Invalid configuration ID", {
           providedId: id,
         });
       }
 
-      // Use storage service to retrieve
-      const result = await this.storageService.getCompleteConfiguration(id);
+      // Get from cache instead of storage
+      const config = this.cache.get(id) || null;
 
-      if (!result.success) {
-        throw new ConfigOperationError(
-          "read",
-          result.error || "Failed to read configuration",
-          { id },
-        );
-      }
-
-      if (!result.data) {
-        this.logger.debug("Configuration not found", { id });
-        return null;
-      }
-
-      this.logger.debug("Configuration retrieved successfully", { id });
-      return result.data;
+      this.logger.debug(
+        config ? "Configuration found in cache" : "Configuration not found",
+        { id },
+      );
+      return config;
     } catch (error) {
       if (
         error instanceof InvalidConfigError ||
@@ -186,15 +183,17 @@ export class LlmConfigService implements LlmConfigServiceInterface {
     updates: Partial<LlmConfigInput>,
   ): Promise<LlmConfig> {
     try {
-      // Verify configuration exists
-      const existing = await this.read(id);
+      await this.ensureInitialized();
+
+      // Get existing from cache
+      const existing = this.cache.get(id);
       if (!existing) {
         throw new ConfigNotFoundError(id);
       }
 
-      // Check for duplicate names if name is being changed
+      // Check for duplicate names in cache if name is changing
       if (updates.customName && updates.customName !== existing.customName) {
-        const configs = await this.list();
+        const configs = Array.from(this.cache.values());
         const duplicate = configs.find(
           (cfg) => cfg.customName === updates.customName && cfg.id !== id,
         );
@@ -204,14 +203,16 @@ export class LlmConfigService implements LlmConfigServiceInterface {
         }
       }
 
-      // Save through storage service
+      // Update storage first
       const result = await this.storageService.repository.update(id, updates);
 
-      // Ensure updated timestamp
+      // Update cache only if storage succeeds
       const updatedConfig: LlmConfig = {
         ...result,
         updatedAt: new Date().toISOString(),
       };
+
+      this.cache.set(id, updatedConfig);
 
       this.logger.info("LLM configuration updated successfully", {
         id,
@@ -243,15 +244,18 @@ export class LlmConfigService implements LlmConfigServiceInterface {
    */
   async delete(id: string): Promise<void> {
     try {
-      // Verify configuration exists
-      const existing = await this.read(id);
+      await this.ensureInitialized();
+
+      // Check cache instead of storage
+      const existing = this.cache.get(id);
       if (!existing) {
-        // Don't throw error for deleting non-existent config
-        this.logger.debug("Configuration not found for deletion", { id });
+        this.logger.debug("Configuration not found in cache for deletion", {
+          id,
+        });
         return;
       }
 
-      // Delete through storage service
+      // Delete from storage first
       const result = await this.storageService.deleteConfiguration(id);
 
       if (!result.success) {
@@ -261,6 +265,9 @@ export class LlmConfigService implements LlmConfigServiceInterface {
           { id },
         );
       }
+
+      // Remove from cache only if storage deletion succeeds
+      this.cache.delete(id);
 
       this.logger.info("LLM configuration deleted successfully", {
         id,
@@ -288,30 +295,15 @@ export class LlmConfigService implements LlmConfigServiceInterface {
    */
   async list(): Promise<LlmConfig[]> {
     try {
-      const result = await this.storageService.getAllConfigurations();
+      await this.ensureInitialized();
 
-      if (!result.success) {
-        throw new ConfigOperationError(
-          "list",
-          result.error || "Failed to list configurations",
-        );
-      }
+      const configs = Array.from(this.cache.values());
 
-      // Get complete configs with API keys
-      const completeConfigs: LlmConfig[] = [];
-      for (const metadata of result.data || []) {
-        const completeResult =
-          await this.storageService.getCompleteConfiguration(metadata.id);
-        if (completeResult.success && completeResult.data) {
-          completeConfigs.push(completeResult.data);
-        }
-      }
-
-      this.logger.debug("Listed LLM configurations", {
-        count: completeConfigs.length,
+      this.logger.debug("Listed LLM configurations from cache", {
+        count: configs.length,
       });
 
-      return completeConfigs;
+      return configs;
     } catch (error) {
       if (error instanceof ConfigOperationError) {
         throw error;
