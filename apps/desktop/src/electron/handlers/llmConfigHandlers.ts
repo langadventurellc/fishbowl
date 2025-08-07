@@ -1,4 +1,4 @@
-import { ipcMain } from "electron";
+import type { IpcMain } from "electron";
 import {
   LLM_CONFIG_CHANNELS,
   type LlmConfigCreateRequest,
@@ -15,7 +15,6 @@ import {
   type LlmConfigInitializeResponse,
 } from "../../shared/ipc/index";
 import { serializeError } from "../utils/errorSerialization";
-import { llmConfigServiceManager } from "../getLlmConfigService";
 import type { LlmConfigServiceInterface } from "../services/LlmConfigServiceInterface";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 
@@ -24,15 +23,60 @@ const logger = createLoggerSync({
 });
 
 /**
- * Sets up IPC handlers for LLM configuration operations
- * Registers handlers for create, read, update, delete, and list operations
- *
- * @param service - Optional LlmConfigService instance for dependency injection (used in tests)
+ * Validate create request structure
  */
-export function setupLlmConfigHandlers(
-  service?: LlmConfigServiceInterface,
+function validateCreateRequest(request: LlmConfigCreateRequest): void {
+  if (!request) {
+    throw new Error("Request is required");
+  }
+  if (!request.config) {
+    throw new Error("Configuration input is required");
+  }
+}
+
+/**
+ * Validate read request structure
+ */
+function validateReadRequest(request: LlmConfigReadRequest): void {
+  if (!request) {
+    throw new Error("Request is required");
+  }
+  if (!request.id) {
+    throw new Error("Configuration ID is required");
+  }
+}
+
+/**
+ * Validate update request structure
+ */
+function validateUpdateRequest(request: LlmConfigUpdateRequest): void {
+  if (!request) {
+    throw new Error("Request is required");
+  }
+  if (!request.id) {
+    throw new Error("Configuration ID is required");
+  }
+}
+
+/**
+ * Validate delete request structure
+ */
+function validateDeleteRequest(request: LlmConfigDeleteRequest): void {
+  if (!request) {
+    throw new Error("Request is required");
+  }
+  if (!request.id) {
+    throw new Error("Configuration ID is required");
+  }
+}
+
+/**
+ * Register create handler with ipcMain
+ */
+function registerCreateHandler(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
 ): void {
-  // Handler for creating LLM configuration
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.CREATE,
     async (
@@ -40,17 +84,13 @@ export function setupLlmConfigHandlers(
       request: LlmConfigCreateRequest,
     ): Promise<LlmConfigCreateResponse> => {
       try {
+        validateCreateRequest(request);
+
         logger.debug("Creating LLM configuration", {
-          provider: request.config.provider,
+          provider: request.config?.provider,
         });
 
-        // Validate request structure
-        if (!request.config) {
-          throw new Error("Configuration input is required");
-        }
-
-        const configService = service || llmConfigServiceManager.get();
-        const createdConfig = await configService.create(request.config);
+        const createdConfig = await service.create(request.config);
 
         logger.debug("LLM configuration created successfully", {
           configId: createdConfig.id,
@@ -62,8 +102,15 @@ export function setupLlmConfigHandlers(
       }
     },
   );
+}
 
-  // Handler for reading LLM configuration
+/**
+ * Register read handler with ipcMain
+ */
+function registerReadHandler(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
+): void {
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.READ,
     async (
@@ -73,12 +120,9 @@ export function setupLlmConfigHandlers(
       try {
         logger.debug("Reading LLM configuration", { configId: request.id });
 
-        if (!request.id) {
-          throw new Error("Configuration ID is required");
-        }
+        validateReadRequest(request);
 
-        const configService = service || llmConfigServiceManager.get();
-        const config = await configService.read(request.id);
+        const config = await service.read(request.id);
 
         if (!config) {
           logger.debug("LLM configuration not found", { configId: request.id });
@@ -95,8 +139,15 @@ export function setupLlmConfigHandlers(
       }
     },
   );
+}
 
-  // Handler for updating LLM configuration
+/**
+ * Register update handler with ipcMain
+ */
+function registerUpdateHandler(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
+): void {
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.UPDATE,
     async (
@@ -106,18 +157,12 @@ export function setupLlmConfigHandlers(
       try {
         logger.debug("Updating LLM configuration", {
           configId: request.id,
-          hasUpdates: Object.keys(request.updates).length > 0,
+          hasUpdates: Object.keys(request.updates || {}).length > 0,
         });
 
-        if (!request.id) {
-          throw new Error("Configuration ID is required");
-        }
+        validateUpdateRequest(request);
 
-        const configService = service || llmConfigServiceManager.get();
-        const updatedConfig = await configService.update(
-          request.id,
-          request.updates,
-        );
+        const updatedConfig = await service.update(request.id, request.updates);
 
         logger.debug("LLM configuration updated successfully", {
           configId: request.id,
@@ -129,8 +174,15 @@ export function setupLlmConfigHandlers(
       }
     },
   );
+}
 
-  // Handler for deleting LLM configuration
+/**
+ * Register delete handler with ipcMain
+ */
+function registerDeleteHandler(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
+): void {
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.DELETE,
     async (
@@ -140,12 +192,9 @@ export function setupLlmConfigHandlers(
       try {
         logger.debug("Deleting LLM configuration", { configId: request.id });
 
-        if (!request.id) {
-          throw new Error("Configuration ID is required");
-        }
+        validateDeleteRequest(request);
 
-        const configService = service || llmConfigServiceManager.get();
-        await configService.delete(request.id);
+        await service.delete(request.id);
 
         logger.debug("LLM configuration deleted successfully", {
           configId: request.id,
@@ -157,8 +206,15 @@ export function setupLlmConfigHandlers(
       }
     },
   );
+}
 
-  // Handler for listing LLM configurations
+/**
+ * Register list handler with ipcMain
+ */
+function registerListHandler(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
+): void {
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.LIST,
     async (
@@ -168,8 +224,7 @@ export function setupLlmConfigHandlers(
       try {
         logger.debug("Listing LLM configurations");
 
-        const configService = service || llmConfigServiceManager.get();
-        const configs = await configService.list();
+        const configs = await service.list();
 
         logger.debug("LLM configurations listed successfully", {
           count: configs.length,
@@ -181,8 +236,15 @@ export function setupLlmConfigHandlers(
       }
     },
   );
+}
 
-  // Handler for initializing LLM configuration service
+/**
+ * Register initialize handler with ipcMain
+ */
+function registerInitializeHandler(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
+): void {
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.INITIALIZE,
     async (
@@ -192,8 +254,7 @@ export function setupLlmConfigHandlers(
       try {
         logger.debug("Initializing LLM configuration service");
 
-        const configService = service || llmConfigServiceManager.get();
-        await configService.initialize();
+        await service.initialize();
 
         logger.debug("LLM configuration service initialized successfully");
         return { success: true };
@@ -206,6 +267,34 @@ export function setupLlmConfigHandlers(
       }
     },
   );
+}
 
-  logger.info("LLM configuration IPC handlers initialized");
+/**
+ * Sets up IPC handlers for LLM configuration operations
+ * Registers handlers for create, read, update, delete, list, and initialize operations
+ *
+ * @param ipcMain - Electron's IpcMain instance
+ * @param service - LlmConfigService instance for handling operations
+ */
+export function setupLlmConfigHandlers(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
+): void {
+  // Validate inputs
+  if (!ipcMain) {
+    throw new Error("IpcMain instance is required");
+  }
+  if (!service) {
+    throw new Error("LlmConfigService instance is required");
+  }
+
+  // Register all handlers
+  registerCreateHandler(ipcMain, service);
+  registerReadHandler(ipcMain, service);
+  registerUpdateHandler(ipcMain, service);
+  registerDeleteHandler(ipcMain, service);
+  registerListHandler(ipcMain, service);
+  registerInitializeHandler(ipcMain, service);
+
+  logger.info("LLM configuration IPC handlers registered successfully");
 }

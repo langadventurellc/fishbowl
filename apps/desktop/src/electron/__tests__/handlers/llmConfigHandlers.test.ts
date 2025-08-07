@@ -67,7 +67,7 @@ describe("llmConfigHandlers", () => {
 
   describe("setupLlmConfigHandlers", () => {
     it("should register all LLM config handlers", () => {
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
 
       expect(ipcMain.handle).toHaveBeenCalledWith(
         LLM_CONFIG_CHANNELS.CREATE,
@@ -91,30 +91,23 @@ describe("llmConfigHandlers", () => {
       );
     });
 
-    it("should use injected service when provided", () => {
-      const customService = {
-        create: jest.fn(),
-        read: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        list: jest.fn(),
-        initialize: jest.fn(),
-      };
+    it("should require both ipcMain and service parameters", () => {
+      expect(() =>
+        setupLlmConfigHandlers(null as any, mockService as any),
+      ).toThrow("IpcMain instance is required");
 
-      setupLlmConfigHandlers(customService as any);
-
-      // Should not call the manager when custom service is provided
-      expect(llmConfigServiceManager.get).not.toHaveBeenCalled();
+      expect(() => setupLlmConfigHandlers(ipcMain as any, null as any)).toThrow(
+        "LlmConfigService instance is required",
+      );
     });
 
-    it("should handle service manager not initialized", () => {
-      const error = new Error("LLM storage service not initialized");
-      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
-        throw error;
-      });
+    it("should register initialize handler", () => {
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
 
-      // Should not throw during setup
-      expect(() => setupLlmConfigHandlers()).not.toThrow();
+      expect(ipcMain.handle).toHaveBeenCalledWith(
+        LLM_CONFIG_CHANNELS.INITIALIZE,
+        expect.any(Function),
+      );
     });
   });
 
@@ -143,7 +136,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.create.mockResolvedValue(mockConfig);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.CREATE,
       )[1];
@@ -154,7 +147,7 @@ describe("llmConfigHandlers", () => {
       expect(result).toEqual({ success: true, data: mockConfig });
     });
 
-    it("should handle validation errors", async () => {
+    it("should handle service validation errors", async () => {
       const validationError = new Error(
         "Validation failed: customName is required",
       );
@@ -168,7 +161,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.create.mockRejectedValue(validationError);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.CREATE,
       )[1];
@@ -193,7 +186,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.create.mockRejectedValue(error);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.CREATE,
       )[1];
@@ -233,7 +226,7 @@ describe("llmConfigHandlers", () => {
         },
       };
 
-      setupLlmConfigHandlers(customService as any);
+      setupLlmConfigHandlers(ipcMain as any, customService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.CREATE,
       )[1];
@@ -263,7 +256,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.read.mockResolvedValue(mockConfig);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.READ,
       )[1];
@@ -281,7 +274,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.read.mockResolvedValue(null);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.READ,
       )[1];
@@ -299,7 +292,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.read.mockRejectedValue(validationError);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.READ,
       )[1];
@@ -319,7 +312,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.read.mockRejectedValue(error);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.READ,
       )[1];
@@ -356,7 +349,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.update.mockResolvedValue(mockUpdatedConfig);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.UPDATE,
       )[1];
@@ -388,7 +381,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.update.mockResolvedValue(mockConfig);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.UPDATE,
       )[1];
@@ -407,7 +400,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.update.mockRejectedValue(validationError);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.UPDATE,
       )[1];
@@ -435,7 +428,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.update.mockRejectedValue(validationError);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.UPDATE,
       )[1];
@@ -456,7 +449,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.delete.mockResolvedValue(undefined);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.DELETE,
       )[1];
@@ -475,7 +468,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.delete.mockRejectedValue(validationError);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.DELETE,
       )[1];
@@ -495,7 +488,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.delete.mockRejectedValue(error);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.DELETE,
       )[1];
@@ -536,7 +529,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.list.mockResolvedValue(mockConfigs);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.LIST,
       )[1];
@@ -552,7 +545,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.list.mockResolvedValue([]);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.LIST,
       )[1];
@@ -568,7 +561,7 @@ describe("llmConfigHandlers", () => {
 
       mockService.list.mockRejectedValue(error);
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.LIST,
       )[1];
@@ -582,77 +575,49 @@ describe("llmConfigHandlers", () => {
     });
   });
 
-  describe("Service manager error handling", () => {
-    it("should handle service manager not initialized in CREATE handler", async () => {
-      const error = new Error("LLM storage service not initialized");
-      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
-        throw error;
-      });
+  describe("Input validation", () => {
+    it("should handle missing request in CREATE handler", async () => {
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
+      const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
+        ([channel]) => channel === LLM_CONFIG_CHANNELS.CREATE,
+      )[1];
 
+      const result: LlmConfigCreateResponse = await handler(null, null);
+
+      expect(result.success).toBe(false);
+      expect(result.error?.message).toBe("Request is required");
+    });
+
+    it("should handle missing config in CREATE handler", async () => {
       const request: LlmConfigCreateRequest = {
-        config: {
-          customName: "Test Config",
-          provider: "openai",
-          apiKey: "test-key",
-          useAuthHeader: true,
-        },
+        config: null as any,
       };
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.CREATE,
       )[1];
 
       const result: LlmConfigCreateResponse = await handler(null, request);
 
-      expect(result).toEqual({
-        success: false,
-        error: { message: error.message, name: error.name },
-      });
+      expect(result.success).toBe(false);
+      expect(result.error?.message).toBe("Configuration input is required");
     });
 
-    it("should handle service manager not initialized in READ handler", async () => {
-      const error = new Error("LLM storage service not initialized");
-      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
-        throw error;
-      });
-
+    it("should handle missing ID in READ handler", async () => {
       const request: LlmConfigReadRequest = {
-        id: "123e4567-e89b-12d3-a456-426614174000",
+        id: null as any,
       };
 
-      setupLlmConfigHandlers();
+      setupLlmConfigHandlers(ipcMain as any, mockService as any);
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.READ,
       )[1];
 
       const result: LlmConfigReadResponse = await handler(null, request);
 
-      expect(result).toEqual({
-        success: false,
-        error: { message: error.message, name: error.name },
-      });
-    });
-
-    it("should handle service manager not initialized in LIST handler", async () => {
-      const error = new Error("LLM storage service not initialized");
-      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
-        throw error;
-      });
-
-      const request: LlmConfigListRequest = {};
-
-      setupLlmConfigHandlers();
-      const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
-        ([channel]) => channel === LLM_CONFIG_CHANNELS.LIST,
-      )[1];
-
-      const result: LlmConfigListResponse = await handler(null, request);
-
-      expect(result).toEqual({
-        success: false,
-        error: { message: error.message, name: error.name },
-      });
+      expect(result.success).toBe(false);
+      expect(result.error?.message).toBe("Configuration ID is required");
     });
   });
 });

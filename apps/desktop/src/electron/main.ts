@@ -4,7 +4,7 @@ import {
   NodeFileSystemBridge,
   SettingsRepository,
 } from "@fishbowl-ai/shared";
-import { app, BrowserWindow, globalShortcut, shell } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
@@ -175,10 +175,26 @@ app.whenReady().then(async () => {
     const llmConfigService = new LlmConfigService(llmStorageService);
     llmConfigServiceManager.set(llmConfigService);
 
-    // Initialize the service
+    // Register IPC handlers BEFORE service initialization
+    try {
+      setupLlmConfigHandlers(ipcMain, llmConfigService);
+      mainLogger?.info(
+        "LLM configuration IPC handlers registered successfully",
+      );
+    } catch (error) {
+      mainLogger?.error(
+        "Failed to register LLM configuration IPC handlers",
+        error as Error,
+      );
+      // Continue startup - app can function without LLM config handlers
+    }
+
+    // Initialize the service AFTER handlers are registered
     try {
       await llmConfigService.initialize();
-      mainLogger?.debug("LLM configuration service initialized successfully");
+      mainLogger?.info("LLM configuration service initialized successfully", {
+        configCount: (await llmConfigService.list()).length,
+      });
     } catch (error) {
       mainLogger?.error(
         "Failed to initialize LLM configuration service",
@@ -206,16 +222,7 @@ app.whenReady().then(async () => {
     // Continue startup - app can function without settings handlers
   }
 
-  try {
-    setupLlmConfigHandlers();
-    mainLogger?.debug("LLM configuration IPC handlers registered successfully");
-  } catch (error) {
-    mainLogger?.error(
-      "Failed to register LLM configuration IPC handlers",
-      error as Error,
-    );
-    // Continue startup - app can function without LLM config handlers
-  }
+  // LLM config handlers are now registered earlier in the startup process
 
   // Setup application menu after window creation
   const { setupApplicationMenu } = await import("./setupApplicationMenu.js");
