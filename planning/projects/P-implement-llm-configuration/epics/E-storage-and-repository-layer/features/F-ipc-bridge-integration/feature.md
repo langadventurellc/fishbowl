@@ -2,12 +2,12 @@
 kind: feature
 id: F-ipc-bridge-integration
 title: IPC Bridge Integration
-status: in-progress
+status: done
 priority: normal
 prerequisites:
   - F-repository-pattern
 created: "2025-08-06T15:36:56.804029"
-updated: "2025-08-06T15:36:56.804029"
+updated: "2025-08-07T02:32:59.772221+00:00"
 schema_version: "1.1"
 parent: E-storage-and-repository-layer
 ---

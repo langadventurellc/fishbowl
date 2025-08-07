@@ -177,8 +177,27 @@ app.whenReady().then(async () => {
   }
 
   // Setup IPC handlers
-  setupSettingsHandlers();
-  setupLlmConfigHandlers();
+  try {
+    setupSettingsHandlers();
+    mainLogger?.debug("Settings IPC handlers registered successfully");
+  } catch (error) {
+    mainLogger?.error(
+      "Failed to register settings IPC handlers",
+      error as Error,
+    );
+    // Continue startup - app can function without settings handlers
+  }
+
+  try {
+    setupLlmConfigHandlers();
+    mainLogger?.debug("LLM configuration IPC handlers registered successfully");
+  } catch (error) {
+    mainLogger?.error(
+      "Failed to register LLM configuration IPC handlers",
+      error as Error,
+    );
+    // Continue startup - app can function without LLM config handlers
+  }
 
   // Setup application menu after window creation
   const { setupApplicationMenu } = await import("./setupApplicationMenu.js");

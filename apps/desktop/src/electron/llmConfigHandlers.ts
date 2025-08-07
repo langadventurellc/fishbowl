@@ -11,9 +11,10 @@ import {
   type LlmConfigDeleteResponse,
   type LlmConfigListRequest,
   type LlmConfigListResponse,
-} from "../shared/ipc/index.js";
-import { serializeError } from "./utils/errorSerialization.js";
-import { llmStorageServiceManager } from "./getLlmStorageService.js";
+} from "../shared/ipc/index";
+import { serializeError } from "./utils/errorSerialization";
+import { llmStorageServiceManager } from "./getLlmStorageService";
+import { LlmStorageService } from "./services/LlmStorageService";
 import { createLoggerSync, llmConfigInputSchema } from "@fishbowl-ai/shared";
 import { z } from "zod";
 
@@ -26,8 +27,10 @@ const uuidSchema = z.string().uuid();
 /**
  * Sets up IPC handlers for LLM configuration operations
  * Registers handlers for create, read, update, delete, and list operations
+ *
+ * @param service - Optional storage service instance for dependency injection (used in tests)
  */
-export function setupLlmConfigHandlers(): void {
+export function setupLlmConfigHandlers(service?: LlmStorageService): void {
   // Handler for creating LLM configuration
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.CREATE,
@@ -43,8 +46,9 @@ export function setupLlmConfigHandlers(): void {
         // Validate input
         const validatedInput = llmConfigInputSchema.parse(request.config);
 
-        const service = llmStorageServiceManager.get();
-        const createdConfig = await service.repository.create(validatedInput);
+        const storageService = service || llmStorageServiceManager.get();
+        const createdConfig =
+          await storageService.repository.create(validatedInput);
 
         logger.debug("LLM configuration created successfully", {
           configId: createdConfig.id,
@@ -70,8 +74,8 @@ export function setupLlmConfigHandlers(): void {
         // Validate UUID format
         uuidSchema.parse(request.id);
 
-        const service = llmStorageServiceManager.get();
-        const config = await service.repository.read(request.id);
+        const storageService = service || llmStorageServiceManager.get();
+        const config = await storageService.repository.read(request.id);
 
         if (!config) {
           logger.debug("LLM configuration not found", { configId: request.id });
@@ -110,8 +114,8 @@ export function setupLlmConfigHandlers(): void {
           llmConfigInputSchema.partial().parse(request.updates);
         }
 
-        const service = llmStorageServiceManager.get();
-        const updatedConfig = await service.repository.update(
+        const storageService = service || llmStorageServiceManager.get();
+        const updatedConfig = await storageService.repository.update(
           request.id,
           request.updates,
         );
@@ -140,8 +144,8 @@ export function setupLlmConfigHandlers(): void {
         // Validate UUID format
         uuidSchema.parse(request.id);
 
-        const service = llmStorageServiceManager.get();
-        await service.repository.delete(request.id);
+        const storageService = service || llmStorageServiceManager.get();
+        await storageService.repository.delete(request.id);
 
         logger.debug("LLM configuration deleted successfully", {
           configId: request.id,
@@ -164,8 +168,8 @@ export function setupLlmConfigHandlers(): void {
       try {
         logger.debug("Listing LLM configurations");
 
-        const service = llmStorageServiceManager.get();
-        const configs = await service.repository.list();
+        const storageService = service || llmStorageServiceManager.get();
+        const configs = await storageService.repository.list();
 
         logger.debug("LLM configurations listed successfully", {
           count: configs.length,
