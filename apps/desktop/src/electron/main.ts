@@ -11,7 +11,9 @@ import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupSettingsHandlers } from "./settingsHandlers.js";
 import { LlmStorageService } from "./services/LlmStorageService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
-import { setupLlmConfigHandlers } from "./llmConfigHandlers.js";
+import { LlmConfigService } from "./services/LlmConfigService.js";
+import { llmConfigServiceManager } from "./getLlmConfigService.js";
+import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -168,6 +170,22 @@ app.whenReady().then(async () => {
     mainLogger?.info("LLM storage service initialized successfully", {
       secureStorageAvailable: llmStorageService.isSecureStorageAvailable(),
     });
+
+    // Initialize LLM configuration service
+    const llmConfigService = new LlmConfigService(llmStorageService);
+    llmConfigServiceManager.set(llmConfigService);
+
+    // Initialize the service
+    try {
+      await llmConfigService.initialize();
+      mainLogger?.debug("LLM configuration service initialized successfully");
+    } catch (error) {
+      mainLogger?.error(
+        "Failed to initialize LLM configuration service",
+        error as Error,
+      );
+      // Continue startup - app can function without pre-cached configs
+    }
   } catch (error) {
     mainLogger?.error(
       "Failed to initialize settings repository",

@@ -1,5 +1,5 @@
 import { ipcMain } from "electron";
-import { setupLlmConfigHandlers } from "../llmConfigHandlers";
+import { setupLlmConfigHandlers } from "../../handlers/llmConfigHandlers";
 import {
   LLM_CONFIG_CHANNELS,
   type LlmConfigCreateRequest,
@@ -12,9 +12,9 @@ import {
   type LlmConfigDeleteResponse,
   type LlmConfigListRequest,
   type LlmConfigListResponse,
-} from "../../shared/ipc";
-import { serializeError } from "../utils/errorSerialization";
-import { llmStorageServiceManager } from "../getLlmStorageService";
+} from "../../../shared/ipc";
+import { serializeError } from "../../utils/errorSerialization";
+import { llmConfigServiceManager } from "../../getLlmConfigService";
 import { LlmConfig, LlmConfigInput } from "@fishbowl-ai/shared";
 
 // Mock electron
@@ -24,15 +24,15 @@ jest.mock("electron", () => ({
   },
 }));
 
-// Mock llmStorageServiceManager module
-jest.mock("../getLlmStorageService", () => ({
-  llmStorageServiceManager: {
+// Mock llmConfigServiceManager module
+jest.mock("../../getLlmConfigService", () => ({
+  llmConfigServiceManager: {
     get: jest.fn(),
   },
 }));
 
 // Mock errorSerialization
-jest.mock("../utils/errorSerialization", () => ({
+jest.mock("../../utils/errorSerialization", () => ({
   serializeError: jest.fn((error) => ({
     message: error.message,
     name: error.name,
@@ -41,15 +41,12 @@ jest.mock("../utils/errorSerialization", () => ({
 
 describe("llmConfigHandlers", () => {
   let mockService: {
-    repository: {
-      create: jest.Mock;
-      read: jest.Mock;
-      update: jest.Mock;
-      delete: jest.Mock;
-      list: jest.Mock;
-      exists: jest.Mock;
-    };
-    isSecureStorageAvailable: jest.Mock;
+    create: jest.Mock;
+    read: jest.Mock;
+    update: jest.Mock;
+    delete: jest.Mock;
+    list: jest.Mock;
+    initialize: jest.Mock;
   };
 
   beforeEach(() => {
@@ -57,18 +54,15 @@ describe("llmConfigHandlers", () => {
 
     // Create mock service
     mockService = {
-      repository: {
-        create: jest.fn(),
-        read: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        list: jest.fn(),
-        exists: jest.fn(),
-      },
-      isSecureStorageAvailable: jest.fn().mockReturnValue(true),
+      create: jest.fn(),
+      read: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      list: jest.fn(),
+      initialize: jest.fn(),
     };
 
-    (llmStorageServiceManager.get as jest.Mock).mockReturnValue(mockService);
+    (llmConfigServiceManager.get as jest.Mock).mockReturnValue(mockService);
   });
 
   describe("setupLlmConfigHandlers", () => {
@@ -99,26 +93,23 @@ describe("llmConfigHandlers", () => {
 
     it("should use injected service when provided", () => {
       const customService = {
-        repository: {
-          create: jest.fn(),
-          read: jest.fn(),
-          update: jest.fn(),
-          delete: jest.fn(),
-          list: jest.fn(),
-          exists: jest.fn(),
-        },
-        isSecureStorageAvailable: jest.fn().mockReturnValue(true),
+        create: jest.fn(),
+        read: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        list: jest.fn(),
+        initialize: jest.fn(),
       };
 
       setupLlmConfigHandlers(customService as any);
 
       // Should not call the manager when custom service is provided
-      expect(llmStorageServiceManager.get).not.toHaveBeenCalled();
+      expect(llmConfigServiceManager.get).not.toHaveBeenCalled();
     });
 
     it("should handle service manager not initialized", () => {
       const error = new Error("LLM storage service not initialized");
-      (llmStorageServiceManager.get as jest.Mock).mockImplementation(() => {
+      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
         throw error;
       });
 
@@ -150,7 +141,7 @@ describe("llmConfigHandlers", () => {
         },
       };
 
-      mockService.repository.create.mockResolvedValue(mockConfig);
+      mockService.create.mockResolvedValue(mockConfig);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -159,11 +150,14 @@ describe("llmConfigHandlers", () => {
 
       const result: LlmConfigCreateResponse = await handler(null, request);
 
-      expect(mockService.repository.create).toHaveBeenCalled();
+      expect(mockService.create).toHaveBeenCalled();
       expect(result).toEqual({ success: true, data: mockConfig });
     });
 
     it("should handle validation errors", async () => {
+      const validationError = new Error(
+        "Validation failed: customName is required",
+      );
       const request: LlmConfigCreateRequest = {
         config: {
           customName: "", // Invalid - empty name
@@ -171,6 +165,8 @@ describe("llmConfigHandlers", () => {
           apiKey: "test-key",
         } as LlmConfigInput,
       };
+
+      mockService.create.mockRejectedValue(validationError);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -181,7 +177,7 @@ describe("llmConfigHandlers", () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
-      expect(mockService.repository.create).not.toHaveBeenCalled();
+      expect(mockService.create).toHaveBeenCalled();
     });
 
     it("should handle repository errors", async () => {
@@ -195,7 +191,7 @@ describe("llmConfigHandlers", () => {
         },
       };
 
-      mockService.repository.create.mockRejectedValue(error);
+      mockService.create.mockRejectedValue(error);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -213,22 +209,19 @@ describe("llmConfigHandlers", () => {
 
     it("should use injected service in handler", async () => {
       const customService = {
-        repository: {
-          create: jest.fn().mockResolvedValue({
-            id: "test-uuid",
-            customName: "Test Config",
-            provider: "openai",
-            apiKey: "encrypted-key",
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          }),
-          read: jest.fn(),
-          update: jest.fn(),
-          delete: jest.fn(),
-          list: jest.fn(),
-          exists: jest.fn(),
-        },
-        isSecureStorageAvailable: jest.fn().mockReturnValue(true),
+        create: jest.fn().mockResolvedValue({
+          id: "test-uuid",
+          customName: "Test Config",
+          provider: "openai",
+          apiKey: "encrypted-key",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }),
+        read: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        list: jest.fn(),
+        initialize: jest.fn(),
       };
 
       const request: LlmConfigCreateRequest = {
@@ -247,8 +240,8 @@ describe("llmConfigHandlers", () => {
 
       await handler(null, request);
 
-      expect(customService.repository.create).toHaveBeenCalled();
-      expect(llmStorageServiceManager.get).not.toHaveBeenCalled();
+      expect(customService.create).toHaveBeenCalled();
+      expect(llmConfigServiceManager.get).not.toHaveBeenCalled();
     });
   });
 
@@ -268,7 +261,7 @@ describe("llmConfigHandlers", () => {
         id: "123e4567-e89b-12d3-a456-426614174000",
       };
 
-      mockService.repository.read.mockResolvedValue(mockConfig);
+      mockService.read.mockResolvedValue(mockConfig);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -277,7 +270,7 @@ describe("llmConfigHandlers", () => {
 
       const result: LlmConfigReadResponse = await handler(null, request);
 
-      expect(mockService.repository.read).toHaveBeenCalledWith(request.id);
+      expect(mockService.read).toHaveBeenCalledWith(request.id);
       expect(result).toEqual({ success: true, data: mockConfig });
     });
 
@@ -286,7 +279,7 @@ describe("llmConfigHandlers", () => {
         id: "123e4567-e89b-12d3-a456-426614174000",
       };
 
-      mockService.repository.read.mockResolvedValue(null);
+      mockService.read.mockResolvedValue(null);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -299,9 +292,12 @@ describe("llmConfigHandlers", () => {
     });
 
     it("should handle invalid UUID format", async () => {
+      const validationError = new Error("Invalid UUID format");
       const request: LlmConfigReadRequest = {
         id: "invalid-uuid",
       };
+
+      mockService.read.mockRejectedValue(validationError);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -312,7 +308,7 @@ describe("llmConfigHandlers", () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
-      expect(mockService.repository.read).not.toHaveBeenCalled();
+      expect(mockService.read).toHaveBeenCalledWith("invalid-uuid");
     });
 
     it("should handle repository errors", async () => {
@@ -321,7 +317,7 @@ describe("llmConfigHandlers", () => {
         id: "123e4567-e89b-12d3-a456-426614174000",
       };
 
-      mockService.repository.read.mockRejectedValue(error);
+      mockService.read.mockRejectedValue(error);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -358,7 +354,7 @@ describe("llmConfigHandlers", () => {
         },
       };
 
-      mockService.repository.update.mockResolvedValue(mockUpdatedConfig);
+      mockService.update.mockResolvedValue(mockUpdatedConfig);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -367,7 +363,7 @@ describe("llmConfigHandlers", () => {
 
       const result: LlmConfigUpdateResponse = await handler(null, request);
 
-      expect(mockService.repository.update).toHaveBeenCalledWith(
+      expect(mockService.update).toHaveBeenCalledWith(
         request.id,
         request.updates,
       );
@@ -390,7 +386,7 @@ describe("llmConfigHandlers", () => {
         updates: {},
       };
 
-      mockService.repository.update.mockResolvedValue(mockConfig);
+      mockService.update.mockResolvedValue(mockConfig);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -403,10 +399,13 @@ describe("llmConfigHandlers", () => {
     });
 
     it("should handle invalid UUID format", async () => {
+      const validationError = new Error("Invalid UUID format");
       const request: LlmConfigUpdateRequest = {
         id: "invalid-uuid",
         updates: { customName: "New Name" },
       };
+
+      mockService.update.mockRejectedValue(validationError);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -417,10 +416,15 @@ describe("llmConfigHandlers", () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
-      expect(mockService.repository.update).not.toHaveBeenCalled();
+      expect(mockService.update).toHaveBeenCalledWith("invalid-uuid", {
+        customName: "New Name",
+      });
     });
 
     it("should handle validation errors in updates", async () => {
+      const validationError = new Error(
+        "Validation failed: customName cannot be empty",
+      );
       const request: LlmConfigUpdateRequest = {
         id: "123e4567-e89b-12d3-a456-426614174000",
         updates: {
@@ -429,6 +433,8 @@ describe("llmConfigHandlers", () => {
         },
       };
 
+      mockService.update.mockRejectedValue(validationError);
+
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
         ([channel]) => channel === LLM_CONFIG_CHANNELS.UPDATE,
@@ -438,7 +444,7 @@ describe("llmConfigHandlers", () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
-      expect(mockService.repository.update).not.toHaveBeenCalled();
+      expect(mockService.update).toHaveBeenCalled();
     });
   });
 
@@ -448,7 +454,7 @@ describe("llmConfigHandlers", () => {
         id: "123e4567-e89b-12d3-a456-426614174000",
       };
 
-      mockService.repository.delete.mockResolvedValue(undefined);
+      mockService.delete.mockResolvedValue(undefined);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -457,14 +463,17 @@ describe("llmConfigHandlers", () => {
 
       const result: LlmConfigDeleteResponse = await handler(null, request);
 
-      expect(mockService.repository.delete).toHaveBeenCalledWith(request.id);
+      expect(mockService.delete).toHaveBeenCalledWith(request.id);
       expect(result).toEqual({ success: true });
     });
 
     it("should handle invalid UUID format", async () => {
+      const validationError = new Error("Invalid UUID format");
       const request: LlmConfigDeleteRequest = {
         id: "invalid-uuid",
       };
+
+      mockService.delete.mockRejectedValue(validationError);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -475,7 +484,7 @@ describe("llmConfigHandlers", () => {
 
       expect(result.success).toBe(false);
       expect(result.error).toBeDefined();
-      expect(mockService.repository.delete).not.toHaveBeenCalled();
+      expect(mockService.delete).toHaveBeenCalledWith("invalid-uuid");
     });
 
     it("should handle repository errors", async () => {
@@ -484,7 +493,7 @@ describe("llmConfigHandlers", () => {
         id: "123e4567-e89b-12d3-a456-426614174000",
       };
 
-      mockService.repository.delete.mockRejectedValue(error);
+      mockService.delete.mockRejectedValue(error);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -525,7 +534,7 @@ describe("llmConfigHandlers", () => {
 
       const request: LlmConfigListRequest = {};
 
-      mockService.repository.list.mockResolvedValue(mockConfigs);
+      mockService.list.mockResolvedValue(mockConfigs);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -534,14 +543,14 @@ describe("llmConfigHandlers", () => {
 
       const result: LlmConfigListResponse = await handler(null, request);
 
-      expect(mockService.repository.list).toHaveBeenCalled();
+      expect(mockService.list).toHaveBeenCalled();
       expect(result).toEqual({ success: true, data: mockConfigs });
     });
 
     it("should return empty array when no configurations exist", async () => {
       const request: LlmConfigListRequest = {};
 
-      mockService.repository.list.mockResolvedValue([]);
+      mockService.list.mockResolvedValue([]);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -557,7 +566,7 @@ describe("llmConfigHandlers", () => {
       const error = new Error("Failed to list configurations");
       const request: LlmConfigListRequest = {};
 
-      mockService.repository.list.mockRejectedValue(error);
+      mockService.list.mockRejectedValue(error);
 
       setupLlmConfigHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -576,7 +585,7 @@ describe("llmConfigHandlers", () => {
   describe("Service manager error handling", () => {
     it("should handle service manager not initialized in CREATE handler", async () => {
       const error = new Error("LLM storage service not initialized");
-      (llmStorageServiceManager.get as jest.Mock).mockImplementation(() => {
+      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
         throw error;
       });
 
@@ -604,7 +613,7 @@ describe("llmConfigHandlers", () => {
 
     it("should handle service manager not initialized in READ handler", async () => {
       const error = new Error("LLM storage service not initialized");
-      (llmStorageServiceManager.get as jest.Mock).mockImplementation(() => {
+      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
         throw error;
       });
 
@@ -627,7 +636,7 @@ describe("llmConfigHandlers", () => {
 
     it("should handle service manager not initialized in LIST handler", async () => {
       const error = new Error("LLM storage service not initialized");
-      (llmStorageServiceManager.get as jest.Mock).mockImplementation(() => {
+      (llmConfigServiceManager.get as jest.Mock).mockImplementation(() => {
         throw error;
       });
 

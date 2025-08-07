@@ -13,26 +13,25 @@ import {
   type LlmConfigListResponse,
   type LlmConfigInitializeRequest,
   type LlmConfigInitializeResponse,
-} from "../shared/ipc/index";
-import { serializeError } from "./utils/errorSerialization";
-import { llmStorageServiceManager } from "./getLlmStorageService";
-import { LlmStorageService } from "./services/LlmStorageService";
-import { createLoggerSync, llmConfigInputSchema } from "@fishbowl-ai/shared";
-import { z } from "zod";
+} from "../../shared/ipc/index";
+import { serializeError } from "../utils/errorSerialization";
+import { llmConfigServiceManager } from "../getLlmConfigService";
+import type { LlmConfigServiceInterface } from "../services/LlmConfigServiceInterface";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 
 const logger = createLoggerSync({
   context: { metadata: { component: "llmConfigHandlers" } },
 });
 
-const uuidSchema = z.string().uuid();
-
 /**
  * Sets up IPC handlers for LLM configuration operations
  * Registers handlers for create, read, update, delete, and list operations
  *
- * @param service - Optional storage service instance for dependency injection (used in tests)
+ * @param service - Optional LlmConfigService instance for dependency injection (used in tests)
  */
-export function setupLlmConfigHandlers(service?: LlmStorageService): void {
+export function setupLlmConfigHandlers(
+  service?: LlmConfigServiceInterface,
+): void {
   // Handler for creating LLM configuration
   ipcMain.handle(
     LLM_CONFIG_CHANNELS.CREATE,
@@ -45,12 +44,13 @@ export function setupLlmConfigHandlers(service?: LlmStorageService): void {
           provider: request.config.provider,
         });
 
-        // Validate input
-        const validatedInput = llmConfigInputSchema.parse(request.config);
+        // Validate request structure
+        if (!request.config) {
+          throw new Error("Configuration input is required");
+        }
 
-        const storageService = service || llmStorageServiceManager.get();
-        const createdConfig =
-          await storageService.repository.create(validatedInput);
+        const configService = service || llmConfigServiceManager.get();
+        const createdConfig = await configService.create(request.config);
 
         logger.debug("LLM configuration created successfully", {
           configId: createdConfig.id,
@@ -73,11 +73,12 @@ export function setupLlmConfigHandlers(service?: LlmStorageService): void {
       try {
         logger.debug("Reading LLM configuration", { configId: request.id });
 
-        // Validate UUID format
-        uuidSchema.parse(request.id);
+        if (!request.id) {
+          throw new Error("Configuration ID is required");
+        }
 
-        const storageService = service || llmStorageServiceManager.get();
-        const config = await storageService.repository.read(request.id);
+        const configService = service || llmConfigServiceManager.get();
+        const config = await configService.read(request.id);
 
         if (!config) {
           logger.debug("LLM configuration not found", { configId: request.id });
@@ -108,16 +109,12 @@ export function setupLlmConfigHandlers(service?: LlmStorageService): void {
           hasUpdates: Object.keys(request.updates).length > 0,
         });
 
-        // Validate UUID format
-        uuidSchema.parse(request.id);
-
-        // Validate updates if provided
-        if (Object.keys(request.updates).length > 0) {
-          llmConfigInputSchema.partial().parse(request.updates);
+        if (!request.id) {
+          throw new Error("Configuration ID is required");
         }
 
-        const storageService = service || llmStorageServiceManager.get();
-        const updatedConfig = await storageService.repository.update(
+        const configService = service || llmConfigServiceManager.get();
+        const updatedConfig = await configService.update(
           request.id,
           request.updates,
         );
@@ -143,11 +140,12 @@ export function setupLlmConfigHandlers(service?: LlmStorageService): void {
       try {
         logger.debug("Deleting LLM configuration", { configId: request.id });
 
-        // Validate UUID format
-        uuidSchema.parse(request.id);
+        if (!request.id) {
+          throw new Error("Configuration ID is required");
+        }
 
-        const storageService = service || llmStorageServiceManager.get();
-        await storageService.repository.delete(request.id);
+        const configService = service || llmConfigServiceManager.get();
+        await configService.delete(request.id);
 
         logger.debug("LLM configuration deleted successfully", {
           configId: request.id,
@@ -170,8 +168,8 @@ export function setupLlmConfigHandlers(service?: LlmStorageService): void {
       try {
         logger.debug("Listing LLM configurations");
 
-        const storageService = service || llmStorageServiceManager.get();
-        const configs = await storageService.repository.list();
+        const configService = service || llmConfigServiceManager.get();
+        const configs = await configService.list();
 
         logger.debug("LLM configurations listed successfully", {
           count: configs.length,
@@ -194,19 +192,10 @@ export function setupLlmConfigHandlers(service?: LlmStorageService): void {
       try {
         logger.debug("Initializing LLM configuration service");
 
-        // Get or create the storage service instance (initialization happens in constructor)
-        const storageService = service || llmStorageServiceManager.get();
+        const configService = service || llmConfigServiceManager.get();
+        await configService.initialize();
 
-        // Verify secure storage is available
-        const isSecureStorageAvailable =
-          storageService.isSecureStorageAvailable();
-        if (!isSecureStorageAvailable) {
-          logger.warn("Secure storage is not available for API key encryption");
-        }
-
-        logger.debug("LLM configuration service initialized successfully", {
-          secureStorageAvailable: isSecureStorageAvailable,
-        });
+        logger.debug("LLM configuration service initialized successfully");
         return { success: true };
       } catch (error) {
         logger.error(
