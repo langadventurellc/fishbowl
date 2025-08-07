@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-implement-error-serialization
+parent: F-ipc-communication-layer
+status: done
 title: Implement error serialization utilities for IPC transport
-status: open
 priority: high
 prerequisites:
   - T-create-ipc-channel-definitions-1
 created: "2025-08-07T15:13:19.219336"
-updated: "2025-08-07T15:13:19.219336"
+updated: "2025-08-07T15:38:27.345810"
 schema_version: "1.1"
-parent: F-ipc-communication-layer
+worktree: null
 ---
 
 # Implement Error Serialization Utilities for IPC Transport
@@ -165,3 +166,7 @@ apps/desktop/src/electron/
 - Consider performance - error serialization should be fast
 
 ### Log
+
+**2025-08-07T20:50:44.194498Z** - Implemented comprehensive error serialization utilities for IPC transport with context extraction, security filtering, and response helpers. Enhanced the existing serializeError function to extract and sanitize context from LlmConfigError, FileStorageError, and SettingsValidationError instances while filtering sensitive information (API keys, passwords, tokens). Added generic error type detection based on message content for ValidationError, ServiceError, and StorageError patterns. Created separate response helper functions (createSuccessResponse and createErrorResponse) following the project's single-export-per-file convention. All functionality includes comprehensive unit tests with 59 passing tests covering context extraction, security filtering, error type detection, and response helpers.
+
+- filesChanged: ["apps/desktop/src/shared/ipc/types.ts", "apps/desktop/src/electron/utils/errorSerialization.ts", "apps/desktop/src/electron/utils/createSuccessResponse.ts", "apps/desktop/src/electron/utils/createErrorResponse.ts", "apps/desktop/src/electron/utils/__tests__/errorSerialization.test.ts"]

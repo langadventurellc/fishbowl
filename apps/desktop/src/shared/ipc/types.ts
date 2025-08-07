@@ -5,5 +5,6 @@
 export interface SerializableError {
   message: string;
   code: string;
+  context?: Record<string, unknown>; // Optional contextual data (sanitized)
   stack?: string; // Only included in development
 }
