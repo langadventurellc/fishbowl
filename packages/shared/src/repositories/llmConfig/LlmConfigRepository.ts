@@ -71,7 +71,7 @@ export class LlmConfigRepository implements LlmConfigRepositoryInterface {
         customName: validatedInput.customName,
         provider: validatedInput.provider,
         baseUrl: validatedInput.baseUrl,
-        authHeaderType: validatedInput.authHeaderType,
+        useAuthHeader: validatedInput.useAuthHeader,
         createdAt: now,
         updatedAt: now,
       };
@@ -195,10 +195,10 @@ export class LlmConfigRepository implements LlmConfigRepositoryInterface {
         updates.baseUrl !== undefined
           ? updates.baseUrl
           : existingMetadata.baseUrl,
-      authHeaderType:
-        updates.authHeaderType !== undefined
-          ? updates.authHeaderType
-          : existingMetadata.authHeaderType,
+      useAuthHeader:
+        updates.useAuthHeader !== undefined
+          ? updates.useAuthHeader
+          : existingMetadata.useAuthHeader,
       updatedAt: new Date().toISOString(),
     };
 
@@ -365,7 +365,7 @@ export class LlmConfigRepository implements LlmConfigRepositoryInterface {
         customName: updates.customName ?? existingConfig.customName,
         provider: updates.provider ?? existingConfig.provider,
         baseUrl: updates.baseUrl ?? existingConfig.baseUrl,
-        authHeaderType: updates.authHeaderType ?? existingConfig.authHeaderType,
+        useAuthHeader: updates.useAuthHeader ?? existingConfig.useAuthHeader,
         id, // Ensure ID cannot be changed
         createdAt: existingConfig.createdAt, // Preserve original creation time
         updatedAt: new Date().toISOString(),

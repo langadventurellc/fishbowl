@@ -10,7 +10,7 @@ describe("llmConfigSchema", () => {
         provider: "openai",
         apiKey: "sk-test123",
         baseUrl: "https://api.openai.com/v1",
-        authHeaderType: "Bearer",
+        useAuthHeader: true,
       };
       const result = llmConfigInputSchema.parse(validInput);
       expect(result).toEqual(validInput);
@@ -23,7 +23,12 @@ describe("llmConfigSchema", () => {
         apiKey: "test-key",
       };
       const result = llmConfigInputSchema.parse(minimalInput);
-      expect(result).toEqual(minimalInput);
+      expect(result).toEqual({
+        customName: "Minimal Config",
+        provider: "anthropic",
+        apiKey: "test-key",
+        useAuthHeader: true,
+      });
     });
 
     it("should allow unknown fields (passthrough)", () => {
@@ -34,7 +39,13 @@ describe("llmConfigSchema", () => {
         unknownField: "value",
       };
       const result = llmConfigInputSchema.parse(inputWithExtra);
-      expect(result).toEqual(inputWithExtra);
+      expect(result).toEqual({
+        customName: "Test",
+        provider: "openai",
+        apiKey: "test",
+        useAuthHeader: true,
+        unknownField: "value",
+      });
     });
 
     describe("customName validation", () => {
@@ -81,35 +92,31 @@ describe("llmConfigSchema", () => {
     });
 
     describe("provider validation", () => {
-      it("should reject empty provider", () => {
-        expect(() => {
-          llmConfigInputSchema.parse({
+      it("should accept valid providers (excluding custom)", () => {
+        const validProviders = ["openai", "anthropic", "google"];
+
+        validProviders.forEach((provider) => {
+          const result = llmConfigInputSchema.parse({
             customName: "Test",
-            provider: "",
+            provider: provider,
             apiKey: "test",
           });
-        }).toThrow("Provider is required");
-      });
-
-      it("should reject provider exceeding 50 characters", () => {
-        const longProvider = "a".repeat(51);
-        expect(() => {
-          llmConfigInputSchema.parse({
-            customName: "Test",
-            provider: longProvider,
-            apiKey: "test",
-          });
-        }).toThrow("Provider cannot exceed 50 characters");
-      });
-
-      it("should accept provider at 50 character boundary", () => {
-        const boundaryProvider = "a".repeat(50);
-        const result = llmConfigInputSchema.parse({
-          customName: "Test",
-          provider: boundaryProvider,
-          apiKey: "test",
+          expect(result.provider).toBe(provider);
         });
-        expect(result.provider).toBe(boundaryProvider);
+      });
+
+      it("should reject invalid providers", () => {
+        const invalidProviders = ["invalid", "azure", "gemini", ""];
+
+        invalidProviders.forEach((provider) => {
+          expect(() => {
+            llmConfigInputSchema.parse({
+              customName: "Test",
+              provider: provider,
+              apiKey: "test",
+            });
+          }).toThrow();
+        });
       });
 
       it("should reject non-string provider", () => {
@@ -119,7 +126,7 @@ describe("llmConfigSchema", () => {
             provider: 123,
             apiKey: "test",
           });
-        }).toThrow("Provider must be a string");
+        }).toThrow();
       });
     });
 
@@ -228,62 +235,79 @@ describe("llmConfigSchema", () => {
       });
     });
 
-    describe("authHeaderType validation", () => {
-      it("should accept valid auth header types", () => {
-        const validTypes = ["Bearer", "X-API-Key", "Authorization"];
+    describe("custom provider validation", () => {
+      it("should require baseUrl for custom provider", () => {
+        expect(() => {
+          llmConfigInputSchema.parse({
+            customName: "Test",
+            provider: "custom",
+            apiKey: "test",
+          });
+        }).toThrow("Base URL is required for custom providers");
+      });
 
-        validTypes.forEach((type) => {
+      it("should accept custom provider with baseUrl", () => {
+        const result = llmConfigInputSchema.parse({
+          customName: "Test",
+          provider: "custom",
+          apiKey: "test",
+          baseUrl: "https://custom.example.com/api",
+        });
+        expect(result.provider).toBe("custom");
+        expect(result.baseUrl).toBe("https://custom.example.com/api");
+      });
+
+      it("should not require baseUrl for other providers", () => {
+        const providers = ["openai", "anthropic", "google"];
+
+        providers.forEach((provider) => {
+          const result = llmConfigInputSchema.parse({
+            customName: "Test",
+            provider: provider,
+            apiKey: "test",
+          });
+          expect(result.provider).toBe(provider);
+        });
+      });
+    });
+
+    describe("useAuthHeader validation", () => {
+      it("should accept boolean values", () => {
+        const booleanValues = [true, false];
+
+        booleanValues.forEach((value) => {
           const result = llmConfigInputSchema.parse({
             customName: "Test",
             provider: "openai",
             apiKey: "test",
-            authHeaderType: type,
+            useAuthHeader: value,
           });
-          expect(result.authHeaderType).toBe(type);
+          expect(result.useAuthHeader).toBe(value);
         });
       });
 
-      it("should reject auth header type exceeding 50 characters", () => {
-        const longType = "a".repeat(51);
-        expect(() => {
-          llmConfigInputSchema.parse({
-            customName: "Test",
-            provider: "openai",
-            apiKey: "test",
-            authHeaderType: longType,
-          });
-        }).toThrow("Auth header type cannot exceed 50 characters");
-      });
-
-      it("should accept auth header type at 50 character boundary", () => {
-        const boundaryType = "a".repeat(50);
-        const result = llmConfigInputSchema.parse({
-          customName: "Test",
-          provider: "openai",
-          apiKey: "test",
-          authHeaderType: boundaryType,
-        });
-        expect(result.authHeaderType).toBe(boundaryType);
-      });
-
-      it("should accept undefined authHeaderType", () => {
+      it("should default to true when omitted", () => {
         const result = llmConfigInputSchema.parse({
           customName: "Test",
           provider: "openai",
           apiKey: "test",
         });
-        expect(result.authHeaderType).toBeUndefined();
+        expect(result.useAuthHeader).toBe(true);
       });
 
-      it("should reject non-string authHeaderType", () => {
-        expect(() => {
-          llmConfigInputSchema.parse({
-            customName: "Test",
-            provider: "openai",
-            apiKey: "test",
-            authHeaderType: 123,
-          });
-        }).toThrow("Auth header type must be a string");
+      it("should reject non-boolean values", () => {
+        const invalidValues = ["true", "false", 1, 0, "Bearer", null];
+
+        invalidValues.forEach((value) => {
+          expect(() => {
+            llmConfigInputSchema.parse({
+              customName: "Test",
+              provider: "openai",
+              apiKey: "test",
+              useAuthHeader: value,
+            });
+          }).toThrow("Use auth header must be a boolean");
+        });
       });
     });
   });
@@ -296,7 +320,7 @@ describe("llmConfigSchema", () => {
         provider: "openai",
         apiKey: "sk-test",
         baseUrl: "https://api.openai.com/v1",
-        authHeaderType: "Bearer",
+        useAuthHeader: true,
         createdAt: "2024-01-01T12:00:00.000Z",
         updatedAt: "2024-01-02T12:00:00.000Z",
       };
@@ -314,7 +338,15 @@ describe("llmConfigSchema", () => {
         updatedAt: "2024-01-01T12:00:00.000Z",
       };
       const result = llmConfigSchema.parse(minimalConfig);
-      expect(result).toEqual(minimalConfig);
+      expect(result).toEqual({
+        id: "550e8400-e29b-41d4-a716-446655440000",
+        customName: "Minimal Config",
+        provider: "anthropic",
+        apiKey: "test-key",
+        useAuthHeader: true,
+        createdAt: "2024-01-01T12:00:00.000Z",
+        updatedAt: "2024-01-01T12:00:00.000Z",
+      });
     });
 
     describe("id validation", () => {
@@ -500,15 +532,17 @@ describe("llmConfigSchema", () => {
       // Type assertions to ensure structure matches expected interfaces
       const inputTest: InputType = {
         customName: "test",
-        provider: "test",
+        provider: "openai",
         apiKey: "test",
+        useAuthHeader: true,
       };
 
       const configTest: ConfigType = {
         id: "550e8400-e29b-41d4-a716-446655440000",
         customName: "test",
-        provider: "test",
+        provider: "openai",
         apiKey: "test",
+        useAuthHeader: true,
         createdAt: "2024-01-01T12:00:00.000Z",
         updatedAt: "2024-01-01T12:00:00.000Z",
       };

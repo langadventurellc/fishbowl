@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PROVIDER_OPTIONS } from "./Provider";
 
 /**
  * Zod schema for validating LLM configuration input data.
@@ -11,10 +12,7 @@ export const llmConfigInputSchema = z
       .min(1, "Custom name is required")
       .max(100, "Custom name cannot exceed 100 characters"),
 
-    provider: z
-      .string({ message: "Provider must be a string" })
-      .min(1, "Provider is required")
-      .max(50, "Provider cannot exceed 50 characters"),
+    provider: z.enum(PROVIDER_OPTIONS),
 
     apiKey: z
       .string({ message: "API key must be a string" })
@@ -26,9 +24,18 @@ export const llmConfigInputSchema = z
       .url("Base URL must be a valid URL")
       .optional(),
 
-    authHeaderType: z
-      .string({ message: "Auth header type must be a string" })
-      .max(50, "Auth header type cannot exceed 50 characters")
-      .optional(),
+    useAuthHeader: z
+      .boolean({ message: "Use auth header must be a boolean" })
+      .default(true),
   })
-  .passthrough(); // Allow unknown fields for schema evolution
+  .passthrough() // Allow unknown fields for schema evolution
+  .superRefine((data, ctx) => {
+    // Custom providers must have a base URL
+    if (data.provider === "custom" && !data.baseUrl) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Base URL is required for custom providers",
+        path: ["baseUrl"],
+      });
+    }
+  });

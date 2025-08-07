@@ -1,3 +1,5 @@
+import type { Provider } from "./Provider";
+
 /**
  * Complete LLM configuration including decrypted API key.
  * This type is used when reading configurations from the repository
@@ -10,8 +12,8 @@ export interface LlmConfig {
   /** User-defined name for the configuration */
   customName: string;
 
-  /** Provider type (e.g., "openai", "anthropic") */
-  provider: string;
+  /** Provider type */
+  provider: Provider;
 
   /** Decrypted API key from secure storage */
   apiKey: string;
@@ -19,8 +21,8 @@ export interface LlmConfig {
   /** Optional custom base URL for self-hosted models */
   baseUrl?: string;
 
-  /** Optional auth header type for custom implementations */
-  authHeaderType?: string;
+  /** Whether to use authorization header for API requests */
+  useAuthHeader: boolean;
 
   /** ISO timestamp of creation */
   createdAt: string;

@@ -62,7 +62,7 @@ describe("LlmConfigRepository", () => {
     provider: "openai",
     apiKey: "sk-test123456789",
     baseUrl: "https://api.openai.com/v1",
-    authHeaderType: "Bearer",
+    useAuthHeader: true,
   });
 
   const createValidMetadata = (): LlmConfigMetadata => ({
@@ -70,7 +70,7 @@ describe("LlmConfigRepository", () => {
     customName: "Test OpenAI",
     provider: "openai",
     baseUrl: "https://api.openai.com/v1",
-    authHeaderType: "Bearer",
+    useAuthHeader: true,
     createdAt: "2023-10-01T00:00:00.000Z",
     updatedAt: "2023-10-01T00:00:00.000Z",
   });
@@ -92,7 +92,7 @@ describe("LlmConfigRepository", () => {
       expect(result.provider).toBe(config.provider);
       expect(result.apiKey).toBe(config.apiKey);
       expect(result.baseUrl).toBe(config.baseUrl);
-      expect(result.authHeaderType).toBe(config.authHeaderType);
+      expect(result.useAuthHeader).toBe(config.useAuthHeader);
       expect(typeof result.createdAt).toBe("string");
       expect(typeof result.updatedAt).toBe("string");
     });
@@ -133,7 +133,7 @@ describe("LlmConfigRepository", () => {
             customName: config.customName,
             provider: config.provider,
             baseUrl: config.baseUrl,
-            authHeaderType: config.authHeaderType,
+            useAuthHeader: config.useAuthHeader,
           }),
         ]),
       );
@@ -265,15 +265,15 @@ describe("LlmConfigRepository", () => {
       // Start with metadata that has undefined optional fields
       const existingConfig = createValidMetadata();
       existingConfig.baseUrl = undefined;
-      existingConfig.authHeaderType = undefined;
+      existingConfig.useAuthHeader = false;
       mockFileStorage.readJsonFile.mockResolvedValue([existingConfig]);
 
-      const updates = { baseUrl: undefined, authHeaderType: "" };
+      const updates = { baseUrl: undefined, useAuthHeader: true };
 
       const result = await repository.update("test-id-123", updates);
 
       expect(result.baseUrl).toBeUndefined();
-      expect(result.authHeaderType).toBe("");
+      expect(result.useAuthHeader).toBe(true);
     });
 
     it("should throw error for non-existent config", async () => {
@@ -398,7 +398,8 @@ describe("LlmConfigRepository", () => {
       it("should save configuration and return success with ID", async () => {
         const config = {
           customName: "Test OpenAI",
-          provider: "openai",
+          provider: "openai" as const,
+          useAuthHeader: true,
         };
         const apiKey = "sk-test123456789";
 
@@ -410,7 +411,11 @@ describe("LlmConfigRepository", () => {
 
       it("should return error when secure storage unavailable", async () => {
         mockSecureStorage.isAvailable.mockReturnValue(false);
-        const config = { customName: "Test", provider: "openai" };
+        const config = {
+          customName: "Test",
+          provider: "openai" as const,
+          useAuthHeader: true,
+        };
 
         const result = await repository.saveConfiguration(config, "sk-key");
 
