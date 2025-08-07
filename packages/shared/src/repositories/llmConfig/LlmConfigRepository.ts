@@ -1,5 +1,11 @@
-import type { LlmConfigMetadata, StorageResult } from "../../types/llmConfig";
+import type {
+  LlmConfig,
+  LlmConfigInput,
+  LlmConfigMetadata,
+  StorageResult,
+} from "../../types/llmConfig";
 import type { LlmConfigRepositoryInterface } from "./LlmConfigRepositoryInterface";
+import { llmConfigInputSchema } from "../../types/llmConfig";
 import { FileStorageService } from "../../services/storage/FileStorageService";
 import type { SecureStorageInterface } from "../../services/storage/SecureStorageInterface";
 import { FileStorageError } from "../../services/storage/errors";
@@ -35,6 +41,211 @@ export class LlmConfigRepository implements LlmConfigRepositoryInterface {
   ) {
     this.configFilePath =
       configFilePath ?? LlmConfigRepository.DEFAULT_CONFIG_FILE_NAME;
+  }
+
+  /**
+   * Create a new LLM configuration with complete data validation.
+   * Returns complete configuration including decrypted API key.
+   */
+  async create(config: LlmConfigInput): Promise<LlmConfig> {
+    // Validate input
+    const validatedInput = llmConfigInputSchema.parse(config);
+
+    // Generate ID and timestamps
+    const id = generateId();
+    const now = new Date().toISOString();
+
+    // Check secure storage availability
+    if (!this.secureStorage.isAvailable()) {
+      throw new Error("Secure storage is not available on this system");
+    }
+
+    // Store API key securely
+    const secureKey = this.getSecureStorageKey(id);
+    this.secureStorage.store(secureKey, validatedInput.apiKey);
+
+    try {
+      // Create metadata (without API key)
+      const metadata: LlmConfigMetadata = {
+        id,
+        customName: validatedInput.customName,
+        provider: validatedInput.provider,
+        baseUrl: validatedInput.baseUrl,
+        authHeaderType: validatedInput.authHeaderType,
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      // Load existing configs and add new one
+      const configs = await this.loadConfigurationsInternal();
+      configs.push(metadata);
+
+      // Save to file
+      await this.fileStorageService.writeJsonFile(this.configFilePath, configs);
+
+      this.logger.debug("LLM configuration created successfully", {
+        configId: id,
+        provider: validatedInput.provider,
+      });
+
+      // Return complete config
+      return {
+        ...metadata,
+        apiKey: validatedInput.apiKey,
+      };
+    } catch (error) {
+      // Rollback: delete API key from secure storage
+      try {
+        this.secureStorage.delete(secureKey);
+      } catch {
+        // Ignore cleanup errors
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Read a complete LLM configuration by ID.
+   * Returns configuration with decrypted API key or null if not found.
+   */
+  async read(id: string): Promise<LlmConfig | null> {
+    // Load metadata
+    const configs = await this.loadConfigurationsInternal();
+    const metadata = configs.find((c) => c.id === id);
+
+    if (!metadata) {
+      return null;
+    }
+
+    // Check secure storage availability
+    if (!this.secureStorage.isAvailable()) {
+      this.logger.warn("Secure storage unavailable, cannot retrieve API key", {
+        configId: id,
+      });
+      return null;
+    }
+
+    // Retrieve and decrypt API key
+    const secureKey = this.getSecureStorageKey(id);
+    const apiKey = this.secureStorage.retrieve(secureKey);
+
+    if (!apiKey) {
+      this.logger.warn("Configuration found but API key missing", {
+        configId: id,
+      });
+      return null;
+    }
+
+    // Return complete config
+    return {
+      ...metadata,
+      apiKey,
+    };
+  }
+
+  /**
+   * Update an existing LLM configuration with partial updates.
+   * Returns updated complete configuration.
+   */
+  async update(
+    id: string,
+    updates: Partial<LlmConfigInput>,
+  ): Promise<LlmConfig> {
+    // Validate updates if provided
+    if (Object.keys(updates).length > 0) {
+      llmConfigInputSchema.partial().parse(updates);
+    }
+
+    // Load existing config
+    const configs = await this.loadConfigurationsInternal();
+    const configIndex = configs.findIndex((c) => c.id === id);
+
+    if (configIndex === -1) {
+      throw new Error(`Configuration not found: ${id}`);
+    }
+
+    const existingMetadata = configs[configIndex]!; // Safe because we checked configIndex !== -1
+
+    // Update API key if provided
+    let currentApiKey: string | null = null;
+    if (updates.apiKey) {
+      if (!this.secureStorage.isAvailable()) {
+        throw new Error("Secure storage is not available for API key update");
+      }
+
+      const secureKey = this.getSecureStorageKey(id);
+      this.secureStorage.store(secureKey, updates.apiKey);
+      currentApiKey = updates.apiKey;
+    } else {
+      // Retrieve existing API key
+      const secureKey = this.getSecureStorageKey(id);
+      currentApiKey = this.secureStorage.retrieve(secureKey);
+      if (!currentApiKey) {
+        throw new Error(`API key not found for configuration: ${id}`);
+      }
+    }
+
+    // Update metadata
+    const updatedMetadata: LlmConfigMetadata = {
+      id: existingMetadata.id,
+      createdAt: existingMetadata.createdAt,
+      customName: updates.customName ?? existingMetadata.customName,
+      provider: updates.provider ?? existingMetadata.provider,
+      baseUrl:
+        updates.baseUrl !== undefined
+          ? updates.baseUrl
+          : existingMetadata.baseUrl,
+      authHeaderType:
+        updates.authHeaderType !== undefined
+          ? updates.authHeaderType
+          : existingMetadata.authHeaderType,
+      updatedAt: new Date().toISOString(),
+    };
+
+    configs[configIndex] = updatedMetadata;
+
+    // Save updated configs
+    await this.fileStorageService.writeJsonFile(this.configFilePath, configs);
+
+    this.logger.debug("LLM configuration updated successfully", {
+      configId: id,
+      hasNewApiKey: !!updates.apiKey,
+    });
+
+    // Return complete updated config
+    return {
+      ...updatedMetadata,
+      apiKey: currentApiKey,
+    };
+  }
+
+  /**
+   * Delete an LLM configuration completely from both storages.
+   */
+  async delete(id: string): Promise<void> {
+    const result = await this.deleteConfiguration(id);
+    if (!result.success) {
+      throw new Error(result.error || `Failed to delete configuration: ${id}`);
+    }
+  }
+
+  /**
+   * List all LLM configurations metadata (without API keys).
+   */
+  async list(): Promise<LlmConfigMetadata[]> {
+    const result = await this.getAllConfigurations();
+    if (!result.success) {
+      throw new Error(result.error || "Failed to list configurations");
+    }
+    return result.data || [];
+  }
+
+  /**
+   * Check if a configuration exists by ID.
+   */
+  async exists(id: string): Promise<boolean> {
+    const configs = await this.loadConfigurationsInternal();
+    return configs.some((c) => c.id === id);
   }
 
   /**

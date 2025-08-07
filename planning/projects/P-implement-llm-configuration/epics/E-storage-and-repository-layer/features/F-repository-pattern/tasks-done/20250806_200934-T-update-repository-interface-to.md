@@ -1,15 +1,16 @@
 ---
 kind: task
 id: T-update-repository-interface-to
+parent: F-repository-pattern
+status: done
 title: Update repository interface to return complete LlmConfig objects
-status: open
 priority: high
 prerequisites:
   - T-add-complete-llmconfig-types-and
 created: "2025-08-06T17:02:28.594768"
-updated: "2025-08-06T17:02:28.594768"
+updated: "2025-08-06T20:02:12.646715"
 schema_version: "1.1"
-parent: F-repository-pattern
+worktree: null
 ---
 
 # Update Repository Interface to Return Complete LlmConfig Objects
@@ -114,3 +115,7 @@ Use Zod schemas to validate:
 - Test graceful handling of missing API keys
 
 ### Log
+
+**2025-08-07T01:09:34.499789Z** - Updated LlmConfigRepository interface and implementation to return complete LlmConfig objects that include decrypted API keys. Added new methods (create, read, update, delete, list, exists) that provide cleaner interface while maintaining backward compatibility with existing StorageResult-based methods. Implemented atomic operations with proper rollback, input validation using Zod schemas, and comprehensive error handling. All quality checks and builds pass successfully.
+
+- filesChanged: ["packages/shared/src/repositories/llmConfig/LlmConfigRepositoryInterface.ts", "packages/shared/src/repositories/llmConfig/LlmConfigRepository.ts"]
