@@ -13,7 +13,7 @@ import type { LlmConfigData } from "@fishbowl-ai/ui-shared";
 import { useCallback, useState } from "react";
 import { EmptyLlmState, LlmConfigModal, LlmProviderCard } from ".";
 import { cn } from "../../../lib/utils";
-import { generateId } from "../../../utils/generateId";
+import { generateId } from "@fishbowl-ai/shared";
 import {
   AlertDialog,
   AlertDialogAction,

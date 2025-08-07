@@ -1,10 +1,8 @@
-import { randomBytes } from "crypto";
-
 /**
  * Generates a unique identifier for configurations and entities.
  *
- * Uses Node.js crypto.randomBytes to generate a UUID-like identifier.
- * Provides consistent behavior across different environments.
+ * Uses platform-appropriate crypto APIs to generate a UUID-like identifier.
+ * Works in both Node.js and browser environments.
  *
  * @returns A unique string identifier
  *
@@ -14,11 +12,30 @@ import { randomBytes } from "crypto";
  */
 export function generateId(): string {
   try {
-    // Generate 16 random bytes
-    const bytes = randomBytes(16);
+    let bytes: Uint8Array;
+
+    // Check if we're in Node.js environment
+    if (typeof process !== "undefined" && process.versions?.node) {
+      // Node.js environment - use crypto module
+      const crypto = eval('require("crypto")');
+      bytes = crypto.randomBytes(16);
+    } else if (
+      typeof globalThis.crypto !== "undefined" &&
+      globalThis.crypto.getRandomValues
+    ) {
+      // Browser environment - use Web Crypto API
+      bytes = new Uint8Array(16);
+      globalThis.crypto.getRandomValues(bytes);
+    } else {
+      // Fallback if neither is available
+      throw new Error("No crypto API available");
+    }
 
     // Convert to UUID format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-    const hex = bytes.toString("hex");
+    const hex = Array.from(bytes)
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+
     return [
       hex.substring(0, 8),
       hex.substring(8, 12),
