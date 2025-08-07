@@ -17,6 +17,11 @@ export { llmConfigSchema } from "./llmConfigSchema";
 // Validation utilities
 export { validateApiKey } from "./validateApiKey";
 export { getApiKeyErrorMessage } from "./getApiKeyErrorMessage";
+export type { ValidationResult } from "./ValidationResult";
+export { validateApiKeyWithError } from "./validateApiKeyWithError";
+export { validateUniqueConfigName } from "./validateUniqueConfigName";
+export { validateProviderRequirements } from "./validateProviderRequirements";
+export { validateLlmConfig } from "./validateLlmConfig";
 
 // Inferred types from schemas
 export type { LlmConfigInputSchemaData } from "./LlmConfigInputSchemaData";

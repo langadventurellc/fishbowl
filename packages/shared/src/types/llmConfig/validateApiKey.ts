@@ -10,14 +10,14 @@ import type { Provider } from "./Provider";
 export function validateApiKey(apiKey: string, provider: Provider): boolean {
   switch (provider) {
     case "openai":
-      return apiKey.startsWith("sk-") && apiKey.length > 40;
+      return apiKey.startsWith("sk-") && apiKey.length >= 40;
 
     case "anthropic":
-      return apiKey.startsWith("sk-ant-") && apiKey.length > 50;
+      return apiKey.startsWith("sk-ant-") && apiKey.length >= 50;
 
     case "google":
-      // Google API keys typically start with "AIza" and are 39 characters
-      return /^AIza[0-9A-Za-z_-]{35}$/.test(apiKey);
+      // Google API keys are typically 35-45 characters, alphanumeric with underscores/hyphens
+      return /^[A-Za-z0-9_-]{35,45}$/.test(apiKey);
 
     case "custom":
       // For custom providers, any non-empty key is valid

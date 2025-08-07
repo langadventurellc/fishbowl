@@ -18,9 +18,9 @@ describe("validateApiKey", () => {
       expect(validateApiKey(wrongPrefix, "openai")).toBe(false);
     });
 
-    it("rejects keys with exactly 40 characters (should be longer)", () => {
+    it("accepts keys with exactly 40 characters", () => {
       const exactLength = "sk-" + "a".repeat(37); // sk- + 37 = 40 total
-      expect(validateApiKey(exactLength, "openai")).toBe(false);
+      expect(validateApiKey(exactLength, "openai")).toBe(true);
     });
   });
 
@@ -40,35 +40,40 @@ describe("validateApiKey", () => {
       expect(validateApiKey(wrongPrefix, "anthropic")).toBe(false);
     });
 
-    it("rejects keys with exactly 50 characters (should be longer)", () => {
+    it("accepts keys with exactly 50 characters", () => {
       const exactLength = "sk-ant-" + "a".repeat(43); // sk-ant- + 43 = 50 total
-      expect(validateApiKey(exactLength, "anthropic")).toBe(false);
+      expect(validateApiKey(exactLength, "anthropic")).toBe(true);
     });
   });
 
   describe("Google keys", () => {
-    it("validates correct Google keys", () => {
-      const validKey = "AIzaSyB1234567890abcdefghijklmnopqrstuv";
+    it("validates correct Google keys with minimum length", () => {
+      const validKey = "A".repeat(35); // 35 characters
+      expect(validateApiKey(validKey, "google")).toBe(true);
+    });
+
+    it("validates Google keys with maximum length", () => {
+      const validKey = "A".repeat(45); // 45 characters
       expect(validateApiKey(validKey, "google")).toBe(true);
     });
 
     it("validates Google keys with mixed case and valid characters", () => {
-      const validKey = "AIzaSyBAbCdEfGhIjKlMnOpQrStUvWxYz123456";
+      const validKey = "AbC123_-eFgHiJkLmNoPqRsTuVwXyZ0123456789";
       expect(validateApiKey(validKey, "google")).toBe(true);
     });
 
-    it("rejects keys without AIza prefix", () => {
-      const wrongPrefix = "wrong1234567890abcdefghijklmnopqrs";
-      expect(validateApiKey(wrongPrefix, "google")).toBe(false);
+    it("rejects keys that are too short", () => {
+      const shortKey = "A".repeat(34); // 34 characters
+      expect(validateApiKey(shortKey, "google")).toBe(false);
     });
 
-    it("rejects keys with wrong length", () => {
-      const wrongLength = "AIzaShort";
-      expect(validateApiKey(wrongLength, "google")).toBe(false);
+    it("rejects keys that are too long", () => {
+      const longKey = "A".repeat(46); // 46 characters
+      expect(validateApiKey(longKey, "google")).toBe(false);
     });
 
     it("rejects keys with invalid characters", () => {
-      const invalidChars = "AIzaSyB1234567890abcdefghijklmnopq#$";
+      const invalidChars = "A".repeat(30) + "#$%@!"; // 35 chars but with invalid symbols
       expect(validateApiKey(invalidChars, "google")).toBe(false);
     });
   });

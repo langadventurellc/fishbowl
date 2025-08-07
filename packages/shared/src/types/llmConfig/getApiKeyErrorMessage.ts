@@ -9,16 +9,16 @@ import type { Provider } from "./Provider";
 export function getApiKeyErrorMessage(provider: Provider): string {
   switch (provider) {
     case "openai":
-      return "OpenAI API key must start with 'sk-' and be longer than 40 characters";
+      return 'OpenAI API key must start with "sk-" and be at least 40 characters long';
 
     case "anthropic":
-      return "Anthropic API key must start with 'sk-ant-' and be longer than 50 characters";
+      return 'Anthropic API key must start with "sk-ant-" and be at least 50 characters long';
 
     case "google":
-      return "Google API key must be a valid format (39 characters starting with 'AIza')";
+      return "Google API key must be 35-45 characters with letters, numbers, underscores, or hyphens";
 
     case "custom":
-      return "API key is required";
+      return "API key cannot be empty";
 
     default:
       return "Invalid API key format for the selected provider";

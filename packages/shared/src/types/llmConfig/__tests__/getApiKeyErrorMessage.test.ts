@@ -5,27 +5,27 @@ describe("getApiKeyErrorMessage", () => {
   it("returns correct error message for OpenAI", () => {
     const message = getApiKeyErrorMessage("openai");
     expect(message).toBe(
-      "OpenAI API key must start with 'sk-' and be longer than 40 characters",
+      'OpenAI API key must start with "sk-" and be at least 40 characters long',
     );
   });
 
   it("returns correct error message for Anthropic", () => {
     const message = getApiKeyErrorMessage("anthropic");
     expect(message).toBe(
-      "Anthropic API key must start with 'sk-ant-' and be longer than 50 characters",
+      'Anthropic API key must start with "sk-ant-" and be at least 50 characters long',
     );
   });
 
   it("returns correct error message for Google", () => {
     const message = getApiKeyErrorMessage("google");
     expect(message).toBe(
-      "Google API key must be a valid format (39 characters starting with 'AIza')",
+      "Google API key must be 35-45 characters with letters, numbers, underscores, or hyphens",
     );
   });
 
   it("returns correct error message for custom provider", () => {
     const message = getApiKeyErrorMessage("custom");
-    expect(message).toBe("API key is required");
+    expect(message).toBe("API key cannot be empty");
   });
 
   it("returns default error message for unknown provider", () => {
