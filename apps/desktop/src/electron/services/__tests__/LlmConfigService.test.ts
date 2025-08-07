@@ -426,25 +426,100 @@ describe("LlmConfigService", () => {
   });
 
   describe("initialize()", () => {
-    it("should initialize successfully", async () => {
+    it("should initialize cache with existing configurations from storage", async () => {
+      const configs = [
+        createValidConfig(),
+        { ...createValidConfig(), id: "test-2" },
+      ];
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: configs,
+      });
+      mockStorageService.getCompleteConfiguration
+        .mockResolvedValueOnce({
+          success: true,
+          data: configs[0],
+        })
+        .mockResolvedValueOnce({
+          success: true,
+          data: configs[1],
+        });
+
+      await service.initialize();
+
+      // Verify cache was populated
+      const cache = (service as any).cache;
+      expect(cache.size).toBe(2);
+      expect(cache.get("test-uuid-123")).toEqual(configs[0]);
+      expect(cache.get("test-2")).toEqual(configs[1]);
+      expect((service as any).initialized).toBe(true);
+    });
+
+    it("should initialize cache with empty storage (no configurations)", async () => {
       mockStorageService.getAllConfigurations.mockResolvedValue({
         success: true,
         data: [],
       });
 
-      await expect(service.initialize()).resolves.not.toThrow();
+      await service.initialize();
+
+      // Verify empty cache was created
+      const cache = (service as any).cache;
+      expect(cache.size).toBe(0);
+      expect((service as any).initialized).toBe(true);
+
+      const mockLogger = (service as any).logger;
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "LlmConfigService initialized successfully",
+        expect.objectContaining({ configCount: 0 }),
+      );
     });
 
-    it("should handle initialization failures", async () => {
+    it("should handle storage errors during initialization gracefully", async () => {
       mockStorageService.getAllConfigurations.mockResolvedValue({
         success: false,
-        error: "Init failed",
+        error: "Storage failed",
       });
 
-      await expect(service.initialize()).rejects.toThrow(Error);
-      await expect(service.initialize()).rejects.toThrow(
-        /Service initialization failed/,
+      // Should not throw but continue with empty cache
+      await expect(service.initialize()).resolves.not.toThrow();
+
+      // Verify empty cache and initialized flag set
+      const cache = (service as any).cache;
+      expect(cache.size).toBe(0);
+      expect((service as any).initialized).toBe(true);
+
+      // Verify error was logged
+      const mockLogger = (service as any).logger;
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Failed to initialize LlmConfigService",
+        expect.any(Error),
       );
+    });
+
+    it("should be idempotent and not reload cache on subsequent calls", async () => {
+      const configs = [createValidConfig()];
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: configs,
+      });
+      mockStorageService.getCompleteConfiguration.mockResolvedValue({
+        success: true,
+        data: configs[0],
+      });
+
+      // First initialization
+      await service.initialize();
+      expect(mockStorageService.getAllConfigurations).toHaveBeenCalledTimes(1);
+
+      // Second initialization should not call storage again
+      await service.initialize();
+      expect(mockStorageService.getAllConfigurations).toHaveBeenCalledTimes(1);
+
+      // Cache should still have the same data
+      const cache = (service as any).cache;
+      expect(cache.size).toBe(1);
+      expect((service as any).initialized).toBe(true);
     });
 
     it("should log configuration count on successful initialization", async () => {
@@ -466,6 +541,84 @@ describe("LlmConfigService", () => {
         "LlmConfigService initialized successfully",
         expect.objectContaining({ configCount: 1 }),
       );
+    });
+  });
+
+  describe("Cache functionality", () => {
+    it("should ensure initialization before operations via ensureInitialized", async () => {
+      const configs = [createValidConfig()];
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: configs,
+      });
+      mockStorageService.getCompleteConfiguration.mockResolvedValue({
+        success: true,
+        data: configs[0],
+      });
+
+      // Service not initialized yet
+      expect((service as any).initialized).toBe(false);
+
+      // Call private method ensureInitialized
+      await (service as any).ensureInitialized();
+
+      // Should now be initialized with cache populated
+      expect((service as any).initialized).toBe(true);
+      const cache = (service as any).cache;
+      expect(cache.size).toBe(1);
+    });
+
+    it("should not reinitialize if already initialized via ensureInitialized", async () => {
+      // First initialize manually
+      await service.initialize();
+      expect(mockStorageService.getAllConfigurations).toHaveBeenCalledTimes(1);
+
+      // Call ensureInitialized - should not call storage again
+      await (service as any).ensureInitialized();
+      expect(mockStorageService.getAllConfigurations).toHaveBeenCalledTimes(1);
+    });
+
+    it("should handle partial configuration load failures during cache initialization", async () => {
+      const metadata = [
+        {
+          id: "test-1",
+          customName: "Config 1",
+          provider: "openai" as const,
+          useAuthHeader: true,
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
+        },
+        {
+          id: "test-2",
+          customName: "Config 2",
+          provider: "anthropic" as const,
+          useAuthHeader: false,
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
+        },
+      ];
+      mockStorageService.getAllConfigurations.mockResolvedValue({
+        success: true,
+        data: metadata,
+      });
+
+      // First config loads successfully, second fails
+      mockStorageService.getCompleteConfiguration
+        .mockResolvedValueOnce({
+          success: true,
+          data: createValidConfig(),
+        })
+        .mockResolvedValueOnce({
+          success: false,
+          error: "Failed to load config 2",
+        });
+
+      await service.initialize();
+
+      // Should continue with partial data
+      const cache = (service as any).cache;
+      expect(cache.size).toBe(1); // Only successfully loaded config
+      expect((service as any).initialized).toBe(true);
     });
   });
 

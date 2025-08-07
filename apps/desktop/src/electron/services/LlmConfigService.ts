@@ -26,6 +26,8 @@ export class LlmConfigService implements LlmConfigServiceInterface {
   private logger = createLoggerSync({
     context: { metadata: { component: "LlmConfigService" } },
   });
+  private cache: Map<string, LlmConfig> = new Map();
+  private initialized: boolean = false;
 
   constructor(storageService?: LlmStorageService) {
     this.storageService = storageService ?? LlmStorageService.getInstance();
@@ -36,9 +38,18 @@ export class LlmConfigService implements LlmConfigServiceInterface {
    * Should be called during application startup.
    */
   async initialize(): Promise<void> {
+    if (this.initialized) return;
+
     try {
-      // Load existing configurations to validate service state
-      const configs = await this.list();
+      // Load all configurations from storage using the new private method
+      const configs = await this.getAllConfigurationsFromStorage();
+
+      // Populate cache
+      configs.forEach((config) => {
+        this.cache.set(config.id, config);
+      });
+
+      this.initialized = true;
       this.logger.info("LlmConfigService initialized successfully", {
         configCount: configs.length,
       });
@@ -47,9 +58,18 @@ export class LlmConfigService implements LlmConfigServiceInterface {
         "Failed to initialize LlmConfigService",
         error as Error,
       );
-      throw new Error(
-        `Service initialization failed: ${error instanceof Error ? error.message : "Unknown error"}`,
-      );
+      // Continue with empty cache for graceful degradation
+      this.initialized = true;
+    }
+  }
+
+  /**
+   * Ensure service is initialized before operations.
+   * Implements lazy initialization pattern.
+   */
+  private async ensureInitialized(): Promise<void> {
+    if (!this.initialized) {
+      await this.initialize();
     }
   }
 
@@ -305,6 +325,34 @@ export class LlmConfigService implements LlmConfigServiceInterface {
         error instanceof Error ? error : undefined,
       );
     }
+  }
+
+  /**
+   * Load all configurations directly from storage.
+   * Private method used only for cache initialization.
+   */
+  private async getAllConfigurationsFromStorage(): Promise<LlmConfig[]> {
+    const result = await this.storageService.getAllConfigurations();
+
+    if (!result.success) {
+      throw new ConfigOperationError(
+        "list",
+        result.error || "Failed to load configurations from storage",
+      );
+    }
+
+    // Get complete configs with API keys
+    const completeConfigs: LlmConfig[] = [];
+    for (const metadata of result.data || []) {
+      const completeResult = await this.storageService.getCompleteConfiguration(
+        metadata.id,
+      );
+      if (completeResult.success && completeResult.data) {
+        completeConfigs.push(completeResult.data);
+      }
+    }
+
+    return completeConfigs;
   }
 }
 
