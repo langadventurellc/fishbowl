@@ -15,6 +15,7 @@ jest.mock("@fishbowl-ai/shared", () => ({
     info: jest.fn(),
     debug: jest.fn(),
     error: jest.fn(),
+    warn: jest.fn(),
   })),
 }));
 
@@ -495,8 +496,7 @@ describe("LlmConfigService", () => {
 
       const mockLogger = (service as any).logger;
       expect(mockLogger.info).toHaveBeenCalledWith(
-        "LlmConfigService initialized successfully",
-        expect.objectContaining({ configCount: 0 }),
+        "Successfully loaded 0 LLM configurations into cache",
       );
     });
 
@@ -517,7 +517,7 @@ describe("LlmConfigService", () => {
       // Verify error was logged
       const mockLogger = (service as any).logger;
       expect(mockLogger.error).toHaveBeenCalledWith(
-        "Failed to initialize LlmConfigService",
+        "Failed to initialize LLM config cache",
         expect.any(Error),
       );
     });
@@ -563,8 +563,7 @@ describe("LlmConfigService", () => {
       // Verify logger.info was called with correct parameters
       const mockLogger = (service as any).logger;
       expect(mockLogger.info).toHaveBeenCalledWith(
-        "LlmConfigService initialized successfully",
-        expect.objectContaining({ configCount: 1 }),
+        "Successfully loaded 1 LLM configurations into cache",
       );
     });
   });
@@ -685,7 +684,9 @@ describe("LlmConfigService", () => {
 
       expect(error).toBeInstanceOf(ConfigOperationError);
       expect(error.context.operation).toBe("create");
-      expect(error.message).toBe("Configuration creation failed");
+      expect(error.message).toBe(
+        "Configuration creation failed. Consider calling refreshCache() if this persists.",
+      );
     });
   });
 
@@ -735,6 +736,350 @@ describe("LlmConfigService", () => {
       await expect(service.create(input2)).rejects.toThrow(
         DuplicateConfigError,
       );
+    });
+  });
+
+  describe("Cache error handling and recovery", () => {
+    describe("refreshCache()", () => {
+      it("should reload all configurations from storage", async () => {
+        const configs = [
+          createValidConfig(),
+          { ...createValidConfig(), id: "test-2" },
+        ];
+
+        // Mock for initialization
+        mockStorageService.getAllConfigurations.mockResolvedValueOnce({
+          success: true,
+          data: configs,
+        });
+        mockStorageService.getCompleteConfiguration
+          .mockResolvedValueOnce({ success: true, data: configs[0] })
+          .mockResolvedValueOnce({ success: true, data: configs[1] });
+
+        await service.initialize();
+
+        // Modify cache to simulate corruption
+        (service as any).cache.delete("test-2");
+        expect((service as any).cache.size).toBe(1);
+
+        // Mock for refresh
+        mockStorageService.getAllConfigurations.mockResolvedValueOnce({
+          success: true,
+          data: configs,
+        });
+        mockStorageService.getCompleteConfiguration
+          .mockResolvedValueOnce({ success: true, data: configs[0] })
+          .mockResolvedValueOnce({ success: true, data: configs[1] });
+
+        // Refresh cache
+        await service.refreshCache();
+
+        // Verify cache was reloaded
+        expect((service as any).cache.size).toBe(2);
+        expect((service as any).cache.get("test-2")).toEqual(configs[1]);
+      });
+
+      it("should handle storage failures during refresh", async () => {
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: false,
+          error: "Storage failed",
+        });
+
+        await expect(service.refreshCache()).rejects.toThrow(
+          ConfigOperationError,
+        );
+      });
+
+      it("should log successful refresh with configuration count", async () => {
+        const configs = [createValidConfig()];
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: true,
+          data: configs,
+        });
+        mockStorageService.getCompleteConfiguration.mockResolvedValue({
+          success: true,
+          data: configs[0],
+        });
+
+        await service.refreshCache();
+
+        const mockLogger = (service as any).logger;
+        expect(mockLogger.info).toHaveBeenCalledWith(
+          "Cache refreshed with 1 configurations",
+        );
+      });
+    });
+
+    describe("validateCache()", () => {
+      it("should detect missing configurations in cache", async () => {
+        const configs = [
+          createValidConfig(),
+          { ...createValidConfig(), id: "test-2" },
+        ];
+
+        // Mock for initialization
+        mockStorageService.getAllConfigurations.mockResolvedValueOnce({
+          success: true,
+          data: configs,
+        });
+        mockStorageService.getCompleteConfiguration
+          .mockResolvedValueOnce({ success: true, data: configs[0] })
+          .mockResolvedValueOnce({ success: true, data: configs[1] });
+
+        await service.initialize();
+
+        // Remove one config from cache
+        (service as any).cache.delete("test-2");
+
+        // Mock for validateCache
+        mockStorageService.getAllConfigurations.mockResolvedValueOnce({
+          success: true,
+          data: configs,
+        });
+        mockStorageService.getCompleteConfiguration
+          .mockResolvedValueOnce({ success: true, data: configs[0] })
+          .mockResolvedValueOnce({ success: true, data: configs[1] });
+
+        const result = await service.validateCache();
+
+        expect(result.isValid).toBe(false);
+        expect(result.issues).toContain(
+          "Configuration test-2 exists in storage but not in cache",
+        );
+        expect(result.cacheCount).toBe(1);
+        expect(result.storageCount).toBe(2);
+      });
+
+      it("should detect extra configurations in cache", async () => {
+        const config = createValidConfig();
+        mockStorageService.getAllConfigurations
+          .mockResolvedValueOnce({ success: true, data: [config] })
+          .mockResolvedValueOnce({ success: true, data: [] });
+        mockStorageService.getCompleteConfiguration.mockResolvedValue({
+          success: true,
+          data: config,
+        });
+
+        await service.initialize();
+
+        const result = await service.validateCache();
+
+        expect(result.isValid).toBe(false);
+        expect(result.issues).toContain(
+          "Configuration test-uuid-123 exists in cache but not in storage",
+        );
+      });
+
+      it("should handle storage access failures", async () => {
+        await service.initialize();
+
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: false,
+          error: "Storage error",
+        });
+
+        const result = await service.validateCache();
+
+        expect(result.isValid).toBe(false);
+        expect(result.issues[0]).toContain("Storage access failed");
+        expect(result.storageCount).toBe(-1);
+      });
+
+      it("should return valid status when cache matches storage", async () => {
+        const configs = [createValidConfig()];
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: true,
+          data: configs,
+        });
+        mockStorageService.getCompleteConfiguration.mockResolvedValue({
+          success: true,
+          data: configs[0],
+        });
+
+        await service.initialize();
+
+        const result = await service.validateCache();
+
+        expect(result.isValid).toBe(true);
+        expect(result.issues).toHaveLength(0);
+        expect(result.cacheCount).toBe(1);
+        expect(result.storageCount).toBe(1);
+      });
+    });
+
+    describe("getCacheInfo()", () => {
+      it("should return accurate diagnostic information", async () => {
+        const configs = [
+          createValidConfig(),
+          { ...createValidConfig(), id: "test-2" },
+        ];
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: true,
+          data: configs,
+        });
+        mockStorageService.getCompleteConfiguration
+          .mockResolvedValueOnce({ success: true, data: configs[0] })
+          .mockResolvedValueOnce({ success: true, data: configs[1] });
+
+        await service.initialize();
+
+        const info = service.getCacheInfo();
+
+        expect(info.initialized).toBe(true);
+        expect(info.configCount).toBe(2);
+        expect(info.memorySizeEstimate).toMatch(/~[\d.]+MB/);
+      });
+
+      it("should work before initialization", () => {
+        const info = service.getCacheInfo();
+
+        expect(info.initialized).toBe(false);
+        expect(info.configCount).toBe(0);
+        expect(info.memorySizeEstimate).toBe("~0MB");
+      });
+    });
+
+    describe("Enhanced initialization error handling", () => {
+      it("should clear cache before populating on initialization", async () => {
+        const config = createValidConfig();
+
+        // Manually add something to cache
+        (service as any).cache.set("stale", { id: "stale" });
+
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: true,
+          data: [config],
+        });
+        mockStorageService.getCompleteConfiguration.mockResolvedValue({
+          success: true,
+          data: config,
+        });
+
+        await service.initialize();
+
+        // Verify stale entry was cleared
+        expect((service as any).cache.has("stale")).toBe(false);
+        expect((service as any).cache.size).toBe(1);
+      });
+
+      it("should clear cache on initialization failure", async () => {
+        // Add something to cache
+        (service as any).cache.set("existing", { id: "existing" });
+
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: false,
+          error: "Storage failed",
+        });
+
+        await service.initialize();
+
+        // Verify cache was cleared
+        expect((service as any).cache.size).toBe(0);
+        expect((service as any).initialized).toBe(true);
+      });
+
+      it("should log appropriate warning message on initialization failure", async () => {
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: false,
+          error: "Storage failed",
+        });
+
+        await service.initialize();
+
+        const mockLogger = (service as any).logger;
+        expect(mockLogger.warn).toHaveBeenCalledWith(
+          "Starting with empty configuration cache due to initialization failure",
+        );
+      });
+    });
+
+    describe("Error recovery suggestions", () => {
+      it("should suggest cache refresh in create operation failures", async () => {
+        await service.initialize();
+
+        mockRepository.create.mockRejectedValue(new Error("Storage error"));
+
+        await expect(service.create(createValidInput())).rejects.toThrow(
+          expect.objectContaining({
+            message: expect.stringContaining("refreshCache()"),
+          }),
+        );
+      });
+
+      it("should suggest cache refresh in read operation failures", async () => {
+        // Mock an unexpected error during ensureInitialized to trigger error handling
+        jest
+          .spyOn(service as any, "ensureInitialized")
+          .mockRejectedValue(new Error("Storage error"));
+
+        await expect(service.read("test-id")).rejects.toThrow(
+          expect.objectContaining({
+            message: expect.stringContaining("refreshCache()"),
+          }),
+        );
+      });
+
+      it("should suggest cache refresh in update operation failures", async () => {
+        const config = createValidConfig();
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: true,
+          data: [config],
+        });
+        mockStorageService.getCompleteConfiguration.mockResolvedValue({
+          success: true,
+          data: config,
+        });
+
+        await service.initialize();
+
+        mockRepository.update.mockRejectedValue(new Error("Storage error"));
+
+        await expect(
+          service.update("test-uuid-123", { customName: "New Name" }),
+        ).rejects.toThrow(
+          expect.objectContaining({
+            message: expect.stringContaining("refreshCache()"),
+          }),
+        );
+      });
+
+      it("should suggest cache refresh in delete operation failures", async () => {
+        const config = createValidConfig();
+        mockStorageService.getAllConfigurations.mockResolvedValue({
+          success: true,
+          data: [config],
+        });
+        mockStorageService.getCompleteConfiguration.mockResolvedValue({
+          success: true,
+          data: config,
+        });
+
+        await service.initialize();
+
+        // Mock an unexpected error to hit the catch block with recovery suggestion
+        mockStorageService.deleteConfiguration.mockRejectedValue(
+          new Error("Storage error"),
+        );
+
+        await expect(service.delete("test-uuid-123")).rejects.toThrow(
+          expect.objectContaining({
+            message: expect.stringContaining("refreshCache()"),
+          }),
+        );
+      });
+
+      it("should suggest cache refresh in list operation failures", async () => {
+        // Mock an unexpected error during ensureInitialized to trigger error handling
+        jest
+          .spyOn(service as any, "ensureInitialized")
+          .mockRejectedValue(new Error("Storage error"));
+
+        await expect(service.list()).rejects.toThrow(
+          expect.objectContaining({
+            message: expect.stringContaining("refreshCache()"),
+          }),
+        );
+      });
     });
   });
 });

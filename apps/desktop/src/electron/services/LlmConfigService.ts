@@ -41,8 +41,11 @@ export class LlmConfigService implements LlmConfigServiceInterface {
     if (this.initialized) return;
 
     try {
-      // Load all configurations from storage using the new private method
+      // Load all configurations from storage
       const configs = await this.getAllConfigurationsFromStorage();
+
+      // Clear any existing cache state
+      this.cache.clear();
 
       // Populate cache
       configs.forEach((config) => {
@@ -50,16 +53,22 @@ export class LlmConfigService implements LlmConfigServiceInterface {
       });
 
       this.initialized = true;
-      this.logger.info("LlmConfigService initialized successfully", {
-        configCount: configs.length,
-      });
+      this.logger.info(
+        `Successfully loaded ${configs.length} LLM configurations into cache`,
+      );
     } catch (error) {
       this.logger.error(
-        "Failed to initialize LlmConfigService",
+        "Failed to initialize LLM config cache",
         error as Error,
       );
-      // Continue with empty cache for graceful degradation
+
+      // Clear cache and continue with empty state for graceful degradation
+      this.cache.clear();
       this.initialized = true;
+
+      this.logger.warn(
+        "Starting with empty configuration cache due to initialization failure",
+      );
     }
   }
 
@@ -124,7 +133,7 @@ export class LlmConfigService implements LlmConfigServiceInterface {
       this.logger.error("Failed to create LLM configuration", error as Error);
       throw new ConfigOperationError(
         "create",
-        "Configuration creation failed",
+        "Configuration creation failed. Consider calling refreshCache() if this persists.",
         { provider: input.provider },
         error instanceof Error ? error : undefined,
       );
@@ -167,7 +176,7 @@ export class LlmConfigService implements LlmConfigServiceInterface {
       this.logger.error("Failed to read LLM configuration", error as Error);
       throw new ConfigOperationError(
         "read",
-        "Configuration read failed",
+        "Configuration read failed. Consider calling refreshCache() if this persists.",
         { id },
         error instanceof Error ? error : undefined,
       );
@@ -231,7 +240,7 @@ export class LlmConfigService implements LlmConfigServiceInterface {
       this.logger.error("Failed to update LLM configuration", error as Error);
       throw new ConfigOperationError(
         "update",
-        "Configuration update failed",
+        "Configuration update failed. Consider calling refreshCache() if this persists.",
         { id, updates },
         error instanceof Error ? error : undefined,
       );
@@ -282,7 +291,7 @@ export class LlmConfigService implements LlmConfigServiceInterface {
       this.logger.error("Failed to delete LLM configuration", error as Error);
       throw new ConfigOperationError(
         "delete",
-        "Configuration deletion failed",
+        "Configuration deletion failed. Consider calling refreshCache() if this persists.",
         { id },
         error instanceof Error ? error : undefined,
       );
@@ -312,7 +321,7 @@ export class LlmConfigService implements LlmConfigServiceInterface {
       this.logger.error("Failed to list LLM configurations", error as Error);
       throw new ConfigOperationError(
         "list",
-        "Configuration list failed",
+        "Configuration list failed. Consider calling refreshCache() if this persists.",
         undefined,
         error instanceof Error ? error : undefined,
       );
@@ -345,6 +354,120 @@ export class LlmConfigService implements LlmConfigServiceInterface {
     }
 
     return completeConfigs;
+  }
+
+  /**
+   * Refresh the cache by reloading all configurations from storage.
+   * Useful for recovery scenarios or when cache sync is suspected to be lost.
+   */
+  async refreshCache(): Promise<void> {
+    try {
+      this.logger.info("Refreshing LLM configuration cache");
+
+      // Load fresh data from storage
+      const configs = await this.getAllConfigurationsFromStorage();
+
+      // Replace cache contents
+      this.cache.clear();
+      configs.forEach((config) => {
+        this.cache.set(config.id, config);
+      });
+
+      this.logger.info(`Cache refreshed with ${configs.length} configurations`);
+    } catch (error) {
+      this.logger.error("Failed to refresh cache", error as Error);
+      throw new ConfigOperationError(
+        "refresh",
+        "Cache refresh failed",
+        undefined,
+        error instanceof Error ? error : undefined,
+      );
+    }
+  }
+
+  /**
+   * Validate cache integrity by comparing with storage.
+   * Returns information about any discrepancies found.
+   */
+  async validateCache(): Promise<{
+    isValid: boolean;
+    issues: string[];
+    cacheCount: number;
+    storageCount: number;
+  }> {
+    await this.ensureInitialized();
+
+    const issues: string[] = [];
+    const cacheConfigs = Array.from(this.cache.values());
+
+    try {
+      // Get configurations from storage
+      const storageConfigs = await this.getAllConfigurationsFromStorage();
+
+      // Compare counts
+      if (cacheConfigs.length !== storageConfigs.length) {
+        issues.push(
+          `Count mismatch: cache has ${cacheConfigs.length}, storage has ${storageConfigs.length}`,
+        );
+      }
+
+      // Check for missing configurations in cache
+      const cacheIds = new Set(cacheConfigs.map((c) => c.id));
+      const storageIds = new Set(storageConfigs.map((c) => c.id));
+
+      for (const storageId of storageIds) {
+        if (!cacheIds.has(storageId)) {
+          issues.push(
+            `Configuration ${storageId} exists in storage but not in cache`,
+          );
+        }
+      }
+
+      for (const cacheId of cacheIds) {
+        if (!storageIds.has(cacheId)) {
+          issues.push(
+            `Configuration ${cacheId} exists in cache but not in storage`,
+          );
+        }
+      }
+
+      return {
+        isValid: issues.length === 0,
+        issues,
+        cacheCount: cacheConfigs.length,
+        storageCount: storageConfigs.length,
+      };
+    } catch (error) {
+      issues.push(
+        `Storage access failed during validation: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+      return {
+        isValid: false,
+        issues,
+        cacheCount: cacheConfigs.length,
+        storageCount: -1,
+      };
+    }
+  }
+
+  /**
+   * Get cache health and diagnostic information.
+   */
+  getCacheInfo(): {
+    initialized: boolean;
+    configCount: number;
+    memorySizeEstimate: string;
+  } {
+    const configCount = this.cache.size;
+
+    // Rough memory estimate (each config ~1KB on average)
+    const memorySizeEstimate = `~${Math.round(((configCount * 1024) / 1024) * 100) / 100}MB`;
+
+    return {
+      initialized: this.initialized,
+      configCount,
+      memorySizeEstimate,
+    };
   }
 }
 
