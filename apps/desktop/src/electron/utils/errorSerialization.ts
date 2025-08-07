@@ -1,13 +1,20 @@
-import type { SerializableError } from "../../shared/ipc/types";
 import type { SystemError } from "@fishbowl-ai/shared";
 import {
-  FileStorageError,
   FileNotFoundError,
-  WritePermissionError,
+  FileStorageError,
   InvalidJsonError,
-  SettingsValidationError,
   SchemaVersionError,
+  SettingsValidationError,
+  WritePermissionError,
 } from "@fishbowl-ai/shared";
+import type { SerializableError } from "../../shared/ipc/types";
+import {
+  ConfigNotFoundError,
+  ConfigOperationError,
+  DuplicateConfigError,
+  InvalidConfigError,
+  LlmConfigError,
+} from "../services/errors";
 
 /**
  * Determines if the current environment is development
@@ -19,7 +26,26 @@ function isDevelopment(): boolean {
 /**
  * Maps known error types to standardized error codes
  */
+// eslint-disable-next-line statement-count/function-statement-count-warn
 function determineErrorCode(error: unknown): string {
+  // LLM Config error checks
+  if (error instanceof DuplicateConfigError) {
+    return "DUPLICATE_CONFIG_NAME";
+  }
+  if (error instanceof ConfigNotFoundError) {
+    return "CONFIG_NOT_FOUND";
+  }
+  if (error instanceof InvalidConfigError) {
+    return "INVALID_CONFIG_DATA";
+  }
+  if (error instanceof ConfigOperationError) {
+    return "CONFIG_OPERATION_FAILED";
+  }
+  if (error instanceof LlmConfigError) {
+    return error.code || "LLM_CONFIG_ERROR";
+  }
+
+  // File storage error checks
   if (error instanceof FileNotFoundError) {
     return "FILE_NOT_FOUND";
   }
