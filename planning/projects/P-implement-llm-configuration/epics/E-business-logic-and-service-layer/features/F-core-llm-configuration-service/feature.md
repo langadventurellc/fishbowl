@@ -2,11 +2,11 @@
 kind: feature
 id: F-core-llm-configuration-service
 title: Core LLM Configuration Service
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 created: "2025-08-06T21:36:26.640586"
-updated: "2025-08-06T21:36:26.640586"
+updated: "2025-08-07T06:33:16.791882+00:00"
 schema_version: "1.1"
 parent: E-business-logic-and-service-layer
 ---

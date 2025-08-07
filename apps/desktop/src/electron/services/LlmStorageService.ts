@@ -21,10 +21,22 @@ import { LlmSecureStorage } from "./LlmSecureStorage";
  * Provides a single interface for all LLM configuration operations.
  */
 export class LlmStorageService {
+  private static instance: LlmStorageService | null = null;
+
   public repository: LlmConfigRepository;
   private logger = createLoggerSync({
     context: { metadata: { component: "LlmStorageService" } },
   });
+
+  /**
+   * Get singleton instance of LlmStorageService
+   */
+  public static getInstance(): LlmStorageService {
+    if (!LlmStorageService.instance) {
+      LlmStorageService.instance = new LlmStorageService();
+    }
+    return LlmStorageService.instance;
+  }
 
   constructor() {
     // Initialize file storage service for metadata
