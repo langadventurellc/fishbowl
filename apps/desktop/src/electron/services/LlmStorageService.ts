@@ -82,7 +82,7 @@ export class LlmStorageService {
         provider: config.provider,
         apiKey,
         baseUrl: config.baseUrl,
-        authHeaderType: config.authHeaderType,
+        useAuthHeader: config.useAuthHeader,
       };
 
       const createdConfig = await this.repository.create(input);
@@ -119,7 +119,7 @@ export class LlmStorageService {
         customName: updates.customName,
         provider: updates.provider,
         baseUrl: updates.baseUrl,
-        authHeaderType: updates.authHeaderType,
+        useAuthHeader: updates.useAuthHeader,
         apiKey: newApiKey,
       };
 

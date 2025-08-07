@@ -66,7 +66,7 @@ describe("LlmStorageService", () => {
     customName: "Test OpenAI",
     provider: "openai",
     baseUrl: "https://api.openai.com/v1",
-    authHeaderType: "Bearer",
+    useAuthHeader: true,
     createdAt: "2023-10-01T00:00:00.000Z",
     updatedAt: "2023-10-01T00:00:00.000Z",
   });
@@ -80,9 +80,9 @@ describe("LlmStorageService", () => {
     it("should use repository create method successfully", async () => {
       const config = {
         customName: "Test OpenAI",
-        provider: "openai",
+        provider: "openai" as const,
         baseUrl: "https://api.openai.com/v1",
-        authHeaderType: "Bearer",
+        useAuthHeader: true,
       };
       const apiKey = "sk-test123456789";
       const createdConfig = createCompleteConfig();
@@ -98,14 +98,15 @@ describe("LlmStorageService", () => {
         provider: config.provider,
         apiKey,
         baseUrl: config.baseUrl,
-        authHeaderType: config.authHeaderType,
+        useAuthHeader: config.useAuthHeader,
       });
     });
 
     it("should handle validation errors from repository", async () => {
       const config = {
         customName: "",
-        provider: "openai",
+        provider: "openai" as const,
+        useAuthHeader: true,
       };
       const apiKey = "sk-test123456789";
 
@@ -132,7 +133,8 @@ describe("LlmStorageService", () => {
     it("should handle general errors from repository", async () => {
       const config = {
         customName: "Test",
-        provider: "openai",
+        provider: "openai" as const,
+        useAuthHeader: true,
       };
       const apiKey = "sk-test123456789";
 
@@ -389,7 +391,7 @@ describe("LlmStorageService", () => {
       mockRepository.create.mockRejectedValue(zodError);
 
       const result = await service.saveConfiguration(
-        { customName: "", provider: "openai" },
+        { customName: "", provider: "openai", useAuthHeader: true },
         "key",
       );
 
@@ -415,7 +417,7 @@ describe("LlmStorageService", () => {
       mockRepository.create.mockRejectedValue(zodError);
 
       const result = await service.saveConfiguration(
-        { customName: "Test", provider: "openai" },
+        { customName: "", provider: "openai", useAuthHeader: true },
         "key",
       );
 
@@ -427,7 +429,7 @@ describe("LlmStorageService", () => {
       mockRepository.create.mockRejectedValue(new Error("Regular error"));
 
       const result = await service.saveConfiguration(
-        { customName: "Test", provider: "openai" },
+        { customName: "", provider: "openai", useAuthHeader: true },
         "key",
       );
 
@@ -439,7 +441,7 @@ describe("LlmStorageService", () => {
       mockRepository.create.mockRejectedValue("String error");
 
       const result = await service.saveConfiguration(
-        { customName: "Test", provider: "openai" },
+        { customName: "", provider: "openai", useAuthHeader: true },
         "key",
       );
 

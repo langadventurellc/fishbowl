@@ -135,7 +135,7 @@ describe("llmConfigHandlers", () => {
         provider: "openai",
         apiKey: "encrypted-key",
         baseUrl: "https://api.openai.com",
-        authHeaderType: "Bearer",
+        useAuthHeader: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -146,7 +146,7 @@ describe("llmConfigHandlers", () => {
           provider: "openai",
           apiKey: "test-api-key",
           baseUrl: "https://api.openai.com",
-          authHeaderType: "Bearer",
+          useAuthHeader: true,
         },
       };
 
@@ -191,6 +191,7 @@ describe("llmConfigHandlers", () => {
           customName: "Test Config",
           provider: "openai",
           apiKey: "test-api-key",
+          useAuthHeader: true,
         },
       };
 
@@ -235,6 +236,7 @@ describe("llmConfigHandlers", () => {
           customName: "Test Config",
           provider: "openai",
           apiKey: "test-api-key",
+          useAuthHeader: true,
         },
       };
 
@@ -257,6 +259,7 @@ describe("llmConfigHandlers", () => {
         customName: "Test Config",
         provider: "openai",
         apiKey: "encrypted-key",
+        useAuthHeader: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -342,6 +345,7 @@ describe("llmConfigHandlers", () => {
         provider: "openai",
         apiKey: "encrypted-key",
         baseUrl: "https://api.openai.com/v2",
+        useAuthHeader: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -376,6 +380,7 @@ describe("llmConfigHandlers", () => {
         customName: "Test Config",
         provider: "openai",
         apiKey: "encrypted-key",
+        useAuthHeader: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -503,6 +508,7 @@ describe("llmConfigHandlers", () => {
           customName: "Config 1",
           provider: "openai",
           apiKey: "encrypted-key-1",
+          useAuthHeader: true,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -511,6 +517,7 @@ describe("llmConfigHandlers", () => {
           customName: "Config 2",
           provider: "anthropic",
           apiKey: "encrypted-key-2",
+          useAuthHeader: false,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -578,6 +585,7 @@ describe("llmConfigHandlers", () => {
           customName: "Test Config",
           provider: "openai",
           apiKey: "test-key",
+          useAuthHeader: true,
         },
       };
 

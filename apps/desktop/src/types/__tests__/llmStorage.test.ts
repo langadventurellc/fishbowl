@@ -11,6 +11,7 @@ describe("llmStorage types", () => {
         id: "550e8400-e29b-41d4-a716-446655440000",
         customName: "Production OpenAI",
         provider: "openai",
+        useAuthHeader: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -26,13 +27,13 @@ describe("llmStorage types", () => {
         customName: "Custom Model",
         provider: "custom",
         baseUrl: "https://api.custom.com",
-        authHeaderType: "Bearer",
+        useAuthHeader: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
 
       expect(metadata.baseUrl).toBe("https://api.custom.com");
-      expect(metadata.authHeaderType).toBe("Bearer");
+      expect(metadata.useAuthHeader).toBe(true);
     });
   });
 

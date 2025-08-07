@@ -34,7 +34,7 @@ describe("LlmConfigService", () => {
     provider: "openai",
     apiKey: "sk-test123",
     baseUrl: "https://api.openai.com/v1",
-    authHeaderType: "Bearer",
+    useAuthHeader: true,
   });
 
   const createValidConfig = (): LlmConfig => ({
@@ -386,14 +386,16 @@ describe("LlmConfigService", () => {
         {
           id: "test-1",
           customName: "Config 1",
-          provider: "openai",
+          provider: "openai" as const,
+          useAuthHeader: true,
           createdAt: "2024-01-01T00:00:00.000Z",
           updatedAt: "2024-01-01T00:00:00.000Z",
         },
         {
           id: "test-2",
           customName: "Config 2",
-          provider: "anthropic",
+          provider: "anthropic" as const,
+          useAuthHeader: false,
           createdAt: "2024-01-01T00:00:00.000Z",
           updatedAt: "2024-01-01T00:00:00.000Z",
         },
@@ -532,7 +534,7 @@ describe("LlmConfigService", () => {
 
     it("should enforce unique custom names across providers", async () => {
       const input1 = createValidInput();
-      const input2 = { ...input1, provider: "anthropic" }; // Different provider, same name
+      const input2 = { ...input1, provider: "anthropic" as const }; // Different provider, same name
 
       const existingConfig = createValidConfig();
 
