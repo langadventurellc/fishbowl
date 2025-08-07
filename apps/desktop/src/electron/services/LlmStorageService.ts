@@ -21,7 +21,7 @@ import { LlmSecureStorage } from "./LlmSecureStorage";
  * Provides a single interface for all LLM configuration operations.
  */
 export class LlmStorageService {
-  private repository: LlmConfigRepository;
+  public repository: LlmConfigRepository;
   private logger = createLoggerSync({
     context: { metadata: { component: "LlmStorageService" } },
   });

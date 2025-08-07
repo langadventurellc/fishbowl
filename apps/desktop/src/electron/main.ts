@@ -9,6 +9,9 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupSettingsHandlers } from "./settingsHandlers.js";
+import { LlmStorageService } from "./services/LlmStorageService.js";
+import { llmStorageServiceManager } from "./getLlmStorageService.js";
+import { setupLlmConfigHandlers } from "./llmConfigHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -157,6 +160,14 @@ app.whenReady().then(async () => {
       storageType: "FileStorage",
       settingsPath: settingsFilePath,
     });
+
+    // Initialize LLM storage service
+    const llmStorageService = new LlmStorageService();
+    llmStorageServiceManager.set(llmStorageService);
+
+    mainLogger?.info("LLM storage service initialized successfully", {
+      secureStorageAvailable: llmStorageService.isSecureStorageAvailable(),
+    });
   } catch (error) {
     mainLogger?.error(
       "Failed to initialize settings repository",
@@ -167,6 +178,7 @@ app.whenReady().then(async () => {
 
   // Setup IPC handlers
   setupSettingsHandlers();
+  setupLlmConfigHandlers();
 
   // Setup application menu after window creation
   const { setupApplicationMenu } = await import("./setupApplicationMenu.js");
