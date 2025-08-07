@@ -10,6 +10,7 @@ export const LLM_CONFIG_CHANNELS = {
   UPDATE: "llm-config:update",
   DELETE: "llm-config:delete",
   LIST: "llm-config:list",
+  INITIALIZE: "llm-config:initialize",
 } as const;
 
 /**

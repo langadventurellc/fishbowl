@@ -27,6 +27,7 @@ export type { LlmConfigReadRequest } from "./llmConfig/readRequest";
 export type { LlmConfigUpdateRequest } from "./llmConfig/updateRequest";
 export type { LlmConfigDeleteRequest } from "./llmConfig/deleteRequest";
 export type { LlmConfigListRequest } from "./llmConfig/listRequest";
+export type { LlmConfigInitializeRequest } from "./llmConfig/initializeRequest";
 
 // Response types
 export type { SettingsLoadResponse } from "./loadResponse";
@@ -40,6 +41,7 @@ export type { LlmConfigReadResponse } from "./llmConfig/readResponse";
 export type { LlmConfigUpdateResponse } from "./llmConfig/updateResponse";
 export type { LlmConfigDeleteResponse } from "./llmConfig/deleteResponse";
 export type { LlmConfigListResponse } from "./llmConfig/listResponse";
+export type { LlmConfigInitializeResponse } from "./llmConfig/initializeResponse";
 
 // Data types
 export type { PersistedSettingsData } from "./data";

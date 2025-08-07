@@ -11,6 +11,8 @@ import {
   type LlmConfigDeleteResponse,
   type LlmConfigListRequest,
   type LlmConfigListResponse,
+  type LlmConfigInitializeRequest,
+  type LlmConfigInitializeResponse,
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
 import { llmStorageServiceManager } from "./getLlmStorageService";
@@ -177,6 +179,40 @@ export function setupLlmConfigHandlers(service?: LlmStorageService): void {
         return { success: true, data: configs };
       } catch (error) {
         logger.error("Failed to list LLM configurations", error as Error);
+        return { success: false, error: serializeError(error) };
+      }
+    },
+  );
+
+  // Handler for initializing LLM configuration service
+  ipcMain.handle(
+    LLM_CONFIG_CHANNELS.INITIALIZE,
+    async (
+      _event,
+      _request: LlmConfigInitializeRequest,
+    ): Promise<LlmConfigInitializeResponse> => {
+      try {
+        logger.debug("Initializing LLM configuration service");
+
+        // Get or create the storage service instance (initialization happens in constructor)
+        const storageService = service || llmStorageServiceManager.get();
+
+        // Verify secure storage is available
+        const isSecureStorageAvailable =
+          storageService.isSecureStorageAvailable();
+        if (!isSecureStorageAvailable) {
+          logger.warn("Secure storage is not available for API key encryption");
+        }
+
+        logger.debug("LLM configuration service initialized successfully", {
+          secureStorageAvailable: isSecureStorageAvailable,
+        });
+        return { success: true };
+      } catch (error) {
+        logger.error(
+          "Failed to initialize LLM configuration service",
+          error as Error,
+        );
         return { success: false, error: serializeError(error) };
       }
     },
