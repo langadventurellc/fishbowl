@@ -19,6 +19,8 @@ import type {
   LlmConfigDeleteRequest,
   LlmConfigDeleteResponse,
   LlmConfigListResponse,
+  LlmConfigRefreshCacheRequest,
+  LlmConfigRefreshCacheResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -276,6 +278,29 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error listing LLM configurations:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    refreshCache: async (): Promise<void> => {
+      try {
+        const request: LlmConfigRefreshCacheRequest = {};
+        const response = (await ipcRenderer.invoke(
+          LLM_CONFIG_CHANNELS.REFRESH_CACHE,
+          request,
+        )) as LlmConfigRefreshCacheResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message ||
+              "Failed to refresh LLM configuration cache",
+          );
+        }
+      } catch (error) {
+        logger.error(
+          "Error refreshing LLM configuration cache:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

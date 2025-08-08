@@ -15,4 +15,5 @@ export interface LlmConfigServiceInterface {
   delete(id: string): Promise<void>;
   list(): Promise<LlmConfigMetadata[]>;
   initialize(): Promise<void>;
+  refreshCache(): Promise<void>;
 }

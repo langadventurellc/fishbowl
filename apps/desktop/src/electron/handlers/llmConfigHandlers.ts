@@ -13,6 +13,8 @@ import {
   type LlmConfigListResponse,
   type LlmConfigInitializeRequest,
   type LlmConfigInitializeResponse,
+  type LlmConfigRefreshCacheRequest,
+  type LlmConfigRefreshCacheResponse,
 } from "../../shared/ipc/index";
 import { serializeError } from "../utils/errorSerialization";
 import type { LlmConfigServiceInterface } from "../services/LlmConfigServiceInterface";
@@ -289,6 +291,37 @@ function registerInitializeHandler(
 }
 
 /**
+ * Register refresh cache handler with ipcMain
+ */
+function registerRefreshCacheHandler(
+  ipcMain: IpcMain,
+  service: LlmConfigServiceInterface,
+): void {
+  ipcMain.handle(
+    LLM_CONFIG_CHANNELS.REFRESH_CACHE,
+    async (
+      _event,
+      _request: LlmConfigRefreshCacheRequest,
+    ): Promise<LlmConfigRefreshCacheResponse> => {
+      try {
+        logger.debug("Refreshing LLM configuration cache");
+
+        await service.refreshCache();
+
+        logger.debug("LLM configuration cache refreshed successfully");
+        return { success: true };
+      } catch (error) {
+        logger.error(
+          "Failed to refresh LLM configuration cache",
+          error as Error,
+        );
+        return { success: false, error: serializeError(error) };
+      }
+    },
+  );
+}
+
+/**
  * Sets up IPC handlers for LLM configuration operations
  * Registers handlers for create, read, update, delete, list, and initialize operations
  *
@@ -314,6 +347,7 @@ export function setupLlmConfigHandlers(
   registerDeleteHandler(ipcMain, service);
   registerListHandler(ipcMain, service);
   registerInitializeHandler(ipcMain, service);
+  registerRefreshCacheHandler(ipcMain, service);
 
   logger.info("LLM configuration IPC handlers registered successfully");
 }

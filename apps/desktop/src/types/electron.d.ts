@@ -94,6 +94,11 @@ export interface ElectronAPI {
      * @returns Promise resolving to array of configuration metadata
      */
     list: () => Promise<import("@fishbowl-ai/shared").LlmConfigMetadata[]>;
+    /**
+     * Refresh the LLM configuration cache by reloading from storage.
+     * @returns Promise resolving when cache refresh is complete
+     */
+    refreshCache: () => Promise<void>;
   };
 }
 

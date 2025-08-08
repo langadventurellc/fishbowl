@@ -38,18 +38,58 @@ interface StoredLlmConfig {
 
 // Storage cleanup helper functions
 const cleanupLlmStorage = async (configPath: string, keysPath: string) => {
-  // Delete JSON config file
-  try {
-    await unlink(configPath);
-  } catch {
-    // File might not exist, that's fine
+  // Delete JSON config file with retries
+  for (let i = 0; i < 3; i++) {
+    try {
+      await unlink(configPath);
+      break;
+    } catch (error) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === "ENOENT"
+      ) {
+        // File doesn't exist, that's fine
+        break;
+      }
+      if (i === 2) {
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        console.warn(
+          `Failed to delete config file after 3 attempts: ${message}`,
+        );
+      } else {
+        // Wait a bit before retrying
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
   }
 
-  // Delete secure keys file
-  try {
-    await unlink(keysPath);
-  } catch {
-    // File might not exist, that's fine
+  // Delete secure keys file with retries
+  for (let i = 0; i < 3; i++) {
+    try {
+      await unlink(keysPath);
+      break;
+    } catch (error) {
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === "ENOENT"
+      ) {
+        // File doesn't exist, that's fine
+        break;
+      }
+      if (i === 2) {
+        const message =
+          error instanceof Error ? error.message : "Unknown error";
+        console.warn(`Failed to delete keys file after 3 attempts: ${message}`);
+      } else {
+        // Wait a bit before retrying
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+    }
   }
 };
 
@@ -132,7 +172,11 @@ test.describe("Feature: LLM Setup Configuration", () => {
   });
 
   test.beforeEach(async () => {
-    // Get storage paths
+    // FIXED: Properly reset LLM configuration state between tests
+    // The app caches configurations in the Electron main process that survives page reloads
+    // Solution: Delete files AND refresh the in-memory cache via IPC
+
+    // Get storage paths and perform standard cleanup
     try {
       userDataPath = await electronApp.evaluate(async ({ app }) => {
         return app.getPath("userData");
@@ -141,28 +185,54 @@ test.describe("Feature: LLM Setup Configuration", () => {
       llmConfigPath = path.join(userDataPath, "llm_config.json");
       secureKeysPath = path.join(userDataPath, "secure_keys.json");
 
-      // Clean up both storage locations
+      // Delete LLM config files first
       await cleanupLlmStorage(llmConfigPath, secureKeysPath);
+
+      // THE FIX: Clear the in-memory cache in the Electron main process
+      await window.evaluate(async () => {
+        const electronAPI = (
+          globalThis as {
+            electronAPI?: {
+              llmConfig?: { refreshCache?: () => Promise<void> };
+            };
+          }
+        ).electronAPI;
+        if (electronAPI?.llmConfig?.refreshCache) {
+          await electronAPI.llmConfig.refreshCache();
+        }
+      });
+
+      // Small delay for cleanup operations
+      await new Promise((resolve) => setTimeout(resolve, 100));
     } catch (error) {
       console.warn("Could not setup clean test state:", error);
     }
 
     // Ensure modal is closed before each test
-    await window.evaluate(() => {
-      const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-        .__TEST_HELPERS__;
-      if (helpers?.isSettingsModalOpen()) {
-        helpers!.closeSettingsModal();
-      }
-    });
+    try {
+      await window.evaluate(() => {
+        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
+          .__TEST_HELPERS__;
+        if (helpers?.isSettingsModalOpen()) {
+          helpers!.closeSettingsModal();
+        }
+      });
 
-    // Force reload the page to ensure fresh state
-    await window.reload();
-    await window.waitForLoadState("domcontentloaded");
-    await window.waitForLoadState("networkidle");
+      // Wait for modal to actually close and any animations to complete
+      await expect(
+        window.locator('[data-testid="settings-modal"]'),
+      ).not.toBeVisible({ timeout: 2000 });
 
-    // Wait a bit for the app to initialize properly
-    await window.waitForTimeout(500);
+      // Wait for any dialog overlays to disappear
+      await expect(
+        window.locator('[data-slot="dialog-overlay"]'),
+      ).not.toBeVisible({ timeout: 2000 });
+
+      // Small additional delay for any remaining animations
+      await window.waitForTimeout(200);
+    } catch {
+      // Test helpers might not be available yet or modal wasn't open
+    }
   });
 
   test.afterEach(async () => {
@@ -175,13 +245,28 @@ test.describe("Feature: LLM Setup Configuration", () => {
           helpers!.closeSettingsModal();
         }
       });
+
+      // Wait for modal to actually close and any animations to complete
+      await expect(
+        window.locator('[data-testid="settings-modal"]'),
+      ).not.toBeVisible({ timeout: 2000 });
+
+      // Wait for any dialog overlays to disappear
+      await expect(
+        window.locator('[data-slot="dialog-overlay"]'),
+      ).not.toBeVisible({ timeout: 2000 });
+
+      // Small additional delay for any remaining animations
+      await window.waitForTimeout(200);
     } catch {
       // Window might be closed, ignore
     }
 
-    // Clean up storage after each test
+    // Clean up storage after each test to ensure clean state
     if (llmConfigPath && secureKeysPath) {
       await cleanupLlmStorage(llmConfigPath, secureKeysPath);
+      // Wait for cleanup to complete
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
   });
 
@@ -191,8 +276,72 @@ test.describe("Feature: LLM Setup Configuration", () => {
     }
   });
 
+  // Helper to forcefully reset application state
+  const _forceApplicationReset = async () => {
+    // Clean up storage files once more
+    if (llmConfigPath && secureKeysPath) {
+      await cleanupLlmStorage(llmConfigPath, secureKeysPath);
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    // Force application to reload and detect changes
+    await window.reload();
+    await window.waitForLoadState("domcontentloaded");
+    await window.waitForLoadState("networkidle");
+    await window.waitForTimeout(500);
+
+    // Close any open modals
+    try {
+      await window.evaluate(() => {
+        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
+          .__TEST_HELPERS__;
+        if (helpers?.isSettingsModalOpen()) {
+          helpers!.closeSettingsModal();
+        }
+      });
+
+      // Wait for modal to actually close and any animations to complete
+      await expect(
+        window.locator('[data-testid="settings-modal"]'),
+      ).not.toBeVisible({ timeout: 2000 });
+
+      // Wait for any dialog overlays to disappear
+      await expect(
+        window.locator('[data-slot="dialog-overlay"]'),
+      ).not.toBeVisible({ timeout: 2000 });
+
+      // Small additional delay for any remaining animations
+      await window.waitForTimeout(200);
+    } catch {
+      // Ignore if helpers not available
+    }
+  };
+
   // Navigation helper to open LLM Setup section
   const openLlmSetupSection = async () => {
+    // Ensure no modals are open before starting
+    try {
+      await window.evaluate(() => {
+        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
+          .__TEST_HELPERS__;
+        if (helpers?.isSettingsModalOpen()) {
+          helpers!.closeSettingsModal();
+        }
+      });
+
+      // Wait for any existing modal to close
+      await expect(
+        window.locator('[data-testid="settings-modal"]'),
+      ).not.toBeVisible({ timeout: 2000 });
+
+      // Wait for any dialog overlays to disappear
+      await expect(
+        window.locator('[data-slot="dialog-overlay"]'),
+      ).not.toBeVisible({ timeout: 2000 });
+    } catch {
+      // No modal was open, continue
+    }
+
     // Open settings modal
     await window.evaluate(() => {
       const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
@@ -200,14 +349,21 @@ test.describe("Feature: LLM Setup Configuration", () => {
       helpers!.openSettingsModal();
     });
 
+    // Wait for settings modal to be fully visible and stable
     await expect(
       window.locator('[data-testid="settings-modal"]'),
     ).toBeVisible();
 
-    // Navigate to LLM Setup tab
+    // Wait a bit for modal animations to settle
+    await window.waitForTimeout(300);
+
+    // Navigate to LLM Setup tab - wait for it to be clickable
     const llmSetupNavItem = window
       .locator("button")
       .filter({ hasText: "LLM Setup" });
+
+    await expect(llmSetupNavItem).toBeVisible();
+    await expect(llmSetupNavItem).toBeEnabled();
     await llmSetupNavItem.click();
 
     // Wait for LLM setup content to be visible
@@ -810,10 +966,67 @@ test.describe("Feature: LLM Setup Configuration", () => {
     test("supports both OpenAI and Anthropic configs simultaneously", async () => {
       await openLlmSetupSection();
 
-      // Work with existing configurations (2 OpenAI + 1 Anthropic from previous tests)
+      // Create OpenAI configuration first
+      await waitForEmptyState();
 
-      // Verify we have multiple configuration cards
+      // Create OpenAI config
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const openAiConfig = createMockOpenAiConfig();
+      await modal.locator('[name="customName"]').fill(openAiConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(openAiConfig.apiKey);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await saveButton.click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Wait for OpenAI card to appear
       await waitForConfigurationList();
+
+      // Now create Anthropic configuration
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).toBeVisible();
+
+      // Click provider selector dropdown
+      const providerDropdown = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await providerDropdown.click();
+      const anthropicOption = window
+        .locator('[role="option"]')
+        .filter({ hasText: "Anthropic" });
+      await anthropicOption.click();
+      await addAnotherButton.click();
+
+      // Fill Anthropic config
+      const anthropicModal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(anthropicModal).toBeVisible({ timeout: 5000 });
+
+      const anthropicConfig = createMockAnthropicConfig();
+      await anthropicModal
+        .locator('[name="customName"]')
+        .fill(anthropicConfig.customName);
+      await anthropicModal
+        .locator('[name="apiKey"]')
+        .fill(anthropicConfig.apiKey);
+
+      const anthropicSaveButton = anthropicModal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await anthropicSaveButton.click();
+      await expect(anthropicModal).not.toBeVisible({ timeout: 5000 });
+
+      // Now verify we have both configurations
       const allCards = window.locator('[role="article"]');
       await expect(allCards.first()).toBeVisible();
 
@@ -854,10 +1067,10 @@ test.describe("Feature: LLM Setup Configuration", () => {
       await expect(firstAnthropicCard).toContainText("sk-ant-...****"); // Anthropic mask format
 
       // Verify "Add Another Provider" button is available for adding more
-      const addAnotherButton = window
+      const finalAddAnotherButton = window
         .locator("button")
         .filter({ hasText: "Add Another Provider" });
-      await expect(addAnotherButton).toBeVisible();
+      await expect(finalAddAnotherButton).toBeVisible();
 
       // Verify storage contains both provider types (if file exists)
       try {
