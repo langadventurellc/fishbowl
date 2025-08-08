@@ -4,7 +4,7 @@
  * Features:
  * - Key icon indicating API configuration
  * - Clear messaging about the empty state
- * - Provider dropdown (OpenAI/Anthropic/Google/Custom)
+ * - Provider dropdown (OpenAI/Anthropic)
  * - Dynamic setup button based on selected provider
  * - Consistent with design system patterns
  * - Accessibility attributes for screen readers
@@ -12,6 +12,7 @@
  * @module components/settings/llm-setup/EmptyLlmState
  */
 
+import type { Provider } from "@fishbowl-ai/shared";
 import { Key } from "lucide-react";
 import React, { useState } from "react";
 import { cn } from "../../../lib/utils";
@@ -23,7 +24,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
-import type { Provider } from "@fishbowl-ai/shared";
 
 export interface EmptyLlmStateProps {
   onSetupProvider: (provider: Provider) => void;
@@ -46,10 +46,6 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
         return "Set up OpenAI";
       case "anthropic":
         return "Set up Anthropic";
-      case "google":
-        return "Set up Google AI";
-      case "custom":
-        return "Set up Custom Provider";
     }
   };
 
@@ -80,8 +76,6 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
           <SelectContent>
             <SelectItem value="openai">OpenAI</SelectItem>
             <SelectItem value="anthropic">Anthropic</SelectItem>
-            <SelectItem value="google">Google AI</SelectItem>
-            <SelectItem value="custom">Custom Provider</SelectItem>
           </SelectContent>
         </Select>
         <Button

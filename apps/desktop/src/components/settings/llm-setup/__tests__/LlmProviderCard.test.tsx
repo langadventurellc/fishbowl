@@ -6,10 +6,9 @@
  *
  * @module components/settings/llm-setup/__tests__/LlmProviderCard.test
  */
-import "@testing-library/jest-dom";
-import { render, screen, fireEvent } from "@testing-library/react";
-import React from "react";
 import type { LlmConfigMetadata } from "@fishbowl-ai/shared";
+import "@testing-library/jest-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { LlmProviderCard } from "../LlmProviderCard";
 
 describe("LlmProviderCard", () => {
@@ -66,50 +65,6 @@ describe("LlmProviderCard", () => {
       expect(screen.getByText("sk-ant-...****")).toBeInTheDocument();
     });
 
-    it("renders Google configuration correctly", () => {
-      const googleConfig: LlmConfigMetadata = {
-        ...mockConfig,
-        provider: "google",
-        customName: "Gemini API",
-      };
-
-      render(
-        <LlmProviderCard
-          configuration={googleConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      expect(screen.getByText("Gemini API")).toBeInTheDocument();
-      expect(screen.getByText("Google AI")).toBeInTheDocument();
-      expect(screen.getByText("AIza...****")).toBeInTheDocument();
-    });
-
-    it("renders Custom configuration with baseUrl", () => {
-      const customConfig: LlmConfigMetadata = {
-        ...mockConfig,
-        provider: "custom",
-        customName: "Local LLM",
-        baseUrl: "http://localhost:8080/v1",
-        useAuthHeader: true,
-      };
-
-      render(
-        <LlmProviderCard
-          configuration={customConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      expect(screen.getByText("Local LLM")).toBeInTheDocument();
-      expect(screen.getByText("Custom Provider")).toBeInTheDocument();
-      expect(screen.getByText("****...****")).toBeInTheDocument();
-      expect(screen.getByText("http://localhost:8080/v1")).toBeInTheDocument();
-      expect(screen.getByText("Uses authorization header")).toBeInTheDocument();
-    });
-
     it("handles unknown provider type", () => {
       const unknownConfig: LlmConfigMetadata = {
         ...mockConfig,
@@ -134,7 +89,7 @@ describe("LlmProviderCard", () => {
 
   describe("Security - API Key Masking", () => {
     it("masks API keys securely for all providers", () => {
-      const providers = ["openai", "anthropic", "google", "custom"] as const;
+      const providers = ["openai", "anthropic"] as const;
       const expectedMasks = [
         "sk-...****",
         "sk-ant-...****",
@@ -318,97 +273,6 @@ describe("LlmProviderCard", () => {
       // Should show a formatted date instead of relative time
       const updateText = screen.getByText(/Updated/);
       expect(updateText.textContent).toMatch(/Updated \d{1,2}\/\d{1,2}\/\d{4}/);
-    });
-  });
-
-  describe("Custom Provider Features", () => {
-    it("shows baseUrl for custom providers", () => {
-      const customConfig: LlmConfigMetadata = {
-        ...mockConfig,
-        provider: "custom",
-        baseUrl: "https://api.custom-llm.com/v1",
-      };
-
-      render(
-        <LlmProviderCard
-          configuration={customConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      expect(
-        screen.getByText("https://api.custom-llm.com/v1"),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Base URL:")).toBeInTheDocument();
-    });
-
-    it("hides baseUrl section for non-custom providers", () => {
-      render(
-        <LlmProviderCard
-          configuration={mockConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      expect(screen.queryByText("Base URL:")).not.toBeInTheDocument();
-    });
-
-    it("shows auth header indicator when enabled", () => {
-      const authConfig: LlmConfigMetadata = {
-        ...mockConfig,
-        provider: "custom",
-        baseUrl: "https://example.com",
-        useAuthHeader: true,
-      };
-
-      render(
-        <LlmProviderCard
-          configuration={authConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      expect(screen.getByText("Uses authorization header")).toBeInTheDocument();
-    });
-
-    it("hides auth header indicator when disabled", () => {
-      const noAuthConfig: LlmConfigMetadata = {
-        ...mockConfig,
-        useAuthHeader: false,
-      };
-
-      render(
-        <LlmProviderCard
-          configuration={noAuthConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      expect(
-        screen.queryByText("Uses authorization header"),
-      ).not.toBeInTheDocument();
-    });
-
-    it("handles custom provider without baseUrl", () => {
-      const customNoUrlConfig: LlmConfigMetadata = {
-        ...mockConfig,
-        provider: "custom",
-        baseUrl: undefined,
-      };
-
-      render(
-        <LlmProviderCard
-          configuration={customNoUrlConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      expect(screen.queryByText("Base URL:")).not.toBeInTheDocument();
     });
   });
 
@@ -598,7 +462,7 @@ describe("LlmProviderCard", () => {
     });
 
     it("displays provider icons for visual distinction", () => {
-      const providers = ["openai", "anthropic", "google", "custom"] as const;
+      const providers = ["openai", "anthropic"] as const;
 
       providers.forEach((provider) => {
         const config: LlmConfigMetadata = {
@@ -642,26 +506,6 @@ describe("LlmProviderCard", () => {
 
       const title = screen.getByRole("heading", { level: 3 });
       expect(title).toHaveClass("truncate");
-    });
-
-    it("handles extremely long baseUrl", () => {
-      const longUrlConfig: LlmConfigMetadata = {
-        ...mockConfig,
-        provider: "custom",
-        baseUrl:
-          "https://api.very-long-domain-name-that-might-cause-layout-issues.example.com/v1/completions/with/very/long/path",
-      };
-
-      render(
-        <LlmProviderCard
-          configuration={longUrlConfig}
-          onEdit={mockOnEdit}
-          onDelete={mockOnDelete}
-        />,
-      );
-
-      const baseUrlElement = screen.getByText(longUrlConfig.baseUrl!);
-      expect(baseUrlElement).toHaveClass("break-all");
     });
 
     it("handles missing optional fields gracefully", () => {

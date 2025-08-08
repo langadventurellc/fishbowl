@@ -1,8 +1,8 @@
 import {
   validateApiKeyWithError,
-  validateUniqueConfigName,
-  validateProviderRequirements,
   validateLlmConfig,
+  validateProviderRequirements,
+  validateUniqueConfigName,
 } from "../index";
 import type { Provider } from "../Provider";
 
@@ -41,36 +41,6 @@ describe("validators", () => {
       expect(result.error).toContain(
         'Anthropic API key must start with "sk-ant-"',
       );
-    });
-
-    it("returns success for valid Google key", () => {
-      const result = validateApiKeyWithError("A".repeat(35), "google");
-      expect(result.isValid).toBe(true);
-      expect(result.error).toBeUndefined();
-    });
-
-    it("returns success for maximum length Google key", () => {
-      const result = validateApiKeyWithError("A".repeat(45), "google");
-      expect(result.isValid).toBe(true);
-      expect(result.error).toBeUndefined();
-    });
-
-    it("returns error for invalid Google key", () => {
-      const result = validateApiKeyWithError("too-short", "google");
-      expect(result.isValid).toBe(false);
-      expect(result.error).toContain("Google API key must be 35-45 characters");
-    });
-
-    it("returns success for valid custom key", () => {
-      const result = validateApiKeyWithError("custom-key-123", "custom");
-      expect(result.isValid).toBe(true);
-      expect(result.error).toBeUndefined();
-    });
-
-    it("returns error for empty custom key", () => {
-      const result = validateApiKeyWithError("", "custom");
-      expect(result.isValid).toBe(false);
-      expect(result.error).toBe("API key must be a non-empty string");
     });
 
     it("returns error for null/undefined API key", () => {
@@ -174,30 +144,6 @@ describe("validators", () => {
   });
 
   describe("validateProviderRequirements", () => {
-    it("requires baseUrl for custom provider", () => {
-      const result = validateProviderRequirements("custom", {});
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Base URL is required for custom providers",
-      );
-    });
-
-    it("accepts custom provider with valid baseUrl", () => {
-      const result = validateProviderRequirements("custom", {
-        baseUrl: "https://api.example.com",
-      });
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toBeUndefined();
-    });
-
-    it("rejects custom provider with invalid baseUrl", () => {
-      const result = validateProviderRequirements("custom", {
-        baseUrl: "not-a-url",
-      });
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain("Base URL must be a valid URL");
-    });
-
     it("accepts OpenAI without baseUrl", () => {
       const result = validateProviderRequirements("openai", {});
       expect(result.isValid).toBe(true);
@@ -228,12 +174,6 @@ describe("validators", () => {
       expect(result.errors).toBeUndefined();
     });
 
-    it("accepts Google without baseUrl", () => {
-      const result = validateProviderRequirements("google", {});
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toBeUndefined();
-    });
-
     it("handles unknown provider", () => {
       const result = validateProviderRequirements("unknown" as Provider, {});
       expect(result.isValid).toBe(false);
@@ -246,16 +186,6 @@ describe("validators", () => {
       });
       expect(result.isValid).toBe(true);
       expect(result.errors).toBeUndefined();
-    });
-
-    it("handles multiple errors for custom provider", () => {
-      const result = validateProviderRequirements("custom", {
-        baseUrl: "",
-      });
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Base URL is required for custom providers",
-      );
     });
   });
 
@@ -297,21 +227,6 @@ describe("validators", () => {
       );
     });
 
-    it("validates custom provider requirements", () => {
-      const customConfig = {
-        customName: "Custom Provider",
-        provider: "custom" as Provider,
-        apiKey: "any-key",
-        // Missing baseUrl
-      };
-
-      const result = validateLlmConfig(customConfig, existingConfigs);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toContain(
-        "Base URL is required for custom providers",
-      );
-    });
-
     it("skips name uniqueness check for updates", () => {
       const updateConfig = {
         customName: "Existing Config",
@@ -328,48 +243,11 @@ describe("validators", () => {
       expect(result.isValid).toBe(true);
     });
 
-    it("validates all aspects of custom config", () => {
-      const customConfig = {
-        customName: "Valid Custom",
-        provider: "custom" as Provider,
-        apiKey: "custom-key-123",
-        baseUrl: "https://custom.api.com",
-      };
-
-      const result = validateLlmConfig(customConfig, []);
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toBeUndefined();
-    });
-
-    it("catches all validation errors in one pass", () => {
-      const badConfig = {
-        customName: "Existing Config", // Duplicate name
-        provider: "custom" as Provider,
-        apiKey: "", // Empty API key
-        // Missing baseUrl for custom provider
-      };
-
-      const result = validateLlmConfig(badConfig, existingConfigs);
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toHaveLength(3); // Name, API key, and baseUrl errors
-    });
-
     it("handles undefined existing configs gracefully", () => {
       const result = validateLlmConfig(
         validConfig,
         undefined as unknown as Array<{ id: string; customName: string }>,
       );
-      expect(result.isValid).toBe(true);
-    });
-
-    it("validates Google API key correctly", () => {
-      const googleConfig = {
-        customName: "Google Config",
-        provider: "google" as Provider,
-        apiKey: "A".repeat(35), // Valid Google key
-      };
-
-      const result = validateLlmConfig(googleConfig, []);
       expect(result.isValid).toBe(true);
     });
 

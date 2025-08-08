@@ -6,20 +6,20 @@
  * - Modal-based configuration for adding/editing APIs
  * - List view of configured APIs with edit/delete actions
  * - Service layer integration with persistent storage
- * - Support for all provider types (OpenAI, Anthropic, Google, Custom)
+ * - Support for all provider types (OpenAI, Anthropic)
  *
  * @module components/settings/LlmSetupSection
  */
 import type {
-  Provider,
   LlmConfigInput,
   LlmConfigMetadata,
+  Provider,
 } from "@fishbowl-ai/shared";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { EmptyLlmState, LlmConfigModal, LlmProviderCard } from ".";
-import { cn } from "../../../lib/utils";
 import { useLlmConfig } from "../../../hooks/useLlmConfig";
-import { Loader2, AlertCircle } from "lucide-react";
+import { cn } from "../../../lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,

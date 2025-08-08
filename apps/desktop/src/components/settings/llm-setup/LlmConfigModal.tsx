@@ -1,5 +1,5 @@
-import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import type { Provider } from "@fishbowl-ai/shared";
+import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -28,10 +28,8 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import { OpenAiProviderFields } from "./OpenAiProviderFields";
 import { AnthropicProviderFields } from "./AnthropicProviderFields";
-import { GoogleProviderFields } from "./GoogleProviderFields";
-import { CustomProviderFields } from "./CustomProviderFields";
+import { OpenAiProviderFields } from "./OpenAiProviderFields";
 
 const llmConfigSchema = z.object({
   customName: z.string().min(1, "Custom name is required"),
@@ -69,10 +67,6 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         return "https://api.openai.com/v1";
       case "anthropic":
         return "https://api.anthropic.com";
-      case "google":
-        return "https://generativelanguage.googleapis.com";
-      case "custom":
-        return "";
     }
   }, [provider]);
 
@@ -140,10 +134,8 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         return "OpenAI";
       case "anthropic":
         return "Anthropic";
-      case "google":
-        return "Google AI";
-      case "custom":
-        return "Custom Provider";
+      default:
+        return "Unknown Provider";
     }
   };
 
@@ -209,10 +201,8 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
               <OpenAiProviderFields control={form.control} />
             ) : provider === "anthropic" ? (
               <AnthropicProviderFields control={form.control} />
-            ) : provider === "google" ? (
-              <GoogleProviderFields control={form.control} />
             ) : (
-              <CustomProviderFields control={form.control} />
+              <p>Unsupported provider: {provider}</p>
             )}
 
             <DialogFooter>

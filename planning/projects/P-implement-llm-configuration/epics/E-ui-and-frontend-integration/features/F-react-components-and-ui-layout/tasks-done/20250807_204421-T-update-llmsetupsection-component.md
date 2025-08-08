@@ -19,7 +19,7 @@ worktree: null
 
 ## Context
 
-The existing `LlmSetupSection` component uses local state and only supports OpenAI and Anthropic providers. This task updates it to use the new `useLlmConfig` hook and support all provider types (OpenAI, Anthropic, Google, Custom).
+The existing `LlmSetupSection` component uses local state and only supports OpenAI and Anthropic providers. This task updates it to use the new `useLlmConfig` hook and support all provider types (OpenAI, Anthropic).
 
 ## Current Implementation Issues
 
@@ -83,7 +83,7 @@ const {
 
 **Extend Provider Support**
 
-- Support all 4 provider types: OpenAI, Anthropic, Google, Custom
+- Support all 4 provider types: OpenAI, Anthropic
 - Update modal state to use `Provider` enum instead of hardcoded strings
 - Update provider selection UI to show all options
 - Handle provider-specific field requirements (Custom needs baseUrl)
@@ -169,7 +169,6 @@ const handleSaveApi = useCallback(
 
 ### Provider Selection
 
-- Add Google and Custom provider options
 - Update provider icons and labels
 - Show provider-specific field requirements
 - Provide helpful descriptions for each provider
@@ -206,23 +205,10 @@ const handleSaveApi = useCallback(
 
 ## Provider-Specific Requirements
 
-### Google Provider
-
-- Support Google API key format validation
-- Handle Google-specific configuration fields
-- Provide appropriate help text and examples
-
-### Custom Provider
-
-- Require baseUrl field for custom providers
-- Validate URL format
-- Provide guidance on custom provider setup
-- Support various authentication methods
+ious authentication methods
 
 ### Provider Icons
 
-- Add Google provider icon
-- Add generic custom provider icon
 - Ensure consistent icon sizing and styling
 
 ## Security Considerations
@@ -271,7 +257,7 @@ Update existing test file: `apps/desktop/src/components/settings/llm-setup/__tes
 ## Acceptance Criteria
 
 ✅ Component uses `useLlmConfig` hook instead of local state
-✅ Supports all 4 provider types (OpenAI, Anthropic, Google, Custom)
+✅ Supports all 4 provider types (OpenAI, Anthropic)
 ✅ Uses shared types from `@fishbowl-ai/shared` package
 ✅ Proper loading states during async operations
 ✅ Comprehensive error handling and display
@@ -285,6 +271,6 @@ Update existing test file: `apps/desktop/src/components/settings/llm-setup/__tes
 
 ### Log
 
-**2025-08-08T01:44:21.966516Z** - Successfully updated LlmSetupSection component with service integration and full provider support. The component now uses the useLlmConfig hook instead of local state, supports all four provider types (OpenAI, Anthropic, Google, Custom), includes comprehensive error handling, and maintains proper loading states. All quality checks pass and comprehensive test coverage achieved.
+**2025-08-08T01:44:21.966516Z** - Successfully updated LlmSetupSection component with service integration and full provider support. The component now uses the useLlmConfig hook instead of local state, supports all four provider types (OpenAI, Anthropic), includes comprehensive error handling, and maintains proper loading states. All quality checks pass and comprehensive test coverage achieved.
 
 - filesChanged: ["packages/ui-shared/src/types/settings/LlmProviderCardProps.ts", "packages/ui-shared/src/types/settings/LlmConfigModalProps.ts", "packages/ui-shared/src/types/settings/LlmConfigData.ts", "apps/desktop/src/components/settings/llm-setup/GoogleProviderFields.tsx", "apps/desktop/src/components/settings/llm-setup/CustomProviderFields.tsx", "apps/desktop/src/components/settings/llm-setup/LlmSetupSection.tsx", "apps/desktop/src/components/settings/llm-setup/EmptyLlmState.tsx", "apps/desktop/src/components/settings/llm-setup/LlmProviderCard.tsx", "apps/desktop/src/components/settings/llm-setup/LlmConfigModal.tsx", "apps/desktop/src/components/settings/llm-setup/index.ts", "apps/desktop/src/components/settings/llm-setup/__tests__/LlmSetupSection.test.tsx"]

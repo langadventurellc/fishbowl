@@ -67,7 +67,7 @@ Create the core React components for displaying and managing LLM configurations 
 - ✓ Provider cards display in a grid or list layout
 - ✓ Responsive design that works on different screen sizes
 - ✓ Consistent spacing and typography with existing app
-- ✓ Provider icons displayed correctly (OpenAI, Anthropic, Google, Custom)
+- ✓ Provider icons displayed correctly (OpenAI, Anthropic)
 - ✓ Dark mode compatibility
 
 ### Accessibility

@@ -2,7 +2,7 @@
  * LlmProviderCard component displays a configured LLM provider API.
  *
  * Features:
- * - Enhanced provider support (OpenAI, Anthropic, Google, Custom)
+ * - Enhanced provider support (OpenAI, Anthropic)
  * - Secure API key masking with provider-specific formats
  * - Provider-specific icons and color coding
  * - Additional configuration display (baseUrl, auth headers)
@@ -15,12 +15,11 @@
 
 import type { LlmConfigMetadata, Provider } from "@fishbowl-ai/shared";
 import {
-  Edit2,
+  Brain,
+  Edit2, // Anthropic
+  Settings,
+  Sparkles,
   Trash2,
-  Sparkles, // OpenAI
-  Brain, // Anthropic
-  Globe, // Google
-  Settings, // Custom
 } from "lucide-react";
 import React, { useMemo } from "react";
 import { cn } from "../../../lib/utils";
@@ -54,18 +53,6 @@ const getProviderInfo = (provider: Provider) => {
         label: "Anthropic",
         colorClass: "text-orange-600 dark:text-orange-400",
       };
-    case "google":
-      return {
-        icon: <Globe className="h-5 w-5" />,
-        label: "Google AI",
-        colorClass: "text-blue-600 dark:text-blue-400",
-      };
-    case "custom":
-      return {
-        icon: <Settings className="h-5 w-5" />,
-        label: "Custom Provider",
-        colorClass: "text-gray-600 dark:text-gray-400",
-      };
     default:
       return {
         icon: <Settings className="h-5 w-5" />,
@@ -85,10 +72,6 @@ const maskApiKey = (provider: Provider): string => {
       return "sk-...****";
     case "anthropic":
       return "sk-ant-...****";
-    case "google":
-      return "AIza...****";
-    case "custom":
-      return "****...****";
     default:
       return "****";
   }
@@ -159,15 +142,6 @@ export const LlmProviderCard = React.memo<LlmProviderCardProps>(
                       {maskedKey}
                     </code>
                   </div>
-                  {configuration.provider === "custom" &&
-                    configuration.baseUrl && (
-                      <div className="text-xs text-muted-foreground">
-                        <span>Base URL: </span>
-                        <code className="bg-muted px-1.5 py-0.5 rounded text-xs break-all">
-                          {configuration.baseUrl}
-                        </code>
-                      </div>
-                    )}
                   {configuration.useAuthHeader && (
                     <div className="text-xs text-muted-foreground">
                       Uses authorization header

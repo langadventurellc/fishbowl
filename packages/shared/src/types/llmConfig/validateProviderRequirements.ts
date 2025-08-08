@@ -15,23 +15,8 @@ export function validateProviderRequirements(
   const errors: string[] = [];
 
   switch (provider) {
-    case "custom":
-      // Custom providers require baseUrl
-      if (!config.baseUrl) {
-        errors.push("Base URL is required for custom providers");
-      } else if (typeof config.baseUrl === "string") {
-        // Basic URL validation using try/catch with URL constructor
-        try {
-          new globalThis.URL(config.baseUrl);
-        } catch {
-          errors.push("Base URL must be a valid URL");
-        }
-      }
-      break;
-
     case "openai":
     case "anthropic":
-    case "google":
       // Standard providers have default endpoints, baseUrl is optional
       if (config.baseUrl && typeof config.baseUrl === "string") {
         try {

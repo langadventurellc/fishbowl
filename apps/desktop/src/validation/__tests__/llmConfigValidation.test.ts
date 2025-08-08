@@ -1,13 +1,13 @@
-import {
-  LlmConfigValidationService,
-  LlmConfigValidationError,
-  validateCreateInput,
-  validateUpdateInput,
-  validateComplete,
-  throwIfValidationFailed,
-} from "../index";
 import type { LlmConfig, LlmConfigInput } from "@fishbowl-ai/shared";
 import { ValidationErrorCode } from "@fishbowl-ai/shared";
+import {
+  LlmConfigValidationError,
+  LlmConfigValidationService,
+  throwIfValidationFailed,
+  validateComplete,
+  validateCreateInput,
+  validateUpdateInput,
+} from "../index";
 
 describe("LlmConfigValidation", () => {
   let validationService: LlmConfigValidationService;
@@ -35,14 +35,6 @@ describe("LlmConfigValidation", () => {
     useAuthHeader: true,
   });
 
-  const createCustomInput = (): LlmConfigInput => ({
-    customName: "Test Custom",
-    provider: "custom",
-    apiKey: "custom-key-123",
-    baseUrl: "https://api.custom.com/v1",
-    useAuthHeader: true,
-  });
-
   beforeEach(() => {
     validationService = new LlmConfigValidationService();
   });
@@ -59,15 +51,6 @@ describe("LlmConfigValidation", () => {
 
     it("should pass validation for valid Anthropic input", async () => {
       const input = createAnthropicInput();
-      const result = await validateCreateInput(input, []);
-
-      expect(result.success).toBe(true);
-      expect(result.data).toEqual(input);
-      expect(result.errors).toHaveLength(0);
-    });
-
-    it("should pass validation for valid custom provider with baseUrl", async () => {
-      const input = createCustomInput();
       const result = await validateCreateInput(input, []);
 
       expect(result.success).toBe(true);
@@ -108,20 +91,6 @@ describe("LlmConfigValidation", () => {
       expect(result.errors).toHaveLength(1);
       expect(result.errors[0]?.code).toBe(ValidationErrorCode.DUPLICATE_NAME);
       expect(result.errors[0]?.field).toBe("customName");
-    });
-
-    it("should fail for custom provider without baseUrl", async () => {
-      const input = createCustomInput();
-      input.baseUrl = undefined;
-
-      const result = await validateCreateInput(input, []);
-
-      expect(result.success).toBe(false);
-      expect(
-        result.errors.some(
-          (e) => e.code === ValidationErrorCode.PROVIDER_SPECIFIC,
-        ),
-      ).toBe(true);
     });
 
     it("should aggregate multiple validation errors", async () => {
@@ -239,23 +208,6 @@ describe("LlmConfigValidation", () => {
       expect(
         result.errors.some(
           (e) => e.code === ValidationErrorCode.API_KEY_FORMAT,
-        ),
-      ).toBe(true);
-    });
-
-    it("should validate merged configuration for provider requirements", async () => {
-      const current = createValidConfig();
-      current.provider = "custom";
-      current.baseUrl = "https://api.custom.com/v1";
-
-      const update = { baseUrl: undefined }; // This would make custom provider invalid
-
-      const result = await validateUpdateInput(update, current, []);
-
-      expect(result.success).toBe(false);
-      expect(
-        result.errors.some(
-          (e) => e.code === ValidationErrorCode.PROVIDER_SPECIFIC,
         ),
       ).toBe(true);
     });

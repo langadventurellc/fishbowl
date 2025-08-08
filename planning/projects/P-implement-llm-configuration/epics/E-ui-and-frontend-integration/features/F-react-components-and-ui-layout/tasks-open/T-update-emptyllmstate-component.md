@@ -15,7 +15,7 @@ parent: F-react-components-and-ui-layout
 
 ## Context
 
-The existing `EmptyLlmState` component needs to be updated to support all provider types (OpenAI, Anthropic, Google, Custom) instead of just OpenAI and Anthropic, and use the shared `Provider` enum.
+The existing `EmptyLlmState` component needs to be updated to support all provider types (OpenAI, Anthropic) instead of just OpenAI and Anthropic, and use the shared `Provider` enum.
 
 ## Current File Location
 
@@ -67,22 +67,6 @@ const providerOptions = [
     icon: <AnthropicIcon className="w-8 h-8" />,
     color: "orange",
     popular: true,
-  },
-  {
-    provider: Provider.GOOGLE,
-    name: "Google AI",
-    description: "Gemini models from Google AI Studio",
-    icon: <GoogleIcon className="w-8 h-8" />,
-    color: "blue",
-    popular: false,
-  },
-  {
-    provider: Provider.CUSTOM,
-    name: "Custom Provider",
-    description: "Connect to any OpenAI-compatible API",
-    icon: <CustomIcon className="w-8 h-8" />,
-    color: "gray",
-    popular: false,
   },
 ];
 ```
@@ -180,19 +164,6 @@ const ProviderCard: React.FC<ProviderCardProps> = ({
 - Emphasize Claude's conversational abilities
 - Mention safety and helpfulness focus
 - Orange color scheme matching Anthropic branding
-
-**Google Card**
-
-- Highlight Gemini models and Google integration
-- Mention free tier availability in Google AI Studio
-- Blue color scheme matching Google branding
-
-**Custom Provider Card**
-
-- Emphasize flexibility and compatibility
-- Mention OpenAI-compatible API requirement
-- Gray/neutral color scheme
-- Add "Advanced" or "Developers" indicator
 
 ### Responsive Design
 
@@ -338,8 +309,6 @@ describe('EmptyLlmState', () => {
 
     expect(screen.getByText('OpenAI')).toBeInTheDocument();
     expect(screen.getByText('Anthropic')).toBeInTheDocument();
-    expect(screen.getByText('Google AI')).toBeInTheDocument();
-    expect(screen.getByText('Custom Provider')).toBeInTheDocument();
   });
 
   it('calls onSetupProvider with correct provider when clicked', () => {
@@ -363,7 +332,7 @@ describe('EmptyLlmState', () => {
 
 ## Acceptance Criteria
 
-✅ Component supports all 4 provider types (OpenAI, Anthropic, Google, Custom)
+✅ Component supports all 4 provider types (OpenAI, Anthropic)
 ✅ Uses `Provider` enum from shared package
 ✅ Card-based layout with consistent design
 ✅ Provider-specific icons, descriptions, and branding

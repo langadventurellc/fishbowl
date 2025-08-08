@@ -25,7 +25,7 @@ describe("llmStorage types", () => {
       const metadata: LlmConfigMetadata = {
         id: "test-id",
         customName: "Custom Model",
-        provider: "custom",
+        provider: "openai",
         baseUrl: "https://api.custom.com",
         useAuthHeader: true,
         createdAt: new Date().toISOString(),

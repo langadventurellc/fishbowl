@@ -6,10 +6,9 @@
  *
  * @module components/settings/llm-setup/__tests__/LlmSetupSection.test
  */
-import "@testing-library/jest-dom";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import React from "react";
 import type { LlmConfigMetadata } from "@fishbowl-ai/shared";
+import "@testing-library/jest-dom";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { LlmSetupSection } from "../LlmSetupSection";
 
 // Mock the useLlmConfig hook
@@ -146,24 +145,6 @@ const mockConfigurations: LlmConfigMetadata[] = [
     createdAt: "2023-01-01T00:00:00.000Z",
     updatedAt: "2023-01-01T00:00:00.000Z",
   },
-  {
-    id: "config-3",
-    customName: "My Google AI",
-    provider: "google",
-    baseUrl: "https://generativelanguage.googleapis.com",
-    useAuthHeader: false,
-    createdAt: "2023-01-01T00:00:00.000Z",
-    updatedAt: "2023-01-01T00:00:00.000Z",
-  },
-  {
-    id: "config-4",
-    customName: "My Custom Provider",
-    provider: "custom",
-    baseUrl: "https://api.custom.com/v1",
-    useAuthHeader: true,
-    createdAt: "2023-01-01T00:00:00.000Z",
-    updatedAt: "2023-01-01T00:00:00.000Z",
-  },
 ];
 
 describe("LlmSetupSection", () => {
@@ -227,8 +208,6 @@ describe("LlmSetupSection", () => {
 
       expect(screen.getByTestId("provider-card-config-1")).toBeInTheDocument();
       expect(screen.getByTestId("provider-card-config-2")).toBeInTheDocument();
-      expect(screen.getByTestId("provider-card-config-3")).toBeInTheDocument();
-      expect(screen.getByTestId("provider-card-config-4")).toBeInTheDocument();
       expect(screen.getByText("Add Another Provider")).toBeInTheDocument();
     });
   });
@@ -248,29 +227,13 @@ describe("LlmSetupSection", () => {
       });
     });
 
-    it("supports Google provider from empty state", async () => {
-      render(<LlmSetupSection />);
-
-      const setupButton = screen.getByTestId("setup-google");
-      fireEvent.click(setupButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId("llm-config-modal")).toBeInTheDocument();
-        expect(
-          screen.getByText("Add google Configuration"),
-        ).toBeInTheDocument();
-      });
-    });
-
-    it("displays all four provider types correctly", () => {
+    it("displays all provider types correctly", () => {
       mockUseLlmConfig.configurations = mockConfigurations;
 
       render(<LlmSetupSection />);
 
       expect(screen.getByText("openai")).toBeInTheDocument();
       expect(screen.getByText("anthropic")).toBeInTheDocument();
-      expect(screen.getByText("google")).toBeInTheDocument();
-      expect(screen.getByText("custom")).toBeInTheDocument();
     });
   });
 

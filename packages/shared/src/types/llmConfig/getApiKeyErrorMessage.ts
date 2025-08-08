@@ -14,12 +14,6 @@ export function getApiKeyErrorMessage(provider: Provider): string {
     case "anthropic":
       return 'Anthropic API key must start with "sk-ant-" and be at least 50 characters long';
 
-    case "google":
-      return "Google API key must be 35-45 characters with letters, numbers, underscores, or hyphens";
-
-    case "custom":
-      return "API key cannot be empty";
-
     default:
       return "Invalid API key format for the selected provider";
   }

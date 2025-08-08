@@ -1,5 +1,5 @@
-import { validateApiKey } from "../validateApiKey";
 import type { Provider } from "../Provider";
+import { validateApiKey } from "../validateApiKey";
 
 describe("validateApiKey", () => {
   describe("OpenAI keys", () => {
@@ -46,50 +46,6 @@ describe("validateApiKey", () => {
     });
   });
 
-  describe("Google keys", () => {
-    it("validates correct Google keys with minimum length", () => {
-      const validKey = "A".repeat(35); // 35 characters
-      expect(validateApiKey(validKey, "google")).toBe(true);
-    });
-
-    it("validates Google keys with maximum length", () => {
-      const validKey = "A".repeat(45); // 45 characters
-      expect(validateApiKey(validKey, "google")).toBe(true);
-    });
-
-    it("validates Google keys with mixed case and valid characters", () => {
-      const validKey = "AbC123_-eFgHiJkLmNoPqRsTuVwXyZ0123456789";
-      expect(validateApiKey(validKey, "google")).toBe(true);
-    });
-
-    it("rejects keys that are too short", () => {
-      const shortKey = "A".repeat(34); // 34 characters
-      expect(validateApiKey(shortKey, "google")).toBe(false);
-    });
-
-    it("rejects keys that are too long", () => {
-      const longKey = "A".repeat(46); // 46 characters
-      expect(validateApiKey(longKey, "google")).toBe(false);
-    });
-
-    it("rejects keys with invalid characters", () => {
-      const invalidChars = "A".repeat(30) + "#$%@!"; // 35 chars but with invalid symbols
-      expect(validateApiKey(invalidChars, "google")).toBe(false);
-    });
-  });
-
-  describe("Custom provider keys", () => {
-    it("validates any non-empty key for custom providers", () => {
-      expect(validateApiKey("any-key", "custom")).toBe(true);
-      expect(validateApiKey("123", "custom")).toBe(true);
-      expect(validateApiKey("custom-api-key-123", "custom")).toBe(true);
-    });
-
-    it("rejects empty keys for custom providers", () => {
-      expect(validateApiKey("", "custom")).toBe(false);
-    });
-  });
-
   describe("Invalid provider", () => {
     it("returns false for unknown providers", () => {
       expect(validateApiKey("any-key", "unknown" as Provider)).toBe(false);
@@ -100,13 +56,6 @@ describe("validateApiKey", () => {
     it("handles empty strings", () => {
       expect(validateApiKey("", "openai")).toBe(false);
       expect(validateApiKey("", "anthropic")).toBe(false);
-      expect(validateApiKey("", "google")).toBe(false);
-      expect(validateApiKey("", "custom")).toBe(false);
-    });
-
-    it("handles whitespace", () => {
-      expect(validateApiKey(" ", "custom")).toBe(true);
-      expect(validateApiKey("   ", "custom")).toBe(true);
     });
   });
 });

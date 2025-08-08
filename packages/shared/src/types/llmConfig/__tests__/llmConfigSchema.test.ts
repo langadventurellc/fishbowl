@@ -92,8 +92,8 @@ describe("llmConfigSchema", () => {
     });
 
     describe("provider validation", () => {
-      it("should accept valid providers (excluding custom)", () => {
-        const validProviders = ["openai", "anthropic", "google"];
+      it("should accept valid providers", () => {
+        const validProviders = ["openai", "anthropic"];
 
         validProviders.forEach((provider) => {
           const result = llmConfigInputSchema.parse({
@@ -232,42 +232,6 @@ describe("llmConfigSchema", () => {
             baseUrl: 123,
           });
         }).toThrow("Base URL must be a string");
-      });
-    });
-
-    describe("custom provider validation", () => {
-      it("should require baseUrl for custom provider", () => {
-        expect(() => {
-          llmConfigInputSchema.parse({
-            customName: "Test",
-            provider: "custom",
-            apiKey: "test",
-          });
-        }).toThrow("Base URL is required for custom providers");
-      });
-
-      it("should accept custom provider with baseUrl", () => {
-        const result = llmConfigInputSchema.parse({
-          customName: "Test",
-          provider: "custom",
-          apiKey: "test",
-          baseUrl: "https://custom.example.com/api",
-        });
-        expect(result.provider).toBe("custom");
-        expect(result.baseUrl).toBe("https://custom.example.com/api");
-      });
-
-      it("should not require baseUrl for other providers", () => {
-        const providers = ["openai", "anthropic", "google"];
-
-        providers.forEach((provider) => {
-          const result = llmConfigInputSchema.parse({
-            customName: "Test",
-            provider: provider,
-            apiKey: "test",
-          });
-          expect(result.provider).toBe(provider);
-        });
       });
     });
 

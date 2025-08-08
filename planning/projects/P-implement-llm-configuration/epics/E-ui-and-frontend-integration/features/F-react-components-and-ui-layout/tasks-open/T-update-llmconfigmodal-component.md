@@ -18,7 +18,7 @@ parent: F-react-components-and-ui-layout
 
 ## Context
 
-The existing `LlmConfigModal` component needs to be updated to support all provider types (OpenAI, Anthropic, Google, Custom), use shared types, and integrate with the service layer for validation and form handling.
+The existing `LlmConfigModal` component needs to be updated to support all provider types (OpenAI, Anthropic), use shared types, and integrate with the service layer for validation and form handling.
 
 ## Current File Location
 
@@ -60,8 +60,6 @@ interface LlmConfigModalProps {
 
 - **OpenAI**: API key field, optional baseUrl override
 - **Anthropic**: API key field, optional baseUrl override
-- **Google**: API key field for Google AI Studio
-- **Custom**: API key field + required baseUrl field
 
 **Dynamic Form Fields**
 
@@ -74,10 +72,6 @@ const getProviderFields = (provider: Provider) => {
       return [...common, "baseUrl?", "useAuthHeader?"];
     case Provider.ANTHROPIC:
       return [...common, "baseUrl?", "useAuthHeader?"];
-    case Provider.GOOGLE:
-      return [...common, "useAuthHeader?"];
-    case Provider.CUSTOM:
-      return [...common, "baseUrl!", "useAuthHeader?"]; // baseUrl required
     default:
       return common;
   }
@@ -140,20 +134,6 @@ const validateForm = useCallback(
 - Optional useAuthHeader checkbox
 - Help text explaining Anthropic-specific setup
 
-**Google Provider Fields**
-
-- API key input with validation (Google AI Studio key format)
-- useAuthHeader checkbox (typically false for Google)
-- Help text with link to Google AI Studio console
-- Clear instructions for obtaining API keys
-
-**Custom Provider Fields**
-
-- API key input (flexible validation)
-- Required baseUrl field with URL validation
-- useAuthHeader checkbox with explanation
-- Comprehensive help text for custom setup
-
 ### Form Layout and UX
 
 **Modal Structure**
@@ -174,15 +154,6 @@ const validateForm = useCallback(
       <div className="space-y-4">
         <FormField name="customName" {...} />
         <FormField name="apiKey" type="password" {...} />
-        {provider === Provider.CUSTOM && (
-          <FormField name="baseUrl" required {...} />
-        )}
-        {(provider !== Provider.GOOGLE || showAdvanced) && (
-          <>
-            <FormField name="baseUrl" optional {...} />
-            <FormField name="useAuthHeader" type="checkbox" {...} />
-          </>
-        )}
       </div>
 
       <DialogFooter>
@@ -299,17 +270,6 @@ const getProviderHelpText = (provider: Provider) => {
         baseUrl: "Optional: Use a different endpoint (advanced users only)",
         description: "Configure Anthropic Claude models for conversations",
       };
-    case Provider.GOOGLE:
-      return {
-        apiKey: "Get your API key from https://aistudio.google.com/apikey",
-        description: "Configure Google Gemini models for conversations",
-      };
-    case Provider.CUSTOM:
-      return {
-        apiKey: "Enter the API key for your custom provider",
-        baseUrl: "The base URL endpoint for your custom provider's API",
-        description: "Configure a custom LLM provider (OpenAI-compatible API)",
-      };
   }
 };
 ```
@@ -364,16 +324,14 @@ Create comprehensive test file: `apps/desktop/src/components/settings/llm-setup/
 
 ```typescript
 describe("LlmConfigModal", () => {
-  describe.each([
-    Provider.OPENAI,
-    Provider.ANTHROPIC,
-    Provider.GOOGLE,
-    Provider.CUSTOM,
-  ])("Provider: %s", (provider) => {
-    it("renders correct form fields", () => {});
-    it("validates provider-specific requirements", () => {});
-    it("submits form with correct data structure", () => {});
-  });
+  describe.each([Provider.OPENAI, Provider.ANTHROPIC])(
+    "Provider: %s",
+    (provider) => {
+      it("renders correct form fields", () => {});
+      it("validates provider-specific requirements", () => {});
+      it("submits form with correct data structure", () => {});
+    },
+  );
 
   it("requires baseUrl for custom provider", () => {});
   it("handles form submission errors", () => {});

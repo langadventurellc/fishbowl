@@ -19,7 +19,7 @@ worktree: null
 
 ## Context
 
-The existing `LlmProviderCard` component needs to be updated to support all provider types (OpenAI, Anthropic, Google, Custom) and use the proper shared types instead of local types. It also needs enhanced security features for API key display.
+The existing `LlmProviderCard` component needs to be updated to support all provider types (OpenAI, Anthropic) and use the proper shared types instead of local types. It also needs enhanced security features for API key display.
 
 ## Current File Location
 

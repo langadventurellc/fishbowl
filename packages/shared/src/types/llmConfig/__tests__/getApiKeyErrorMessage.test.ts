@@ -16,18 +16,6 @@ describe("getApiKeyErrorMessage", () => {
     );
   });
 
-  it("returns correct error message for Google", () => {
-    const message = getApiKeyErrorMessage("google");
-    expect(message).toBe(
-      "Google API key must be 35-45 characters with letters, numbers, underscores, or hyphens",
-    );
-  });
-
-  it("returns correct error message for custom provider", () => {
-    const message = getApiKeyErrorMessage("custom");
-    expect(message).toBe("API key cannot be empty");
-  });
-
   it("returns default error message for unknown provider", () => {
     const message = getApiKeyErrorMessage("unknown" as Provider);
     expect(message).toBe("Invalid API key format for the selected provider");

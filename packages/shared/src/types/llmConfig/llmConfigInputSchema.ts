@@ -28,14 +28,4 @@ export const llmConfigInputSchema = z
       .boolean({ message: "Use auth header must be a boolean" })
       .default(true),
   })
-  .passthrough() // Allow unknown fields for schema evolution
-  .superRefine((data, ctx) => {
-    // Custom providers must have a base URL
-    if (data.provider === "custom" && !data.baseUrl) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Base URL is required for custom providers",
-        path: ["baseUrl"],
-      });
-    }
-  });
+  .passthrough();
