@@ -26,7 +26,7 @@ test.describe("Feature: General Settings Modal", () => {
     // Launch Electron app with test environment
     const electronPath = path.join(
       __dirname,
-      "../../../apps/desktop/dist-electron/electron/main.js",
+      "../../../../apps/desktop/dist-electron/electron/main.js",
     );
 
     const launchArgs = [electronPath];

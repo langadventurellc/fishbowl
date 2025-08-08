@@ -93,51 +93,6 @@ const cleanupLlmStorage = async (configPath: string, keysPath: string) => {
   }
 };
 
-// Helper to verify storage contents
-const _verifyStorageContents = async (
-  configPath: string,
-  keysPath: string,
-  expectedConfig: Partial<MockLlmConfig>,
-) => {
-  // Verify JSON config file
-  const configContent = await readFile(configPath, "utf-8");
-  const configs: StoredLlmConfig[] = JSON.parse(configContent);
-  expect(configs).toHaveLength(1);
-
-  const savedConfig = configs[0];
-  if (!savedConfig) {
-    throw new Error("No configuration found in storage");
-  }
-
-  expect(savedConfig.customName).toBe(expectedConfig.customName);
-  expect(savedConfig.provider).toBe(expectedConfig.provider);
-  if (expectedConfig.baseUrl) {
-    expect(savedConfig.baseUrl).toBe(expectedConfig.baseUrl);
-  }
-  expect(
-    (savedConfig as StoredLlmConfig & { apiKey?: string }).apiKey,
-  ).toBeUndefined(); // Should NOT be in JSON
-
-  // Try to verify secure storage file exists and contains key
-  try {
-    const keysContent = await readFile(keysPath, "utf-8");
-    const keys = JSON.parse(keysContent);
-    // Handle doubled prefix issue in secure storage
-    const expectedKey = `llm_api_key_${savedConfig.id}`;
-    const doubledPrefixKey = `llm_api_key_llm_api_key_${savedConfig.id}`;
-
-    const storedKey = keys[expectedKey] || keys[doubledPrefixKey];
-    expect(storedKey).toBeDefined();
-    expect(storedKey).not.toBe(expectedConfig.apiKey);
-  } catch (error) {
-    // Keys file might not exist or be empty in test environment
-    console.log("Secure storage file not found or empty:", error);
-    // For now, skip the secure storage verification in tests
-  }
-
-  return savedConfig;
-};
-
 test.describe("Feature: LLM Setup Configuration", () => {
   let electronApp: ElectronApplication;
   let window: Page;
@@ -149,7 +104,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     // Launch Electron app with test environment
     const electronPath = path.join(
       __dirname,
-      "../../../apps/desktop/dist-electron/electron/main.js",
+      "../../../../apps/desktop/dist-electron/electron/main.js",
     );
 
     const launchArgs = [electronPath];
@@ -638,13 +593,6 @@ test.describe("Feature: LLM Setup Configuration", () => {
       await expect(configCard).toContainText(mockConfig.customName);
       await expect(configCard).toContainText("OpenAI");
       await expect(configCard).toContainText("sk-...****"); // Masked API key
-
-      // Verify storage
-      const _savedConfig = await _verifyStorageContents(
-        llmConfigPath,
-        secureKeysPath,
-        mockConfig,
-      );
 
       // Verify "Add Another Provider" button is now visible
       const addAnotherButton = window

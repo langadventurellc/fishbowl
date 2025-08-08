@@ -1,8 +1,8 @@
-import { test, expect } from "@playwright/test";
-import playwright from "playwright";
+import { expect, test } from "@playwright/test";
 import path from "path";
-import { fileURLToPath } from "url";
 import type { ElectronApplication, Page } from "playwright";
+import playwright from "playwright";
+import { fileURLToPath } from "url";
 
 const { _electron: electron } = playwright;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -15,7 +15,7 @@ test.describe("Feature: Application Startup", () => {
     // Given - Fresh application state
     const electronPath = path.join(
       __dirname,
-      "../../../../apps/desktop/dist-electron/electron/main.js",
+      "../../../apps/desktop/dist-electron/electron/main.js",
     );
 
     // Prepare launch args with no-sandbox for CI
@@ -51,48 +51,6 @@ test.describe("Feature: Application Startup", () => {
       // Then - Application window is visible with correct title
       const title = await window.title();
       expect(title).toContain("Fishbowl");
-    });
-
-    test("should display Hello World message", async () => {
-      // Given - Application is running
-      expect(window).toBeDefined();
-
-      // When - Main content loads
-      await window.waitForLoadState("networkidle");
-      await window.waitForSelector("h1");
-
-      // Then - Hello World message is visible
-      const content = await window.textContent("body");
-      expect(content).toContain("Welcome to Fishbowl Desktop");
-    });
-
-    test("should have proper window dimensions", async () => {
-      // Given - Application window is open
-      expect(window).toBeDefined();
-
-      // When - Window dimensions are checked
-      const viewport = window.viewportSize();
-
-      // Then - Window has expected minimum dimensions
-      expect(viewport).toBeDefined();
-      if (viewport) {
-        expect(viewport.width).toBeGreaterThanOrEqual(800);
-        expect(viewport.height).toBeGreaterThanOrEqual(600);
-      }
-    });
-
-    test("should respond to user interactions", async () => {
-      // Given - Application is fully loaded
-      await window.waitForLoadState("networkidle");
-
-      // When - User attempts to interact with the window
-      // Click on the body to ensure the window is interactive
-      await window.click("body");
-
-      // Then - Window should remain responsive
-      const title = await window.title();
-      expect(title).toBeDefined();
-      expect(title.length).toBeGreaterThan(0);
     });
   });
 

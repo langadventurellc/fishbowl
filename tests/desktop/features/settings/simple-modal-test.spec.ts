@@ -1,8 +1,8 @@
-import { test, expect } from "@playwright/test";
-import playwright from "playwright";
+import { expect, test } from "@playwright/test";
 import path from "path";
-import { fileURLToPath } from "url";
 import type { ElectronApplication, Page } from "playwright";
+import playwright from "playwright";
+import { fileURLToPath } from "url";
 
 const { _electron: electron } = playwright;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -21,7 +21,7 @@ test.describe("Simple Modal Test", () => {
   test.beforeAll(async () => {
     const electronPath = path.join(
       __dirname,
-      "../../../apps/desktop/dist-electron/electron/main.js",
+      "../../../../apps/desktop/dist-electron/electron/main.js",
     );
 
     const launchArgs = [electronPath];
