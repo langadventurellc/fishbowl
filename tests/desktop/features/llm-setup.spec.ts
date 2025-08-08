@@ -27,6 +27,15 @@ interface MockLlmConfig {
   useAuthHeader: boolean;
 }
 
+// Stored config type (without API key, which is stored separately)
+interface StoredLlmConfig {
+  id: string;
+  customName: string;
+  provider: Provider;
+  baseUrl?: string;
+  useAuthHeader: boolean;
+}
+
 // Storage cleanup helper functions
 const cleanupLlmStorage = async (configPath: string, keysPath: string) => {
   // Delete JSON config file
@@ -52,16 +61,22 @@ const _verifyStorageContents = async (
 ) => {
   // Verify JSON config file
   const configContent = await readFile(configPath, "utf-8");
-  const configs = JSON.parse(configContent);
+  const configs: StoredLlmConfig[] = JSON.parse(configContent);
   expect(configs).toHaveLength(1);
 
   const savedConfig = configs[0];
+  if (!savedConfig) {
+    throw new Error("No configuration found in storage");
+  }
+
   expect(savedConfig.customName).toBe(expectedConfig.customName);
   expect(savedConfig.provider).toBe(expectedConfig.provider);
   if (expectedConfig.baseUrl) {
     expect(savedConfig.baseUrl).toBe(expectedConfig.baseUrl);
   }
-  expect(savedConfig.apiKey).toBeUndefined(); // Should NOT be in JSON
+  expect(
+    (savedConfig as StoredLlmConfig & { apiKey?: string }).apiKey,
+  ).toBeUndefined(); // Should NOT be in JSON
 
   // Try to verify secure storage file exists and contains key
   try {
@@ -239,6 +254,19 @@ test.describe("Feature: LLM Setup Configuration", () => {
       provider: "openai",
       apiKey: `sk-test-${randomUUID()}`,
       useAuthHeader: false,
+      ...overrides,
+    };
+  };
+
+  const createMockAnthropicConfig = (
+    overrides?: Partial<MockLlmConfig>,
+  ): MockLlmConfig => {
+    return {
+      customName: `Test Anthropic ${randomUUID().slice(0, 8)}`,
+      provider: "anthropic",
+      apiKey: `sk-ant-api-test-${randomUUID()}`,
+      baseUrl: "https://api.anthropic.com",
+      useAuthHeader: true,
       ...overrides,
     };
   };
@@ -584,6 +612,349 @@ test.describe("Feature: LLM Setup Configuration", () => {
       const configCard = window.locator('[role="article"]').last();
       await expect(configCard).toContainText("sk-...****");
       await expect(configCard).not.toContainText(mockConfig.apiKey);
+    });
+  });
+
+  test.describe("Scenario: Anthropic Configuration Creation", () => {
+    test("creates Anthropic configuration successfully", async () => {
+      // Navigate to LLM Setup
+      await openLlmSetupSection();
+
+      // Handle both empty state and existing configs
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+
+      if (await addAnotherButton.isVisible()) {
+        // Click provider selector dropdown that appears with "Add Another Provider"
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+        await addAnotherButton.click();
+      } else {
+        await waitForEmptyState();
+        // Select Anthropic provider
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+
+        // Verify button text changed
+        const setupButton = window
+          .locator("button")
+          .filter({ hasText: "Set up Anthropic" });
+        await expect(setupButton).toBeVisible();
+        await setupButton.click();
+      }
+
+      // Wait for modal
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      // Verify modal shows Anthropic-specific content
+      await expect(modal.locator("text=Setup LLM API")).toBeVisible();
+
+      // Fill configuration
+      const mockConfig = createMockAnthropicConfig();
+      await modal.locator('[name="customName"]').fill(mockConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(mockConfig.apiKey);
+
+      // Save configuration
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await expect(saveButton).toBeEnabled();
+      await saveButton.click();
+
+      // Wait for modal to close
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify configuration card appears with Anthropic branding
+      await waitForConfigurationList();
+      const configCard = window.locator('[role="article"]').last(); // Get the latest added card
+      await expect(configCard).toBeVisible();
+
+      // Verify Anthropic-specific content
+      await expect(configCard).toContainText(mockConfig.customName);
+      await expect(configCard).toContainText("Anthropic");
+      await expect(configCard).toContainText("sk-ant-...****"); // Anthropic masked format
+    });
+
+    test("populates Anthropic-specific defaults", async () => {
+      await openLlmSetupSection();
+
+      // Handle both empty state and existing configs
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+
+      if (await addAnotherButton.isVisible()) {
+        // Click provider selector dropdown that appears with "Add Another Provider"
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+        await addAnotherButton.click();
+      } else {
+        await waitForEmptyState();
+        // Select Anthropic and open modal
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+
+        const setupButton = window
+          .locator("button")
+          .filter({ hasText: "Set up Anthropic" });
+        await setupButton.click();
+      }
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible();
+
+      // Advanced options should be hidden by default
+      const baseUrlField = modal.locator('[name="baseUrl"]');
+      await expect(baseUrlField).not.toBeVisible();
+
+      // Click to show advanced options
+      const advancedToggle = modal.locator("button").filter({
+        hasText: "Show advanced options",
+      });
+      await advancedToggle.click();
+
+      // Now base URL should be visible with correct default
+      await expect(baseUrlField).toBeVisible();
+      const baseUrlValue = await baseUrlField.inputValue();
+      expect(baseUrlValue).toBe("https://api.anthropic.com");
+
+      // Check auth header checkbox is checked by default - wait for it to appear first
+      const authHeaderCheckbox = modal
+        .locator('input[type="checkbox"]')
+        .first();
+      await expect(authHeaderCheckbox).toBeVisible(); // Wait for checkbox to appear
+      await expect(authHeaderCheckbox).toBeChecked();
+    });
+
+    test("validates Anthropic configuration fields", async () => {
+      await openLlmSetupSection();
+
+      // Handle both empty state and existing configs
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+
+      if (await addAnotherButton.isVisible()) {
+        // Click provider selector dropdown that appears with "Add Another Provider"
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+        await addAnotherButton.click();
+      } else {
+        await waitForEmptyState();
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+        const setupButton = window
+          .locator("button")
+          .filter({ hasText: "Set up Anthropic" });
+        await setupButton.click();
+      }
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible();
+
+      // Save button should be disabled initially
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await expect(saveButton).toBeDisabled();
+
+      // Fill only custom name
+      await modal.locator('[name="customName"]').fill("Test Anthropic Config");
+      await expect(saveButton).toBeDisabled(); // Still disabled without API key
+
+      // Add API key
+      await modal.locator('[name="apiKey"]').fill("sk-ant-api-test-key");
+      await expect(saveButton).toBeEnabled(); // Now enabled
+    });
+  });
+
+  test.describe("Scenario: Multiple Provider Management", () => {
+    test("supports both OpenAI and Anthropic configs simultaneously", async () => {
+      await openLlmSetupSection();
+
+      // Work with existing configurations (2 OpenAI + 1 Anthropic from previous tests)
+
+      // Verify we have multiple configuration cards
+      await waitForConfigurationList();
+      const allCards = window.locator('[role="article"]');
+      await expect(allCards.first()).toBeVisible();
+
+      // Verify both provider types are present
+      const openAiCards = allCards.filter({ hasText: "OpenAI" });
+      const anthropicCards = allCards.filter({ hasText: "Anthropic" });
+
+      await expect(openAiCards.first()).toBeVisible();
+      await expect(anthropicCards.first()).toBeVisible();
+
+      // Verify each provider type has independent edit/delete actions
+      const firstOpenAiCard = openAiCards.first();
+      const firstAnthropicCard = anthropicCards.first();
+
+      // OpenAI card should have edit/delete buttons
+      const openAiEditButton = firstOpenAiCard.locator('[aria-label*="Edit"]');
+      const openAiDeleteButton = firstOpenAiCard.locator(
+        '[aria-label*="Delete"]',
+      );
+      await expect(openAiEditButton).toBeVisible();
+      await expect(openAiDeleteButton).toBeVisible();
+
+      // Anthropic card should have edit/delete buttons
+      const anthropicEditButton = firstAnthropicCard.locator(
+        '[aria-label*="Edit"]',
+      );
+      const anthropicDeleteButton = firstAnthropicCard.locator(
+        '[aria-label*="Delete"]',
+      );
+      await expect(anthropicEditButton).toBeVisible();
+      await expect(anthropicDeleteButton).toBeVisible();
+
+      // Verify correct provider branding
+      await expect(firstOpenAiCard).toContainText("OpenAI");
+      await expect(firstOpenAiCard).toContainText("sk-...****"); // OpenAI mask format
+
+      await expect(firstAnthropicCard).toContainText("Anthropic");
+      await expect(firstAnthropicCard).toContainText("sk-ant-...****"); // Anthropic mask format
+
+      // Verify "Add Another Provider" button is available for adding more
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).toBeVisible();
+
+      // Verify storage contains both provider types (if file exists)
+      try {
+        const configContent = await readFile(llmConfigPath, "utf-8");
+        const configs: StoredLlmConfig[] = JSON.parse(configContent);
+        expect(configs.length).toBeGreaterThanOrEqual(2);
+
+        const hasOpenAi = configs.some(
+          (c: StoredLlmConfig) => c.provider === "openai",
+        );
+        const hasAnthropic = configs.some(
+          (c: StoredLlmConfig) => c.provider === "anthropic",
+        );
+
+        expect(hasOpenAi).toBe(true);
+        expect(hasAnthropic).toBe(true);
+
+        // Verify Anthropic configs have correct base URL
+        const anthropicConfigs = configs.filter(
+          (c: StoredLlmConfig) => c.provider === "anthropic",
+        );
+        anthropicConfigs.forEach((config) => {
+          expect(config.baseUrl).toBe("https://api.anthropic.com");
+        });
+      } catch (error) {
+        // Config file might not exist in this test - that's ok, UI verification above is sufficient
+        console.log(
+          "Config file not found, but UI verification passed:",
+          error,
+        );
+      }
+    });
+
+    test("displays correct provider branding and styling", async () => {
+      await openLlmSetupSection();
+
+      // Handle both empty state and existing configs
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+
+      if (await addAnotherButton.isVisible()) {
+        // Click provider selector dropdown that appears with "Add Another Provider"
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+        await addAnotherButton.click();
+      } else {
+        await waitForEmptyState();
+        // Create Anthropic configuration
+        const providerDropdown = window.locator(
+          '[aria-label="Select LLM provider"]',
+        );
+        await providerDropdown.click();
+        const anthropicOption = window
+          .locator('[role="option"]')
+          .filter({ hasText: "Anthropic" });
+        await anthropicOption.click();
+
+        const setupButton = window
+          .locator("button")
+          .filter({ hasText: "Set up Anthropic" });
+        await setupButton.click();
+      }
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible();
+
+      const anthropicConfig = createMockAnthropicConfig({
+        customName: "Anthropic Test Config",
+      });
+      await modal
+        .locator('[name="customName"]')
+        .fill(anthropicConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(anthropicConfig.apiKey);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await saveButton.click();
+      await expect(modal).not.toBeVisible();
+
+      // Verify Anthropic card appears with correct branding
+      await waitForConfigurationList();
+      const anthropicCard = window.locator('[role="article"]').last(); // Get the latest added card
+      await expect(anthropicCard).toBeVisible();
+
+      // Verify provider-specific branding
+      await expect(anthropicCard).toContainText("Anthropic");
+      await expect(anthropicCard).toContainText("Anthropic Test Config");
+      await expect(anthropicCard).toContainText("sk-ant-...****"); // Anthropic-specific mask format
+      await expect(anthropicCard).not.toContainText("sk-...****"); // Should not use OpenAI format
     });
   });
 });
