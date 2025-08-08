@@ -2,8 +2,12 @@
   "mcpServers": {
     "task-trellis": {
       "type": "stdio",
-      "command": "uvx",
-      "args": ["--refresh", "task-trellis-mcp", "serve"],
+      "command": "npx",
+      "args": [
+        "@langadventurellc/task-trellis-mcp",
+        "--projectRootFolder",
+        "/Users/zach/code/fishbowl"
+      ],
       "env": {}
     },
     "shadcn-ui": {
