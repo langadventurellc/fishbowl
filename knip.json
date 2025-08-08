@@ -1,0 +1,98 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["turbo.json", ".husky/**/*.{js,sh}"],
+      "project": [
+        "**/*.{js,ts,json}",
+        "!apps/**",
+        "!packages/**",
+        "!tests/**",
+        "!node_modules/**",
+        "!dist/**",
+        "!build/**"
+      ]
+    },
+    "apps/desktop": {
+      "entry": [
+        "src/main.tsx",
+        "src/electron/main.ts",
+        "src/electron/preload.ts",
+        "vite.config.ts",
+        "vite.main.config.ts",
+        "vite.preload.config.ts",
+        "jest.config.cjs",
+        "eslint.config.cjs",
+        "components.json"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "**/*.config.{js,ts,cjs}",
+        "**/*.d.ts",
+        "index.html"
+      ]
+    },
+    "apps/mobile": {
+      "entry": [
+        "App.tsx",
+        "index.js",
+        "app.json",
+        "babel.config.cjs",
+        "metro.config.js",
+        "jest.config.cjs",
+        "jest.transform.js",
+        "eslint.config.cjs",
+        ".detoxrc.json",
+        "eas.json"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "**/*.config.{js,ts,cjs}",
+        "**/*.d.ts",
+        "types/**/*.ts"
+      ]
+    },
+    "packages/*": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.{ts,tsx,js,jsx}", "**/*.d.ts"]
+    },
+    "tests/*": {
+      "entry": [
+        "**/*.test.{ts,tsx,js,jsx}",
+        "**/*.spec.{ts,tsx,js,jsx}",
+        "**/*.e2e.{ts,tsx,js,jsx}",
+        "support/index.ts"
+      ],
+      "project": ["**/*.{ts,tsx,js,jsx}", "**/*.d.ts"]
+    }
+  },
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.turbo/**",
+    "**/.expo/**",
+    "**/coverage/**",
+    "**/*.tsbuildinfo",
+    "apps/mobile/android/**",
+    "apps/mobile/ios/**",
+    "apps/mobile/__mocks__/**"
+  ],
+  "ignoreDependencies": ["@types/*"],
+  "ignoreBinaries": [],
+  "includeEntryExports": false,
+  "eslint": {
+    "config": ["**/eslint.config.{js,cjs}"]
+  },
+  "typescript": {
+    "config": ["**/tsconfig*.json"]
+  },
+  "jest": {
+    "config": ["**/jest.config.{js,cjs}"]
+  },
+  "vite": {
+    "config": ["**/vite*.config.ts"]
+  },
+  "metro": true,
+  "expo": true
+}
