@@ -22,6 +22,7 @@ export const AnthropicProviderFields: React.FC<
   AnthropicProviderFieldsProps
 > = ({ control }) => {
   const [showApiKey, setShowApiKey] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const { announceStateChange } = useAccessibilityAnnouncements();
 
   return (
@@ -75,47 +76,72 @@ export const AnthropicProviderFields: React.FC<
         )}
       />
 
-      {/* Base URL Field */}
-      <FormField
-        control={control}
-        name="baseUrl"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Base URL (Optional)</FormLabel>
-            <FormControl>
-              <Input
-                {...field}
-                type="url"
-                placeholder="https://api.anthropic.com"
-                autoComplete="url"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck="false"
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {/* Advanced Options Toggle */}
+      <div className="flex justify-start">
+        <Button
+          type="button"
+          variant="link"
+          size="sm"
+          className="h-auto p-0 text-sm font-normal"
+          onClick={() => {
+            const newState = !showAdvanced;
+            setShowAdvanced(newState);
+            announceStateChange(
+              newState
+                ? "Advanced options are now visible"
+                : "Advanced options are now hidden",
+            );
+          }}
+        >
+          {showAdvanced ? "Hide" : "Show"} advanced options
+        </Button>
+      </div>
 
-      {/* Authorization Header Checkbox */}
-      <FormField
-        control={control}
-        name="useAuthHeader"
-        render={({ field }) => (
-          <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-            <FormControl>
-              <Checkbox
-                checked={field.value}
-                onCheckedChange={field.onChange}
-              />
-            </FormControl>
-            <div className="space-y-1 leading-none">
-              <FormLabel>Send API key in authorization header</FormLabel>
-            </div>
-          </FormItem>
-        )}
-      />
+      {showAdvanced && (
+        <>
+          {/* Base URL Field */}
+          <FormField
+            control={control}
+            name="baseUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Base URL (Optional)</FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    type="url"
+                    placeholder="https://api.anthropic.com"
+                    autoComplete="url"
+                    autoCapitalize="none"
+                    autoCorrect="off"
+                    spellCheck="false"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Authorization Header Checkbox */}
+          <FormField
+            control={control}
+            name="useAuthHeader"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Send API key in authorization header</FormLabel>
+                </div>
+              </FormItem>
+            )}
+          />
+        </>
+      )}
     </>
   );
 };

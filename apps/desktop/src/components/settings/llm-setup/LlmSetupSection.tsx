@@ -17,7 +17,12 @@ import type {
 } from "@fishbowl-ai/shared";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
-import { EmptyLlmState, LlmConfigModal, LlmProviderCard } from ".";
+import {
+  EmptyLlmState,
+  LlmConfigModal,
+  LlmProviderCard,
+  ProviderSelector,
+} from ".";
 import { useLlmConfig } from "../../../hooks/useLlmConfig";
 import { cn } from "../../../lib/utils";
 import {
@@ -232,12 +237,11 @@ export function LlmSetupSection({ className }: { className?: string }) {
             ))}
           </div>
           <div className="flex justify-center pt-4">
-            <Button
-              onClick={() => handleSetupProvider("openai")}
-              className="gap-2"
-            >
-              Add Another Provider
-            </Button>
+            <ProviderSelector
+              onSetupProvider={handleSetupProvider}
+              buttonText="Add Another Provider"
+              showIcon={false}
+            />
           </div>
         </>
       )}

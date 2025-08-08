@@ -158,10 +158,9 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
     onOpenChange(false);
   }, [onOpenChange]);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts (Escape handled in DialogContent onKeyDown)
   useGlobalKeyboardShortcuts({
     shortcuts: {
-      Escape: handleCancel,
       "Ctrl+S": () => form.handleSubmit(handleSave)(),
       "Meta+S": () => form.handleSubmit(handleSave)(),
     },
@@ -227,6 +226,13 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         aria-describedby={ariaIds.descriptionId}
         role="dialog"
         aria-modal="true"
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            e.stopPropagation();
+            handleCancel();
+          }
+        }}
       >
         <DialogHeader>
           <DialogTitle id={ariaIds.titleId}>{modalTitle}</DialogTitle>

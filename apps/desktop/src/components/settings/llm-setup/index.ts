@@ -13,3 +13,5 @@ export type { LlmConfigFormData } from "./LlmConfigModal";
 export { LlmProviderCard } from "./LlmProviderCard";
 export { LlmSetupSection } from "./LlmSetupSection";
 export { OpenAiProviderFields } from "./OpenAiProviderFields";
+export { ProviderSelector } from "./ProviderSelector";
+export type { ProviderSelectorProps } from "./ProviderSelector";
