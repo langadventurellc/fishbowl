@@ -181,14 +181,21 @@ export class LlmStorageService {
    */
   async getAllConfigurations(): Promise<StorageResult<LlmConfigMetadata[]>> {
     try {
+      this.logger.debug("LlmStorageService.getAllConfigurations called");
       const configs = await this.repository.list();
 
-      this.logger.debug("Loaded LLM configurations", { count: configs.length });
+      this.logger.debug("LlmStorageService loaded LLM configurations", {
+        count: configs.length,
+        configs: configs.map((c) => ({ id: c.id, customName: c.customName })),
+      });
 
       return { success: true, data: configs };
     } catch (error) {
       const message = this.extractErrorMessage(error);
-      this.logger.error("Failed to load LLM configurations", error as Error);
+      this.logger.error(
+        "LlmStorageService failed to load LLM configurations",
+        error as Error,
+      );
       return { success: false, error: message };
     }
   }
@@ -227,10 +234,18 @@ export class LlmStorageService {
     id: string,
   ): Promise<StorageResult<LlmConfig | null>> {
     try {
+      this.logger.debug("LlmStorageService.getCompleteConfiguration called", {
+        id,
+      });
       const config = await this.repository.read(id);
 
       if (config) {
-        this.logger.debug("Complete LLM configuration retrieved", {
+        this.logger.debug("Complete LLM configuration retrieved successfully", {
+          configId: id,
+          hasApiKey: !!config.apiKey,
+        });
+      } else {
+        this.logger.debug("Complete LLM configuration not found", {
           configId: id,
         });
       }
@@ -241,6 +256,7 @@ export class LlmStorageService {
       this.logger.error(
         "Failed to get complete LLM configuration",
         error as Error,
+        { configId: id },
       );
       return { success: false, error: message };
     }

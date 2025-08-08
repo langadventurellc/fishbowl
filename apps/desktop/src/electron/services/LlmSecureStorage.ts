@@ -2,17 +2,29 @@ import {
   createLoggerSync,
   type SecureStorageInterface,
 } from "@fishbowl-ai/shared";
-import { safeStorage } from "electron";
+import { safeStorage, app } from "electron";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
  * Secure storage service using Electron's safeStorage API.
- * Encrypts and stores LLM API keys with prefixed identifiers.
+ * Encrypts and stores LLM API keys with prefixed identifiers in a persistent file.
  */
 export class LlmSecureStorage implements SecureStorageInterface {
   private readonly keyPrefix = "llm_api_key_";
   private readonly logger = createLoggerSync({
     context: { metadata: { component: "LlmSecureStorage" } },
   });
+  private readonly storageFilePath: string;
+
+  constructor() {
+    // Store encrypted keys in userData directory
+    const userDataPath = app.getPath("userData");
+    this.storageFilePath = path.join(userDataPath, "secure_keys.json");
+    this.logger.debug("LlmSecureStorage initialized", {
+      storageFilePath: this.storageFilePath,
+    });
+  }
 
   /**
    * Check if secure storage is available on the system.
@@ -26,6 +38,36 @@ export class LlmSecureStorage implements SecureStorageInterface {
     } catch {
       this.logger.warn("Failed to check secure storage availability");
       return false;
+    }
+  }
+
+  /**
+   * Load encrypted keys from persistent storage file.
+   */
+  private loadStorage(): Record<string, string> {
+    try {
+      if (fs.existsSync(this.storageFilePath)) {
+        const data = fs.readFileSync(this.storageFilePath, "utf8");
+        return JSON.parse(data);
+      }
+    } catch (error) {
+      this.logger.warn("Failed to load secure storage file", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+    return {};
+  }
+
+  /**
+   * Save encrypted keys to persistent storage file.
+   */
+  private saveStorage(storage: Record<string, string>): void {
+    try {
+      const data = JSON.stringify(storage, null, 2);
+      fs.writeFileSync(this.storageFilePath, data, "utf8");
+    } catch (error) {
+      this.logger.error("Failed to save secure storage file", error as Error);
+      throw new Error("Failed to persist encrypted keys");
     }
   }
 
@@ -55,15 +97,15 @@ export class LlmSecureStorage implements SecureStorageInterface {
       // Encrypt the API key
       const encryptedBuffer = safeStorage.encryptString(apiKey);
 
-      // Store in global object (persisted in Electron's main process)
-      // Using global object pattern similar to how Electron apps store data
-      if (!global.llmSecureStorage) {
-        global.llmSecureStorage = new Map<string, string>();
-      }
+      // Load existing storage
+      const storage = this.loadStorage();
 
       // Convert buffer to base64 string for storage
       const encryptedString = encryptedBuffer.toString("base64");
-      global.llmSecureStorage.set(storageKey, encryptedString);
+      storage[storageKey] = encryptedString;
+
+      // Save to persistent file
+      this.saveStorage(storage);
 
       this.logger.debug("API key stored successfully", { id });
     } catch (error) {
@@ -97,21 +139,17 @@ export class LlmSecureStorage implements SecureStorageInterface {
         return null;
       }
 
-      // Check if storage exists
-      if (
-        !global.llmSecureStorage ||
-        !global.llmSecureStorage.has(storageKey)
-      ) {
-        this.logger.debug("API key not found", { id });
+      // Load storage from file
+      const storage = this.loadStorage();
+
+      // Check if key exists
+      if (!storage[storageKey]) {
+        this.logger.debug("API key not found in storage", { id });
         return null;
       }
 
       // Get encrypted string and convert back to buffer
-      const encryptedString = global.llmSecureStorage.get(storageKey);
-      if (!encryptedString) {
-        return null;
-      }
-
+      const encryptedString = storage[storageKey];
       const encryptedBuffer = Buffer.from(encryptedString, "base64");
 
       // Decrypt the API key
@@ -140,16 +178,17 @@ export class LlmSecureStorage implements SecureStorageInterface {
     const storageKey = this.getStorageKey(id);
 
     try {
-      // Check if storage exists
-      if (!global.llmSecureStorage) {
-        this.logger.debug("No secure storage to delete from", { id });
-        return;
-      }
+      // Load existing storage
+      const storage = this.loadStorage();
 
       // Delete the key (no error if not found)
-      const deleted = global.llmSecureStorage.delete(storageKey);
+      const existed = storageKey in storage;
+      delete storage[storageKey];
 
-      this.logger.debug("API key deletion attempted", { id, deleted });
+      // Save updated storage
+      this.saveStorage(storage);
+
+      this.logger.debug("API key deletion attempted", { id, existed });
     } catch (error) {
       this.logger.error("Failed to delete API key", error as Error);
       throw new Error("Failed to delete API key");
@@ -164,9 +203,4 @@ export class LlmSecureStorage implements SecureStorageInterface {
   private getStorageKey(id: string): string {
     return `${this.keyPrefix}${id}`;
   }
-}
-
-// Declare global type for TypeScript
-declare global {
-  var llmSecureStorage: Map<string, string> | undefined;
 }

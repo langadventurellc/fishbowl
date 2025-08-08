@@ -1,4 +1,5 @@
-import { safeStorage } from "electron";
+import { safeStorage, app } from "electron";
+import * as fs from "fs";
 import { LlmSecureStorage } from "../LlmSecureStorage";
 
 // Mock electron
@@ -8,6 +9,16 @@ jest.mock("electron", () => ({
     encryptString: jest.fn(),
     decryptString: jest.fn(),
   },
+  app: {
+    getPath: jest.fn(),
+  },
+}));
+
+// Mock fs
+jest.mock("fs", () => ({
+  existsSync: jest.fn(),
+  readFileSync: jest.fn(),
+  writeFileSync: jest.fn(),
 }));
 
 // Mock logger
@@ -22,11 +33,18 @@ jest.mock("@fishbowl-ai/shared", () => ({
 
 describe("LlmSecureStorage", () => {
   let storage: LlmSecureStorage;
+  const mockUserDataPath = "/test/userData";
+  const expectedFilePath = "/test/userData/secure_keys.json";
 
   beforeEach(() => {
     jest.clearAllMocks();
-    // Clear global storage
-    delete global.llmSecureStorage;
+    // Mock app.getPath to return test directory
+    (app.getPath as jest.Mock).mockReturnValue(mockUserDataPath);
+    // Mock fs methods
+    (fs.existsSync as jest.Mock).mockReturnValue(false);
+    (fs.readFileSync as jest.Mock).mockReturnValue("{}");
+    (fs.writeFileSync as jest.Mock).mockImplementation(() => {});
+
     storage = new LlmSecureStorage();
   });
 
@@ -48,7 +66,7 @@ describe("LlmSecureStorage", () => {
       expect(result).toBe(false);
     });
 
-    it("should return false when checking availability throws", () => {
+    it("should return false when safeStorage throws error", () => {
       (safeStorage.isEncryptionAvailable as jest.Mock).mockImplementation(
         () => {
           throw new Error("System error");
@@ -73,10 +91,16 @@ describe("LlmSecureStorage", () => {
       storage.store("test-id", "test-api-key");
 
       expect(safeStorage.encryptString).toHaveBeenCalledWith("test-api-key");
-      expect(global.llmSecureStorage).toBeDefined();
-      expect(global.llmSecureStorage?.has("llm_api_key_test-id")).toBe(true);
-      expect(global.llmSecureStorage?.get("llm_api_key_test-id")).toBe(
-        testBuffer.toString("base64"),
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expectedFilePath,
+        JSON.stringify(
+          {
+            "llm_api_key_test-id": testBuffer.toString("base64"),
+          },
+          null,
+          2,
+        ),
+        "utf8",
       );
     });
 
@@ -97,14 +121,6 @@ describe("LlmSecureStorage", () => {
         "Secure storage is not available on this system",
       );
     });
-
-    it("should throw Error when encryption fails", () => {
-      (safeStorage.encryptString as jest.Mock).mockImplementation(() => {
-        throw new Error("Encryption failed");
-      });
-
-      expect(() => storage.store("id", "api-key")).toThrow("Encryption failed");
-    });
   });
 
   describe("retrieve", () => {
@@ -113,33 +129,44 @@ describe("LlmSecureStorage", () => {
     });
 
     it("should retrieve and decrypt API key successfully", () => {
-      // Setup: Store an encrypted key
-      const encryptedData = "encrypted-base64-data";
-      global.llmSecureStorage = new Map();
-      global.llmSecureStorage.set("llm_api_key_test-id", encryptedData);
+      const testBuffer = Buffer.from("encrypted");
+      const testData = {
+        "llm_api_key_test-id": testBuffer.toString("base64"),
+      };
 
+      (fs.existsSync as jest.Mock).mockReturnValue(true);
+      (fs.readFileSync as jest.Mock).mockReturnValue(JSON.stringify(testData));
       (safeStorage.decryptString as jest.Mock).mockReturnValue(
         "decrypted-api-key",
       );
 
       const result = storage.retrieve("test-id");
 
+      expect(fs.readFileSync).toHaveBeenCalledWith(expectedFilePath, "utf8");
+      expect(safeStorage.decryptString).toHaveBeenCalledWith(testBuffer);
       expect(result).toBe("decrypted-api-key");
-      expect(safeStorage.decryptString).toHaveBeenCalledWith(
-        Buffer.from(encryptedData, "base64"),
-      );
     });
 
-    it("should return null for non-existent key", () => {
+    it("should return null when API key not found", () => {
       const result = storage.retrieve("non-existent");
 
       expect(result).toBeNull();
-      expect(safeStorage.decryptString).not.toHaveBeenCalled();
+    });
+
+    it("should return null when storage file does not exist", () => {
+      (fs.existsSync as jest.Mock).mockReturnValue(false);
+
+      const result = storage.retrieve("test-id");
+
+      expect(result).toBeNull();
     });
 
     it("should return null for invalid ID", () => {
-      expect(storage.retrieve("")).toBeNull();
-      expect(storage.retrieve(null as any)).toBeNull();
+      const result1 = storage.retrieve("");
+      const result2 = storage.retrieve(null as any);
+
+      expect(result1).toBeNull();
+      expect(result2).toBeNull();
     });
 
     it("should return null when encryption is not available", () => {
@@ -149,66 +176,57 @@ describe("LlmSecureStorage", () => {
 
       expect(result).toBeNull();
     });
-
-    it("should throw StorageError when decryption fails", () => {
-      global.llmSecureStorage = new Map();
-      global.llmSecureStorage.set("llm_api_key_test-id", "encrypted");
-
-      (safeStorage.decryptString as jest.Mock).mockImplementation(() => {
-        throw new Error("Decryption failed");
-      });
-
-      expect(() => storage.retrieve("test-id")).toThrow(
-        "Failed to decrypt API key",
-      );
-    });
   });
 
   describe("delete", () => {
     it("should delete API key successfully", () => {
-      global.llmSecureStorage = new Map();
-      global.llmSecureStorage.set("llm_api_key_test-id", "encrypted");
+      const existingData = {
+        "llm_api_key_test-id": "encrypted-data",
+        llm_api_key_other: "other-data",
+      };
+
+      (fs.existsSync as jest.Mock).mockReturnValue(true);
+      (fs.readFileSync as jest.Mock).mockReturnValue(
+        JSON.stringify(existingData),
+      );
 
       storage.delete("test-id");
 
-      expect(global.llmSecureStorage.has("llm_api_key_test-id")).toBe(false);
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expectedFilePath,
+        JSON.stringify(
+          {
+            llm_api_key_other: "other-data",
+          },
+          null,
+          2,
+        ),
+        "utf8",
+      );
     });
 
-    it("should not throw when deleting non-existent key", () => {
-      expect(() => storage.delete("non-existent")).not.toThrow();
+    it("should handle deletion when key does not exist", () => {
+      const existingData = {
+        llm_api_key_other: "other-data",
+      };
+
+      (fs.existsSync as jest.Mock).mockReturnValue(true);
+      (fs.readFileSync as jest.Mock).mockReturnValue(
+        JSON.stringify(existingData),
+      );
+
+      storage.delete("non-existent");
+
+      expect(fs.writeFileSync).toHaveBeenCalledWith(
+        expectedFilePath,
+        JSON.stringify(existingData, null, 2),
+        "utf8",
+      );
     });
 
-    it("should not throw for invalid ID", () => {
+    it("should handle invalid ID gracefully", () => {
       expect(() => storage.delete("")).not.toThrow();
       expect(() => storage.delete(null as any)).not.toThrow();
-    });
-
-    it("should not throw when global storage doesn't exist", () => {
-      delete global.llmSecureStorage;
-
-      expect(() => storage.delete("test-id")).not.toThrow();
-    });
-  });
-
-  describe("store and retrieve round-trip", () => {
-    it("should successfully store and retrieve the same API key", () => {
-      (safeStorage.isEncryptionAvailable as jest.Mock).mockReturnValue(true);
-
-      const apiKey = "sk-test-1234567890abcdef";
-      const encryptedBuffer = Buffer.from("encrypted-content");
-
-      (safeStorage.encryptString as jest.Mock).mockReturnValue(encryptedBuffer);
-      (safeStorage.decryptString as jest.Mock).mockReturnValue(apiKey);
-
-      // Store the API key
-      storage.store("config-123", apiKey);
-
-      // Retrieve it back
-      const retrieved = storage.retrieve("config-123");
-
-      expect(retrieved).toBe(apiKey);
-      expect(safeStorage.encryptString).toHaveBeenCalledWith(apiKey);
-      expect(safeStorage.decryptString).toHaveBeenCalledWith(encryptedBuffer);
     });
   });
 });

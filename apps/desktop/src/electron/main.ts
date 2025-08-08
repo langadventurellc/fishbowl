@@ -7,13 +7,13 @@ import {
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { settingsRepositoryManager } from "./getSettingsRepository.js";
-import { setupSettingsHandlers } from "./settingsHandlers.js";
-import { LlmStorageService } from "./services/LlmStorageService.js";
-import { llmStorageServiceManager } from "./getLlmStorageService.js";
-import { LlmConfigService } from "./services/LlmConfigService.js";
 import { llmConfigServiceManager } from "./getLlmConfigService.js";
+import { llmStorageServiceManager } from "./getLlmStorageService.js";
+import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
+import { LlmConfigService } from "./services/LlmConfigService.js";
+import { LlmStorageService } from "./services/LlmStorageService.js";
+import { setupSettingsHandlers } from "./settingsHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -113,6 +113,7 @@ function openSettingsModal(): void {
   }
 }
 
+// eslint-disable-next-line statement-count/function-statement-count-warn
 app.whenReady().then(async () => {
   // Initialize logger first
   try {
@@ -192,8 +193,9 @@ app.whenReady().then(async () => {
     // Initialize the service AFTER handlers are registered
     try {
       await llmConfigService.initialize();
+      const configs = await llmConfigService.list();
       mainLogger?.info("LLM configuration service initialized successfully", {
-        configCount: (await llmConfigService.list()).length,
+        configCount: configs.length,
       });
     } catch (error) {
       mainLogger?.error(

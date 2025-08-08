@@ -36,7 +36,7 @@ export function generateId(): string {
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
 
-    return [
+    const uuid = [
       hex.substring(0, 8),
       hex.substring(8, 12),
       "4" + hex.substring(13, 16), // Version 4 UUID
@@ -44,6 +44,8 @@ export function generateId(): string {
         hex.substring(17, 20),
       hex.substring(20, 32),
     ].join("-");
+
+    return uuid;
   } catch {
     // Fallback: timestamp in base36 + random string
     // This provides reasonable uniqueness for configuration purposes

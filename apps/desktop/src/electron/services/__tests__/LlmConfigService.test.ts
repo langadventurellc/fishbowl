@@ -6,7 +6,11 @@ import {
   ConfigOperationError,
   InvalidConfigError,
 } from "../errors";
-import type { LlmConfig, LlmConfigInput } from "@fishbowl-ai/shared";
+import type {
+  LlmConfig,
+  LlmConfigInput,
+  LlmConfigMetadata,
+} from "@fishbowl-ai/shared";
 
 // Mock dependencies
 jest.mock("../LlmStorageService");
@@ -41,6 +45,16 @@ describe("LlmConfigService", () => {
   const createValidConfig = (): LlmConfig => ({
     id: "test-uuid-123",
     ...createValidInput(),
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  });
+
+  const createValidMetadata = (): LlmConfigMetadata => ({
+    id: "test-uuid-123",
+    customName: "Test OpenAI",
+    provider: "openai",
+    baseUrl: "https://api.openai.com/v1",
+    useAuthHeader: true,
     createdAt: "2024-01-01T00:00:00.000Z",
     updatedAt: "2024-01-01T00:00:00.000Z",
   });
@@ -89,7 +103,10 @@ describe("LlmConfigService", () => {
 
       expect(result.id).toBe("test-uuid-123");
       expect(mockRandomUUID).toHaveBeenCalled();
-      expect(mockRepository.create).toHaveBeenCalledWith(input);
+      expect(mockRepository.create).toHaveBeenCalledWith(
+        input,
+        "test-uuid-123",
+      );
     });
 
     it("should prevent duplicate configuration names", async () => {
@@ -335,9 +352,16 @@ describe("LlmConfigService", () => {
       });
       await service.initialize();
 
-      // Now delete a non-existent config - should not call storage since not in cache
+      // Mock storage to return success for non-existent item deletion
+      mockStorageService.deleteConfiguration.mockResolvedValue({
+        success: true,
+      });
+
+      // Now delete a non-existent config - should call storage to ensure consistency
       await expect(service.delete("non-existent")).resolves.not.toThrow();
-      expect(mockStorageService.deleteConfiguration).not.toHaveBeenCalled();
+      expect(mockStorageService.deleteConfiguration).toHaveBeenCalledWith(
+        "non-existent",
+      );
     });
 
     it("should handle storage failures", async () => {
@@ -369,9 +393,10 @@ describe("LlmConfigService", () => {
   describe("list()", () => {
     it("should return all configurations", async () => {
       const configs = [createValidConfig()];
+      const expectedMetadata = [createValidMetadata()];
       mockStorageService.getAllConfigurations.mockResolvedValue({
         success: true,
-        data: configs,
+        data: expectedMetadata,
       });
       mockStorageService.getCompleteConfiguration.mockResolvedValue({
         success: true,
@@ -380,7 +405,7 @@ describe("LlmConfigService", () => {
 
       const result = await service.list();
 
-      expect(result).toEqual(configs);
+      expect(result).toEqual(expectedMetadata);
       expect(mockStorageService.getAllConfigurations).toHaveBeenCalled();
     });
 
@@ -446,7 +471,17 @@ describe("LlmConfigService", () => {
 
       const result = await service.list();
 
-      expect(result).toEqual([config1]);
+      // Expect metadata only (without API key)
+      const expectedMetadata = {
+        id: "test-1",
+        customName: "Test OpenAI",
+        provider: "openai",
+        baseUrl: "https://api.openai.com/v1",
+        useAuthHeader: true,
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
+      };
+      expect(result).toEqual([expectedMetadata]);
       expect(result).toHaveLength(1);
     });
   });

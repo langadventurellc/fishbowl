@@ -1,4 +1,8 @@
-import type { LlmConfig, LlmConfigInput } from "@fishbowl-ai/shared";
+import type {
+  LlmConfig,
+  LlmConfigInput,
+  LlmConfigMetadata,
+} from "@fishbowl-ai/shared";
 
 /**
  * Interface for the LLM Configuration Service providing all CRUD operations
@@ -9,6 +13,6 @@ export interface LlmConfigServiceInterface {
   read(id: string): Promise<LlmConfig | null>;
   update(id: string, updates: Partial<LlmConfigInput>): Promise<LlmConfig>;
   delete(id: string): Promise<void>;
-  list(): Promise<LlmConfig[]>;
+  list(): Promise<LlmConfigMetadata[]>;
   initialize(): Promise<void>;
 }

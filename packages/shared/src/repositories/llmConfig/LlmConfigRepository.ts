@@ -47,12 +47,15 @@ export class LlmConfigRepository implements LlmConfigRepositoryInterface {
    * Create a new LLM configuration with complete data validation.
    * Returns complete configuration including decrypted API key.
    */
-  async create(config: LlmConfigInput): Promise<LlmConfig> {
+  async create(
+    config: LlmConfigInput,
+    providedId?: string,
+  ): Promise<LlmConfig> {
     // Validate input
     const validatedInput = llmConfigInputSchema.parse(config);
 
-    // Generate ID and timestamps
-    const id = generateId();
+    // Use provided ID or generate new one
+    const id = providedId || generateId();
     const now = new Date().toISOString();
 
     // Check secure storage availability
@@ -94,6 +97,8 @@ export class LlmConfigRepository implements LlmConfigRepositoryInterface {
         apiKey: validatedInput.apiKey,
       };
     } catch (error) {
+      this.logger.error("Error during create operation", error as Error);
+
       // Rollback: delete API key from secure storage
       try {
         this.secureStorage.delete(secureKey);
@@ -502,17 +507,33 @@ export class LlmConfigRepository implements LlmConfigRepositoryInterface {
    */
   private async loadConfigurationsInternal(): Promise<LlmConfigMetadata[]> {
     try {
-      return await this.fileStorageService.readJsonFile<LlmConfigMetadata[]>(
-        this.configFilePath,
-      );
+      this.logger.debug("Loading configurations from file", {
+        configFilePath: this.configFilePath,
+      });
+      const result = await this.fileStorageService.readJsonFile<
+        LlmConfigMetadata[]
+      >(this.configFilePath);
+      this.logger.debug("Successfully loaded configurations from file", {
+        count: result.length,
+        configs: result.map((c) => ({ id: c.id, customName: c.customName })),
+      });
+      return result;
     } catch (error) {
       // Return empty array if file doesn't exist
       if (error instanceof FileStorageError && error.operation === "read") {
         this.logger.debug(
           "LLM config file does not exist, returning empty array",
+          { configFilePath: this.configFilePath },
         );
         return [];
       }
+      this.logger.error(
+        "Failed to load configurations from file",
+        error as Error,
+        {
+          configFilePath: this.configFilePath,
+        },
+      );
       throw error;
     }
   }

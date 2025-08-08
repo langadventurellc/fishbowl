@@ -3,6 +3,7 @@ import {
   createLoggerSync,
   type LlmConfig,
   type LlmConfigInput,
+  type LlmConfigMetadata,
 } from "@fishbowl-ai/shared";
 import { LlmStorageService } from "./LlmStorageService";
 import type { LlmConfigServiceInterface } from "./LlmConfigServiceInterface";
@@ -103,28 +104,19 @@ export class LlmConfigService implements LlmConfigServiceInterface {
         throw new DuplicateConfigError(input.customName);
       }
 
-      // Save using storage service repository
-      const result = await this.storageService.repository.create(input);
+      // Save using storage service repository, passing our generated ID
+      const result = await this.storageService.repository.create(input, id);
 
-      // Override the repository-generated ID with our UUID and ensure proper timestamps
-      const now = new Date().toISOString();
-      const finalConfig: LlmConfig = {
-        ...result,
-        id,
-        createdAt: now,
-        updatedAt: now,
-      };
-
-      // Update cache with new configuration
-      this.cache.set(finalConfig.id, finalConfig);
+      // Update cache with new configuration (no ID override needed now)
+      this.cache.set(result.id, result);
 
       this.logger.info("LLM configuration created successfully", {
-        id,
+        id: result.id,
         provider: input.provider,
         customName: input.customName,
       });
 
-      return finalConfig;
+      return result;
     } catch (error) {
       if (error instanceof DuplicateConfigError) {
         throw error;
@@ -264,13 +256,15 @@ export class LlmConfigService implements LlmConfigServiceInterface {
     try {
       await this.ensureInitialized();
 
-      // Check cache instead of storage
+      // Check cache for logging purposes, but always attempt deletion
       const existing = this.cache.get(id);
       if (!existing) {
-        this.logger.debug("Configuration not found in cache for deletion", {
-          id,
-        });
-        return;
+        this.logger.debug(
+          "Configuration not found in cache, attempting storage deletion anyway",
+          {
+            id,
+          },
+        );
       }
 
       // Delete from storage first
@@ -284,13 +278,13 @@ export class LlmConfigService implements LlmConfigServiceInterface {
         );
       }
 
-      // Remove from cache only if storage deletion succeeds
+      // Remove from cache (if present) after successful storage deletion
       this.cache.delete(id);
 
       this.logger.info("LLM configuration deleted successfully", {
         id,
-        provider: existing.provider,
-        customName: existing.customName,
+        provider: existing?.provider,
+        customName: existing?.customName,
       });
     } catch (error) {
       if (error instanceof ConfigOperationError) {
@@ -309,19 +303,30 @@ export class LlmConfigService implements LlmConfigServiceInterface {
 
   /**
    * Retrieve all configurations from storage.
-   * Returns empty array if no configurations exist.
+   * Returns metadata only (without API keys) for security.
    */
-  async list(): Promise<LlmConfig[]> {
+  async list(): Promise<LlmConfigMetadata[]> {
     try {
       await this.ensureInitialized();
 
       const configs = Array.from(this.cache.values());
 
-      this.logger.debug("Listed LLM configurations from cache", {
-        count: configs.length,
+      // Convert to metadata objects (strip API keys for security)
+      const metadata: LlmConfigMetadata[] = configs.map((config) => ({
+        id: config.id,
+        customName: config.customName,
+        provider: config.provider,
+        baseUrl: config.baseUrl,
+        useAuthHeader: config.useAuthHeader,
+        createdAt: config.createdAt,
+        updatedAt: config.updatedAt,
+      }));
+
+      this.logger.debug("Listed LLM configurations metadata from cache", {
+        count: metadata.length,
       });
 
-      return configs;
+      return metadata;
     } catch (error) {
       if (error instanceof ConfigOperationError) {
         throw error;
