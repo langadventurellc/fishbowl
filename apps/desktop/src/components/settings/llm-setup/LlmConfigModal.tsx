@@ -1,9 +1,11 @@
-import type { Provider } from "@fishbowl-ai/shared";
+import type { Provider, LlmConfigInput } from "@fishbowl-ai/shared";
+import { z } from "zod";
 import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { cn } from "../../../lib/utils";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../../hooks/useGlobalKeyboardShortcuts";
 import {
@@ -22,6 +24,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -31,14 +34,16 @@ import { Input } from "../../ui/input";
 import { AnthropicProviderFields } from "./AnthropicProviderFields";
 import { OpenAiProviderFields } from "./OpenAiProviderFields";
 
-const llmConfigSchema = z.object({
+// Local form schema that exactly matches our form needs
+const llmConfigFormSchema = z.object({
   customName: z.string().min(1, "Custom name is required"),
   apiKey: z.string().min(1, "API key is required"),
-  baseUrl: z.string().min(1, "Base URL is required"),
+  provider: z.enum(["openai", "anthropic"]),
+  baseUrl: z.string().optional(),
   useAuthHeader: z.boolean(),
 });
 
-export type LlmConfigFormData = z.infer<typeof llmConfigSchema>;
+export type LlmConfigFormData = z.infer<typeof llmConfigFormSchema>;
 
 export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   isOpen,
@@ -47,6 +52,9 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   mode = "add",
   initialData,
   onSave,
+  isLoading = false,
+  error = null,
+  existingConfigs: _existingConfigs = [],
 }) => {
   // Generate consistent ARIA IDs
   const ariaIds = generateDialogAriaIds(`llm-config-modal-${provider}`);
@@ -71,34 +79,45 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   }, [provider]);
 
   const form = useForm<LlmConfigFormData>({
-    resolver: zodResolver(llmConfigSchema),
+    resolver: zodResolver(llmConfigFormSchema),
+    mode: "onChange", // Enable form validation
     defaultValues: {
       customName: initialData?.customName || "",
       apiKey: initialData?.apiKey || "",
+      provider,
       baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-      useAuthHeader: initialData?.useAuthHeader || false,
+      useAuthHeader: initialData?.useAuthHeader ?? true,
     },
   });
 
   const handleSave = useCallback(
     async (data: LlmConfigFormData) => {
       try {
-        // Include ID and provider when editing
+        // Convert to shared LlmConfigInput type
+        const llmConfigData: LlmConfigInput = {
+          customName: data.customName,
+          apiKey: data.apiKey,
+          provider: data.provider,
+          baseUrl: data.baseUrl,
+          useAuthHeader: data.useAuthHeader,
+        };
+
+        // Include ID when editing
         const saveData =
           mode === "edit" && initialData?.id
-            ? { ...data, provider, id: initialData.id }
-            : { ...data, provider };
+            ? { ...llmConfigData, id: initialData.id }
+            : llmConfigData;
 
         await onSave(saveData);
         // Only close if save succeeds
         onOpenChange(false);
       } catch (error) {
-        // Error is already handled by the useLlmConfig hook
+        // Error handled by parent component through error prop
         // Modal stays open to show validation errors
         console.error("Save failed:", error);
       }
     },
-    [onSave, onOpenChange, mode, initialData?.id, provider],
+    [onSave, onOpenChange, mode, initialData?.id],
   );
 
   const handleCancel = useCallback(() => {
@@ -122,8 +141,9 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
       form.reset({
         customName: initialData?.customName || "",
         apiKey: initialData?.apiKey || "",
+        provider,
         baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-        useAuthHeader: initialData?.useAuthHeader || false,
+        useAuthHeader: initialData?.useAuthHeader ?? true,
       });
     }
   }, [isOpen, provider, initialData, form, getDefaultBaseUrl]);
@@ -175,22 +195,54 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
           </DialogDescription>
         </DialogHeader>
 
+        {/* Error Display */}
+        {error && (
+          <div className="p-3 mb-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-800">
+                Configuration Error
+              </p>
+              <p className="text-sm text-red-600 mt-1">{error}</p>
+            </div>
+          </div>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSave)} className="space-y-4">
             {/* Custom Name Field */}
             <FormField
               control={form.control}
               name="customName"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Custom Name</FormLabel>
+                  <FormLabel>
+                    Custom Name <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder={`e.g., My ${providerName} API`}
+                      className={cn(fieldState.error ? "border-red-500" : "")}
                       autoComplete="off"
+                      maxLength={100}
                     />
                   </FormControl>
+                  <FormDescription className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      A unique name to identify this configuration
+                    </span>
+                    <span
+                      className={cn(
+                        "text-xs",
+                        field.value?.length > 90
+                          ? "text-yellow-600"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {field.value?.length || 0}/100
+                    </span>
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -206,10 +258,30 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
             )}
 
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={handleCancel}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleCancel}
+                disabled={isLoading}
+              >
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button
+                type="submit"
+                disabled={isLoading || !form.formState.isValid}
+                className="gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : mode === "add" ? (
+                  "Add Configuration"
+                ) : (
+                  "Update Configuration"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -41,12 +41,6 @@ jest.mock("../EmptyLlmState", () => ({
       >
         Set up OpenAI
       </button>
-      <button
-        onClick={() => onSetupProvider("google")}
-        data-testid="setup-google"
-      >
-        Set up Google AI
-      </button>
     </div>
   ),
 }));
