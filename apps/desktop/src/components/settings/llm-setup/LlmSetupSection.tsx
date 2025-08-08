@@ -196,16 +196,9 @@ export function LlmSetupSection({ className }: { className?: string }) {
             {configurations.map((config) => (
               <LlmProviderCard
                 key={config.id}
-                api={{
-                  id: config.id,
-                  customName: config.customName,
-                  provider: config.provider,
-                  apiKey: "••••",
-                  baseUrl: config.baseUrl || "",
-                  useAuthHeader: config.useAuthHeader,
-                }}
-                onEdit={() => handleEdit(config)}
-                onDelete={() => handleDeleteClick(config.id)}
+                configuration={config}
+                onEdit={handleEdit}
+                onDelete={handleDeleteClick}
               />
             ))}
           </div>

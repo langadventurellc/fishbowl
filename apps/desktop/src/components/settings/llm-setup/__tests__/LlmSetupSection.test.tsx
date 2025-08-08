@@ -54,21 +54,27 @@ jest.mock("../EmptyLlmState", () => ({
 
 jest.mock("../LlmProviderCard", () => ({
   LlmProviderCard: ({
-    api,
+    configuration,
     onEdit,
     onDelete,
   }: {
-    api: any;
-    onEdit: () => void;
-    onDelete: () => void;
+    configuration: any;
+    onEdit: (config: any) => void;
+    onDelete: (configId: string) => void;
   }) => (
-    <div data-testid={`provider-card-${api.id}`}>
-      <h3>{api.customName}</h3>
-      <p>{api.provider}</p>
-      <button onClick={onEdit} data-testid={`edit-${api.id}`}>
+    <div data-testid={`provider-card-${configuration.id}`}>
+      <h3>{configuration.customName}</h3>
+      <p>{configuration.provider}</p>
+      <button
+        onClick={() => onEdit(configuration)}
+        data-testid={`edit-${configuration.id}`}
+      >
         Edit
       </button>
-      <button onClick={onDelete} data-testid={`delete-${api.id}`}>
+      <button
+        onClick={() => onDelete(configuration.id)}
+        data-testid={`delete-${configuration.id}`}
+      >
         Delete
       </button>
     </div>
