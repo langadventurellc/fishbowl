@@ -50,6 +50,7 @@ export function LlmSetupSection({ className }: { className?: string }) {
     createConfiguration,
     updateConfiguration,
     deleteConfiguration,
+    getConfiguration,
     clearError,
   } = useLlmConfig();
 
@@ -107,22 +108,47 @@ export function LlmSetupSection({ className }: { className?: string }) {
     ],
   );
 
-  const handleEdit = useCallback((config: LlmConfigMetadata) => {
-    setModalState({
-      isOpen: true,
-      mode: "edit",
-      provider: config.provider,
-      editingId: config.id,
-      initialData: {
-        id: config.id,
-        customName: config.customName,
-        provider: config.provider,
-        apiKey: "",
-        baseUrl: config.baseUrl,
-        useAuthHeader: config.useAuthHeader,
-      },
-    });
-  }, []);
+  const handleEdit = useCallback(
+    async (config: LlmConfigMetadata) => {
+      try {
+        // First open modal with basic metadata
+        setModalState({
+          isOpen: true,
+          mode: "edit",
+          provider: config.provider,
+          editingId: config.id,
+          initialData: {
+            id: config.id,
+            customName: config.customName,
+            provider: config.provider,
+            apiKey: "", // Will be fetched below
+            baseUrl: config.baseUrl,
+            useAuthHeader: config.useAuthHeader,
+          },
+        });
+
+        // Then fetch the full configuration including API key
+        const fullConfig = await getConfiguration(config.id);
+        if (fullConfig) {
+          setModalState((prev) => ({
+            ...prev,
+            initialData: {
+              id: fullConfig.id,
+              customName: fullConfig.customName,
+              provider: fullConfig.provider,
+              apiKey: fullConfig.apiKey,
+              baseUrl: fullConfig.baseUrl,
+              useAuthHeader: fullConfig.useAuthHeader,
+            },
+          }));
+        }
+      } catch (error) {
+        console.error("Failed to load configuration for editing:", error);
+        // Modal will still open with basic data, just no API key
+      }
+    },
+    [getConfiguration],
+  );
 
   const handleDeleteClick = useCallback((apiId: string) => {
     setDeleteConfirmation({

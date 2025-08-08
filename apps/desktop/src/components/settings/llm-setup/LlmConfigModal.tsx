@@ -11,6 +11,8 @@ import { useGlobalKeyboardShortcuts } from "../../../hooks/useGlobalKeyboardShor
 import {
   generateDialogAriaIds,
   useAccessibilityAnnouncements,
+  maskApiKey,
+  isMaskedApiKey,
 } from "../../../utils";
 import { Button } from "../../ui/button";
 import {
@@ -35,15 +37,28 @@ import { AnthropicProviderFields } from "./AnthropicProviderFields";
 import { OpenAiProviderFields } from "./OpenAiProviderFields";
 
 // Local form schema that exactly matches our form needs
-const llmConfigFormSchema = z.object({
-  customName: z.string().min(1, "Custom name is required"),
-  apiKey: z.string().min(1, "API key is required"),
-  provider: z.enum(["openai", "anthropic"]),
-  baseUrl: z.string().optional(),
-  useAuthHeader: z.boolean(),
-});
+const createLlmConfigFormSchema = (mode: "add" | "edit") =>
+  z.object({
+    customName: z.string().min(1, "Custom name is required"),
+    apiKey: z
+      .string()
+      .min(1, "API key is required")
+      .refine((value) => {
+        // In edit mode, allow masked API keys to pass validation
+        if (mode === "edit" && isMaskedApiKey(value)) {
+          return true;
+        }
+        // In add mode or when actually changing the API key, require a real key
+        return value.length > 0;
+      }, "API key is required"),
+    provider: z.enum(["openai", "anthropic"]),
+    baseUrl: z.string().optional(),
+    useAuthHeader: z.boolean(),
+  });
 
-export type LlmConfigFormData = z.infer<typeof llmConfigFormSchema>;
+export type LlmConfigFormData = z.infer<
+  ReturnType<typeof createLlmConfigFormSchema>
+>;
 
 export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   isOpen,
@@ -78,12 +93,25 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
     }
   }, [provider]);
 
+  // Store original API key for comparison
+  const originalApiKey = useMemo(() => {
+    return mode === "edit" && initialData?.apiKey ? initialData.apiKey : null;
+  }, [mode, initialData?.apiKey]);
+
+  // Get the display value for API key (masked in edit mode)
+  const getApiKeyDisplayValue = useMemo(() => {
+    if (mode === "edit" && originalApiKey) {
+      return maskApiKey(originalApiKey);
+    }
+    return initialData?.apiKey || "";
+  }, [mode, originalApiKey, initialData?.apiKey]);
+
   const form = useForm<LlmConfigFormData>({
-    resolver: zodResolver(llmConfigFormSchema),
+    resolver: zodResolver(createLlmConfigFormSchema(mode)),
     mode: "onChange", // Enable form validation
     defaultValues: {
       customName: initialData?.customName || "",
-      apiKey: initialData?.apiKey || "",
+      apiKey: getApiKeyDisplayValue,
       provider,
       baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
       useAuthHeader: initialData?.useAuthHeader ?? true,
@@ -93,10 +121,16 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   const handleSave = useCallback(
     async (data: LlmConfigFormData) => {
       try {
+        // For edit mode, check if API key was actually changed
+        const apiKeyToSave =
+          mode === "edit" && isMaskedApiKey(data.apiKey)
+            ? originalApiKey // Keep original if not changed
+            : data.apiKey; // Use new value if changed
+
         // Convert to shared LlmConfigInput type
         const llmConfigData: LlmConfigInput = {
           customName: data.customName,
-          apiKey: data.apiKey,
+          apiKey: apiKeyToSave!,
           provider: data.provider,
           baseUrl: data.baseUrl,
           useAuthHeader: data.useAuthHeader,
@@ -117,7 +151,7 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         console.error("Save failed:", error);
       }
     },
-    [onSave, onOpenChange, mode, initialData?.id],
+    [onSave, onOpenChange, mode, initialData?.id, originalApiKey],
   );
 
   const handleCancel = useCallback(() => {
@@ -140,13 +174,20 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
     if (isOpen) {
       form.reset({
         customName: initialData?.customName || "",
-        apiKey: initialData?.apiKey || "",
+        apiKey: getApiKeyDisplayValue,
         provider,
         baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
         useAuthHeader: initialData?.useAuthHeader ?? true,
       });
     }
-  }, [isOpen, provider, initialData, form, getDefaultBaseUrl]);
+  }, [
+    isOpen,
+    provider,
+    initialData,
+    form,
+    getDefaultBaseUrl,
+    getApiKeyDisplayValue,
+  ]);
 
   const getProviderName = (provider: Provider): string => {
     switch (provider) {

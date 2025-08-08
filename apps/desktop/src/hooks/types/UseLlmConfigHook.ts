@@ -23,6 +23,7 @@ export interface UseLlmConfigHook {
     updates: Partial<LlmConfigInput>,
   ) => Promise<LlmConfig>;
   deleteConfiguration: (id: string) => Promise<void>;
+  getConfiguration: (id: string) => Promise<LlmConfig | null>;
   refreshConfigurations: () => Promise<void>;
 
   // UI State helpers

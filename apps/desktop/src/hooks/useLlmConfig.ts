@@ -249,6 +249,38 @@ export function useLlmConfig(): UseLlmConfigHook {
     [loadConfigurations],
   );
 
+  // Get configuration with API key for editing
+  const getConfiguration = useCallback(
+    async (id: string): Promise<LlmConfig | null> => {
+      try {
+        setError(null);
+
+        // Check if running in Electron environment
+        if (
+          typeof window === "undefined" ||
+          !window.electronAPI?.llmConfig?.read ||
+          typeof window.electronAPI.llmConfig.read !== "function"
+        ) {
+          throw new Error("LLM configuration operations not available");
+        }
+
+        logger.debug("Reading LLM configuration", { id });
+
+        const config = await window.electronAPI.llmConfig.read(id);
+
+        logger.info("Successfully read LLM configuration", { id });
+        return config;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to read configuration";
+        logger.error("Failed to read LLM configuration:", err as Error);
+        setError(errorMessage);
+        throw err;
+      }
+    },
+    [],
+  );
+
   // Refresh configurations
   const refreshConfigurations = useCallback(async () => {
     await loadConfigurations();
@@ -266,6 +298,7 @@ export function useLlmConfig(): UseLlmConfigHook {
     createConfiguration,
     updateConfiguration,
     deleteConfiguration,
+    getConfiguration,
     refreshConfigurations,
     clearError,
   };
