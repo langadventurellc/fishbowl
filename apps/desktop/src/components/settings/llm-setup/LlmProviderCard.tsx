@@ -11,11 +11,25 @@
  */
 
 import type { LlmProviderCardProps } from "@fishbowl-ai/ui-shared";
+import type { Provider } from "@fishbowl-ai/shared";
 import { Edit2, Trash2 } from "lucide-react";
 import React from "react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
 import { Card, CardContent } from "../../ui/card";
+
+const getProviderName = (provider: Provider): string => {
+  switch (provider) {
+    case "openai":
+      return "OpenAI";
+    case "anthropic":
+      return "Anthropic";
+    case "google":
+      return "Google AI";
+    case "custom":
+      return "Custom Provider";
+  }
+};
 
 export const LlmProviderCard: React.FC<LlmProviderCardProps> = ({
   api,
@@ -23,7 +37,7 @@ export const LlmProviderCard: React.FC<LlmProviderCardProps> = ({
   onDelete,
   className,
 }) => {
-  const providerName = api.provider === "openai" ? "OpenAI" : "Anthropic";
+  const providerName = getProviderName(api.provider);
 
   return (
     <Card className={cn("w-full", className)}>

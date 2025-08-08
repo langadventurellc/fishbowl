@@ -5,15 +5,21 @@
  * - Empty state with provider selection dropdown
  * - Modal-based configuration for adding/editing APIs
  * - List view of configured APIs with edit/delete actions
- * - Component-local state management (no persistence)
+ * - Service layer integration with persistent storage
+ * - Support for all provider types (OpenAI, Anthropic, Google, Custom)
  *
  * @module components/settings/LlmSetupSection
  */
-import type { LlmConfigData } from "@fishbowl-ai/ui-shared";
+import type {
+  Provider,
+  LlmConfigInput,
+  LlmConfigMetadata,
+} from "@fishbowl-ai/shared";
 import { useCallback, useState } from "react";
 import { EmptyLlmState, LlmConfigModal, LlmProviderCard } from ".";
 import { cn } from "../../../lib/utils";
-import { generateId } from "@fishbowl-ai/shared";
+import { useLlmConfig } from "../../../hooks/useLlmConfig";
+import { Loader2, AlertCircle } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,31 +32,34 @@ import {
 } from "../../ui/alert-dialog";
 import { Button } from "../../ui/button";
 
-interface LlmProviderConfig extends LlmConfigData {
-  id: string;
-  provider: "openai" | "anthropic";
-}
-
 /**
  * LLM Setup section component that manages LLM configurations.
  *
  * Provides UI for adding, editing, and deleting LLM provider API configurations
- * through a modal-based interface with component-local state management.
+ * through a modal-based interface with service layer integration.
  *
  * @param className - Optional CSS class name for styling
  * @returns LLM Setup section component
  */
 export function LlmSetupSection({ className }: { className?: string }) {
-  // State for configured APIs
-  const [configuredApis, setConfiguredApis] = useState<LlmProviderConfig[]>([]);
+  // Use service layer hook
+  const {
+    configurations,
+    isLoading,
+    error,
+    createConfiguration,
+    updateConfiguration,
+    deleteConfiguration,
+    clearError,
+  } = useLlmConfig();
 
-  // Modal state
+  // Modal state with Provider type
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
     mode: "add" | "edit";
-    provider: "openai" | "anthropic";
+    provider: Provider;
     editingId?: string;
-    initialData?: LlmConfigData & { id?: string };
+    initialData?: LlmConfigInput & { id?: string };
   }>({
     isOpen: false,
     mode: "add",
@@ -66,62 +75,52 @@ export function LlmSetupSection({ className }: { className?: string }) {
     apiId: null,
   });
 
-  // Handle setup from empty state
-  const handleSetupProvider = useCallback(
-    (provider: "openai" | "anthropic") => {
-      setModalState({
-        isOpen: true,
-        mode: "add",
-        provider,
-      });
-    },
-    [],
-  );
+  const handleSetupProvider = useCallback((provider: Provider) => {
+    setModalState({
+      isOpen: true,
+      mode: "add",
+      provider,
+    });
+  }, []);
 
-  // Handle saving API configuration
   const handleSaveApi = useCallback(
-    (data: LlmConfigData & { id?: string }) => {
-      if (modalState.mode === "edit" && modalState.editingId) {
-        // Update existing API
-        setConfiguredApis((prev) =>
-          prev.map((api) =>
-            api.id === modalState.editingId ? { ...api, ...data } : api,
-          ),
-        );
-      } else {
-        // Add new API
-        const newApi: LlmProviderConfig = {
-          ...data,
-          id: generateId(),
-          provider: modalState.provider,
-        };
-        setConfiguredApis((prev) => [...prev, newApi]);
+    async (data: LlmConfigInput & { id?: string }) => {
+      try {
+        if (modalState.mode === "edit" && modalState.editingId) {
+          await updateConfiguration(modalState.editingId, data);
+        } else {
+          await createConfiguration(data);
+        }
+        setModalState((prev) => ({ ...prev, isOpen: false }));
+      } catch (err) {
+        console.error("Failed to save configuration:", err);
       }
-
-      // Close modal after saving
-      setModalState((prev) => ({ ...prev, isOpen: false }));
     },
-    [modalState.mode, modalState.editingId, modalState.provider],
+    [
+      modalState.mode,
+      modalState.editingId,
+      createConfiguration,
+      updateConfiguration,
+    ],
   );
 
-  // Handle edit click
-  const handleEdit = useCallback((api: LlmProviderConfig) => {
+  const handleEdit = useCallback((config: LlmConfigMetadata) => {
     setModalState({
       isOpen: true,
       mode: "edit",
-      provider: api.provider,
-      editingId: api.id,
+      provider: config.provider,
+      editingId: config.id,
       initialData: {
-        id: api.id,
-        customName: api.customName,
-        apiKey: api.apiKey,
-        baseUrl: api.baseUrl,
-        useAuthHeader: api.useAuthHeader,
+        id: config.id,
+        customName: config.customName,
+        provider: config.provider,
+        apiKey: "",
+        baseUrl: config.baseUrl,
+        useAuthHeader: config.useAuthHeader,
       },
     });
   }, []);
 
-  // Handle delete click
   const handleDeleteClick = useCallback((apiId: string) => {
     setDeleteConfirmation({
       isOpen: true,
@@ -129,15 +128,39 @@ export function LlmSetupSection({ className }: { className?: string }) {
     });
   }, []);
 
-  // Confirm delete
-  const handleConfirmDelete = useCallback(() => {
+  const handleConfirmDelete = useCallback(async () => {
     if (deleteConfirmation.apiId) {
-      setConfiguredApis((prev) =>
-        prev.filter((api) => api.id !== deleteConfirmation.apiId),
-      );
+      try {
+        await deleteConfiguration(deleteConfirmation.apiId);
+      } catch (err) {
+        console.error("Failed to delete configuration:", err);
+      }
     }
     setDeleteConfirmation({ isOpen: false, apiId: null });
-  }, [deleteConfirmation.apiId]);
+  }, [deleteConfirmation.apiId, deleteConfiguration]);
+
+  if (isLoading) {
+    return (
+      <div className={cn("space-y-6", className)}>
+        <div>
+          <h1 className="text-2xl font-bold mb-2">LLM Setup</h1>
+          <p className="text-muted-foreground">
+            Configure AI language model providers for your conversations
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-8">
+          <Loader2
+            className="h-6 w-6 animate-spin mr-2"
+            role="progressbar"
+            aria-label="Loading"
+          />
+          <span className="text-muted-foreground">
+            Loading configurations...
+          </span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn("space-y-6", className)}>
@@ -148,17 +171,41 @@ export function LlmSetupSection({ className }: { className?: string }) {
         </p>
       </div>
 
-      {configuredApis.length === 0 ? (
+      {error && (
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between">
+          <div className="flex items-center">
+            <AlertCircle className="h-4 w-4 text-red-600 mr-2" />
+            <span className="text-red-700">{error}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={clearError}
+            className="ml-2 text-red-600 hover:text-red-700"
+          >
+            Dismiss
+          </Button>
+        </div>
+      )}
+
+      {configurations.length === 0 ? (
         <EmptyLlmState onSetupProvider={handleSetupProvider} />
       ) : (
         <>
           <div className="space-y-4">
-            {configuredApis.map((api) => (
+            {configurations.map((config) => (
               <LlmProviderCard
-                key={api.id}
-                api={api}
-                onEdit={() => handleEdit(api)}
-                onDelete={() => handleDeleteClick(api.id)}
+                key={config.id}
+                api={{
+                  id: config.id,
+                  customName: config.customName,
+                  provider: config.provider,
+                  apiKey: "••••",
+                  baseUrl: config.baseUrl || "",
+                  useAuthHeader: config.useAuthHeader,
+                }}
+                onEdit={() => handleEdit(config)}
+                onDelete={() => handleDeleteClick(config.id)}
               />
             ))}
           </div>

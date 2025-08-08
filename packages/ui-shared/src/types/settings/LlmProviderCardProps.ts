@@ -6,7 +6,6 @@ import type { LlmConfigData } from "./LlmConfigData";
 export interface LlmProviderCardProps {
   api: LlmConfigData & {
     id: string;
-    provider: "openai" | "anthropic";
   };
   onEdit: () => void;
   onDelete: () => void;

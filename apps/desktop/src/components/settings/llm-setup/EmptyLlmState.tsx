@@ -4,7 +4,7 @@
  * Features:
  * - Key icon indicating API configuration
  * - Clear messaging about the empty state
- * - Provider dropdown (OpenAI/Anthropic)
+ * - Provider dropdown (OpenAI/Anthropic/Google/Custom)
  * - Dynamic setup button based on selected provider
  * - Consistent with design system patterns
  * - Accessibility attributes for screen readers
@@ -23,9 +23,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
+import type { Provider } from "@fishbowl-ai/shared";
 
 export interface EmptyLlmStateProps {
-  onSetupProvider: (provider: "openai" | "anthropic") => void;
+  onSetupProvider: (provider: Provider) => void;
   className?: string;
 }
 
@@ -33,16 +34,23 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
   onSetupProvider,
   className,
 }) => {
-  const [selectedProvider, setSelectedProvider] = useState<
-    "openai" | "anthropic"
-  >("openai");
+  const [selectedProvider, setSelectedProvider] = useState<Provider>("openai");
 
   const handleSetupClick = () => {
     onSetupProvider(selectedProvider);
   };
 
   const getButtonText = () => {
-    return selectedProvider === "openai" ? "Set up OpenAI" : "Set up Anthropic";
+    switch (selectedProvider) {
+      case "openai":
+        return "Set up OpenAI";
+      case "anthropic":
+        return "Set up Anthropic";
+      case "google":
+        return "Set up Google AI";
+      case "custom":
+        return "Set up Custom Provider";
+    }
   };
 
   return (
@@ -64,9 +72,7 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
       <div className="flex flex-col items-center gap-4">
         <Select
           value={selectedProvider}
-          onValueChange={(value: "openai" | "anthropic") =>
-            setSelectedProvider(value)
-          }
+          onValueChange={(value: Provider) => setSelectedProvider(value)}
         >
           <SelectTrigger className="w-[200px]" aria-label="Select LLM provider">
             <SelectValue placeholder="Select provider" />
@@ -74,6 +80,8 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
           <SelectContent>
             <SelectItem value="openai">OpenAI</SelectItem>
             <SelectItem value="anthropic">Anthropic</SelectItem>
+            <SelectItem value="google">Google AI</SelectItem>
+            <SelectItem value="custom">Custom Provider</SelectItem>
           </SelectContent>
         </Select>
         <Button

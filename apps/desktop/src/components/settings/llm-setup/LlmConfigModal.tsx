@@ -1,4 +1,5 @@
 import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
+import type { Provider } from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
@@ -29,6 +30,8 @@ import {
 import { Input } from "../../ui/input";
 import { OpenAiProviderFields } from "./OpenAiProviderFields";
 import { AnthropicProviderFields } from "./AnthropicProviderFields";
+import { GoogleProviderFields } from "./GoogleProviderFields";
+import { CustomProviderFields } from "./CustomProviderFields";
 
 const llmConfigSchema = z.object({
   customName: z.string(),
@@ -61,9 +64,16 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   });
 
   const getDefaultBaseUrl = useMemo(() => {
-    return provider === "openai"
-      ? "https://api.openai.com/v1"
-      : "https://api.anthropic.com";
+    switch (provider) {
+      case "openai":
+        return "https://api.openai.com/v1";
+      case "anthropic":
+        return "https://api.anthropic.com";
+      case "google":
+        return "https://generativelanguage.googleapis.com";
+      case "custom":
+        return "";
+    }
   }, [provider]);
 
   const form = useForm<LlmConfigFormData>({
@@ -78,15 +88,15 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
 
   const handleSave = useCallback(
     (data: LlmConfigFormData) => {
-      // Include ID when editing
+      // Include ID and provider when editing
       const saveData =
         mode === "edit" && initialData?.id
-          ? { ...data, id: initialData.id }
-          : data;
+          ? { ...data, provider, id: initialData.id }
+          : { ...data, provider };
       onSave(saveData);
       onOpenChange(false);
     },
-    [onSave, onOpenChange, mode, initialData?.id],
+    [onSave, onOpenChange, mode, initialData?.id, provider],
   );
 
   const handleCancel = useCallback(() => {
@@ -116,7 +126,20 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
     }
   }, [isOpen, provider, initialData, form, getDefaultBaseUrl]);
 
-  const providerName = provider === "openai" ? "OpenAI" : "Anthropic";
+  const getProviderName = (provider: Provider): string => {
+    switch (provider) {
+      case "openai":
+        return "OpenAI";
+      case "anthropic":
+        return "Anthropic";
+      case "google":
+        return "Google AI";
+      case "custom":
+        return "Custom Provider";
+    }
+  };
+
+  const providerName = getProviderName(provider);
 
   // Generate dynamic modal title based on mode
   const modalTitle =
@@ -176,8 +199,12 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
             {/* Provider-specific fields */}
             {provider === "openai" ? (
               <OpenAiProviderFields control={form.control} />
-            ) : (
+            ) : provider === "anthropic" ? (
               <AnthropicProviderFields control={form.control} />
+            ) : provider === "google" ? (
+              <GoogleProviderFields control={form.control} />
+            ) : (
+              <CustomProviderFields control={form.control} />
             )}
 
             <DialogFooter>

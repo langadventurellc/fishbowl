@@ -1,9 +1,10 @@
 import { LlmConfigData } from "./LlmConfigData";
+import type { Provider } from "@fishbowl-ai/shared";
 
 export interface LlmConfigModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  provider: "openai" | "anthropic";
+  provider: Provider;
   mode?: "add" | "edit";
   initialData?: {
     id?: string;
