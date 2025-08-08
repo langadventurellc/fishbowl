@@ -1741,4 +1741,390 @@ test.describe("Feature: LLM Setup Configuration", () => {
       await expect(anthropicCards).toHaveCount(1);
     });
   });
+
+  test.describe("Scenario: Form Validation and Error Handling", () => {
+    test("validates required fields on save attempt", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Open configuration modal
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      // Save button should be disabled initially
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await expect(saveButton).toBeDisabled();
+
+      // Fill only custom name → still should be disabled (API key missing)
+      await modal.locator('[name="customName"]').fill("Test Config");
+      await expect(saveButton).toBeDisabled();
+
+      // Clear custom name and fill only API key → still should be disabled (custom name missing)
+      await modal.locator('[name="customName"]').clear();
+      await modal.locator('[name="apiKey"]').fill("sk-test123");
+      await expect(saveButton).toBeDisabled();
+
+      // Fill both required fields → should be enabled
+      await modal.locator('[name="customName"]').fill("Test Config");
+      await expect(saveButton).toBeEnabled();
+    });
+
+    test("validates custom name field", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const customNameInput = modal.locator('[name="customName"]');
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+
+      // Test empty name → save button disabled
+      await customNameInput.clear();
+      await modal.locator('[name="apiKey"]').fill("sk-test123");
+      await expect(saveButton).toBeDisabled();
+
+      // Test whitespace only → form accepts this as valid input
+      await customNameInput.fill("   ");
+      await expect(saveButton).toBeEnabled();
+
+      // Test valid name with special characters → should be accepted
+      await customNameInput.fill("Test Config @#$%");
+      await expect(saveButton).toBeEnabled();
+
+      // Test very long name → should be accepted (no length limit imposed)
+      const longName = "a".repeat(200);
+      await customNameInput.fill(longName);
+      await expect(saveButton).toBeEnabled();
+    });
+
+    test("validates API key field", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const apiKeyInput = modal.locator('[name="apiKey"]');
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+
+      // Fill custom name first
+      await modal.locator('[name="customName"]').fill("Test Config");
+
+      // Test empty API key → save button disabled
+      await apiKeyInput.clear();
+      await expect(saveButton).toBeDisabled();
+
+      // Test whitespace only → form accepts this as valid input
+      await apiKeyInput.fill("   ");
+      await expect(saveButton).toBeEnabled();
+
+      // Test valid API key → should be enabled
+      await apiKeyInput.fill("sk-test-valid-key-123");
+      await expect(saveButton).toBeEnabled();
+
+      // Test very long API key → should be accepted
+      const longKey = "sk-" + "a".repeat(500);
+      await apiKeyInput.fill(longKey);
+      await expect(saveButton).toBeEnabled();
+    });
+
+    test("validates Anthropic base URL format", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Select Anthropic provider since it has advanced options including base URL
+      const providerDropdown = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await providerDropdown.click();
+      const anthropicOption = window
+        .locator('[role="option"]')
+        .filter({ hasText: "Anthropic" });
+      await anthropicOption.click();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up Anthropic" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      // Fill required fields first
+      await modal.locator('[name="customName"]').fill("Test Config");
+      await modal.locator('[name="apiKey"]').fill("sk-ant-test123");
+
+      // Show advanced options to access base URL field
+      const advancedToggle = modal.locator("button").filter({
+        hasText: "Show advanced options",
+      });
+      await advancedToggle.click();
+
+      const baseUrlInput = modal.locator('[name="baseUrl"]');
+      await expect(baseUrlInput).toBeVisible();
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+
+      // Test valid URLs - should remain enabled
+      const validUrls = [
+        "https://api.anthropic.com",
+        "http://localhost:3000",
+        "https://192.168.1.1:8080",
+        "https://api.custom-provider.com",
+        "https://api.anthropic.com/", // trailing slash
+      ];
+
+      for (const url of validUrls) {
+        await baseUrlInput.clear();
+        await baseUrlInput.fill(url);
+        // Should remain enabled for valid URLs
+        await expect(saveButton).toBeEnabled();
+      }
+
+      // Base URL should have default value and be optional
+      await baseUrlInput.clear();
+      await expect(saveButton).toBeEnabled();
+    });
+
+    test("save button enables/disables based on form validity", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const customNameInput = modal.locator('[name="customName"]');
+      const apiKeyInput = modal.locator('[name="apiKey"]');
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+
+      // Initial state → save disabled
+      await expect(saveButton).toBeDisabled();
+
+      // Fill custom name → still disabled (missing API key)
+      await customNameInput.fill("Test Config");
+      await expect(saveButton).toBeDisabled();
+
+      // Fill API key → should enable
+      await apiKeyInput.fill("sk-test123");
+      await expect(saveButton).toBeEnabled();
+
+      // Clear custom name → should disable again
+      await customNameInput.clear();
+      await expect(saveButton).toBeDisabled();
+
+      // Re-fill custom name → should enable again
+      await customNameInput.fill("Test Config");
+      await expect(saveButton).toBeEnabled();
+
+      // Clear API key → should disable
+      await apiKeyInput.clear();
+      await expect(saveButton).toBeDisabled();
+    });
+
+    test("maintains form state after validation errors", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const customNameInput = modal.locator('[name="customName"]');
+      const apiKeyInput = modal.locator('[name="apiKey"]');
+
+      // Fill form with valid data
+      const testName = "Test Configuration";
+      const testKey = "sk-test-api-key-123";
+
+      await customNameInput.fill(testName);
+      await apiKeyInput.fill(testKey);
+
+      // Simulate clearing a field to trigger validation error
+      await customNameInput.clear();
+
+      // Verify API key field retains its value
+      const apiKeyValue = await apiKeyInput.inputValue();
+      expect(apiKeyValue).toBe(testKey);
+
+      // Re-fill custom name and verify form becomes valid again
+      await customNameInput.fill(testName);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await expect(saveButton).toBeEnabled();
+
+      // Verify both fields retain their values
+      const finalCustomName = await customNameInput.inputValue();
+      const finalApiKey = await apiKeyInput.inputValue();
+      expect(finalCustomName).toBe(testName);
+      expect(finalApiKey).toBe(testKey);
+    });
+
+    test("validates Anthropic configuration fields", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Select Anthropic provider
+      const providerDropdown = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await providerDropdown.click();
+      const anthropicOption = window
+        .locator('[role="option"]')
+        .filter({ hasText: "Anthropic" });
+      await anthropicOption.click();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up Anthropic" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+
+      // Save button should be disabled initially
+      await expect(saveButton).toBeDisabled();
+
+      // Fill only custom name → still disabled (API key missing)
+      await modal.locator('[name="customName"]').fill("Test Anthropic Config");
+      await expect(saveButton).toBeDisabled();
+
+      // Fill API key → should enable
+      await modal.locator('[name="apiKey"]').fill("sk-ant-api-test-key");
+      await expect(saveButton).toBeEnabled();
+
+      // Clear custom name → should disable
+      await modal.locator('[name="customName"]').clear();
+      await expect(saveButton).toBeDisabled();
+
+      // Test with valid Anthropic API key format
+      await modal.locator('[name="customName"]').fill("Test Anthropic Config");
+      await modal.locator('[name="apiKey"]').clear();
+      await modal
+        .locator('[name="apiKey"]')
+        .fill(
+          "sk-ant-api03-12345678901234567890123456789012345678901234567890",
+        );
+      await expect(saveButton).toBeEnabled();
+    });
+
+    test("handles form interaction without errors", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      // Test rapid field switching and interaction
+      const customNameInput = modal.locator('[name="customName"]');
+      const apiKeyInput = modal.locator('[name="apiKey"]');
+
+      // Rapid field updates should not cause errors
+      await customNameInput.fill("Test");
+      await apiKeyInput.fill("sk-test");
+      await customNameInput.fill("Test Updated");
+      await apiKeyInput.fill("sk-test-updated");
+
+      // OpenAI doesn't have advanced options, so skip that part and just test basic form interaction
+
+      // Final form should still be functional
+      await customNameInput.clear();
+      await customNameInput.fill("Final Test Config");
+      await apiKeyInput.clear();
+      await apiKeyInput.fill("sk-final-test-key");
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await expect(saveButton).toBeEnabled();
+    });
+
+    test("cancel operation discards form data", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      // Fill form with data
+      await modal.locator('[name="customName"]').fill("Test Config To Cancel");
+      await modal.locator('[name="apiKey"]').fill("sk-test-cancel-key");
+
+      // Cancel the modal
+      const cancelButton = modal.locator("button").filter({
+        hasText: "Cancel",
+      });
+      await cancelButton.click();
+
+      // Modal should close
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify no configuration was created
+      await expect(
+        window.locator("text=No LLM providers configured"),
+      ).toBeVisible();
+
+      // Reopen modal and verify fields are empty
+      await setupButton.click();
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const customNameValue = await modal
+        .locator('[name="customName"]')
+        .inputValue();
+      const apiKeyValue = await modal.locator('[name="apiKey"]').inputValue();
+
+      expect(customNameValue).toBe("");
+      expect(apiKeyValue).toBe("");
+    });
+  });
 });

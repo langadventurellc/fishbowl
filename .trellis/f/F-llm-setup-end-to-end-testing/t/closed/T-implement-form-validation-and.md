@@ -1,13 +1,28 @@
 ---
 id: T-implement-form-validation-and
 title: Implement form validation and error handling tests
-status: open
+status: done
 priority: high
 parent: F-llm-setup-end-to-end-testing
 prerequisites:
   - T-create-test-file-structure
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/features/llm-setup.spec.ts: "Added comprehensive form validation
+    and error handling tests including: validates required fields, validates
+    custom name field, validates API key field, validates Anthropic base URL
+    format, save button state management, form state preservation after
+    validation errors, Anthropic-specific field validation, form interaction
+    handling, and cancel operation testing"
+log:
+  - "Successfully implemented comprehensive form validation and error handling
+    tests for the LLM setup functionality. Added 9 new test cases covering
+    required field validation, field-specific validation (custom name, API key,
+    base URL), save button state management, form state preservation, and error
+    recovery scenarios. Tests cover both OpenAI and Anthropic configuration
+    forms, accounting for the different fields available for each provider
+    (OpenAI: custom name + API key only; Anthropic: custom name + API key + base
+    URL + auth header). All tests are passing and follow existing patterns from
+    the codebase."
 schema: v1.0
 childrenIds: []
 created: 2025-08-08T05:28:12.426Z
