@@ -135,10 +135,8 @@ export function useLlmConfig(): UseLlmConfigHook {
         });
         return createdConfig;
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to create configuration";
+        // Error is already set above, just re-throw
         logger.error("Failed to create LLM configuration:", err as Error);
-        setError(errorMessage);
         throw err;
       }
     },

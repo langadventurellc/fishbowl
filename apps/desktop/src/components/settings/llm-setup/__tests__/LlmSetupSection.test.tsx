@@ -101,15 +101,20 @@ jest.mock("../LlmConfigModal", () => ({
           {mode === "edit" ? "Edit" : "Add"} {provider} Configuration
         </h2>
         <button
-          onClick={() =>
-            onSave({
-              customName: `Test ${provider}`,
-              provider,
-              apiKey: "test-key",
-              baseUrl: "",
-              useAuthHeader: false,
-            })
-          }
+          onClick={async () => {
+            try {
+              await onSave({
+                customName: `Test ${provider}`,
+                provider,
+                apiKey: "test-key",
+                baseUrl: "",
+                useAuthHeader: false,
+              });
+            } catch (error) {
+              // Handle error gracefully like the real modal does
+              console.error("Save failed:", error);
+            }
+          }}
           data-testid="save-config"
         >
           Save

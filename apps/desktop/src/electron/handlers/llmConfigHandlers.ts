@@ -17,6 +17,7 @@ import {
 import { serializeError } from "../utils/errorSerialization";
 import type { LlmConfigServiceInterface } from "../services/LlmConfigServiceInterface";
 import { createLoggerSync } from "@fishbowl-ai/shared";
+import { ZodError } from "zod";
 
 const logger = createLoggerSync({
   context: { metadata: { component: "llmConfigHandlers" } },
@@ -98,6 +99,24 @@ function registerCreateHandler(
         return { success: true, data: createdConfig };
       } catch (error) {
         logger.error("Failed to create LLM configuration", error as Error);
+
+        // For Zod validation errors, provide more detailed error information
+        if (error instanceof ZodError) {
+          const validationMessages = error.issues.map((issue) => {
+            const path = issue.path.join(".") || "field";
+            return `${path}: ${issue.message}`;
+          });
+
+          return {
+            success: false,
+            error: {
+              message: `Validation failed: ${validationMessages.join(", ")}`,
+              code: "VALIDATION_ERROR",
+              context: { issues: error.issues },
+            },
+          };
+        }
+
         return { success: false, error: serializeError(error) };
       }
     },

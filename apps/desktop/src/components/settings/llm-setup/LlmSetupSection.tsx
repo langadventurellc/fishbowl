@@ -91,9 +91,12 @@ export function LlmSetupSection({ className }: { className?: string }) {
         } else {
           await createConfiguration(data);
         }
+        // Only close modal if save succeeds
         setModalState((prev) => ({ ...prev, isOpen: false }));
       } catch (err) {
         console.error("Failed to save configuration:", err);
+        // Re-throw the error so the modal can handle it
+        throw err;
       }
     },
     [

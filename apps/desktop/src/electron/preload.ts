@@ -169,6 +169,13 @@ const electronAPI: ElectronAPI = {
           request,
         )) as LlmConfigCreateResponse;
         if (!response.success) {
+          // Handle validation errors with detailed messages
+          if (response.error?.code === "VALIDATION_ERROR") {
+            const validationError = new Error(response.error.message);
+            validationError.name = "ValidationError";
+            throw validationError;
+          }
+
           throw new Error(
             response.error?.message || "Failed to create LLM configuration",
           );

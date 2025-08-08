@@ -130,6 +130,15 @@ export class LlmConfigService implements LlmConfigServiceInterface {
         throw error;
       }
 
+      // Check if this is a Zod validation error and preserve the validation details
+      if (error && typeof error === "object" && "issues" in error) {
+        this.logger.error(
+          "LLM configuration validation failed",
+          error as unknown as Error,
+        );
+        throw error; // Pass through validation errors unchanged
+      }
+
       this.logger.error("Failed to create LLM configuration", error as Error);
       throw new ConfigOperationError(
         "create",

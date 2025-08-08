@@ -34,9 +34,9 @@ import { GoogleProviderFields } from "./GoogleProviderFields";
 import { CustomProviderFields } from "./CustomProviderFields";
 
 const llmConfigSchema = z.object({
-  customName: z.string(),
-  apiKey: z.string(),
-  baseUrl: z.string(),
+  customName: z.string().min(1, "Custom name is required"),
+  apiKey: z.string().min(1, "API key is required"),
+  baseUrl: z.string().min(1, "Base URL is required"),
   useAuthHeader: z.boolean(),
 });
 
@@ -87,14 +87,22 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   });
 
   const handleSave = useCallback(
-    (data: LlmConfigFormData) => {
-      // Include ID and provider when editing
-      const saveData =
-        mode === "edit" && initialData?.id
-          ? { ...data, provider, id: initialData.id }
-          : { ...data, provider };
-      onSave(saveData);
-      onOpenChange(false);
+    async (data: LlmConfigFormData) => {
+      try {
+        // Include ID and provider when editing
+        const saveData =
+          mode === "edit" && initialData?.id
+            ? { ...data, provider, id: initialData.id }
+            : { ...data, provider };
+
+        await onSave(saveData);
+        // Only close if save succeeds
+        onOpenChange(false);
+      } catch (error) {
+        // Error is already handled by the useLlmConfig hook
+        // Modal stays open to show validation errors
+        console.error("Save failed:", error);
+      }
     },
     [onSave, onOpenChange, mode, initialData?.id, provider],
   );
