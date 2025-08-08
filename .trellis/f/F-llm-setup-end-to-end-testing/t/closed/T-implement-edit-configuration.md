@@ -1,14 +1,28 @@
 ---
 id: T-implement-edit-configuration
 title: Implement edit configuration tests with data persistence verification
-status: open
+status: done
 priority: medium
 parent: F-llm-setup-end-to-end-testing
 prerequisites:
   - T-test-openai-configuration
   - T-test-anthropic-configuration
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/features/llm-setup.spec.ts: "Added comprehensive edit
+    configuration test suite with 8 test scenarios: basic edit flow, modal title
+    verification, API key field behavior (showing masked values), custom name
+    updates with persistence checking, base URL updates for Anthropic
+    configurations, field validation during edit operations, cancel operation
+    behavior, and multiple sequential edit handling. Tests properly handle the
+    API key masking logic from maskApiKey.ts utility."
+log:
+  - Successfully implemented comprehensive edit configuration tests with data
+    persistence verification. Added 8 new test scenarios covering basic edit
+    flow, modal behavior, API key field handling, field updates (custom name,
+    base URL, API key), validation during edit, cancel operations, and multiple
+    sequential edits. All tests now pass (37/37) including proper handling of
+    masked API keys, provider-specific field differences (OpenAI vs Anthropic),
+    and storage verification.
 schema: v1.0
 childrenIds: []
 created: 2025-08-08T05:26:14.174Z
