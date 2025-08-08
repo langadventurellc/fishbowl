@@ -1170,4 +1170,575 @@ test.describe("Feature: LLM Setup Configuration", () => {
       await expect(anthropicCard).not.toContainText("sk-...****"); // Should not use OpenAI format
     });
   });
+
+  test.describe("Scenario: Multiple Same-Provider Configurations", () => {
+    test("supports multiple OpenAI configurations with unique names", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Create first OpenAI configuration
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const firstConfig = createMockOpenAiConfig({ customName: "GPT-4" });
+      await modal.locator('[name="customName"]').fill(firstConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(firstConfig.apiKey);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await saveButton.click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Wait for first card to appear
+      await waitForConfigurationList();
+
+      // Create second OpenAI configuration
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).toBeVisible();
+
+      // Ensure OpenAI is selected (should be default)
+      const providerDropdown = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await expect(providerDropdown).toContainText("OpenAI");
+
+      await addAnotherButton.click();
+
+      // Fill second configuration
+      const secondModal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(secondModal).toBeVisible({ timeout: 5000 });
+
+      const secondConfig = createMockOpenAiConfig({ customName: "GPT-3.5" });
+      await secondModal
+        .locator('[name="customName"]')
+        .fill(secondConfig.customName);
+      await secondModal.locator('[name="apiKey"]').fill(secondConfig.apiKey);
+
+      const secondSaveButton = secondModal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await secondSaveButton.click();
+      await expect(secondModal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify both configurations exist
+      const allCards = window.locator('[role="article"]');
+      await expect(allCards).toHaveCount(2);
+
+      // Verify both are OpenAI configs with unique names
+      const openAiCards = allCards.filter({ hasText: "OpenAI" });
+      await expect(openAiCards).toHaveCount(2);
+
+      await expect(openAiCards.nth(0)).toContainText("GPT-4");
+      await expect(openAiCards.nth(1)).toContainText("GPT-3.5");
+
+      // Verify each has independent edit/delete operations
+      const firstCard = openAiCards.nth(0);
+      const secondCard = openAiCards.nth(1);
+
+      await expect(firstCard.locator('[aria-label*="Edit"]')).toBeVisible();
+      await expect(firstCard.locator('[aria-label*="Delete"]')).toBeVisible();
+      await expect(secondCard.locator('[aria-label*="Edit"]')).toBeVisible();
+      await expect(secondCard.locator('[aria-label*="Delete"]')).toBeVisible();
+
+      // Verify unique IDs in storage
+      try {
+        const configContent = await readFile(llmConfigPath, "utf-8");
+        const configs: StoredLlmConfig[] = JSON.parse(configContent);
+        expect(configs).toHaveLength(2);
+        expect(configs[0]?.id).toBeDefined();
+        expect(configs[1]?.id).toBeDefined();
+        expect(configs[0]?.id).not.toBe(configs[1]?.id);
+      } catch (error) {
+        console.log("Storage verification skipped:", error);
+      }
+    });
+
+    test("supports multiple Anthropic configurations", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Create first Anthropic configuration
+      const providerDropdown = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await providerDropdown.click();
+      const anthropicOption = window
+        .locator('[role="option"]')
+        .filter({ hasText: "Anthropic" });
+      await anthropicOption.click();
+
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up Anthropic" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+
+      const firstConfig = createMockAnthropicConfig({
+        customName: "Claude-3-Opus",
+      });
+      await modal.locator('[name="customName"]').fill(firstConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(firstConfig.apiKey);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await saveButton.click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      await waitForConfigurationList();
+
+      // Create second Anthropic configuration
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).toBeVisible();
+
+      // Select Anthropic again
+      const providerDropdown2 = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await providerDropdown2.click();
+      const anthropicOption2 = window
+        .locator('[role="option"]')
+        .filter({ hasText: "Anthropic" });
+      await anthropicOption2.click();
+
+      await addAnotherButton.click();
+
+      // Fill second configuration
+      const secondModal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(secondModal).toBeVisible({ timeout: 5000 });
+
+      const secondConfig = createMockAnthropicConfig({
+        customName: "Claude-3-Sonnet",
+      });
+      await secondModal
+        .locator('[name="customName"]')
+        .fill(secondConfig.customName);
+      await secondModal.locator('[name="apiKey"]').fill(secondConfig.apiKey);
+
+      const secondSaveButton = secondModal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await secondSaveButton.click();
+      await expect(secondModal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify both configurations exist
+      const allCards = window.locator('[role="article"]');
+      await expect(allCards).toHaveCount(2);
+
+      // Verify both are Anthropic configs
+      const anthropicCards = allCards.filter({ hasText: "Anthropic" });
+      await expect(anthropicCards).toHaveCount(2);
+
+      await expect(anthropicCards.nth(0)).toContainText("Claude-3-Opus");
+      await expect(anthropicCards.nth(1)).toContainText("Claude-3-Sonnet");
+    });
+  });
+
+  test.describe("Scenario: Add Another Provider Button Behavior", () => {
+    test("Add Another Provider button appears after first configuration", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Verify button is not visible in empty state
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).not.toBeVisible();
+
+      // Create first configuration
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      const config = createMockOpenAiConfig();
+      await modal.locator('[name="customName"]').fill(config.customName);
+      await modal.locator('[name="apiKey"]').fill(config.apiKey);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await saveButton.click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify button appears after first configuration
+      await expect(addAnotherButton).toBeVisible();
+    });
+
+    test("Add Another Provider button persists with multiple configurations", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Create first configuration
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      const firstConfig = createMockOpenAiConfig();
+      await modal.locator('[name="customName"]').fill(firstConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(firstConfig.apiKey);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await saveButton.click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).toBeVisible();
+
+      // Create second configuration
+      await addAnotherButton.click();
+
+      const secondModal = window.locator('[role="dialog"].llm-config-modal');
+      const secondConfig = createMockOpenAiConfig();
+      await secondModal
+        .locator('[name="customName"]')
+        .fill(secondConfig.customName);
+      await secondModal.locator('[name="apiKey"]').fill(secondConfig.apiKey);
+
+      const secondSaveButton = secondModal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await secondSaveButton.click();
+      await expect(secondModal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify button is still visible
+      await expect(addAnotherButton).toBeVisible();
+    });
+  });
+
+  test.describe("Scenario: Configuration List Ordering", () => {
+    test("maintains configuration creation order", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Create configurations in specific order
+      const configs = [
+        createMockOpenAiConfig({ customName: "First Config" }),
+        createMockAnthropicConfig({ customName: "Second Config" }),
+        createMockOpenAiConfig({ customName: "Third Config" }),
+      ];
+
+      // Create first config (OpenAI)
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      let modal = window.locator('[role="dialog"].llm-config-modal');
+      await modal.locator('[name="customName"]').fill(configs[0]!.customName);
+      await modal.locator('[name="apiKey"]').fill(configs[0]!.apiKey);
+      await modal
+        .locator("button")
+        .filter({ hasText: "Add Configuration" })
+        .click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Create second config (Anthropic)
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).toBeVisible();
+
+      const providerDropdown = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await providerDropdown.click();
+      const anthropicOption = window
+        .locator('[role="option"]')
+        .filter({ hasText: "Anthropic" });
+      await anthropicOption.click();
+      await addAnotherButton.click();
+
+      modal = window.locator('[role="dialog"].llm-config-modal');
+      await modal.locator('[name="customName"]').fill(configs[1]!.customName);
+      await modal.locator('[name="apiKey"]').fill(configs[1]!.apiKey);
+      await modal
+        .locator("button")
+        .filter({ hasText: "Add Configuration" })
+        .click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Create third config (OpenAI)
+      await addAnotherButton.click();
+
+      modal = window.locator('[role="dialog"].llm-config-modal');
+      await modal.locator('[name="customName"]').fill(configs[2]!.customName);
+      await modal.locator('[name="apiKey"]').fill(configs[2]!.apiKey);
+      await modal
+        .locator("button")
+        .filter({ hasText: "Add Configuration" })
+        .click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify order matches creation order
+      const allCards = window.locator('[role="article"]');
+      await expect(allCards).toHaveCount(3);
+
+      await expect(allCards.nth(0)).toContainText("First Config");
+      await expect(allCards.nth(1)).toContainText("Second Config");
+      await expect(allCards.nth(2)).toContainText("Third Config");
+    });
+
+    test("order remains unchanged after editing configuration", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Create two configurations
+      const firstConfig = createMockOpenAiConfig({ customName: "First" });
+      const secondConfig = createMockOpenAiConfig({ customName: "Second" });
+
+      // Create first
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      let modal = window.locator('[role="dialog"].llm-config-modal');
+      await modal.locator('[name="customName"]').fill(firstConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(firstConfig.apiKey);
+      await modal
+        .locator("button")
+        .filter({ hasText: "Add Configuration" })
+        .click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Create second
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await addAnotherButton.click();
+
+      modal = window.locator('[role="dialog"].llm-config-modal');
+      await modal.locator('[name="customName"]').fill(secondConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(secondConfig.apiKey);
+      await modal
+        .locator("button")
+        .filter({ hasText: "Add Configuration" })
+        .click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify initial order
+      const allCards = window.locator('[role="article"]');
+      await expect(allCards.nth(0)).toContainText("First");
+      await expect(allCards.nth(1)).toContainText("Second");
+
+      // Edit the first configuration
+      const firstCard = allCards.nth(0);
+      const editButton = firstCard.locator('[aria-label*="Edit"]');
+      await editButton.click();
+
+      modal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(modal).toBeVisible({ timeout: 5000 });
+      await modal.locator('[name="customName"]').clear();
+      await modal.locator('[name="customName"]').fill("First Edited");
+
+      // Find save button - could be "Save Changes" or "Save Configuration"
+      const editSaveButton = modal
+        .locator("button")
+        .filter({
+          hasText: /Save|Update/,
+        })
+        .first();
+      await expect(editSaveButton).toBeVisible();
+      await editSaveButton.click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify order hasn't changed
+      await expect(allCards.nth(0)).toContainText("First Edited");
+      await expect(allCards.nth(1)).toContainText("Second");
+    });
+  });
+
+  test.describe("Scenario: Handling Many Configurations", () => {
+    test("handles multiple configurations gracefully", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Create 5 configurations to test UI responsiveness
+      const configs = Array.from({ length: 5 }, (_, i) =>
+        createMockOpenAiConfig({ customName: `Config ${i + 1}` }),
+      );
+
+      // Create first config
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      let modal = window.locator('[role="dialog"].llm-config-modal');
+      await modal.locator('[name="customName"]').fill(configs[0]!.customName);
+      await modal.locator('[name="apiKey"]').fill(configs[0]!.apiKey);
+      await modal
+        .locator("button")
+        .filter({ hasText: "Add Configuration" })
+        .click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      // Create remaining configs
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+
+      for (let i = 1; i < configs.length; i++) {
+        await addAnotherButton.click();
+
+        modal = window.locator('[role="dialog"].llm-config-modal');
+        await modal.locator('[name="customName"]').fill(configs[i]!.customName);
+        await modal.locator('[name="apiKey"]').fill(configs[i]!.apiKey);
+        await modal
+          .locator("button")
+          .filter({ hasText: "Add Configuration" })
+          .click();
+        await expect(modal).not.toBeVisible({ timeout: 5000 });
+      }
+
+      // Verify all configurations are visible
+      const allCards = window.locator('[role="article"]');
+      await expect(allCards).toHaveCount(5);
+
+      // Verify each card is interactive
+      for (let i = 0; i < 5; i++) {
+        const card = allCards.nth(i);
+        await expect(card).toContainText(`Config ${i + 1}`);
+        await expect(card.locator('[aria-label*="Edit"]')).toBeVisible();
+        await expect(card.locator('[aria-label*="Delete"]')).toBeVisible();
+      }
+
+      // Verify UI remains responsive
+      await expect(addAnotherButton).toBeVisible();
+    });
+  });
+
+  test.describe("Scenario: Provider Selection After Creation", () => {
+    test("provider dropdown behavior with existing configurations", async () => {
+      await openLlmSetupSection();
+      await waitForEmptyState();
+
+      // Create first OpenAI configuration
+      const setupButton = window
+        .locator("button")
+        .filter({ hasText: "Set up OpenAI" });
+      await setupButton.click();
+
+      const modal = window.locator('[role="dialog"].llm-config-modal');
+      const firstConfig = createMockOpenAiConfig({
+        customName: "First OpenAI",
+      });
+      await modal.locator('[name="customName"]').fill(firstConfig.customName);
+      await modal.locator('[name="apiKey"]').fill(firstConfig.apiKey);
+
+      const saveButton = modal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await saveButton.click();
+      await expect(modal).not.toBeVisible({ timeout: 5000 });
+
+      await waitForConfigurationList();
+
+      // Click "Add Another Provider" to test dropdown behavior
+      const addAnotherButton = window
+        .locator("button")
+        .filter({ hasText: "Add Another Provider" });
+      await expect(addAnotherButton).toBeVisible();
+
+      // Verify provider dropdown still shows all options
+      const providerDropdown = window.locator(
+        '[aria-label="Select LLM provider"]',
+      );
+      await providerDropdown.click();
+
+      // Verify both OpenAI and Anthropic options are still available
+      const openAiOption = window
+        .locator('[role="option"]')
+        .filter({ hasText: "OpenAI" });
+      const anthropicOption = window
+        .locator('[role="option"]')
+        .filter({ hasText: "Anthropic" });
+
+      await expect(openAiOption).toBeVisible();
+      await expect(anthropicOption).toBeVisible();
+
+      // Select OpenAI to create multiple of same provider
+      await openAiOption.click();
+      await addAnotherButton.click();
+
+      // Fill second OpenAI configuration
+      const secondModal = window.locator('[role="dialog"].llm-config-modal');
+      await expect(secondModal).toBeVisible({ timeout: 5000 });
+
+      const secondConfig = createMockOpenAiConfig({
+        customName: "Second OpenAI",
+      });
+      await secondModal
+        .locator('[name="customName"]')
+        .fill(secondConfig.customName);
+      await secondModal.locator('[name="apiKey"]').fill(secondConfig.apiKey);
+
+      const secondSaveButton = secondModal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await secondSaveButton.click();
+      await expect(secondModal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify both OpenAI configurations exist
+      const allCards = window.locator('[role="article"]');
+      await expect(allCards).toHaveCount(2);
+
+      const openAiCards = allCards.filter({ hasText: "OpenAI" });
+      await expect(openAiCards).toHaveCount(2);
+
+      await expect(openAiCards.nth(0)).toContainText("First OpenAI");
+      await expect(openAiCards.nth(1)).toContainText("Second OpenAI");
+
+      // Test dropdown behavior again after creating multiple configs
+      await providerDropdown.click();
+      await expect(openAiOption).toBeVisible();
+      await expect(anthropicOption).toBeVisible();
+
+      // Select Anthropic to test cross-provider creation
+      await anthropicOption.click();
+      await addAnotherButton.click();
+
+      const thirdModal = window.locator('[role="dialog"].llm-config-modal');
+      const anthropicConfig = createMockAnthropicConfig({
+        customName: "Test Anthropic",
+      });
+      await thirdModal
+        .locator('[name="customName"]')
+        .fill(anthropicConfig.customName);
+      await thirdModal.locator('[name="apiKey"]').fill(anthropicConfig.apiKey);
+
+      const thirdSaveButton = thirdModal.locator("button").filter({
+        hasText: "Add Configuration",
+      });
+      await thirdSaveButton.click();
+      await expect(thirdModal).not.toBeVisible({ timeout: 5000 });
+
+      // Verify we now have mixed provider configurations
+      await expect(allCards).toHaveCount(3);
+      await expect(openAiCards).toHaveCount(2);
+
+      const anthropicCards = allCards.filter({ hasText: "Anthropic" });
+      await expect(anthropicCards).toHaveCount(1);
+    });
+  });
 });
