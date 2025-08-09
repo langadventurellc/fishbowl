@@ -62,13 +62,10 @@
     }
   },
   "devDependencies": {
-    "@babel/core": "^7.25.2",
     "@fishbowl-ai/eslint-config": "workspace:*",
-    "@react-native-community/cli": "^19.1.0",
     "@testing-library/react-native": "^13.2.0",
     "@types/jest": "^30.0.0",
     "@types/react": "~19.0.10",
-    "babel-jest": "^30.0.5",
     "detox": "^20.40.2",
     "jest": "^30.0.4",
     "react-test-renderer": "19.0.0",
