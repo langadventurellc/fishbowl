@@ -1,12 +1,24 @@
 ---
 id: T-analyze-and-document-all
 title: Analyze and document all import dependencies for files to be deleted
-status: open
+status: done
 priority: high
 parent: F-legacy-roles-code-cleanup
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  dependency-map-analysis.md: Created comprehensive dependency analysis document
+    with complete mapping of all import references, impact assessment, and safe
+    deletion strategy for 5 legacy role utility files and their associated test
+    files
+log:
+  - "Completed comprehensive dependency analysis for legacy roles code cleanup.
+    Identified all import references for 5 files scheduled for deletion, created
+    detailed dependency map with impact assessment, and documented safe deletion
+    strategy. Key findings: 4/5 files have minimal impact (only test
+    dependencies), rolesPersistence.ts requires careful handling due to active
+    usage in rolesStore.ts. No external barrel export usage found, making
+    cleanup operation low-risk. Documented specific lines to update and files to
+    delete."
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T21:52:58.146Z
