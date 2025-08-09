@@ -8,21 +8,7 @@
  */
 
 import type { RoleViewModel, RoleFormData } from "../../";
-import { rolesPersistence } from "../rolesPersistence";
 import { useRolesStore } from "../rolesStore";
-
-// Mock the persistence layer
-jest.mock("../rolesPersistence", () => ({
-  rolesPersistence: {
-    save: jest.fn(),
-    load: jest.fn(),
-    clear: jest.fn(),
-  },
-}));
-
-const mockPersistence = rolesPersistence as jest.Mocked<
-  typeof rolesPersistence
->;
 
 // Mock console methods
 const mockConsoleError = jest.fn();
@@ -34,13 +20,6 @@ beforeEach(() => {
     isLoading: false,
     error: null,
   });
-
-  // Reset persistence mocks
-  mockPersistence.save.mockClear();
-  mockPersistence.load.mockClear();
-  mockPersistence.clear.mockClear();
-  mockPersistence.save.mockResolvedValue();
-  mockPersistence.load.mockResolvedValue([]);
 
   // Reset console mocks
   mockConsoleError.mockClear();
@@ -59,27 +38,6 @@ describe("rolesStore", () => {
       expect(state.roles).toEqual([]);
       expect(state.isLoading).toBe(false);
       expect(state.error).toBe(null);
-    });
-
-    it("should load roles on initialization", async () => {
-      const mockRoles: RoleViewModel[] = [
-        {
-          id: "test-1",
-          name: "Test Role",
-          description: "Test description",
-          createdAt: "2024-01-01T00:00:00.000Z",
-          updatedAt: "2024-01-01T00:00:00.000Z",
-        },
-      ];
-
-      mockPersistence.load.mockResolvedValue(mockRoles);
-
-      // Trigger load manually to test behavior
-      await useRolesStore.getState().loadRoles();
-
-      const state = useRolesStore.getState();
-      expect(state.roles).toEqual(mockRoles);
-      expect(mockPersistence.load).toHaveBeenCalled();
     });
   });
 
@@ -106,14 +64,6 @@ describe("rolesStore", () => {
       expect(state.roles[0]!.createdAt).toBeTruthy();
       expect(state.roles[0]!.updatedAt).toBeTruthy();
       expect(state.error).toBe(null);
-    });
-
-    it("should trigger save after creating role", () => {
-      const store = useRolesStore.getState();
-
-      store.createRole(validRoleData);
-
-      expect(mockPersistence.save).toHaveBeenCalled();
     });
 
     it("should reject duplicate role names (case-insensitive)", () => {
@@ -152,20 +102,6 @@ describe("rolesStore", () => {
       expect(state.roles).toHaveLength(0);
       expect(state.error).toBeTruthy();
     });
-
-    it("should handle persistence errors gracefully", async () => {
-      mockPersistence.save.mockRejectedValue(new Error("Storage full"));
-
-      const store = useRolesStore.getState();
-      store.createRole(validRoleData);
-
-      // Wait for async save to complete
-
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      const state = useRolesStore.getState();
-      expect(state.error).toBe("Storage full");
-    });
   });
 
   describe("updateRole action", () => {
@@ -203,19 +139,6 @@ describe("rolesStore", () => {
       expect(state.roles[0]!.createdAt).toBe(existingRole.createdAt);
       expect(state.roles[0]!.updatedAt).not.toBe(existingRole.updatedAt);
       expect(state.error).toBe(null);
-    });
-
-    it("should trigger save after updating role", () => {
-      const store = useRolesStore.getState();
-
-      const updateData: RoleFormData = {
-        name: "Updated Role",
-        description: "Updated description",
-      };
-
-      store.updateRole(existingRole.id, updateData);
-
-      expect(mockPersistence.save).toHaveBeenCalled();
     });
 
     it("should reject non-existent role ID", () => {
@@ -304,14 +227,6 @@ describe("rolesStore", () => {
       const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(0);
       expect(state.error).toBe(null);
-    });
-
-    it("should trigger save after deleting role", () => {
-      const store = useRolesStore.getState();
-
-      store.deleteRole(existingRole.id);
-
-      expect(mockPersistence.save).toHaveBeenCalled();
     });
 
     it("should handle non-existent role ID", () => {
@@ -457,52 +372,6 @@ describe("rolesStore", () => {
 
       store.clearError();
       expect(useRolesStore.getState().error).toBe(null);
-    });
-  });
-
-  describe("persistence integration", () => {
-    it("should handle successful load", async () => {
-      const mockRoles: RoleViewModel[] = [
-        {
-          id: "test-1",
-          name: "Test Role",
-          description: "Test description",
-          createdAt: "2024-01-01T00:00:00.000Z",
-          updatedAt: "2024-01-01T00:00:00.000Z",
-        },
-      ];
-
-      mockPersistence.load.mockResolvedValue(mockRoles);
-
-      const store = useRolesStore.getState();
-      await store.loadRoles();
-
-      const state = useRolesStore.getState();
-      expect(state.roles).toEqual(mockRoles);
-      expect(state.isLoading).toBe(false);
-      expect(state.error).toBe(null);
-    });
-
-    it("should handle load errors", async () => {
-      mockPersistence.load.mockRejectedValue(new Error("Load failed"));
-
-      const store = useRolesStore.getState();
-      await store.loadRoles();
-
-      const state = useRolesStore.getState();
-      expect(state.roles).toEqual([]);
-      expect(state.isLoading).toBe(false);
-      expect(state.error).toBe("Load failed");
-    });
-
-    it("should handle save errors", async () => {
-      mockPersistence.save.mockRejectedValue(new Error("Save failed"));
-
-      const store = useRolesStore.getState();
-      await store.saveRoles();
-
-      const state = useRolesStore.getState();
-      expect(state.error).toBe("Save failed");
     });
   });
 });

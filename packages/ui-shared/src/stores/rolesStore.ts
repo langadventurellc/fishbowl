@@ -11,7 +11,6 @@ import { create } from "zustand";
 import { roleSchema } from "../schemas/roleSchema";
 import { RoleViewModel } from "../types/settings/RoleViewModel";
 import { RoleFormData } from "../types/settings/RoleFormData";
-import { rolesPersistence } from "./rolesPersistence";
 
 // Generate unique ID using crypto API or fallback
 const generateId = (): string => {
@@ -36,8 +35,6 @@ interface RolesActions {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
-  loadRoles: () => Promise<void>;
-  saveRoles: () => Promise<void>;
 }
 
 type RolesStore = RolesState & RolesActions;
@@ -71,9 +68,6 @@ export const useRolesStore = create<RolesStore>()((set, get) => ({
         roles: [...state.roles, newRole],
         error: null,
       }));
-
-      // Async save
-      get().saveRoles();
 
       return newRole.id;
     } catch (error) {
@@ -109,9 +103,6 @@ export const useRolesStore = create<RolesStore>()((set, get) => ({
         ),
         error: null,
       }));
-
-      // Async save
-      get().saveRoles();
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to update role";
@@ -132,9 +123,6 @@ export const useRolesStore = create<RolesStore>()((set, get) => ({
       roles: state.roles.filter((role) => role.id !== id),
       error: null,
     }));
-
-    // Async save
-    get().saveRoles();
   },
 
   getRoleById: (id: string) => {
@@ -161,31 +149,4 @@ export const useRolesStore = create<RolesStore>()((set, get) => ({
   clearError: () => {
     set({ error: null });
   },
-
-  // Persistence operations
-  loadRoles: async () => {
-    try {
-      set({ isLoading: true, error: null });
-      const loadedRoles = await rolesPersistence.load();
-      set({ roles: loadedRoles, isLoading: false });
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to load roles";
-      set({ error: errorMessage, isLoading: false });
-    }
-  },
-
-  saveRoles: async () => {
-    try {
-      const { roles } = get();
-      await rolesPersistence.save(roles);
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to save roles";
-      set({ error: errorMessage });
-    }
-  },
 }));
-
-// Initialize store by loading existing roles
-useRolesStore.getState().loadRoles();
