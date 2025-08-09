@@ -1,12 +1,13 @@
 /**
- * RolesSection component integrates roles management with TabContainer.
+ * RolesSection component displays a unified list of roles.
  *
  * Features:
- * - Tab navigation between Predefined and Custom roles
- * - Centralized modal state management for CRUD operations
+ * - Single unified list view of all roles (no tab distinction)
+ * - Displays sample roles data for demonstration
+ * - Modal infrastructure preserved for future functionality
  * - Integration with settings modal navigation state
  * - Responsive design and accessibility compliance
- * - Only one modal open at a time for optimal UX
+ * - Edit/Delete buttons present but non-functional (logging only)
  *
  * @module components/settings/RolesSection
  */
@@ -15,14 +16,11 @@ import type {
   CustomRoleViewModel,
   RoleFormData,
   RolesSectionProps,
-  TabConfiguration,
 } from "@fishbowl-ai/ui-shared";
-import { useCustomRoles } from "@fishbowl-ai/ui-shared";
+import { SAMPLE_ROLES } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useState } from "react";
 import { cn } from "../../../lib/utils";
-import { TabContainer } from "../TabContainer";
-import { CustomRolesTab } from "./CustomRolesTab";
-import { PredefinedRolesTab } from "./PredefinedRolesTab";
+import { RolesList } from "./RolesList";
 import { RoleDeleteDialog } from "./RoleDeleteDialog";
 import { RoleFormModal } from "./RoleFormModal";
 import { createLoggerSync } from "@fishbowl-ai/shared";
@@ -33,89 +31,39 @@ const logger = createLoggerSync({
 
 export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   // Modal state management - centralized to ensure only one modal open
-  const [selectedRole, setSelectedRole] = useState<
+  const [selectedRole, _setSelectedRole] = useState<
     CustomRoleViewModel | undefined
   >(undefined);
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [formMode, setFormMode] = useState<"create" | "edit">("create");
+  const [formMode, _setFormMode] = useState<"create" | "edit">("create");
 
-  // Store operations
-  const { createRole, updateRole, deleteRole, isLoading } = useCustomRoles();
-
-  // CRUD operation handlers
+  // Disabled handlers - preserved for future functionality
   const handleCreateRole = useCallback(() => {
-    setFormMode("create");
-    setSelectedRole(undefined);
-    setDeleteDialogOpen(false); // Ensure only one modal open
-    setFormModalOpen(true);
+    // TODO: Will be implemented in future functionality
+    logger.info("Create role clicked - not implemented yet");
   }, []);
 
   const handleEditRole = useCallback((role: CustomRoleViewModel) => {
-    setFormMode("edit");
-    setSelectedRole(role);
-    setDeleteDialogOpen(false); // Ensure only one modal open
-    setFormModalOpen(true);
+    // TODO: Will be implemented in future functionality
+    logger.info("Edit role clicked - not implemented yet", { roleId: role.id });
   }, []);
 
   const handleDeleteRole = useCallback((role: CustomRoleViewModel) => {
-    setSelectedRole(role);
-    setFormModalOpen(false); // Ensure only one modal open
-    setDeleteDialogOpen(true);
+    // TODO: Will be implemented in future functionality
+    logger.info("Delete role clicked - not implemented yet", {
+      roleId: role.id,
+    });
   }, []);
 
-  const handleSaveRole = useCallback(
-    async (data: RoleFormData) => {
-      try {
-        if (formMode === "create") {
-          await createRole(data);
-        } else if (selectedRole) {
-          await updateRole(selectedRole.id, data);
-        }
-        // Modal will close automatically on success
-        setFormModalOpen(false);
-        setSelectedRole(undefined);
-      } catch (error) {
-        // Error handling - modal stays open for retry
-        logger.error("Failed to save role", error as Error);
-      }
-    },
-    [formMode, selectedRole, createRole, updateRole],
-  );
+  // Disabled save/delete handlers for modals
+  const handleSaveRole = useCallback(async (data: RoleFormData) => {
+    logger.info("Save role - not implemented yet", { data });
+  }, []);
 
-  const handleConfirmDelete = useCallback(
-    async (role: CustomRoleViewModel) => {
-      try {
-        await deleteRole(role.id);
-        setDeleteDialogOpen(false);
-        setSelectedRole(undefined);
-      } catch (error) {
-        // Error handling - dialog stays open for retry
-        logger.error("Failed to delete role", error as Error);
-      }
-    },
-    [deleteRole],
-  );
-
-  // Tab configuration with handler injection
-  const tabs: TabConfiguration[] = [
-    {
-      id: "predefined",
-      label: "Predefined",
-      content: () => <PredefinedRolesTab />,
-    },
-    {
-      id: "custom",
-      label: "Custom",
-      content: () => (
-        <CustomRolesTab
-          onCreateRole={handleCreateRole}
-          onEditRole={handleEditRole}
-          onDeleteRole={handleDeleteRole}
-        />
-      ),
-    },
-  ];
+  const handleConfirmDelete = useCallback(async (role: CustomRoleViewModel) => {
+    logger.info("Confirm delete - not implemented yet", { roleId: role.id });
+  }, []);
 
   return (
     <div className={cn("roles-section space-y-6", className)}>
@@ -125,11 +73,12 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
           Define and configure agent roles and permissions.
         </p>
       </div>
-      <TabContainer
-        tabs={tabs}
-        useStore={true}
-        animationDuration={200}
-        className="roles-tabs"
+      {/* Direct list rendering - no tabs */}
+      <RolesList
+        roles={SAMPLE_ROLES}
+        onCreateRole={handleCreateRole}
+        onEditRole={handleEditRole}
+        onDeleteRole={handleDeleteRole}
       />
 
       {/* Role creation/editing modal */}
@@ -139,7 +88,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         mode={formMode}
         role={selectedRole}
         onSave={handleSaveRole}
-        isLoading={isLoading}
+        isLoading={false}
       />
 
       {/* Role deletion confirmation dialog */}
@@ -148,7 +97,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         onOpenChange={setDeleteDialogOpen}
         role={selectedRole || null}
         onConfirm={handleConfirmDelete}
-        isLoading={isLoading}
+        isLoading={false}
       />
     </div>
   );

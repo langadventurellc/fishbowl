@@ -46,15 +46,7 @@ const navigationSections = [
       { id: "create-new" as const, label: "Create New" },
     ],
   },
-  {
-    id: "roles" as const,
-    label: "Roles",
-    hasSubTabs: true,
-    subTabs: [
-      { id: "predefined" as const, label: "Predefined" },
-      { id: "custom" as const, label: "Custom" },
-    ],
-  },
+  { id: "roles" as const, label: "Roles", hasSubTabs: false },
   { id: "advanced" as const, label: "Advanced", hasSubTabs: false },
 ] as const;
 
