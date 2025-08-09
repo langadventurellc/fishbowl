@@ -14,7 +14,7 @@
 
 import type { RoleFormModalProps } from "@fishbowl-ai/ui-shared";
 import {
-  useCustomRoles,
+  useRoles,
   useUnsavedChanges,
   type RoleFormData,
 } from "@fishbowl-ai/ui-shared";
@@ -39,7 +39,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
 }) => {
   const { showConfirmation } = useConfirmationDialog();
   const { hasUnsavedChanges } = useUnsavedChanges();
-  const { roles } = useCustomRoles();
+  const { roles } = useRoles();
 
   // Handle modal close with unsaved changes protection
   const handleOpenChange = useCallback(

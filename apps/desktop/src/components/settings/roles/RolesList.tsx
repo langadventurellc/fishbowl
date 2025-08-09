@@ -12,18 +12,18 @@
  * @module components/settings/RolesList
  */
 
-import type { CustomRoleViewModel } from "@fishbowl-ai/ui-shared";
+import type { RoleViewModel } from "@fishbowl-ai/ui-shared";
 import { Plus } from "lucide-react";
 import { memo, useMemo } from "react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
-import { CustomRoleListItem } from "./CustomRoleListItem";
+import { RoleListItem } from "./RoleListItem";
 
 interface RolesListProps {
-  roles: readonly CustomRoleViewModel[];
+  roles: readonly RoleViewModel[];
   onCreateRole?: () => void;
-  onEditRole?: (role: CustomRoleViewModel) => void;
-  onDeleteRole?: (role: CustomRoleViewModel) => void;
+  onEditRole?: (role: RoleViewModel) => void;
+  onDeleteRole?: (role: RoleViewModel) => void;
   className?: string;
 }
 
@@ -60,7 +60,7 @@ export const RolesList = memo<RolesListProps>(function RolesList({
 
           {sortedRoles.map((role) => (
             <div key={role.id} role="listitem">
-              <CustomRoleListItem
+              <RoleListItem
                 role={role}
                 onEdit={onEditRole}
                 onDelete={onDeleteRole}

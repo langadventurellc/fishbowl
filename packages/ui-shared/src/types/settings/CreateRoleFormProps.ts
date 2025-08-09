@@ -3,7 +3,7 @@
  *
  * @module types/ui/components/CreateRoleFormProps
  */
-import type { CustomRoleViewModel } from "./CustomRoleViewModel";
+import type { RoleViewModel } from "./RoleViewModel";
 import type { RoleFormData } from "./RoleFormData";
 
 export interface CreateRoleFormProps {
@@ -11,6 +11,6 @@ export interface CreateRoleFormProps {
   initialData?: Partial<RoleFormData>;
   onSave: (data: RoleFormData) => void;
   onCancel: () => void;
-  existingRoles?: CustomRoleViewModel[];
+  existingRoles?: RoleViewModel[];
   isLoading?: boolean;
 }

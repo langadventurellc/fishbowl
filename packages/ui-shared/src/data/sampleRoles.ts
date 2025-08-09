@@ -1,17 +1,17 @@
 /**
  * Sample roles data for unified roles UI.
- * Transforms predefined roles into CustomRoleViewModel format.
+ * Transforms predefined roles into RoleViewModel format.
  *
  * @module data/sampleRoles
  */
 
-import type { CustomRoleViewModel } from "../types/settings/CustomRoleViewModel";
+import type { RoleViewModel } from "../types/settings/RoleViewModel";
 
 /**
  * Sample roles with consistent mock timestamps (January 1, 2025).
- * Includes all current predefined roles transformed to CustomRoleViewModel format.
+ * Includes all current predefined roles transformed to RoleViewModel format.
  */
-export const SAMPLE_ROLES: readonly CustomRoleViewModel[] = [
+export const SAMPLE_ROLES: readonly RoleViewModel[] = [
   {
     id: "project-manager",
     name: "Project Manager",

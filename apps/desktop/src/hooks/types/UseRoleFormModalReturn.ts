@@ -4,15 +4,15 @@
  * @module hooks/types/UseRoleFormModalReturn
  */
 
-import type { CustomRoleViewModel, RoleFormData } from "@fishbowl-ai/ui-shared";
+import type { RoleViewModel, RoleFormData } from "@fishbowl-ai/ui-shared";
 
 export interface UseRoleFormModalReturn {
   isOpen: boolean;
   mode: "create" | "edit";
-  currentRole?: CustomRoleViewModel;
+  currentRole?: RoleViewModel;
   isLoading: boolean;
   openCreateModal: () => void;
-  openEditModal: (role: CustomRoleViewModel) => void;
+  openEditModal: (role: RoleViewModel) => void;
   closeModal: () => void;
   handleSave: (data: RoleFormData) => Promise<void>;
 }

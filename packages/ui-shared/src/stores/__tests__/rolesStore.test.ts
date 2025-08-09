@@ -1,27 +1,27 @@
 /**
- * Unit tests for the custom roles Zustand store.
+ * Unit tests for the roles Zustand store.
  *
  * Tests store initialization, CRUD operations, validation, error handling,
  * persistence integration, and edge cases.
  *
- * @module stores/__tests__/customRolesStore.test
+ * @module stores/__tests__/rolesStore.test
  */
 
-import type { CustomRoleViewModel, RoleFormData } from "../../";
-import { customRolesPersistence } from "../customRolesPersistence";
-import { useCustomRolesStore } from "../customRolesStore";
+import type { RoleViewModel, RoleFormData } from "../../";
+import { rolesPersistence } from "../rolesPersistence";
+import { useRolesStore } from "../rolesStore";
 
 // Mock the persistence layer
-jest.mock("../customRolesPersistence", () => ({
-  customRolesPersistence: {
+jest.mock("../rolesPersistence", () => ({
+  rolesPersistence: {
     save: jest.fn(),
     load: jest.fn(),
     clear: jest.fn(),
   },
 }));
 
-const mockPersistence = customRolesPersistence as jest.Mocked<
-  typeof customRolesPersistence
+const mockPersistence = rolesPersistence as jest.Mocked<
+  typeof rolesPersistence
 >;
 
 // Mock console methods
@@ -29,7 +29,7 @@ const mockConsoleError = jest.fn();
 
 beforeEach(() => {
   // Reset store to clean state
-  useCustomRolesStore.setState({
+  useRolesStore.setState({
     roles: [],
     isLoading: false,
     error: null,
@@ -51,10 +51,10 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe("customRolesStore", () => {
+describe("rolesStore", () => {
   describe("store initialization", () => {
     it("should initialize with correct default values", () => {
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
 
       expect(state.roles).toEqual([]);
       expect(state.isLoading).toBe(false);
@@ -62,7 +62,7 @@ describe("customRolesStore", () => {
     });
 
     it("should load roles on initialization", async () => {
-      const mockRoles: CustomRoleViewModel[] = [
+      const mockRoles: RoleViewModel[] = [
         {
           id: "test-1",
           name: "Test Role",
@@ -75,9 +75,9 @@ describe("customRolesStore", () => {
       mockPersistence.load.mockResolvedValue(mockRoles);
 
       // Trigger load manually to test behavior
-      await useCustomRolesStore.getState().loadRoles();
+      await useRolesStore.getState().loadRoles();
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toEqual(mockRoles);
       expect(mockPersistence.load).toHaveBeenCalled();
     });
@@ -90,14 +90,14 @@ describe("customRolesStore", () => {
     };
 
     it("should create a new role with valid data", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const roleId = store.createRole(validRoleData);
 
       expect(roleId).toBeTruthy();
       expect(roleId).toMatch(/^[a-f0-9-]{36}$|^[a-z0-9]+$/); // UUID or fallback format
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(1);
       expect(state.roles[0]).toBeTruthy();
       expect(state.roles[0]!.name).toBe(validRoleData.name);
@@ -109,7 +109,7 @@ describe("customRolesStore", () => {
     });
 
     it("should trigger save after creating role", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       store.createRole(validRoleData);
 
@@ -117,7 +117,7 @@ describe("customRolesStore", () => {
     });
 
     it("should reject duplicate role names (case-insensitive)", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       // Create first role
       const firstId = store.createRole(validRoleData);
@@ -132,13 +132,13 @@ describe("customRolesStore", () => {
       const secondId = store.createRole(duplicateData);
 
       expect(secondId).toBe("");
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(1);
       expect(state.error).toBe("A role with this name already exists");
     });
 
     it("should handle invalid data and return empty string", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const invalidData = {
         name: "", // Invalid: empty name
@@ -148,7 +148,7 @@ describe("customRolesStore", () => {
       const roleId = store.createRole(invalidData);
 
       expect(roleId).toBe("");
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(0);
       expect(state.error).toBeTruthy();
     });
@@ -156,20 +156,20 @@ describe("customRolesStore", () => {
     it("should handle persistence errors gracefully", async () => {
       mockPersistence.save.mockRejectedValue(new Error("Storage full"));
 
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
       store.createRole(validRoleData);
 
       // Wait for async save to complete
 
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.error).toBe("Storage full");
     });
   });
 
   describe("updateRole action", () => {
-    const existingRole: CustomRoleViewModel = {
+    const existingRole: RoleViewModel = {
       id: "existing-1",
       name: "Original Role",
       description: "Original description",
@@ -178,7 +178,7 @@ describe("customRolesStore", () => {
     };
 
     beforeEach(() => {
-      useCustomRolesStore.setState({
+      useRolesStore.setState({
         roles: [existingRole],
         isLoading: false,
         error: null,
@@ -186,7 +186,7 @@ describe("customRolesStore", () => {
     });
 
     it("should update existing role with valid data", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const updateData: RoleFormData = {
         name: "Updated Role",
@@ -195,7 +195,7 @@ describe("customRolesStore", () => {
 
       store.updateRole(existingRole.id, updateData);
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(1);
       expect(state.roles[0]!.id).toBe(existingRole.id);
       expect(state.roles[0]!.name).toBe(updateData.name);
@@ -206,7 +206,7 @@ describe("customRolesStore", () => {
     });
 
     it("should trigger save after updating role", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const updateData: RoleFormData = {
         name: "Updated Role",
@@ -219,7 +219,7 @@ describe("customRolesStore", () => {
     });
 
     it("should reject non-existent role ID", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const updateData: RoleFormData = {
         name: "Updated Role",
@@ -228,13 +228,13 @@ describe("customRolesStore", () => {
 
       store.updateRole("non-existent", updateData);
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles[0]).toEqual(existingRole); // Unchanged
       expect(state.error).toBe("Role not found");
     });
 
     it("should reject duplicate names when updating (excluding current role)", () => {
-      const secondRole: CustomRoleViewModel = {
+      const secondRole: RoleViewModel = {
         id: "existing-2",
         name: "Second Role",
         description: "Second description",
@@ -242,13 +242,13 @@ describe("customRolesStore", () => {
         updatedAt: "2024-01-01T00:00:00.000Z",
       };
 
-      useCustomRolesStore.setState({
+      useRolesStore.setState({
         roles: [existingRole, secondRole],
         isLoading: false,
         error: null,
       });
 
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       // Try to update second role to have same name as first
       const updateData: RoleFormData = {
@@ -258,13 +258,13 @@ describe("customRolesStore", () => {
 
       store.updateRole(secondRole.id, updateData);
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles[1]).toEqual(secondRole); // Unchanged
       expect(state.error).toBe("A role with this name already exists");
     });
 
     it("should allow updating role to same name (no duplicate error)", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const updateData: RoleFormData = {
         name: existingRole.name, // Same name
@@ -273,14 +273,14 @@ describe("customRolesStore", () => {
 
       store.updateRole(existingRole.id, updateData);
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles[0]!.description).toBe(updateData.description);
       expect(state.error).toBe(null);
     });
   });
 
   describe("deleteRole action", () => {
-    const existingRole: CustomRoleViewModel = {
+    const existingRole: RoleViewModel = {
       id: "existing-1",
       name: "Test Role",
       description: "Test description",
@@ -289,7 +289,7 @@ describe("customRolesStore", () => {
     };
 
     beforeEach(() => {
-      useCustomRolesStore.setState({
+      useRolesStore.setState({
         roles: [existingRole],
         isLoading: false,
         error: null,
@@ -297,17 +297,17 @@ describe("customRolesStore", () => {
     });
 
     it("should delete existing role", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       store.deleteRole(existingRole.id);
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(0);
       expect(state.error).toBe(null);
     });
 
     it("should trigger save after deleting role", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       store.deleteRole(existingRole.id);
 
@@ -315,18 +315,18 @@ describe("customRolesStore", () => {
     });
 
     it("should handle non-existent role ID", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       store.deleteRole("non-existent");
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(1); // Unchanged
       expect(state.error).toBe("Role not found");
     });
   });
 
   describe("getRoleById action", () => {
-    const existingRole: CustomRoleViewModel = {
+    const existingRole: RoleViewModel = {
       id: "existing-1",
       name: "Test Role",
       description: "Test description",
@@ -335,7 +335,7 @@ describe("customRolesStore", () => {
     };
 
     beforeEach(() => {
-      useCustomRolesStore.setState({
+      useRolesStore.setState({
         roles: [existingRole],
         isLoading: false,
         error: null,
@@ -343,7 +343,7 @@ describe("customRolesStore", () => {
     });
 
     it("should return role for existing ID", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const role = store.getRoleById(existingRole.id);
 
@@ -351,7 +351,7 @@ describe("customRolesStore", () => {
     });
 
     it("should return undefined for non-existent ID", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const role = store.getRoleById("non-existent");
 
@@ -360,7 +360,7 @@ describe("customRolesStore", () => {
   });
 
   describe("isRoleNameUnique action", () => {
-    const existingRoles: CustomRoleViewModel[] = [
+    const existingRoles: RoleViewModel[] = [
       {
         id: "role-1",
         name: "First Role",
@@ -378,7 +378,7 @@ describe("customRolesStore", () => {
     ];
 
     beforeEach(() => {
-      useCustomRolesStore.setState({
+      useRolesStore.setState({
         roles: existingRoles,
         isLoading: false,
         error: null,
@@ -386,7 +386,7 @@ describe("customRolesStore", () => {
     });
 
     it("should return false for existing name", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const isUnique = store.isRoleNameUnique("First Role");
 
@@ -394,7 +394,7 @@ describe("customRolesStore", () => {
     });
 
     it("should return false for existing name (case-insensitive)", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const isUnique = store.isRoleNameUnique("FIRST ROLE");
 
@@ -402,7 +402,7 @@ describe("customRolesStore", () => {
     });
 
     it("should return true for unique name", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       const isUnique = store.isRoleNameUnique("Unique Role");
 
@@ -410,7 +410,7 @@ describe("customRolesStore", () => {
     });
 
     it("should exclude specified ID when checking uniqueness", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       // Should be unique when excluding the existing role with this name
       const isUnique = store.isRoleNameUnique("First Role", "role-1");
@@ -419,7 +419,7 @@ describe("customRolesStore", () => {
     });
 
     it("should return false when excluding different ID", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       // Should not be unique when excluding a different role
       const isUnique = store.isRoleNameUnique("First Role", "role-2");
@@ -430,39 +430,39 @@ describe("customRolesStore", () => {
 
   describe("state management actions", () => {
     it("should set loading state", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       store.setLoading(true);
-      expect(useCustomRolesStore.getState().isLoading).toBe(true);
+      expect(useRolesStore.getState().isLoading).toBe(true);
 
       store.setLoading(false);
-      expect(useCustomRolesStore.getState().isLoading).toBe(false);
+      expect(useRolesStore.getState().isLoading).toBe(false);
     });
 
     it("should set error state", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       store.setError("Test error");
-      expect(useCustomRolesStore.getState().error).toBe("Test error");
+      expect(useRolesStore.getState().error).toBe("Test error");
 
       store.setError(null);
-      expect(useCustomRolesStore.getState().error).toBe(null);
+      expect(useRolesStore.getState().error).toBe(null);
     });
 
     it("should clear error", () => {
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
 
       store.setError("Test error");
-      expect(useCustomRolesStore.getState().error).toBe("Test error");
+      expect(useRolesStore.getState().error).toBe("Test error");
 
       store.clearError();
-      expect(useCustomRolesStore.getState().error).toBe(null);
+      expect(useRolesStore.getState().error).toBe(null);
     });
   });
 
   describe("persistence integration", () => {
     it("should handle successful load", async () => {
-      const mockRoles: CustomRoleViewModel[] = [
+      const mockRoles: RoleViewModel[] = [
         {
           id: "test-1",
           name: "Test Role",
@@ -474,10 +474,10 @@ describe("customRolesStore", () => {
 
       mockPersistence.load.mockResolvedValue(mockRoles);
 
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
       await store.loadRoles();
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toEqual(mockRoles);
       expect(state.isLoading).toBe(false);
       expect(state.error).toBe(null);
@@ -486,10 +486,10 @@ describe("customRolesStore", () => {
     it("should handle load errors", async () => {
       mockPersistence.load.mockRejectedValue(new Error("Load failed"));
 
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
       await store.loadRoles();
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.roles).toEqual([]);
       expect(state.isLoading).toBe(false);
       expect(state.error).toBe("Load failed");
@@ -498,10 +498,10 @@ describe("customRolesStore", () => {
     it("should handle save errors", async () => {
       mockPersistence.save.mockRejectedValue(new Error("Save failed"));
 
-      const store = useCustomRolesStore.getState();
+      const store = useRolesStore.getState();
       await store.saveRoles();
 
-      const state = useCustomRolesStore.getState();
+      const state = useRolesStore.getState();
       expect(state.error).toBe("Save failed");
     });
   });

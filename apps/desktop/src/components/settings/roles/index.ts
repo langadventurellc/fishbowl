@@ -1,5 +1,5 @@
 export { CreateRoleForm } from "./CreateRoleForm";
-export { CustomRoleListItem } from "./CustomRoleListItem";
+export { RoleListItem } from "./RoleListItem";
 export { RoleDeleteDialog } from "./RoleDeleteDialog";
 export { RoleDescriptionTextarea } from "./RoleDescriptionTextarea";
 export { RoleFormModal } from "./RoleFormModal";

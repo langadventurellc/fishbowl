@@ -13,7 +13,7 @@
  */
 
 import type {
-  CustomRoleViewModel,
+  RoleViewModel,
   RoleFormData,
   RolesSectionProps,
 } from "@fishbowl-ai/ui-shared";
@@ -31,9 +31,9 @@ const logger = createLoggerSync({
 
 export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   // Modal state management - centralized to ensure only one modal open
-  const [selectedRole, setSelectedRole] = useState<
-    CustomRoleViewModel | undefined
-  >(undefined);
+  const [selectedRole, setSelectedRole] = useState<RoleViewModel | undefined>(
+    undefined,
+  );
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
@@ -47,7 +47,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     setFormModalOpen(true);
   }, []);
 
-  const handleEditRole = useCallback((role: CustomRoleViewModel) => {
+  const handleEditRole = useCallback((role: RoleViewModel) => {
     logger.info("Opening edit role modal", {
       roleId: role.id,
       roleName: role.name,
@@ -58,7 +58,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     setFormModalOpen(true);
   }, []);
 
-  const handleDeleteRole = useCallback((role: CustomRoleViewModel) => {
+  const handleDeleteRole = useCallback((role: RoleViewModel) => {
     logger.info("Opening delete confirmation dialog", {
       roleId: role.id,
       roleName: role.name,
@@ -91,7 +91,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     [formMode],
   );
 
-  const handleConfirmDelete = useCallback(async (role: CustomRoleViewModel) => {
+  const handleConfirmDelete = useCallback(async (role: RoleViewModel) => {
     logger.info("Delete role confirmed (functionality disabled)", {
       roleId: role.id,
       roleName: role.name,
