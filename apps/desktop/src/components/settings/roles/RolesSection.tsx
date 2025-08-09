@@ -31,38 +31,81 @@ const logger = createLoggerSync({
 
 export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   // Modal state management - centralized to ensure only one modal open
-  const [selectedRole, _setSelectedRole] = useState<
+  const [selectedRole, setSelectedRole] = useState<
     CustomRoleViewModel | undefined
   >(undefined);
   const [formModalOpen, setFormModalOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [formMode, _setFormMode] = useState<"create" | "edit">("create");
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
 
-  // Disabled handlers - preserved for future functionality
+  // Modal opening handlers - opens modals with appropriate data
   const handleCreateRole = useCallback(() => {
-    // TODO: Will be implemented in future functionality
-    logger.info("Create role clicked - not implemented yet");
+    logger.info("Opening create role modal");
+    setFormMode("create");
+    setSelectedRole(undefined);
+    setDeleteDialogOpen(false); // Ensure only one modal open
+    setFormModalOpen(true);
   }, []);
 
   const handleEditRole = useCallback((role: CustomRoleViewModel) => {
-    // TODO: Will be implemented in future functionality
-    logger.info("Edit role clicked - not implemented yet", { roleId: role.id });
+    logger.info("Opening edit role modal", {
+      roleId: role.id,
+      roleName: role.name,
+    });
+    setFormMode("edit");
+    setSelectedRole(role);
+    setDeleteDialogOpen(false); // Ensure only one modal open
+    setFormModalOpen(true);
   }, []);
 
   const handleDeleteRole = useCallback((role: CustomRoleViewModel) => {
-    // TODO: Will be implemented in future functionality
-    logger.info("Delete role clicked - not implemented yet", {
+    logger.info("Opening delete confirmation dialog", {
       roleId: role.id,
+      roleName: role.name,
     });
+    setSelectedRole(role);
+    setFormModalOpen(false); // Ensure only one modal open
+    setDeleteDialogOpen(true);
   }, []);
 
-  // Disabled save/delete handlers for modals
-  const handleSaveRole = useCallback(async (data: RoleFormData) => {
-    logger.info("Save role - not implemented yet", { data });
-  }, []);
+  // Simulated save/delete handlers for modals
+  const handleSaveRole = useCallback(
+    async (data: RoleFormData) => {
+      logger.info("Save role clicked (functionality disabled)", {
+        mode: formMode,
+        data,
+      });
+
+      // Simulate a brief processing delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Close modal and reset state to simulate success
+      setFormModalOpen(false);
+      setSelectedRole(undefined);
+
+      // Log success simulation
+      logger.info(
+        `Role ${formMode === "create" ? "creation" : "update"} simulated successfully`,
+      );
+    },
+    [formMode],
+  );
 
   const handleConfirmDelete = useCallback(async (role: CustomRoleViewModel) => {
-    logger.info("Confirm delete - not implemented yet", { roleId: role.id });
+    logger.info("Delete role confirmed (functionality disabled)", {
+      roleId: role.id,
+      roleName: role.name,
+    });
+
+    // Simulate a brief processing delay
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    // Close dialog and reset state to simulate success
+    setDeleteDialogOpen(false);
+    setSelectedRole(undefined);
+
+    // Log success simulation
+    logger.info("Role deletion simulated successfully");
   }, []);
 
   return (
