@@ -13,7 +13,6 @@
  */
 
 import type { CustomRoleViewModel } from "@fishbowl-ai/ui-shared";
-import { SAMPLE_ROLES } from "@fishbowl-ai/ui-shared";
 import { Plus } from "lucide-react";
 import { memo, useMemo } from "react";
 import { cn } from "../../../lib/utils";
@@ -21,6 +20,7 @@ import { Button } from "../../ui/button";
 import { CustomRoleListItem } from "./CustomRoleListItem";
 
 interface RolesListProps {
+  roles: readonly CustomRoleViewModel[];
   onCreateRole?: () => void;
   onEditRole?: (role: CustomRoleViewModel) => void;
   onDeleteRole?: (role: CustomRoleViewModel) => void;
@@ -28,6 +28,7 @@ interface RolesListProps {
 }
 
 export const RolesList = memo<RolesListProps>(function RolesList({
+  roles,
   onCreateRole = () => {},
   onEditRole = () => {},
   onDeleteRole = () => {},
@@ -35,8 +36,8 @@ export const RolesList = memo<RolesListProps>(function RolesList({
 }) {
   // Sort roles alphabetically by name
   const sortedRoles = useMemo(() => {
-    return [...SAMPLE_ROLES].sort((a, b) => a.name.localeCompare(b.name));
-  }, []);
+    return [...roles].sort((a, b) => a.name.localeCompare(b.name));
+  }, [roles]);
 
   return (
     <div className={cn("roles-list flex flex-col h-full", className)}>

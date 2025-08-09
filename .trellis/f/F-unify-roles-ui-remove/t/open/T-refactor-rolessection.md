@@ -60,8 +60,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
 
-  // Use sample data instead of store operations
-  const sampleRoles = SAMPLE_ROLES; // Import from new sample data
+  // Use sample data passed to RolesList as prop
 
   // Disabled handlers (keep for future functionality)
   const handleCreateRole = useCallback(() => {
@@ -89,8 +88,8 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
       </div>
 
       {/* Direct list rendering - no tabs */}
-      <UnifiedRolesList
-        roles={sampleRoles}
+      <RolesList
+        roles={SAMPLE_ROLES}
         onCreateRole={handleCreateRole}
         onEditRole={handleEditRole}
         onDeleteRole={handleDeleteRole}
@@ -118,7 +117,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
 };
 ```
 
-### 3. Create UnifiedRolesList Component
+### 3. Create RolesList Component
 
 **Location**: Same file as RolesSection (as internal component)
 
@@ -141,6 +140,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
 **Add**:
 
 - SAMPLE_ROLES import from new data file
+- RolesList import
 
 ### 5. Preserve Accessibility
 
@@ -189,5 +189,5 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
 - Keep existing modal structure intact for future functionality
 - Use console.log for disabled handlers (temporary)
 - Maintain component prop interfaces where possible
-- Consider creating the UnifiedRolesList as a separate component file in future iterations
+- Consider creating the RolesList as a separate component file in future iterations
 - Follow existing styling patterns and CSS classes from CustomRolesTab

@@ -4,6 +4,7 @@ import { fireEvent, render, screen } from "@testing-library/react";
 import { RolesList } from "../RolesList";
 
 const defaultProps = {
+  roles: SAMPLE_ROLES,
   onCreateRole: jest.fn(),
   onEditRole: jest.fn(),
   onDeleteRole: jest.fn(),
@@ -126,7 +127,7 @@ describe("RolesList Component", () => {
   });
 
   it("renders without optional handlers", () => {
-    render(<RolesList />);
+    render(<RolesList roles={SAMPLE_ROLES} />);
 
     // Should render without errors
     expect(screen.getByText("Project Manager")).toBeInTheDocument();
@@ -134,7 +135,7 @@ describe("RolesList Component", () => {
   });
 
   it("handles click events without handlers gracefully", () => {
-    render(<RolesList />);
+    render(<RolesList roles={SAMPLE_ROLES} />);
 
     const createButton = screen.getByLabelText("Create a new role");
     const editButtons = screen.getAllByText("Edit");
