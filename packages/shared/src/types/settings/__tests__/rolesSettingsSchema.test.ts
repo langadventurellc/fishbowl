@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { persistedRoleSchema } from "../rolesSettingsSchema";
+import {
+  persistedRoleSchema,
+  persistedRolesSettingsSchema,
+} from "../rolesSettingsSchema";
 
 describe("persistedRoleSchema", () => {
   describe("valid data validation", () => {
@@ -525,6 +528,252 @@ describe("persistedRoleSchema", () => {
       expect(() => {
         persistedRoleSchema.parse(undefined);
       }).toThrow("Invalid input: expected object, received undefined");
+    });
+  });
+});
+
+describe("persistedRolesSettingsSchema", () => {
+  describe("valid file structure validation", () => {
+    it("should accept empty roles array with defaults", () => {
+      const result = persistedRolesSettingsSchema.parse({});
+      expect(result.roles).toEqual([]);
+      expect(result.schemaVersion).toBe("1.0.0");
+      expect(result.lastUpdated).toMatch(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+      );
+    });
+
+    it("should accept multiple valid roles in array", () => {
+      const validRoles = [
+        {
+          id: "role-1",
+          name: "Developer",
+          description: "Writes code",
+          systemPrompt: "You are a developer",
+        },
+        {
+          id: "role-2",
+          name: "Designer",
+          description: "Creates designs",
+          systemPrompt: "You are a designer",
+        },
+      ];
+
+      const result = persistedRolesSettingsSchema.parse({ roles: validRoles });
+      expect(result.roles).toHaveLength(2);
+      expect(result.roles[0]?.name).toBe("Developer");
+      expect(result.roles[1]?.name).toBe("Designer");
+    });
+
+    it("should accept file with all metadata fields", () => {
+      const completeFile = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "role-1",
+            name: "Manager",
+            description: "Manages projects",
+            systemPrompt: "You are a manager",
+            createdAt: "2025-01-15T10:30:00.000Z",
+            updatedAt: "2025-01-15T10:30:00.000Z",
+          },
+        ],
+        lastUpdated: "2025-01-15T10:30:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.parse(completeFile);
+      expect(result).toEqual(completeFile);
+    });
+
+    it("should accept file with extra unknown fields (passthrough)", () => {
+      const fileWithExtras = {
+        roles: [],
+        futureField: "new feature",
+        metadata: { custom: "data" },
+      };
+
+      const result = persistedRolesSettingsSchema.parse(fileWithExtras);
+      expect(result.futureField).toBe("new feature");
+      expect(result.metadata).toEqual({ custom: "data" });
+    });
+  });
+
+  describe("schema version validation", () => {
+    it("should default to current version", () => {
+      const result = persistedRolesSettingsSchema.parse({ roles: [] });
+      expect(result.schemaVersion).toBe("1.0.0");
+    });
+
+    it("should accept custom version strings", () => {
+      const result = persistedRolesSettingsSchema.parse({
+        schemaVersion: "2.0.0-beta",
+        roles: [],
+      });
+      expect(result.schemaVersion).toBe("2.0.0-beta");
+    });
+
+    it("should reject empty version strings", () => {
+      expect(() => {
+        persistedRolesSettingsSchema.parse({
+          schemaVersion: "",
+          roles: [],
+        });
+      }).toThrow("Schema version cannot be empty");
+    });
+
+    it("should reject non-string version", () => {
+      expect(() => {
+        persistedRolesSettingsSchema.parse({
+          schemaVersion: 1.0,
+          roles: [],
+        });
+      }).toThrow("Schema version must be a string");
+    });
+  });
+
+  describe("roles array validation", () => {
+    it("should default to empty array", () => {
+      const result = persistedRolesSettingsSchema.parse({});
+      expect(result.roles).toEqual([]);
+    });
+
+    it("should validate each role in array", () => {
+      const rolesWithInvalid = [
+        {
+          id: "valid-role",
+          name: "Valid",
+          description: "OK",
+          systemPrompt: "OK",
+        },
+        {
+          id: "", // Invalid - empty ID
+          name: "Invalid",
+          description: "Bad",
+          systemPrompt: "Bad",
+        },
+      ];
+
+      expect(() => {
+        persistedRolesSettingsSchema.parse({ roles: rolesWithInvalid });
+      }).toThrow("Role ID cannot be empty");
+    });
+
+    it("should provide clear error messages for specific array indices", () => {
+      const rolesWithInvalid = [
+        {
+          id: "role-1",
+          name: "Valid Role",
+          description: "OK",
+          systemPrompt: "OK",
+        },
+        {
+          id: "role-2",
+          name: "A".repeat(101), // Invalid - exceeds 100 chars
+          description: "OK",
+          systemPrompt: "OK",
+        },
+      ];
+
+      expect(() => {
+        persistedRolesSettingsSchema.parse({ roles: rolesWithInvalid });
+      }).toThrow("Role name cannot exceed 100 characters");
+    });
+
+    it("should reject non-array roles field", () => {
+      expect(() => {
+        persistedRolesSettingsSchema.parse({ roles: "not-an-array" });
+      }).toThrow("Roles must be an array of role objects");
+    });
+  });
+
+  describe("timestamp validation", () => {
+    it("should generate automatic timestamp", () => {
+      const before = new Date().toISOString();
+      const result = persistedRolesSettingsSchema.parse({ roles: [] });
+      const after = new Date().toISOString();
+
+      expect(new Date(result.lastUpdated).getTime()).toBeGreaterThanOrEqual(
+        new Date(before).getTime(),
+      );
+      expect(new Date(result.lastUpdated).getTime()).toBeLessThanOrEqual(
+        new Date(after).getTime(),
+      );
+    });
+
+    it("should accept custom valid timestamps", () => {
+      const customTimestamp = "2025-01-15T10:30:00.000Z";
+      const result = persistedRolesSettingsSchema.parse({
+        roles: [],
+        lastUpdated: customTimestamp,
+      });
+      expect(result.lastUpdated).toBe(customTimestamp);
+    });
+
+    it("should reject invalid timestamp formats", () => {
+      expect(() => {
+        persistedRolesSettingsSchema.parse({
+          roles: [],
+          lastUpdated: "not-a-date",
+        });
+      }).toThrow("Last updated must be a valid ISO datetime");
+    });
+  });
+
+  describe("future compatibility", () => {
+    it("should preserve unknown fields", () => {
+      const fileWithFutureFields = {
+        roles: [],
+        experimental: { feature: true },
+        version2Fields: ["field1", "field2"],
+      };
+
+      const result = persistedRolesSettingsSchema.parse(fileWithFutureFields);
+      expect(result.experimental).toEqual({ feature: true });
+      expect(result.version2Fields).toEqual(["field1", "field2"]);
+    });
+
+    it("should handle JSON serialization round-trip", () => {
+      const original = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "role-1",
+            name: "Test Role",
+            description: "Test",
+            systemPrompt: "Test",
+          },
+        ],
+        lastUpdated: "2025-01-15T10:30:00.000Z",
+        customField: "preserved",
+      };
+
+      const json = JSON.stringify(original);
+      const parsed = JSON.parse(json);
+      const result = persistedRolesSettingsSchema.parse(parsed);
+
+      expect(result).toEqual(original);
+    });
+  });
+
+  describe("type inference", () => {
+    it("should properly infer TypeScript types", () => {
+      type InferredType = z.infer<typeof persistedRolesSettingsSchema>;
+
+      const testFile: InferredType = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "test",
+            name: "Test",
+            description: "Test",
+            systemPrompt: "Test",
+          },
+        ],
+        lastUpdated: "2025-01-15T10:30:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.parse(testFile);
+      expect(result).toEqual(testFile);
     });
   });
 });

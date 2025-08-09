@@ -1,6 +1,17 @@
 import { z } from "zod";
 
 /**
+ * Schema version constant for roles configuration.
+ * Used for schema evolution and migration support.
+ */
+export const ROLES_SCHEMA_VERSION = "1.0.0";
+
+/**
+ * Current schema version alias for consistency with application patterns.
+ */
+export const CURRENT_ROLES_SCHEMA_VERSION = ROLES_SCHEMA_VERSION;
+
+/**
  * Zod schema for validating persisted role data.
  *
  * Features:
@@ -47,3 +58,36 @@ export const persistedRoleSchema = z
       .optional(),
   })
   .passthrough(); // Allow unknown fields for schema evolution
+
+/**
+ * Master Zod schema for validating complete roles settings file.
+ *
+ * Features:
+ * - Schema versioning for migration support
+ * - Array of validated role objects
+ * - Automatic timestamp generation
+ * - Schema evolution support with .passthrough()
+ * - Clear error messages for validation failures
+ */
+export const persistedRolesSettingsSchema = z
+  .object({
+    // Schema versioning for migration support
+    schemaVersion: z
+      .string({ message: "Schema version must be a string" })
+      .min(1, "Schema version cannot be empty")
+      .default(CURRENT_ROLES_SCHEMA_VERSION),
+
+    // Array of role configurations
+    roles: z
+      .array(persistedRoleSchema, {
+        message: "Roles must be an array of role objects",
+      })
+      .default([]),
+
+    // Metadata with automatic generation
+    lastUpdated: z
+      .string({ message: "Last updated must be an ISO timestamp string" })
+      .datetime("Last updated must be a valid ISO datetime")
+      .default(() => new Date().toISOString()),
+  })
+  .passthrough(); // Allow unknown fields for future compatibility
