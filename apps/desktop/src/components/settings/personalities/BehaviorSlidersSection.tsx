@@ -174,5 +174,3 @@ export const BehaviorSlidersSection: React.FC<BehaviorSlidersSectionProps> = ({
     </Collapsible>
   );
 };
-
-export default BehaviorSlidersSection;

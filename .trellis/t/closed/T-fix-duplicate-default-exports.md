@@ -1,11 +1,19 @@
 ---
 id: T-fix-duplicate-default-exports
 title: Fix duplicate default exports in personality components
-status: open
+status: done
 priority: high
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/BehaviorSlidersSection.tsx: Removed duplicate default export statement (line 178)
+  apps/desktop/src/components/settings/personalities/BigFiveSliders.tsx: Removed duplicate default export statement (line 130)
+log:
+  - Fixed duplicate default exports in personality components by removing
+    redundant default export statements. Both BehaviorSlidersSection and
+    BigFiveSliders components already had named exports, so the default exports
+    were unnecessary and causing build ambiguity. All imports were already using
+    named exports, so no other code needed to be changed. All quality checks
+    pass and knip no longer reports duplicate export issues.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T17:03:07.739Z
