@@ -16,6 +16,7 @@ export async function createElectronApp(
   const launchArgs = [electronPath];
   if (process.env.CI) {
     launchArgs.push("--no-sandbox");
+    launchArgs.push("--password-store=basic");
   }
 
   let app = (await electron.launch({
