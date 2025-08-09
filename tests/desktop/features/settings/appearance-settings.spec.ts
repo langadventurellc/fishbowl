@@ -1,23 +1,18 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "fs/promises";
 import path from "path";
-import type { ElectronApplication, Page } from "playwright";
-import playwright from "playwright";
 import { fileURLToPath } from "url";
 
-const { _electron: electron } = playwright;
+import {
+  createElectronApp,
+  type TestElectronApplication,
+  type TestWindow,
+} from "../../helpers";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Test helpers interface for type safety
-interface TestHelpers {
-  openSettingsModal: () => void;
-  closeSettingsModal: () => void;
-  isSettingsModalOpen: () => boolean;
-}
-
 test.describe("Feature: Appearance Settings Persistence", () => {
-  let electronApp: ElectronApplication;
-  let window: Page;
+  let electronApp: TestElectronApplication;
+  let window: TestWindow;
   let actualSettingsPath: string; // Where settings are actually saved
 
   test.beforeAll(async () => {
@@ -26,22 +21,9 @@ test.describe("Feature: Appearance Settings Persistence", () => {
       __dirname,
       "../../../../apps/desktop/dist-electron/electron/main.js",
     );
+    electronApp = await createElectronApp(electronPath);
 
-    const launchArgs = [electronPath];
-    if (process.env.CI) {
-      launchArgs.push("--no-sandbox");
-    }
-
-    electronApp = await electron.launch({
-      args: launchArgs,
-      timeout: 30000,
-      env: {
-        ...process.env,
-        NODE_ENV: "test", // Enable test helpers
-      },
-    });
-
-    window = await electronApp.firstWindow();
+    window = electronApp.window;
     await window.waitForLoadState("domcontentloaded");
 
     // Wait for the app to fully initialize
@@ -72,10 +54,8 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
     // Ensure modal is closed before each test
     await window.evaluate(() => {
-      const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-        .__TEST_HELPERS__;
-      if (helpers?.isSettingsModalOpen()) {
-        helpers!.closeSettingsModal();
+      if (window.testHelpers?.isSettingsModalOpen()) {
+        window.testHelpers!.closeSettingsModal();
       }
     });
   });
@@ -84,10 +64,8 @@ test.describe("Feature: Appearance Settings Persistence", () => {
     // Ensure modal is closed first
     try {
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        if (helpers?.isSettingsModalOpen()) {
-          helpers!.closeSettingsModal();
+        if (window.testHelpers?.isSettingsModalOpen()) {
+          window.testHelpers!.closeSettingsModal();
         }
       });
     } catch {
@@ -114,9 +92,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
   const openAppearanceSettings = async () => {
     // Open settings modal
     await window.evaluate(() => {
-      const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-        .__TEST_HELPERS__;
-      helpers!.openSettingsModal();
+      window.testHelpers!.openSettingsModal();
     });
 
     await expect(
@@ -214,9 +190,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
       // Reopen and verify persistence
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.closeSettingsModal();
+        window.testHelpers!.closeSettingsModal();
       });
 
       await openAppearanceSettings();
@@ -257,9 +231,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
       // Reopen and verify persistence
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.closeSettingsModal();
+        window.testHelpers!.closeSettingsModal();
       });
 
       await openAppearanceSettings();
@@ -304,9 +276,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
       // Reopen and verify persistence
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.closeSettingsModal();
+        window.testHelpers!.closeSettingsModal();
       });
 
       await openAppearanceSettings();
@@ -357,9 +327,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
       // Reopen and verify persistence
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.closeSettingsModal();
+        window.testHelpers!.closeSettingsModal();
       });
 
       await openAppearanceSettings();
@@ -394,9 +362,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
       // Reopen and verify persistence
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.closeSettingsModal();
+        window.testHelpers!.closeSettingsModal();
       });
 
       await openAppearanceSettings();

@@ -1,15 +1,17 @@
 import { expect, test } from "@playwright/test";
 import path from "path";
-import type { ElectronApplication, Page } from "playwright";
-import playwright from "playwright";
 import { fileURLToPath } from "url";
 
-const { _electron: electron } = playwright;
+import {
+  createElectronApp,
+  type TestElectronApplication,
+  type TestWindow,
+} from "../helpers";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test.describe("Feature: Application Startup", () => {
-  let electronApp: ElectronApplication;
-  let window: Page;
+  let electronApp: TestElectronApplication;
+  let window: TestWindow;
 
   test.beforeAll(async () => {
     // Given - Fresh application state
@@ -17,20 +19,10 @@ test.describe("Feature: Application Startup", () => {
       __dirname,
       "../../../apps/desktop/dist-electron/electron/main.js",
     );
-
-    // Prepare launch args with no-sandbox for CI
-    const launchArgs = [electronPath];
-    if (process.env.CI) {
-      launchArgs.push("--no-sandbox");
-    }
-
-    electronApp = await electron.launch({
-      args: launchArgs,
-      timeout: 30000,
-    });
+    electronApp = await createElectronApp(electronPath);
 
     // Wait for the first window to be ready
-    window = await electronApp.firstWindow();
+    window = electronApp.window;
     await window.waitForLoadState("domcontentloaded");
   });
 

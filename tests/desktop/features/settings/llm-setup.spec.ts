@@ -2,21 +2,17 @@ import { expect, test } from "@playwright/test";
 import { randomUUID } from "crypto";
 import { readFile, unlink } from "fs/promises";
 import path from "path";
-import type { ElectronApplication, Page } from "playwright";
-import playwright from "playwright";
 import { fileURLToPath } from "url";
+
+import {
+  createElectronApp,
+  type TestElectronApplication,
+  type TestWindow,
+} from "../../helpers";
 // Local type definitions for testing
 type Provider = "openai" | "anthropic";
 
-const { _electron: electron } = playwright;
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-// Test helpers interface matching existing pattern
-interface TestHelpers {
-  openSettingsModal: () => void;
-  closeSettingsModal: () => void;
-  isSettingsModalOpen: () => boolean;
-}
 
 // Test data factory types
 interface MockLlmConfig {
@@ -94,8 +90,8 @@ const cleanupLlmStorage = async (configPath: string, keysPath: string) => {
 };
 
 test.describe("Feature: LLM Setup Configuration", () => {
-  let electronApp: ElectronApplication;
-  let window: Page;
+  let electronApp: TestElectronApplication;
+  let window: TestWindow;
   let userDataPath: string;
   let llmConfigPath: string;
   let secureKeysPath: string;
@@ -106,22 +102,9 @@ test.describe("Feature: LLM Setup Configuration", () => {
       __dirname,
       "../../../../apps/desktop/dist-electron/electron/main.js",
     );
+    electronApp = await createElectronApp(electronPath);
 
-    const launchArgs = [electronPath];
-    if (process.env.CI) {
-      launchArgs.push("--no-sandbox");
-    }
-
-    electronApp = await electron.launch({
-      args: launchArgs,
-      timeout: 30000,
-      env: {
-        ...process.env,
-        NODE_ENV: "test", // Enable test helpers
-      },
-    });
-
-    window = await electronApp.firstWindow();
+    window = electronApp.window;
     await window.waitForLoadState("domcontentloaded");
     await window.waitForLoadState("networkidle");
   });
@@ -166,10 +149,8 @@ test.describe("Feature: LLM Setup Configuration", () => {
     // Ensure modal is closed before each test
     try {
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        if (helpers?.isSettingsModalOpen()) {
-          helpers!.closeSettingsModal();
+        if (window.testHelpers?.isSettingsModalOpen()) {
+          window.testHelpers!.closeSettingsModal();
         }
       });
 
@@ -194,10 +175,8 @@ test.describe("Feature: LLM Setup Configuration", () => {
     // Ensure modal is closed
     try {
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        if (helpers?.isSettingsModalOpen()) {
-          helpers!.closeSettingsModal();
+        if (window.testHelpers?.isSettingsModalOpen()) {
+          window.testHelpers!.closeSettingsModal();
         }
       });
 
@@ -240,7 +219,6 @@ test.describe("Feature: LLM Setup Configuration", () => {
     }
 
     // Force application to reload and detect changes
-    await window.reload();
     await window.waitForLoadState("domcontentloaded");
     await window.waitForLoadState("networkidle");
     await window.waitForTimeout(500);
@@ -248,10 +226,8 @@ test.describe("Feature: LLM Setup Configuration", () => {
     // Close any open modals
     try {
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        if (helpers?.isSettingsModalOpen()) {
-          helpers!.closeSettingsModal();
+        if (window.testHelpers?.isSettingsModalOpen()) {
+          window.testHelpers!.closeSettingsModal();
         }
       });
 
@@ -277,10 +253,8 @@ test.describe("Feature: LLM Setup Configuration", () => {
     // Ensure no modals are open before starting
     try {
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        if (helpers?.isSettingsModalOpen()) {
-          helpers!.closeSettingsModal();
+        if (window.testHelpers?.isSettingsModalOpen()) {
+          window.testHelpers!.closeSettingsModal();
         }
       });
 
@@ -299,9 +273,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
     // Open settings modal
     await window.evaluate(() => {
-      const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-        .__TEST_HELPERS__;
-      helpers!.openSettingsModal();
+      window.testHelpers!.openSettingsModal();
     });
 
     // Wait for settings modal to be fully visible and stable
@@ -2361,7 +2333,6 @@ test.describe("Feature: LLM Setup Configuration", () => {
       await expect(configCard).not.toContainText("Config A");
 
       // Reload page simulation and verify persistence
-      await window.reload();
       await window.waitForLoadState("domcontentloaded");
       await window.waitForLoadState("networkidle");
 

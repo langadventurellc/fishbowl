@@ -1,23 +1,19 @@
 import { expect, test } from "@playwright/test";
 import { readFile } from "fs/promises";
 import path from "path";
-import type { ElectronApplication, Page } from "playwright";
-import playwright from "playwright";
 import { fileURLToPath } from "url";
 
-const { _electron: electron } = playwright;
+import {
+  createElectronApp,
+  type TestElectronApplication,
+  type TestWindow,
+} from "../../helpers";
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Test helpers interface for type safety
-interface TestHelpers {
-  openSettingsModal: () => void;
-  closeSettingsModal: () => void;
-  isSettingsModalOpen: () => boolean;
-}
-
 test.describe("Feature: General Settings Modal", () => {
-  let electronApp: ElectronApplication;
-  let window: Page;
+  let electronApp: TestElectronApplication;
+  let window: TestWindow;
   let settingsBackupPath: string;
   let originalSettings: string;
   let actualSettingsPath: string; // Where settings are actually saved
@@ -28,22 +24,9 @@ test.describe("Feature: General Settings Modal", () => {
       __dirname,
       "../../../../apps/desktop/dist-electron/electron/main.js",
     );
+    electronApp = await createElectronApp(electronPath);
 
-    const launchArgs = [electronPath];
-    if (process.env.CI) {
-      launchArgs.push("--no-sandbox");
-    }
-
-    electronApp = await electron.launch({
-      args: launchArgs,
-      timeout: 30000,
-      env: {
-        ...process.env,
-        NODE_ENV: "test", // Enable test helpers
-      },
-    });
-
-    window = await electronApp.firstWindow();
+    window = electronApp.window;
     await window.waitForLoadState("domcontentloaded");
 
     // Wait for the app to fully initialize
@@ -78,22 +61,19 @@ test.describe("Feature: General Settings Modal", () => {
 
     // Ensure modal is closed before each test
     await window.evaluate(() => {
-      const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-        .__TEST_HELPERS__;
-      if (helpers?.isSettingsModalOpen()) {
-        helpers!.closeSettingsModal();
+      if (window.testHelpers?.isSettingsModalOpen()) {
+        window.testHelpers!.closeSettingsModal();
       }
     });
+    ``;
   });
 
   test.afterEach(async () => {
     // Ensure modal is closed first
     try {
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        if (helpers?.isSettingsModalOpen()) {
-          helpers!.closeSettingsModal();
+        if (window.testHelpers?.isSettingsModalOpen()) {
+          window.testHelpers!.closeSettingsModal();
         }
       });
     } catch {
@@ -123,17 +103,13 @@ test.describe("Feature: General Settings Modal", () => {
       await window.waitForLoadState("networkidle");
 
       const modalClosed = await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        return !helpers?.isSettingsModalOpen();
+        return !window.testHelpers?.isSettingsModalOpen();
       });
       expect(modalClosed).toBe(true);
 
       // When - Settings modal is opened using test helper
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       // Then - Settings modal appears
@@ -166,9 +142,7 @@ test.describe("Feature: General Settings Modal", () => {
     test("saves changes to JSON file", async () => {
       // Given - Settings modal is open
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -222,9 +196,7 @@ test.describe("Feature: General Settings Modal", () => {
     test("persists saved settings when modal is reopened", async () => {
       // Given - Settings modal is open and changes are made
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -255,9 +227,7 @@ test.describe("Feature: General Settings Modal", () => {
 
       // And - Modal is closed
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.closeSettingsModal();
+        window.testHelpers!.closeSettingsModal();
       });
 
       await expect(
@@ -266,9 +236,7 @@ test.describe("Feature: General Settings Modal", () => {
 
       // And - Modal is reopened
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -285,9 +253,7 @@ test.describe("Feature: General Settings Modal", () => {
     test("discards unsaved changes when modal is closed", async () => {
       // Given - Settings modal is open
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -343,9 +309,7 @@ test.describe("Feature: General Settings Modal", () => {
 
       // When - Modal is reopened
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -360,9 +324,7 @@ test.describe("Feature: General Settings Modal", () => {
     test("discards unsaved changes when modal is closed with X button", async () => {
       // Given - Settings modal is open
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -403,9 +365,7 @@ test.describe("Feature: General Settings Modal", () => {
 
       // When - Modal is reopened
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -421,9 +381,7 @@ test.describe("Feature: General Settings Modal", () => {
     test("handles form state changes correctly", async () => {
       // Given - Settings modal is open
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(
@@ -449,9 +407,7 @@ test.describe("Feature: General Settings Modal", () => {
     test("maintains keyboard navigation and accessibility", async () => {
       // Given - Settings modal is open
       await window.evaluate(() => {
-        const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-          .__TEST_HELPERS__;
-        helpers!.openSettingsModal();
+        window.testHelpers!.openSettingsModal();
       });
 
       await expect(

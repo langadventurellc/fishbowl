@@ -1,44 +1,26 @@
 import { expect, test } from "@playwright/test";
 import path from "path";
-import type { ElectronApplication, Page } from "playwright";
-import playwright from "playwright";
 import { fileURLToPath } from "url";
 
-const { _electron: electron } = playwright;
+import {
+  createElectronApp,
+  type TestElectronApplication,
+  type TestWindow,
+} from "../../helpers";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Test helpers interface for type safety
-interface TestHelpers {
-  openSettingsModal: () => void;
-  closeSettingsModal: () => void;
-  isSettingsModalOpen: () => boolean;
-}
-
 test.describe("Simple Modal Test", () => {
-  let electronApp: ElectronApplication;
-  let window: Page;
+  let electronApp: TestElectronApplication;
+  let window: TestWindow;
 
   test.beforeAll(async () => {
     const electronPath = path.join(
       __dirname,
       "../../../../apps/desktop/dist-electron/electron/main.js",
     );
+    electronApp = await createElectronApp(electronPath);
 
-    const launchArgs = [electronPath];
-    if (process.env.CI) {
-      launchArgs.push("--no-sandbox");
-    }
-
-    electronApp = await electron.launch({
-      args: launchArgs,
-      timeout: 30000,
-      env: {
-        ...process.env,
-        NODE_ENV: "test",
-      },
-    });
-
-    window = await electronApp.firstWindow();
+    window = electronApp.window;
     await window.waitForLoadState("domcontentloaded");
     await window.waitForLoadState("networkidle");
   });
@@ -52,9 +34,7 @@ test.describe("Simple Modal Test", () => {
   test("should open settings modal", async () => {
     // Open the modal
     await window.evaluate(() => {
-      const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-        .__TEST_HELPERS__;
-      helpers!.openSettingsModal();
+      window.testHelpers!.openSettingsModal();
     });
 
     // Check if modal appears
@@ -67,9 +47,7 @@ test.describe("Simple Modal Test", () => {
 
     // Close the modal
     await window.evaluate(() => {
-      const helpers = (window as { __TEST_HELPERS__?: TestHelpers })
-        .__TEST_HELPERS__;
-      helpers!.closeSettingsModal();
+      window.testHelpers!.closeSettingsModal();
     });
 
     // Verify modal is closed
