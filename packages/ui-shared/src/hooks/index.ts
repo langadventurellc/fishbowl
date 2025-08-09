@@ -4,11 +4,7 @@
  */
 
 export { useAgentSearch } from "./useAgentSearch";
-export {
-  useCustomRoleActions,
-  useCustomRoleById,
-  useCustomRoles,
-} from "./useCustomRoles";
+export { useRoleActions, useRoleById, useRoles } from "./useRoles";
 export { useEnhancedTabNavigation } from "./useEnhancedTabNavigation/useEnhancedTabNavigation";
 export { useSettingsMapper } from "./useSettingsMapper";
 export type { UseSettingsMapperReturn } from "./UseSettingsMapperReturn";

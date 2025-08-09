@@ -17,7 +17,7 @@ import {
   roleSchema,
   useUnsavedChanges,
   type CreateRoleFormProps,
-  type CustomRoleViewModel,
+  type RoleViewModel,
   type RoleFormData,
 } from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -97,7 +97,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
 
   const currentRoleId =
     isEditMode && initialData
-      ? (initialData as CustomRoleViewModel & { id?: string }).id
+      ? (initialData as RoleViewModel & { id?: string }).id
       : undefined;
 
   return (

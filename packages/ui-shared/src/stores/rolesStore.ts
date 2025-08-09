@@ -1,17 +1,17 @@
 /**
- * Zustand store for custom roles management with CRUD operations.
+ * Zustand store for roles management with CRUD operations.
  *
- * Provides reactive state management for custom user-created roles with
+ * Provides reactive state management for user-created roles with
  * comprehensive validation, error handling, and persistence integration.
  *
- * @module stores/customRolesStore
+ * @module stores/rolesStore
  */
 
 import { create } from "zustand";
 import { roleSchema } from "../schemas/roleSchema";
-import { CustomRoleViewModel } from "../types/settings/CustomRoleViewModel";
+import { RoleViewModel } from "../types/settings/RoleViewModel";
 import { RoleFormData } from "../types/settings/RoleFormData";
-import { customRolesPersistence } from "./customRolesPersistence";
+import { rolesPersistence } from "./rolesPersistence";
 
 // Generate unique ID using crypto API or fallback
 const generateId = (): string => {
@@ -21,17 +21,17 @@ const generateId = (): string => {
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
-interface CustomRolesState {
-  roles: CustomRoleViewModel[];
+interface RolesState {
+  roles: RoleViewModel[];
   isLoading: boolean;
   error: string | null;
 }
 
-interface CustomRolesActions {
+interface RolesActions {
   createRole: (roleData: RoleFormData) => string;
   updateRole: (id: string, roleData: RoleFormData) => void;
   deleteRole: (id: string) => void;
-  getRoleById: (id: string) => CustomRoleViewModel | undefined;
+  getRoleById: (id: string) => RoleViewModel | undefined;
   isRoleNameUnique: (name: string, excludeId?: string) => boolean;
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
@@ -40,9 +40,9 @@ interface CustomRolesActions {
   saveRoles: () => Promise<void>;
 }
 
-type CustomRolesStore = CustomRolesState & CustomRolesActions;
+type RolesStore = RolesState & RolesActions;
 
-export const useCustomRolesStore = create<CustomRolesStore>()((set, get) => ({
+export const useRolesStore = create<RolesStore>()((set, get) => ({
   roles: [],
   isLoading: false,
   error: null,
@@ -60,7 +60,7 @@ export const useCustomRolesStore = create<CustomRolesStore>()((set, get) => ({
         return "";
       }
 
-      const newRole: CustomRoleViewModel = {
+      const newRole: RoleViewModel = {
         id: generateId(),
         ...validatedData,
         createdAt: new Date().toISOString(),
@@ -166,7 +166,7 @@ export const useCustomRolesStore = create<CustomRolesStore>()((set, get) => ({
   loadRoles: async () => {
     try {
       set({ isLoading: true, error: null });
-      const loadedRoles = await customRolesPersistence.load();
+      const loadedRoles = await rolesPersistence.load();
       set({ roles: loadedRoles, isLoading: false });
     } catch (error) {
       const errorMessage =
@@ -178,7 +178,7 @@ export const useCustomRolesStore = create<CustomRolesStore>()((set, get) => ({
   saveRoles: async () => {
     try {
       const { roles } = get();
-      await customRolesPersistence.save(roles);
+      await rolesPersistence.save(roles);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : "Failed to save roles";
@@ -188,4 +188,4 @@ export const useCustomRolesStore = create<CustomRolesStore>()((set, get) => ({
 }));
 
 // Initialize store by loading existing roles
-useCustomRolesStore.getState().loadRoles();
+useRolesStore.getState().loadRoles();

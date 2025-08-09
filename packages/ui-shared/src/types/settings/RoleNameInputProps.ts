@@ -7,12 +7,12 @@
  * @module types/ui/components/RoleNameInputProps
  */
 
-import type { CustomRoleViewModel } from "./CustomRoleViewModel";
+import type { RoleViewModel } from "./RoleViewModel";
 
 export interface RoleNameInputProps {
   value: string;
   onChange: (value: string) => void;
-  existingRoles?: CustomRoleViewModel[];
+  existingRoles?: RoleViewModel[];
   currentRoleId?: string; // For edit mode exclusion
   disabled?: boolean;
   className?: string;

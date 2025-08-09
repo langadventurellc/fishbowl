@@ -1,9 +1,9 @@
-import type { CustomRoleViewModel } from "@fishbowl-ai/ui-shared";
+import type { RoleViewModel } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { CustomRoleListItem } from "../CustomRoleListItem";
+import { RoleListItem } from "../RoleListItem";
 
-const mockRole: CustomRoleViewModel = {
+const mockRole: RoleViewModel = {
   id: "test-role-1",
   name: "Test Developer",
   description:
@@ -18,13 +18,13 @@ const defaultProps = {
   onDelete: jest.fn(),
 };
 
-describe("CustomRoleListItem Component", () => {
+describe("RoleListItem Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it("renders role name prominently", () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     const nameElement = screen.getByText("Test Developer");
     expect(nameElement).toBeInTheDocument();
@@ -32,7 +32,7 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("truncates long descriptions at word boundaries", () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     const descriptionElement = screen.getByText(
       /A role for testing development scenarios/,
@@ -42,7 +42,7 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("renders edit and delete buttons with proper accessibility", () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     const editButton = screen.getByLabelText("Edit Test Developer role");
     const deleteButton = screen.getByLabelText("Delete Test Developer role");
@@ -55,7 +55,7 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("calls onEdit when edit button is clicked", async () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     const editButton = screen.getByLabelText("Edit Test Developer role");
     fireEvent.click(editButton);
@@ -67,7 +67,7 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("calls onDelete when delete button is clicked", async () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     const deleteButton = screen.getByLabelText("Delete Test Developer role");
     fireEvent.click(deleteButton);
@@ -85,7 +85,7 @@ describe("CustomRoleListItem Component", () => {
         () => new Promise((resolve) => setTimeout(resolve, 50)),
       );
 
-    render(<CustomRoleListItem {...defaultProps} onEdit={slowOnEdit} />);
+    render(<RoleListItem {...defaultProps} onEdit={slowOnEdit} />);
 
     const editButton = screen.getByLabelText("Edit Test Developer role");
 
@@ -99,7 +99,7 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("applies hover effects with transition classes", () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     // Check that the card has hover classes applied (we can't easily test the actual hover state)
     const roleNameElement = screen.getByText("Test Developer");
@@ -110,14 +110,12 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("handles short descriptions without truncation", () => {
-    const shortDescriptionRole: CustomRoleViewModel = {
+    const shortDescriptionRole: RoleViewModel = {
       ...mockRole,
       description: "Short description",
     };
 
-    render(
-      <CustomRoleListItem {...defaultProps} role={shortDescriptionRole} />,
-    );
+    render(<RoleListItem {...defaultProps} role={shortDescriptionRole} />);
 
     const descriptionElement = screen.getByText("Short description");
     expect(descriptionElement).toBeInTheDocument();
@@ -125,12 +123,12 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("maintains proper layout with long role names", () => {
-    const longNameRole: CustomRoleViewModel = {
+    const longNameRole: RoleViewModel = {
       ...mockRole,
       name: "A Very Long Role Name That Might Wrap to Multiple Lines",
     };
 
-    render(<CustomRoleListItem {...defaultProps} role={longNameRole} />);
+    render(<RoleListItem {...defaultProps} role={longNameRole} />);
 
     const nameElement = screen.getByText(
       "A Very Long Role Name That Might Wrap to Multiple Lines",
@@ -140,7 +138,7 @@ describe("CustomRoleListItem Component", () => {
 
   it("applies custom className when provided", () => {
     const customClass = "custom-test-class";
-    render(<CustomRoleListItem {...defaultProps} className={customClass} />);
+    render(<RoleListItem {...defaultProps} className={customClass} />);
 
     const roleNameElement = screen.getByText("Test Developer");
     const cardContainer = roleNameElement.closest(`div.${customClass}`);
@@ -148,14 +146,14 @@ describe("CustomRoleListItem Component", () => {
   });
 
   it("displays delete button with destructive styling", () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     const deleteButton = screen.getByLabelText("Delete Test Developer role");
     expect(deleteButton).toHaveClass("text-destructive");
   });
 
   it("shows both icon and text in buttons", () => {
-    render(<CustomRoleListItem {...defaultProps} />);
+    render(<RoleListItem {...defaultProps} />);
 
     const editButton = screen.getByLabelText("Edit Test Developer role");
     const deleteButton = screen.getByLabelText("Delete Test Developer role");

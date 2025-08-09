@@ -57,6 +57,7 @@
   },
   "packageManager": "pnpm@10.13.1",
   "devDependencies": {
+    "@fishbowl-ai/eslint-config": "workspace:*",
     "@langadventurellc/tsla-linter": "^2.1.2",
     "@types/node": "^24.0.15",
     "eslint": "^9.31.0",

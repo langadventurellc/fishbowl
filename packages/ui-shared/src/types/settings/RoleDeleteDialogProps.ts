@@ -4,12 +4,12 @@
  * @module types/ui/components/RoleDeleteDialogProps
  */
 
-import type { CustomRoleViewModel } from "./CustomRoleViewModel";
+import type { RoleViewModel } from "./RoleViewModel";
 
 export interface RoleDeleteDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  role: CustomRoleViewModel | null;
-  onConfirm: (role: CustomRoleViewModel) => void;
+  role: RoleViewModel | null;
+  onConfirm: (role: RoleViewModel) => void;
   isLoading?: boolean;
 }

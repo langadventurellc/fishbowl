@@ -128,12 +128,6 @@ jest.mock("../../../adapters/desktopSettingsAdapter", () => ({
   },
 }));
 
-// Mock form error display
-jest.mock("../FormErrorDisplay", () => ({
-  FormErrorDisplay: ({ error }: { error: string | null }) =>
-    error ? <div data-testid="form-error">{error}</div> : null,
-}));
-
 describe("AppearanceSettings Component", () => {
   const renderWithProvider = (ui: React.ReactElement) => {
     return render(<SettingsProvider>{ui}</SettingsProvider>);

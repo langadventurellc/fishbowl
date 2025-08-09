@@ -1,17 +1,17 @@
-import { randomUUID } from "crypto";
 import {
   createLoggerSync,
   type LlmConfig,
   type LlmConfigInput,
   type LlmConfigMetadata,
 } from "@fishbowl-ai/shared";
-import { LlmStorageService } from "./LlmStorageService";
+import { randomUUID } from "crypto";
 import type { LlmConfigServiceInterface } from "./LlmConfigServiceInterface";
+import { LlmStorageService } from "./LlmStorageService";
 import {
-  DuplicateConfigError,
   ConfigNotFoundError,
-  InvalidConfigError,
   ConfigOperationError,
+  DuplicateConfigError,
+  InvalidConfigError,
 } from "./errors";
 
 /**
@@ -484,6 +484,3 @@ export class LlmConfigService implements LlmConfigServiceInterface {
     };
   }
 }
-
-// Export singleton instance
-export const llmConfigService = new LlmConfigService();

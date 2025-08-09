@@ -126,5 +126,3 @@ export const BigFiveSliders: React.FC<BigFiveSlidersProps> = ({
     </div>
   );
 };
-
-export default BigFiveSliders;

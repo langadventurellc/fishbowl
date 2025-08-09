@@ -4,3 +4,5 @@
  */
 
 export { PREDEFINED_ROLES, PREDEFINED_ROLES_MAP } from "./predefinedRoles";
+export { SAMPLE_ROLES } from "./sampleRoles";
+export { SAMPLE_ROLE_CATEGORIES } from "./sampleRoleCategories";

@@ -179,25 +179,3 @@ export const COMMON_FOCUS_CLASSES = {
    */
   transition: "transition-all duration-200 ease-in-out",
 } as const;
-
-/**
- * Validation helper to ensure focus classes meet accessibility requirements.
- * Used in development to verify focus implementation compliance.
- *
- * @param element - DOM element to validate
- * @returns Validation result with recommendations
- */
-export const validateFocusIndicator = (element: HTMLElement) => {
-  if (process.env.NODE_ENV !== "development") return null;
-
-  const computedStyle = window.getComputedStyle(element, ":focus-visible");
-  const ringWidth = computedStyle.getPropertyValue("--tw-ring-width");
-
-  return {
-    hasRing: ringWidth && parseFloat(ringWidth) >= 2,
-    recommendation:
-      parseFloat(ringWidth) < 2
-        ? "Focus ring should be at least 2px for WCAG compliance"
-        : "Focus indicator meets accessibility requirements",
-  };
-};

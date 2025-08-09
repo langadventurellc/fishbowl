@@ -1,16 +1,16 @@
 /**
- * Persistence layer for custom roles data.
+ * Persistence layer for roles data.
  *
- * Handles saving/loading custom roles to/from localStorage with error recovery,
+ * Handles saving/loading roles to/from localStorage with error recovery,
  * data migration, and version compatibility.
  *
- * @module stores/customRolesPersistence
+ * @module stores/rolesPersistence
  */
 
-import { CustomRoleViewModel } from "../types/settings/CustomRoleViewModel";
+import { RoleViewModel } from "../types/settings/RoleViewModel";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 
-const STORAGE_KEY = "fishbowl-custom-roles";
+const STORAGE_KEY = "fishbowl-roles";
 const STORAGE_VERSION = "1.0";
 
 // Lazy logger creation to avoid process access in browser context
@@ -19,7 +19,7 @@ const getLogger = () => {
   if (!logger) {
     try {
       logger = createLoggerSync({
-        context: { metadata: { component: "customRolesPersistence" } },
+        context: { metadata: { component: "rolesPersistence" } },
       });
     } catch {
       // Fallback to console in browser contexts where logger creation fails
@@ -34,12 +34,12 @@ const getLogger = () => {
 
 interface StorageData {
   version: string;
-  roles: CustomRoleViewModel[];
+  roles: RoleViewModel[];
   lastModified: string;
 }
 
-export const customRolesPersistence = {
-  async save(roles: CustomRoleViewModel[]): Promise<void> {
+export const rolesPersistence = {
+  async save(roles: RoleViewModel[]): Promise<void> {
     try {
       const storageData: StorageData = {
         version: STORAGE_VERSION,
@@ -49,12 +49,12 @@ export const customRolesPersistence = {
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(storageData));
     } catch (error) {
-      getLogger().error("Failed to save custom roles", error as Error);
-      throw new Error("Unable to save custom roles to storage");
+      getLogger().error("Failed to save roles", error as Error);
+      throw new Error("Unable to save roles to storage");
     }
   },
 
-  async load(): Promise<CustomRoleViewModel[]> {
+  async load(): Promise<RoleViewModel[]> {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
 
@@ -67,7 +67,7 @@ export const customRolesPersistence = {
       // Handle version migration if needed
       if (parsedData.version !== STORAGE_VERSION) {
         getLogger().warn(
-          `Custom roles data version mismatch. Expected ${STORAGE_VERSION}, got ${parsedData.version}`,
+          `Roles data version mismatch. Expected ${STORAGE_VERSION}, got ${parsedData.version}`,
         );
         // Perform migration logic here if needed in the future
       }
@@ -79,7 +79,7 @@ export const customRolesPersistence = {
 
       return parsedData.roles;
     } catch (error) {
-      getLogger().error("Failed to load custom roles", error as Error);
+      getLogger().error("Failed to load roles", error as Error);
 
       // Return empty array on error but don't throw to prevent app crashes
       return [];
@@ -90,8 +90,8 @@ export const customRolesPersistence = {
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch (error) {
-      getLogger().error("Failed to clear custom roles", error as Error);
-      throw new Error("Unable to clear custom roles storage");
+      getLogger().error("Failed to clear roles", error as Error);
+      throw new Error("Unable to clear roles storage");
     }
   },
 };
