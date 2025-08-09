@@ -5,6 +5,7 @@ import type {
   StorageResult,
 } from "../../types/llmConfig";
 import type { LlmConfigRepositoryInterface } from "./LlmConfigRepositoryInterface";
+import type { LlmConfigStorageInterface } from "./LlmConfigStorageInterface";
 import { llmConfigInputSchema } from "../../types/llmConfig";
 import { FileStorageService } from "../../services/storage/FileStorageService";
 import type { SecureStorageInterface } from "../../services/storage/SecureStorageInterface";
@@ -19,7 +20,9 @@ import { generateId } from "../../utils/generateId";
  * providing a unified interface for all LLM configuration operations.
  * Follows the repository pattern established by SettingsRepository.
  */
-export class LlmConfigRepository implements LlmConfigRepositoryInterface {
+export class LlmConfigRepository
+  implements LlmConfigRepositoryInterface, LlmConfigStorageInterface
+{
   private static readonly DEFAULT_CONFIG_FILE_NAME = "llm_config.json";
   private readonly configFilePath: string;
   private readonly keyPrefix = "llm_api_key_";
