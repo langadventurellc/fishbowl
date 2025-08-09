@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@fishbowl-ai/shared": "workspace:*",
-    "@fishbowl-ai/ui-theme": "workspace:*",
     "zod": "^4.0.5",
     "zustand": "^5.0.6"
   },

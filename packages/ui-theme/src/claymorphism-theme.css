@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -27,25 +26,29 @@
 /* Light Theme Variables - Fully compatible with shadcn/ui */
 :root {
   /* Core theme colors used by shadcn/ui components */
-  --background: rgb(231, 229, 228);           /* Page background */
-  --foreground: rgb(30, 41, 59);              /* Primary text */
-  --card: rgb(245, 245, 244);                 /* Card backgrounds */
-  --card-foreground: rgb(30, 41, 59);         /* Card text */
-  --popover: rgb(245, 245, 244);              /* Popover/dropdown backgrounds */
-  --popover-foreground: rgb(30, 41, 59);      /* Popover text */
-  --primary: rgb(99, 102, 241);               /* Primary brand color */
-  --primary-foreground: rgb(255, 255, 255);   /* Text on primary background */
-  --secondary: rgb(214, 211, 209);            /* Secondary backgrounds */
-  --secondary-foreground: rgb(75, 85, 99);    /* Text on secondary background */
-  --muted: rgb(231, 229, 228);                /* Muted backgrounds */
-  --muted-foreground: rgb(107, 114, 128);     /* Muted text */
-  --accent: rgb(214, 211, 209);               /* Accent color */
-  --accent-foreground: rgb(55, 65, 81);       /* Text on accent background */
-  --destructive: rgb(239, 68, 68);            /* Error/danger color */
-  --destructive-foreground: rgb(255, 255, 255); /* Text on destructive background */
-  --border: rgb(214, 211, 209);               /* Border color */
-  --input: rgb(214, 211, 209);                /* Input field backgrounds */
-  --ring: rgb(99, 102, 241);                  /* Focus ring color */
+  --background: rgb(231, 229, 228); /* Page background */
+  --foreground: rgb(30, 41, 59); /* Primary text */
+  --card: rgb(245, 245, 244); /* Card backgrounds */
+  --card-foreground: rgb(30, 41, 59); /* Card text */
+  --popover: rgb(245, 245, 244); /* Popover/dropdown backgrounds */
+  --popover-foreground: rgb(30, 41, 59); /* Popover text */
+  --primary: rgb(99, 102, 241); /* Primary brand color */
+  --primary-foreground: rgb(255, 255, 255); /* Text on primary background */
+  --secondary: rgb(214, 211, 209); /* Secondary backgrounds */
+  --secondary-foreground: rgb(75, 85, 99); /* Text on secondary background */
+  --muted: rgb(231, 229, 228); /* Muted backgrounds */
+  --muted-foreground: rgb(107, 114, 128); /* Muted text */
+  --accent: rgb(214, 211, 209); /* Accent color */
+  --accent-foreground: rgb(55, 65, 81); /* Text on accent background */
+  --destructive: rgb(239, 68, 68); /* Error/danger color */
+  --destructive-foreground: rgb(
+    255,
+    255,
+    255
+  ); /* Text on destructive background */
+  --border: rgb(214, 211, 209); /* Border color */
+  --input: rgb(214, 211, 209); /* Input field backgrounds */
+  --ring: rgb(99, 102, 241); /* Focus ring color */
 
   /* Chart colors for shadcn/ui chart components */
   --chart-1: rgb(99, 102, 241);
@@ -75,11 +78,21 @@
   /* Shadow system for depth and elevation */
   --shadow-2xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
   --shadow-xs: 2px 2px 10px 4px hsl(240 4% 60% / 0.09);
-  --shadow-sm: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
-  --shadow: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 1px 2px 3px hsl(240 4% 60% / 0.18);
-  --shadow-md: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 2px 4px 3px hsl(240 4% 60% / 0.18);
-  --shadow-lg: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 4px 6px 3px hsl(240 4% 60% / 0.18);
-  --shadow-xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.18), 2px 8px 10px 3px hsl(240 4% 60% / 0.18);
+  --shadow-sm:
+    2px 2px 10px 4px hsl(240 4% 60% / 0.18),
+    2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+  --shadow:
+    2px 2px 10px 4px hsl(240 4% 60% / 0.18),
+    2px 1px 2px 3px hsl(240 4% 60% / 0.18);
+  --shadow-md:
+    2px 2px 10px 4px hsl(240 4% 60% / 0.18),
+    2px 2px 4px 3px hsl(240 4% 60% / 0.18);
+  --shadow-lg:
+    2px 2px 10px 4px hsl(240 4% 60% / 0.18),
+    2px 4px 6px 3px hsl(240 4% 60% / 0.18);
+  --shadow-xl:
+    2px 2px 10px 4px hsl(240 4% 60% / 0.18),
+    2px 8px 10px 3px hsl(240 4% 60% / 0.18);
   --shadow-2xl: 2px 2px 10px 4px hsl(240 4% 60% / 0.45);
 
   /* Layout and spacing */
@@ -90,25 +103,33 @@
 /* Dark Theme Variables - Automatic shadcn/ui dark mode support */
 .dark {
   /* Core theme colors for dark mode */
-  --background: rgb(30, 27, 24);              /* Dark page background */
-  --foreground: rgb(226, 232, 240);           /* Light text on dark background */
-  --card: rgb(44, 40, 37);                    /* Dark card backgrounds */
-  --card-foreground: rgb(226, 232, 240);      /* Light text on dark cards */
-  --popover: rgb(44, 40, 37);                 /* Dark popover backgrounds */
-  --popover-foreground: rgb(226, 232, 240);   /* Light text on dark popovers */
-  --primary: rgb(129, 140, 248);              /* Adjusted primary for dark mode */
-  --primary-foreground: rgb(30, 27, 24);      /* Dark text on primary background */
-  --secondary: rgb(58, 54, 51);               /* Dark secondary backgrounds */
-  --secondary-foreground: rgb(209, 213, 219); /* Light text on secondary background */
-  --muted: rgb(44, 40, 37);                   /* Dark muted backgrounds */
-  --muted-foreground: rgb(156, 163, 175);     /* Muted text for dark mode */
-  --accent: rgb(72, 68, 65);                  /* Dark accent color */
-  --accent-foreground: rgb(209, 213, 219);    /* Light text on accent background */
-  --destructive: rgb(239, 68, 68);            /* Error color (consistent) */
-  --destructive-foreground: rgb(30, 27, 24);  /* Dark text on destructive background */
-  --border: rgb(58, 54, 51);                  /* Dark border color */
-  --input: rgb(58, 54, 51);                   /* Dark input backgrounds */
-  --ring: rgb(129, 140, 248);                 /* Focus ring for dark mode */
+  --background: rgb(30, 27, 24); /* Dark page background */
+  --foreground: rgb(226, 232, 240); /* Light text on dark background */
+  --card: rgb(44, 40, 37); /* Dark card backgrounds */
+  --card-foreground: rgb(226, 232, 240); /* Light text on dark cards */
+  --popover: rgb(44, 40, 37); /* Dark popover backgrounds */
+  --popover-foreground: rgb(226, 232, 240); /* Light text on dark popovers */
+  --primary: rgb(129, 140, 248); /* Adjusted primary for dark mode */
+  --primary-foreground: rgb(30, 27, 24); /* Dark text on primary background */
+  --secondary: rgb(58, 54, 51); /* Dark secondary backgrounds */
+  --secondary-foreground: rgb(
+    209,
+    213,
+    219
+  ); /* Light text on secondary background */
+  --muted: rgb(44, 40, 37); /* Dark muted backgrounds */
+  --muted-foreground: rgb(156, 163, 175); /* Muted text for dark mode */
+  --accent: rgb(72, 68, 65); /* Dark accent color */
+  --accent-foreground: rgb(209, 213, 219); /* Light text on accent background */
+  --destructive: rgb(239, 68, 68); /* Error color (consistent) */
+  --destructive-foreground: rgb(
+    30,
+    27,
+    24
+  ); /* Dark text on destructive background */
+  --border: rgb(58, 54, 51); /* Dark border color */
+  --input: rgb(58, 54, 51); /* Dark input backgrounds */
+  --ring: rgb(129, 140, 248); /* Focus ring for dark mode */
 
   /* Chart colors adapted for dark mode */
   --chart-1: rgb(129, 140, 248);
@@ -138,11 +159,16 @@
   /* Dark mode shadow system */
   --shadow-2xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
   --shadow-xs: 2px 2px 10px 4px hsl(0 0% 0% / 0.09);
-  --shadow-sm: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
-  --shadow: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
-  --shadow-md: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 2px 4px 3px hsl(0 0% 0% / 0.18);
-  --shadow-lg: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 4px 6px 3px hsl(0 0% 0% / 0.18);
-  --shadow-xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 8px 10px 3px hsl(0 0% 0% / 0.18);
+  --shadow-sm:
+    2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+  --shadow:
+    2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 1px 2px 3px hsl(0 0% 0% / 0.18);
+  --shadow-md:
+    2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 2px 4px 3px hsl(0 0% 0% / 0.18);
+  --shadow-lg:
+    2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 4px 6px 3px hsl(0 0% 0% / 0.18);
+  --shadow-xl:
+    2px 2px 10px 4px hsl(0 0% 0% / 0.18), 2px 8px 10px 3px hsl(0 0% 0% / 0.18);
   --shadow-2xl: 2px 2px 10px 4px hsl(0 0% 0% / 0.45);
 }
 
@@ -197,55 +223,59 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
-  
+
   /* Custom transition durations for smooth animations */
   --transition-duration-200: 200ms;
   --transition-duration-tab: 200ms;
-  
+
   /* Custom keyframes for tab transitions */
   --keyframes-tab-fade-in: tab-fade-in 200ms ease-out;
   --keyframes-tab-fade-out: tab-fade-out 200ms ease-in;
 
   /* === DESIGN TOKEN INTEGRATION === */
-  
+
   /* Spacing Scale Extensions */
   --spacing-nav-item: var(--dt-nav-item-padding-horizontal);
   --spacing-content-lg: var(--dt-content-padding-desktop);
   --spacing-content-sm: var(--dt-content-padding-mobile);
   --spacing-modal-header: var(--dt-modal-header-padding);
-  
+
   /* Size Scale Extensions */
   --size-nav-item: var(--dt-nav-item-height);
   --size-sub-nav-item: var(--dt-sub-nav-item-height);
   --size-modal-header: var(--dt-modal-header-height);
   --size-modal-footer: var(--dt-modal-footer-height);
   --size-touch-target: var(--dt-touch-target-min);
-  
+
   /* Width Scale Extensions */
   --size-nav-desktop: var(--dt-nav-width-desktop);
   --size-nav-medium: var(--dt-nav-width-medium);
   --size-modal-min: var(--dt-modal-min-width);
   --size-modal-max: var(--dt-modal-max-width);
-  
+
   /* Height Scale Extensions */
   --size-modal-min-h: var(--dt-modal-min-height);
   --size-modal-max-h: var(--dt-modal-max-height);
-  
+
   /* Border Width Extensions */
   --border-width-nav-active: var(--dt-nav-active-border);
   --border-width-nav-sub: var(--dt-nav-sub-active-border);
-  
+
   /* Animation Duration Extensions */
   --animate-duration-fast: var(--dt-animation-fast);
   --animate-duration-normal: var(--dt-animation-normal);
   --animate-duration-slow: var(--dt-animation-slow);
-  
+
   /* Breakpoint Extensions - Integrating Design Token Breakpoints with Tailwind */
-  --breakpoint-sm: 640px;                              /* Tailwind default sm */
-  --breakpoint-md: var(--dt-breakpoint-tablet-min);    /* 768px - Tablet and up */
-  --breakpoint-lg: var(--dt-breakpoint-desktop-min);   /* 1024px - Desktop and up */
-  --breakpoint-xl: var(--dt-breakpoint-wide-min);      /* 1280px - Wide desktop and up */
-  --breakpoint-2xl: 1536px;                            /* Tailwind default 2xl */
+  --breakpoint-sm: 640px; /* Tailwind default sm */
+  --breakpoint-md: var(--dt-breakpoint-tablet-min); /* 768px - Tablet and up */
+  --breakpoint-lg: var(
+    --dt-breakpoint-desktop-min
+  ); /* 1024px - Desktop and up */
+  --breakpoint-xl: var(
+    --dt-breakpoint-wide-min
+  ); /* 1280px - Wide desktop and up */
+  --breakpoint-2xl: 1536px; /* Tailwind default 2xl */
 }
 
 @layer base {
@@ -255,27 +285,27 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Tab transition keyframes for smooth enter/exit animations */
   @keyframes tab-fade-in {
-    0% { 
-      opacity: 0; 
-      transform: translateY(8px); 
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
     }
-    100% { 
-      opacity: 1; 
-      transform: translateY(0); 
+    100% {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
-  
+
   @keyframes tab-fade-out {
-    0% { 
-      opacity: 1; 
-      transform: translateY(0); 
+    0% {
+      opacity: 1;
+      transform: translateY(0);
     }
-    100% { 
-      opacity: 0; 
-      transform: translateY(-4px); 
+    100% {
+      opacity: 0;
+      transform: translateY(-4px);
     }
   }
 }
