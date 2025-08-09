@@ -1,7 +1,7 @@
 ---
 id: F-roles-persistence-schema-and
 title: Roles Persistence Schema and Types
-status: open
+status: done
 priority: medium
 parent: E-data-foundation-and-schema
 prerequisites: []
