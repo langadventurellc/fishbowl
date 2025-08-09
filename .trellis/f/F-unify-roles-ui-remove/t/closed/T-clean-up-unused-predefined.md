@@ -1,13 +1,25 @@
 ---
 id: T-clean-up-unused-predefined
 title: Clean up unused predefined components and imports
-status: open
+status: done
 priority: medium
 parent: F-unify-roles-ui-remove
 prerequisites:
   - T-refactor-rolessection
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/PredefinedRolesTab.tsx: deleted - unused component after unified roles UI
+  apps/desktop/src/components/settings/roles/PredefinedRoleCard.tsx: deleted - unused component after unified roles UI
+  packages/ui-shared/src/types/settings/PredefinedRoleCardProps.ts: deleted - unused type definition
+  packages/ui-shared/src/types/settings/PredefinedRolesTabProps.ts: deleted - unused type definition
+  packages/ui-shared/src/types/settings/index.ts: removed exports for deleted type definitions
+log:
+  - Successfully cleaned up unused predefined role components and types after
+    RolesSection refactoring. Deleted PredefinedRolesTab and PredefinedRoleCard
+    components along with their associated type definitions. Updated shared
+    package barrel exports to remove deleted types. All quality checks pass and
+    roles section displays correctly with unified SAMPLE_ROLES data. Preserved
+    data infrastructure (predefinedRoles.ts, utilities) for future
+    functionality.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T03:59:08.532Z

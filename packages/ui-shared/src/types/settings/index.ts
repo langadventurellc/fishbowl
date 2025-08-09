@@ -44,8 +44,6 @@ export * from "./PersonalityCardProps";
 export * from "./PersonalityFormData";
 export * from "./PersonalityNameInputProps";
 export * from "./PredefinedRole";
-export * from "./PredefinedRoleCardProps";
-export * from "./PredefinedRolesTabProps";
 export * from "./providers";
 export * from "./RoleCardProps";
 export * from "./RoleDeleteDialogProps";
