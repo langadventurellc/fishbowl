@@ -12,6 +12,7 @@ import {
 } from "@fishbowl-ai/shared";
 import { ZodError } from "zod";
 import { LlmSecureStorage } from "./LlmSecureStorage";
+import { TestSecureStorage } from "./TestSecureStorage";
 
 /**
  * Unified LLM storage service for the Fishbowl desktop application.
@@ -45,8 +46,12 @@ export class LlmStorageService {
       fileSystemBridge,
     );
 
-    // Initialize Electron secure storage for API keys
-    const secureStorage = new LlmSecureStorage();
+    // Initialize secure storage for API keys
+    // Use test storage in CI/test environments to avoid safeStorage issues
+    const secureStorage =
+      process.env.NODE_ENV === "test" || process.env.CI === "true"
+        ? new TestSecureStorage()
+        : new LlmSecureStorage();
 
     // Get configuration file path in userData directory
     const userDataPath = app.getPath("userData");
