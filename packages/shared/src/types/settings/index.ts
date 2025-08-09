@@ -11,6 +11,7 @@ export {
 export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
 export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettings";
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
+export { createDefaultRolesSettings } from "./createDefaultRolesSettings";
 export type { ConversationMode } from "./ConversationMode";
 export { CONVERSATION_MODE_OPTIONS } from "./ConversationMode";
 export type { MessageSpacing } from "./MessageSpacing";
