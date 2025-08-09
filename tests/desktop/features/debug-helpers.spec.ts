@@ -1,37 +1,26 @@
 import { test, expect } from "@playwright/test";
-import playwright from "playwright";
 import path from "path";
 import { fileURLToPath } from "url";
-import type { ElectronApplication, Page } from "playwright";
 
-const { _electron: electron } = playwright;
+import {
+  createElectronApp,
+  type TestElectronApplication,
+  type TestWindow,
+} from "../helpers";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test.describe("Debug: Test Helpers", () => {
-  let electronApp: ElectronApplication;
-  let window: Page;
+  let electronApp: TestElectronApplication;
+  let window: TestWindow;
 
   test.beforeAll(async () => {
     const electronPath = path.join(
       __dirname,
       "../../../apps/desktop/dist-electron/electron/main.js",
     );
+    electronApp = await createElectronApp(electronPath);
 
-    const launchArgs = [electronPath];
-    if (process.env.CI) {
-      launchArgs.push("--no-sandbox");
-    }
-
-    electronApp = await electron.launch({
-      args: launchArgs,
-      timeout: 30000,
-      env: {
-        ...process.env,
-        NODE_ENV: "test", // Ensure test environment
-      },
-    });
-
-    window = await electronApp.firstWindow();
+    window = electronApp.window;
     await window.waitForLoadState("domcontentloaded");
     await window.waitForLoadState("networkidle");
   });

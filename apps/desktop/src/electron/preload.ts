@@ -4,13 +4,30 @@ import type { ElectronAPI } from "../types/electron";
 
 const logger = createLoggerSync({ config: { name: "preload", level: "info" } });
 import { SETTINGS_CHANNELS } from "../shared/ipc/constants";
+import { LLM_CONFIG_CHANNELS } from "../shared/ipc/llmConfigConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
   SettingsSaveResponse,
   SettingsResetResponse,
+  LlmConfigCreateRequest,
+  LlmConfigCreateResponse,
+  LlmConfigReadRequest,
+  LlmConfigReadResponse,
+  LlmConfigUpdateRequest,
+  LlmConfigUpdateResponse,
+  LlmConfigDeleteRequest,
+  LlmConfigDeleteResponse,
+  LlmConfigListResponse,
+  LlmConfigRefreshCacheRequest,
+  LlmConfigRefreshCacheResponse,
 } from "../shared/ipc/index";
-import type { PersistedSettingsData } from "@fishbowl-ai/shared";
+import type {
+  PersistedSettingsData,
+  LlmConfig,
+  LlmConfigInput,
+  LlmConfigMetadata,
+} from "@fishbowl-ai/shared";
 import type { SettingsCategory } from "@fishbowl-ai/ui-shared";
 
 const electronAPI: ElectronAPI = {
@@ -137,6 +154,153 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error setting debug logging:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  llmConfig: {
+    create: async (config: LlmConfigInput): Promise<LlmConfig> => {
+      try {
+        const request: LlmConfigCreateRequest = { config };
+        const response = (await ipcRenderer.invoke(
+          LLM_CONFIG_CHANNELS.CREATE,
+          request,
+        )) as LlmConfigCreateResponse;
+        if (!response.success) {
+          // Handle validation errors with detailed messages
+          if (response.error?.code === "VALIDATION_ERROR") {
+            const validationError = new Error(response.error.message);
+            validationError.name = "ValidationError";
+            throw validationError;
+          }
+
+          throw new Error(
+            response.error?.message || "Failed to create LLM configuration",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error creating LLM configuration:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    read: async (id: string): Promise<LlmConfig | null> => {
+      try {
+        const request: LlmConfigReadRequest = { id };
+        const response = (await ipcRenderer.invoke(
+          LLM_CONFIG_CHANNELS.READ,
+          request,
+        )) as LlmConfigReadResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to read LLM configuration",
+          );
+        }
+        return response.data || null;
+      } catch (error) {
+        logger.error(
+          "Error reading LLM configuration:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    update: async (
+      id: string,
+      updates: Partial<LlmConfigInput>,
+    ): Promise<LlmConfig> => {
+      try {
+        const request: LlmConfigUpdateRequest = { id, updates };
+        const response = (await ipcRenderer.invoke(
+          LLM_CONFIG_CHANNELS.UPDATE,
+          request,
+        )) as LlmConfigUpdateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to update LLM configuration",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error updating LLM configuration:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    delete: async (id: string): Promise<void> => {
+      try {
+        const request: LlmConfigDeleteRequest = { id };
+        const response = (await ipcRenderer.invoke(
+          LLM_CONFIG_CHANNELS.DELETE,
+          request,
+        )) as LlmConfigDeleteResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to delete LLM configuration",
+          );
+        }
+      } catch (error) {
+        logger.error(
+          "Error deleting LLM configuration:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    list: async (): Promise<LlmConfigMetadata[]> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          LLM_CONFIG_CHANNELS.LIST,
+        )) as LlmConfigListResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to list LLM configurations",
+          );
+        }
+        return response.data || [];
+      } catch (error) {
+        logger.error(
+          "Error listing LLM configurations:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    refreshCache: async (): Promise<void> => {
+      try {
+        const request: LlmConfigRefreshCacheRequest = {};
+        const response = (await ipcRenderer.invoke(
+          LLM_CONFIG_CHANNELS.REFRESH_CACHE,
+          request,
+        )) as LlmConfigRefreshCacheResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message ||
+              "Failed to refresh LLM configuration cache",
+          );
+        }
+      } catch (error) {
+        logger.error(
+          "Error refreshing LLM configuration cache:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

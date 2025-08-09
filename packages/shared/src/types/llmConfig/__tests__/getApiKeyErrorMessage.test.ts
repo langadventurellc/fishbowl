@@ -1,0 +1,23 @@
+import { getApiKeyErrorMessage } from "../getApiKeyErrorMessage";
+import type { Provider } from "../Provider";
+
+describe("getApiKeyErrorMessage", () => {
+  it("returns correct error message for OpenAI", () => {
+    const message = getApiKeyErrorMessage("openai");
+    expect(message).toBe(
+      'OpenAI API key must start with "sk-" and be at least 40 characters long',
+    );
+  });
+
+  it("returns correct error message for Anthropic", () => {
+    const message = getApiKeyErrorMessage("anthropic");
+    expect(message).toBe(
+      'Anthropic API key must start with "sk-ant-" and be at least 50 characters long',
+    );
+  });
+
+  it("returns default error message for unknown provider", () => {
+    const message = getApiKeyErrorMessage("unknown" as Provider);
+    expect(message).toBe("Invalid API key format for the selected provider");
+  });
+});

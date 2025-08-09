@@ -9,16 +9,20 @@ echo "🔧 Running pre-completion checks for Trellis task..."
 cd "$(git rev-parse --show-toplevel)"
 
 echo "📝 Running quality checks..."
-if ! pnpm quality; then
+QUALITY_OUTPUT=$(pnpm quality 2>&1)
+if [ $? -ne 0 ]; then
     echo "❌ Quality checks failed - fix issues before completing task" >&2
+    echo "$QUALITY_OUTPUT" | grep -E "(error|warning)" >&2
     exit 2
 fi
 
 echo "✅ Quality checks passed"
 
 echo "🧪 Running tests..."
-if ! pnpm test; then
+TEST_OUTPUT=$(pnpm test 2>&1)
+if [ $? -ne 0 ]; then
     echo "❌ Tests failed - fix issues before completing task" >&2
+    echo "$TEST_OUTPUT" | grep -E "(error|warning|failed|FAIL|Summary of all failing tests|●.*›|Test Suites:.*failed|Failed:)" >&2
     exit 2
 fi
 

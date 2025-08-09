@@ -52,6 +52,54 @@ export interface ElectronAPI {
      */
     setDebugLogging: (enabled: boolean) => Promise<void>;
   };
+  /**
+   * LLM configuration operations for managing AI provider settings.
+   * Provides CRUD operations for LLM configurations with secure API key storage.
+   */
+  llmConfig: {
+    /**
+     * Create a new LLM configuration.
+     * @param config - Configuration input with provider details and API key
+     * @returns Promise resolving to created configuration
+     */
+    create: (
+      config: import("@fishbowl-ai/shared").LlmConfigInput,
+    ) => Promise<import("@fishbowl-ai/shared").LlmConfig>;
+    /**
+     * Read a specific LLM configuration.
+     * @param id - Configuration ID
+     * @returns Promise resolving to configuration or null if not found
+     */
+    read: (
+      id: string,
+    ) => Promise<import("@fishbowl-ai/shared").LlmConfig | null>;
+    /**
+     * Update an existing LLM configuration.
+     * @param id - Configuration ID
+     * @param updates - Partial configuration updates
+     * @returns Promise resolving to updated configuration
+     */
+    update: (
+      id: string,
+      updates: Partial<import("@fishbowl-ai/shared").LlmConfigInput>,
+    ) => Promise<import("@fishbowl-ai/shared").LlmConfig>;
+    /**
+     * Delete an LLM configuration.
+     * @param id - Configuration ID
+     * @returns Promise resolving when deletion is complete
+     */
+    delete: (id: string) => Promise<void>;
+    /**
+     * List all LLM configurations (metadata only, no API keys).
+     * @returns Promise resolving to array of configuration metadata
+     */
+    list: () => Promise<import("@fishbowl-ai/shared").LlmConfigMetadata[]>;
+    /**
+     * Refresh the LLM configuration cache by reloading from storage.
+     * @returns Promise resolving when cache refresh is complete
+     */
+    refreshCache: () => Promise<void>;
+  };
 }
 
 declare global {

@@ -1,0 +1,270 @@
+import { expect, test } from "@playwright/test";
+import { readFile } from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+
+import {
+  createElectronApp,
+  type TestElectronApplication,
+  type TestWindow,
+} from "../../helpers";
+import { openAdvancedSettings } from "../../helpers/openAdvancedSettings";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+test.describe("Feature: Advanced Settings Persistence", () => {
+  let electronApp: TestElectronApplication;
+  let window: TestWindow;
+  let actualSettingsPath: string; // Where settings are actually saved
+
+  test.beforeAll(async () => {
+    // Launch Electron app with test environment
+    const electronPath = path.join(
+      __dirname,
+      "../../../../apps/desktop/dist-electron/electron/main.js",
+    );
+    electronApp = await createElectronApp(electronPath);
+
+    window = electronApp.window;
+    await window.waitForLoadState("domcontentloaded");
+
+    // Wait for the app to fully initialize
+    await window.waitForLoadState("networkidle");
+  });
+
+  test.beforeEach(async () => {
+    // Get the settings file path and delete it to ensure clean state
+    try {
+      const userDataPath = await electronApp.evaluate(async ({ app }) => {
+        return app.getPath("userData");
+      });
+
+      actualSettingsPath = path.join(userDataPath, "preferences.json");
+
+      // Delete the settings file to start each test with a clean state
+      try {
+        const fs = await import("fs/promises");
+        await fs.unlink(actualSettingsPath);
+      } catch {
+        // File might not exist, that's fine
+      }
+    } catch (error) {
+      actualSettingsPath = ""; // Fallback
+      console.warn("Could not setup clean test state:", error);
+    }
+
+    // Ensure modal is closed before each test
+    await window.evaluate(() => {
+      if (window.testHelpers?.isSettingsModalOpen()) {
+        window.testHelpers!.closeSettingsModal();
+      }
+    });
+
+    // Force reload the page to ensure fresh state after file deletion
+    await window.reload();
+    await window.waitForLoadState("domcontentloaded");
+    await window.waitForLoadState("networkidle");
+
+    // Re-inject testHelpers after reload (reload clears JavaScript state)
+    await window.evaluate(() => {
+      // Make __TEST_HELPERS__ also available as testHelpers for cleaner API
+      // @ts-expect-error - Types not available in browser context
+      window.testHelpers = window.__TEST_HELPERS__;
+    });
+  });
+
+  test.afterEach(async () => {
+    // Ensure modal is closed first
+    try {
+      await window.evaluate(() => {
+        if (window.testHelpers?.isSettingsModalOpen()) {
+          window.testHelpers!.closeSettingsModal();
+        }
+      });
+    } catch {
+      // Window might be closed, ignore
+    }
+
+    // Clean up settings file after each test
+    if (actualSettingsPath) {
+      try {
+        const fs = await import("fs/promises");
+        await fs.unlink(actualSettingsPath);
+      } catch {
+        // File might not exist, that's fine
+      }
+    }
+  });
+
+  test.afterAll(async () => {
+    if (electronApp) {
+      await electronApp.close();
+    }
+  });
+
+  test.describe("Scenario: Debug Logging Setting Persistence", () => {
+    test("saves debug logging toggle to preferences file", async () => {
+      await openAdvancedSettings(window);
+
+      // Find debug logging switch using test id
+      const debugLoggingSwitch = window.locator(
+        '[data-testid="debug-logging-switch"]',
+      );
+
+      const initialState = await debugLoggingSwitch.getAttribute("data-state");
+      await debugLoggingSwitch.click();
+
+      // Verify state changed
+      const newState = await debugLoggingSwitch.getAttribute("data-state");
+      expect(newState).not.toBe(initialState);
+
+      // Save changes
+      const saveButton = window.locator('[data-testid="save-button"]');
+      await expect(saveButton).toBeEnabled();
+      await saveButton.click();
+
+      // Wait for save operation to complete
+      await window.waitForTimeout(500);
+
+      // Verify saved to preferences.json
+      if (actualSettingsPath) {
+        const settingsContent = await readFile(actualSettingsPath, "utf-8");
+        const settings = JSON.parse(settingsContent);
+        expect(settings.advanced?.debugLogging).toBe(newState === "checked");
+      }
+
+      // Test persistence by reopening
+      await window.evaluate(() => {
+        window.testHelpers!.closeSettingsModal();
+      });
+
+      await openAdvancedSettings(window);
+      const reopenedSwitch = window.locator(
+        '[data-testid="debug-logging-switch"]',
+      );
+      const reopenedState = await reopenedSwitch.getAttribute("data-state");
+      expect(reopenedState).toBe(newState);
+    });
+  });
+
+  test.describe("Scenario: Experimental Features Setting Persistence", () => {
+    test("saves experimental features toggle to preferences file", async () => {
+      await openAdvancedSettings(window);
+
+      // Find experimental features switch using test id
+      const experimentalSwitch = window.locator(
+        '[data-testid="experimental-features-switch"]',
+      );
+
+      const initialState = await experimentalSwitch.getAttribute("data-state");
+      await experimentalSwitch.click();
+
+      // Verify state changed
+      const newState = await experimentalSwitch.getAttribute("data-state");
+      expect(newState).not.toBe(initialState);
+
+      // Save changes
+      const saveButton = window.locator('[data-testid="save-button"]');
+      await expect(saveButton).toBeEnabled();
+      await saveButton.click();
+
+      // Wait for save operation to complete
+      await window.waitForTimeout(500);
+
+      // Verify saved to preferences.json
+      if (actualSettingsPath) {
+        const settingsContent = await readFile(actualSettingsPath, "utf-8");
+        const settings = JSON.parse(settingsContent);
+        expect(settings.advanced?.experimentalFeatures).toBe(
+          newState === "checked",
+        );
+      }
+
+      // Test persistence by reopening
+      await window.evaluate(() => {
+        window.testHelpers!.closeSettingsModal();
+      });
+
+      await openAdvancedSettings(window);
+      const reopenedSwitch = window.locator(
+        '[data-testid="experimental-features-switch"]',
+      );
+      const reopenedState = await reopenedSwitch.getAttribute("data-state");
+      expect(reopenedState).toBe(newState);
+    });
+  });
+
+  test.describe("Scenario: Multiple Advanced Settings Persistence", () => {
+    test("saves multiple advanced settings to preferences file", async () => {
+      await openAdvancedSettings(window);
+
+      // Get initial states
+      const debugLoggingSwitch = window.locator(
+        '[data-testid="debug-logging-switch"]',
+      );
+      const experimentalSwitch = window.locator(
+        '[data-testid="experimental-features-switch"]',
+      );
+
+      const initialDebugState =
+        await debugLoggingSwitch.getAttribute("data-state");
+      const initialExperimentalState =
+        await experimentalSwitch.getAttribute("data-state");
+
+      // Toggle both switches
+      await debugLoggingSwitch.click();
+      await experimentalSwitch.click();
+
+      // Get new states after toggling
+      const newDebugState = await debugLoggingSwitch.getAttribute("data-state");
+      const newExperimentalState =
+        await experimentalSwitch.getAttribute("data-state");
+
+      // Verify both states changed
+      expect(newDebugState).not.toBe(initialDebugState);
+      expect(newExperimentalState).not.toBe(initialExperimentalState);
+
+      // Save changes
+      const saveButton = window.locator('[data-testid="save-button"]');
+      await expect(saveButton).toBeEnabled();
+      await saveButton.click();
+
+      // Wait for save operation to complete
+      await window.waitForTimeout(500);
+
+      // Verify both settings saved to file with correct values
+      if (actualSettingsPath) {
+        const settingsContent = await readFile(actualSettingsPath, "utf-8");
+        const settings = JSON.parse(settingsContent);
+        expect(settings.advanced?.debugLogging).toBe(
+          newDebugState === "checked",
+        );
+        expect(settings.advanced?.experimentalFeatures).toBe(
+          newExperimentalState === "checked",
+        );
+      }
+
+      // Test persistence by reopening and verifying both switches maintain state
+      await window.evaluate(() => {
+        window.testHelpers!.closeSettingsModal();
+      });
+
+      await openAdvancedSettings(window);
+
+      const reopenedDebugSwitch = window.locator(
+        '[data-testid="debug-logging-switch"]',
+      );
+      const reopenedExperimentalSwitch = window.locator(
+        '[data-testid="experimental-features-switch"]',
+      );
+
+      // Both switches should maintain their toggled state
+      const finalDebugState =
+        await reopenedDebugSwitch.getAttribute("data-state");
+      const finalExperimentalState =
+        await reopenedExperimentalSwitch.getAttribute("data-state");
+
+      expect(finalDebugState).toBe(newDebugState);
+      expect(finalExperimentalState).toBe(newExperimentalState);
+    });
+  });
+});

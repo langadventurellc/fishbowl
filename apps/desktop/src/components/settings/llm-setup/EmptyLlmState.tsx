@@ -12,20 +12,14 @@
  * @module components/settings/llm-setup/EmptyLlmState
  */
 
+import type { Provider } from "@fishbowl-ai/shared";
 import { Key } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import { cn } from "../../../lib/utils";
-import { Button } from "../../ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
+import { ProviderSelector } from "./ProviderSelector";
 
 export interface EmptyLlmStateProps {
-  onSetupProvider: (provider: "openai" | "anthropic") => void;
+  onSetupProvider: (provider: Provider) => void;
   className?: string;
 }
 
@@ -33,18 +27,6 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
   onSetupProvider,
   className,
 }) => {
-  const [selectedProvider, setSelectedProvider] = useState<
-    "openai" | "anthropic"
-  >("openai");
-
-  const handleSetupClick = () => {
-    onSetupProvider(selectedProvider);
-  };
-
-  const getButtonText = () => {
-    return selectedProvider === "openai" ? "Set up OpenAI" : "Set up Anthropic";
-  };
-
   return (
     <div
       className={cn(
@@ -61,30 +43,7 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
       <p className="text-sm text-muted-foreground text-center mb-6 max-w-md leading-relaxed">
         Connect your preferred LLM provider to start using AI features
       </p>
-      <div className="flex flex-col items-center gap-4">
-        <Select
-          value={selectedProvider}
-          onValueChange={(value: "openai" | "anthropic") =>
-            setSelectedProvider(value)
-          }
-        >
-          <SelectTrigger className="w-[200px]" aria-label="Select LLM provider">
-            <SelectValue placeholder="Select provider" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="openai">OpenAI</SelectItem>
-            <SelectItem value="anthropic">Anthropic</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button
-          onClick={handleSetupClick}
-          className="gap-2"
-          aria-label={getButtonText()}
-        >
-          <Key className="h-4 w-4" />
-          {getButtonText()}
-        </Button>
-      </div>
+      <ProviderSelector onSetupProvider={onSetupProvider} />
     </div>
   );
 };

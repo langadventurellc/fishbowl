@@ -4,10 +4,15 @@ import {
   NodeFileSystemBridge,
   SettingsRepository,
 } from "@fishbowl-ai/shared";
-import { app, BrowserWindow, globalShortcut, shell } from "electron";
+import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { llmConfigServiceManager } from "./getLlmConfigService.js";
+import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
+import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
+import { LlmConfigService } from "./services/LlmConfigService.js";
+import { LlmStorageService } from "./services/LlmStorageService.js";
 import { setupSettingsHandlers } from "./settingsHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -108,6 +113,7 @@ function openSettingsModal(): void {
   }
 }
 
+// eslint-disable-next-line statement-count/function-statement-count-warn
 app.whenReady().then(async () => {
   // Initialize logger first
   try {
@@ -157,6 +163,47 @@ app.whenReady().then(async () => {
       storageType: "FileStorage",
       settingsPath: settingsFilePath,
     });
+
+    // Initialize LLM storage service
+    const llmStorageService = new LlmStorageService();
+    llmStorageServiceManager.set(llmStorageService);
+
+    mainLogger?.info("LLM storage service initialized successfully", {
+      secureStorageAvailable: llmStorageService.isSecureStorageAvailable(),
+    });
+
+    // Initialize LLM configuration service
+    const llmConfigService = new LlmConfigService(llmStorageService);
+    llmConfigServiceManager.set(llmConfigService);
+
+    // Register IPC handlers BEFORE service initialization
+    try {
+      setupLlmConfigHandlers(ipcMain, llmConfigService);
+      mainLogger?.info(
+        "LLM configuration IPC handlers registered successfully",
+      );
+    } catch (error) {
+      mainLogger?.error(
+        "Failed to register LLM configuration IPC handlers",
+        error as Error,
+      );
+      // Continue startup - app can function without LLM config handlers
+    }
+
+    // Initialize the service AFTER handlers are registered
+    try {
+      await llmConfigService.initialize();
+      const configs = await llmConfigService.list();
+      mainLogger?.info("LLM configuration service initialized successfully", {
+        configCount: configs.length,
+      });
+    } catch (error) {
+      mainLogger?.error(
+        "Failed to initialize LLM configuration service",
+        error as Error,
+      );
+      // Continue startup - app can function without pre-cached configs
+    }
   } catch (error) {
     mainLogger?.error(
       "Failed to initialize settings repository",
@@ -166,7 +213,18 @@ app.whenReady().then(async () => {
   }
 
   // Setup IPC handlers
-  setupSettingsHandlers();
+  try {
+    setupSettingsHandlers();
+    mainLogger?.debug("Settings IPC handlers registered successfully");
+  } catch (error) {
+    mainLogger?.error(
+      "Failed to register settings IPC handlers",
+      error as Error,
+    );
+    // Continue startup - app can function without settings handlers
+  }
+
+  // LLM config handlers are now registered earlier in the startup process
 
   // Setup application menu after window creation
   const { setupApplicationMenu } = await import("./setupApplicationMenu.js");

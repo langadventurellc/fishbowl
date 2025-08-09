@@ -4,3 +4,4 @@ export * from "./services";
 export * from "./repositories";
 export * from "./logger";
 export * from "./logging";
+export * from "./utils";

@@ -1,17 +1,20 @@
+import type { Provider, LlmConfigInput } from "@fishbowl-ai/shared";
+import { z } from "zod";
 import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeOff } from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { AlertCircle, Loader2 } from "lucide-react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { cn } from "../../../lib/utils";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../../hooks/useGlobalKeyboardShortcuts";
 import {
   generateDialogAriaIds,
   useAccessibilityAnnouncements,
+  maskApiKey,
+  isMaskedApiKey,
 } from "../../../utils";
 import { Button } from "../../ui/button";
-import { Checkbox } from "../../ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -23,21 +26,39 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import { AnthropicProviderFields } from "./AnthropicProviderFields";
+import { OpenAiProviderFields } from "./OpenAiProviderFields";
 
-const llmConfigSchema = z.object({
-  customName: z.string(),
-  apiKey: z.string(),
-  baseUrl: z.string(),
-  useAuthHeader: z.boolean(),
-});
+// Local form schema that exactly matches our form needs
+const createLlmConfigFormSchema = (mode: "add" | "edit") =>
+  z.object({
+    customName: z.string().min(1, "Custom name is required"),
+    apiKey: z
+      .string()
+      .min(1, "API key is required")
+      .refine((value) => {
+        // In edit mode, allow masked API keys to pass validation
+        if (mode === "edit" && isMaskedApiKey(value)) {
+          return true;
+        }
+        // In add mode or when actually changing the API key, require a real key
+        return value.length > 0;
+      }, "API key is required"),
+    provider: z.enum(["openai", "anthropic"]),
+    baseUrl: z.string().optional(),
+    useAuthHeader: z.boolean(),
+  });
 
-type LlmConfigFormData = z.infer<typeof llmConfigSchema>;
+export type LlmConfigFormData = z.infer<
+  ReturnType<typeof createLlmConfigFormSchema>
+>;
 
 export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   isOpen,
@@ -46,9 +67,10 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   mode = "add",
   initialData,
   onSave,
+  isLoading = false,
+  error = null,
+  existingConfigs: _existingConfigs = [],
 }) => {
-  const [showApiKey, setShowApiKey] = useState(false);
-
   // Generate consistent ARIA IDs
   const ariaIds = generateDialogAriaIds(`llm-config-modal-${provider}`);
 
@@ -63,42 +85,82 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   });
 
   const getDefaultBaseUrl = useMemo(() => {
-    return provider === "openai"
-      ? "https://api.openai.com/v1"
-      : "https://api.anthropic.com";
+    switch (provider) {
+      case "openai":
+        return "https://api.openai.com/v1";
+      case "anthropic":
+        return "https://api.anthropic.com";
+    }
   }, [provider]);
 
+  // Store original API key for comparison
+  const originalApiKey = useMemo(() => {
+    return mode === "edit" && initialData?.apiKey ? initialData.apiKey : null;
+  }, [mode, initialData?.apiKey]);
+
+  // Get the display value for API key (masked in edit mode)
+  const getApiKeyDisplayValue = useMemo(() => {
+    if (mode === "edit" && originalApiKey) {
+      return maskApiKey(originalApiKey);
+    }
+    return initialData?.apiKey || "";
+  }, [mode, originalApiKey, initialData?.apiKey]);
+
   const form = useForm<LlmConfigFormData>({
-    resolver: zodResolver(llmConfigSchema),
+    resolver: zodResolver(createLlmConfigFormSchema(mode)),
+    mode: "onChange", // Enable form validation
     defaultValues: {
       customName: initialData?.customName || "",
-      apiKey: initialData?.apiKey || "",
+      apiKey: getApiKeyDisplayValue,
+      provider,
       baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-      useAuthHeader: initialData?.useAuthHeader || false,
+      useAuthHeader: initialData?.useAuthHeader ?? true,
     },
   });
 
   const handleSave = useCallback(
-    (data: LlmConfigFormData) => {
-      // Include ID when editing
-      const saveData =
-        mode === "edit" && initialData?.id
-          ? { ...data, id: initialData.id }
-          : data;
-      onSave(saveData);
-      onOpenChange(false);
+    async (data: LlmConfigFormData) => {
+      try {
+        // For edit mode, check if API key was actually changed
+        const apiKeyToSave =
+          mode === "edit" && isMaskedApiKey(data.apiKey)
+            ? originalApiKey // Keep original if not changed
+            : data.apiKey; // Use new value if changed
+
+        // Convert to shared LlmConfigInput type
+        const llmConfigData: LlmConfigInput = {
+          customName: data.customName,
+          apiKey: apiKeyToSave!,
+          provider: data.provider,
+          baseUrl: data.baseUrl,
+          useAuthHeader: data.useAuthHeader,
+        };
+
+        // Include ID when editing
+        const saveData =
+          mode === "edit" && initialData?.id
+            ? { ...llmConfigData, id: initialData.id }
+            : llmConfigData;
+
+        await onSave(saveData);
+        // Only close if save succeeds
+        onOpenChange(false);
+      } catch (error) {
+        // Error handled by parent component through error prop
+        // Modal stays open to show validation errors
+        console.error("Save failed:", error);
+      }
     },
-    [onSave, onOpenChange, mode, initialData?.id],
+    [onSave, onOpenChange, mode, initialData?.id, originalApiKey],
   );
 
   const handleCancel = useCallback(() => {
     onOpenChange(false);
   }, [onOpenChange]);
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts (Escape handled in DialogContent onKeyDown)
   useGlobalKeyboardShortcuts({
     shortcuts: {
-      Escape: handleCancel,
       "Ctrl+S": () => form.handleSubmit(handleSave)(),
       "Meta+S": () => form.handleSubmit(handleSave)(),
     },
@@ -111,15 +173,33 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
     if (isOpen) {
       form.reset({
         customName: initialData?.customName || "",
-        apiKey: initialData?.apiKey || "",
+        apiKey: getApiKeyDisplayValue,
+        provider,
         baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-        useAuthHeader: initialData?.useAuthHeader || false,
+        useAuthHeader: initialData?.useAuthHeader ?? true,
       });
-      setShowApiKey(false);
     }
-  }, [isOpen, provider, initialData, form, getDefaultBaseUrl]);
+  }, [
+    isOpen,
+    provider,
+    initialData,
+    form,
+    getDefaultBaseUrl,
+    getApiKeyDisplayValue,
+  ]);
 
-  const providerName = provider === "openai" ? "OpenAI" : "Anthropic";
+  const getProviderName = (provider: Provider): string => {
+    switch (provider) {
+      case "openai":
+        return "OpenAI";
+      case "anthropic":
+        return "Anthropic";
+      default:
+        return "Unknown Provider";
+    }
+  };
+
+  const providerName = getProviderName(provider);
 
   // Generate dynamic modal title based on mode
   const modalTitle =
@@ -146,6 +226,13 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         aria-describedby={ariaIds.descriptionId}
         role="dialog"
         aria-modal="true"
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            e.stopPropagation();
+            handleCancel();
+          }
+        }}
       >
         <DialogHeader>
           <DialogTitle id={ariaIds.titleId}>{modalTitle}</DialogTitle>
@@ -155,125 +242,93 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
           </DialogDescription>
         </DialogHeader>
 
+        {/* Error Display */}
+        {error && (
+          <div className="p-3 mb-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-red-800">
+                Configuration Error
+              </p>
+              <p className="text-sm text-red-600 mt-1">{error}</p>
+            </div>
+          </div>
+        )}
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSave)} className="space-y-4">
             {/* Custom Name Field */}
             <FormField
               control={form.control}
               name="customName"
-              render={({ field }) => (
+              render={({ field, fieldState }) => (
                 <FormItem>
-                  <FormLabel>Custom Name</FormLabel>
+                  <FormLabel>
+                    Custom Name <span className="text-red-500">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="e.g., My ChatGPT API"
+                      placeholder={`e.g., My ${providerName} API`}
+                      className={cn(fieldState.error ? "border-red-500" : "")}
                       autoComplete="off"
+                      maxLength={100}
                     />
                   </FormControl>
+                  <FormDescription className="flex justify-between">
+                    <span className="text-muted-foreground">
+                      A unique name to identify this configuration
+                    </span>
+                    <span
+                      className={cn(
+                        "text-xs",
+                        field.value?.length > 90
+                          ? "text-yellow-600"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {field.value?.length || 0}/100
+                    </span>
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {/* API Key Field */}
-            <FormField
-              control={form.control}
-              name="apiKey"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>API Key</FormLabel>
-                  <FormControl>
-                    <div className="relative">
-                      <Input
-                        {...field}
-                        type={showApiKey ? "text" : "password"}
-                        placeholder="Enter your API key"
-                        className="pr-10"
-                        autoComplete="off"
-                        autoCapitalize="none"
-                        autoCorrect="off"
-                        spellCheck="false"
-                      />
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-transparent h-8 w-8"
-                        onClick={() => {
-                          const newState = !showApiKey;
-                          setShowApiKey(newState);
-                          announceStateChange(
-                            newState
-                              ? "API key is now visible"
-                              : "API key is now hidden",
-                          );
-                        }}
-                        aria-label={
-                          showApiKey ? "Hide API key" : "Show API key"
-                        }
-                        aria-pressed={showApiKey}
-                      >
-                        {showApiKey ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Base URL Field */}
-            <FormField
-              control={form.control}
-              name="baseUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Base URL</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="url"
-                      placeholder={getDefaultBaseUrl}
-                      autoComplete="url"
-                      autoCapitalize="none"
-                      autoCorrect="off"
-                      spellCheck="false"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Authorization Header Checkbox */}
-            <FormField
-              control={form.control}
-              name="useAuthHeader"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>Send API key in authorization header</FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
+            {/* Provider-specific fields */}
+            {provider === "openai" ? (
+              <OpenAiProviderFields control={form.control} />
+            ) : provider === "anthropic" ? (
+              <AnthropicProviderFields control={form.control} />
+            ) : (
+              <p>Unsupported provider: {provider}</p>
+            )}
 
             <DialogFooter>
-              <Button type="button" variant="ghost" onClick={handleCancel}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleCancel}
+                disabled={isLoading}
+              >
                 Cancel
               </Button>
-              <Button type="submit">Save</Button>
+              <Button
+                type="submit"
+                disabled={isLoading || !form.formState.isValid}
+                className="gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : mode === "add" ? (
+                  "Add Configuration"
+                ) : (
+                  "Update Configuration"
+                )}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
