@@ -9,6 +9,3 @@
 
 export { useElectronIPC } from "./useElectronIPC";
 export { useDebounce } from "./useDebounce";
-export { useIsCompactViewport } from "./useIsCompactViewport";
-// Deprecated: use useIsCompactViewport instead
-export { useIsMobile } from "./useIsMobile";

@@ -1,11 +1,45 @@
 ---
 id: T-investigate-and-remove-unused
 title: Investigate and remove unused files safely
-status: open
+status: done
 priority: medium
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/ui/context-menu.tsx: removed unused shadcn/ui context menu component
+  apps/desktop/src/hooks/useRoleFormModal.ts: removed unused role form modal hook
+  apps/desktop/src/hooks/useRoleDeleteDialog.ts: removed unused role delete dialog hook
+  apps/desktop/src/hooks/types/UseRoleFormModalReturn.ts: removed unused role form modal return type
+  apps/desktop/src/hooks/useIsCompactViewport.ts: removed unused compact viewport hook
+  apps/desktop/src/hooks/useIsMobile.ts: removed deprecated mobile detection hook
+  apps/desktop/src/utils/focusManagement.ts: removed unused focus management utilities
+  apps/desktop/src/utils/skipLinks.ts: removed unused skip links utilities
+  packages/ui-shared/src/mapping/utils/examples.ts: removed unused mapping utility examples
+  apps/desktop/src/hooks/index.ts: updated to remove references to deleted hooks
+log:
+  - >-
+    Successfully investigated 18 files identified by knip and removed 9
+    genuinely unused files. Analysis revealed knip had false positives for
+    barrel files (index.ts) and some components that are used but not directly
+    imported by their barrel exports.
+
+
+    Removed files:
+
+    - shadcn/ui context-menu.tsx (unused, app uses custom ContextMenu)
+
+    - Role management hooks: useRoleFormModal.ts, useRoleDeleteDialog.ts,
+    UseRoleFormModalReturn.ts (unused role features)
+
+    - Viewport hooks: useIsCompactViewport.ts, useIsMobile.ts
+    (unused/deprecated)
+
+    - Accessibility utilities: focusManagement.ts, skipLinks.ts (unused)
+
+    - Example code: mapping/utils/examples.ts (never called)
+
+
+    Updated hooks/index.ts to remove references to deleted files. All quality
+    checks and tests pass after cleanup.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T17:03:38.623Z
