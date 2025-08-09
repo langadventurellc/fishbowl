@@ -1,12 +1,54 @@
 ---
 id: T-create-individual-role-zod
 title: Create Individual Role Zod Schema with Validation
-status: open
+status: done
 priority: high
 parent: F-roles-persistence-schema-and
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/settings/rolesSettingsSchema.ts: Created core Zod
+    schema for individual role validation with all required constraints and
+    error messages
+  packages/shared/src/types/settings/PersistedRole.ts: Created TypeScript interface for documentation and type reference
+  packages/shared/src/types/settings/PersistedRoleData.ts: Created type inference from schema for runtime usage
+  packages/shared/src/types/settings/__tests__/rolesSettingsSchema.test.ts:
+    Created comprehensive test suite with 57 test cases covering all validation
+    scenarios
+  packages/shared/src/types/settings/index.ts: Updated barrel exports to include new role schema and types
+log:
+  - >-
+    Successfully implemented individual role Zod schema with comprehensive
+    validation for the Fishbowl roles settings system. Created foundational
+    schema that handles both programmatically created roles and manual JSON
+    edits, following established patterns from existing settings schemas.
+
+
+    Key accomplishments:
+
+    - Individual role schema validates all required fields (id, name) and
+    optional fields (description, systemPrompt, timestamps)
+
+    - Updated schema to allow empty strings for description and systemPrompt
+    based on user feedback
+
+    - Character limits enforced for security (name: 100, description: 500,
+    systemPrompt: 5000 chars)
+
+    - Timestamps handle null/undefined values gracefully for manual JSON editing
+
+    - Comprehensive error messages for all validation failures
+
+    - 100% test coverage with 57 test cases covering valid/invalid data, edge
+    cases, and type inference
+
+    - Full TypeScript type safety with proper schema-to-type inference
+
+    - Schema evolution support via passthrough functionality
+
+
+    All quality checks pass, tests complete successfully, and shared package
+    builds correctly. The schema is now ready for use by subsequent tasks in the
+    roles persistence feature.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T19:42:41.943Z

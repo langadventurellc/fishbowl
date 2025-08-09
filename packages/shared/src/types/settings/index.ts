@@ -2,6 +2,7 @@
 export { advancedSettingsSchema } from "./advancedSettingsSchema";
 export { appearanceSettingsSchema } from "./appearanceSettingsSchema";
 export { generalSettingsSchema } from "./generalSettingsSchema";
+export { persistedRoleSchema } from "./rolesSettingsSchema";
 export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
 export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettings";
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
@@ -15,6 +16,8 @@ export type { PersistedAppearanceSettings } from "./PersistedAppearanceSettings"
 export type { PersistedAppearanceSettingsData } from "./PersistedAppearanceSettingsData";
 export type { PersistedGeneralSettings } from "./PersistedGeneralSettings";
 export type { PersistedGeneralSettingsData } from "./PersistedGeneralSettingsData";
+export type { PersistedRole } from "./PersistedRole";
+export type { PersistedRoleData } from "./PersistedRoleData";
 export type { ShowTimestamps } from "./ShowTimestamps";
 export { SHOW_TIMESTAMPS_OPTIONS } from "./ShowTimestamps";
 export type { ThemeMode } from "./ThemeMode";
