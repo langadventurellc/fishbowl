@@ -9,6 +9,7 @@ import {
   type TestElectronApplication,
   type TestWindow,
 } from "../../helpers";
+import { openLlmSetupSection } from "../../helpers/openLlmSetupSection";
 // Local type definitions for testing
 type Provider = "openai" | "anthropic";
 
@@ -210,95 +211,6 @@ test.describe("Feature: LLM Setup Configuration", () => {
     }
   });
 
-  // Helper to forcefully reset application state
-  const _forceApplicationReset = async () => {
-    // Clean up storage files once more
-    if (llmConfigPath && secureKeysPath) {
-      await cleanupLlmStorage(llmConfigPath, secureKeysPath);
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-
-    // Force application to reload and detect changes
-    await window.waitForLoadState("domcontentloaded");
-    await window.waitForLoadState("networkidle");
-    await window.waitForTimeout(500);
-
-    // Close any open modals
-    try {
-      await window.evaluate(() => {
-        if (window.testHelpers?.isSettingsModalOpen()) {
-          window.testHelpers!.closeSettingsModal();
-        }
-      });
-
-      // Wait for modal to actually close and any animations to complete
-      await expect(
-        window.locator('[data-testid="settings-modal"]'),
-      ).not.toBeVisible({ timeout: 2000 });
-
-      // Wait for any dialog overlays to disappear
-      await expect(
-        window.locator('[data-slot="dialog-overlay"]'),
-      ).not.toBeVisible({ timeout: 2000 });
-
-      // Small additional delay for any remaining animations
-      await window.waitForTimeout(200);
-    } catch {
-      // Ignore if helpers not available
-    }
-  };
-
-  // Navigation helper to open LLM Setup section
-  const openLlmSetupSection = async () => {
-    // Ensure no modals are open before starting
-    try {
-      await window.evaluate(() => {
-        if (window.testHelpers?.isSettingsModalOpen()) {
-          window.testHelpers!.closeSettingsModal();
-        }
-      });
-
-      // Wait for any existing modal to close
-      await expect(
-        window.locator('[data-testid="settings-modal"]'),
-      ).not.toBeVisible({ timeout: 2000 });
-
-      // Wait for any dialog overlays to disappear
-      await expect(
-        window.locator('[data-slot="dialog-overlay"]'),
-      ).not.toBeVisible({ timeout: 2000 });
-    } catch {
-      // No modal was open, continue
-    }
-
-    // Open settings modal
-    await window.evaluate(() => {
-      window.testHelpers!.openSettingsModal();
-    });
-
-    // Wait for settings modal to be fully visible and stable
-    await expect(
-      window.locator('[data-testid="settings-modal"]'),
-    ).toBeVisible();
-
-    // Wait a bit for modal animations to settle
-    await window.waitForTimeout(300);
-
-    // Navigate to LLM Setup tab - wait for it to be clickable
-    const llmSetupNavItem = window
-      .locator("button")
-      .filter({ hasText: "LLM Setup" });
-
-    await expect(llmSetupNavItem).toBeVisible();
-    await expect(llmSetupNavItem).toBeEnabled();
-    await llmSetupNavItem.click();
-
-    // Wait for LLM setup content to be visible
-    await expect(
-      window.locator("h1").filter({ hasText: "LLM Setup" }),
-    ).toBeVisible();
-  };
-
   // Helper to wait for empty state
   const waitForEmptyState = async () => {
     // Debug what's actually on the page if empty state not found
@@ -357,7 +269,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
   test.describe("Scenario: Empty State Interaction", () => {
     test("displays empty state when no configurations exist", async () => {
       // Navigate to LLM Setup tab
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Verify EmptyLlmState component is visible
       await waitForEmptyState();
@@ -387,7 +299,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("provider dropdown shows available options", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Click provider dropdown trigger
@@ -425,7 +337,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("setup button text changes based on selected provider", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Initial state should show OpenAI (default)
@@ -467,7 +379,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("opens configuration modal when setup button clicked", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Select OpenAI provider (should be default)
@@ -516,7 +428,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
   test.describe("Scenario: OpenAI Configuration Creation", () => {
     test("creates OpenAI configuration successfully", async () => {
       // Navigate to LLM Setup
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Verify initial empty state
@@ -574,7 +486,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("validates required fields for OpenAI", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Check if there are existing configurations
       const addAnotherButton = window
@@ -626,7 +538,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("masks API key and stores securely", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Check for existing configurations and use appropriate flow
       const addAnotherButton = window
@@ -694,7 +606,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
   test.describe("Scenario: Anthropic Configuration Creation", () => {
     test("creates Anthropic configuration successfully", async () => {
       // Navigate to LLM Setup
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Handle both empty state and existing configs
       const addAnotherButton = window
@@ -766,7 +678,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("populates Anthropic-specific defaults", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Handle both empty state and existing configs
       const addAnotherButton = window
@@ -829,7 +741,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("validates Anthropic configuration fields", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Handle both empty state and existing configs
       const addAnotherButton = window
@@ -884,7 +796,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Multiple Provider Management", () => {
     test("supports both OpenAI and Anthropic configs simultaneously", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Create OpenAI configuration first
       await waitForEmptyState();
@@ -1025,7 +937,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("displays correct provider branding and styling", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
 
       // Handle both empty state and existing configs
       const addAnotherButton = window
@@ -1093,7 +1005,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Multiple Same-Provider Configurations", () => {
     test("supports multiple OpenAI configurations with unique names", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create first OpenAI configuration
@@ -1182,7 +1094,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("supports multiple Anthropic configurations", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create first Anthropic configuration
@@ -1268,7 +1180,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Add Another Provider Button Behavior", () => {
     test("Add Another Provider button appears after first configuration", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Verify button is not visible in empty state
@@ -1299,7 +1211,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("Add Another Provider button persists with multiple configurations", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create first configuration
@@ -1347,7 +1259,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Configuration List Ordering", () => {
     test("maintains configuration creation order", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create configurations in specific order
@@ -1419,7 +1331,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("order remains unchanged after editing configuration", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create two configurations
@@ -1490,7 +1402,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Handling Many Configurations", () => {
     test("handles multiple configurations gracefully", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create 5 configurations to test UI responsiveness
@@ -1550,7 +1462,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Provider Selection After Creation", () => {
     test("provider dropdown behavior with existing configurations", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create first OpenAI configuration
@@ -1664,7 +1576,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Form Validation and Error Handling", () => {
     test("validates required fields on save attempt", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Open configuration modal
@@ -1697,7 +1609,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("validates custom name field", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       const setupButton = window
@@ -1733,7 +1645,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("validates API key field", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       const setupButton = window
@@ -1771,7 +1683,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("validates Anthropic base URL format", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Select Anthropic provider since it has advanced options including base URL
@@ -1831,7 +1743,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("save button enables/disables based on form validity", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       const setupButton = window
@@ -1873,7 +1785,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("maintains form state after validation errors", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       const setupButton = window
@@ -1917,7 +1829,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("validates Anthropic configuration fields", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Select Anthropic provider
@@ -1969,7 +1881,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("handles form interaction without errors", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       const setupButton = window
@@ -2005,7 +1917,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("cancel operation discards form data", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       const setupButton = window
@@ -2050,7 +1962,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
 
   test.describe("Scenario: Edit Configuration Tests", () => {
     test("edits existing configuration successfully", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create initial configuration
@@ -2132,7 +2044,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("shows correct title when editing", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create OpenAI config
@@ -2210,7 +2122,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("handles API key field correctly in edit mode", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create config with API key
@@ -2286,7 +2198,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("updates custom name successfully", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create initial configuration
@@ -2337,7 +2249,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
       await window.waitForLoadState("networkidle");
 
       // Navigate back to LLM Setup
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForConfigurationList();
 
       // Verify name persisted after reload
@@ -2346,7 +2258,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("updates base URL for custom endpoints", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create Anthropic configuration (has base URL field)
@@ -2413,7 +2325,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("validates fields during edit", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create initial configuration
@@ -2456,7 +2368,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("cancels edit without saving changes", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create configuration with "Name A"
@@ -2514,7 +2426,7 @@ test.describe("Feature: LLM Setup Configuration", () => {
     });
 
     test("handles multiple sequential edits", async () => {
-      await openLlmSetupSection();
+      await openLlmSetupSection(window);
       await waitForEmptyState();
 
       // Create configuration

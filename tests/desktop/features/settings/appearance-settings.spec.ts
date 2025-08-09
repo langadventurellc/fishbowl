@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 
 import {
   createElectronApp,
+  openAppearanceSettings,
   type TestElectronApplication,
   type TestWindow,
 } from "../../helpers";
@@ -89,31 +90,9 @@ test.describe("Feature: Appearance Settings Persistence", () => {
     }
   });
 
-  const openAppearanceSettings = async () => {
-    // Open settings modal
-    await window.evaluate(() => {
-      window.testHelpers!.openSettingsModal();
-    });
-
-    await expect(
-      window.locator('[data-testid="settings-modal"]'),
-    ).toBeVisible();
-
-    // Navigate to appearance settings - the nav items use the section name
-    const appearanceNavItem = window
-      .locator("button")
-      .filter({ hasText: "Appearance" });
-    await appearanceNavItem.click();
-
-    // Wait for appearance form to be visible
-    await expect(
-      window.locator("h1").filter({ hasText: "Appearance" }),
-    ).toBeVisible();
-  };
-
   test.describe("Scenario: Theme Setting Persistence", () => {
     test("saves theme selection to preferences file", async () => {
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // Verify default theme is system
       await expect(window.locator("#theme-system")).toBeChecked();
@@ -141,7 +120,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
   test.describe("Scenario: Display Settings Persistence", () => {
     test("saves and loads timestamp display setting", async () => {
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // First, determine what the current setting is and change to a different one
       const isAlwaysChecked = await window
@@ -193,12 +172,12 @@ test.describe("Feature: Appearance Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
       await expect(window.locator(targetSelector)).toBeChecked();
     });
 
     test("saves and loads activity time switch", async () => {
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // Find the activity time switch and toggle it
       const activityTimeSwitch = window.getByRole("switch", {
@@ -234,7 +213,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       const reopenedSwitch = window.getByRole("switch", {
         name: "Show last activity time",
@@ -245,7 +224,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
     });
 
     test("saves and loads compact list switch", async () => {
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // Find the compact list switch and toggle it
       const compactListSwitch = window.getByRole("switch", {
@@ -279,7 +258,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       const reopenedSwitch = window.getByRole("switch", {
         name: "Compact conversation list",
@@ -292,7 +271,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
 
   test.describe("Scenario: Chat Display Settings Persistence", () => {
     test("saves and loads font size setting", async () => {
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // Find the font size slider
       const fontSizeSlider = window
@@ -330,7 +309,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // Verify font size is still 16px
       await expect(
@@ -339,7 +318,7 @@ test.describe("Feature: Appearance Settings Persistence", () => {
     });
 
     test("saves and loads message spacing setting", async () => {
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // Change message spacing to "relaxed"
       await window.locator("#spacing-relaxed").click();
@@ -365,14 +344,14 @@ test.describe("Feature: Appearance Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
       await expect(window.locator("#spacing-relaxed")).toBeChecked();
     });
   });
 
   test.describe("Scenario: Multiple Settings Persistence", () => {
     test("saves multiple appearance settings to preferences file", async () => {
-      await openAppearanceSettings();
+      await openAppearanceSettings(window);
 
       // Change multiple settings
       await window.locator("#timestamps-never").click();

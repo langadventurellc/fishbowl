@@ -2,7 +2,6 @@ import { expect, test } from "@playwright/test";
 import { readFile } from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
-
 import {
   createElectronApp,
   type TestElectronApplication,

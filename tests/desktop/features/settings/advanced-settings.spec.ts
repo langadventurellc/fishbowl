@@ -8,6 +8,7 @@ import {
   type TestElectronApplication,
   type TestWindow,
 } from "../../helpers";
+import { openAdvancedSettings } from "../../helpers/openAdvancedSettings";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test.describe("Feature: Advanced Settings Persistence", () => {
@@ -100,31 +101,9 @@ test.describe("Feature: Advanced Settings Persistence", () => {
     }
   });
 
-  const openAdvancedSettings = async () => {
-    // Open settings modal
-    await window.evaluate(() => {
-      window.testHelpers!.openSettingsModal();
-    });
-
-    await expect(
-      window.locator('[data-testid="settings-modal"]'),
-    ).toBeVisible();
-
-    // Navigate to Advanced settings tab
-    const advancedNavItem = window
-      .locator("button")
-      .filter({ hasText: "Advanced" });
-    await advancedNavItem.click();
-
-    // Wait for advanced form to be visible
-    await expect(
-      window.locator("h1").filter({ hasText: "Advanced Settings" }),
-    ).toBeVisible();
-  };
-
   test.describe("Scenario: Debug Logging Setting Persistence", () => {
     test("saves debug logging toggle to preferences file", async () => {
-      await openAdvancedSettings();
+      await openAdvancedSettings(window);
 
       // Find debug logging switch using test id
       const debugLoggingSwitch = window.locator(
@@ -158,7 +137,7 @@ test.describe("Feature: Advanced Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAdvancedSettings();
+      await openAdvancedSettings(window);
       const reopenedSwitch = window.locator(
         '[data-testid="debug-logging-switch"]',
       );
@@ -169,7 +148,7 @@ test.describe("Feature: Advanced Settings Persistence", () => {
 
   test.describe("Scenario: Experimental Features Setting Persistence", () => {
     test("saves experimental features toggle to preferences file", async () => {
-      await openAdvancedSettings();
+      await openAdvancedSettings(window);
 
       // Find experimental features switch using test id
       const experimentalSwitch = window.locator(
@@ -205,7 +184,7 @@ test.describe("Feature: Advanced Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAdvancedSettings();
+      await openAdvancedSettings(window);
       const reopenedSwitch = window.locator(
         '[data-testid="experimental-features-switch"]',
       );
@@ -216,7 +195,7 @@ test.describe("Feature: Advanced Settings Persistence", () => {
 
   test.describe("Scenario: Multiple Advanced Settings Persistence", () => {
     test("saves multiple advanced settings to preferences file", async () => {
-      await openAdvancedSettings();
+      await openAdvancedSettings(window);
 
       // Get initial states
       const debugLoggingSwitch = window.locator(
@@ -269,7 +248,7 @@ test.describe("Feature: Advanced Settings Persistence", () => {
         window.testHelpers!.closeSettingsModal();
       });
 
-      await openAdvancedSettings();
+      await openAdvancedSettings(window);
 
       const reopenedDebugSwitch = window.locator(
         '[data-testid="debug-logging-switch"]',
