@@ -1,11 +1,31 @@
 ---
 id: T-add-missing-dependencies-to
 title: Add missing dependencies to package.json files
-status: open
+status: done
 priority: medium
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/package.json: Added globals ^16.3.0 as devDependency for ESLint
+    globals usage in eslint.config.cjs
+  apps/mobile/package.json:
+    Added expo-updates ^0.28.17 and expo-system-ui ^5.0.10
+    as dependencies for app.json config support, and @expo/metro-config ^0.20.17
+    as devDependency for metro.config.js
+  package.json: Added @fishbowl-ai/eslint-config workspace dependency for root
+    ESLint configuration
+  packages/shared/package.json: Added @testing-library/jest-dom ^6.6.4 as
+    devDependency for enhanced Jest DOM matchers in test setup
+  pnpm-lock.yaml: Updated lockfile with new dependencies and their transitive dependencies
+log:
+  - "Successfully added all 6 missing dependencies to their appropriate
+    package.json files with latest stable versions. All dependencies are now
+    properly declared, installed, and verified through quality checks. Fixed
+    Knip analysis issues by adding: globals (^16.3.0) for ESLint configs,
+    expo-updates (^0.28.17) and expo-system-ui (^5.0.10) for mobile app
+    configuration, @expo/metro-config (^0.20.17) for Metro bundler setup,
+    @fishbowl-ai/eslint-config for root ESLint config, and
+    @testing-library/jest-dom (^6.6.4) for enhanced Jest matchers. All imports
+    now resolve correctly and build processes work without dependency warnings."
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T17:03:20.689Z
