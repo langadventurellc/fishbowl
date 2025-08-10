@@ -11,8 +11,8 @@ import type { RoleFormData } from "./RoleFormData";
 export interface RoleViewModel extends RoleFormData {
   /** Unique identifier for the role */
   id: string;
-  /** When the role was created */
-  createdAt: string;
-  /** When the role was last updated */
-  updatedAt: string;
+  /** When the role was created (nullable) */
+  createdAt?: string;
+  /** When the role was last updated (nullable) */
+  updatedAt?: string;
 }

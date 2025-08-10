@@ -102,6 +102,49 @@ describe("rolesStore", () => {
       expect(state.roles).toHaveLength(0);
       expect(state.error).toBeTruthy();
     });
+
+    it("should create a role with systemPrompt", () => {
+      const store = useRolesStore.getState();
+
+      const roleDataWithPrompt: RoleFormData = {
+        name: "AI Assistant",
+        description: "Helpful AI assistant role",
+        systemPrompt: "You are a helpful AI assistant.",
+      };
+
+      const roleId = store.createRole(roleDataWithPrompt);
+
+      expect(roleId).toBeTruthy();
+      const state = useRolesStore.getState();
+      expect(state.roles).toHaveLength(1);
+      expect(state.roles[0]!.name).toBe(roleDataWithPrompt.name);
+      expect(state.roles[0]!.description).toBe(roleDataWithPrompt.description);
+      expect(state.roles[0]!.systemPrompt).toBe(
+        roleDataWithPrompt.systemPrompt,
+      );
+      expect(state.error).toBe(null);
+    });
+
+    it("should create a role without systemPrompt (backward compatibility)", () => {
+      const store = useRolesStore.getState();
+
+      const roleDataWithoutPrompt: RoleFormData = {
+        name: "Simple Role",
+        description: "Role without system prompt",
+      };
+
+      const roleId = store.createRole(roleDataWithoutPrompt);
+
+      expect(roleId).toBeTruthy();
+      const state = useRolesStore.getState();
+      expect(state.roles).toHaveLength(1);
+      expect(state.roles[0]!.name).toBe(roleDataWithoutPrompt.name);
+      expect(state.roles[0]!.description).toBe(
+        roleDataWithoutPrompt.description,
+      );
+      expect(state.roles[0]!.systemPrompt).toBeUndefined();
+      expect(state.error).toBe(null);
+    });
   });
 
   describe("updateRole action", () => {
@@ -197,6 +240,51 @@ describe("rolesStore", () => {
       store.updateRole(existingRole.id, updateData);
 
       const state = useRolesStore.getState();
+      expect(state.roles[0]!.description).toBe(updateData.description);
+      expect(state.error).toBe(null);
+    });
+
+    it("should update role with systemPrompt", () => {
+      const store = useRolesStore.getState();
+
+      const updateData: RoleFormData = {
+        name: existingRole.name,
+        description: existingRole.description,
+        systemPrompt: "You are an updated AI assistant.",
+      };
+
+      store.updateRole(existingRole.id, updateData);
+
+      const state = useRolesStore.getState();
+      expect(state.roles[0]!.systemPrompt).toBe(updateData.systemPrompt);
+      expect(state.error).toBe(null);
+    });
+
+    it("should update role to remove systemPrompt (set to undefined)", () => {
+      // First create a role with systemPrompt
+      const roleWithPrompt: RoleViewModel = {
+        ...existingRole,
+        systemPrompt: "Original system prompt",
+      };
+
+      useRolesStore.setState({
+        roles: [roleWithPrompt],
+        isLoading: false,
+        error: null,
+      });
+
+      const store = useRolesStore.getState();
+
+      const updateData: RoleFormData = {
+        name: existingRole.name,
+        description: existingRole.description,
+        // systemPrompt not provided, should remain as original or undefined depending on schema
+      };
+
+      store.updateRole(existingRole.id, updateData);
+
+      const state = useRolesStore.getState();
+      expect(state.roles[0]!.name).toBe(updateData.name);
       expect(state.roles[0]!.description).toBe(updateData.description);
       expect(state.error).toBe(null);
     });

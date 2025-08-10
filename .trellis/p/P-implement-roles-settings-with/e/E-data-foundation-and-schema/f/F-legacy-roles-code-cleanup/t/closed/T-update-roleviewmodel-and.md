@@ -1,20 +1,37 @@
 ---
 id: T-update-roleviewmodel-and
 title: Update RoleViewModel and roleSchema to align with new architecture
-status: open
+status: done
 priority: high
 parent: F-legacy-roles-code-cleanup
 prerequisites:
   - T-remove-localstorage
   - T-remove-role-category
   - T-remove-custom-vs-predefined
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/schemas/roleSchema.ts:
+    Added optional systemPrompt field
+    with validation (1-2000 chars, trimmed, no whitespace-only)
+  packages/ui-shared/src/types/settings/RoleViewModel.ts: Made timestamps
+    (createdAt, updatedAt) optional/nullable for backward compatibility
+  packages/ui-shared/src/stores/__tests__/rolesStore.test.ts:
+    Added unit tests for
+    systemPrompt functionality with and without prompt for backward
+    compatibility
+  packages/ui-shared/src/schemas/__tests__/roleSchema.test.ts:
+    Created comprehensive unit tests for roleSchema validation including
+    systemPrompt field validation and backward compatibility scenarios
 log:
   - 📋 **Dependency Analysis Complete** - Comprehensive dependency analysis has
     been completed for all legacy roles files. See `dependency-map-analysis.md`
     for detailed mapping of imports, impact assessment, and safe deletion
     strategy. Analysis confirms safe cleanup path for RoleViewModel updates with
     no external dependencies blocking simplification.
+  - Successfully updated RoleViewModel and roleSchema to align with new
+    simplified architecture. Added optional systemPrompt field to both schema
+    and type definitions, made timestamps nullable for backward compatibility,
+    and wrote comprehensive unit tests. All quality checks pass and TypeScript
+    compilation succeeds.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T21:55:11.235Z
