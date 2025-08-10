@@ -64,7 +64,7 @@ export const RoleDeleteDialog = memo<RoleDeleteDialogProps>(
       <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Custom Role</AlertDialogTitle>
+            <AlertDialogTitle>Delete Role</AlertDialogTitle>
             <AlertDialogDescription>
               {role ? (
                 <>

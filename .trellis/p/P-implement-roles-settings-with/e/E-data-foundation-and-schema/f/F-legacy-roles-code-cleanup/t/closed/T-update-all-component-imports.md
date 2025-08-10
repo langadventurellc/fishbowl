@@ -1,20 +1,46 @@
 ---
 id: T-update-all-component-imports
 title: Update all component imports and remove references to deleted utilities
-status: open
+status: done
 priority: high
 parent: F-legacy-roles-code-cleanup
 prerequisites:
   - T-remove-role-category
   - T-remove-custom-vs-predefined
   - T-update-roleviewmodel-and
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/settings/PredefinedRole.ts:
+    Removed category field
+    from PredefinedRole interface, updated documentation to reflect unified role
+    structure
+  packages/ui-shared/src/data/predefinedRoles.ts:
+    Removed category fields from all
+    role objects, updated comments to reflect role templates without categories
+  packages/ui-shared/src/data/sampleRoleCategories.ts: Deleted - obsolete role categories mapping file no longer needed
+  packages/ui-shared/src/data/index.ts: Removed export for deleted sampleRoleCategories file
+  packages/ui-shared/src/data/__tests__/sampleRoles.test.ts: Updated test to
+    remove category-related tests, updated test description from 'predefined
+    roles' to 'role templates'
+  packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'predefined' and 'custom' subtab options from SettingsSubTab type
+  packages/ui-shared/src/stores/settings/settingsStore.ts: Updated VALID_SUB_TABS array to remove predefined/custom entries
+  apps/desktop/src/components/settings/__tests__/TabsIntegration.test.tsx:
+    Updated roles section test to use library/create-new structure instead of
+    predefined/custom tabs
+  apps/desktop/src/components/settings/roles/RoleFormModal.tsx:
+    Changed modal title from 'Create Custom Role' to 'Create Role', updated
+    description to remove 'custom' branding
+  apps/desktop/src/components/settings/roles/RoleDeleteDialog.tsx: Changed dialog title from 'Delete Custom Role' to 'Delete Role'
 log:
   - 📋 **Dependency Analysis Complete** - Comprehensive dependency analysis has
     been completed for all legacy roles files. See `dependency-map-analysis.md`
     for detailed mapping of imports, impact assessment, and safe deletion
     strategy. Analysis shows NO external component imports found - only barrel
     exports need updating (specific lines documented).
+  - Successfully updated all component imports and removed references to deleted
+    utilities. Simplified role model by removing category and predefined/custom
+    distinctions throughout the codebase. All components now treat roles
+    uniformly without type-based differentiation. TypeScript compilation,
+    linting, and all unit tests are passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T21:55:50.493Z
