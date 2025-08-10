@@ -18,6 +18,7 @@ export { isValidJson } from "./isValidJson";
 export { isValidSchemaVersion } from "./isValidSchemaVersion";
 export { parseSchemaVersion } from "./parseSchemaVersion";
 export { validateSettingsData } from "./validateSettingsData";
+export { validateRolesData } from "./validateRolesData";
 
 // File system utilities
 export { ensureDirectoryExists } from "./ensureDirectoryExists";

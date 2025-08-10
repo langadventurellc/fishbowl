@@ -1,12 +1,32 @@
 ---
 id: T-create-validaterolesdata
 title: Create validateRolesData utility function
-status: open
+status: done
 priority: high
 parent: F-schema-validation-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/services/storage/utils/validateRolesData.ts:
+    Created new validation utility function that follows validateSettingsData
+    pattern exactly, with comprehensive JSDoc documentation and proper error
+    handling
+  packages/shared/src/services/storage/utils/index.ts: Added export for
+    validateRolesData to make it available for import by other modules
+  packages/shared/src/services/storage/utils/__tests__/validateRolesData.test.ts:
+    Created comprehensive unit test suite with 24 test cases covering all
+    validation scenarios, error handling, edge cases, and integration with
+    existing validation infrastructure
+log:
+  - Successfully implemented validateRolesData utility function following the
+    exact pattern established by validateSettingsData(). The function provides
+    comprehensive validation for roles data with enhanced error handling,
+    including field-level error reporting with detailed context, graceful
+    handling of null timestamps (for direct JSON edits), and operation/file path
+    context for debugging. All 24 unit tests pass, covering valid data
+    scenarios, invalid data with specific error cases, edge cases, and error
+    context preservation. The function integrates seamlessly with existing
+    validation infrastructure using SettingsValidationError and
+    validateWithSchema.
 schema: v1.0
 childrenIds: []
 created: 2025-08-10T03:02:10.114Z
