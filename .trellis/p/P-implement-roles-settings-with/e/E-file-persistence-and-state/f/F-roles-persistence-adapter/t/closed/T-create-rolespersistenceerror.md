@@ -1,12 +1,26 @@
 ---
 id: T-create-rolespersistenceerror
 title: Create RolesPersistenceError class with unit tests
-status: open
+status: done
 priority: high
 parent: F-roles-persistence-adapter
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/roles/persistence/RolesPersistenceError.ts:
+    Created new error class that extends Error with operation context and error
+    chaining, following SettingsPersistenceError pattern exactly
+  packages/ui-shared/src/types/roles/persistence/__tests__/RolesPersistenceError.test.ts: Created comprehensive unit tests with 6 test cases achieving 100% coverage
+  packages/ui-shared/src/types/roles/persistence/index.ts: Created barrel export file for clean imports
+log:
+  - 'Successfully implemented RolesPersistenceError class following the exact
+    pattern established by SettingsPersistenceError. The error class provides
+    structured error handling with operation context ("save" | "load" | "reset")
+    and error chaining capabilities. Created comprehensive unit tests with 100%
+    coverage including 6 test cases covering all functionality: error creation
+    with properties, operation types, optional cause parameter, stack trace
+    maintenance, Error class inheritance, and various cause types. All quality
+    checks pass and the implementation is ready for use by future
+    RolesPersistenceAdapter implementations.'
 schema: v1.0
 childrenIds: []
 created: 2025-08-10T21:38:30.640Z
