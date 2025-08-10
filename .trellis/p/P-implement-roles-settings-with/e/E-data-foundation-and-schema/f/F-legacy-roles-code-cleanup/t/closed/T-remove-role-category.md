@@ -1,18 +1,28 @@
 ---
 id: T-remove-role-category
 title: Remove role category utilities and related tests
-status: open
+status: done
 priority: medium
 parent: F-legacy-roles-code-cleanup
 prerequisites:
   - T-analyze-and-document-all
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/utils/getRoleCategories.ts: Deleted - role category enumeration utility no longer needed
+  packages/ui-shared/src/utils/getRolesByCategory.ts: Deleted - role category filtering utility no longer needed
+  packages/ui-shared/src/utils/__tests__/getRoleCategories.test.ts: Deleted - test file for removed utility
+  packages/ui-shared/src/utils/__tests__/getRolesByCategory.test.ts: Deleted - test file for removed utility
+  packages/ui-shared/src/utils/index.ts: Updated - removed exports for deleted role category utilities
 log:
   - 📋 **Dependency Analysis Complete** - Comprehensive dependency analysis has
     been completed for all legacy roles files. See `dependency-map-analysis.md`
     for detailed mapping of imports, impact assessment, and safe deletion
     strategy. Analysis confirms getRoleCategories.ts and getRolesByCategory.ts
     have only test file dependencies - safe for deletion.
+  - Successfully removed all role category utilities and related test files.
+    Deleted getRoleCategories.ts, getRolesByCategory.ts and their corresponding
+    test files. Updated utils/index.ts barrel export to remove deleted
+    utilities. Verified no remaining imports exist and all quality checks
+    (linting, formatting, type checking) pass cleanly.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T21:54:02.242Z
