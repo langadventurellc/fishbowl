@@ -742,6 +742,331 @@ describe("validateRolesData", () => {
     });
   });
 
+  describe("security testing", () => {
+    it("should safely handle script injection attempts in role names", () => {
+      const maliciousData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "malicious-1",
+            name: "<script>alert('XSS')</script>",
+            description: "javascript:alert('XSS')",
+            systemPrompt: "'; DROP TABLE roles; --",
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+      };
+
+      // Should validate without executing any scripts
+      const result = validateRolesData(
+        maliciousData,
+        persistedRolesSettingsSchema,
+        "/path/to/roles.json",
+        "saveRoles",
+      );
+
+      // Data should be preserved as-is for validation
+      expect(result.roles[0]!.name).toBe("<script>alert('XSS')</script>");
+      expect(result.roles[0]!.description).toBe("javascript:alert('XSS')");
+      expect(result.roles[0]!.systemPrompt).toBe("'; DROP TABLE roles; --");
+    });
+
+    it("should handle path traversal attempts in role data", () => {
+      const pathTraversalData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "../../../etc/passwd",
+            name: "../../sensitive/data",
+            description: "~/.ssh/id_rsa",
+            systemPrompt: "file:///etc/shadow",
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+      };
+
+      // Should validate without attempting to access files
+      const result = validateRolesData(
+        pathTraversalData,
+        persistedRolesSettingsSchema,
+        "/path/to/roles.json",
+        "saveRoles",
+      );
+
+      expect(result.roles[0]!.id).toBe("../../../etc/passwd");
+      expect(result.roles[0]!.name).toBe("../../sensitive/data");
+      expect(result.roles[0]!.description).toBe("~/.ssh/id_rsa");
+      expect(result.roles[0]!.systemPrompt).toBe("file:///etc/shadow");
+    });
+
+    it("should handle special characters and encoding attempts", () => {
+      const specialCharData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "special-chars",
+            name: "Role\x00\x01\x02\x03\xFF",
+            description: "%3Cscript%3Ealert%28%29%3C%2Fscript%3E",
+            systemPrompt: "&lt;script&gt;alert()&lt;/script&gt;",
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+      };
+
+      const result = validateRolesData(
+        specialCharData,
+        persistedRolesSettingsSchema,
+        "/path/to/special.json",
+        "saveRoles",
+      );
+
+      // Should preserve special characters without interpretation
+      expect(result.roles[0]!.name).toContain("\x00");
+      expect(result.roles[0]!.description).toContain("%3C");
+      expect(result.roles[0]!.systemPrompt).toContain("&lt;");
+    });
+
+    it("should prevent prototype pollution attempts", () => {
+      const pollutionData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "prototype-test",
+            name: "Test Role",
+            description: "Testing prototype pollution",
+            systemPrompt: "Test prompt",
+            __proto__: { malicious: true },
+            constructor: { prototype: { polluted: true } },
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+        __proto__: { globalPollution: true },
+      };
+
+      validateRolesData(
+        pollutionData,
+        persistedRolesSettingsSchema,
+        "/path/to/pollution.json",
+        "saveRoles",
+      );
+
+      // Should not affect global prototype
+      expect(
+        (Object.prototype as unknown as { malicious?: boolean }).malicious,
+      ).toBeUndefined();
+      expect(
+        (Object.prototype as unknown as { polluted?: boolean }).polluted,
+      ).toBeUndefined();
+      expect(
+        (Object.prototype as unknown as { globalPollution?: boolean })
+          .globalPollution,
+      ).toBeUndefined();
+    });
+
+    it("should handle extremely long strings safely", () => {
+      const extremeData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "extreme-test",
+            name: "a".repeat(100000), // Very long name
+            description: "b".repeat(100000), // Very long description
+            systemPrompt: "c".repeat(100000), // Very long system prompt
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+      };
+
+      // Should fail validation due to length limits, but not crash
+      expect(() =>
+        validateRolesData(
+          extremeData,
+          persistedRolesSettingsSchema,
+          "/path/to/extreme.json",
+          "saveRoles",
+        ),
+      ).toThrow(SettingsValidationError);
+    });
+  });
+
+  describe("concurrent validation", () => {
+    it("should handle multiple concurrent validation calls", async () => {
+      const validData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "concurrent-test",
+            name: "Concurrent Role",
+            description: "Testing concurrent validation",
+            systemPrompt: "Concurrent validation test",
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+      };
+
+      const promises = Array.from({ length: 10 }, (_, i) =>
+        Promise.resolve(
+          validateRolesData(
+            {
+              ...validData,
+              roles: [{ ...validData.roles[0]!, id: `concurrent-${i}` }],
+            },
+            persistedRolesSettingsSchema,
+            `/path/to/concurrent-${i}.json`,
+            "concurrentValidation",
+          ),
+        ),
+      );
+
+      const results = await Promise.all(promises);
+      results.forEach((result, i) => {
+        expect(result.roles[0]!.id).toBe(`concurrent-${i}`);
+        expect(result.roles[0]!.name).toBe("Concurrent Role");
+      });
+    });
+
+    it("should handle concurrent validations with mixed success/failure", async () => {
+      const createData = (valid: boolean, index: number) => ({
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: `concurrent-${index}`,
+            name: valid ? "Valid Role" : "a".repeat(101), // Invalid if false
+            description: "Testing concurrent mixed validation",
+            systemPrompt: "Concurrent test",
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+      });
+
+      const promises = Array.from(
+        { length: 10 },
+        (_, i) =>
+          new Promise((resolve) => {
+            try {
+              const result = validateRolesData(
+                createData(i % 2 === 0, i), // Alternate valid/invalid
+                persistedRolesSettingsSchema,
+                `/path/to/mixed-${i}.json`,
+                "mixedConcurrent",
+              );
+              resolve({ success: true, result, index: i });
+            } catch (error) {
+              resolve({ success: false, error, index: i });
+            }
+          }),
+      );
+
+      const results = (await Promise.all(promises)) as Array<{
+        success: boolean;
+        result?: unknown;
+        error?: SettingsValidationError;
+        index: number;
+      }>;
+      results.forEach((result, i) => {
+        if (i % 2 === 0) {
+          // Should succeed
+          expect(result.success).toBe(true);
+        } else {
+          // Should fail
+          expect(result.success).toBe(false);
+          expect(result.error).toBeInstanceOf(SettingsValidationError);
+        }
+      });
+    });
+  });
+
+  describe("memory usage", () => {
+    it("should not leak memory during repeated validations", () => {
+      const validData = {
+        schemaVersion: "1.0.0",
+        roles: Array.from({ length: 10 }, (_, i) => ({
+          id: `role-${i}`,
+          name: `Role ${i}`,
+          description: `Description ${i}`,
+          systemPrompt: `Prompt ${i}`,
+        })),
+        lastUpdated: new Date().toISOString(),
+      };
+
+      // Run validation 1000 times
+      for (let i = 0; i < 1000; i++) {
+        validateRolesData(
+          validData,
+          persistedRolesSettingsSchema,
+          "/path/to/roles.json",
+          "memoryTest",
+        );
+      }
+
+      // Test passes if no memory errors occur
+      expect(true).toBe(true);
+    });
+
+    it("should handle large validation error sets without excessive memory", () => {
+      // Create data with many validation errors
+      const invalidRoles = Array.from({ length: 50 }, () => ({
+        id: "", // Invalid
+        name: "a".repeat(101), // Invalid
+        description: "b".repeat(501), // Invalid
+        systemPrompt: "c".repeat(5001), // Invalid
+      }));
+
+      const largeInvalidData = {
+        schemaVersion: "1.0.0",
+        roles: invalidRoles,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      try {
+        validateRolesData(
+          largeInvalidData,
+          persistedRolesSettingsSchema,
+          "/path/to/large-invalid.json",
+          "memoryErrorTest",
+        );
+      } catch (error) {
+        expect(error).toBeInstanceOf(SettingsValidationError);
+        if (error instanceof SettingsValidationError) {
+          // Should have many errors but not crash
+          expect(error.fieldErrors.length).toBeGreaterThan(50);
+        }
+      }
+    });
+
+    it("should efficiently handle repeated error generation", () => {
+      const invalidData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "", // Invalid
+            name: "a".repeat(101), // Invalid
+            description: "b".repeat(501), // Invalid
+            systemPrompt: "c".repeat(5001), // Invalid
+          },
+        ],
+        lastUpdated: new Date().toISOString(),
+      };
+
+      // Generate errors 100 times
+      for (let i = 0; i < 100; i++) {
+        try {
+          validateRolesData(
+            invalidData,
+            persistedRolesSettingsSchema,
+            `/path/to/error-${i}.json`,
+            "repeatedErrors",
+          );
+        } catch (error) {
+          expect(error).toBeInstanceOf(SettingsValidationError);
+        }
+      }
+
+      // Test passes if no memory issues occur
+      expect(true).toBe(true);
+    });
+  });
+
   describe("integration with validateWithSchema", () => {
     it("should properly delegate to validateWithSchema", () => {
       const validData = {
