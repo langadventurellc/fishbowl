@@ -1,7 +1,7 @@
 ---
 id: F-legacy-roles-code-cleanup
 title: Legacy Roles Code Cleanup
-status: open
+status: done
 priority: medium
 parent: E-data-foundation-and-schema
 prerequisites:

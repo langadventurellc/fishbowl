@@ -1,7 +1,7 @@
 ---
 id: T-clean-up-remaining-test-files
 title: Clean up remaining test files and ensure test coverage
-status: open
+status: done
 priority: medium
 parent: F-legacy-roles-code-cleanup
 prerequisites:
@@ -13,6 +13,14 @@ log:
     for detailed mapping of imports, impact assessment, and safe deletion
     strategy. This task benefits from the analysis showing which test files need
     deletion and their exact locations.
+  - Successfully completed test file cleanup and validation. All test files were
+    already properly updated from previous tasks. Verified no references to
+    deleted utilities (getRoleCategories, getRolesByCategory, isPredefinedRole,
+    isValidPredefinedRole) exist in test files. All test suites continue to pass
+    with proper systemPrompt testing in place. Test fixtures align with new
+    RoleViewModel structure without obsolete fields like category or
+    isPredefined. Quality checks (linting, formatting, type-checking) all pass
+    successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T21:56:29.357Z
