@@ -1,7 +1,7 @@
 ---
 id: F-roles-persistence-adapter
 title: Roles Persistence Adapter Interface
-status: open
+status: done
 priority: medium
 parent: E-file-persistence-and-state
 prerequisites: []
