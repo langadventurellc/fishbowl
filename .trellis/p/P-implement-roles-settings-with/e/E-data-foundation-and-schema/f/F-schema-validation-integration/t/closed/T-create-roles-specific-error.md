@@ -1,13 +1,41 @@
 ---
 id: T-create-roles-specific-error
 title: Create roles-specific error formatting functions
-status: open
+status: done
 priority: high
 parent: F-schema-validation-integration
 prerequisites:
   - T-create-validaterolesdata
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/services/storage/utils/formatRolesValidationErrors.ts:
+    Created function to format Zod validation errors into user-friendly messages
+    for roles, with enhanced field naming and specific guidance for character
+    limits, required fields, and validation types
+  packages/shared/src/services/storage/utils/createRolesValidationSummary.ts:
+    Created function to generate human-readable summaries of validation errors,
+    grouping errors by role and providing overview of issues with proper
+    pluralization
+  packages/shared/src/services/storage/utils/__tests__/formatRolesValidationErrors.test.ts:
+    Comprehensive unit tests with 10 test cases covering field name formatting,
+    enhanced error messages, multiple roles, and edge cases
+  packages/shared/src/services/storage/utils/__tests__/createRolesValidationSummary.test.ts:
+    Comprehensive unit tests with 19 test cases covering basic functionality,
+    multiple errors, role indexing, edge cases, and pluralization
+  packages/shared/src/services/storage/utils/index.ts:
+    Added exports for both new
+    error formatting functions to enable import by other modules
+log:
+  - 'Successfully implemented roles-specific error formatting functions
+    following established patterns and project standards. Created two separate
+    functions to comply with linting rules: formatRolesValidationErrors() for
+    converting Zod errors to user-friendly messages with roles-specific context
+    (e.g., "Role 1 name cannot exceed 100 characters. Please shorten the text.")
+    and createRolesValidationSummary() for generating concise overviews of
+    multiple validation issues. Both functions provide clear, actionable error
+    messages with enhanced field naming and specific guidance. Comprehensive
+    test coverage with 29 total test cases covering all validation scenarios,
+    edge cases, and error message content validation. All quality checks pass
+    including linting, formatting, and type-checking.'
 schema: v1.0
 childrenIds: []
 created: 2025-08-10T03:02:29.422Z

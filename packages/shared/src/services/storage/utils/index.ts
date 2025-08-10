@@ -19,6 +19,8 @@ export { isValidSchemaVersion } from "./isValidSchemaVersion";
 export { parseSchemaVersion } from "./parseSchemaVersion";
 export { validateSettingsData } from "./validateSettingsData";
 export { validateRolesData } from "./validateRolesData";
+export { formatRolesValidationErrors } from "./formatRolesValidationErrors";
+export { createRolesValidationSummary } from "./createRolesValidationSummary";
 
 // File system utilities
 export { ensureDirectoryExists } from "./ensureDirectoryExists";
