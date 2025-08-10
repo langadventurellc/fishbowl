@@ -54,8 +54,8 @@ Integrate the new roles schema validation throughout the application, implement 
 
 - [ ] **Field Constraint Enforcement**: All validation rules properly enforced
   - Name field: Required, 1-100 character limit enforced
-  - Description field: Required, 500 character limit enforced
-  - SystemPrompt field: Required, 1-5000 character limit enforced
+  - Description field: 500 character limit enforced
+  - SystemPrompt field: 5000 character limit enforced
   - ID field: Required, non-empty string validation
   - Timestamp fields: Optional, valid ISO datetime when present
 
@@ -137,7 +137,7 @@ try {
   - Edge cases like minimum and maximum character limits
 
 - [ ] **Invalid Data Testing**: Invalid configurations produce appropriate errors
-  - Missing required fields (id, name, description, systemPrompt)
+  - Missing required fields (id, name)
   - Fields exceeding character limits (name > 100, description > 500, systemPrompt > 5000)
   - Invalid data types (non-strings, non-ISO dates)
   - Empty strings in required fields
