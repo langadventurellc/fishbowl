@@ -1,18 +1,29 @@
 ---
 id: T-remove-custom-vs-predefined
 title: Remove custom vs predefined role distinction utilities
-status: open
+status: done
 priority: medium
 parent: F-legacy-roles-code-cleanup
 prerequisites:
   - T-analyze-and-document-all
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/utils/isPredefinedRole.ts: Deleted utility function that checked if a role ID was predefined
+  packages/ui-shared/src/utils/isValidPredefinedRole.ts: Deleted utility function that validated predefined role structure
+  packages/ui-shared/src/utils/__tests__/isPredefinedRole.test.ts: Deleted test file for isPredefinedRole utility
+  packages/ui-shared/src/utils/__tests__/isValidPredefinedRole.test.ts: Deleted test file for isValidPredefinedRole utility
+  packages/ui-shared/src/utils/index.ts: Removed exports for deleted
+    isPredefinedRole and isValidPredefinedRole utilities
 log:
   - 📋 **Dependency Analysis Complete** - Comprehensive dependency analysis has
     been completed for all legacy roles files. See `dependency-map-analysis.md`
     for detailed mapping of imports, impact assessment, and safe deletion
     strategy. Analysis shows isPredefinedRole.ts and isValidPredefinedRole.ts
     have only test file dependencies - safe for deletion.
+  - Successfully removed custom vs predefined role distinction utilities.
+    Deleted isPredefinedRole.ts and isValidPredefinedRole.ts utility files along
+    with their test files, updated the barrel export in utils/index.ts to remove
+    references, and verified no remaining imports exist. All quality checks pass
+    with no errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T21:54:33.374Z
