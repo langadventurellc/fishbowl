@@ -1,13 +1,23 @@
 ---
 id: T-integrate-roles-persistence
 title: Integrate roles persistence exports in ui-shared package
-status: open
+status: done
 priority: low
 parent: F-roles-persistence-adapter
 prerequisites:
   - T-create-roles-persistence
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/roles/index.ts:
+    Created new barrel export for roles
+    types following established pattern from settings
+  packages/ui-shared/src/types/index.ts: Added roles export to main types index in alphabetical order
+log:
+  - Successfully integrated roles persistence exports in ui-shared package
+    following established patterns. Created missing roles category barrel export
+    at packages/ui-shared/src/types/roles/index.ts and added roles export to
+    main types index. All exports now follow the hierarchical barrel export
+    pattern used by settings persistence. TypeScript compilation and all quality
+    checks pass. External imports work correctly from consuming applications.
 schema: v1.0
 childrenIds: []
 created: 2025-08-10T21:40:01.092Z
