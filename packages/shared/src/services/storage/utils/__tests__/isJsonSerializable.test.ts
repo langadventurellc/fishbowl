@@ -1,4 +1,4 @@
-import { isJsonSerializable } from "../isJsonSerializable";
+import { isJsonSerializable } from "../../../../validation/isJsonSerializable";
 
 describe("isJsonSerializable", () => {
   it("should return true for serializable primitives", () => {

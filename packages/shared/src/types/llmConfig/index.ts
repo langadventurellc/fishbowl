@@ -33,14 +33,14 @@ export { ValidationErrorCode } from "./ValidationErrorCode";
 export type { StandardizedValidationResult } from "./StandardizedValidationResult";
 
 // Validation utilities
-export { formatZodErrors } from "./formatZodErrors";
-export { sanitizeValue } from "./sanitizeValue";
+export { formatZodErrors } from "../../validation/formatZodErrors";
+export { sanitizeValue } from "../../validation/sanitizeValue";
 export { createValidationError } from "./createValidationError";
 export { createValidationResult } from "./createValidationResult";
 export { aggregateValidationErrors } from "./aggregateValidationErrors";
 
 // User-friendly error formatting
-export { groupErrorsByField } from "./groupErrorsByField";
+export { groupErrorsByField } from "../../validation/groupErrorsByField";
 export { getFieldDisplayName } from "./getFieldDisplayName";
 export { getValidationSummary } from "./getValidationSummary";
 export { formatErrorsForDisplay } from "./formatErrorsForDisplay";

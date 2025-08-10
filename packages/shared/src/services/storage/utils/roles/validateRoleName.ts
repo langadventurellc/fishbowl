@@ -1,4 +1,4 @@
-import type { ValidationResult } from "../../../../types/validation/ValidationResult";
+import type { ValidationResult } from "../../../../validation/ValidationResult";
 
 /**
  * Validates a role name according to schema constraints.

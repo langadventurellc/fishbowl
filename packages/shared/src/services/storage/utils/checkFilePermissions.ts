@@ -1,7 +1,8 @@
 import { FileSystemBridge } from "../FileSystemBridge";
 import { NodeFileSystemBridge } from "../NodeFileSystemBridge";
 import { PathValidationError } from "./PathValidationError";
-import { validatePath, sanitizePath } from "./index";
+import { sanitizePath } from "../../../validation/sanitizePath";
+import { validatePath } from "../../../validation/validatePath";
 
 /**
  * Helper to get Node.js fs instance for permission operations.

@@ -1,4 +1,4 @@
-import { validatePathStrict } from "./validatePathStrict";
+import { validatePathStrict } from "../services/storage/utils/validatePathStrict";
 
 /**
  * Validates if a file path is safe for file operations.

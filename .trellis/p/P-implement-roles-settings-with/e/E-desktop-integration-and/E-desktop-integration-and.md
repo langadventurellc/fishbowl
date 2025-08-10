@@ -7,7 +7,103 @@ parent: P-implement-roles-settings-with
 prerequisites:
   - E-file-persistence-and-state
 affectedFiles: {}
-log: []
+log:
+  - >-
+    ## General-purpose validation utilities consolidated
+    (T-consolidate-general-purpose completed)
+
+
+    The following validation utility files have been moved from scattered
+    locations to a centralized validation folder:
+
+
+    ### Moved Files (Old → New Location):
+
+
+    **Timestamp/Date Validation:**
+
+    - `packages/shared/src/services/storage/utils/roles/isValidTimestamp.ts` →
+    `packages/shared/src/validation/isValidTimestamp.ts`
+
+
+    **JSON Utilities:**
+
+    - `packages/shared/src/services/storage/utils/isJsonSerializable.ts` →
+    `packages/shared/src/validation/isJsonSerializable.ts`
+
+    - `packages/shared/src/services/storage/utils/safeJsonStringify.ts` →
+    `packages/shared/src/validation/safeJsonStringify.ts`
+
+    - `packages/shared/src/services/storage/utils/safeJsonParse.ts` →
+    `packages/shared/src/validation/safeJsonParse.ts`
+
+    - `packages/shared/src/services/storage/utils/isValidJson.ts` →
+    `packages/shared/src/validation/isValidJson.ts`
+
+
+    **Schema/Version Validation:**
+
+    - `packages/shared/src/services/storage/utils/isValidSchemaVersion.ts` →
+    `packages/shared/src/validation/isValidSchemaVersion.ts`
+
+    - `packages/shared/src/services/storage/utils/parseSchemaVersion.ts` →
+    `packages/shared/src/validation/parseSchemaVersion.ts`
+
+    - `packages/shared/src/services/storage/utils/validateWithSchema.ts` →
+    `packages/shared/src/validation/validateWithSchema.ts`
+
+
+    **Path/Security Utilities:**
+
+    - `packages/shared/src/services/storage/utils/validatePath.ts` →
+    `packages/shared/src/validation/validatePath.ts`
+
+    - `packages/shared/src/services/storage/utils/isPathSafe.ts` →
+    `packages/shared/src/validation/isPathSafe.ts`
+
+    - `packages/shared/src/services/storage/utils/sanitizePath.ts` →
+    `packages/shared/src/validation/sanitizePath.ts`
+
+
+    **Object Utilities:**
+
+    - `packages/shared/src/services/storage/utils/deepMerge.ts` →
+    `packages/shared/src/validation/deepMerge.ts`
+
+
+    **Error Handling/Formatting:**
+
+    - `packages/shared/src/types/llmConfig/sanitizeValue.ts` →
+    `packages/shared/src/validation/sanitizeValue.ts`
+
+    - `packages/shared/src/types/llmConfig/groupErrorsByField.ts` →
+    `packages/shared/src/validation/groupErrorsByField.ts`
+
+    - `packages/shared/src/types/llmConfig/formatZodErrors.ts` →
+    `packages/shared/src/validation/formatZodErrors.ts`
+
+
+    **Validation Types:**
+
+    - `packages/shared/src/types/validation/ValidationResult.ts` →
+    `packages/shared/src/validation/ValidationResult.ts`
+
+
+    ### Created Files:
+
+    - `packages/shared/src/validation/index.ts` - Barrel exports for all
+    validation utilities
+
+
+    ### Impact:
+
+    - All import references updated throughout codebase
+
+    - Improved discoverability of general-purpose validation utilities
+
+    - Centralized location makes code maintenance easier
+
+    - All quality checks pass (lint, format, type-check, tests)
 schema: v1.0
 childrenIds: []
 created: 2025-08-09T19:34:13.872Z

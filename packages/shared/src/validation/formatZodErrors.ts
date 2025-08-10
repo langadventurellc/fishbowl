@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { ValidationError } from "./ValidationError";
-import { mapZodIssueToErrorCode } from "./mapZodIssueToErrorCode";
+import type { ValidationError } from "../types/llmConfig/ValidationError";
+import { mapZodIssueToErrorCode } from "../types/llmConfig/mapZodIssueToErrorCode";
 import { sanitizeValue } from "./sanitizeValue";
 
 /**

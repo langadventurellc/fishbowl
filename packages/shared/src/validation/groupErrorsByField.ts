@@ -1,4 +1,4 @@
-import type { ValidationError } from "./ValidationError";
+import type { ValidationError } from "../types/llmConfig/ValidationError";
 
 /**
  * Groups errors by field name

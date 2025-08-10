@@ -1,4 +1,4 @@
-import { isPathSafe } from "../isPathSafe";
+import { isPathSafe } from "../../../../validation/isPathSafe";
 
 describe("isPathSafe", () => {
   it("should return true for safe paths without base restriction", () => {

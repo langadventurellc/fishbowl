@@ -1,5 +1,5 @@
 import type { ValidationError } from "./ValidationError";
-import { groupErrorsByField } from "./groupErrorsByField";
+import { groupErrorsByField } from "../../validation/groupErrorsByField";
 import { getFieldDisplayName } from "./getFieldDisplayName";
 
 /**

@@ -1,5 +1,5 @@
-import { validatePathStrict } from "./validatePathStrict";
-import { resolvePath } from "./resolvePath";
+import { validatePathStrict } from "../services/storage/utils/validatePathStrict";
+import { resolvePath } from "../services/storage/utils/resolvePath";
 
 /**
  * Checks if a path is safe for file operations.

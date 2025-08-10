@@ -1,4 +1,4 @@
-import { validatePath } from "../validatePath";
+import { validatePath } from "../../../../validation/validatePath";
 
 describe("validatePath", () => {
   it("should return true for valid relative paths", () => {

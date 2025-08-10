@@ -1,6 +1,6 @@
 import type { ValidationError } from "./ValidationError";
 import type { ValidationErrorCode } from "./ValidationErrorCode";
-import { sanitizeValue } from "./sanitizeValue";
+import { sanitizeValue } from "../../validation/sanitizeValue";
 
 /**
  * Creates a validation error for custom business rules

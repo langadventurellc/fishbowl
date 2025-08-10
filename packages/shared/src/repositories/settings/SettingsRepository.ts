@@ -3,7 +3,7 @@ import type { PersistedSettingsData } from "../../types/settings/PersistedSettin
 import { FileStorageService } from "../../services/storage/FileStorageService";
 import { createDefaultPersistedSettings } from "../../types/settings/createDefaultPersistedSettings";
 import { persistedSettingsSchema } from "../../types/settings/persistedSettingsSchema";
-import { deepMerge } from "../../services/storage/utils/deepMerge";
+import { deepMerge } from "../../validation/deepMerge";
 import {
   FileStorageError,
   SettingsValidationError,

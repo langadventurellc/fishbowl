@@ -7,11 +7,8 @@ import { FileStorageError } from "./errors/FileStorageError";
 import { ErrorFactory } from "./errors/ErrorFactory";
 import { SystemError } from "../../types/SystemError";
 import { FileStorageOptions } from "./FileStorageOptions";
-import {
-  validatePathStrict,
-  safeJsonStringify,
-  ensureDirectoryExists,
-} from "./utils";
+import { validatePathStrict, ensureDirectoryExists } from "./utils";
+import { safeJsonStringify } from "../../validation/safeJsonStringify";
 import { createLoggerSync } from "../../logging/createLoggerSync";
 
 /**

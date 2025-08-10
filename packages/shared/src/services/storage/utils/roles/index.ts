@@ -13,7 +13,7 @@ export { validateRoleId } from "./validateRoleId";
 
 // Timestamp utilities
 export { normalizeTimestamps } from "./normalizeTimestamps";
-export { isValidTimestamp } from "./isValidTimestamp";
+export { isValidTimestamp } from "../../../../validation/isValidTimestamp";
 export { addDefaultTimestamps } from "./addDefaultTimestamps";
 
 // Batch operations
