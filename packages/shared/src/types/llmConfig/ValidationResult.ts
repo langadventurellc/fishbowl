@@ -1,8 +1,5 @@
 /**
- * Validation result type for validators that return detailed results
+ * @deprecated Import from ../validation/ValidationResult instead
+ * Re-export for backward compatibility
  */
-export interface ValidationResult {
-  isValid: boolean;
-  error?: string;
-  errors?: string[];
-}
+export type { ValidationResult } from "../validation/ValidationResult";
