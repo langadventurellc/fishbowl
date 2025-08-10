@@ -1,7 +1,7 @@
 ---
 id: F-schema-validation-integration
 title: Schema Validation Integration
-status: open
+status: done
 priority: medium
 parent: E-data-foundation-and-schema
 prerequisites:
