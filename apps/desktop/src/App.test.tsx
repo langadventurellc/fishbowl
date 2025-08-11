@@ -68,6 +68,9 @@ jest.mock("./contexts", () => ({
   SettingsProvider: jest.fn(({ children }) => (
     <div data-testid="settings-provider">{children}</div>
   )),
+  RolesProvider: jest.fn(({ children }) => (
+    <div data-testid="roles-provider">{children}</div>
+  )),
 }));
 
 // Mock logger
@@ -303,9 +306,10 @@ describe("App", () => {
       expect(screen.getByTestId("home-page")).toBeInTheDocument();
     });
 
-    it("should be wrapped in SettingsProvider", () => {
+    it("should be wrapped in SettingsProvider and RolesProvider", () => {
       render(<App />);
       expect(screen.getByTestId("settings-provider")).toBeInTheDocument();
+      expect(screen.getByTestId("roles-provider")).toBeInTheDocument();
     });
   });
 
