@@ -1,13 +1,30 @@
 ---
 id: T-create-rolesprovider-context
 title: Create RolesProvider context and hook
-status: open
+status: done
 priority: medium
 parent: F-desktop-adapter-implementation
 prerequisites:
   - T-implement-desktoprolesadapter
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/contexts/RolesProvider.tsx:
+    Created new React context provider
+    following SettingsProvider pattern exactly - provides
+    RolesPersistenceAdapter through context with error handling hook
+  apps/desktop/src/contexts/index.ts: Added barrel exports for RolesProvider,
+    useRolesAdapter, and RolesPersistenceAdapterContext
+  apps/desktop/src/contexts/__tests__/RolesProvider.test.tsx: Created
+    comprehensive unit tests covering provider functionality, hook error
+    handling, adapter provision, and interface validation with 4 passing test
+    cases
+log:
+  - Created RolesProvider context and hook following the exact pattern of
+    SettingsProvider. Implemented React context provider that provides the
+    desktopRolesAdapter singleton to child components, with a useRolesAdapter
+    hook that throws an error when used outside the provider. Added
+    comprehensive unit tests that verify all functionality including error
+    handling, adapter provision, and interface correctness. All quality checks
+    pass (lint, format, type-check) and tests pass (4/4).
 schema: v1.0
 childrenIds: []
 created: 2025-08-11T03:15:35.830Z
