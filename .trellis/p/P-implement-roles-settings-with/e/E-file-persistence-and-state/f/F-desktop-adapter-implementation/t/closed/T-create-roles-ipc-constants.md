@@ -1,12 +1,32 @@
 ---
 id: T-create-roles-ipc-constants
 title: Create roles IPC constants and types
-status: open
+status: done
 priority: high
 parent: F-desktop-adapter-implementation
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/shared/ipc/rolesConstants.ts: New file - ROLES_CHANNELS
+    constants and RolesChannelType following llmConfig pattern
+  apps/desktop/src/shared/ipc/roles/loadRequest.ts: New file - RolesLoadRequest interface for load operations
+  apps/desktop/src/shared/ipc/roles/saveRequest.ts: New file - RolesSaveRequest
+    interface with PersistedRolesSettingsData parameter
+  apps/desktop/src/shared/ipc/roles/resetRequest.ts: New file - RolesResetRequest interface for reset operations
+  apps/desktop/src/shared/ipc/roles/loadResponse.ts:
+    New file - RolesLoadResponse
+    extending IPCResponse<PersistedRolesSettingsData>
+  apps/desktop/src/shared/ipc/roles/saveResponse.ts: New file - RolesSaveResponse extending IPCResponse<void>
+  apps/desktop/src/shared/ipc/roles/resetResponse.ts: New file -
+    RolesResetResponse extending IPCResponse<PersistedRolesSettingsData>
+  apps/desktop/src/shared/ipc/index.ts: Updated - Added exports for
+    ROLES_CHANNELS, RolesChannelType, and all roles request/response types
+log:
+  - Implemented complete IPC constants and types system for roles persistence
+    operations, following the exact pattern established by settings. Created
+    dedicated rolesConstants.ts file to avoid multiple exports lint violations.
+    All request/response types properly extend IPCResponse with SerializedError
+    support. Comprehensive type system enables type-safe communication between
+    renderer and main processes for file-based roles management.
 schema: v1.0
 childrenIds: []
 created: 2025-08-11T03:14:19.644Z
