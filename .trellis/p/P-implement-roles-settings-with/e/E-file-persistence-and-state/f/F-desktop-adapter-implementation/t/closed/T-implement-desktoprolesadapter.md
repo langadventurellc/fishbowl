@@ -1,13 +1,31 @@
 ---
 id: T-implement-desktoprolesadapter
 title: Implement DesktopRolesAdapter class
-status: open
+status: done
 priority: high
 parent: F-desktop-adapter-implementation
 prerequisites:
   - T-add-roles-api-to-electron
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/adapters/desktopRolesAdapter.ts: Created DesktopRolesAdapter
+    class implementing RolesPersistenceAdapter interface with save(), load(),
+    and reset() methods using window.electronAPI.roles IPC communication.
+    Includes proper error handling, null returns for missing data, and singleton
+    export.
+  apps/desktop/src/adapters/__tests__/desktopRolesAdapter.test.ts:
+    Created comprehensive unit tests with 27 test cases covering all methods,
+    error scenarios, edge cases, interface compliance, and singleton behavior.
+    Tests include mocked electronAPI, error mapping verification, and complete
+    coverage of success and failure paths.
+log:
+  - Implemented DesktopRolesAdapter class following exact pattern from
+    DesktopSettingsAdapter. The adapter implements RolesPersistenceAdapter
+    interface using Electron IPC communication through window.electronAPI.roles.
+    Key features include proper error handling with RolesPersistenceError
+    mapping, null return for missing roles data, void return for reset method
+    despite IPC returning data, and comprehensive unit testing with 100%
+    coverage (27/27 tests passed). Implementation follows project conventions
+    and passes all quality checks.
 schema: v1.0
 childrenIds: []
 created: 2025-08-11T03:15:22.054Z
