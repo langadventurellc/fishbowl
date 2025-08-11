@@ -1,15 +1,26 @@
 ---
 id: T-create-roles-mapping-barrel
 title: Create roles mapping barrel exports and integrate with ui-shared package
-status: open
+status: done
 priority: low
 parent: F-data-mapping-layer
 prerequisites:
   - T-create-roles-ui-to-persistence
   - T-create-roles-persistence-to
   - T-create-roles-mapping-utility
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/mapping/roles/utils/index.ts: Added re-export of
+    handleNullTimestamps from transformers to make it available as a roles
+    utility function
+log:
+  - Completed barrel export integration for roles mapping layer. The roles
+    mapping functions were already properly set up with barrel exports at all
+    levels - the main missing piece was ensuring handleNullTimestamps utility
+    function is accessible from the roles utils namespace. Updated the roles
+    utils index to re-export handleNullTimestamps from the shared transformers,
+    allowing consumers to import all roles mapping utilities from a unified
+    interface. All quality checks pass and shared packages rebuild successfully
+    with the updated exports.
 schema: v1.0
 childrenIds: []
 created: 2025-08-10T22:20:31.190Z
