@@ -1,12 +1,36 @@
 ---
 id: T-create-roles-ui-to-persistence
 title: Create roles UI to persistence mapping functions with comprehensive unit tests
-status: open
+status: done
 priority: high
 parent: F-data-mapping-layer
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/mapping/roles/mapSingleRoleUIToPersistence.ts:
+    Created new mapping function that transforms individual RoleViewModel to
+    PersistedRoleData format with field normalization and timestamp generation
+  packages/ui-shared/src/mapping/roles/mapRolesUIToPersistence.ts:
+    Created new mapping function that transforms RoleViewModel array to
+    PersistedRolesSettingsData with schema validation and metadata generation
+  packages/ui-shared/src/mapping/roles/__tests__/mapSingleRoleUIToPersistence.test.ts:
+    Added comprehensive unit tests with 100% coverage including field
+    normalization, timestamp generation, and constraint enforcement
+  packages/ui-shared/src/mapping/roles/__tests__/mapRolesUIToPersistence.test.ts:
+    Added comprehensive unit tests including edge cases, performance testing,
+    and schema validation with 100% coverage
+  packages/ui-shared/src/mapping/roles/index.ts:
+    Updated barrel exports to include
+    new UI-to-persistence mapping functions for consumption by other packages
+log:
+  - Successfully implemented roles UI to persistence mapping functions with
+    comprehensive unit tests. Created mapRolesUIToPersistence and
+    mapSingleRoleUIToPersistence functions that transform RoleViewModel data to
+    PersistedRolesSettingsData format with proper field normalization, timestamp
+    generation, and schema validation. Both functions follow established
+    patterns and include full JSDoc documentation. Comprehensive unit tests
+    achieve 100% coverage with edge cases including empty arrays, missing
+    fields, field constraints, and performance testing with 100+ roles. All
+    quality checks pass (lint, format, type-check, tests).
 schema: v1.0
 childrenIds: []
 created: 2025-08-10T22:18:15.860Z
