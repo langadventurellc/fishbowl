@@ -246,16 +246,16 @@ describe("mapRolesPersistenceToUI", () => {
         roles: [
           {
             id: "short",
-            name: "A", // Will be padded
-            description: "B", // Minimum valid
-            systemPrompt: "C", // Minimum valid
+            name: "A", // Valid single char (min 1)
+            description: "B", // Valid single char
+            systemPrompt: "C", // Valid single char
             createdAt: "2025-01-10T09:00:00.000Z",
             updatedAt: "2025-01-14T15:30:00.000Z",
           },
           {
             id: "long",
-            name: "X".repeat(100), // Will be truncated to 50
-            description: "Y".repeat(300), // Will be truncated to 200
+            name: "X".repeat(150), // Will be truncated to 100
+            description: "Y".repeat(600), // Will be truncated to 500
             systemPrompt: "Z".repeat(3000), // Will be truncated to 2000
             createdAt: "2025-01-10T09:00:00.000Z",
             updatedAt: "2025-01-14T15:30:00.000Z",
@@ -268,17 +268,17 @@ describe("mapRolesPersistenceToUI", () => {
 
       expect(result).toHaveLength(2);
 
-      // Short role (padded)
-      expect(result[0]!.name).toBe("A ");
-      expect(result[0]!.name.length).toBe(2);
+      // Short role (valid single chars)
+      expect(result[0]!.name).toBe("A");
+      expect(result[0]!.name.length).toBe(1);
       expect(result[0]!.description).toBe("B");
       expect(result[0]!.systemPrompt).toBe("C");
 
       // Long role (truncated)
-      expect(result[1]!.name).toBe("X".repeat(50));
-      expect(result[1]!.name.length).toBe(50);
-      expect(result[1]!.description).toBe("Y".repeat(200));
-      expect(result[1]!.description.length).toBe(200);
+      expect(result[1]!.name).toBe("X".repeat(100));
+      expect(result[1]!.name.length).toBe(100);
+      expect(result[1]!.description).toBe("Y".repeat(500));
+      expect(result[1]!.description.length).toBe(500);
       expect(result[1]!.systemPrompt).toBe("Z".repeat(2000));
       expect(result[1]!.systemPrompt?.length).toBe(2000);
     });

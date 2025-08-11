@@ -47,7 +47,7 @@ describe("normalizeRoleFields", () => {
   });
 
   describe("name field", () => {
-    it("should trim and enforce name constraints (2-50 chars)", () => {
+    it("should trim and enforce name constraints (1-100 chars)", () => {
       const role = {
         id: "role-1",
         name: "  Valid Role Name  ",
@@ -60,32 +60,32 @@ describe("normalizeRoleFields", () => {
       expect(result.name).toBe("Valid Role Name");
     });
 
-    it("should pad short names to minimum length", () => {
+    it("should preserve single character names (minimum 1 char)", () => {
       const role = {
         id: "role-1",
-        name: "A", // 1 char, min is 2
+        name: "A", // 1 char, min is 1
         description: "Test description",
         systemPrompt: "Test prompt",
       };
 
       const result = normalizeRoleFields(role);
 
-      expect(result.name).toBe("A ");
-      expect(result.name.length).toBe(2);
+      expect(result.name).toBe("A");
+      expect(result.name.length).toBe(1);
     });
 
     it("should truncate long names to maximum length", () => {
       const role = {
         id: "role-1",
-        name: "A".repeat(100), // 100 chars, max is 50
+        name: "A".repeat(150), // 150 chars, max is 100
         description: "Test description",
         systemPrompt: "Test prompt",
       };
 
       const result = normalizeRoleFields(role);
 
-      expect(result.name).toBe("A".repeat(50));
-      expect(result.name.length).toBe(50);
+      expect(result.name).toBe("A".repeat(100));
+      expect(result.name.length).toBe(100);
     });
 
     it("should handle empty name by padding to minimum", () => {
@@ -98,8 +98,8 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.name).toBe("  ");
-      expect(result.name.length).toBe(2);
+      expect(result.name).toBe(" ");
+      expect(result.name.length).toBe(1);
     });
 
     it("should handle null/undefined name", () => {
@@ -112,13 +112,13 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.name).toBe("  ");
-      expect(result.name.length).toBe(2);
+      expect(result.name).toBe(" ");
+      expect(result.name.length).toBe(1);
     });
   });
 
   describe("description field", () => {
-    it("should trim and enforce description constraints (1-200 chars)", () => {
+    it("should trim and enforce description constraints (0-500 chars)", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
@@ -131,7 +131,7 @@ describe("normalizeRoleFields", () => {
       expect(result.description).toBe("This is a valid description");
     });
 
-    it("should pad empty description to minimum length", () => {
+    it("should allow empty description (minimum 0 chars)", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
@@ -141,22 +141,22 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.description).toBe(" ");
-      expect(result.description.length).toBe(1);
+      expect(result.description).toBe("");
+      expect(result.description.length).toBe(0);
     });
 
     it("should truncate long descriptions to maximum length", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
-        description: "A".repeat(300), // 300 chars, max is 200
+        description: "A".repeat(600), // 600 chars, max is 500
         systemPrompt: "Test prompt",
       };
 
       const result = normalizeRoleFields(role);
 
-      expect(result.description).toBe("A".repeat(200));
-      expect(result.description.length).toBe(200);
+      expect(result.description).toBe("A".repeat(500));
+      expect(result.description.length).toBe(500);
     });
 
     it("should handle null/undefined description", () => {
@@ -169,13 +169,13 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.description).toBe(" ");
-      expect(result.description.length).toBe(1);
+      expect(result.description).toBe("");
+      expect(result.description.length).toBe(0);
     });
   });
 
   describe("systemPrompt field", () => {
-    it("should trim and enforce systemPrompt constraints (1-2000 chars)", () => {
+    it("should trim and enforce systemPrompt constraints (0-2000 chars)", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
@@ -188,7 +188,7 @@ describe("normalizeRoleFields", () => {
       expect(result.systemPrompt).toBe("You are a helpful assistant");
     });
 
-    it("should pad empty systemPrompt to minimum length", () => {
+    it("should allow empty systemPrompt (minimum 0 chars)", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
@@ -198,8 +198,8 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.systemPrompt).toBe(" ");
-      expect(result.systemPrompt.length).toBe(1);
+      expect(result.systemPrompt).toBe("");
+      expect(result.systemPrompt.length).toBe(0);
     });
 
     it("should truncate long systemPrompts to maximum length", () => {
@@ -226,8 +226,8 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.systemPrompt).toBe(" ");
-      expect(result.systemPrompt.length).toBe(1);
+      expect(result.systemPrompt).toBe("");
+      expect(result.systemPrompt.length).toBe(0);
     });
   });
 
@@ -253,18 +253,18 @@ describe("normalizeRoleFields", () => {
     it("should handle role with mixed valid and invalid fields", () => {
       const role = {
         id: "  role-456  ",
-        name: "A", // too short, will be padded
-        description: "B".repeat(300), // too long, will be truncated
+        name: "A", // valid single char name (min is 1)
+        description: "B".repeat(600), // too long, will be truncated
         systemPrompt: "  Valid prompt  ",
       };
 
       const result = normalizeRoleFields(role);
 
       expect(result.id).toBe("role-456");
-      expect(result.name).toBe("A ");
-      expect(result.name.length).toBe(2);
-      expect(result.description).toBe("B".repeat(200));
-      expect(result.description.length).toBe(200);
+      expect(result.name).toBe("A");
+      expect(result.name.length).toBe(1);
+      expect(result.description).toBe("B".repeat(500));
+      expect(result.description.length).toBe(500);
       expect(result.systemPrompt).toBe("Valid prompt");
     });
 
@@ -279,12 +279,12 @@ describe("normalizeRoleFields", () => {
       const result = normalizeRoleFields(role);
 
       expect(result.id).toBe("");
-      expect(result.name).toBe("  ");
-      expect(result.name.length).toBe(2);
-      expect(result.description).toBe(" ");
-      expect(result.description.length).toBe(1);
-      expect(result.systemPrompt).toBe(" ");
-      expect(result.systemPrompt.length).toBe(1);
+      expect(result.name).toBe(" ");
+      expect(result.name.length).toBe(1);
+      expect(result.description).toBe("");
+      expect(result.description.length).toBe(0);
+      expect(result.systemPrompt).toBe("");
+      expect(result.systemPrompt.length).toBe(0);
     });
   });
 

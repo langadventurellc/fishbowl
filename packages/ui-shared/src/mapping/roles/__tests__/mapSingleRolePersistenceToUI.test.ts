@@ -147,7 +147,7 @@ describe("mapSingleRolePersistenceToUI", () => {
     it("should apply name length constraints", () => {
       const persistedRole: PersistedRole = {
         id: "role-123",
-        name: "A", // Too short (min 2 chars)
+        name: "A", // Valid single char (min 1 char)
         description: "Test description",
         systemPrompt: "Test prompt",
         createdAt: "2025-01-10T09:00:00.000Z",
@@ -156,15 +156,15 @@ describe("mapSingleRolePersistenceToUI", () => {
 
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
-      expect(result.name).toBe("A ");
-      expect(result.name.length).toBe(2);
+      expect(result.name).toBe("A");
+      expect(result.name.length).toBe(1);
     });
 
     it("should truncate long fields to maximum length", () => {
       const persistedRole: PersistedRole = {
         id: "role-123",
-        name: "A".repeat(100), // Exceeds max 50 chars
-        description: "B".repeat(300), // Exceeds max 200 chars
+        name: "A".repeat(150), // Exceeds max 100 chars
+        description: "B".repeat(600), // Exceeds max 500 chars
         systemPrompt: "C".repeat(3000), // Exceeds max 2000 chars
         createdAt: "2025-01-10T09:00:00.000Z",
         updatedAt: "2025-01-14T15:30:00.000Z",
@@ -172,10 +172,10 @@ describe("mapSingleRolePersistenceToUI", () => {
 
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
-      expect(result.name).toBe("A".repeat(50));
-      expect(result.name.length).toBe(50);
-      expect(result.description).toBe("B".repeat(200));
-      expect(result.description.length).toBe(200);
+      expect(result.name).toBe("A".repeat(100));
+      expect(result.name.length).toBe(100);
+      expect(result.description).toBe("B".repeat(500));
+      expect(result.description.length).toBe(500);
       expect(result.systemPrompt).toBe("C".repeat(2000));
       expect(result.systemPrompt?.length).toBe(2000);
     });
@@ -193,9 +193,9 @@ describe("mapSingleRolePersistenceToUI", () => {
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
       expect(result.id).toBe("");
-      expect(result.name).toBe("  "); // Padded to min 2 chars
-      expect(result.description).toBe(" "); // Padded to min 1 char
-      expect(result.systemPrompt).toBe(" "); // Padded to min 1 char
+      expect(result.name).toBe(" "); // Padded to min 1 char
+      expect(result.description).toBe(""); // Min 0 chars allowed
+      expect(result.systemPrompt).toBe(undefined); // Empty string becomes undefined via mapping logic
     });
   });
 
@@ -212,7 +212,7 @@ describe("mapSingleRolePersistenceToUI", () => {
 
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
-      expect(result.systemPrompt).toBe(" "); // After normalization becomes " " (1 char minimum)
+      expect(result.systemPrompt).toBe(undefined); // Empty string normalized to "" then converted to undefined
     });
 
     it("should preserve valid systemPrompt", () => {
@@ -282,8 +282,8 @@ describe("mapSingleRolePersistenceToUI", () => {
 
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
-      expect(result.description).toBe(" ");
-      expect(result.systemPrompt).toBe(" ");
+      expect(result.description).toBe(""); // null normalized to "" (min 0 chars)
+      expect(result.systemPrompt).toBe(undefined); // undefined normalized to "" then converted to undefined
     });
   });
 

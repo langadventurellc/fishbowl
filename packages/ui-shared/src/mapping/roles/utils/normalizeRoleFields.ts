@@ -5,9 +5,9 @@ import { clampString } from "../../utils/transformers/clampString";
  *
  * This function ensures that role fields meet the required constraints:
  * - id: trimmed but not length-limited
- * - name: 2-50 characters after trimming
- * - description: 1-200 characters after trimming
- * - systemPrompt: 1-2000 characters after trimming (optional)
+ * - name: 1-100 characters after trimming
+ * - description: 0-500 characters after trimming
+ * - systemPrompt: 0-2000 characters after trimming (optional)
  *
  * @param role - Role data to normalize
  * @returns Normalized role data with guaranteed field constraints
@@ -38,8 +38,8 @@ export function normalizeRoleFields(role: {
 } {
   return {
     id: role.id?.trim() || "",
-    name: clampString(role.name || "", 2, 50),
-    description: clampString(role.description || "", 1, 200),
-    systemPrompt: clampString(role.systemPrompt || "", 1, 2000),
+    name: clampString(role.name || "", 1, 100),
+    description: clampString(role.description || "", 0, 500),
+    systemPrompt: clampString(role.systemPrompt || "", 0, 2000),
   };
 }

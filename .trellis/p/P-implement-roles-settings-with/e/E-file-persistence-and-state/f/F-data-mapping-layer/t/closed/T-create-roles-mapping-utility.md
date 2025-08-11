@@ -1,12 +1,27 @@
 ---
 id: T-create-roles-mapping-utility
 title: Create roles mapping utility functions with comprehensive unit tests
-status: open
+status: done
 priority: medium
 parent: F-data-mapping-layer
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/mapping/roles/utils/normalizeRoleFields.ts:
+    "Updated field constraints to match persistence schema (name: 1-100,
+    description: 0-500, systemPrompt: 0-2000)"
+  packages/ui-shared/src/mapping/roles/utils/index.ts: Removed re-export of
+    clampString and handleNullTimestamps - only exports normalizeRoleFields
+  packages/ui-shared/src/mapping/roles/utils/__tests__/normalizeRoleFields.test.ts: Updated all test cases to match new field constraints
+  packages/ui-shared/src/mapping/roles/__tests__/mapSingleRolePersistenceToUI.test.ts: Updated tests to match new constraint behavior
+  packages/ui-shared/src/mapping/roles/__tests__/mapRolesPersistenceToUI.test.ts: Updated tests to match new constraint behavior
+  packages/ui-shared/src/mapping/roles/__tests__/mapSingleRoleUIToPersistence.test.ts: Updated tests to match new constraint behavior
+log:
+  - "Updated roles mapping utility functions to align with persistence schema
+    constraints. Updated normalizeRoleFields to use correct field length
+    constraints (name: 1-100, description: 0-500, systemPrompt: 0-2000) instead
+    of UI validation constraints. Removed duplicate handleNullTimestamps
+    function and kept existing one in transformers directory. Updated all
+    affected tests to match new constraints. All quality checks and tests pass."
 schema: v1.0
 childrenIds: []
 created: 2025-08-10T22:19:20.553Z

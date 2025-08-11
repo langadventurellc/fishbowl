@@ -88,21 +88,21 @@ describe("mapSingleRoleUIToPersistence", () => {
 
     const result = mapSingleRoleUIToPersistence(uiRole);
 
-    expect(result.systemPrompt).toBe(" ");
+    expect(result.systemPrompt).toBe(""); // Min 0 chars allowed, empty undefined becomes ""
   });
 
   it("should enforce field length constraints", () => {
     const uiRole: RoleViewModel = {
       id: "role-long",
-      name: "X".repeat(100),
-      description: "Y".repeat(300),
-      systemPrompt: "Z".repeat(3000),
+      name: "X".repeat(150), // Exceeds max 100
+      description: "Y".repeat(600), // Exceeds max 500
+      systemPrompt: "Z".repeat(3000), // Exceeds max 2000
     };
 
     const result = mapSingleRoleUIToPersistence(uiRole);
 
-    expect(result.name).toBe("X".repeat(50));
-    expect(result.description).toBe("Y".repeat(200));
+    expect(result.name).toBe("X".repeat(100));
+    expect(result.description).toBe("Y".repeat(500));
     expect(result.systemPrompt).toBe("Z".repeat(2000));
   });
 });
