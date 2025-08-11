@@ -82,6 +82,10 @@ interface RolesActions {
   // Auto-save methods
   persistChanges: () => Promise<void>;
   syncWithStorage: () => Promise<void>;
+  // Sync and bulk operation methods
+  exportRoles: () => Promise<PersistedRolesSettingsData>;
+  importRoles: (data: PersistedRolesSettingsData) => Promise<void>;
+  resetRoles: () => Promise<void>;
 }
 
 type RolesStore = RolesState & RolesActions;
@@ -470,6 +474,140 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           isLoading: false,
           error: errorMessage,
         });
+
+        throw error;
+      }
+    },
+
+    exportRoles: async () => {
+      const { roles } = get();
+
+      try {
+        // Transform current UI state to persistence format
+        const persistedData = mapRolesUIToPersistence(roles);
+
+        getLogger().info(`Exported ${roles.length} roles for backup`);
+
+        return persistedData;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to export roles: ${error.message}`
+            : "Failed to export roles";
+
+        set({ error: errorMessage });
+
+        getLogger().error(
+          "Export roles failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+
+        throw error;
+      }
+    },
+
+    importRoles: async (data: PersistedRolesSettingsData) => {
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new RolesPersistenceError(
+          "Cannot import roles: no adapter configured",
+          "save",
+        );
+      }
+
+      set({
+        isSaving: true,
+        error: null,
+      });
+
+      try {
+        // Validate imported data structure
+        const validatedData = mapRolesUIToPersistence(
+          mapRolesPersistenceToUI(data),
+        );
+
+        // Transform from persistence to UI format
+        const uiRoles = mapRolesPersistenceToUI(validatedData);
+
+        // Replace current store state with imported data
+        set({
+          roles: uiRoles,
+          isSaving: false,
+          lastSyncTime: new Date().toISOString(),
+          pendingOperations: [],
+          error: null,
+        });
+
+        // Save imported data to persistence
+        await adapter.save(validatedData);
+
+        getLogger().info(`Successfully imported ${uiRoles.length} roles`);
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to import roles: ${error.message}`
+            : "Failed to import roles";
+
+        set({
+          isSaving: false,
+          error: errorMessage,
+        });
+
+        getLogger().error(
+          "Import roles failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+
+        throw error;
+      }
+    },
+
+    resetRoles: async () => {
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new RolesPersistenceError(
+          "Cannot reset roles: no adapter configured",
+          "reset",
+        );
+      }
+
+      set({
+        isSaving: true,
+        error: null,
+      });
+
+      try {
+        // Clear local store state
+        set({
+          roles: [],
+          isInitialized: false,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          error: null,
+        });
+
+        // Call adapter's reset() method
+        await adapter.reset();
+
+        getLogger().info("Successfully reset all roles and storage");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to reset roles: ${error.message}`
+            : "Failed to reset roles";
+
+        set({
+          isSaving: false,
+          error: errorMessage,
+        });
+
+        getLogger().error(
+          "Reset roles failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
 
         throw error;
       }

@@ -1,13 +1,29 @@
 ---
 id: T-add-sync-and-bulk-operation
 title: Add sync and bulk operation methods
-status: open
+status: done
 priority: medium
 parent: F-roles-store-refactoring
 prerequisites:
   - T-implement-auto-save-logic
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/rolesStore.ts: "Added three new methods to
+    RolesActions interface and implemented them: exportRoles() transforms
+    current UI state to persistence format, importRoles() validates and imports
+    external data then saves to persistence, resetRoles() clears store state and
+    calls adapter reset"
+  packages/ui-shared/src/stores/__tests__/rolesStore.test.ts:
+    Added comprehensive
+    test suite for sync and bulk operation methods including success cases,
+    error handling, adapter validation, and data structure validation tests
+log:
+  - Successfully implemented sync and bulk operation methods for the roles
+    store, adding exportRoles(), importRoles(), and resetRoles() methods with
+    comprehensive error handling, loading state management, and data validation.
+    The syncWithStorage() method was already implemented. All methods follow the
+    existing patterns for adapter integration, async operations, and state
+    management. Added extensive unit tests covering success cases, error
+    handling, and edge cases. All quality checks and tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-11T18:29:17.979Z

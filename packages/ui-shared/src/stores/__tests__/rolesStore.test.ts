@@ -8,6 +8,9 @@
  */
 
 import type { RoleViewModel, RoleFormData } from "../../";
+import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
+import type { RolesPersistenceAdapter } from "../../types/roles/persistence/RolesPersistenceAdapter";
+import { RolesPersistenceError } from "../../types/roles/persistence/RolesPersistenceError";
 import { useRolesStore } from "../rolesStore";
 
 // Mock console methods
@@ -460,6 +463,316 @@ describe("rolesStore", () => {
 
       store.clearError();
       expect(useRolesStore.getState().error).toBe(null);
+    });
+  });
+
+  describe("sync and bulk operation methods", () => {
+    const mockAdapter: RolesPersistenceAdapter = {
+      save: jest.fn(),
+      load: jest.fn(),
+      reset: jest.fn(),
+    };
+
+    const sampleRoles: RoleViewModel[] = [
+      {
+        id: "role-1",
+        name: "Test Role 1",
+        description: "First test role",
+        systemPrompt: "You are a test assistant",
+        createdAt: "2025-01-10T10:00:00.000Z",
+        updatedAt: "2025-01-10T10:00:00.000Z",
+      },
+      {
+        id: "role-2",
+        name: "Test Role 2",
+        description: "Second test role",
+        createdAt: "2025-01-10T11:00:00.000Z",
+        updatedAt: "2025-01-10T11:00:00.000Z",
+      },
+    ];
+
+    const samplePersistedData: PersistedRolesSettingsData = {
+      schemaVersion: "1.0.0",
+      roles: [
+        {
+          id: "role-1",
+          name: "Test Role 1",
+          description: "First test role",
+          systemPrompt: "You are a test assistant",
+          createdAt: "2025-01-10T10:00:00.000Z",
+          updatedAt: "2025-01-10T10:00:00.000Z",
+        },
+      ],
+      lastUpdated: "2025-01-10T12:00:00.000Z",
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    describe("exportRoles", () => {
+      it("should export roles in persistence format", async () => {
+        useRolesStore.setState({
+          roles: sampleRoles,
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+        const exportedData = await store.exportRoles();
+
+        expect(exportedData).toBeDefined();
+        expect(exportedData.schemaVersion).toBe("1.0.0");
+        expect(exportedData.roles).toHaveLength(2);
+        expect(exportedData.roles[0]?.name).toBe("Test Role 1");
+        expect(exportedData.roles[1]?.name).toBe("Test Role 2");
+        expect(exportedData.lastUpdated).toBeTruthy();
+      });
+
+      it("should export empty array when no roles exist", async () => {
+        useRolesStore.setState({
+          roles: [],
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+        const exportedData = await store.exportRoles();
+
+        expect(exportedData.roles).toHaveLength(0);
+        expect(exportedData.schemaVersion).toBe("1.0.0");
+      });
+
+      it("should handle export errors gracefully", async () => {
+        // Set up store with invalid data that will cause mapping to fail
+        useRolesStore.setState({
+          roles: [
+            {
+              id: "",
+              name: "",
+              description: "",
+              createdAt: "",
+              updatedAt: "",
+            } as RoleViewModel,
+          ],
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+
+        await expect(store.exportRoles()).rejects.toThrow();
+
+        const state = useRolesStore.getState();
+        expect(state.error).toContain("Failed to export roles");
+      });
+    });
+
+    describe("importRoles", () => {
+      it("should import valid roles data", async () => {
+        (mockAdapter.save as jest.Mock).mockResolvedValue(undefined);
+
+        useRolesStore.setState({
+          roles: [],
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+        await store.importRoles(samplePersistedData);
+
+        const state = useRolesStore.getState();
+        expect(state.roles).toHaveLength(1);
+        expect(state.roles[0]?.name).toBe("Test Role 1");
+        expect(state.roles[0]?.description).toBe("First test role");
+        expect(state.isSaving).toBe(false);
+        expect(state.error).toBe(null);
+        expect(state.lastSyncTime).toBeTruthy();
+
+        expect(mockAdapter.save).toHaveBeenCalledWith(
+          expect.objectContaining({
+            schemaVersion: "1.0.0",
+            roles: expect.arrayContaining([
+              expect.objectContaining({
+                name: "Test Role 1",
+                description: "First test role",
+              }),
+            ]),
+          }),
+        );
+      });
+
+      it("should throw error when no adapter configured", async () => {
+        useRolesStore.setState({
+          roles: [],
+          isLoading: false,
+          error: null,
+          adapter: null,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+
+        await expect(store.importRoles(samplePersistedData)).rejects.toThrow(
+          RolesPersistenceError,
+        );
+      });
+
+      it("should handle import errors gracefully", async () => {
+        (mockAdapter.save as jest.Mock).mockRejectedValue(
+          new Error("Save failed"),
+        );
+
+        useRolesStore.setState({
+          roles: sampleRoles,
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+
+        await expect(store.importRoles(samplePersistedData)).rejects.toThrow(
+          "Save failed",
+        );
+
+        const state = useRolesStore.getState();
+        expect(state.error).toContain("Failed to import roles");
+        expect(state.isSaving).toBe(false);
+      });
+
+      it("should validate imported data structure", async () => {
+        const invalidData = {
+          schemaVersion: "1.0.0",
+          roles: [
+            {
+              id: "",
+              name: "",
+              description: "",
+            },
+          ],
+          lastUpdated: "invalid-date",
+        } as PersistedRolesSettingsData;
+
+        useRolesStore.setState({
+          roles: [],
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+
+        await expect(store.importRoles(invalidData)).rejects.toThrow();
+
+        const state = useRolesStore.getState();
+        expect(state.error).toContain("Failed to import roles");
+      });
+    });
+
+    describe("resetRoles", () => {
+      it("should reset all roles and storage", async () => {
+        (mockAdapter.reset as jest.Mock).mockResolvedValue(undefined);
+
+        useRolesStore.setState({
+          roles: sampleRoles,
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: "2025-01-10T10:00:00.000Z",
+          pendingOperations: [
+            { type: "test", timestamp: "2025-01-10T10:00:00.000Z" },
+          ],
+        });
+
+        const store = useRolesStore.getState();
+        await store.resetRoles();
+
+        const state = useRolesStore.getState();
+        expect(state.roles).toHaveLength(0);
+        expect(state.isInitialized).toBe(false);
+        expect(state.isSaving).toBe(false);
+        expect(state.lastSyncTime).toBe(null);
+        expect(state.pendingOperations).toHaveLength(0);
+        expect(state.error).toBe(null);
+
+        expect(mockAdapter.reset).toHaveBeenCalled();
+      });
+
+      it("should throw error when no adapter configured", async () => {
+        useRolesStore.setState({
+          roles: sampleRoles,
+          isLoading: false,
+          error: null,
+          adapter: null,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+
+        await expect(store.resetRoles()).rejects.toThrow(RolesPersistenceError);
+      });
+
+      it("should handle reset errors gracefully", async () => {
+        (mockAdapter.reset as jest.Mock).mockRejectedValue(
+          new Error("Reset failed"),
+        );
+
+        useRolesStore.setState({
+          roles: sampleRoles,
+          isLoading: false,
+          error: null,
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: "2025-01-10T10:00:00.000Z",
+          pendingOperations: [],
+        });
+
+        const store = useRolesStore.getState();
+
+        await expect(store.resetRoles()).rejects.toThrow("Reset failed");
+
+        const state = useRolesStore.getState();
+        expect(state.error).toContain("Failed to reset roles");
+        expect(state.isSaving).toBe(false);
+      });
     });
   });
 });
