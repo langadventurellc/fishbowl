@@ -7,10 +7,13 @@
  * @module stores/rolesStore
  */
 
+import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
 import { create } from "zustand";
+import { mapRolesPersistenceToUI } from "../mapping/roles/mapRolesPersistenceToUI";
 import { roleSchema } from "../schemas/roleSchema";
-import { RoleViewModel } from "../types/settings/RoleViewModel";
+import { RolesPersistenceAdapter } from "../types/roles/persistence/RolesPersistenceAdapter";
 import { RoleFormData } from "../types/settings/RoleFormData";
+import { RoleViewModel } from "../types/settings/RoleViewModel";
 
 // Generate unique ID using crypto API or fallback
 const generateId = (): string => {
@@ -24,6 +27,12 @@ interface RolesState {
   roles: RoleViewModel[];
   isLoading: boolean;
   error: string | null;
+  // New adapter integration state
+  adapter: RolesPersistenceAdapter | null;
+  isInitialized: boolean;
+  isSaving: boolean;
+  lastSyncTime: string | null;
+  pendingOperations: Array<{ type: string; timestamp: string }>;
 }
 
 interface RolesActions {
@@ -35,6 +44,9 @@ interface RolesActions {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
+  // New adapter integration methods
+  setAdapter: (adapter: RolesPersistenceAdapter) => void;
+  initialize: (adapter: RolesPersistenceAdapter) => Promise<void>;
 }
 
 type RolesStore = RolesState & RolesActions;
@@ -43,6 +55,12 @@ export const useRolesStore = create<RolesStore>()((set, get) => ({
   roles: [],
   isLoading: false,
   error: null,
+  // New adapter integration state defaults
+  adapter: null,
+  isInitialized: false,
+  isSaving: false,
+  lastSyncTime: null,
+  pendingOperations: [],
 
   // CRUD operations
   createRole: (roleData: RoleFormData) => {
@@ -148,5 +166,59 @@ export const useRolesStore = create<RolesStore>()((set, get) => ({
 
   clearError: () => {
     set({ error: null });
+  },
+
+  setAdapter: (adapter: RolesPersistenceAdapter) => {
+    set({ adapter });
+  },
+
+  initialize: async (adapter: RolesPersistenceAdapter) => {
+    set({
+      adapter,
+      isLoading: true,
+      error: null,
+    });
+
+    try {
+      // Load data from adapter
+      const persistedData: PersistedRolesSettingsData | null =
+        await adapter.load();
+
+      if (persistedData) {
+        // Transform persistence data to UI format
+        const uiRoles = mapRolesPersistenceToUI(persistedData);
+
+        set({
+          roles: uiRoles,
+          isInitialized: true,
+          isLoading: false,
+          lastSyncTime: new Date().toISOString(),
+          error: null,
+        });
+      } else {
+        // No persisted data, start with empty array
+        set({
+          roles: [],
+          isInitialized: true,
+          isLoading: false,
+          lastSyncTime: new Date().toISOString(),
+          error: null,
+        });
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error
+          ? `Failed to initialize roles: ${error.message}`
+          : "Failed to initialize roles";
+
+      set({
+        isInitialized: false,
+        isLoading: false,
+        error: errorMessage,
+      });
+
+      // Log detailed error for debugging but don't throw to avoid crashing UI
+      console.error("Roles store initialization error:", error);
+    }
   },
 }));
