@@ -1,13 +1,36 @@
 ---
 id: T-add-roles-api-to-electron
 title: Add roles API to Electron preload script
-status: open
+status: done
 priority: high
 parent: F-desktop-adapter-implementation
 prerequisites:
   - T-create-roles-ipc-constants
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts:
+    Added roles API to electronAPI object with
+    load, save, and reset methods. Imported ROLES_CHANNELS constants and all
+    required types. Implemented proper error handling and logging following
+    existing patterns.
+  apps/desktop/src/types/electron.d.ts: Updated ElectronAPI interface to include
+    roles property with full TypeScript definitions and JSDoc documentation for
+    all three methods.
+  apps/desktop/src/electron/__tests__/preload.test.ts:
+    Created comprehensive unit
+    tests for roles API covering IPC invocation, error handling, contextBridge
+    integration, and logging functionality. Tests verify correct channel usage,
+    parameter passing, and error scenarios.
+log:
+  - Successfully implemented roles API in Electron preload script, exposing
+    three IPC methods (load, save, reset) through contextBridge. The
+    implementation follows the exact same pattern as the existing settings API,
+    ensuring consistency and security. All methods properly handle IPC
+    communication, error handling with logging, and parameter validation.
+    Updated TypeScript definitions to provide full type safety. Added
+    comprehensive unit tests covering all success and error scenarios, including
+    proper mock testing of IPC invocation and contextBridge exposure. All
+    quality checks pass including linting, formatting, type checking, and unit
+    tests.
 schema: v1.0
 childrenIds: []
 created: 2025-08-11T03:15:06.134Z

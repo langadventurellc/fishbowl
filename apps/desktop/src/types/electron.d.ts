@@ -100,6 +100,30 @@ export interface ElectronAPI {
      */
     refreshCache: () => Promise<void>;
   };
+  /**
+   * Roles persistence operations for managing role configurations.
+   * Provides async methods for loading, saving, and resetting roles data.
+   */
+  roles: {
+    /**
+     * Load roles from persistent storage.
+     * @returns Promise resolving to roles data
+     */
+    load(): Promise<import("@fishbowl-ai/shared").PersistedRolesSettingsData>;
+    /**
+     * Save roles to persistent storage.
+     * @param roles - Roles data to persist
+     * @returns Promise resolving when save is complete
+     */
+    save(
+      roles: import("@fishbowl-ai/shared").PersistedRolesSettingsData,
+    ): Promise<void>;
+    /**
+     * Reset roles to default values.
+     * @returns Promise resolving to reset roles data
+     */
+    reset(): Promise<import("@fishbowl-ai/shared").PersistedRolesSettingsData>;
+  };
 }
 
 declare global {
