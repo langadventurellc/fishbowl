@@ -1,7 +1,7 @@
 ---
 id: F-desktop-adapter-implementation
 title: Desktop Adapter Implementation
-status: open
+status: done
 priority: medium
 parent: E-file-persistence-and-state
 prerequisites:
