@@ -7,11 +7,11 @@
  * @module stores/__tests__/rolesStore.test
  */
 
-import type { RoleViewModel, RoleFormData } from "../../";
 import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
+import type { RoleFormData, RoleViewModel } from "../../";
 import type { RolesPersistenceAdapter } from "../../types/roles/persistence/RolesPersistenceAdapter";
 import { RolesPersistenceError } from "../../types/roles/persistence/RolesPersistenceError";
-import { useRolesStore } from "../rolesStore";
+import { useRolesStore } from "../useRolesStore";
 
 // Mock console methods
 const mockConsoleError = jest.fn();
@@ -21,7 +21,19 @@ beforeEach(() => {
   useRolesStore.setState({
     roles: [],
     isLoading: false,
-    error: null,
+    error: {
+      message: null,
+      operation: null,
+      isRetryable: false,
+      retryCount: 0,
+      timestamp: null,
+    },
+    adapter: null,
+    isInitialized: false,
+    isSaving: false,
+    lastSyncTime: null,
+    pendingOperations: [],
+    retryTimers: new Map(),
   });
 
   // Reset console mocks
@@ -40,7 +52,7 @@ describe("rolesStore", () => {
 
       expect(state.roles).toEqual([]);
       expect(state.isLoading).toBe(false);
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
   });
 
@@ -66,7 +78,7 @@ describe("rolesStore", () => {
       expect(state.roles[0]!.id).toBe(roleId);
       expect(state.roles[0]!.createdAt).toBeTruthy();
       expect(state.roles[0]!.updatedAt).toBeTruthy();
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
 
     it("should reject duplicate role names (case-insensitive)", () => {
@@ -87,7 +99,7 @@ describe("rolesStore", () => {
       expect(secondId).toBe("");
       const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(1);
-      expect(state.error).toBe("A role with this name already exists");
+      expect(state.error?.message).toBe("A role with this name already exists");
     });
 
     it("should handle invalid data and return empty string", () => {
@@ -103,7 +115,7 @@ describe("rolesStore", () => {
       expect(roleId).toBe("");
       const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(0);
-      expect(state.error).toBeTruthy();
+      expect(state.error?.message).toBeTruthy();
     });
 
     it("should create a role with systemPrompt", () => {
@@ -125,7 +137,7 @@ describe("rolesStore", () => {
       expect(state.roles[0]!.systemPrompt).toBe(
         roleDataWithPrompt.systemPrompt,
       );
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
 
     it("should create a role without systemPrompt (backward compatibility)", () => {
@@ -146,7 +158,7 @@ describe("rolesStore", () => {
         roleDataWithoutPrompt.description,
       );
       expect(state.roles[0]!.systemPrompt).toBeUndefined();
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
   });
 
@@ -163,7 +175,19 @@ describe("rolesStore", () => {
       useRolesStore.setState({
         roles: [existingRole],
         isLoading: false,
-        error: null,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: null,
+        isInitialized: false,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
       });
     });
 
@@ -184,7 +208,7 @@ describe("rolesStore", () => {
       expect(state.roles[0]!.description).toBe(updateData.description);
       expect(state.roles[0]!.createdAt).toBe(existingRole.createdAt);
       expect(state.roles[0]!.updatedAt).not.toBe(existingRole.updatedAt);
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
 
     it("should reject non-existent role ID", () => {
@@ -199,7 +223,7 @@ describe("rolesStore", () => {
 
       const state = useRolesStore.getState();
       expect(state.roles[0]).toEqual(existingRole); // Unchanged
-      expect(state.error).toBe("Role not found");
+      expect(state.error?.message).toBe("Role not found");
     });
 
     it("should reject duplicate names when updating (excluding current role)", () => {
@@ -214,7 +238,19 @@ describe("rolesStore", () => {
       useRolesStore.setState({
         roles: [existingRole, secondRole],
         isLoading: false,
-        error: null,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: null,
+        isInitialized: false,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
       });
 
       const store = useRolesStore.getState();
@@ -229,7 +265,7 @@ describe("rolesStore", () => {
 
       const state = useRolesStore.getState();
       expect(state.roles[1]).toEqual(secondRole); // Unchanged
-      expect(state.error).toBe("A role with this name already exists");
+      expect(state.error?.message).toBe("A role with this name already exists");
     });
 
     it("should allow updating role to same name (no duplicate error)", () => {
@@ -244,7 +280,7 @@ describe("rolesStore", () => {
 
       const state = useRolesStore.getState();
       expect(state.roles[0]!.description).toBe(updateData.description);
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
 
     it("should update role with systemPrompt", () => {
@@ -260,7 +296,7 @@ describe("rolesStore", () => {
 
       const state = useRolesStore.getState();
       expect(state.roles[0]!.systemPrompt).toBe(updateData.systemPrompt);
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
 
     it("should update role to remove systemPrompt (set to undefined)", () => {
@@ -273,7 +309,19 @@ describe("rolesStore", () => {
       useRolesStore.setState({
         roles: [roleWithPrompt],
         isLoading: false,
-        error: null,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: null,
+        isInitialized: false,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
       });
 
       const store = useRolesStore.getState();
@@ -289,7 +337,7 @@ describe("rolesStore", () => {
       const state = useRolesStore.getState();
       expect(state.roles[0]!.name).toBe(updateData.name);
       expect(state.roles[0]!.description).toBe(updateData.description);
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
   });
 
@@ -306,7 +354,19 @@ describe("rolesStore", () => {
       useRolesStore.setState({
         roles: [existingRole],
         isLoading: false,
-        error: null,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: null,
+        isInitialized: false,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
       });
     });
 
@@ -317,7 +377,7 @@ describe("rolesStore", () => {
 
       const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(0);
-      expect(state.error).toBe(null);
+      expect(state.error?.message).toBe(null);
     });
 
     it("should handle non-existent role ID", () => {
@@ -327,7 +387,7 @@ describe("rolesStore", () => {
 
       const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(1); // Unchanged
-      expect(state.error).toBe("Role not found");
+      expect(state.error?.message).toBe("Role not found");
     });
   });
 
@@ -344,7 +404,19 @@ describe("rolesStore", () => {
       useRolesStore.setState({
         roles: [existingRole],
         isLoading: false,
-        error: null,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: null,
+        isInitialized: false,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
       });
     });
 
@@ -387,7 +459,19 @@ describe("rolesStore", () => {
       useRolesStore.setState({
         roles: existingRoles,
         isLoading: false,
-        error: null,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: null,
+        isInitialized: false,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
       });
     });
 
@@ -449,20 +533,20 @@ describe("rolesStore", () => {
       const store = useRolesStore.getState();
 
       store.setError("Test error");
-      expect(useRolesStore.getState().error).toBe("Test error");
+      expect(useRolesStore.getState().error?.message).toBe("Test error");
 
       store.setError(null);
-      expect(useRolesStore.getState().error).toBe(null);
+      expect(useRolesStore.getState().error?.message).toBe(null);
     });
 
     it("should clear error", () => {
       const store = useRolesStore.getState();
 
       store.setError("Test error");
-      expect(useRolesStore.getState().error).toBe("Test error");
+      expect(useRolesStore.getState().error?.message).toBe("Test error");
 
       store.clearError();
-      expect(useRolesStore.getState().error).toBe(null);
+      expect(useRolesStore.getState().error?.message).toBe(null);
     });
   });
 
@@ -515,12 +599,19 @@ describe("rolesStore", () => {
         useRolesStore.setState({
           roles: sampleRoles,
           isLoading: false,
-          error: null,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
           adapter: mockAdapter,
           isInitialized: true,
           isSaving: false,
           lastSyncTime: null,
           pendingOperations: [],
+          retryTimers: new Map(),
         });
 
         const store = useRolesStore.getState();
@@ -579,7 +670,7 @@ describe("rolesStore", () => {
         await expect(store.exportRoles()).rejects.toThrow();
 
         const state = useRolesStore.getState();
-        expect(state.error).toContain("Failed to export roles");
+        expect(state.error?.message).toContain("Failed to export roles");
       });
     });
 
@@ -606,7 +697,7 @@ describe("rolesStore", () => {
         expect(state.roles[0]?.name).toBe("Test Role 1");
         expect(state.roles[0]?.description).toBe("First test role");
         expect(state.isSaving).toBe(false);
-        expect(state.error).toBe(null);
+        expect(state.error?.message).toBe(null);
         expect(state.lastSyncTime).toBeTruthy();
 
         expect(mockAdapter.save).toHaveBeenCalledWith(
@@ -649,12 +740,19 @@ describe("rolesStore", () => {
         useRolesStore.setState({
           roles: sampleRoles,
           isLoading: false,
-          error: null,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
           adapter: mockAdapter,
           isInitialized: true,
           isSaving: false,
           lastSyncTime: null,
           pendingOperations: [],
+          retryTimers: new Map(),
         });
 
         const store = useRolesStore.getState();
@@ -664,7 +762,7 @@ describe("rolesStore", () => {
         );
 
         const state = useRolesStore.getState();
-        expect(state.error).toContain("Failed to import roles");
+        expect(state.error?.message).toContain("Failed to import roles");
         expect(state.isSaving).toBe(false);
       });
 
@@ -697,7 +795,7 @@ describe("rolesStore", () => {
         await expect(store.importRoles(invalidData)).rejects.toThrow();
 
         const state = useRolesStore.getState();
-        expect(state.error).toContain("Failed to import roles");
+        expect(state.error?.message).toContain("Failed to import roles");
       });
     });
 
@@ -727,7 +825,7 @@ describe("rolesStore", () => {
         expect(state.isSaving).toBe(false);
         expect(state.lastSyncTime).toBe(null);
         expect(state.pendingOperations).toHaveLength(0);
-        expect(state.error).toBe(null);
+        expect(state.error?.message).toBe(null);
 
         expect(mockAdapter.reset).toHaveBeenCalled();
       });
@@ -770,8 +868,358 @@ describe("rolesStore", () => {
         await expect(store.resetRoles()).rejects.toThrow("Reset failed");
 
         const state = useRolesStore.getState();
-        expect(state.error).toContain("Failed to reset roles");
+        expect(state.error?.message).toContain("Failed to reset roles");
         expect(state.isSaving).toBe(false);
+      });
+    });
+  });
+
+  describe("Enhanced Error Handling", () => {
+    const mockAdapter: RolesPersistenceAdapter = {
+      save: jest.fn(),
+      load: jest.fn(),
+      reset: jest.fn(),
+    };
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      useRolesStore.setState({
+        roles: [],
+        isLoading: false,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: mockAdapter,
+        isInitialized: false,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
+      });
+    });
+
+    describe("Error State Management", () => {
+      it("should create proper error state with all fields", () => {
+        const store = useRolesStore.getState();
+        store.setError("Test error message");
+
+        const state = useRolesStore.getState();
+        expect(state.error?.message).toBe("Test error message");
+        expect(state.error?.operation).toBe(null);
+        expect(state.error?.isRetryable).toBe(false);
+        expect(state.error?.retryCount).toBe(0);
+        expect(state.error?.timestamp).toBeTruthy();
+      });
+
+      it("should clear error state completely", () => {
+        const store = useRolesStore.getState();
+
+        // Set an error first
+        store.setError("Test error");
+        expect(useRolesStore.getState().error?.message).toBe("Test error");
+
+        // Clear the error
+        store.clearErrorState();
+        const state = useRolesStore.getState();
+        expect(state.error?.message).toBe(null);
+        expect(state.error?.operation).toBe(null);
+        expect(state.error?.retryCount).toBe(0);
+        expect(state.error?.timestamp).toBe(null);
+      });
+
+      it("should return current error details", () => {
+        const store = useRolesStore.getState();
+        store.setError("Test error message");
+
+        const errorDetails = store.getErrorDetails();
+        expect(errorDetails.message).toBe("Test error message");
+        expect(errorDetails.timestamp).toBeTruthy();
+      });
+    });
+
+    describe("Retryable Error Detection", () => {
+      it("should handle network-related errors as retryable", async () => {
+        const networkError = new Error("Network timeout") as Error & {
+          code: string;
+        };
+        networkError.code = "ETIMEDOUT";
+
+        (mockAdapter.save as jest.Mock).mockRejectedValue(networkError);
+
+        useRolesStore.setState({
+          roles: [
+            {
+              id: "1",
+              name: "Test",
+              description: "Test",
+              createdAt: "2024-01-01T00:00:00.000Z",
+              updatedAt: "2024-01-01T00:00:00.000Z",
+            },
+          ],
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          isLoading: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+
+        try {
+          await store.persistChanges();
+        } catch {
+          // Expected to throw after retries
+        }
+
+        const state = useRolesStore.getState();
+        expect(state.error?.message).toContain("timed out");
+      });
+
+      it("should handle permission errors as non-retryable", async () => {
+        const permissionError = new Error("Permission denied") as Error & {
+          code: string;
+        };
+        permissionError.code = "EACCES";
+
+        (mockAdapter.save as jest.Mock).mockRejectedValue(permissionError);
+
+        useRolesStore.setState({
+          roles: [
+            {
+              id: "1",
+              name: "Test",
+              description: "Test",
+              createdAt: "2024-01-01T00:00:00.000Z",
+              updatedAt: "2024-01-01T00:00:00.000Z",
+            },
+          ],
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          isLoading: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+
+        try {
+          await store.persistChanges();
+        } catch {
+          // Expected to throw immediately
+        }
+
+        const state = useRolesStore.getState();
+        expect(state.error?.message).toContain("Permission denied");
+        expect(state.error?.isRetryable).toBe(false);
+      });
+    });
+
+    describe("Manual Retry Operations", () => {
+      it("should retry last failed save operation", async () => {
+        // Set up mock to succeed on save
+        (mockAdapter.save as jest.Mock).mockResolvedValue(undefined);
+
+        useRolesStore.setState({
+          roles: [
+            {
+              id: "1",
+              name: "Test",
+              description: "Test",
+              createdAt: "2024-01-01T00:00:00.000Z",
+              updatedAt: "2024-01-01T00:00:00.000Z",
+            },
+          ],
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          error: {
+            message: "Save failed",
+            operation: "save",
+            isRetryable: true,
+            retryCount: 1,
+            timestamp: "2024-01-01T00:00:00.000Z",
+          },
+          isLoading: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+        await store.retryLastOperation();
+
+        const state = useRolesStore.getState();
+        expect(state.error?.message).toBe(null);
+        expect(mockAdapter.save).toHaveBeenCalled();
+      });
+
+      it("should not retry non-retryable operations", async () => {
+        useRolesStore.setState({
+          error: {
+            message: "Permission denied",
+            operation: "save",
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: "2024-01-01T00:00:00.000Z",
+          },
+          roles: [],
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          isLoading: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+        await store.retryLastOperation();
+
+        // Should not have called the adapter since operation is not retryable
+        expect(mockAdapter.save).not.toHaveBeenCalled();
+      });
+
+      it("should handle sync retry operations", async () => {
+        (mockAdapter.load as jest.Mock).mockResolvedValue(null);
+
+        useRolesStore.setState({
+          error: {
+            message: "Sync failed",
+            operation: "sync",
+            isRetryable: true,
+            retryCount: 1,
+            timestamp: "2024-01-01T00:00:00.000Z",
+          },
+          roles: [],
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          isLoading: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+        await store.retryLastOperation();
+
+        expect(mockAdapter.load).toHaveBeenCalled();
+      });
+    });
+
+    describe("Timer Management", () => {
+      it("should clear retry timers when clearing error state", () => {
+        const store = useRolesStore.getState();
+
+        // Mock a timer being set
+        const mockTimer = setTimeout(() => {}, 1000);
+        useRolesStore.setState({
+          retryTimers: new Map([["save", mockTimer]]),
+          error: {
+            message: "Test error",
+            operation: "save",
+            isRetryable: true,
+            retryCount: 1,
+            timestamp: "2024-01-01T00:00:00.000Z",
+          },
+          roles: [],
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          isLoading: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+        });
+
+        store.clearErrorState();
+
+        const state = useRolesStore.getState();
+        expect(state.retryTimers.size).toBe(0);
+        expect(state.error?.message).toBe(null);
+      });
+    });
+
+    describe("Field-Level Error Handling", () => {
+      it("should handle validation errors with field details", async () => {
+        interface ZodError extends Error {
+          name: "ZodError";
+          issues: Array<{ path: Array<string | number>; message: string }>;
+        }
+
+        const validationError: ZodError = {
+          name: "ZodError",
+          message: "Validation failed",
+          issues: [
+            { path: ["name"], message: "Name is required" },
+            { path: ["description"], message: "Description is too short" },
+          ],
+        } as ZodError;
+
+        (mockAdapter.save as jest.Mock).mockRejectedValue(validationError);
+
+        useRolesStore.setState({
+          roles: [
+            {
+              id: "1",
+              name: "",
+              description: "",
+              createdAt: "2024-01-01T00:00:00.000Z",
+              updatedAt: "2024-01-01T00:00:00.000Z",
+            },
+          ],
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          isLoading: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+
+        try {
+          await store.persistChanges();
+        } catch {
+          // Expected to throw
+        }
+
+        const state = useRolesStore.getState();
+        expect(state.error?.message).toContain("Validation failed");
+        expect(state.error?.fieldErrors).toEqual([
+          { field: "name", message: "Name is required" },
+          { field: "description", message: "Description is too short" },
+        ]);
+        expect(state.error?.isRetryable).toBe(false);
       });
     });
   });

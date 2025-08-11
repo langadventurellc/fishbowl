@@ -9,7 +9,7 @@
 
 import { useCallback } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { useRolesStore } from "../stores/rolesStore";
+import { useRolesStore } from "../stores/useRolesStore";
 
 /**
  * Main hook for roles management with all store state and actions
