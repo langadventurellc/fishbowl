@@ -1,5 +1,6 @@
 import { RolesErrorState } from "src/stores/RolesErrorState";
 import { RoleViewModel, RolesPersistenceAdapter } from "src/types";
+import { PendingOperation } from "src/types/roles/PendingOperation";
 
 export interface RolesState {
   roles: RoleViewModel[];
@@ -10,6 +11,6 @@ export interface RolesState {
   isInitialized: boolean;
   isSaving: boolean;
   lastSyncTime: string | null;
-  pendingOperations: Array<{ type: string; timestamp: string }>;
+  pendingOperations: PendingOperation[];
   retryTimers: Map<string, ReturnType<typeof setTimeout>>;
 }

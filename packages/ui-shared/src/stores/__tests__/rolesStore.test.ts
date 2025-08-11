@@ -812,7 +812,13 @@ describe("rolesStore", () => {
           isSaving: false,
           lastSyncTime: "2025-01-10T10:00:00.000Z",
           pendingOperations: [
-            { type: "test", timestamp: "2025-01-10T10:00:00.000Z" },
+            {
+              id: "test-operation-id",
+              type: "create",
+              roleId: "test-role-id",
+              timestamp: "2025-01-10T10:00:00.000Z",
+              status: "pending" as const,
+            },
           ],
         });
 
@@ -1220,6 +1226,435 @@ describe("rolesStore", () => {
           { field: "description", message: "Description is too short" },
         ]);
         expect(state.error?.isRetryable).toBe(false);
+      });
+    });
+  });
+
+  describe("CRUD Auto-save Integration Unit Tests", () => {
+    const mockAdapter: RolesPersistenceAdapter = {
+      save: jest.fn(),
+      load: jest.fn(),
+      reset: jest.fn(),
+    };
+
+    // Mock the debounced save functionality
+    let debouncedSaveCallCount = 0;
+    const originalSetTimeout = global.setTimeout;
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+      debouncedSaveCallCount = 0;
+
+      // Mock setTimeout to track debounced save calls
+      global.setTimeout = jest.fn((callback) => {
+        debouncedSaveCallCount++;
+        return originalSetTimeout(callback, 0); // Execute immediately for testing
+      }) as unknown as typeof setTimeout;
+
+      useRolesStore.setState({
+        roles: [],
+        isLoading: false,
+        error: {
+          message: null,
+          operation: null,
+          isRetryable: false,
+          retryCount: 0,
+          timestamp: null,
+        },
+        adapter: mockAdapter,
+        isInitialized: true,
+        isSaving: false,
+        lastSyncTime: null,
+        pendingOperations: [],
+        retryTimers: new Map(),
+      });
+    });
+
+    afterEach(() => {
+      global.setTimeout = originalSetTimeout;
+    });
+
+    describe("CRUD methods trigger auto-save", () => {
+      it("should trigger debounced save after successful createRole", () => {
+        const store = useRolesStore.getState();
+
+        const roleData: RoleFormData = {
+          name: "Test Role",
+          description: "Test description",
+        };
+
+        const roleId = store.createRole(roleData);
+
+        expect(roleId).toBeTruthy();
+        expect(debouncedSaveCallCount).toBe(1);
+      });
+
+      it("should trigger debounced save after successful updateRole", () => {
+        // Setup existing role
+        const existingRole: RoleViewModel = {
+          id: "existing-1",
+          name: "Original Role",
+          description: "Original description",
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
+        };
+
+        useRolesStore.setState({
+          roles: [existingRole],
+          isLoading: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+
+        const updateData: RoleFormData = {
+          name: "Updated Role",
+          description: "Updated description",
+        };
+
+        store.updateRole(existingRole.id, updateData);
+
+        expect(debouncedSaveCallCount).toBe(1);
+      });
+
+      it("should trigger debounced save after successful deleteRole", () => {
+        // Setup existing role
+        const existingRole: RoleViewModel = {
+          id: "existing-1",
+          name: "Test Role",
+          description: "Test description",
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
+        };
+
+        useRolesStore.setState({
+          roles: [existingRole],
+          isLoading: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+        store.deleteRole(existingRole.id);
+
+        expect(debouncedSaveCallCount).toBe(1);
+      });
+
+      it("should NOT trigger auto-save when CRUD operations fail validation", () => {
+        const store = useRolesStore.getState();
+
+        // Invalid role data should fail validation
+        const invalidRoleData = {
+          name: "", // Invalid: empty name
+          description: "Valid description",
+        } as RoleFormData;
+
+        const roleId = store.createRole(invalidRoleData);
+
+        expect(roleId).toBe("");
+        expect(debouncedSaveCallCount).toBe(0);
+      });
+
+      it("should NOT trigger auto-save when updating non-existent role", () => {
+        const store = useRolesStore.getState();
+
+        const updateData: RoleFormData = {
+          name: "Updated Role",
+          description: "Updated description",
+        };
+
+        store.updateRole("non-existent", updateData);
+
+        expect(debouncedSaveCallCount).toBe(0);
+      });
+
+      it("should NOT trigger auto-save when deleting non-existent role", () => {
+        const store = useRolesStore.getState();
+
+        store.deleteRole("non-existent");
+
+        expect(debouncedSaveCallCount).toBe(0);
+      });
+    });
+
+    describe("Pending operations tracking", () => {
+      it("should track pending operation with correct details for createRole", () => {
+        const store = useRolesStore.getState();
+
+        const roleData: RoleFormData = {
+          name: "Test Role",
+          description: "Test description",
+        };
+
+        const roleId = store.createRole(roleData);
+        const state = useRolesStore.getState();
+
+        expect(state.pendingOperations).toHaveLength(1);
+        expect(state.pendingOperations[0]).toMatchObject({
+          id: expect.any(String),
+          type: "create",
+          roleId: roleId,
+          timestamp: expect.any(String),
+          rollbackData: undefined, // No rollback for create
+          status: "pending",
+        });
+      });
+
+      it("should track pending operation with rollback data for updateRole", () => {
+        // Setup existing role
+        const existingRole: RoleViewModel = {
+          id: "existing-1",
+          name: "Original Role",
+          description: "Original description",
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
+        };
+
+        useRolesStore.setState({
+          roles: [existingRole],
+          isLoading: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+
+        const updateData: RoleFormData = {
+          name: "Updated Role",
+          description: "Updated description",
+        };
+
+        store.updateRole(existingRole.id, updateData);
+        const state = useRolesStore.getState();
+
+        expect(state.pendingOperations).toHaveLength(1);
+        expect(state.pendingOperations[0]).toMatchObject({
+          id: expect.any(String),
+          type: "update",
+          roleId: existingRole.id,
+          timestamp: expect.any(String),
+          rollbackData: existingRole, // Original role for rollback
+          status: "pending",
+        });
+      });
+
+      it("should track pending operation with rollback data for deleteRole", () => {
+        // Setup existing role
+        const existingRole: RoleViewModel = {
+          id: "existing-1",
+          name: "Test Role",
+          description: "Test description",
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
+        };
+
+        useRolesStore.setState({
+          roles: [existingRole],
+          isLoading: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+        store.deleteRole(existingRole.id);
+        const state = useRolesStore.getState();
+
+        expect(state.pendingOperations).toHaveLength(1);
+        expect(state.pendingOperations[0]).toMatchObject({
+          id: expect.any(String),
+          type: "delete",
+          roleId: existingRole.id,
+          timestamp: expect.any(String),
+          rollbackData: existingRole, // Deleted role for potential restoration
+          status: "pending",
+        });
+      });
+
+      it("should NOT add pending operations for failed CRUD operations", () => {
+        const store = useRolesStore.getState();
+
+        // Invalid role data should fail validation
+        const invalidRoleData = {
+          name: "", // Invalid: empty name
+          description: "Valid description",
+        } as RoleFormData;
+
+        store.createRole(invalidRoleData);
+        const state = useRolesStore.getState();
+
+        expect(state.pendingOperations).toHaveLength(0);
+      });
+
+      it("should generate unique operation IDs for multiple operations", () => {
+        const store = useRolesStore.getState();
+
+        const roleData1: RoleFormData = {
+          name: "Test Role 1",
+          description: "Test description 1",
+        };
+
+        const roleData2: RoleFormData = {
+          name: "Test Role 2",
+          description: "Test description 2",
+        };
+
+        store.createRole(roleData1);
+        store.createRole(roleData2);
+        const state = useRolesStore.getState();
+
+        expect(state.pendingOperations).toHaveLength(2);
+        expect(state.pendingOperations[0]?.id).not.toBe(
+          state.pendingOperations[1]?.id,
+        );
+      });
+    });
+
+    describe("Operation-specific rollback data", () => {
+      it("should store complete role data for delete operations", () => {
+        const roleWithAllFields: RoleViewModel = {
+          id: "complete-role",
+          name: "Complete Role",
+          description: "Role with all fields",
+          systemPrompt: "You are a complete AI assistant.",
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T12:00:00.000Z",
+        };
+
+        useRolesStore.setState({
+          roles: [roleWithAllFields],
+          isLoading: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+        store.deleteRole(roleWithAllFields.id);
+        const state = useRolesStore.getState();
+
+        const deleteOperation = state.pendingOperations.find(
+          (op) => op.type === "delete",
+        );
+
+        expect(deleteOperation?.rollbackData).toEqual(roleWithAllFields);
+      });
+
+      it("should store original role data for update operations", () => {
+        const originalRole: RoleViewModel = {
+          id: "update-test",
+          name: "Original Name",
+          description: "Original description",
+          systemPrompt: "Original system prompt",
+          createdAt: "2024-01-01T00:00:00.000Z",
+          updatedAt: "2024-01-01T00:00:00.000Z",
+        };
+
+        useRolesStore.setState({
+          roles: [originalRole],
+          isLoading: false,
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+          adapter: mockAdapter,
+          isInitialized: true,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          retryTimers: new Map(),
+        });
+
+        const store = useRolesStore.getState();
+
+        const updateData: RoleFormData = {
+          name: "Updated Name",
+          description: "Updated description",
+        };
+
+        store.updateRole(originalRole.id, updateData);
+        const state = useRolesStore.getState();
+
+        const updateOperation = state.pendingOperations.find(
+          (op) => op.type === "update",
+        );
+
+        expect(updateOperation?.rollbackData).toEqual(originalRole);
+      });
+
+      it("should not store rollback data for create operations", () => {
+        const store = useRolesStore.getState();
+
+        const roleData: RoleFormData = {
+          name: "New Role",
+          description: "New role description",
+        };
+
+        store.createRole(roleData);
+        const state = useRolesStore.getState();
+
+        const createOperation = state.pendingOperations.find(
+          (op) => op.type === "create",
+        );
+
+        expect(createOperation?.rollbackData).toBeUndefined();
       });
     });
   });

@@ -429,12 +429,20 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           updatedAt: new Date().toISOString(),
         };
 
+        const operationId = generateId();
         set((state) => ({
           roles: [...state.roles, newRole],
           error: _clearErrorState(),
           pendingOperations: [
             ...state.pendingOperations,
-            { type: "create", timestamp: new Date().toISOString() },
+            {
+              id: operationId,
+              type: "create",
+              roleId: newRole.id,
+              timestamp: new Date().toISOString(),
+              rollbackData: undefined, // No rollback for create
+              status: "pending" as const,
+            },
           ],
         }));
 
@@ -469,6 +477,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           return;
         }
 
+        const operationId = generateId();
         set((state) => ({
           roles: state.roles.map((role) =>
             role.id === id
@@ -482,7 +491,14 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           error: _clearErrorState(),
           pendingOperations: [
             ...state.pendingOperations,
-            { type: "update", timestamp: new Date().toISOString() },
+            {
+              id: operationId,
+              type: "update",
+              roleId: id,
+              timestamp: new Date().toISOString(),
+              rollbackData: existingRole, // Store original for potential rollback
+              status: "pending" as const,
+            },
           ],
         }));
 
@@ -497,19 +513,27 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
     deleteRole: (id: string) => {
       const { roles } = get();
-      const roleExists = roles.some((role) => role.id === id);
+      const roleToDelete = roles.find((role) => role.id === id);
 
-      if (!roleExists) {
+      if (!roleToDelete) {
         set({ error: _createErrorState("Role not found") });
         return;
       }
 
+      const operationId = generateId();
       set((state) => ({
         roles: state.roles.filter((role) => role.id !== id),
         error: _clearErrorState(),
         pendingOperations: [
           ...state.pendingOperations,
-          { type: "delete", timestamp: new Date().toISOString() },
+          {
+            id: operationId,
+            type: "delete",
+            roleId: id,
+            timestamp: new Date().toISOString(),
+            rollbackData: roleToDelete, // Store for potential restoration
+            status: "pending",
+          },
         ],
       }));
 
@@ -629,12 +653,22 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         await adapter.save(persistedData);
 
         // Update state on success
-        set({
+        set((state) => ({
           isSaving: false,
           lastSyncTime: new Date().toISOString(),
-          pendingOperations: [],
+          pendingOperations: state.pendingOperations
+            .map((op) => ({
+              ...op,
+              status: "completed" as const,
+            }))
+            .filter((op) => {
+              // Keep recent completed operations for audit trail (optional)
+              const opTime = new Date(op.timestamp).getTime();
+              const cutoff = Date.now() - 60000; // Keep for 1 minute
+              return opTime > cutoff;
+            }),
           error: _clearErrorState(),
-        });
+        }));
 
         getLogger().info(`Successfully saved ${roles.length} roles`);
 
