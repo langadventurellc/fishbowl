@@ -1,7 +1,7 @@
 ---
 id: F-concurrent-access-protection
 title: Concurrent Access Protection
-status: open
+status: wont-do
 priority: medium
 parent: E-desktop-integration-and
 prerequisites:

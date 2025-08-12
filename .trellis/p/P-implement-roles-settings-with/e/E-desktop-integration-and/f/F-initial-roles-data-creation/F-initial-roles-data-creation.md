@@ -1,7 +1,7 @@
 ---
 id: F-initial-roles-data-creation
 title: Initial Roles Data Creation
-status: open
+status: done
 priority: medium
 parent: E-desktop-integration-and
 prerequisites: []

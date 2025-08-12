@@ -1,7 +1,7 @@
 ---
 id: F-file-backup-and-recovery
 title: File Backup and Recovery
-status: open
+status: wont-do
 priority: medium
 parent: E-desktop-integration-and
 prerequisites:

@@ -1,7 +1,7 @@
 ---
 id: F-enhanced-error-handling
 title: Enhanced Error Handling
-status: open
+status: wont-do
 priority: medium
 parent: E-desktop-integration-and
 prerequisites:
