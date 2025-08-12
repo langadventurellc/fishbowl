@@ -36,6 +36,12 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   const roles = useRolesStore((state) => state.roles);
   const isLoading = useRolesStore((state) => state.isLoading);
   const error = useRolesStore((state) => state.error);
+  const isSaving = useRolesStore((state) => state.isSaving);
+
+  // Subscribe to store methods
+  const createRole = useRolesStore((state) => state.createRole);
+  const updateRole = useRolesStore((state) => state.updateRole);
+  const clearError = useRolesStore((state) => state.clearError);
 
   // Modal state management - centralized to ensure only one modal open
   const [selectedRole, setSelectedRole] = useState<RoleViewModel | undefined>(
@@ -75,27 +81,58 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     setDeleteDialogOpen(true);
   }, []);
 
-  // Simulated save/delete handlers for modals
+  // Real save handler using store operations
   const handleSaveRole = useCallback(
     async (data: RoleFormData) => {
-      logger.info("Save role clicked (functionality disabled)", {
+      logger.info("Saving role", {
         mode: formMode,
-        data,
+        roleId: selectedRole?.id,
       });
 
-      // Simulate a brief processing delay
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        // Clear any existing errors
+        clearError();
 
-      // Close modal and reset state to simulate success
-      setFormModalOpen(false);
-      setSelectedRole(undefined);
+        if (formMode === "create") {
+          // Create new role
+          const newRoleId = createRole(data);
 
-      // Log success simulation
-      logger.info(
-        `Role ${formMode === "create" ? "creation" : "update"} simulated successfully`,
-      );
+          if (newRoleId) {
+            logger.info("Role created successfully", { roleId: newRoleId });
+            // Close modal only on successful creation
+            setFormModalOpen(false);
+            setSelectedRole(undefined);
+          } else {
+            // Creation failed - error is already set in store
+            logger.warn("Role creation failed - name might not be unique");
+          }
+        } else if (selectedRole?.id) {
+          // Update existing role
+          updateRole(selectedRole.id, data);
+
+          // Check if update succeeded by checking error state
+          const currentError = useRolesStore.getState().error;
+          if (!currentError?.message) {
+            logger.info("Role updated successfully", {
+              roleId: selectedRole.id,
+            });
+            // Close modal only on successful update
+            setFormModalOpen(false);
+            setSelectedRole(undefined);
+          } else {
+            logger.warn("Role update failed", { error: currentError.message });
+          }
+        }
+      } catch (error) {
+        // Handle unexpected errors
+        logger.error(
+          "Failed to save role",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        // Keep modal open on error
+      }
     },
-    [formMode],
+    [formMode, selectedRole, createRole, updateRole, clearError],
   );
 
   const handleConfirmDelete = useCallback(async (role: RoleViewModel) => {
@@ -200,7 +237,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         mode={formMode}
         role={selectedRole}
         onSave={handleSaveRole}
-        isLoading={false}
+        isLoading={isSaving}
       />
 
       {/* Role deletion confirmation dialog */}

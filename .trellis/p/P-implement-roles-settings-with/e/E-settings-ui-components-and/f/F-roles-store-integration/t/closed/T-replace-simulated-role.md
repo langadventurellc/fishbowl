@@ -1,13 +1,23 @@
 ---
 id: T-replace-simulated-role
 title: Replace simulated role create/update handlers with store operations
-status: open
+status: done
 priority: high
 parent: F-roles-store-integration
 prerequisites:
   - T-connect-rolessection
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/RolesSection.tsx:
+    Replaced simulated handleSaveRole function with real store operations for
+    create/update, added proper error handling that only closes modal on
+    success, connected to store's isSaving state for loading indicators, and
+    removed artificial setTimeout delays
+log:
+  - Successfully replaced simulated role create/update handlers with real store
+    operations. Removed artificial setTimeout delays and implemented proper
+    error handling. Modal now closes only on successful operations and uses real
+    loading states from the store. All acceptance criteria met and quality
+    checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T16:51:15.028Z
