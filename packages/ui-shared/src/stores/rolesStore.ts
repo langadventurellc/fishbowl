@@ -1,4 +1,4 @@
-import { RolesActions } from "src/stores/RolesActions";
-import { RolesState } from "src/stores/RolesState";
+import { RolesActions } from "./RolesActions";
+import { RolesState } from "./RolesState";
 
 export type RolesStore = RolesState & RolesActions;

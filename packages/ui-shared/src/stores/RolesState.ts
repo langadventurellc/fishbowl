@@ -1,6 +1,6 @@
-import { RolesErrorState } from "src/stores/RolesErrorState";
-import { RoleViewModel, RolesPersistenceAdapter } from "src/types";
-import { PendingOperation } from "src/types/roles/PendingOperation";
+import { RoleViewModel, RolesPersistenceAdapter } from "../types";
+import { PendingOperation } from "../types/roles/PendingOperation";
+import { RolesErrorState } from "./RolesErrorState";
 
 export interface RolesState {
   roles: RoleViewModel[];

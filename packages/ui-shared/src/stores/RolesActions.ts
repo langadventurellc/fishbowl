@@ -1,10 +1,6 @@
 import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
-import { RolesErrorState } from "src/stores/RolesErrorState";
-import {
-  RoleFormData,
-  RoleViewModel,
-  RolesPersistenceAdapter,
-} from "src/types";
+import { RoleFormData, RoleViewModel, RolesPersistenceAdapter } from "../types";
+import { RolesErrorState } from "./RolesErrorState";
 
 export interface RolesActions {
   createRole: (roleData: RoleFormData) => string;

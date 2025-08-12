@@ -9,8 +9,6 @@
 
 import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
 import { createLoggerSync } from "@fishbowl-ai/shared";
-import { RolesErrorState } from "src/stores/RolesErrorState";
-import { RolesStore } from "src/stores/RolesStore";
 import { create } from "zustand";
 import { mapRolesPersistenceToUI } from "../mapping/roles/mapRolesPersistenceToUI";
 import { mapRolesUIToPersistence } from "../mapping/roles/mapRolesUIToPersistence";
@@ -19,6 +17,8 @@ import { RolesPersistenceAdapter } from "../types/roles/persistence/RolesPersist
 import { RolesPersistenceError } from "../types/roles/persistence/RolesPersistenceError";
 import { RoleFormData } from "../types/settings/RoleFormData";
 import { RoleViewModel } from "../types/settings/RoleViewModel";
+import { RolesErrorState } from "./RolesErrorState";
+import { RolesStore } from "./RolesStore";
 
 // Lazy logger creation to avoid process access in browser context
 let logger: ReturnType<typeof createLoggerSync> | null = null;
