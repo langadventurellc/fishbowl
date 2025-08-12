@@ -1,13 +1,32 @@
 ---
 id: T-create-rolesystemprompttextare
 title: Create RoleSystemPromptTextarea component with validation and character counter
-status: open
+status: done
 priority: high
 parent: F-role-creation-form
 prerequisites:
   - T-update-role-schema-to-match
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/settings/RoleSystemPromptTextareaProps.ts:
+    Created TypeScript interface defining component props with value, onChange,
+    maxLength, disabled, className, and aria-describedby properties
+  packages/ui-shared/src/types/settings/index.ts: Added export for RoleSystemPromptTextareaProps to barrel file
+  apps/desktop/src/components/settings/roles/RoleSystemPromptTextarea.tsx:
+    Created complete component with 10-row textarea, character counter (0-4000
+    green, 4001-4500 yellow, 4501-5000 red), input prevention at 5000 chars,
+    accessibility attributes, and helpful placeholder text
+  apps/desktop/src/components/settings/roles/CreateRoleForm.tsx:
+    Integrated RoleSystemPromptTextarea component with FormField, added
+    systemPrompt to defaultValues, and imported component
+  apps/desktop/src/components/settings/roles/index.ts: Added barrel export for RoleSystemPromptTextarea component
+  apps/desktop/src/components/settings/roles/__tests__/RoleListItem.test.tsx: Updated test mock data to include required systemPrompt field
+log:
+  - Successfully implemented RoleSystemPromptTextarea component with full
+    validation, character counter, and seamless form integration. The component
+    provides a comprehensive system prompt input interface with 5000 character
+    limit, real-time color-coded feedback, accessibility support, and proper
+    integration with react-hook-form. All quality checks pass and the component
+    follows established design patterns from existing role input components.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T21:37:43.533Z

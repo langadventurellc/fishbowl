@@ -34,6 +34,7 @@ import {
 } from "../../ui/form";
 import { RoleDescriptionTextarea } from "./RoleDescriptionTextarea";
 import { RoleNameInput } from "./RoleNameInput";
+import { RoleSystemPromptTextarea } from "./RoleSystemPromptTextarea";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 
 const logger = createLoggerSync({
@@ -57,6 +58,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
     defaultValues: {
       name: initialData?.name || "",
       description: initialData?.description || "",
+      systemPrompt: initialData?.systemPrompt || "",
     },
     mode: "onChange",
   });
@@ -138,6 +140,28 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
                     value={field.value}
                     onChange={field.onChange}
                     maxLength={500}
+                    disabled={isSubmitting || isLoading}
+                    aria-describedby={
+                      fieldState.error ? `${field.name}-error` : undefined
+                    }
+                  />
+                </FormControl>
+                <FormMessage id={`${field.name}-error`} />
+              </FormItem>
+            )}
+          />
+
+          {/* System Prompt Field */}
+          <FormField
+            control={form.control}
+            name="systemPrompt"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormControl>
+                  <RoleSystemPromptTextarea
+                    value={field.value}
+                    onChange={field.onChange}
+                    maxLength={5000}
                     disabled={isSubmitting || isLoading}
                     aria-describedby={
                       fieldState.error ? `${field.name}-error` : undefined

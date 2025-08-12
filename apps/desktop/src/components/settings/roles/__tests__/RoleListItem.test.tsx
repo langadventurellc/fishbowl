@@ -8,6 +8,8 @@ const mockRole: RoleViewModel = {
   name: "Test Developer",
   description:
     "A role for testing development scenarios with comprehensive testing capabilities and detailed feedback mechanisms.",
+  systemPrompt:
+    "You are a helpful software developer who provides clear and concise code solutions.",
   createdAt: "2025-01-01T00:00:00Z",
   updatedAt: "2025-01-02T00:00:00Z",
 };
