@@ -1237,19 +1237,8 @@ describe("rolesStore", () => {
       reset: jest.fn(),
     };
 
-    // Mock the debounced save functionality
-    let debouncedSaveCallCount = 0;
-    const originalSetTimeout = global.setTimeout;
-
     beforeEach(() => {
       jest.clearAllMocks();
-      debouncedSaveCallCount = 0;
-
-      // Mock setTimeout to track debounced save calls
-      global.setTimeout = jest.fn((callback) => {
-        debouncedSaveCallCount++;
-        return originalSetTimeout(callback, 0); // Execute immediately for testing
-      }) as unknown as typeof setTimeout;
 
       useRolesStore.setState({
         roles: [],
@@ -1270,12 +1259,9 @@ describe("rolesStore", () => {
       });
     });
 
-    afterEach(() => {
-      global.setTimeout = originalSetTimeout;
-    });
-
     describe("CRUD methods trigger auto-save", () => {
       it("should trigger debounced save after successful createRole", () => {
+        jest.useFakeTimers();
         const store = useRolesStore.getState();
 
         const roleData: RoleFormData = {
@@ -1286,10 +1272,16 @@ describe("rolesStore", () => {
         const roleId = store.createRole(roleData);
 
         expect(roleId).toBeTruthy();
-        expect(debouncedSaveCallCount).toBe(1);
+
+        // Fast-forward time to trigger debounced save
+        jest.advanceTimersByTime(500);
+
+        expect(mockAdapter.save).toHaveBeenCalled();
+        jest.useRealTimers();
       });
 
       it("should trigger debounced save after successful updateRole", () => {
+        jest.useFakeTimers();
         // Setup existing role
         const existingRole: RoleViewModel = {
           id: "existing-1",
@@ -1326,10 +1318,15 @@ describe("rolesStore", () => {
 
         store.updateRole(existingRole.id, updateData);
 
-        expect(debouncedSaveCallCount).toBe(1);
+        // Fast-forward time to trigger debounced save
+        jest.advanceTimersByTime(500);
+
+        expect(mockAdapter.save).toHaveBeenCalled();
+        jest.useRealTimers();
       });
 
       it("should trigger debounced save after successful deleteRole", () => {
+        jest.useFakeTimers();
         // Setup existing role
         const existingRole: RoleViewModel = {
           id: "existing-1",
@@ -1360,10 +1357,15 @@ describe("rolesStore", () => {
         const store = useRolesStore.getState();
         store.deleteRole(existingRole.id);
 
-        expect(debouncedSaveCallCount).toBe(1);
+        // Fast-forward time to trigger debounced save
+        jest.advanceTimersByTime(500);
+
+        expect(mockAdapter.save).toHaveBeenCalled();
+        jest.useRealTimers();
       });
 
       it("should NOT trigger auto-save when CRUD operations fail validation", () => {
+        jest.useFakeTimers();
         const store = useRolesStore.getState();
 
         // Invalid role data should fail validation
@@ -1375,10 +1377,16 @@ describe("rolesStore", () => {
         const roleId = store.createRole(invalidRoleData);
 
         expect(roleId).toBe("");
-        expect(debouncedSaveCallCount).toBe(0);
+
+        // Fast-forward time to see if any save was triggered
+        jest.advanceTimersByTime(500);
+
+        expect(mockAdapter.save).not.toHaveBeenCalled();
+        jest.useRealTimers();
       });
 
       it("should NOT trigger auto-save when updating non-existent role", () => {
+        jest.useFakeTimers();
         const store = useRolesStore.getState();
 
         const updateData: RoleFormData = {
@@ -1388,15 +1396,24 @@ describe("rolesStore", () => {
 
         store.updateRole("non-existent", updateData);
 
-        expect(debouncedSaveCallCount).toBe(0);
+        // Fast-forward time to see if any save was triggered
+        jest.advanceTimersByTime(500);
+
+        expect(mockAdapter.save).not.toHaveBeenCalled();
+        jest.useRealTimers();
       });
 
       it("should NOT trigger auto-save when deleting non-existent role", () => {
+        jest.useFakeTimers();
         const store = useRolesStore.getState();
 
         store.deleteRole("non-existent");
 
-        expect(debouncedSaveCallCount).toBe(0);
+        // Fast-forward time to see if any save was triggered
+        jest.advanceTimersByTime(500);
+
+        expect(mockAdapter.save).not.toHaveBeenCalled();
+        jest.useRealTimers();
       });
     });
 

@@ -1,13 +1,27 @@
 ---
 id: T-add-comprehensive-testing-for
 title: Add comprehensive testing for refactored store
-status: open
+status: done
 priority: medium
 parent: F-roles-store-refactoring
 prerequisites:
   - T-update-crud-methods-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/__tests__/rolesStorePersistence.test.ts:
+    Created comprehensive persistence-specific test suite with
+    MockRolesPersistenceAdapter class and 70 test cases covering adapter
+    integration, auto-save functionality, debouncing, retry logic, error
+    handling, and sync operations
+  packages/ui-shared/src/stores/__tests__/rolesStore.test.ts: Enhanced existing
+    tests by replacing basic debounced save call counting with proper fake timer
+    implementation for more accurate debouncing behavior testing
+log:
+  - Successfully implemented comprehensive testing for the refactored roles
+    store, including adapter integration, auto-save with debouncing, retry logic
+    with exponential backoff, error handling, and sync operations. Created new
+    comprehensive test file rolesStorePersistence.test.ts with 70 test cases and
+    enhanced existing rolesStore.test.ts with improved debouncing tests using
+    proper fake timers. All tests pass successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-11T18:30:36.938Z
