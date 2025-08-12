@@ -1,7 +1,7 @@
 ---
 id: E-file-persistence-and-state
 title: File Persistence and State Management
-status: open
+status: done
 priority: medium
 parent: P-implement-roles-settings-with
 prerequisites:
