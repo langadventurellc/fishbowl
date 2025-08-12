@@ -1,13 +1,22 @@
 ---
 id: T-update-existing-rolessection
 title: Update existing RolesSection unit tests for store integration
-status: open
+status: done
 priority: low
 parent: F-roles-store-integration
 prerequisites:
   - T-connect-rolessection
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/__tests__/RolesList.test.tsx:
+    Replaced SAMPLE_ROLES import and references with local mockRoles array
+    containing 10 test roles that match expected names and structure for
+    existing tests
+log:
+  - Updated RolesList.test.tsx to use local mock data instead of SAMPLE_ROLES
+    from ui-shared. Replaced all references to SAMPLE_ROLES with local mockRoles
+    array that maintains the same test structure and expected role names. All 17
+    tests continue to pass and all quality checks (lint, format, type-check) are
+    clean.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T16:52:16.237Z

@@ -1,10 +1,95 @@
-import { SAMPLE_ROLES } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { RolesList } from "../RolesList";
+import type { RoleViewModel } from "@fishbowl-ai/ui-shared";
+
+// Mock roles data for testing - matches expected structure and names from original tests
+const mockRoles: RoleViewModel[] = [
+  {
+    id: "analyst",
+    name: "Analyst",
+    description: "Analytical thinker for data-driven insights",
+    systemPrompt:
+      "You are an analytical thinker focused on data-driven insights.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "business-strategist",
+    name: "Business Strategist",
+    description: "Strategic business advisor",
+    systemPrompt: "You are a strategic business advisor.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "coach",
+    name: "Coach",
+    description: "Supportive coach and mentor",
+    systemPrompt: "You are a supportive coach and mentor.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "creative-director",
+    name: "Creative Director",
+    description: "Creative visionary and director",
+    systemPrompt: "You are a creative visionary and director.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "critic",
+    name: "Critic",
+    description: "Critical evaluator and reviewer",
+    systemPrompt: "You are a critical evaluator and reviewer.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "financial-advisor",
+    name: "Financial Advisor",
+    description: "Financial planning and advisory expert",
+    systemPrompt: "You are a financial planning and advisory expert.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "generalist",
+    name: "Generalist",
+    description: "Well-rounded generalist",
+    systemPrompt: "You are a well-rounded generalist.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "project-manager",
+    name: "Project Manager",
+    description: "Organized project coordination expert",
+    systemPrompt: "You are an organized project coordination expert.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "storyteller",
+    name: "Storyteller",
+    description: "Engaging storyteller and narrator",
+    systemPrompt: "You are an engaging storyteller and narrator.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+  {
+    id: "technical-advisor",
+    name: "Technical Advisor",
+    description: "Technical expertise and guidance",
+    systemPrompt: "You are a technical expertise and guidance provider.",
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
+  },
+];
 
 const defaultProps = {
-  roles: SAMPLE_ROLES,
+  roles: mockRoles,
   onCreateRole: jest.fn(),
   onEditRole: jest.fn(),
   onDeleteRole: jest.fn(),
@@ -48,7 +133,7 @@ describe("RolesList Component", () => {
     render(<RolesList {...defaultProps} />);
 
     const roleItems = screen.getAllByRole("listitem");
-    expect(roleItems).toHaveLength(SAMPLE_ROLES.length);
+    expect(roleItems).toHaveLength(mockRoles.length);
     expect(roleItems).toHaveLength(10);
   });
 
@@ -127,7 +212,7 @@ describe("RolesList Component", () => {
   });
 
   it("renders without optional handlers", () => {
-    render(<RolesList roles={SAMPLE_ROLES} />);
+    render(<RolesList roles={mockRoles} />);
 
     // Should render without errors
     expect(screen.getByText("Project Manager")).toBeInTheDocument();
@@ -135,7 +220,7 @@ describe("RolesList Component", () => {
   });
 
   it("handles click events without handlers gracefully", () => {
-    render(<RolesList roles={SAMPLE_ROLES} />);
+    render(<RolesList roles={mockRoles} />);
 
     const createButton = screen.getByLabelText("Create a new role");
     const editButtons = screen.getAllByText("Edit");
