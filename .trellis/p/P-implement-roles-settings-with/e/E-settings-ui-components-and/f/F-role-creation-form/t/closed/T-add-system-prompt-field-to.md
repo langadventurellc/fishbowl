@@ -1,13 +1,29 @@
 ---
 id: T-add-system-prompt-field-to
 title: Add system prompt field to CreateRoleForm with validation integration
-status: open
+status: done
 priority: high
 parent: F-role-creation-form
 prerequisites:
   - T-create-rolesystemprompttextare
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/CreateRoleForm.tsx:
+    Already contains complete system prompt field implementation - import,
+    defaultValues, and FormField with proper validation integration
+  apps/desktop/src/components/settings/roles/RoleSystemPromptTextarea.tsx:
+    Fully implemented system prompt textarea component with character counter,
+    color thresholds, and accessibility features
+  packages/ui-shared/src/schemas/roleSchema.ts: Contains proper systemPrompt
+    validation schema with required, length limits, and whitespace validation
+log:
+  - System prompt field successfully integrated into CreateRoleForm component.
+    All acceptance criteria verified and working correctly. The field is
+    properly positioned after description field, includes comprehensive
+    validation (1-5000 characters, required, whitespace check), features a
+    character counter with color-coded feedback, and integrates seamlessly with
+    react-hook-form and existing form patterns. Form submission properly
+    includes systemPrompt data, edit mode pre-populates values correctly, and
+    tab navigation flows properly through all fields.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T21:38:05.573Z

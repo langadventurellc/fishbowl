@@ -45,6 +45,15 @@ export const RoleDescriptionTextarea: React.FC<
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      // Move focus to next field (system prompt)
+      const systemPromptField = document.getElementById("role-system-prompt");
+      systemPromptField?.focus();
+    }
+  };
+
   return (
     <div className={cn("space-y-2", className)}>
       <Label htmlFor="role-description">
@@ -59,11 +68,13 @@ export const RoleDescriptionTextarea: React.FC<
           id="role-description"
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           rows={4}
           disabled={disabled}
           aria-describedby={cn("role-description-counter", ariaDescribedBy)}
           className="resize-none pr-20"
           placeholder="Describe the role's purpose and expertise area. For example: 'Specializes in software development and technical problem-solving' or 'Focuses on user experience and visual design solutions.'"
+          tabIndex={0}
         />
 
         {/* Character Counter */}

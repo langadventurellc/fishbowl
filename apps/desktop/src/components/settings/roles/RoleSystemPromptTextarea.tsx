@@ -64,6 +64,7 @@ export const RoleSystemPromptTextarea: React.FC<
           aria-describedby={cn("role-system-prompt-counter", ariaDescribedBy)}
           className="resize-y pr-20 min-h-[200px] max-h-[400px]"
           placeholder="Define the AI agent's behavior, expertise, and communication style. For example: 'You are an experienced software architect who specializes in distributed systems. Provide detailed technical explanations while maintaining clarity. Always consider scalability, performance, and maintainability in your recommendations.'"
+          tabIndex={0}
         />
 
         {/* Character Counter */}

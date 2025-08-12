@@ -119,6 +119,15 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
     onChange(e.target.value);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      // Move focus to next field (description)
+      const descriptionField = document.getElementById("role-description");
+      descriptionField?.focus();
+    }
+  };
+
   const getValidationIcon = () => {
     if (!value || validation.isValidating) return null;
 
@@ -161,6 +170,7 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
           type="text"
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder="Enter a unique name for this role"
           disabled={disabled}
           aria-invalid={isInvalid}
@@ -174,6 +184,8 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
             isInvalid &&
               "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
           )}
+          data-role-modal-initial-focus
+          tabIndex={0}
         />
 
         {/* Validation Icon */}
