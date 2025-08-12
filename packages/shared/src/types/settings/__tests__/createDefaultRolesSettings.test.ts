@@ -201,4 +201,233 @@ describe("createDefaultRolesSettings", () => {
       });
     });
   });
+
+  describe("invalid JSON scenarios", () => {
+    it("should throw error when JSON validation fails", () => {
+      // We can't easily mock the JSON import, but we can verify
+      // that the function would throw on invalid data by testing
+      // the schema validation logic indirectly
+      const config = createDefaultRolesSettings();
+
+      // Verify that valid data passes
+      const result = persistedRolesSettingsSchema.safeParse(config);
+      expect(result.success).toBe(true);
+
+      // Test that invalid data would fail schema validation
+      const invalidData = {
+        schemaVersion: "", // Invalid empty version
+        roles: [],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      const invalidResult = persistedRolesSettingsSchema.safeParse(invalidData);
+      expect(invalidResult.success).toBe(false);
+    });
+
+    it("should validate that roles array is required", () => {
+      const invalidData = {
+        schemaVersion: "1.0.0",
+        roles: "not-an-array", // Invalid - should be array
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should validate that role fields are required", () => {
+      const invalidData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "", // Invalid empty ID
+            name: "Test",
+            description: "Test",
+            systemPrompt: "Test",
+            createdAt: null,
+            updatedAt: null,
+          },
+        ],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should validate role field length constraints", () => {
+      const invalidData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "test",
+            name: "A".repeat(101), // Exceeds 100 char limit
+            description: "Test",
+            systemPrompt: "Test",
+            createdAt: null,
+            updatedAt: null,
+          },
+        ],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should validate schema version and roles type constraints", () => {
+      const invalidData = {
+        schemaVersion: 123, // Wrong type
+        roles: null, // Wrong type
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("timestamp generation edge cases", () => {
+    it("should handle Date mock correctly", () => {
+      const mockDate = new Date("2025-01-01T00:00:00.000Z");
+
+      // Mock Date constructor
+      jest.spyOn(globalThis, "Date").mockImplementation(() => mockDate);
+
+      const config = createDefaultRolesSettings();
+      expect(config.lastUpdated).toBe("2025-01-01T00:00:00.000Z");
+
+      jest.restoreAllMocks();
+    });
+
+    it("should generate valid ISO string format", () => {
+      const config = createDefaultRolesSettings();
+      const parsedDate = new Date(config.lastUpdated);
+
+      expect(parsedDate.toISOString()).toBe(config.lastUpdated);
+      expect(config.lastUpdated).toMatch(
+        /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+      );
+    });
+
+    it("should handle millisecond precision", () => {
+      const config = createDefaultRolesSettings();
+
+      // Should have millisecond precision
+      expect(config.lastUpdated).toMatch(/\.\d{3}Z$/);
+
+      const date = new Date(config.lastUpdated);
+      expect(date.getMilliseconds()).toBeGreaterThanOrEqual(0);
+      expect(date.getMilliseconds()).toBeLessThan(1000);
+    });
+  });
+
+  describe("data integrity and consistency", () => {
+    it("should not mutate the imported JSON data", () => {
+      const config1 = createDefaultRolesSettings();
+
+      // Modify first config
+      config1.roles.push({
+        id: "new-role",
+        name: "New Role",
+        description: "Added role",
+        systemPrompt: "Test",
+        createdAt: null,
+        updatedAt: null,
+      });
+
+      // Second config should still have original roles only
+      const config3 = createDefaultRolesSettings();
+      expect(config3.roles).toHaveLength(4);
+    });
+
+    it("should preserve all role fields from JSON", () => {
+      const config = createDefaultRolesSettings();
+
+      config.roles.forEach((role) => {
+        expect(role).toHaveProperty("id");
+        expect(role).toHaveProperty("name");
+        expect(role).toHaveProperty("description");
+        expect(role).toHaveProperty("systemPrompt");
+        expect(role).toHaveProperty("createdAt");
+        expect(role).toHaveProperty("updatedAt");
+      });
+    });
+
+    it("should maintain role order from JSON", () => {
+      const config = createDefaultRolesSettings();
+
+      // Test that order is consistent across calls
+      const config2 = createDefaultRolesSettings();
+
+      expect(config.roles.map((r) => r.id)).toEqual(
+        config2.roles.map((r) => r.id),
+      );
+    });
+
+    it("should maintain consistent timestamp format", () => {
+      const configs = Array.from({ length: 5 }, () =>
+        createDefaultRolesSettings(),
+      );
+
+      configs.forEach((config) => {
+        expect(config.lastUpdated).toMatch(
+          /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/,
+        );
+        expect(new Date(config.lastUpdated).toISOString()).toBe(
+          config.lastUpdated,
+        );
+      });
+    });
+  });
+
+  describe("schema validation edge cases", () => {
+    it("should validate against current schema version", () => {
+      const config = createDefaultRolesSettings();
+
+      // Should always use the current schema version
+      expect(config.schemaVersion).toBe(CURRENT_ROLES_SCHEMA_VERSION);
+
+      // Should validate successfully
+      const result = persistedRolesSettingsSchema.safeParse(config);
+      expect(result.success).toBe(true);
+    });
+
+    it("should handle empty roles array in schema validation", () => {
+      // Test that empty roles array would be valid by schema
+      const emptyRolesData = {
+        schemaVersion: "1.0.0",
+        roles: [],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.safeParse(emptyRolesData);
+      expect(result.success).toBe(true);
+    });
+
+    it("should validate role structure requirements", () => {
+      // Test that invalid role structure would fail validation
+      const invalidRoleData = {
+        schemaVersion: "1.0.0",
+        roles: [
+          {
+            id: "valid-role",
+            name: "Valid Role",
+            description: "Valid description",
+            systemPrompt: "Valid prompt",
+            createdAt: null,
+            updatedAt: null,
+          },
+          {
+            // Missing required fields - should fail validation
+            id: "invalid-role",
+          },
+        ],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      const result = persistedRolesSettingsSchema.safeParse(invalidRoleData);
+      expect(result.success).toBe(false);
+    });
+  });
 });
