@@ -19,7 +19,7 @@ import type {
 } from "@fishbowl-ai/ui-shared";
 import { useRolesStore } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useState, useMemo } from "react";
-import { UserPlus, Plus } from "lucide-react";
+import { UserPlus, Plus, AlertCircle, RotateCcw, X } from "lucide-react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
 import { RolesList } from "./RolesList";
@@ -43,6 +43,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   const updateRole = useRolesStore((state) => state.updateRole);
   const deleteRole = useRolesStore((state) => state.deleteRole);
   const clearError = useRolesStore((state) => state.clearError);
+  const retryLastOperation = useRolesStore((state) => state.retryLastOperation);
 
   // Modal state management - centralized to ensure only one modal open
   const [selectedRole, setSelectedRole] = useState<RoleViewModel | undefined>(
@@ -241,9 +242,59 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
       </div>
 
       {/* Error state display */}
-      {error && (
-        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4">
-          <p className="text-sm text-destructive">{error.message}</p>
+      {error?.message && (
+        <div
+          className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-4"
+          role="alert"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <div className="flex items-start gap-3">
+            <AlertCircle
+              className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0"
+              aria-hidden="true"
+            />
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex-1">
+                  <p className="text-sm font-medium text-destructive mb-1">
+                    {error.operation
+                      ? `${error.operation.charAt(0).toUpperCase() + error.operation.slice(1)} Failed`
+                      : "Error"}
+                  </p>
+                  <p className="text-sm text-destructive/80">{error.message}</p>
+                  {error.retryCount > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Retry attempt {error.retryCount}
+                    </p>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearError}
+                  className="h-6 w-6 p-0 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+                  aria-label="Dismiss error"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              {error.isRetryable && error.operation && (
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={retryLastOperation}
+                    className="h-7 text-xs border-destructive/20 text-destructive hover:bg-destructive/10"
+                    disabled={isSaving || isLoading}
+                  >
+                    <RotateCcw className="h-3 w-3 mr-1" />
+                    Retry
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 
