@@ -41,6 +41,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
   // Subscribe to store methods
   const createRole = useRolesStore((state) => state.createRole);
   const updateRole = useRolesStore((state) => state.updateRole);
+  const deleteRole = useRolesStore((state) => state.deleteRole);
   const clearError = useRolesStore((state) => state.clearError);
 
   // Modal state management - centralized to ensure only one modal open
@@ -135,22 +136,48 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     [formMode, selectedRole, createRole, updateRole, clearError],
   );
 
-  const handleConfirmDelete = useCallback(async (role: RoleViewModel) => {
-    logger.info("Delete role confirmed (functionality disabled)", {
-      roleId: role.id,
-      roleName: role.name,
-    });
+  const handleConfirmDelete = useCallback(
+    async (role: RoleViewModel) => {
+      logger.info("Deleting role", {
+        roleId: role.id,
+        roleName: role.name,
+      });
 
-    // Simulate a brief processing delay
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        // Clear any existing errors
+        clearError();
 
-    // Close dialog and reset state to simulate success
-    setDeleteDialogOpen(false);
-    setSelectedRole(undefined);
+        // Perform the actual deletion
+        deleteRole(role.id);
 
-    // Log success simulation
-    logger.info("Role deletion simulated successfully");
-  }, []);
+        // Check if deletion succeeded by checking error state
+        const currentError = useRolesStore.getState().error;
+        if (!currentError?.message) {
+          logger.info("Role deleted successfully", {
+            roleId: role.id,
+            roleName: role.name,
+          });
+          // Close dialog only on successful deletion
+          setDeleteDialogOpen(false);
+          setSelectedRole(undefined);
+        } else {
+          logger.warn("Role deletion failed", {
+            error: currentError.message,
+            roleId: role.id,
+          });
+          // Keep dialog open on error
+        }
+      } catch (error) {
+        // Handle unexpected errors
+        logger.error(
+          "Failed to delete role",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        // Keep dialog open on error
+      }
+    },
+    [deleteRole, clearError],
+  );
 
   // Render empty state when no roles exist
   const renderEmptyState = useMemo(() => {
@@ -246,7 +273,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         onOpenChange={setDeleteDialogOpen}
         role={selectedRole || null}
         onConfirm={handleConfirmDelete}
-        isLoading={false}
+        isLoading={isSaving}
       />
     </div>
   );

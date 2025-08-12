@@ -1,13 +1,26 @@
 ---
 id: T-replace-simulated-role-delete
 title: Replace simulated role delete handler with store operation
-status: open
+status: done
 priority: high
 parent: F-roles-store-integration
 prerequisites:
   - T-replace-simulated-role
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/RolesSection.tsx:
+    Replaced simulated handleConfirmDelete function with real store deleteRole
+    operation. Added deleteRole method subscription from store. Updated delete
+    dialog to use isSaving state instead of hardcoded false. Implemented proper
+    error handling with try/catch blocks and logger usage. Dialog now closes
+    only on successful deletion and stays open on errors.
+log:
+  - "Successfully replaced simulated role delete handler with real store
+    operation. Removed artificial setTimeout delays and implemented proper error
+    handling with try/catch blocks. Delete dialog now closes only on successful
+    operations and uses real loading states from the store. All acceptance
+    criteria met: delete operation uses store.deleteRole(id), no artificial
+    delays, proper error handling prevents dialog closing on failure, optimistic
+    updates remove role from UI immediately, and all quality checks pass."
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T16:51:26.031Z
