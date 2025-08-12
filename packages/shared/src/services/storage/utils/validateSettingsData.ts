@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { SettingsValidationError } from "../errors/SettingsValidationError";
-import { validateWithSchema } from "./validateWithSchema";
+import { validateWithSchema } from "../../../validation/validateWithSchema";
 
 /**
  * High-level settings validation with complete error handling

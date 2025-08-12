@@ -95,11 +95,11 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
       <DialogContent className="role-form-modal max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Create Custom Role" : "Edit Role"}
+            {mode === "create" ? "Create Role" : "Edit Role"}
           </DialogTitle>
           <DialogDescription>
             {mode === "create"
-              ? "Define a new custom role with specialized focus and responsibilities."
+              ? "Define a new role with specialized focus and responsibilities."
               : "Update the role name and description."}
           </DialogDescription>
         </DialogHeader>

@@ -2,7 +2,7 @@ import { useSettingsModal } from "@fishbowl-ai/ui-shared";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import React from "react";
 import { SettingsModal } from "./components/settings/SettingsModal";
-import { SettingsProvider } from "./contexts";
+import { SettingsProvider, RolesProvider } from "./contexts";
 import { useElectronIPC } from "./hooks/useElectronIPC";
 import { setupTestHelpers } from "./utils/testHelpers";
 import { applyTheme } from "./utils/applyTheme";
@@ -69,16 +69,21 @@ export default function App() {
 
   return (
     <SettingsProvider>
-      <HashRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/showcase/components" element={<ComponentShowcase />} />
-          <Route path="/showcase/layout" element={<LayoutShowcase />} />
-        </Routes>
-      </HashRouter>
+      <RolesProvider>
+        <HashRouter>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route
+              path="/showcase/components"
+              element={<ComponentShowcase />}
+            />
+            <Route path="/showcase/layout" element={<LayoutShowcase />} />
+          </Routes>
+        </HashRouter>
 
-      {/* Settings Modal - rendered globally */}
-      <SettingsModal open={isOpen} onOpenChange={closeModal} />
+        {/* Settings Modal - rendered globally */}
+        <SettingsModal open={isOpen} onOpenChange={closeModal} />
+      </RolesProvider>
     </SettingsProvider>
   );
 }

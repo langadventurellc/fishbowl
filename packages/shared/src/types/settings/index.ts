@@ -2,9 +2,16 @@
 export { advancedSettingsSchema } from "./advancedSettingsSchema";
 export { appearanceSettingsSchema } from "./appearanceSettingsSchema";
 export { generalSettingsSchema } from "./generalSettingsSchema";
+export {
+  persistedRoleSchema,
+  persistedRolesSettingsSchema,
+  ROLES_SCHEMA_VERSION,
+  CURRENT_ROLES_SCHEMA_VERSION,
+} from "./rolesSettingsSchema";
 export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
 export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettings";
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
+export { createDefaultRolesSettings } from "./createDefaultRolesSettings";
 export type { ConversationMode } from "./ConversationMode";
 export { CONVERSATION_MODE_OPTIONS } from "./ConversationMode";
 export type { MessageSpacing } from "./MessageSpacing";
@@ -15,6 +22,9 @@ export type { PersistedAppearanceSettings } from "./PersistedAppearanceSettings"
 export type { PersistedAppearanceSettingsData } from "./PersistedAppearanceSettingsData";
 export type { PersistedGeneralSettings } from "./PersistedGeneralSettings";
 export type { PersistedGeneralSettingsData } from "./PersistedGeneralSettingsData";
+export type { PersistedRole } from "./PersistedRole";
+export type { PersistedRoleData } from "./PersistedRoleData";
+export type { PersistedRolesSettingsData } from "./PersistedRolesSettingsData";
 export type { ShowTimestamps } from "./ShowTimestamps";
 export { SHOW_TIMESTAMPS_OPTIONS } from "./ShowTimestamps";
 export type { ThemeMode } from "./ThemeMode";

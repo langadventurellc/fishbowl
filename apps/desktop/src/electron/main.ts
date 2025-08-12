@@ -14,6 +14,7 @@ import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
 import { LlmStorageService } from "./services/LlmStorageService.js";
 import { setupSettingsHandlers } from "./settingsHandlers.js";
+import { setupRolesHandlers } from "./rolesHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -164,6 +165,15 @@ app.whenReady().then(async () => {
       settingsPath: settingsFilePath,
     });
 
+    // Initialize roles repository manager with userData path
+    const { rolesRepositoryManager } = await import(
+      "../data/repositories/rolesRepositoryManager.js"
+    );
+    rolesRepositoryManager.initialize(userDataPath);
+    mainLogger?.info("Roles repository initialized successfully", {
+      dataPath: userDataPath,
+    });
+
     // Initialize LLM storage service
     const llmStorageService = new LlmStorageService();
     llmStorageServiceManager.set(llmStorageService);
@@ -222,6 +232,15 @@ app.whenReady().then(async () => {
       error as Error,
     );
     // Continue startup - app can function without settings handlers
+  }
+
+  // Setup Roles IPC handlers
+  try {
+    setupRolesHandlers();
+    mainLogger?.debug("Roles IPC handlers registered successfully");
+  } catch (error) {
+    mainLogger?.error("Failed to register roles IPC handlers", error as Error);
+    // Continue startup - app can function without roles handlers
   }
 
   // LLM config handlers are now registered earlier in the startup process

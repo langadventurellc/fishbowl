@@ -6,6 +6,5 @@
  * @module stores
  */
 
-export { rolesPersistence } from "./rolesPersistence";
-export { useRolesStore } from "./rolesStore";
 export * from "./settings";
+export { useRolesStore } from "./useRolesStore";

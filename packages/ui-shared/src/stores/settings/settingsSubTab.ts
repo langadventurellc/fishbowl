@@ -12,6 +12,4 @@ export type SettingsSubTab =
   | "defaults"
   | "saved"
   | "create-new"
-  | "predefined"
-  | "custom"
   | null;

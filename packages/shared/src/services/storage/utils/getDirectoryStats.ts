@@ -4,7 +4,8 @@ import { NodeFileSystemBridge } from "../NodeFileSystemBridge";
 import { PathValidationError } from "./PathValidationError";
 import { ErrorFactory } from "../errors/ErrorFactory";
 import { SystemError } from "../../../types/SystemError";
-import { validatePath, sanitizePath } from "./index";
+import { sanitizePath } from "../../../validation/sanitizePath";
+import { validatePath } from "../../../validation/validatePath";
 
 /**
  * Helper to get Node.js fs instance for permission operations.

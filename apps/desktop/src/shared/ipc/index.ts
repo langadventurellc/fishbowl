@@ -1,12 +1,16 @@
 /**
- * IPC constants and types for settings and LLM configuration operations
+ * IPC constants and types for settings, roles, and LLM configuration operations
  *
  * This module provides a centralized location for all IPC-related
- * constants and types used in the settings and LLM configuration persistence systems.
+ * constants and types used in the settings, roles, and LLM configuration persistence systems.
  */
 
 // Constants
 export { SETTINGS_CHANNELS } from "./constants";
+
+// Roles constants
+export { ROLES_CHANNELS } from "./rolesConstants";
+export type { RolesChannelType } from "./rolesConstants";
 
 // LLM Config constants
 export { LLM_CONFIG_CHANNELS } from "./llmConfigConstants";
@@ -20,6 +24,11 @@ export type { SerializableError } from "./types";
 export type { SettingsLoadRequest } from "./load";
 export type { SettingsSaveRequest } from "./save";
 export type { SettingsResetRequest } from "./reset";
+
+// Roles request types
+export type { RolesLoadRequest } from "./roles/loadRequest";
+export type { RolesSaveRequest } from "./roles/saveRequest";
+export type { RolesResetRequest } from "./roles/resetRequest";
 
 // LLM Config request types
 export type { LlmConfigCreateRequest } from "./llmConfig/createRequest";
@@ -35,6 +44,11 @@ export type { SettingsLoadResponse } from "./loadResponse";
 export type { SettingsSaveResponse } from "./saveResponse";
 export type { SettingsResetResponse } from "./resetResponse";
 export type { SettingsSetDebugLoggingResponse } from "./setDebugLoggingResponse";
+
+// Roles response types
+export type { RolesLoadResponse } from "./roles/loadResponse";
+export type { RolesSaveResponse } from "./roles/saveResponse";
+export type { RolesResetResponse } from "./roles/resetResponse";
 
 // LLM Config response types
 export type { LlmConfigCreateResponse } from "./llmConfig/createResponse";

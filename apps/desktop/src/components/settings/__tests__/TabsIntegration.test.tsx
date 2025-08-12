@@ -92,23 +92,23 @@ describe("Tabs Integration with Settings", () => {
 
   test("renders with roles section tab structure", () => {
     render(
-      <Tabs defaultValue="predefined">
+      <Tabs defaultValue="library">
         <TabsList>
-          <TabsTrigger value="predefined">Predefined</TabsTrigger>
-          <TabsTrigger value="custom">Custom</TabsTrigger>
+          <TabsTrigger value="library">Library</TabsTrigger>
+          <TabsTrigger value="create-new">Create New</TabsTrigger>
         </TabsList>
-        <TabsContent value="predefined">
-          <div>Predefined Roles Content</div>
+        <TabsContent value="library">
+          <div>Roles Library Content</div>
         </TabsContent>
-        <TabsContent value="custom">
-          <div>Custom Roles Content</div>
+        <TabsContent value="create-new">
+          <div>Create New Role Content</div>
         </TabsContent>
       </Tabs>,
     );
 
-    expect(screen.getByText("Predefined")).toBeInTheDocument();
-    expect(screen.getByText("Custom")).toBeInTheDocument();
-    expect(screen.getByText("Predefined Roles Content")).toBeVisible();
+    expect(screen.getByText("Library")).toBeInTheDocument();
+    expect(screen.getByText("Create New")).toBeInTheDocument();
+    expect(screen.getByText("Roles Library Content")).toBeVisible();
   });
 
   test("supports focus management for accessibility", () => {

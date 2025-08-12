@@ -25,4 +25,13 @@ export const roleSchema = z.object({
       (val) => val.trim().length > 0,
       "Description cannot be only whitespace",
     ),
+  systemPrompt: z
+    .string()
+    .min(1, "System prompt is required")
+    .max(2000, "System prompt must be 2000 characters or less")
+    .refine(
+      (val) => val.trim().length > 0,
+      "System prompt cannot be only whitespace",
+    )
+    .optional(),
 });

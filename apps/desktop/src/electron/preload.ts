@@ -5,6 +5,7 @@ import type { ElectronAPI } from "../types/electron";
 const logger = createLoggerSync({ config: { name: "preload", level: "info" } });
 import { SETTINGS_CHANNELS } from "../shared/ipc/constants";
 import { LLM_CONFIG_CHANNELS } from "../shared/ipc/llmConfigConstants";
+import { ROLES_CHANNELS } from "../shared/ipc/rolesConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -21,9 +22,14 @@ import type {
   LlmConfigListResponse,
   LlmConfigRefreshCacheRequest,
   LlmConfigRefreshCacheResponse,
+  RolesLoadResponse,
+  RolesSaveRequest,
+  RolesSaveResponse,
+  RolesResetResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
+  PersistedRolesSettingsData,
   LlmConfig,
   LlmConfigInput,
   LlmConfigMetadata,
@@ -301,6 +307,66 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error refreshing LLM configuration cache:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  roles: {
+    load: async (): Promise<PersistedRolesSettingsData> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          ROLES_CHANNELS.LOAD,
+        )) as RolesLoadResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to load roles");
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error loading roles:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    save: async (roles: PersistedRolesSettingsData): Promise<void> => {
+      try {
+        const request: RolesSaveRequest = { roles };
+        const response = (await ipcRenderer.invoke(
+          ROLES_CHANNELS.SAVE,
+          request,
+        )) as RolesSaveResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to save roles");
+        }
+      } catch (error) {
+        logger.error(
+          "Error saving roles:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    reset: async (): Promise<PersistedRolesSettingsData> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          ROLES_CHANNELS.RESET,
+        )) as RolesResetResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to reset roles");
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error resetting roles:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

@@ -3,7 +3,6 @@
  */
 
 import { SAMPLE_ROLES } from "../sampleRoles";
-import { SAMPLE_ROLE_CATEGORIES } from "../sampleRoleCategories";
 import { roleSchema } from "../../schemas/roleSchema";
 
 describe("SAMPLE_ROLES", () => {
@@ -52,7 +51,7 @@ describe("SAMPLE_ROLES", () => {
     });
   });
 
-  it("should include all expected predefined roles", () => {
+  it("should include all expected role templates", () => {
     const expectedIds = [
       "project-manager",
       "technical-advisor",
@@ -67,28 +66,5 @@ describe("SAMPLE_ROLES", () => {
     ];
     const actualIds = SAMPLE_ROLES.map((role) => role.id);
     expect(actualIds).toEqual(expectedIds);
-  });
-});
-
-describe("SAMPLE_ROLE_CATEGORIES", () => {
-  it("should have categories for all sample roles", () => {
-    SAMPLE_ROLES.forEach((role) => {
-      expect(SAMPLE_ROLE_CATEGORIES).toHaveProperty(role.id);
-    });
-  });
-
-  it("should have valid category values", () => {
-    const validCategories = [
-      "management",
-      "technical",
-      "creative",
-      "analytical",
-      "supportive",
-      "strategic",
-      "general",
-    ];
-    Object.values(SAMPLE_ROLE_CATEGORIES).forEach((category) => {
-      expect(validCategories).toContain(category);
-    });
   });
 });

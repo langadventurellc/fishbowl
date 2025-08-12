@@ -1,7 +1,7 @@
 import type { LlmConfigInput } from "./LlmConfigInput";
 import type { StandardizedValidationResult } from "./StandardizedValidationResult";
 import { llmConfigInputSchema } from "./llmConfigInputSchema";
-import { formatZodErrors } from "./formatZodErrors";
+import { formatZodErrors } from "../../validation/formatZodErrors";
 import { createValidationResult } from "./createValidationResult";
 import { createValidationError } from "./createValidationError";
 import { ValidationErrorCode } from "./ValidationErrorCode";

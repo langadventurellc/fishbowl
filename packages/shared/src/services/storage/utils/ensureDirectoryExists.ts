@@ -2,7 +2,8 @@ import { FileSystemBridge } from "../FileSystemBridge";
 import { PathValidationError } from "./PathValidationError";
 import { ErrorFactory } from "../errors/ErrorFactory";
 import { SystemError } from "../../../types/SystemError";
-import { validatePath, sanitizePath } from "./index";
+import { sanitizePath } from "../../../validation/sanitizePath";
+import { validatePath } from "../../../validation/validatePath";
 
 /**
  * Creates a directory and all parent directories if they don't exist.

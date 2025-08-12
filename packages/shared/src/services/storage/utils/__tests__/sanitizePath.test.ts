@@ -1,5 +1,5 @@
 import * as path from "path";
-import { sanitizePath } from "../sanitizePath";
+import { sanitizePath } from "../../../../validation/sanitizePath";
 
 describe("sanitizePath", () => {
   it("should remove dangerous characters", () => {
