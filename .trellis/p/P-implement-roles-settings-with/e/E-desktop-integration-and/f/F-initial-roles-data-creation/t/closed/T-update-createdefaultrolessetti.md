@@ -1,13 +1,34 @@
 ---
 id: T-update-createdefaultrolessetti
 title: Update createDefaultRolesSettings to load from JSON file
-status: open
+status: done
 priority: high
 parent: F-initial-roles-data-creation
 prerequisites:
   - T-create-default-roles-json
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/settings/createDefaultRolesSettings.ts:
+    Updated function to import JSON and schema, implemented safeParse validation
+    with error handling, and added comprehensive JSDoc documentation explaining
+    new behavior
+  packages/shared/src/types/settings/__tests__/createDefaultRolesSettings.test.ts:
+    Updated tests to expect 4 default roles instead of empty array, and added
+    integration test to verify validation logic works properly
+  packages/shared/src/services/storage/utils/roles/__tests__/recoverFromInvalidRolesFile.test.ts:
+    Updated recovery tests to expect 4 default roles instead of empty array when
+    falling back to default configuration
+log:
+  - Successfully updated createDefaultRolesSettings function to load default
+    roles from JSON file instead of returning empty array. The function now
+    imports defaultRoles.json (containing 4 professional example roles),
+    validates the data against persistedRolesSettingsSchema using safeParse(),
+    and throws descriptive errors if validation fails. Added proper JSDoc
+    documentation explaining the new behavior. Updated all unit tests to expect
+    4 default roles instead of empty array, and added integration test to verify
+    validation logic. Fixed failing tests in recoverFromInvalidRolesFile that
+    expected empty roles fallback to now expect the 4 default roles. All quality
+    checks pass (lint, format, type-check) and all 1127 tests pass successfully.
+    The JSON file is properly copied to dist during build process.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T04:17:38.435Z

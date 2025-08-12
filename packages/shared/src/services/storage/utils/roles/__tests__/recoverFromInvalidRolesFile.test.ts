@@ -129,7 +129,11 @@ describe("recoverFromInvalidRolesFile", () => {
       expect(result.recovered).toBe(true);
       expect(result.recoveryType).toBe("default");
       expect(result.data.schemaVersion).toBe("1.0.0");
-      expect(result.data.roles).toEqual([]);
+      expect(result.data.roles).toHaveLength(4);
+      expect(result.data.roles[0]).toHaveProperty("id", "project-manager");
+      expect(result.data.roles[1]).toHaveProperty("id", "code-reviewer");
+      expect(result.data.roles[2]).toHaveProperty("id", "creative-writer");
+      expect(result.data.roles[3]).toHaveProperty("id", "data-analyst");
       expect(result.data.lastUpdated).toMatch(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
       );
@@ -148,7 +152,11 @@ describe("recoverFromInvalidRolesFile", () => {
       expect(result.recovered).toBe(true);
       expect(result.recoveryType).toBe("default");
       expect(result.data.schemaVersion).toBe("1.0.0");
-      expect(result.data.roles).toEqual([]);
+      expect(result.data.roles).toHaveLength(4);
+      expect(result.data.roles[0]).toHaveProperty("id", "project-manager");
+      expect(result.data.roles[1]).toHaveProperty("id", "code-reviewer");
+      expect(result.data.roles[2]).toHaveProperty("id", "creative-writer");
+      expect(result.data.roles[3]).toHaveProperty("id", "data-analyst");
       expect(result.data.lastUpdated).toMatch(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
       );
@@ -169,7 +177,11 @@ describe("recoverFromInvalidRolesFile", () => {
       expect(result.recovered).toBe(true);
       expect(result.recoveryType).toBe("default");
       expect(result.data.schemaVersion).toBe("1.0.0");
-      expect(result.data.roles).toEqual([]);
+      expect(result.data.roles).toHaveLength(4);
+      expect(result.data.roles[0]).toHaveProperty("id", "project-manager");
+      expect(result.data.roles[1]).toHaveProperty("id", "code-reviewer");
+      expect(result.data.roles[2]).toHaveProperty("id", "creative-writer");
+      expect(result.data.roles[3]).toHaveProperty("id", "data-analyst");
       expect(result.data.lastUpdated).toMatch(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
       );
@@ -191,7 +203,11 @@ describe("recoverFromInvalidRolesFile", () => {
       expect(result.recovered).toBe(true);
       expect(result.recoveryType).toBe("default");
       expect(result.data.schemaVersion).toBe("1.0.0");
-      expect(result.data.roles).toEqual([]);
+      expect(result.data.roles).toHaveLength(4);
+      expect(result.data.roles[0]).toHaveProperty("id", "project-manager");
+      expect(result.data.roles[1]).toHaveProperty("id", "code-reviewer");
+      expect(result.data.roles[2]).toHaveProperty("id", "creative-writer");
+      expect(result.data.roles[3]).toHaveProperty("id", "data-analyst");
       expect(result.data.lastUpdated).toMatch(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
       );
@@ -213,7 +229,11 @@ describe("recoverFromInvalidRolesFile", () => {
       expect(result.recovered).toBe(true);
       expect(result.recoveryType).toBe("default");
       expect(result.data.schemaVersion).toBe("1.0.0");
-      expect(result.data.roles).toEqual([]);
+      expect(result.data.roles).toHaveLength(4);
+      expect(result.data.roles[0]).toHaveProperty("id", "project-manager");
+      expect(result.data.roles[1]).toHaveProperty("id", "code-reviewer");
+      expect(result.data.roles[2]).toHaveProperty("id", "creative-writer");
+      expect(result.data.roles[3]).toHaveProperty("id", "data-analyst");
       expect(result.data.lastUpdated).toMatch(
         /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/,
       );
@@ -271,7 +291,8 @@ describe("recoverFromInvalidRolesFile", () => {
 
       expect(result.recovered).toBe(true);
       expect(result.recoveryType).toBe("default");
-      expect(result.data.roles).toHaveLength(0);
+      expect(result.data.roles).toHaveLength(4);
+      expect(result.data.roles[0]).toHaveProperty("id", "project-manager");
     });
 
     it("should handle roles array with all valid data", () => {

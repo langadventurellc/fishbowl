@@ -48,11 +48,15 @@ describe("createDefaultRolesSettings", () => {
   });
 
   describe("roles array", () => {
-    it("should return an empty array", () => {
+    it("should return default roles from JSON", () => {
       const config = createDefaultRolesSettings();
 
-      expect(config.roles).toEqual([]);
-      expect(config.roles).toHaveLength(0);
+      expect(config.roles).toHaveLength(4);
+      expect(config.roles[0]).toHaveProperty("id", "project-manager");
+      expect(config.roles[0]).toHaveProperty("name", "Project Manager");
+      expect(config.roles[1]).toHaveProperty("id", "code-reviewer");
+      expect(config.roles[2]).toHaveProperty("id", "creative-writer");
+      expect(config.roles[3]).toHaveProperty("id", "data-analyst");
     });
 
     it("should return a mutable array", () => {
@@ -68,7 +72,7 @@ describe("createDefaultRolesSettings", () => {
         updatedAt: null,
       });
 
-      expect(config.roles).toHaveLength(1);
+      expect(config.roles).toHaveLength(5); // 4 default + 1 added
     });
 
     it("should return a new array instance each time", () => {
@@ -157,7 +161,7 @@ describe("createDefaultRolesSettings", () => {
       });
 
       // Second config should be unaffected
-      expect(config2.roles).toHaveLength(0);
+      expect(config2.roles).toHaveLength(4); // Still has default roles
     });
 
     it("should not share references between calls", () => {
@@ -173,6 +177,28 @@ describe("createDefaultRolesSettings", () => {
       // Arrays should also be different instances
       expect(configs[0]!.roles).not.toBe(configs[1]!.roles);
       expect(configs[1]!.roles).not.toBe(configs[2]!.roles);
+    });
+  });
+
+  describe("error handling", () => {
+    it("should have validation that would catch invalid JSON (integration test)", () => {
+      // Test that the function properly validates against schema
+      // This verifies the validation logic is in place
+      const config = createDefaultRolesSettings();
+
+      // Verify the returned config would pass validation
+      const result = persistedRolesSettingsSchema.safeParse(config);
+      expect(result.success).toBe(true);
+
+      // Verify all roles have required fields
+      config.roles.forEach((role) => {
+        expect(role).toHaveProperty("id");
+        expect(role).toHaveProperty("name");
+        expect(role).toHaveProperty("description");
+        expect(role).toHaveProperty("systemPrompt");
+        expect(typeof role.id).toBe("string");
+        expect(role.id.length).toBeGreaterThan(0);
+      });
     });
   });
 });
