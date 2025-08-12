@@ -1,12 +1,20 @@
 ---
 id: T-create-default-roles-json
 title: Create default roles JSON file with example roles
-status: open
+status: done
 priority: high
 parent: F-initial-roles-data-creation
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/data/defaultRoles.json: Created JSON file with 4 example roles following exact schema structure
+  packages/shared/src/data/__tests__/defaultRoles.test.ts: Added unit tests to validate JSON format and schema compliance
+log:
+  - Created default roles JSON file with 4 professional example roles (project
+    manager, code reviewer, creative writer, data analyst) that validates
+    against the persistedRolesSettingsSchema. Each role includes high-quality
+    system prompts (100-300 words), professional descriptions, and proper null
+    timestamps. Added comprehensive unit tests to validate JSON structure and
+    schema compliance. All quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T04:17:18.085Z
