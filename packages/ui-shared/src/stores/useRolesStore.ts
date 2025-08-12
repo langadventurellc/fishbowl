@@ -18,7 +18,7 @@ import { RolesPersistenceError } from "../types/roles/persistence/RolesPersisten
 import { RoleFormData } from "../types/settings/RoleFormData";
 import { RoleViewModel } from "../types/settings/RoleViewModel";
 import { RolesErrorState } from "./RolesErrorState";
-import { RolesStore } from "./RolesStore";
+import { type RolesStore } from "./RolesStore";
 
 // Lazy logger creation to avoid process access in browser context
 let logger: ReturnType<typeof createLoggerSync> | null = null;
