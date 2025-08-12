@@ -11,7 +11,8 @@
     }
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && pnpm copy:json",
+    "copy:json": "mkdir -p dist/data && cp src/data/*.json dist/data/ 2>/dev/null || true",
     "dev": "tsc --watch",
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
