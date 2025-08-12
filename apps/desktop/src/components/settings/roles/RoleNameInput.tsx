@@ -54,8 +54,8 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
       if (trimmedName && trimmedName.length < 2) {
         errors.push("Name must be at least 2 characters");
       }
-      if (name.length > 50) {
-        errors.push("Name must be 50 characters or less");
+      if (name.length > 100) {
+        errors.push("Name must be 100 characters or less");
       }
 
       // Character validation
@@ -133,8 +133,8 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
 
   const getCounterColor = useCallback(() => {
     const characterCount = value.length;
-    const warningThreshold = Math.floor(50 * 0.8); // 40 chars
-    const errorThreshold = Math.floor(50 * 0.9); // 45 chars
+    const warningThreshold = Math.floor(100 * 0.8); // 80 chars
+    const errorThreshold = Math.floor(100 * 0.9); // 90 chars
 
     if (characterCount <= warningThreshold) return "text-muted-foreground";
     if (characterCount <= errorThreshold) return "text-yellow-600";
@@ -203,7 +203,7 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
         className={cn("text-xs text-right", getCounterColor())}
         aria-live="polite"
       >
-        {characterCount}/50 characters
+        {characterCount}/100 characters
       </div>
     </div>
   );

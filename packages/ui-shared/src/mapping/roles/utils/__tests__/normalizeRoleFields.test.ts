@@ -175,7 +175,7 @@ describe("normalizeRoleFields", () => {
   });
 
   describe("systemPrompt field", () => {
-    it("should trim and enforce systemPrompt constraints (0-2000 chars)", () => {
+    it("should trim and enforce systemPrompt constraints (0-5000 chars)", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
@@ -207,13 +207,13 @@ describe("normalizeRoleFields", () => {
         id: "role-1",
         name: "Test Role",
         description: "Test description",
-        systemPrompt: "A".repeat(3000), // 3000 chars, max is 2000
+        systemPrompt: "A".repeat(6000), // 6000 chars, max is 5000
       };
 
       const result = normalizeRoleFields(role);
 
-      expect(result.systemPrompt).toBe("A".repeat(2000));
-      expect(result.systemPrompt.length).toBe(2000);
+      expect(result.systemPrompt).toBe("A".repeat(5000));
+      expect(result.systemPrompt.length).toBe(5000);
     });
 
     it("should handle null/undefined systemPrompt", () => {

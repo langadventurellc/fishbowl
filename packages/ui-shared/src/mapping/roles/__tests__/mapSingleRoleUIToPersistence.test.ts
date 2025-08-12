@@ -40,6 +40,7 @@ describe("mapSingleRoleUIToPersistence", () => {
       id: "role-456",
       name: "Test Role",
       description: "Test description",
+      systemPrompt: "Test system prompt",
     };
 
     const result = mapSingleRoleUIToPersistence(uiRole);
@@ -54,6 +55,7 @@ describe("mapSingleRoleUIToPersistence", () => {
       id: "role-789",
       name: "Existing Role",
       description: "Has timestamps",
+      systemPrompt: "Test system prompt",
       createdAt: existingCreatedAt,
     };
 
@@ -79,16 +81,17 @@ describe("mapSingleRoleUIToPersistence", () => {
     expect(result.systemPrompt).toBe("System prompt with spaces");
   });
 
-  it("should handle empty optional fields", () => {
+  it("should handle required systemPrompt field", () => {
     const uiRole: RoleViewModel = {
       id: "role-minimal",
       name: "Minimal Role",
       description: "Basic description",
+      systemPrompt: "Test system prompt",
     };
 
     const result = mapSingleRoleUIToPersistence(uiRole);
 
-    expect(result.systemPrompt).toBe(""); // Min 0 chars allowed, empty undefined becomes ""
+    expect(result.systemPrompt).toBe("Test system prompt"); // systemPrompt is now required
   });
 
   it("should enforce field length constraints", () => {
@@ -96,13 +99,13 @@ describe("mapSingleRoleUIToPersistence", () => {
       id: "role-long",
       name: "X".repeat(150), // Exceeds max 100
       description: "Y".repeat(600), // Exceeds max 500
-      systemPrompt: "Z".repeat(3000), // Exceeds max 2000
+      systemPrompt: "Z".repeat(6000), // Exceeds max 5000
     };
 
     const result = mapSingleRoleUIToPersistence(uiRole);
 
     expect(result.name).toBe("X".repeat(100));
     expect(result.description).toBe("Y".repeat(500));
-    expect(result.systemPrompt).toBe("Z".repeat(2000));
+    expect(result.systemPrompt).toBe("Z".repeat(5000));
   });
 });

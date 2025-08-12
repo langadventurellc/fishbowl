@@ -137,7 +137,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
                   <RoleDescriptionTextarea
                     value={field.value}
                     onChange={field.onChange}
-                    maxLength={200}
+                    maxLength={500}
                     disabled={isSubmitting || isLoading}
                     aria-describedby={
                       fieldState.error ? `${field.name}-error` : undefined

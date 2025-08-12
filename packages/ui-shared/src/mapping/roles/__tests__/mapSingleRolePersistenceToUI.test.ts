@@ -165,7 +165,7 @@ describe("mapSingleRolePersistenceToUI", () => {
         id: "role-123",
         name: "A".repeat(150), // Exceeds max 100 chars
         description: "B".repeat(600), // Exceeds max 500 chars
-        systemPrompt: "C".repeat(3000), // Exceeds max 2000 chars
+        systemPrompt: "C".repeat(6000), // Exceeds max 5000 chars
         createdAt: "2025-01-10T09:00:00.000Z",
         updatedAt: "2025-01-14T15:30:00.000Z",
       };
@@ -176,8 +176,8 @@ describe("mapSingleRolePersistenceToUI", () => {
       expect(result.name.length).toBe(100);
       expect(result.description).toBe("B".repeat(500));
       expect(result.description.length).toBe(500);
-      expect(result.systemPrompt).toBe("C".repeat(2000));
-      expect(result.systemPrompt?.length).toBe(2000);
+      expect(result.systemPrompt).toBe("C".repeat(5000));
+      expect(result.systemPrompt?.length).toBe(5000);
     });
 
     it("should handle empty string fields", () => {
@@ -195,12 +195,12 @@ describe("mapSingleRolePersistenceToUI", () => {
       expect(result.id).toBe("");
       expect(result.name).toBe(" "); // Padded to min 1 char
       expect(result.description).toBe(""); // Min 0 chars allowed
-      expect(result.systemPrompt).toBe(undefined); // Empty string becomes undefined via mapping logic
+      expect(result.systemPrompt).toBe("You are a helpful assistant."); // Empty string gets default value
     });
   });
 
   describe("systemPrompt handling", () => {
-    it("should convert empty systemPrompt to undefined", () => {
+    it("should convert empty systemPrompt to default value", () => {
       const persistedRole: PersistedRole = {
         id: "role-123",
         name: "Test Role",
@@ -212,7 +212,7 @@ describe("mapSingleRolePersistenceToUI", () => {
 
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
-      expect(result.systemPrompt).toBe(undefined); // Empty string normalized to "" then converted to undefined
+      expect(result.systemPrompt).toBe("You are a helpful assistant."); // Empty string gets default value
     });
 
     it("should preserve valid systemPrompt", () => {
@@ -283,7 +283,7 @@ describe("mapSingleRolePersistenceToUI", () => {
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
       expect(result.description).toBe(""); // null normalized to "" (min 0 chars)
-      expect(result.systemPrompt).toBe(undefined); // undefined normalized to "" then converted to undefined
+      expect(result.systemPrompt).toBe("You are a helpful assistant."); // undefined gets default value
     });
   });
 

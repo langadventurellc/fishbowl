@@ -3,10 +3,10 @@
  *
  * Features:
  * - 4-row textarea with fixed height (no resize)
- * - Character counter with color-coded feedback (200 char limit)
+ * - Character counter with color-coded feedback (500 char limit)
  * - Input prevention beyond maximum length
  * - Accessibility support with ARIA attributes
- * - Visual feedback: green (0-160), yellow (161-180), red (181-200)
+ * - Visual feedback: green (0-400), yellow (401-450), red (451-500)
  * - Enhanced placeholder with usage examples
  *
  * @module components/settings/RoleDescriptionTextarea
@@ -23,14 +23,14 @@ export const RoleDescriptionTextarea: React.FC<
 > = ({
   value,
   onChange,
-  maxLength = 200,
+  maxLength = 500,
   disabled = false,
   className,
   "aria-describedby": ariaDescribedBy,
 }) => {
   const characterCount = value.length;
-  const warningThreshold = Math.floor(maxLength * 0.8); // 160 chars
-  const errorThreshold = Math.floor(maxLength * 0.9); // 180 chars
+  const warningThreshold = Math.floor(maxLength * 0.8); // 400 chars
+  const errorThreshold = Math.floor(maxLength * 0.9); // 450 chars
 
   const getCounterColor = useCallback(() => {
     if (characterCount <= warningThreshold) return "text-muted-foreground";

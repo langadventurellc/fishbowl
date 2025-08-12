@@ -41,7 +41,8 @@ export function mapSingleRolePersistenceToUI(
     id: normalizedFields.id,
     name: normalizedFields.name,
     description: normalizedFields.description,
-    systemPrompt: normalizedFields.systemPrompt || undefined,
+    systemPrompt:
+      normalizedFields.systemPrompt || "You are a helpful assistant.",
     createdAt: timestamps.createdAt,
     updatedAt: timestamps.updatedAt,
   };
