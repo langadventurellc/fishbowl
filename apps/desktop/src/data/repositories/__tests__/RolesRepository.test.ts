@@ -14,7 +14,7 @@ import {
   FileStorageError,
 } from "@fishbowl-ai/shared";
 
-// Mock FileStorageService
+// Mock FileStorageService and createDefaultRolesSettings
 jest.mock("@fishbowl-ai/shared", () => ({
   ...jest.requireActual("@fishbowl-ai/shared"),
   FileStorageService: jest.fn(),
@@ -24,6 +24,7 @@ jest.mock("@fishbowl-ai/shared", () => ({
     info: jest.fn(),
     warn: jest.fn(),
   })),
+  createDefaultRolesSettings: jest.fn(),
 }));
 
 // Mock fs.promises for resetRoles
@@ -69,6 +70,30 @@ describe("RolesRepository", () => {
     lastUpdated: "2025-01-15T10:30:00.000Z",
   };
 
+  // Mock default roles data
+  const mockDefaultRolesData: PersistedRolesSettingsData = {
+    schemaVersion: "1.0.0",
+    roles: [
+      {
+        id: "default-role-1",
+        name: "Project Manager",
+        description: "Helps with project planning and coordination",
+        systemPrompt: "You are a project manager...",
+        createdAt: "2025-01-15T10:30:00.000Z",
+        updatedAt: "2025-01-15T10:30:00.000Z",
+      },
+      {
+        id: "default-role-2",
+        name: "Code Reviewer",
+        description: "Provides code review and feedback",
+        systemPrompt: "You are a code reviewer...",
+        createdAt: "2025-01-15T10:30:00.000Z",
+        updatedAt: "2025-01-15T10:30:00.000Z",
+      },
+    ],
+    lastUpdated: "2025-01-15T10:30:00.000Z",
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -79,6 +104,10 @@ describe("RolesRepository", () => {
     } as any;
 
     MockedFileStorageService.mockImplementation(() => mockFileStorageService);
+
+    // Set up default behavior for createDefaultRolesSettings mock
+    const mockShared = jest.requireMock("@fishbowl-ai/shared");
+    mockShared.createDefaultRolesSettings.mockReturnValue(mockDefaultRolesData);
 
     repository = new RolesRepository(testDataPath);
   });
@@ -113,20 +142,46 @@ describe("RolesRepository", () => {
       );
     });
 
-    it("should return null when file does not exist", async () => {
+    it("should create and return default roles when file does not exist", async () => {
       const fileNotFoundError = new (class extends FileStorageError {
         constructor() {
           super("File not found", "read", "roles.json");
         }
       })();
       mockFileStorageService.readJsonFile.mockRejectedValue(fileNotFoundError);
+      mockFileStorageService.writeJsonFile.mockResolvedValue(undefined);
 
       const result = await repository.loadRoles();
 
-      expect(result).toBeNull();
+      expect(result).toEqual(mockDefaultRolesData);
       expect(mockFileStorageService.readJsonFile).toHaveBeenCalledWith(
         expectedFilePath,
       );
+      expect(mockFileStorageService.writeJsonFile).toHaveBeenCalledWith(
+        expectedFilePath,
+        expect.objectContaining({
+          schemaVersion: "1.0.0",
+          roles: expect.any(Array),
+        }),
+      );
+    });
+
+    it("should return default roles even if saving fails", async () => {
+      const fileNotFoundError = new (class extends FileStorageError {
+        constructor() {
+          super("File not found", "read", "roles.json");
+        }
+      })();
+      mockFileStorageService.readJsonFile.mockRejectedValue(fileNotFoundError);
+      mockFileStorageService.writeJsonFile.mockRejectedValue(
+        new Error("Write failed"),
+      );
+
+      const result = await repository.loadRoles();
+
+      expect(result).toEqual(mockDefaultRolesData);
+      // Verify that write was attempted but failure was handled gracefully
+      expect(mockFileStorageService.writeJsonFile).toHaveBeenCalled();
     });
 
     it("should throw error for file system errors other than file not found", async () => {

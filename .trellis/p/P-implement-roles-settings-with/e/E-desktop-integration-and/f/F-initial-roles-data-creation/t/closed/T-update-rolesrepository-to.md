@@ -1,14 +1,32 @@
 ---
 id: T-update-rolesrepository-to
 title: Update RolesRepository to create default roles on first run
-status: open
+status: done
 priority: high
 parent: F-initial-roles-data-creation
 prerequisites:
   - T-update-createdefaultrolessetti
   - T-configure-typescript-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/data/repositories/RolesRepository.ts: Updated loadRoles()
+    method to create default roles when file doesn't exist instead of returning
+    null. Changed return type from Promise<PersistedRolesSettingsData | null> to
+    Promise<PersistedRolesSettingsData>. Added dynamic import of
+    createDefaultRolesSettings with graceful error handling and appropriate
+    logging.
+  apps/desktop/src/data/repositories/__tests__/RolesRepository.test.ts:
+    Updated existing test 'should return null when file does not exist' to
+    verify default roles creation. Added new test for save failure scenario.
+    Enhanced mock setup to properly handle dynamic import of
+    createDefaultRolesSettings function.
+log:
+  - Successfully updated RolesRepository.loadRoles() to create and persist
+    default roles when roles.json doesn't exist. Implementation uses dynamic
+    import to load createDefaultRolesSettings from @fishbowl-ai/shared package,
+    attempts to save defaults to file for future loads, and returns default
+    roles even if saving fails (graceful degradation). Added comprehensive test
+    coverage for both successful default creation and save failure scenarios.
+    All quality checks pass and existing functionality is preserved.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T04:18:21.474Z
