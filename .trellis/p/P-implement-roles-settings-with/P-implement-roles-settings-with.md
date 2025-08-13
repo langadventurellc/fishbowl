@@ -1,7 +1,7 @@
 ---
 id: P-implement-roles-settings-with
 title: Implement Roles Settings with JSON File Persistence
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:

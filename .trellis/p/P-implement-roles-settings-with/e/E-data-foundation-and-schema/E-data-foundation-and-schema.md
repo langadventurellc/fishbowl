@@ -1,7 +1,7 @@
 ---
 id: E-data-foundation-and-schema
 title: Data Foundation and Schema Design
-status: open
+status: done
 priority: medium
 parent: P-implement-roles-settings-with
 prerequisites: []
