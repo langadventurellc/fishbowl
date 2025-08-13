@@ -27,6 +27,7 @@ export const RoleDescriptionTextarea: React.FC<
   disabled = false,
   className,
   "aria-describedby": ariaDescribedBy,
+  isDirty = false,
 }) => {
   const characterCount = value.length;
   const warningThreshold = Math.floor(maxLength * 0.8); // 400 chars
@@ -56,12 +57,22 @@ export const RoleDescriptionTextarea: React.FC<
 
   return (
     <div className={cn("space-y-2", className)}>
-      <Label htmlFor="role-description">
-        Role Description
-        <span className="text-red-500 ml-1" aria-hidden="true">
-          *
-        </span>
-      </Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor="role-description" className="flex items-center gap-2">
+          Role Description
+          <span className="text-red-500 ml-1" aria-hidden="true">
+            *
+          </span>
+          {isDirty && (
+            <span
+              className="text-xs text-amber-600 dark:text-amber-400"
+              aria-label="Field has unsaved changes"
+            >
+              (modified)
+            </span>
+          )}
+        </Label>
+      </div>
 
       <div className="relative">
         <Textarea

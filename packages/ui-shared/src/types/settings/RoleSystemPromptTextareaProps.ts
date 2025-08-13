@@ -14,4 +14,5 @@ export interface RoleSystemPromptTextareaProps {
   disabled?: boolean;
   className?: string;
   "aria-describedby"?: string;
+  isDirty?: boolean; // Visual indicator for unsaved changes
 }

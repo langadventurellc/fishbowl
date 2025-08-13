@@ -17,4 +17,5 @@ export interface RoleNameInputProps {
   disabled?: boolean;
   className?: string;
   "aria-describedby"?: string;
+  isDirty?: boolean; // Visual indicator for unsaved changes
 }

@@ -10,7 +10,22 @@ affectedFiles:
   apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx:
     Created comprehensive test suite for edit mode verification with 18 test
     cases covering modal behavior, form validation, character counters, isDirty
-    tracking, and edge cases
+    tracking, and edge cases; Updated mocks and tests to support enhanced change
+    detection
+  apps/desktop/src/components/settings/roles/CreateRoleForm.tsx:
+    Enhanced change detection logic with edge case handling, field-level dirty
+    state tracking, improved form reset behavior
+  packages/ui-shared/src/types/settings/RoleNameInputProps.ts: Added isDirty prop for visual change indicators
+  packages/ui-shared/src/types/settings/RoleDescriptionTextareaProps.ts: Added isDirty prop for visual change indicators
+  packages/ui-shared/src/types/settings/RoleSystemPromptTextareaProps.ts: Added isDirty prop for visual change indicators
+  apps/desktop/src/components/settings/roles/RoleNameInput.tsx: Added visual dirty state indicator with accessibility support
+  apps/desktop/src/components/settings/roles/RoleDescriptionTextarea.tsx: Added visual dirty state indicator with accessibility support
+  apps/desktop/src/components/settings/roles/RoleSystemPromptTextarea.tsx: Added visual dirty state indicator with accessibility support
+  apps/desktop/src/components/ui/confirmation-dialog.tsx: Created new ConfirmationDialog component using shadcn/ui AlertDialog
+  apps/desktop/src/hooks/useConfirmationDialog.ts: Enhanced hook for proper dialog integration with state management
+  apps/desktop/src/components/settings/roles/RoleFormModal.tsx: Updated to use new ConfirmationDialog with destructive variant
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.changeDetection.test.tsx: Comprehensive test suite for enhanced change detection functionality
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.basic.test.tsx: Updated mocks to support new form functionality
 log:
   - >-
     ## General-purpose validation utilities consolidated

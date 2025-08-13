@@ -27,6 +27,7 @@ export const RoleSystemPromptTextarea: React.FC<
   disabled = false,
   className,
   "aria-describedby": ariaDescribedBy,
+  isDirty = false,
 }) => {
   const characterCount = value.length;
   const warningThreshold = Math.floor(maxLength * 0.8); // 4000 chars
@@ -47,12 +48,22 @@ export const RoleSystemPromptTextarea: React.FC<
 
   return (
     <div className={cn("space-y-2", className)}>
-      <Label htmlFor="role-system-prompt">
-        System Prompt
-        <span className="text-red-500 ml-1" aria-hidden="true">
-          *
-        </span>
-      </Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor="role-system-prompt" className="flex items-center gap-2">
+          System Prompt
+          <span className="text-red-500 ml-1" aria-hidden="true">
+            *
+          </span>
+          {isDirty && (
+            <span
+              className="text-xs text-amber-600 dark:text-amber-400"
+              aria-label="Field has unsaved changes"
+            >
+              (modified)
+            </span>
+          )}
+        </Label>
+      </div>
 
       <div className="relative">
         <Textarea

@@ -22,6 +22,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
+import { ConfirmationDialog } from "../../ui/confirmation-dialog";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +40,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   onSave,
   isLoading = false,
 }) => {
-  const { showConfirmation } = useConfirmationDialog();
+  const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
   const { hasUnsavedChanges } = useUnsavedChanges();
   const { roles } = useRoles();
 
@@ -75,6 +76,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
             "You have unsaved changes. Are you sure you want to close without saving?",
           confirmText: "Close Without Saving",
           cancelText: "Continue Editing",
+          variant: "destructive",
         });
         if (!confirmed) return;
       }
@@ -159,6 +161,11 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
           isLoading={isLoading}
         />
       </DialogContent>
+
+      {/* Confirmation Dialog for unsaved changes */}
+      {confirmationDialogProps && (
+        <ConfirmationDialog {...confirmationDialogProps} />
+      )}
     </Dialog>
   );
 };

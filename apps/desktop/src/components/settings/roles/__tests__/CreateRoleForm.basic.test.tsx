@@ -44,8 +44,11 @@ jest.mock("react-hook-form", () => ({
       isValid: true,
       isDirty: false,
       errors: {},
+      dirtyFields: {},
     },
     reset: jest.fn(),
+    watch: jest.fn(() => ({ name: "", description: "", systemPrompt: "" })),
+    getFieldState: jest.fn(() => ({ isDirty: false })),
   }),
   Controller: ({ render: renderProp }: any) =>
     renderProp({
@@ -83,7 +86,7 @@ jest.mock("../../../ui/button", () => ({
 }));
 
 jest.mock("../../../ui/form", () => ({
-  Form: ({ children }: any) => <form>{children}</form>,
+  Form: ({ children }: any) => <div>{children}</div>,
   FormControl: ({ children }: any) => <div>{children}</div>,
   FormField: ({ render }: any) =>
     render({
