@@ -39,10 +39,15 @@ export const persistedRoleSchema = z
       .string({ message: "Role description must be a string" })
       .max(500, "Role description cannot exceed 500 characters"),
 
-    // System prompt for AI instructions (can be empty)
+    // System prompt for AI instructions (required, 1-5000 characters)
     systemPrompt: z
       .string({ message: "System prompt must be a string" })
-      .max(5000, "System prompt cannot exceed 5000 characters"),
+      .min(1, "System prompt is required")
+      .max(5000, "System prompt cannot exceed 5000 characters")
+      .refine(
+        (val) => val.trim().length > 0,
+        "System prompt cannot be only whitespace",
+      ),
 
     // Timestamps - nullable and optional for manual JSON edits
     createdAt: z

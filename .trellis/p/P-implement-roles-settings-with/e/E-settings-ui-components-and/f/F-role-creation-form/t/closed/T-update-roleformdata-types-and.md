@@ -1,13 +1,37 @@
 ---
 id: T-update-roleformdata-types-and
 title: Update RoleFormData types and ensure validation compatibility
-status: open
+status: done
 priority: medium
 parent: F-role-creation-form
 prerequisites:
   - T-update-role-schema-to-match
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/settings/rolesSettingsSchema.ts: Updated persistence
+    schema to require systemPrompt with minimum 1 character and whitespace
+    validation
+  packages/shared/src/services/storage/utils/roles/validateRoleFormData.ts: Simplified validation function to use updated persistence schema
+  packages/ui-shared/src/mapping/roles/utils/normalizeRoleFields.ts:
+    Updated to enforce minimum 1 character for systemPrompt with meaningful
+    default
+  packages/shared/src/services/storage/utils/roles/validateSystemPrompt.ts: Added validation for empty and whitespace-only systemPrompt
+  packages/shared/src/services/storage/utils/roles/__tests__/rolesValidationHelpers.test.ts:
+    Updated test data and added comprehensive validation tests for systemPrompt
+    requirements
+  packages/ui-shared/src/mapping/roles/utils/__tests__/normalizeRoleFields.test.ts: Updated tests to expect default value for empty systemPrompt
+  packages/shared/src/types/settings/__tests__/rolesSettingsSchema.test.ts: Updated tests to validate systemPrompt is required
+  packages/shared/src/services/storage/utils/__tests__/validateRolesData.test.ts: Updated test data to provide valid systemPrompt values
+  packages/shared/src/services/storage/utils/__tests__/rolesValidationBoundary.test.ts: Updated boundary test to use minimum valid systemPrompt
+  packages/shared/src/services/storage/utils/__tests__/formatRolesValidationErrors.test.ts: Updated test data to include valid systemPrompt values
+  packages/ui-shared/src/mapping/roles/__tests__/mapSingleRolePersistenceToUI.test.ts: Updated tests to expect correct default systemPrompt value
+  apps/desktop/src/data/repositories/__tests__/RolesRepository.test.ts: Updated test data to provide valid systemPrompt for all test roles
+log:
+  - Successfully updated RoleFormData types and ensured validation compatibility
+    by aligning persistence schema with UI requirements. Made systemPrompt
+    required across all validation layers with consistent minimum length and
+    whitespace validation. Updated normalization utilities to provide meaningful
+    defaults and fixed all related tests. All quality checks and tests are now
+    passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-12T21:38:59.384Z

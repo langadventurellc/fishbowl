@@ -10,6 +10,12 @@ export function validateSystemPrompt(prompt: string): ValidationResult {
   if (typeof prompt !== "string") {
     return { isValid: false, error: "System prompt must be a string" };
   }
+  if (prompt.length === 0) {
+    return { isValid: false, error: "System prompt is required" };
+  }
+  if (prompt.trim().length === 0) {
+    return { isValid: false, error: "System prompt cannot be only whitespace" };
+  }
   if (prompt.length > 5000) {
     return {
       isValid: false,

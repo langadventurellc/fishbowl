@@ -62,7 +62,7 @@ describe("Roles Validation Boundary Tests", () => {
             id: "a", // 1 char
             name: "b", // 1 char
             description: "", // 0 chars (allowed)
-            systemPrompt: "", // 0 chars (allowed)
+            systemPrompt: "a", // 1 char (minimum required)
           },
         ],
         lastUpdated: new Date().toISOString(),

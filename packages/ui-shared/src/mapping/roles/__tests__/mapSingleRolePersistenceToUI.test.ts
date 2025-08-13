@@ -195,7 +195,9 @@ describe("mapSingleRolePersistenceToUI", () => {
       expect(result.id).toBe("");
       expect(result.name).toBe(" "); // Padded to min 1 char
       expect(result.description).toBe(""); // Min 0 chars allowed
-      expect(result.systemPrompt).toBe("You are a helpful assistant."); // Empty string gets default value
+      expect(result.systemPrompt).toBe(
+        "You are a helpful assistant focused on your assigned role.",
+      ); // Empty string gets default value
     });
   });
 
@@ -212,7 +214,9 @@ describe("mapSingleRolePersistenceToUI", () => {
 
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
-      expect(result.systemPrompt).toBe("You are a helpful assistant."); // Empty string gets default value
+      expect(result.systemPrompt).toBe(
+        "You are a helpful assistant focused on your assigned role.",
+      ); // Empty string gets default value
     });
 
     it("should preserve valid systemPrompt", () => {
@@ -283,7 +287,9 @@ describe("mapSingleRolePersistenceToUI", () => {
       const result = mapSingleRolePersistenceToUI(persistedRole);
 
       expect(result.description).toBe(""); // null normalized to "" (min 0 chars)
-      expect(result.systemPrompt).toBe("You are a helpful assistant."); // undefined gets default value
+      expect(result.systemPrompt).toBe(
+        "You are a helpful assistant focused on your assigned role.",
+      ); // undefined gets default value
     });
   });
 

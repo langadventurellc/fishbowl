@@ -62,7 +62,8 @@ describe("RolesRepository", () => {
         id: "test-role-2",
         name: "Test Role 2",
         description: "",
-        systemPrompt: "",
+        systemPrompt:
+          "You are a helpful assistant focused on your assigned role.",
         createdAt: null,
         updatedAt: null,
       },

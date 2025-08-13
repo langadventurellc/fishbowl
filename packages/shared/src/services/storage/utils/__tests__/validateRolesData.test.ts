@@ -133,15 +133,15 @@ describe("validateRolesData", () => {
       expect(result).toMatchObject(dataWithExtraFields);
     });
 
-    it("should handle empty description and systemPrompt", () => {
-      const dataWithEmptyOptionals = {
+    it("should handle empty description but require systemPrompt", () => {
+      const dataWithEmptyDescription = {
         schemaVersion: "1.0.0",
         roles: [
           {
             id: "role-1",
             name: "Minimal Role",
             description: "",
-            systemPrompt: "",
+            systemPrompt: "You are a helpful assistant",
           },
         ],
         lastUpdated: "2025-01-15T10:00:00.000Z",
@@ -149,14 +149,14 @@ describe("validateRolesData", () => {
       const filePath = "/path/to/roles.json";
 
       const result = validateRolesData(
-        dataWithEmptyOptionals,
+        dataWithEmptyDescription,
         persistedRolesSettingsSchema,
         filePath,
         "loadRoles",
       );
 
       expect(result.roles[0]!.description).toBe("");
-      expect(result.roles[0]!.systemPrompt).toBe("");
+      expect(result.roles[0]!.systemPrompt).toBe("You are a helpful assistant");
     });
 
     it("should apply schema defaults", () => {
