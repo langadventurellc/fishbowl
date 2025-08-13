@@ -239,11 +239,10 @@ describe("RolesList Component", () => {
     const container = document.querySelector(".roles-list");
     expect(container).toHaveClass("flex", "flex-col", "h-full");
 
-    // Check scrollable area
-    const scrollableArea = container?.querySelector(
-      ".max-h-\\[var\\(--dt-scrollable-list-max-height\\)\\]",
-    );
-    expect(scrollableArea).toHaveClass("overflow-y-auto", "space-y-4");
+    // Check list area (without embedded scrolling)
+    const listArea = container?.querySelector('[role="list"]');
+    expect(listArea).toHaveClass("space-y-4");
+    expect(listArea).not.toHaveClass("overflow-y-auto"); // No embedded scroll
 
     // Check create button container
     const createButtonContainer = container?.querySelector(".pt-6.border-t");
@@ -259,15 +258,19 @@ describe("RolesList Component", () => {
     expect(icon).toHaveClass("h-4", "w-4");
   });
 
-  it("applies correct CSS variables for scrollable container", () => {
+  it("renders list without embedded scrolling", () => {
     render(<RolesList {...defaultProps} />);
 
+    // Verify that embedded scroll classes were removed for better UX
     const scrollableContainer = document.querySelector(
       ".max-h-\\[var\\(--dt-scrollable-list-max-height\\)\\]",
     );
-    expect(scrollableContainer).toHaveClass(
-      "pr-[var(--dt-scrollable-container-padding-right)]",
-    );
+    expect(scrollableContainer).toBeNull();
+
+    // Verify the list container exists with proper styling
+    const listContainer = document.querySelector('[role="list"]');
+    expect(listContainer).toHaveClass("space-y-4");
+    expect(listContainer).not.toHaveClass("overflow-y-auto");
   });
 
   it("ensures first role alphabetically is Analyst", () => {

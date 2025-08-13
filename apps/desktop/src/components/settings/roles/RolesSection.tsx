@@ -83,6 +83,22 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     setDeleteDialogOpen(true);
   }, []);
 
+  // Helper to detect which fields changed for verification and logging
+  const getChangedFields = useCallback(
+    (original: RoleViewModel, updated: RoleFormData): string[] => {
+      const changed: string[] = [];
+
+      if (original.name !== updated.name) changed.push("name");
+      if (original.description !== updated.description)
+        changed.push("description");
+      if (original.systemPrompt !== updated.systemPrompt)
+        changed.push("systemPrompt");
+
+      return changed;
+    },
+    [],
+  );
+
   // Real save handler using store operations
   const handleSaveRole = useCallback(
     async (data: RoleFormData) => {
@@ -109,20 +125,45 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
             logger.warn("Role creation failed - name might not be unique");
           }
         } else if (selectedRole?.id) {
+          // Track changes for performance measurement and verification
+          const startTime = performance.now();
+          const changedFields = getChangedFields(selectedRole, data);
+
           // Update existing role
           updateRole(selectedRole.id, data);
 
           // Check if update succeeded by checking error state
           const currentError = useRolesStore.getState().error;
+          const updateTime = performance.now() - startTime;
+
           if (!currentError?.message) {
+            // Verify timestamp was updated
+            const updatedRole = useRolesStore
+              .getState()
+              .roles.find((r) => r.id === selectedRole.id);
+            const timestampUpdated =
+              updatedRole && updatedRole.updatedAt && selectedRole.updatedAt
+                ? new Date(updatedRole.updatedAt) >
+                  new Date(selectedRole.updatedAt)
+                : false;
+
             logger.info("Role updated successfully", {
               roleId: selectedRole.id,
+              updateTime: `${updateTime.toFixed(2)}ms`,
+              fieldsChanged: changedFields,
+              timestampUpdated,
+              changedFieldCount: changedFields.length,
             });
+
             // Close modal only on successful update
             setFormModalOpen(false);
             setSelectedRole(undefined);
           } else {
-            logger.warn("Role update failed", { error: currentError.message });
+            logger.warn("Role update failed", {
+              error: currentError.message,
+              updateTime: `${updateTime.toFixed(2)}ms`,
+              attemptedChanges: changedFields,
+            });
           }
         }
       } catch (error) {
@@ -134,7 +175,14 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         // Keep modal open on error
       }
     },
-    [formMode, selectedRole, createRole, updateRole, clearError],
+    [
+      formMode,
+      selectedRole,
+      createRole,
+      updateRole,
+      clearError,
+      getChangedFields,
+    ],
   );
 
   const handleConfirmDelete = useCallback(

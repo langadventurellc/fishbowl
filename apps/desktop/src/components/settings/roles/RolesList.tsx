@@ -44,10 +44,10 @@ export const RolesList = memo<RolesListProps>(function RolesList({
       {/* Accessible heading for screen readers */}
       <h2 className="sr-only">All Roles List</h2>
 
-      {/* Scrollable role list area */}
-      <div className="flex-1 min-h-0">
+      {/* Role list area */}
+      <div className="flex-1">
         <div
-          className="max-h-[var(--dt-scrollable-list-max-height)] overflow-y-auto space-y-4 pr-[var(--dt-scrollable-container-padding-right)]"
+          className="space-y-4"
           role="list"
           aria-label={`${sortedRoles.length} roles available`}
           aria-describedby="roles-list-description"

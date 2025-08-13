@@ -361,19 +361,33 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     // Use the new error handling infrastructure
     _handlePersistenceError(error, "save");
 
-    // Rollback to original state
-    set({
+    // Rollback to original state with pending operations cleanup
+    set((state) => ({
       roles: originalRoles,
       isSaving: false,
-    });
+      pendingOperations: state.pendingOperations.map((op) => ({
+        ...op,
+        status: op.status === "pending" ? "failed" : op.status,
+      })),
+    }));
+
+    // Announce rollback to UI for user feedback
+    const errorType =
+      error instanceof Error ? error.constructor.name : typeof error;
+    getLogger().info(
+      `Rolled back to previous state after save error. Original role count: ${originalRoles.length}, Error type: ${errorType}`,
+    );
 
     // Implement exponential backoff retry
     if (retryCount < MAX_RETRY_ATTEMPTS) {
       retryCount++;
       const delay = RETRY_BASE_DELAY_MS * Math.pow(2, retryCount - 1);
 
+      const failedOperationsCount = get().pendingOperations.filter(
+        (op) => op.status === "failed",
+      ).length;
       getLogger().info(
-        `Retrying save in ${delay}ms (attempt ${retryCount}/${MAX_RETRY_ATTEMPTS})`,
+        `Retrying save in ${delay}ms (attempt ${retryCount}/${MAX_RETRY_ATTEMPTS}). Failed operations: ${failedOperationsCount}`,
       );
 
       setTimeout(async () => {
@@ -385,7 +399,14 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         }
       }, delay);
     } else {
-      getLogger().error(`Save failed after ${MAX_RETRY_ATTEMPTS} attempts`);
+      const state = get();
+      const failedCount = state.pendingOperations.filter(
+        (op) => op.status === "failed",
+      ).length;
+      const totalCount = state.pendingOperations.length;
+      getLogger().error(
+        `Save failed after ${MAX_RETRY_ATTEMPTS} attempts. Failed operations: ${failedCount}, Total pending: ${totalCount}`,
+      );
       retryCount = 0;
     }
   };
