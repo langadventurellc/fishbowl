@@ -1,15 +1,22 @@
 ---
 id: F-role-editing-functionality
 title: Role Editing Functionality
-status: open
+status: in-progress
 priority: medium
 parent: E-settings-ui-components-and
 prerequisites:
   - F-role-creation-form
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx:
+    Created comprehensive test suite for edit mode verification with 18 test
+    cases covering modal behavior, form validation, character counters, isDirty
+    tracking, and edge cases
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-implement-and-test-change
+  - T-verify-edit-mode-modal
+  - T-verify-update-operation-and
 created: 2025-08-12T16:43:50.629Z
 updated: 2025-08-12T16:43:50.629Z
 ---

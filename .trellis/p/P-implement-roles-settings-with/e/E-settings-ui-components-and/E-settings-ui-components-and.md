@@ -1,12 +1,16 @@
 ---
 id: E-settings-ui-components-and
 title: Settings UI Components and Integration
-status: open
+status: in-progress
 priority: medium
 parent: P-implement-roles-settings-with
 prerequisites:
   - E-desktop-integration-and
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx:
+    Created comprehensive test suite for edit mode verification with 18 test
+    cases covering modal behavior, form validation, character counters, isDirty
+    tracking, and edge cases
 log:
   - >-
     ## General-purpose validation utilities consolidated
@@ -105,7 +109,15 @@ log:
 
     - All quality checks pass (lint, format, type-check, tests)
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-empty-states-and-loading
+  - F-form-validation-and-ux
+  - F-role-creation-form
+  - F-role-deletion-with-confirmatio
+  - F-role-editing-functionality
+  - F-role-list-display
+  - F-roles-store-integration
+  - F-settings-modal-integration
 created: 2025-08-09T19:35:04.854Z
 updated: 2025-08-09T19:35:04.854Z
 ---

@@ -1,10 +1,14 @@
 ---
 id: P-implement-roles-settings-with
 title: Implement Roles Settings with JSON File Persistence
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx:
+    Created comprehensive test suite for edit mode verification with 18 test
+    cases covering modal behavior, form validation, character counters, isDirty
+    tracking, and edge cases
 log:
   - >-
     ## General-purpose validation utilities consolidated
