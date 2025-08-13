@@ -99,17 +99,11 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
     [onSave, onOpenChange],
   );
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts (Escape handled in DialogContent onKeyDown)
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Escape key to close modal (with unsaved changes check)
-      if (event.key === "Escape") {
-        event.preventDefault();
-        handleOpenChange(false);
-      }
-
       // Ctrl/Cmd + S to save
       if ((event.ctrlKey || event.metaKey) && event.key === "s") {
         event.preventDefault();
@@ -139,6 +133,13 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
         onOpenAutoFocus={(e) => {
           // Prevent Radix's default focus behavior
           e.preventDefault();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            e.stopPropagation();
+            onOpenChange(false);
+          }
         }}
       >
         <DialogHeader>

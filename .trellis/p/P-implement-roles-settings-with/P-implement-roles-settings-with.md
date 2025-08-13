@@ -36,6 +36,18 @@ affectedFiles:
   apps/desktop/src/components/settings/roles/__tests__/RolesList.test.tsx:
     Updated test cases to reflect enhanced role editing functionality and
     improved error handling scenarios
+  apps/desktop/src/components/settings/roles/RoleListItem.tsx:
+    Enhanced Card container styling with improved borders, shadows, hover
+    states, and focus-within rings; improved typography with font-semibold and
+    better spacing; enhanced button styling with opacity transitions, refined
+    focus rings, and loading state visual feedback with Loader2 spinning icons;
+    added sophisticated hover interactions with group states
+  apps/desktop/src/components/settings/roles/__tests__/RoleListItem.test.tsx:
+    "Updated test assertions to match enhanced styling: changed font-medium to
+    font-semibold, updated hover shadow expectations from shadow-sm to
+    shadow-md, adjusted delete button color expectations to
+    text-muted-foreground, and corrected description truncation expectations for
+    increased 120-character limit"
 log:
   - >-
     ## General-purpose validation utilities consolidated
