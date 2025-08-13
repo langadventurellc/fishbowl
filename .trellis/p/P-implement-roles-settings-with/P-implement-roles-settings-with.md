@@ -24,6 +24,18 @@ affectedFiles:
   apps/desktop/src/components/settings/roles/RoleFormModal.tsx: Updated to use new ConfirmationDialog with destructive variant
   apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.changeDetection.test.tsx: Comprehensive test suite for enhanced change detection functionality
   apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.basic.test.tsx: Updated mocks to support new form functionality
+  apps/desktop/src/components/settings/roles/RolesSection.tsx:
+    Enhanced role update handling with improved change detection, optimistic
+    updates, and comprehensive error handling with detailed logging
+  packages/ui-shared/src/stores/useRolesStore.ts: Added enhanced logging
+    throughout update operations, improved error handling, and optimized update
+    logic with change detection
+  apps/desktop/src/components/settings/roles/RolesList.tsx: Minor updates to
+    support enhanced role editing functionality and improved integration with
+    updated store
+  apps/desktop/src/components/settings/roles/__tests__/RolesList.test.tsx:
+    Updated test cases to reflect enhanced role editing functionality and
+    improved error handling scenarios
 log:
   - >-
     ## General-purpose validation utilities consolidated
