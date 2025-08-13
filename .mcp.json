@@ -4,9 +4,10 @@
       "type": "stdio",
       "command": "npx",
       "args": [
-        "@langadventurellc/task-trellis-mcp",
+        "@langadventurellc/task-trellis-mcp@latest",
         "--projectRootFolder",
-        "/Users/zach/code/fishbowl"
+        "/Users/zach/code/fishbowl",
+        "--auto-complete-parent"
       ],
       "env": {}
     },
