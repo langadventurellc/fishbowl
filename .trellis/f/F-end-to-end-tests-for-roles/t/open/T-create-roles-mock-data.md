@@ -20,8 +20,8 @@ Implement mock data generation utilities for roles end-to-end tests to provide c
 ## Context
 
 - Feature: End-to-End Tests for Roles Section (`F-end-to-end-tests-for-roles`)
-- Reference: `tests/desktop/features/settings/llm-setup/createMockAnthropicConfig.ts` and similar files for patterns
-- Location: Create files in `tests/desktop/features/settings/roles/`
+- Reference: `tests/desktop/helpers/settings/createMockAnthropicConfig.ts` and similar files for patterns
+- Location: Create files in `tests/desktop/helpers/settings/`
 - Data structure: Based on `packages/shared/src/data/defaultRoles.json`
 
 ## Implementation Requirements
@@ -140,7 +140,7 @@ export const createMockRoleData = (
 
 ## Files to Create
 
-- `tests/desktop/features/settings/roles/createMockRoleData.ts`
+- `tests/desktop/helpers/settings/createMockRoleData.ts`
 
 ## Research Required
 

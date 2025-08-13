@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { setupRolesTestSuite } from "./setupRolesTestSuite";
+import { setupRolesTestSuite } from "../../../helpers";
 
 test.describe("Roles Test Suite Infrastructure", () => {
   const { getElectronApp, getWindow, getUserDataPath, getRolesConfigPath } =

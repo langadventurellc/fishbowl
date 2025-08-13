@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import { TestWindow } from "../../../helpers/TestWindow";
+import { TestWindow } from "../TestWindow";
 
 export async function openRolesSection(window: TestWindow) {
   // Ensure no modals are open before starting

@@ -39,7 +39,7 @@ import {
   setupRolesTestSuite,
   openRolesSection,
   waitForRolesList,
-} from "./index";
+} from \"../../../helpers\";
 
 test.describe("Feature: Roles Section - Default Roles Loading", () => {
   const testSuite = setupRolesTestSuite();

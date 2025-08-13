@@ -33,12 +33,12 @@ childrenIds:
   - T-create-roles-mock-data
   - T-create-roles-storage-cleanup
   - T-create-roles-test-barrel
-  - T-create-roles-test-suite
   - T-implement-default-roles
   - T-implement-role-creation-tests
   - T-implement-role-deletion-tests
   - T-implement-role-editing-tests
   - T-create-roles-navigation-and
+  - T-create-roles-test-suite
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z
 ---

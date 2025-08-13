@@ -24,15 +24,15 @@ Create the barrel export file (`index.ts`) for roles end-to-end test utilities, 
 ## Context
 
 - Feature: End-to-End Tests for Roles Section (`F-end-to-end-tests-for-roles`)
-- Reference: `tests/desktop/features/settings/llm-setup/index.ts` for export patterns
-- Location: Create file at `tests/desktop/features/settings/roles/index.ts`
-- Purpose: Centralized exports for all roles test utilities
+- Reference: `tests/desktop/helpers/index.ts` for export patterns
+- Location: All exports are now centrally managed in `tests/desktop/helpers/index.ts`
+- Purpose: All roles test utilities are exported from the main helpers barrel file
 
 ## Implementation Requirements
 
-### Create `index.ts`
+### Update `tests/desktop/helpers/index.ts`
 
-Following LLM setup export patterns, provide clean barrel exports:
+Ensure all roles test utilities are properly exported from the main helpers barrel file:
 
 **Export Categories:**
 
@@ -125,7 +125,8 @@ import {
 
 ## Files to Create
 
-- `tests/desktop/features/settings/roles/index.ts`
+- Ensure `tests/desktop/helpers/index.ts` exports all roles utilities
+- No new files needed - all exports centralized in main helpers barrel
 
 ## Integration Testing
 

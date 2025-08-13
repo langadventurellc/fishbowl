@@ -23,6 +23,7 @@ Create end-to-end tests to verify role editing functionality including form pre-
 - Feature: End-to-End Tests for Roles Section (`F-end-to-end-tests-for-roles`)
 - Reference: `tests/desktop/features/settings/llm-setup/edit-configuration.spec.ts` for comprehensive editing patterns
 - Location: Create file at `tests/desktop/features/settings/roles/roles-editing.spec.ts`
+- Helper Functions: Located in `tests/desktop/helpers/settings/`
 - UI Components: Role edit modal, form pre-population, change validation, save/cancel behavior
 
 ## Implementation Requirements
@@ -40,7 +41,7 @@ import {
   openRolesSection,
   waitForRolesList,
   createMockRoleData,
-} from "./index";
+} from "../../../helpers";
 
 test.describe("Feature: Roles Section - Role Editing", () => {
   const testSuite = setupRolesTestSuite();

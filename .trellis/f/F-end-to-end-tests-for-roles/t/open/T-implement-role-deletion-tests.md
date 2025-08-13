@@ -23,6 +23,7 @@ Create end-to-end tests to verify role deletion functionality including confirma
 - Feature: End-to-End Tests for Roles Section (`F-end-to-end-tests-for-roles`)
 - Reference: `tests/desktop/features/settings/llm-setup/delete-configuration.spec.ts` for deletion patterns
 - Location: Create file at `tests/desktop/features/settings/roles/roles-deletion.spec.ts`
+- Helper Functions: Located in `tests/desktop/helpers/settings/`
 - UI Components: Delete confirmation dialog, role removal from list, deletion restrictions
 
 ## Implementation Requirements
@@ -40,7 +41,7 @@ import {
   openRolesSection,
   waitForRolesList,
   createMockRoleData,
-} from "./index";
+} from "../../../helpers";
 
 test.describe("Feature: Roles Section - Role Deletion", () => {
   const testSuite = setupRolesTestSuite();

@@ -1,13 +1,21 @@
 ---
 id: T-create-roles-storage-cleanup
 title: Create roles storage cleanup utilities
-status: open
+status: done
 priority: high
 parent: F-end-to-end-tests-for-roles
 prerequisites:
   - T-create-roles-test-suite
 affectedFiles: {}
-log: []
+log:
+  - Roles storage cleanup utilities were already fully implemented and working
+    correctly. The cleanupRolesStorage.ts file exists at
+    tests/desktop/features/settings/roles/cleanupRolesStorage.ts with proper
+    error handling, retry logic, and integration with the test suite. The
+    implementation follows the LLM cleanup pattern exactly with 3 retry
+    attempts, ENOENT error handling, and warning logs for debugging. All
+    acceptance criteria are met and the utility is already being used by
+    setupRolesTestSuite.ts for test isolation.
 schema: v1.0
 childrenIds: []
 created: 2025-08-13T18:16:53.050Z

@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import type { TestWindow } from "../../../helpers/TestWindow";
+import type { TestWindow } from "../TestWindow";
 
 /**
  * Wait for the roles list to be visible and loaded.

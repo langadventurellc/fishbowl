@@ -5,10 +5,10 @@ import { fileURLToPath } from "url";
 
 import {
   createElectronApp,
+  openAdvancedSettings,
   type TestElectronApplication,
   type TestWindow,
 } from "../../helpers";
-import { openAdvancedSettings } from "../../helpers/openAdvancedSettings";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test.describe("Feature: Advanced Settings Persistence", () => {

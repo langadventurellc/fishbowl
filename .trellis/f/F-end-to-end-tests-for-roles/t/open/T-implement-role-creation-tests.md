@@ -23,6 +23,7 @@ Create end-to-end tests to verify role creation functionality including form val
 - Feature: End-to-End Tests for Roles Section (`F-end-to-end-tests-for-roles`)
 - Reference: `tests/desktop/features/settings/llm-setup/anthropic-configuration-creation.spec.ts` for similar patterns
 - Location: Create file at `tests/desktop/features/settings/roles/roles-creation.spec.ts`
+- Helper Functions: Located in `tests/desktop/helpers/settings/`
 - UI Components: Role creation modal, form validation, role list updates
 
 ## Implementation Requirements
@@ -40,7 +41,7 @@ import {
   openRolesSection,
   waitForRolesList,
   createMockRoleData,
-} from "./index";
+} from "../../../helpers";
 
 test.describe("Feature: Roles Section - Role Creation", () => {
   const testSuite = setupRolesTestSuite();
