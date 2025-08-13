@@ -1,7 +1,7 @@
 ---
 id: E-settings-ui-components-and
 title: Settings UI Components and Integration
-status: in-progress
+status: done
 priority: medium
 parent: P-implement-roles-settings-with
 prerequisites:

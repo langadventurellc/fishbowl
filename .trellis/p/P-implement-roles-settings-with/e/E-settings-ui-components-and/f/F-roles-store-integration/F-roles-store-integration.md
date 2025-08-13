@@ -1,7 +1,7 @@
 ---
 id: F-roles-store-integration
 title: Roles Store Integration
-status: open
+status: done
 priority: medium
 parent: E-settings-ui-components-and
 prerequisites: []

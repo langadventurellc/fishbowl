@@ -1,7 +1,7 @@
 ---
 id: F-settings-modal-integration
 title: Settings Modal Integration Polish
-status: open
+status: done
 priority: medium
 parent: E-settings-ui-components-and
 prerequisites:
