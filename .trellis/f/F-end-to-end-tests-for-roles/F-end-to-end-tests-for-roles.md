@@ -27,17 +27,28 @@ affectedFiles:
   tests/desktop/features/settings/roles/roles-infrastructure.spec.ts:
     Created infrastructure validation test to verify setup functions work
     correctly
+  tests/desktop/helpers/settings/MockRoleData.ts: Created TypeScript interface for mock role data structure
+  tests/desktop/helpers/settings/createMockRoleData.ts: Implemented core mock role generator with partial override support
+  tests/desktop/helpers/settings/createMinimalRoleData.ts: Created minimal valid role data generator for boundary testing
+  tests/desktop/helpers/settings/createInvalidRoleData.ts: Implemented invalid data generator for validation testing
+  tests/desktop/helpers/settings/createDuplicateNameRoleData.ts: Created duplicate name generator for uniqueness validation testing
+  tests/desktop/helpers/settings/createMockAnalystRole.ts: Implemented specialized data analyst role generator
+  tests/desktop/helpers/settings/createMockWriterRole.ts: Implemented specialized creative writer role generator
+  tests/desktop/helpers/settings/createMockTechnicalRole.ts: Implemented specialized technical/developer role generator
+  tests/desktop/helpers/settings/createLongTextRoleData.ts: Created edge case generator for maximum character limit testing
+  tests/desktop/helpers/settings/createSpecialCharRoleData.ts: Implemented special character handling test data generator
+  tests/desktop/helpers/index.ts: Updated barrel export to include all new role mock generators and types
 log: []
 schema: v1.0
 childrenIds:
   - T-create-roles-mock-data
-  - T-create-roles-storage-cleanup
   - T-create-roles-test-barrel
   - T-implement-default-roles
   - T-implement-role-creation-tests
   - T-implement-role-deletion-tests
   - T-implement-role-editing-tests
   - T-create-roles-navigation-and
+  - T-create-roles-storage-cleanup
   - T-create-roles-test-suite
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z

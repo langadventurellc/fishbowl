@@ -1,12 +1,30 @@
 ---
 id: T-create-roles-mock-data
 title: Create roles mock data generators
-status: open
+status: done
 priority: medium
 parent: F-end-to-end-tests-for-roles
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/helpers/settings/MockRoleData.ts: Created TypeScript interface for mock role data structure
+  tests/desktop/helpers/settings/createMockRoleData.ts: Implemented core mock role generator with partial override support
+  tests/desktop/helpers/settings/createMinimalRoleData.ts: Created minimal valid role data generator for boundary testing
+  tests/desktop/helpers/settings/createInvalidRoleData.ts: Implemented invalid data generator for validation testing
+  tests/desktop/helpers/settings/createDuplicateNameRoleData.ts: Created duplicate name generator for uniqueness validation testing
+  tests/desktop/helpers/settings/createMockAnalystRole.ts: Implemented specialized data analyst role generator
+  tests/desktop/helpers/settings/createMockWriterRole.ts: Implemented specialized creative writer role generator
+  tests/desktop/helpers/settings/createMockTechnicalRole.ts: Implemented specialized technical/developer role generator
+  tests/desktop/helpers/settings/createLongTextRoleData.ts: Created edge case generator for maximum character limit testing
+  tests/desktop/helpers/settings/createSpecialCharRoleData.ts: Implemented special character handling test data generator
+  tests/desktop/helpers/index.ts: Updated barrel export to include all new role mock generators and types
+log:
+  - Implemented comprehensive mock data generation utilities for roles
+    end-to-end tests following established patterns from LLM config generators.
+    Created 10 generator functions with complete TypeScript typing, unique data
+    generation via UUID to prevent test conflicts, and support for all test
+    scenarios including validation edge cases. All generators follow the
+    one-export-per-file rule and are properly exported through the barrel file.
+    Quality checks (lint, format, type-check) all pass successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-13T18:17:43.386Z
