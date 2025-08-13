@@ -16,12 +16,21 @@ affectedFiles:
     interaction helpers for role creation/editing modals, deletion confirmation
     dialogs, and modal closing with proper overlay and content detection
   tests/desktop/features/settings/roles/index.ts: Created barrel export file for
-    convenient importing of all roles test helper functions
+    convenient importing of all roles test helper functions; Updated barrel
+    export to include new cleanupRolesStorage and setupRolesTestSuite functions
+  tests/desktop/features/settings/roles/cleanupRolesStorage.ts:
+    Created storage cleanup utility with retry logic for handling file locks and
+    timing issues
+  tests/desktop/features/settings/roles/setupRolesTestSuite.ts:
+    Created main test suite setup function following LLM patterns with lifecycle
+    hooks, storage cleanup, and modal management
+  tests/desktop/features/settings/roles/roles-infrastructure.spec.ts:
+    Created infrastructure validation test to verify setup functions work
+    correctly
 log: []
 schema: v1.0
 childrenIds:
   - T-create-roles-mock-data
-  - T-create-roles-navigation-and
   - T-create-roles-storage-cleanup
   - T-create-roles-test-barrel
   - T-create-roles-test-suite
@@ -29,6 +38,7 @@ childrenIds:
   - T-implement-role-creation-tests
   - T-implement-role-deletion-tests
   - T-implement-role-editing-tests
+  - T-create-roles-navigation-and
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z
 ---
