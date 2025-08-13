@@ -1,13 +1,34 @@
 ---
 id: F-end-to-end-tests-for-roles
 title: End-to-End Tests for Roles Section
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  tests/desktop/features/settings/roles/openRolesSection.ts: Created navigation
+    helper function that opens settings modal and navigates to roles section,
+    handling modal lifecycle and waiting for proper UI elements to be visible
+  tests/desktop/features/settings/roles/waitForRolesList.ts:
+    Created comprehensive
+    wait utilities for roles list states including populated list, empty state,
+    loading spinners, and specific role detection with proper error handling
+  tests/desktop/features/settings/roles/waitForRoleModal.ts: Created modal
+    interaction helpers for role creation/editing modals, deletion confirmation
+    dialogs, and modal closing with proper overlay and content detection
+  tests/desktop/features/settings/roles/index.ts: Created barrel export file for
+    convenient importing of all roles test helper functions
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-roles-mock-data
+  - T-create-roles-navigation-and
+  - T-create-roles-storage-cleanup
+  - T-create-roles-test-barrel
+  - T-create-roles-test-suite
+  - T-implement-default-roles
+  - T-implement-role-creation-tests
+  - T-implement-role-deletion-tests
+  - T-implement-role-editing-tests
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z
 ---
