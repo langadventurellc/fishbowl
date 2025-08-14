@@ -1,7 +1,7 @@
 ---
 id: F-end-to-end-tests-for-roles
 title: End-to-End Tests for Roles Section
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -54,11 +54,14 @@ affectedFiles:
     including confirmation dialogs, cancel flows, multiple deletions, default
     role deletion, empty state transitions, and persistence across navigation.
     Follows established patterns from LLM deletion tests.
-log: []
+  tests/desktop/features/settings/roles/roles-editing.spec.ts:
+    Created comprehensive role editing test suite with 6 test cases covering
+    successful editing, form pre-population, validation, cancel functionality,
+    persistence testing, and default vs custom role editing capabilities
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-implement-role-deletion-tests
-  - T-implement-role-editing-tests
   - T-create-roles-mock-data
   - T-create-roles-navigation-and
   - T-create-roles-storage-cleanup
@@ -66,6 +69,8 @@ childrenIds:
   - T-create-roles-test-suite
   - T-implement-default-roles
   - T-implement-role-creation-tests
+  - T-implement-role-deletion-tests
+  - T-implement-role-editing-tests
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z
 ---

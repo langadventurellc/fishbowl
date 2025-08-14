@@ -4,11 +4,15 @@ import type { TestWindow } from "../TestWindow";
 /**
  * Wait for the role creation/editing modal to appear.
  */
-export const waitForRoleModal = async (window: TestWindow) => {
-  // Wait for the role creation modal with "Create Role" title
+export const waitForRoleModal = async (
+  window: TestWindow,
+  mode: "create" | "edit" = "create",
+) => {
+  const modalTitle = mode === "create" ? "Create Role" : "Edit Role";
+  // Wait for the role modal with the specified title
   await expect(
     window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Role")'),
+      has: window.locator(`h2:has-text("${modalTitle}")`),
     }),
   ).toBeVisible({ timeout: 5000 });
 };
@@ -43,10 +47,12 @@ export const waitForDeleteDialog = async (window: TestWindow) => {
  * Wait for any modal to close completely.
  */
 export const waitForModalToClose = async (window: TestWindow) => {
-  // Wait for the role creation modal to disappear
+  // Wait for role modals (either Create or Edit) to disappear
   await expect(
     window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Role")'),
+      has: window.locator(
+        'h2:has-text("Create Role"), h2:has-text("Edit Role")',
+      ),
     }),
   ).not.toBeVisible({ timeout: 3000 });
 
