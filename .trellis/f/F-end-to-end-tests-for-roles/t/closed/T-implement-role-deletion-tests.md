@@ -1,13 +1,23 @@
 ---
 id: T-implement-role-deletion-tests
 title: Implement role deletion tests
-status: open
+status: done
 priority: medium
 parent: F-end-to-end-tests-for-roles
 prerequisites:
   - T-create-roles-test-barrel
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/features/settings/roles/roles-deletion.spec.ts:
+    Created comprehensive end-to-end test suite for role deletion functionality
+    including confirmation dialogs, cancel flows, multiple deletions, default
+    role deletion, empty state transitions, and persistence across navigation.
+    Follows established patterns from LLM deletion tests.
+log:
+  - Implemented comprehensive role deletion tests with confirmation dialogs,
+    cancel flows, multiple deletion scenarios, default roles deletion, empty
+    state transitions, and persistence verification. Created
+    roles-deletion.spec.ts with 8 test cases covering all requirements from the
+    task specification. All code passes lint and type checks.
 schema: v1.0
 childrenIds: []
 created: 2025-08-13T18:20:10.193Z

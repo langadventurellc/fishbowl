@@ -49,10 +49,14 @@ affectedFiles:
   tests/desktop/helpers/settings/waitForRoleModal.ts: Updated modal selectors to
     handle multiple dialog elements and use specific Create Role modal
     identification
+  tests/desktop/features/settings/roles/roles-deletion.spec.ts:
+    Created comprehensive end-to-end test suite for role deletion functionality
+    including confirmation dialogs, cancel flows, multiple deletions, default
+    role deletion, empty state transitions, and persistence across navigation.
+    Follows established patterns from LLM deletion tests.
 log: []
 schema: v1.0
 childrenIds:
-  - T-implement-role-creation-tests
   - T-implement-role-deletion-tests
   - T-implement-role-editing-tests
   - T-create-roles-mock-data
@@ -61,6 +65,7 @@ childrenIds:
   - T-create-roles-test-barrel
   - T-create-roles-test-suite
   - T-implement-default-roles
+  - T-implement-role-creation-tests
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z
 ---
