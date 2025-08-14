@@ -27,10 +27,11 @@ describe("roleSchema", () => {
       }
     });
 
-    it("should validate role data without systemPrompt (backward compatibility)", () => {
+    it("should require systemPrompt field", () => {
       const validData = {
         name: "Simple Role",
-        description: "A role without system prompt",
+        description: "A role with system prompt",
+        systemPrompt: "You are a helpful assistant.",
       };
 
       const result = roleSchema.safeParse(validData);
@@ -39,7 +40,7 @@ describe("roleSchema", () => {
       if (result.success) {
         expect(result.data.name).toBe(validData.name);
         expect(result.data.description).toBe(validData.description);
-        expect(result.data.systemPrompt).toBeUndefined();
+        expect(result.data.systemPrompt).toBe(validData.systemPrompt);
       }
     });
 
@@ -47,6 +48,7 @@ describe("roleSchema", () => {
       const validData = {
         name: "AI-Assistant_v2 Role",
         description: "Valid description",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(validData);
@@ -54,10 +56,11 @@ describe("roleSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should accept description with 200 characters", () => {
+    it("should accept description with 500 characters", () => {
       const validData = {
         name: "Valid Name",
-        description: "A".repeat(200),
+        description: "A".repeat(500),
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(validData);
@@ -65,11 +68,11 @@ describe("roleSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    it("should accept systemPrompt with 2000 characters", () => {
+    it("should accept systemPrompt with 5000 characters", () => {
       const validData = {
         name: "Valid Name",
         description: "Valid description",
-        systemPrompt: "A".repeat(2000),
+        systemPrompt: "A".repeat(5000),
       };
 
       const result = roleSchema.safeParse(validData);
@@ -99,6 +102,7 @@ describe("roleSchema", () => {
       const invalidData = {
         name: "",
         description: "Valid description",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
@@ -109,16 +113,18 @@ describe("roleSchema", () => {
       const invalidData = {
         name: "   ",
         description: "Valid description",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
     });
 
-    it("should reject name longer than 50 characters", () => {
+    it("should reject name longer than 100 characters", () => {
       const invalidData = {
-        name: "A".repeat(51),
+        name: "A".repeat(101),
         description: "Valid description",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
@@ -129,6 +135,7 @@ describe("roleSchema", () => {
       const invalidData = {
         name: "A",
         description: "Valid description",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
@@ -139,6 +146,7 @@ describe("roleSchema", () => {
       const invalidData = {
         name: "Role@Name!",
         description: "Valid description",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
@@ -149,6 +157,7 @@ describe("roleSchema", () => {
       const invalidData = {
         name: "Valid Name",
         description: "",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
@@ -159,16 +168,18 @@ describe("roleSchema", () => {
       const invalidData = {
         name: "Valid Name",
         description: "   ",
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
     });
 
-    it("should reject description longer than 200 characters", () => {
+    it("should reject description longer than 500 characters", () => {
       const invalidData = {
         name: "Valid Name",
-        description: "A".repeat(201),
+        description: "A".repeat(501),
+        systemPrompt: "Test system prompt",
       };
 
       const result = roleSchema.safeParse(invalidData);
@@ -197,11 +208,22 @@ describe("roleSchema", () => {
       expect(result.success).toBe(false);
     });
 
-    it("should reject systemPrompt longer than 2000 characters", () => {
+    it("should reject systemPrompt longer than 5000 characters", () => {
       const invalidData = {
         name: "Valid Name",
         description: "Valid description",
-        systemPrompt: "A".repeat(2001),
+        systemPrompt: "A".repeat(5001),
+      };
+
+      const result = roleSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject missing systemPrompt", () => {
+      const invalidData = {
+        name: "Valid Name",
+        description: "Valid description",
+        // Missing systemPrompt
       };
 
       const result = roleSchema.safeParse(invalidData);
@@ -223,7 +245,7 @@ describe("roleSchema", () => {
         // These should compile without TypeScript errors
         const name: string = result.data.name;
         const description: string = result.data.description;
-        const systemPrompt: string | undefined = result.data.systemPrompt;
+        const systemPrompt: string = result.data.systemPrompt;
 
         expect(name).toBe(validData.name);
         expect(description).toBe(validData.description);
@@ -245,6 +267,7 @@ describe("roleSchema", () => {
       const roleFormDataWithoutPrompt: RoleFormData = {
         name: "Test Role",
         description: "Test description",
+        systemPrompt: "Test system prompt",
       };
 
       const result2 = roleSchema.safeParse(roleFormDataWithoutPrompt);

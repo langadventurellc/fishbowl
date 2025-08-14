@@ -34,14 +34,14 @@ export class RolesRepository {
   }
 
   /**
-   * Load roles from storage. Returns null if file doesn't exist.
-   * Does not create default file - that's handled by the calling code.
+   * Load roles from storage. Creates default roles if file doesn't exist.
+   * Automatically saves default roles to file for future loads.
    *
-   * @returns Promise resolving to roles data or null if file not found
+   * @returns Promise resolving to roles data (default roles if file not found)
    * @throws FileStorageError for file system issues other than file not found
    * @throws Error for JSON parsing or validation failures
    */
-  async loadRoles(): Promise<PersistedRolesSettingsData | null> {
+  async loadRoles(): Promise<PersistedRolesSettingsData> {
     try {
       this.logger.debug("Loading roles from file", { filePath: this.filePath });
 
@@ -57,10 +57,31 @@ export class RolesRepository {
 
       return validatedRoles;
     } catch (error) {
-      // Handle file not found by returning null (not an error condition)
+      // Handle file not found by creating defaults
       if (error instanceof FileStorageError && error.operation === "read") {
-        this.logger.debug("Roles file not found, returning null");
-        return null;
+        this.logger.debug("Roles file not found, creating with defaults");
+
+        // Import createDefaultRolesSettings
+        const { createDefaultRolesSettings } = await import(
+          "@fishbowl-ai/shared"
+        );
+
+        const defaultRoles = createDefaultRolesSettings();
+
+        // Save defaults to file for future loads
+        try {
+          await this.saveRoles(defaultRoles);
+          this.logger.debug("Default roles saved successfully", {
+            roleCount: defaultRoles.roles?.length || 0,
+          });
+        } catch (saveError) {
+          // Log but don't throw - return defaults even if save fails
+          this.logger.warn("Failed to save default roles", {
+            error: saveError as Error,
+          });
+        }
+
+        return defaultRoles;
       }
 
       this.logger.error("Failed to load roles", error as Error);
@@ -119,11 +140,8 @@ export class RolesRepository {
         filePath: this.filePath,
       });
 
-      // Use FileStorageService to delete file if it has a delete method,
-      // otherwise use Node.js fs directly through FileStorageService
-      // For now, we'll use the approach that works with existing patterns
-      const fs = require("fs").promises;
-      await fs.unlink(this.filePath);
+      // Use FileStorageService to delete file consistently with abstraction
+      await this.fileStorageService.deleteJsonFile(this.filePath);
 
       this.logger.debug("Roles file deleted successfully");
     } catch (error: unknown) {

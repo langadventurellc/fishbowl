@@ -33,6 +33,7 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
   disabled = false,
   className,
   "aria-describedby": ariaDescribedBy,
+  isDirty = false,
 }) => {
   const [validation, setValidation] = useState<ValidationResultViewModel>({
     isValid: false,
@@ -54,8 +55,8 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
       if (trimmedName && trimmedName.length < 2) {
         errors.push("Name must be at least 2 characters");
       }
-      if (name.length > 50) {
-        errors.push("Name must be 50 characters or less");
+      if (name.length > 100) {
+        errors.push("Name must be 100 characters or less");
       }
 
       // Character validation
@@ -119,6 +120,15 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
     onChange(e.target.value);
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      // Move focus to next field (description)
+      const descriptionField = document.getElementById("role-description");
+      descriptionField?.focus();
+    }
+  };
+
   const getValidationIcon = () => {
     if (!value || validation.isValidating) return null;
 
@@ -133,8 +143,8 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
 
   const getCounterColor = useCallback(() => {
     const characterCount = value.length;
-    const warningThreshold = Math.floor(50 * 0.8); // 40 chars
-    const errorThreshold = Math.floor(50 * 0.9); // 45 chars
+    const warningThreshold = Math.floor(100 * 0.8); // 80 chars
+    const errorThreshold = Math.floor(100 * 0.9); // 90 chars
 
     if (characterCount <= warningThreshold) return "text-muted-foreground";
     if (characterCount <= errorThreshold) return "text-yellow-600";
@@ -148,12 +158,22 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
 
   return (
     <div className={cn("space-y-2", className)}>
-      <Label htmlFor="role-name">
-        Role Name
-        <span className="text-red-500 ml-1" aria-hidden="true">
-          *
-        </span>
-      </Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor="role-name" className="flex items-center gap-2">
+          Role Name
+          <span className="text-red-500 ml-1" aria-hidden="true">
+            *
+          </span>
+          {isDirty && (
+            <span
+              className="text-xs text-amber-600 dark:text-amber-400"
+              aria-label="Field has unsaved changes"
+            >
+              (modified)
+            </span>
+          )}
+        </Label>
+      </div>
 
       <div className="relative">
         <Input
@@ -161,6 +181,7 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
           type="text"
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           placeholder="Enter a unique name for this role"
           disabled={disabled}
           aria-invalid={isInvalid}
@@ -174,6 +195,8 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
             isInvalid &&
               "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
           )}
+          data-role-modal-initial-focus
+          tabIndex={0}
         />
 
         {/* Validation Icon */}
@@ -203,7 +226,7 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
         className={cn("text-xs text-right", getCounterColor())}
         aria-live="polite"
       >
-        {characterCount}/50 characters
+        {characterCount}/100 characters
       </div>
     </div>
   );

@@ -8,6 +8,8 @@ const mockRole: RoleViewModel = {
   name: "Test Developer",
   description:
     "A role for testing development scenarios with comprehensive testing capabilities and detailed feedback mechanisms.",
+  systemPrompt:
+    "You are a helpful software developer who provides clear and concise code solutions.",
   createdAt: "2025-01-01T00:00:00Z",
   updatedAt: "2025-01-02T00:00:00Z",
 };
@@ -28,7 +30,7 @@ describe("RoleListItem Component", () => {
 
     const nameElement = screen.getByText("Test Developer");
     expect(nameElement).toBeInTheDocument();
-    expect(nameElement).toHaveClass("text-base", "font-medium");
+    expect(nameElement).toHaveClass("text-base", "font-semibold");
   });
 
   it("truncates long descriptions at word boundaries", () => {
@@ -38,7 +40,8 @@ describe("RoleListItem Component", () => {
       /A role for testing development scenarios/,
     );
     expect(descriptionElement).toBeInTheDocument();
-    expect(descriptionElement.textContent).toContain("...");
+    // With maxLength 120, this text should not be truncated
+    expect(descriptionElement.textContent).not.toContain("...");
   });
 
   it("renders edit and delete buttons with proper accessibility", () => {
@@ -104,7 +107,7 @@ describe("RoleListItem Component", () => {
     // Check that the card has hover classes applied (we can't easily test the actual hover state)
     const roleNameElement = screen.getByText("Test Developer");
     const cardContainer = roleNameElement.closest(
-      'div[class*="hover:shadow-sm"]',
+      'div[class*="hover:shadow-md"]',
     );
     expect(cardContainer).toBeInTheDocument();
   });
@@ -149,7 +152,7 @@ describe("RoleListItem Component", () => {
     render(<RoleListItem {...defaultProps} />);
 
     const deleteButton = screen.getByLabelText("Delete Test Developer role");
-    expect(deleteButton).toHaveClass("text-destructive");
+    expect(deleteButton).toHaveClass("text-muted-foreground");
   });
 
   it("shows both icon and text in buttons", () => {

@@ -3,10 +3,10 @@
  *
  * Features:
  * - 4-row textarea with fixed height (no resize)
- * - Character counter with color-coded feedback (200 char limit)
+ * - Character counter with color-coded feedback (500 char limit)
  * - Input prevention beyond maximum length
  * - Accessibility support with ARIA attributes
- * - Visual feedback: green (0-160), yellow (161-180), red (181-200)
+ * - Visual feedback: green (0-400), yellow (401-450), red (451-500)
  * - Enhanced placeholder with usage examples
  *
  * @module components/settings/RoleDescriptionTextarea
@@ -23,14 +23,15 @@ export const RoleDescriptionTextarea: React.FC<
 > = ({
   value,
   onChange,
-  maxLength = 200,
+  maxLength = 500,
   disabled = false,
   className,
   "aria-describedby": ariaDescribedBy,
+  isDirty = false,
 }) => {
   const characterCount = value.length;
-  const warningThreshold = Math.floor(maxLength * 0.8); // 160 chars
-  const errorThreshold = Math.floor(maxLength * 0.9); // 180 chars
+  const warningThreshold = Math.floor(maxLength * 0.8); // 400 chars
+  const errorThreshold = Math.floor(maxLength * 0.9); // 450 chars
 
   const getCounterColor = useCallback(() => {
     if (characterCount <= warningThreshold) return "text-muted-foreground";
@@ -45,25 +46,46 @@ export const RoleDescriptionTextarea: React.FC<
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      // Move focus to next field (system prompt)
+      const systemPromptField = document.getElementById("role-system-prompt");
+      systemPromptField?.focus();
+    }
+  };
+
   return (
     <div className={cn("space-y-2", className)}>
-      <Label htmlFor="role-description">
-        Role Description
-        <span className="text-red-500 ml-1" aria-hidden="true">
-          *
-        </span>
-      </Label>
+      <div className="flex items-center justify-between">
+        <Label htmlFor="role-description" className="flex items-center gap-2">
+          Role Description
+          <span className="text-red-500 ml-1" aria-hidden="true">
+            *
+          </span>
+          {isDirty && (
+            <span
+              className="text-xs text-amber-600 dark:text-amber-400"
+              aria-label="Field has unsaved changes"
+            >
+              (modified)
+            </span>
+          )}
+        </Label>
+      </div>
 
       <div className="relative">
         <Textarea
           id="role-description"
           value={value}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           rows={4}
           disabled={disabled}
           aria-describedby={cn("role-description-counter", ariaDescribedBy)}
           className="resize-none pr-20"
           placeholder="Describe the role's purpose and expertise area. For example: 'Specializes in software development and technical problem-solving' or 'Focuses on user experience and visual design solutions.'"
+          tabIndex={0}
         />
 
         {/* Character Counter */}

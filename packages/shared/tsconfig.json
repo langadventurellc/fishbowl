@@ -5,9 +5,10 @@
     "rootDir": "src",
     "noEmit": false,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {},
+    "composite": true
   },
-  "include": ["src"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.json"],
   "exclude": ["node_modules", "dist"],
   "references": []
 }

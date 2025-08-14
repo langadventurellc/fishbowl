@@ -1,7 +1,7 @@
 ---
 id: E-desktop-integration-and
 title: Desktop Integration and Services
-status: open
+status: done
 priority: medium
 parent: P-implement-roles-settings-with
 prerequisites:

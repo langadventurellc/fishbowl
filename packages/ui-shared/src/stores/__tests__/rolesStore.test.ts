@@ -60,6 +60,7 @@ describe("rolesStore", () => {
     const validRoleData: RoleFormData = {
       name: "Test Role",
       description: "Test description",
+      systemPrompt: "Test system prompt",
     };
 
     it("should create a new role with valid data", () => {
@@ -92,6 +93,7 @@ describe("rolesStore", () => {
       const duplicateData: RoleFormData = {
         name: "TEST ROLE",
         description: "Different description",
+        systemPrompt: "Test system prompt",
       };
 
       const secondId = store.createRole(duplicateData);
@@ -140,24 +142,25 @@ describe("rolesStore", () => {
       expect(state.error?.message).toBe(null);
     });
 
-    it("should create a role without systemPrompt (backward compatibility)", () => {
+    it("should create a role with required systemPrompt", () => {
       const store = useRolesStore.getState();
 
-      const roleDataWithoutPrompt: RoleFormData = {
+      const roleDataWithPrompt: RoleFormData = {
         name: "Simple Role",
-        description: "Role without system prompt",
+        description: "Role with system prompt",
+        systemPrompt: "Test system prompt",
       };
 
-      const roleId = store.createRole(roleDataWithoutPrompt);
+      const roleId = store.createRole(roleDataWithPrompt);
 
       expect(roleId).toBeTruthy();
       const state = useRolesStore.getState();
       expect(state.roles).toHaveLength(1);
-      expect(state.roles[0]!.name).toBe(roleDataWithoutPrompt.name);
-      expect(state.roles[0]!.description).toBe(
-        roleDataWithoutPrompt.description,
+      expect(state.roles[0]!.name).toBe(roleDataWithPrompt.name);
+      expect(state.roles[0]!.description).toBe(roleDataWithPrompt.description);
+      expect(state.roles[0]!.systemPrompt).toBe(
+        roleDataWithPrompt.systemPrompt,
       );
-      expect(state.roles[0]!.systemPrompt).toBeUndefined();
       expect(state.error?.message).toBe(null);
     });
   });
@@ -167,6 +170,7 @@ describe("rolesStore", () => {
       id: "existing-1",
       name: "Original Role",
       description: "Original description",
+      systemPrompt: "Original system prompt",
       createdAt: "2024-01-01T00:00:00.000Z",
       updatedAt: "2024-01-01T00:00:00.000Z",
     };
@@ -197,6 +201,7 @@ describe("rolesStore", () => {
       const updateData: RoleFormData = {
         name: "Updated Role",
         description: "Updated description",
+        systemPrompt: "Updated system prompt",
       };
 
       store.updateRole(existingRole.id, updateData);
@@ -217,6 +222,7 @@ describe("rolesStore", () => {
       const updateData: RoleFormData = {
         name: "Updated Role",
         description: "Updated description",
+        systemPrompt: "Test system prompt",
       };
 
       store.updateRole("non-existent", updateData);
@@ -231,6 +237,7 @@ describe("rolesStore", () => {
         id: "existing-2",
         name: "Second Role",
         description: "Second description",
+        systemPrompt: "Test system prompt",
         createdAt: "2024-01-01T00:00:00.000Z",
         updatedAt: "2024-01-01T00:00:00.000Z",
       };
@@ -259,6 +266,7 @@ describe("rolesStore", () => {
       const updateData: RoleFormData = {
         name: existingRole.name,
         description: "Different description",
+        systemPrompt: "Test system prompt",
       };
 
       store.updateRole(secondRole.id, updateData);
@@ -274,6 +282,7 @@ describe("rolesStore", () => {
       const updateData: RoleFormData = {
         name: existingRole.name, // Same name
         description: "Updated description",
+        systemPrompt: "Test system prompt",
       };
 
       store.updateRole(existingRole.id, updateData);
@@ -329,6 +338,7 @@ describe("rolesStore", () => {
       const updateData: RoleFormData = {
         name: existingRole.name,
         description: existingRole.description,
+        systemPrompt: "Test system prompt",
         // systemPrompt not provided, should remain as original or undefined depending on schema
       };
 
@@ -344,8 +354,9 @@ describe("rolesStore", () => {
   describe("deleteRole action", () => {
     const existingRole: RoleViewModel = {
       id: "existing-1",
-      name: "Test Role",
-      description: "Test description",
+      name: "Original Role",
+      description: "Original description",
+      systemPrompt: "Test system prompt",
       createdAt: "2024-01-01T00:00:00.000Z",
       updatedAt: "2024-01-01T00:00:00.000Z",
     };
@@ -394,8 +405,9 @@ describe("rolesStore", () => {
   describe("getRoleById action", () => {
     const existingRole: RoleViewModel = {
       id: "existing-1",
-      name: "Test Role",
-      description: "Test description",
+      name: "Original Role",
+      description: "Original description",
+      systemPrompt: "Test system prompt",
       createdAt: "2024-01-01T00:00:00.000Z",
       updatedAt: "2024-01-01T00:00:00.000Z",
     };
@@ -443,13 +455,15 @@ describe("rolesStore", () => {
         id: "role-1",
         name: "First Role",
         description: "First description",
+        systemPrompt: "Test system prompt",
         createdAt: "2024-01-01T00:00:00.000Z",
         updatedAt: "2024-01-01T00:00:00.000Z",
       },
       {
-        id: "role-2",
-        name: "Second Role",
-        description: "Second description",
+        id: "role-1",
+        name: "First Role",
+        description: "First description",
+        systemPrompt: "Test system prompt",
         createdAt: "2024-01-01T00:00:00.000Z",
         updatedAt: "2024-01-01T00:00:00.000Z",
       },
@@ -570,8 +584,9 @@ describe("rolesStore", () => {
         id: "role-2",
         name: "Test Role 2",
         description: "Second test role",
-        createdAt: "2025-01-10T11:00:00.000Z",
-        updatedAt: "2025-01-10T11:00:00.000Z",
+        systemPrompt: "You are another test assistant",
+        createdAt: "2024-01-01T00:00:00.000Z",
+        updatedAt: "2024-01-01T00:00:00.000Z",
       },
     ];
 
@@ -959,9 +974,10 @@ describe("rolesStore", () => {
         useRolesStore.setState({
           roles: [
             {
-              id: "1",
-              name: "Test",
-              description: "Test",
+              id: "role-1",
+              name: "First Role",
+              description: "First description",
+              systemPrompt: "Test system prompt",
               createdAt: "2024-01-01T00:00:00.000Z",
               updatedAt: "2024-01-01T00:00:00.000Z",
             },
@@ -1005,9 +1021,10 @@ describe("rolesStore", () => {
         useRolesStore.setState({
           roles: [
             {
-              id: "1",
-              name: "Test",
-              description: "Test",
+              id: "role-1",
+              name: "First Role",
+              description: "First description",
+              systemPrompt: "Test system prompt",
               createdAt: "2024-01-01T00:00:00.000Z",
               updatedAt: "2024-01-01T00:00:00.000Z",
             },
@@ -1050,9 +1067,10 @@ describe("rolesStore", () => {
         useRolesStore.setState({
           roles: [
             {
-              id: "1",
-              name: "Test",
-              description: "Test",
+              id: "role-1",
+              name: "First Role",
+              description: "First description",
+              systemPrompt: "Test system prompt",
               createdAt: "2024-01-01T00:00:00.000Z",
               updatedAt: "2024-01-01T00:00:00.000Z",
             },
@@ -1188,9 +1206,10 @@ describe("rolesStore", () => {
         useRolesStore.setState({
           roles: [
             {
-              id: "1",
-              name: "",
-              description: "",
+              id: "role-1",
+              name: "First Role",
+              description: "First description",
+              systemPrompt: "Test system prompt",
               createdAt: "2024-01-01T00:00:00.000Z",
               updatedAt: "2024-01-01T00:00:00.000Z",
             },
@@ -1267,6 +1286,7 @@ describe("rolesStore", () => {
         const roleData: RoleFormData = {
           name: "Test Role",
           description: "Test description",
+          systemPrompt: "Test system prompt",
         };
 
         const roleId = store.createRole(roleData);
@@ -1287,6 +1307,7 @@ describe("rolesStore", () => {
           id: "existing-1",
           name: "Original Role",
           description: "Original description",
+          systemPrompt: "Test system prompt",
           createdAt: "2024-01-01T00:00:00.000Z",
           updatedAt: "2024-01-01T00:00:00.000Z",
         };
@@ -1314,6 +1335,7 @@ describe("rolesStore", () => {
         const updateData: RoleFormData = {
           name: "Updated Role",
           description: "Updated description",
+          systemPrompt: "Test system prompt",
         };
 
         store.updateRole(existingRole.id, updateData);
@@ -1330,8 +1352,9 @@ describe("rolesStore", () => {
         // Setup existing role
         const existingRole: RoleViewModel = {
           id: "existing-1",
-          name: "Test Role",
-          description: "Test description",
+          name: "Original Role",
+          description: "Original description",
+          systemPrompt: "Test system prompt",
           createdAt: "2024-01-01T00:00:00.000Z",
           updatedAt: "2024-01-01T00:00:00.000Z",
         };
@@ -1392,6 +1415,7 @@ describe("rolesStore", () => {
         const updateData: RoleFormData = {
           name: "Updated Role",
           description: "Updated description",
+          systemPrompt: "Test system prompt",
         };
 
         store.updateRole("non-existent", updateData);
@@ -1424,6 +1448,7 @@ describe("rolesStore", () => {
         const roleData: RoleFormData = {
           name: "Test Role",
           description: "Test description",
+          systemPrompt: "Test system prompt",
         };
 
         const roleId = store.createRole(roleData);
@@ -1446,6 +1471,7 @@ describe("rolesStore", () => {
           id: "existing-1",
           name: "Original Role",
           description: "Original description",
+          systemPrompt: "Test system prompt",
           createdAt: "2024-01-01T00:00:00.000Z",
           updatedAt: "2024-01-01T00:00:00.000Z",
         };
@@ -1473,6 +1499,7 @@ describe("rolesStore", () => {
         const updateData: RoleFormData = {
           name: "Updated Role",
           description: "Updated description",
+          systemPrompt: "Test system prompt",
         };
 
         store.updateRole(existingRole.id, updateData);
@@ -1493,8 +1520,9 @@ describe("rolesStore", () => {
         // Setup existing role
         const existingRole: RoleViewModel = {
           id: "existing-1",
-          name: "Test Role",
-          description: "Test description",
+          name: "Original Role",
+          description: "Original description",
+          systemPrompt: "Test system prompt",
           createdAt: "2024-01-01T00:00:00.000Z",
           updatedAt: "2024-01-01T00:00:00.000Z",
         };
@@ -1552,12 +1580,14 @@ describe("rolesStore", () => {
 
         const roleData1: RoleFormData = {
           name: "Test Role 1",
-          description: "Test description 1",
+          description: "Test description",
+          systemPrompt: "Test system prompt",
         };
 
         const roleData2: RoleFormData = {
           name: "Test Role 2",
-          description: "Test description 2",
+          description: "Test description",
+          systemPrompt: "Test system prompt",
         };
 
         store.createRole(roleData1);
@@ -1642,8 +1672,9 @@ describe("rolesStore", () => {
         const store = useRolesStore.getState();
 
         const updateData: RoleFormData = {
-          name: "Updated Name",
+          name: "Updated Role",
           description: "Updated description",
+          systemPrompt: "Test system prompt",
         };
 
         store.updateRole(originalRole.id, updateData);
@@ -1660,8 +1691,9 @@ describe("rolesStore", () => {
         const store = useRolesStore.getState();
 
         const roleData: RoleFormData = {
-          name: "New Role",
-          description: "New role description",
+          name: "Test Role",
+          description: "Test description",
+          systemPrompt: "Test system prompt",
         };
 
         store.createRole(roleData);

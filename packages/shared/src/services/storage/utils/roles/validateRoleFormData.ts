@@ -3,6 +3,7 @@ import { formatRolesValidationErrors } from "../formatRolesValidationErrors";
 
 /**
  * Validates form data before saving, providing UI-friendly validation.
+ * Uses the updated persistence schema that now requires systemPrompt.
  * Returns validation result without throwing errors.
  *
  * @param formData - Form data from UI
@@ -21,7 +22,7 @@ export function validateRoleFormData(formData: {
   description: string;
   systemPrompt: string;
 }): { isValid: boolean; errors: Array<{ path: string; message: string }> } {
-  // Create a role object with minimal required fields
+  // Create a role object with minimal required fields for validation
   const roleData = {
     id: "temp-validation-id", // Temporary ID for validation
     ...formData,

@@ -48,17 +48,30 @@ describe("persistedRoleSchema", () => {
       expect(result.updatedAt).toBeUndefined();
     });
 
-    it("should accept role with empty description and systemPrompt", () => {
-      const roleWithEmptyFields = {
-        id: "role-empty",
+    it("should accept role with empty description but require systemPrompt", () => {
+      const roleWithEmptyDescription = {
+        id: "role-empty-desc",
         name: "Basic Role",
         description: "",
+        systemPrompt: "You are a helpful assistant",
+      };
+
+      const result = persistedRoleSchema.parse(roleWithEmptyDescription);
+      expect(result.description).toBe("");
+      expect(result.systemPrompt).toBe("You are a helpful assistant");
+    });
+
+    it("should reject role with empty systemPrompt", () => {
+      const roleWithEmptySystemPrompt = {
+        id: "role-empty-prompt",
+        name: "Basic Role",
+        description: "Valid description",
         systemPrompt: "",
       };
 
-      const result = persistedRoleSchema.parse(roleWithEmptyFields);
-      expect(result.description).toBe("");
-      expect(result.systemPrompt).toBe("");
+      expect(() =>
+        persistedRoleSchema.parse(roleWithEmptySystemPrompt),
+      ).toThrow();
     });
 
     it("should accept role with minimum length name", () => {
@@ -274,14 +287,15 @@ describe("persistedRoleSchema", () => {
     });
 
     describe("systemPrompt field", () => {
-      it("should accept empty systemPrompt", () => {
-        const result = persistedRoleSchema.parse({
-          id: "test-id",
-          name: "Test Role",
-          description: "Test",
-          systemPrompt: "",
-        });
-        expect(result.systemPrompt).toBe("");
+      it("should reject empty systemPrompt", () => {
+        expect(() => {
+          persistedRoleSchema.parse({
+            id: "test-id",
+            name: "Test Role",
+            description: "Test",
+            systemPrompt: "",
+          });
+        }).toThrow();
       });
 
       it("should reject systemPrompt exceeding 5000 characters", () => {

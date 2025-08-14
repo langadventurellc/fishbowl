@@ -459,7 +459,7 @@ describe("formatRolesValidationErrors", () => {
                 id: "test",
                 name: "a".repeat(101),
                 description: "",
-                systemPrompt: "",
+                systemPrompt: "Valid prompt",
               },
             ],
           },
@@ -468,7 +468,12 @@ describe("formatRolesValidationErrors", () => {
         {
           data: {
             roles: [
-              { id: "", name: "Valid", description: "", systemPrompt: "" },
+              {
+                id: "",
+                name: "Valid",
+                description: "",
+                systemPrompt: "Valid prompt",
+              },
             ],
           },
           expectedPattern: /must have a value|cannot be empty/i,
@@ -480,7 +485,7 @@ describe("formatRolesValidationErrors", () => {
                 id: "test",
                 name: "Valid",
                 description: "",
-                systemPrompt: "",
+                systemPrompt: "Valid prompt",
                 createdAt: "not-a-date",
               },
             ],

@@ -31,7 +31,7 @@ describe("Role Validation Helpers", () => {
     id: "minimal-role",
     name: "Minimal",
     description: "",
-    systemPrompt: "",
+    systemPrompt: "You are a helpful assistant focused on your assigned role.",
   };
 
   describe("validateSingleRole", () => {
@@ -116,6 +116,26 @@ describe("Role Validation Helpers", () => {
         "cannot exceed 5000 characters",
       );
     });
+
+    it("should return invalid for empty system prompt", () => {
+      const result = validateRoleFormData({
+        ...validFormData,
+        systemPrompt: "",
+      });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.some((e) => e.message.includes("required"))).toBe(
+        true,
+      );
+    });
+
+    it("should return invalid for whitespace-only system prompt", () => {
+      const result = validateRoleFormData({
+        ...validFormData,
+        systemPrompt: "   ",
+      });
+      expect(result.isValid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
   });
 
   describe("validateRolesArray", () => {
@@ -132,7 +152,12 @@ describe("Role Validation Helpers", () => {
     it("should handle mixed valid/invalid with partial failure allowed", () => {
       const rolesArray = [
         validRoleData,
-        { id: "", name: "Invalid", description: "", systemPrompt: "" },
+        {
+          id: "",
+          name: "Invalid",
+          description: "",
+          systemPrompt: "Valid prompt",
+        },
         validRoleDataMinimal,
       ];
 
@@ -309,9 +334,16 @@ describe("Role Validation Helpers", () => {
         expect(result.isValid).toBe(true);
       });
 
-      it("should allow empty prompt", () => {
+      it("should reject empty prompt", () => {
         const result = validateSystemPrompt("");
-        expect(result.isValid).toBe(true);
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe("System prompt is required");
+      });
+
+      it("should reject whitespace-only prompt", () => {
+        const result = validateSystemPrompt("   ");
+        expect(result.isValid).toBe(false);
+        expect(result.error).toBe("System prompt cannot be only whitespace");
       });
 
       it("should reject prompt too long", () => {

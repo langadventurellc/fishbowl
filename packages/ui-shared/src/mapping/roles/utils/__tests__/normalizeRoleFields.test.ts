@@ -175,7 +175,7 @@ describe("normalizeRoleFields", () => {
   });
 
   describe("systemPrompt field", () => {
-    it("should trim and enforce systemPrompt constraints (0-2000 chars)", () => {
+    it("should trim and enforce systemPrompt constraints (0-5000 chars)", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
@@ -188,7 +188,7 @@ describe("normalizeRoleFields", () => {
       expect(result.systemPrompt).toBe("You are a helpful assistant");
     });
 
-    it("should allow empty systemPrompt (minimum 0 chars)", () => {
+    it("should provide default for empty systemPrompt (minimum 1 char)", () => {
       const role = {
         id: "role-1",
         name: "Test Role",
@@ -198,8 +198,10 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.systemPrompt).toBe("");
-      expect(result.systemPrompt.length).toBe(0);
+      expect(result.systemPrompt).toBe(
+        "You are a helpful assistant focused on your assigned role.",
+      );
+      expect(result.systemPrompt.length).toBeGreaterThan(0);
     });
 
     it("should truncate long systemPrompts to maximum length", () => {
@@ -207,13 +209,13 @@ describe("normalizeRoleFields", () => {
         id: "role-1",
         name: "Test Role",
         description: "Test description",
-        systemPrompt: "A".repeat(3000), // 3000 chars, max is 2000
+        systemPrompt: "A".repeat(6000), // 6000 chars, max is 5000
       };
 
       const result = normalizeRoleFields(role);
 
-      expect(result.systemPrompt).toBe("A".repeat(2000));
-      expect(result.systemPrompt.length).toBe(2000);
+      expect(result.systemPrompt).toBe("A".repeat(5000));
+      expect(result.systemPrompt.length).toBe(5000);
     });
 
     it("should handle null/undefined systemPrompt", () => {
@@ -226,8 +228,10 @@ describe("normalizeRoleFields", () => {
 
       const result = normalizeRoleFields(role);
 
-      expect(result.systemPrompt).toBe("");
-      expect(result.systemPrompt.length).toBe(0);
+      expect(result.systemPrompt).toBe(
+        "You are a helpful assistant focused on your assigned role.",
+      );
+      expect(result.systemPrompt.length).toBeGreaterThan(0);
     });
   });
 
@@ -283,8 +287,10 @@ describe("normalizeRoleFields", () => {
       expect(result.name.length).toBe(1);
       expect(result.description).toBe("");
       expect(result.description.length).toBe(0);
-      expect(result.systemPrompt).toBe("");
-      expect(result.systemPrompt.length).toBe(0);
+      expect(result.systemPrompt).toBe(
+        "You are a helpful assistant focused on your assigned role.",
+      );
+      expect(result.systemPrompt.length).toBeGreaterThan(0);
     });
   });
 

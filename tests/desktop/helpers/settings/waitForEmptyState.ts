@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import type { TestWindow } from "../../../helpers";
+import type { TestWindow } from "../index";
 
 export const waitForEmptyState = async (window: TestWindow) => {
   // Debug what's actually on the page if empty state not found

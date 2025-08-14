@@ -256,7 +256,7 @@ describe("mapRolesPersistenceToUI", () => {
             id: "long",
             name: "X".repeat(150), // Will be truncated to 100
             description: "Y".repeat(600), // Will be truncated to 500
-            systemPrompt: "Z".repeat(3000), // Will be truncated to 2000
+            systemPrompt: "Z".repeat(6000), // Will be truncated to 5000
             createdAt: "2025-01-10T09:00:00.000Z",
             updatedAt: "2025-01-14T15:30:00.000Z",
           },
@@ -279,8 +279,8 @@ describe("mapRolesPersistenceToUI", () => {
       expect(result[1]!.name.length).toBe(100);
       expect(result[1]!.description).toBe("Y".repeat(500));
       expect(result[1]!.description.length).toBe(500);
-      expect(result[1]!.systemPrompt).toBe("Z".repeat(2000));
-      expect(result[1]!.systemPrompt?.length).toBe(2000);
+      expect(result[1]!.systemPrompt).toBe("Z".repeat(5000));
+      expect(result[1]!.systemPrompt?.length).toBe(5000);
     });
 
     it("should handle roles with mixed timestamp states", () => {
@@ -370,7 +370,7 @@ describe("mapRolesPersistenceToUI", () => {
             id: "emoji-test",
             name: "🚀".repeat(25), // 25 emojis, under 50 char limit (emojis might take 2 chars each)
             description: "👋".repeat(100), // 100 emojis, under 200 char limit
-            systemPrompt: "🤖".repeat(1000), // 1000 emojis, under 2000 char limit
+            systemPrompt: "🤖".repeat(2500), // 2500 emojis, under 5000 char limit
             createdAt: "2025-01-10T09:00:00.000Z",
             updatedAt: "2025-01-14T15:30:00.000Z",
           },
@@ -382,7 +382,7 @@ describe("mapRolesPersistenceToUI", () => {
 
       expect(result[0]!.name).toBe("🚀".repeat(25));
       expect(result[0]!.description).toBe("👋".repeat(100));
-      expect(result[0]!.systemPrompt).toBe("🤖".repeat(1000));
+      expect(result[0]!.systemPrompt).toBe("🤖".repeat(2500));
     });
   });
 

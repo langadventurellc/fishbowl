@@ -64,6 +64,7 @@ describe("mapRolesUIToPersistence", () => {
         id: "test-role",
         name: "Test",
         description: "Test role",
+        systemPrompt: "Test system prompt",
       },
     ];
 

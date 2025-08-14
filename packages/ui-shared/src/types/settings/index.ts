@@ -50,6 +50,7 @@ export * from "./RoleFormData";
 export * from "./RoleFormModalProps";
 export * from "./RoleNameInputProps";
 export * from "./RolesSectionProps";
+export * from "./RoleSystemPromptTextareaProps";
 export * from "./SavedPersonalitiesTabProps";
 export * from "./SettingsContentProps";
 export * from "./SettingsModalProps";

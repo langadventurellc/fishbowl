@@ -33,11 +33,12 @@ describe("SAMPLE_ROLES", () => {
     });
   });
 
-  it("should pass roleSchema validation for name and description", () => {
+  it("should pass roleSchema validation for name, description, and systemPrompt", () => {
     SAMPLE_ROLES.forEach((role) => {
       const result = roleSchema.safeParse({
         name: role.name,
         description: role.description,
+        systemPrompt: role.systemPrompt,
       });
       expect(result.success).toBe(true);
     });

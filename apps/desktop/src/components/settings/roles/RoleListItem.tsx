@@ -13,9 +13,10 @@
  */
 
 import type { RoleListItemProps } from "@fishbowl-ai/ui-shared";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Loader2, Trash2 } from "lucide-react";
 import { memo, useState } from "react";
 import { cn } from "../../../lib/utils";
+import { FOCUS_STYLES, getButtonFocus } from "../../../styles/focus";
 import { truncateDescription } from "../../../utils";
 import { Button } from "../../ui/button";
 import { Card, CardHeader, CardTitle } from "../../ui/card";
@@ -50,30 +51,45 @@ export const RoleListItem = memo<RoleListItemProps>(function RoleListItem({
   return (
     <Card
       className={cn(
-        "hover:shadow-sm transition-shadow duration-[var(--dt-animation-hover-transition)]",
+        "group relative",
+        "border border-border/50 hover:border-border",
+        "bg-card hover:bg-accent/5",
+        "shadow-sm hover:shadow-md",
+        "transition-all duration-[var(--dt-animation-hover-transition)]",
+        "focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2",
         className,
       )}
     >
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
-            <CardTitle className="text-base font-medium mb-1">
+            <CardTitle className="text-base font-semibold text-foreground mb-1.5 leading-tight">
               {role.name}
             </CardTitle>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {truncateDescription(role.description)}
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+              {truncateDescription(role.description, 120)}
             </p>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-1.5 flex-shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-[var(--dt-animation-hover-transition)]">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleEdit}
               disabled={isEditLoading || isDeleteLoading}
               aria-label={`Edit ${role.name} role`}
-              className="h-8 px-3"
+              className={cn(
+                "h-8 px-3",
+                "hover:bg-accent hover:text-accent-foreground",
+                getButtonFocus("ghost", "sm", isEditLoading || isDeleteLoading),
+                "transition-colors duration-[var(--dt-animation-hover-transition)]",
+                isEditLoading && "opacity-50 cursor-wait",
+              )}
             >
-              <Edit className="h-4 w-4 mr-1" />
+              {isEditLoading ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Edit className="h-3.5 w-3.5 mr-1.5" />
+              )}
               Edit
             </Button>
             <Button
@@ -82,9 +98,20 @@ export const RoleListItem = memo<RoleListItemProps>(function RoleListItem({
               onClick={handleDelete}
               disabled={isEditLoading || isDeleteLoading}
               aria-label={`Delete ${role.name} role`}
-              className="h-8 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
+              className={cn(
+                "h-8 px-3",
+                "text-muted-foreground hover:text-destructive",
+                "hover:bg-destructive/10",
+                FOCUS_STYLES.button,
+                "transition-colors duration-[var(--dt-animation-hover-transition)]",
+                isDeleteLoading && "opacity-50 cursor-wait",
+              )}
             >
-              <Trash2 className="h-4 w-4 mr-1" />
+              {isDeleteLoading ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : (
+                <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              )}
               Delete
             </Button>
           </div>

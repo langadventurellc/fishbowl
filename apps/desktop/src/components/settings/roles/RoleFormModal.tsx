@@ -18,8 +18,11 @@ import {
   useUnsavedChanges,
   type RoleFormData,
 } from "@fishbowl-ai/ui-shared";
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
+import { useFocusTrap } from "../../../hooks/useFocusTrap";
+import { announceToScreenReader } from "../../../utils/announceToScreenReader";
+import { ConfirmationDialog } from "../../ui/confirmation-dialog";
 import {
   Dialog,
   DialogContent,
@@ -37,9 +40,31 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   onSave,
   isLoading = false,
 }) => {
-  const { showConfirmation } = useConfirmationDialog();
+  const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
   const { hasUnsavedChanges } = useUnsavedChanges();
   const { roles } = useRoles();
+
+  // Focus trap setup
+  const triggerRef = useRef<HTMLElement | null>(null);
+  const { containerRef } = useFocusTrap({
+    isActive: isOpen,
+    restoreFocus: true,
+    initialFocusSelector: "[data-role-modal-initial-focus]",
+  });
+
+  // Store the trigger element when modal opens and announce to screen readers
+  useEffect(() => {
+    if (isOpen && document.activeElement instanceof HTMLElement) {
+      triggerRef.current = document.activeElement;
+
+      // Announce modal state to screen readers
+      const message =
+        mode === "create"
+          ? "Create role dialog opened. Press Tab to navigate between fields."
+          : "Edit role dialog opened. Press Tab to navigate between fields.";
+      announceToScreenReader(message, "polite");
+    }
+  }, [isOpen, mode]);
 
   // Handle modal close with unsaved changes protection
   const handleOpenChange = useCallback(
@@ -51,6 +76,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
             "You have unsaved changes. Are you sure you want to close without saving?",
           confirmText: "Close Without Saving",
           cancelText: "Continue Editing",
+          variant: "destructive",
         });
         if (!confirmed) return;
       }
@@ -73,26 +99,49 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
     [onSave, onOpenChange],
   );
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts (Escape handled in DialogContent onKeyDown)
   useEffect(() => {
     if (!isOpen) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl/Cmd + S to save (form will handle this through form submission)
+      // Ctrl/Cmd + S to save
       if ((event.ctrlKey || event.metaKey) && event.key === "s") {
         event.preventDefault();
-        // The CreateRoleForm component will handle the actual submission
-        // We just prevent the browser's default save dialog
+        // Trigger form submission
+        const form = document.querySelector(
+          ".role-form-modal form",
+        ) as HTMLFormElement;
+        if (form) {
+          const submitEvent = new Event("submit", {
+            cancelable: true,
+            bubbles: true,
+          });
+          form.dispatchEvent(submitEvent);
+        }
       }
     };
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen]);
+  }, [isOpen, handleOpenChange]);
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent className="role-form-modal max-w-2xl max-h-[80vh] overflow-y-auto">
+      <DialogContent
+        ref={containerRef}
+        className="role-form-modal max-w-2xl max-h-[80vh] overflow-y-auto"
+        onOpenAutoFocus={(e) => {
+          // Prevent Radix's default focus behavior
+          e.preventDefault();
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Escape") {
+            e.preventDefault();
+            e.stopPropagation();
+            onOpenChange(false);
+          }
+        }}
+      >
         <DialogHeader>
           <DialogTitle>
             {mode === "create" ? "Create Role" : "Edit Role"}
@@ -113,6 +162,11 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
           isLoading={isLoading}
         />
       </DialogContent>
+
+      {/* Confirmation Dialog for unsaved changes */}
+      {confirmationDialogProps && (
+        <ConfirmationDialog {...confirmationDialogProps} />
+      )}
     </Dialog>
   );
 };
