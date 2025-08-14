@@ -251,6 +251,32 @@ export class FileStorageService<T = unknown> {
   }
 
   /**
+   * Delete JSON file from storage.
+   * @param filePath - Path to JSON file to delete (relative or absolute)
+   * @returns Promise resolving when file deletion completes
+   * @throws FileStorageError for file system errors
+   */
+  async deleteJsonFile(filePath: string): Promise<void> {
+    const absolutePath = this.validateAndResolvePath(filePath);
+
+    try {
+      await this.fs.unlink(absolutePath);
+    } catch (error) {
+      // Re-throw custom errors unchanged
+      if (error instanceof FileStorageError) {
+        throw error;
+      }
+
+      // Map Node.js errors to custom errors
+      throw ErrorFactory.fromNodeError(
+        error as SystemError,
+        "delete",
+        absolutePath,
+      );
+    }
+  }
+
+  /**
    * Validate file path and resolve to absolute path.
    * Prevents path traversal attacks and normalizes paths.
    * @param filePath - Input file path

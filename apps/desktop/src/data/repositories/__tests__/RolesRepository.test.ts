@@ -27,17 +27,11 @@ jest.mock("@fishbowl-ai/shared", () => ({
   createDefaultRolesSettings: jest.fn(),
 }));
 
-// Mock fs.promises for resetRoles
-jest.mock("fs", () => ({
-  promises: {
-    unlink: jest.fn(),
-  },
-}));
+// FileStorageService mock now handles deleteJsonFile instead of direct fs access
 
 const MockedFileStorageService = FileStorageService as jest.MockedClass<
   typeof FileStorageService
 >;
-const mockFs = require("fs").promises;
 
 describe("RolesRepository", () => {
   let repository: RolesRepository;
@@ -102,6 +96,7 @@ describe("RolesRepository", () => {
     mockFileStorageService = {
       readJsonFile: jest.fn(),
       writeJsonFile: jest.fn(),
+      deleteJsonFile: jest.fn(),
     } as any;
 
     MockedFileStorageService.mockImplementation(() => mockFileStorageService);
@@ -629,27 +624,31 @@ describe("RolesRepository", () => {
 
   describe("resetRoles", () => {
     it("should delete roles file successfully", async () => {
-      mockFs.unlink.mockResolvedValue();
+      mockFileStorageService.deleteJsonFile.mockResolvedValue();
 
       await repository.resetRoles();
 
-      expect(mockFs.unlink).toHaveBeenCalledTimes(1);
-      expect(mockFs.unlink).toHaveBeenCalledWith(expectedFilePath);
+      expect(mockFileStorageService.deleteJsonFile).toHaveBeenCalledTimes(1);
+      expect(mockFileStorageService.deleteJsonFile).toHaveBeenCalledWith(
+        expectedFilePath,
+      );
     });
 
     it("should not throw error when file does not exist", async () => {
       const enoentError = new Error("File not found");
       (enoentError as any).code = "ENOENT";
-      mockFs.unlink.mockRejectedValue(enoentError);
+      mockFileStorageService.deleteJsonFile.mockRejectedValue(enoentError);
 
       await expect(repository.resetRoles()).resolves.not.toThrow();
-      expect(mockFs.unlink).toHaveBeenCalledWith(expectedFilePath);
+      expect(mockFileStorageService.deleteJsonFile).toHaveBeenCalledWith(
+        expectedFilePath,
+      );
     });
 
     it("should throw error for permission issues", async () => {
       const permissionError = new Error("Permission denied");
       (permissionError as any).code = "EPERM";
-      mockFs.unlink.mockRejectedValue(permissionError);
+      mockFileStorageService.deleteJsonFile.mockRejectedValue(permissionError);
 
       await expect(repository.resetRoles()).rejects.toThrow(
         "Permission denied during roles reset",
@@ -658,7 +657,7 @@ describe("RolesRepository", () => {
 
     it("should throw error for other file system issues", async () => {
       const unknownError = new Error("Unknown error");
-      mockFs.unlink.mockRejectedValue(unknownError);
+      mockFileStorageService.deleteJsonFile.mockRejectedValue(unknownError);
 
       await expect(repository.resetRoles()).rejects.toThrow(
         "Failed to reset roles: Unknown error",
@@ -666,7 +665,7 @@ describe("RolesRepository", () => {
     });
 
     it("should handle non-Error exceptions", async () => {
-      mockFs.unlink.mockRejectedValue("String error");
+      mockFileStorageService.deleteJsonFile.mockRejectedValue("String error");
 
       await expect(repository.resetRoles()).rejects.toThrow(
         "Failed to reset roles: Unknown error",

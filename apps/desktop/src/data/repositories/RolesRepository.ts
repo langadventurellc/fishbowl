@@ -140,11 +140,8 @@ export class RolesRepository {
         filePath: this.filePath,
       });
 
-      // Use FileStorageService to delete file if it has a delete method,
-      // otherwise use Node.js fs directly through FileStorageService
-      // For now, we'll use the approach that works with existing patterns
-      const fs = require("fs").promises;
-      await fs.unlink(this.filePath);
+      // Use FileStorageService to delete file consistently with abstraction
+      await this.fileStorageService.deleteJsonFile(this.filePath);
 
       this.logger.debug("Roles file deleted successfully");
     } catch (error: unknown) {
