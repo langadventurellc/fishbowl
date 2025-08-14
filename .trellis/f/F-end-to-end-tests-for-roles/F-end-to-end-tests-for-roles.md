@@ -42,10 +42,16 @@ affectedFiles:
     New comprehensive e2e test suite for default roles loading with 5 test cases
     covering role count, names/descriptions, UI state, card structure, and file
     persistence
+  tests/desktop/features/settings/roles/roles-creation.spec.ts:
+    Created comprehensive end-to-end test suite for role creation functionality
+    with 9 test cases covering form validation, modal interactions, data
+    persistence, and edge cases
+  tests/desktop/helpers/settings/waitForRoleModal.ts: Updated modal selectors to
+    handle multiple dialog elements and use specific Create Role modal
+    identification
 log: []
 schema: v1.0
 childrenIds:
-  - T-implement-default-roles
   - T-implement-role-creation-tests
   - T-implement-role-deletion-tests
   - T-implement-role-editing-tests
@@ -54,6 +60,7 @@ childrenIds:
   - T-create-roles-storage-cleanup
   - T-create-roles-test-barrel
   - T-create-roles-test-suite
+  - T-implement-default-roles
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z
 ---
