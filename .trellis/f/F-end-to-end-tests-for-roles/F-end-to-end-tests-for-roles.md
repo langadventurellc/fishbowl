@@ -38,17 +38,21 @@ affectedFiles:
   tests/desktop/helpers/settings/createLongTextRoleData.ts: Created edge case generator for maximum character limit testing
   tests/desktop/helpers/settings/createSpecialCharRoleData.ts: Implemented special character handling test data generator
   tests/desktop/helpers/index.ts: Updated barrel export to include all new role mock generators and types
+  tests/desktop/features/settings/roles/roles-default-loading.spec.ts:
+    New comprehensive e2e test suite for default roles loading with 5 test cases
+    covering role count, names/descriptions, UI state, card structure, and file
+    persistence
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-roles-mock-data
-  - T-create-roles-test-barrel
   - T-implement-default-roles
   - T-implement-role-creation-tests
   - T-implement-role-deletion-tests
   - T-implement-role-editing-tests
+  - T-create-roles-mock-data
   - T-create-roles-navigation-and
   - T-create-roles-storage-cleanup
+  - T-create-roles-test-barrel
   - T-create-roles-test-suite
 created: 2025-08-13T18:12:56.311Z
 updated: 2025-08-13T18:12:56.311Z

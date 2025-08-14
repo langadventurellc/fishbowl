@@ -1,7 +1,7 @@
 ---
 id: T-create-roles-test-barrel
 title: Create roles test barrel exports
-status: open
+status: done
 priority: low
 parent: F-end-to-end-tests-for-roles
 prerequisites:
@@ -10,7 +10,12 @@ prerequisites:
   - T-create-roles-navigation-and
   - T-create-roles-mock-data
 affectedFiles: {}
-log: []
+log:
+  - Verified that the roles test barrel exports are already properly implemented
+    in tests/desktop/helpers/index.ts. All required utilities are exported
+    including test suite setup, navigation helpers, wait helpers, mock data
+    generators, storage cleanup utilities, and types. The barrel file follows
+    established patterns and enables clean imports for all test suites.
 schema: v1.0
 childrenIds: []
 created: 2025-08-13T18:18:05.926Z

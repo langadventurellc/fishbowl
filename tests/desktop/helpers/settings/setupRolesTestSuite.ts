@@ -6,7 +6,6 @@ import {
   type TestElectronApplication,
   type TestWindow,
 } from "../index";
-import { cleanupRolesStorage } from "./cleanupRolesStorage";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -15,6 +14,7 @@ export const setupRolesTestSuite = () => {
   let window: TestWindow;
   let userDataPath: string;
   let rolesConfigPath: string;
+  let cleanRolesData: string; // Store the clean default roles JSON
 
   test.beforeAll(async () => {
     // Launch Electron app with test environment
@@ -27,28 +27,41 @@ export const setupRolesTestSuite = () => {
     window = electronApp.window;
     await window.waitForLoadState("domcontentloaded");
     await window.waitForLoadState("networkidle");
+
+    // Get roles config path for tests
+    userDataPath = await electronApp.evaluate(async ({ app }) => {
+      return app.getPath("userData");
+    });
+    rolesConfigPath = path.join(userDataPath, "roles.json");
+
+    // Load clean default roles data directly from source (no data poisoning risk)
+    try {
+      const fs = await import("fs/promises");
+      const defaultRolesSourcePath = path.join(
+        __dirname,
+        "../../../../packages/shared/src/data/defaultRoles.json",
+      );
+      cleanRolesData = await fs.readFile(defaultRolesSourcePath, "utf-8");
+    } catch (error) {
+      console.warn("Could not read default roles source data:", error);
+      // Fallback - this should never happen in normal operation
+      cleanRolesData = JSON.stringify({
+        schemaVersion: "1.0.0",
+        roles: [],
+        lastUpdated: new Date().toISOString(),
+      });
+    }
   });
 
   test.beforeEach(async () => {
-    // Reset roles configuration state between tests
+    // Restore clean default roles state before each test
     try {
-      userDataPath = await electronApp.evaluate(async ({ app }) => {
-        return app.getPath("userData");
-      });
-
-      rolesConfigPath = path.join(userDataPath, "roles.json");
-
-      // Delete roles config file first
-      await cleanupRolesStorage(rolesConfigPath);
-
-      // Note: Unlike LLM config, roles doesn't have refreshCache yet
-      // If caching issues arise, we may need to add this functionality
-      // For now, file deletion should be sufficient
-
-      // Small delay for cleanup operations
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      if (rolesConfigPath && cleanRolesData) {
+        const fs = await import("fs/promises");
+        await fs.writeFile(rolesConfigPath, cleanRolesData, "utf-8");
+      }
     } catch (error) {
-      console.warn("Could not setup clean test state:", error);
+      console.warn("Could not restore clean roles state:", error);
     }
 
     // Ensure modal is closed before each test
@@ -101,12 +114,7 @@ export const setupRolesTestSuite = () => {
       // Window might be closed, ignore
     }
 
-    // Clean up storage after each test to ensure clean state
-    if (rolesConfigPath) {
-      await cleanupRolesStorage(rolesConfigPath);
-      // Wait for cleanup to complete
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
+    // No need to clean up storage - beforeEach restores clean state
   });
 
   test.afterAll(async () => {
