@@ -1,14 +1,23 @@
 ---
 id: F-legacy-code-cleanup-and
 title: Legacy Code Cleanup and Preparation
-status: open
+status: in-progress
 priority: medium
 parent: E-data-foundation-and-schema-1
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/CreatePersonalityForm.tsx:
+    Removed localStorage auto-save functionality, draft cleanup, draft recovery,
+    and localStorage clearing after save. Updated imports to remove unused
+    useEffect and useDebounce. Updated component documentation to remove
+    localStorage references.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-clean-up-unused-imports-and
+  - T-remove-draft-saving-logic-and
+  - T-remove-localstorage-usage
+  - T-remove-tab-navigation-system
 created: 2025-08-15T18:04:15.427Z
 updated: 2025-08-15T18:04:15.427Z
 ---

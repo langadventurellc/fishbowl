@@ -7,7 +7,7 @@
  * - Collapsible behavior sliders section (14 additional traits)
  * - Custom instructions textarea
  * - Form validation with helpful error messages
- * - Unsaved changes tracking with auto-save functionality
+ * - Unsaved changes tracking
  * - Edit mode support with pre-populated data
  * - Comprehensive error handling and user feedback
  *
@@ -21,9 +21,8 @@ import {
   type PersonalityFormData,
 } from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDebounce } from "../../../hooks/useDebounce";
 import {
   Form,
   FormControl,
@@ -173,93 +172,6 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   //   setUnsavedChanges(form.formState.isDirty);
   // }, [form.formState.isDirty, setUnsavedChanges]);
 
-  // Auto-save functionality with localStorage
-  const autoSaveCallback = useCallback(
-    (data: PersonalityFormData) => {
-      if (data.name && data.name.length >= 2 && !isEditMode) {
-        try {
-          const draftKey = `personality-draft-${Date.now()}`;
-          localStorage.setItem(
-            draftKey,
-            JSON.stringify({
-              ...data,
-              timestamp: Date.now(),
-              isEditMode: false,
-            }),
-          );
-          // Clean up old drafts (keep only 3 most recent)
-          cleanupOldDrafts();
-        } catch {
-          logger.warn("Failed to save draft");
-        }
-      }
-    },
-    [isEditMode],
-  );
-
-  const debouncedAutoSave = useDebounce((...args: unknown[]) => {
-    const data = args[0] as PersonalityFormData;
-    autoSaveCallback(data);
-  }, 2000);
-
-  // Cleanup old drafts from localStorage
-  const cleanupOldDrafts = () => {
-    try {
-      const keys = Object.keys(localStorage).filter((key) =>
-        key.startsWith("personality-draft-"),
-      );
-      if (keys.length > 3) {
-        keys
-          .sort()
-          .slice(0, -3)
-          .forEach((key) => localStorage.removeItem(key));
-      }
-    } catch {
-      logger.warn("Failed to cleanup old drafts");
-    }
-  };
-
-  // Auto-save trigger
-  const watchedValues = form.watch();
-  useEffect(() => {
-    if (form.formState.isDirty && form.formState.isValid) {
-      const currentData = form.getValues();
-      debouncedAutoSave(currentData);
-    }
-  }, [
-    watchedValues,
-    debouncedAutoSave,
-    form.formState.isDirty,
-    form.formState.isValid,
-    form,
-  ]);
-
-  // Draft recovery on component mount
-  useEffect(() => {
-    if (!initialData) {
-      try {
-        const keys = Object.keys(localStorage).filter((key) =>
-          key.startsWith("personality-draft-"),
-        );
-        if (keys.length > 0) {
-          const latestKey = keys.sort().pop();
-          if (latestKey) {
-            const savedDraft = localStorage.getItem(latestKey);
-            if (savedDraft) {
-              const draftData = JSON.parse(savedDraft);
-              if (draftData && !draftData.isEditMode) {
-                // For now, just log that a draft exists - in production you might show a dialog
-                logger.info("Draft available for recovery", { draftData });
-              }
-            }
-          }
-        }
-      } catch {
-        logger.warn("Failed to recover draft");
-      }
-    }
-  }, [initialData]);
-
   // TEMPORARILY DISABLED: Set initial saved data for comparison
   // useEffect(() => {
   //   if (initialDataRef.current) {
@@ -279,18 +191,6 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
         // setLastSavedData is not needed since we use form.formState.isDirty
         form.reset(data);
         setUnsavedChanges(false);
-
-        // Clear draft if this was a new personality
-        if (!isEditMode) {
-          try {
-            const keys = Object.keys(localStorage).filter((key) =>
-              key.startsWith("personality-draft-"),
-            );
-            keys.forEach((key) => localStorage.removeItem(key));
-          } catch {
-            logger.warn("Failed to clear drafts");
-          }
-        }
       } catch (error) {
         logger.error("Failed to save personality", error as Error);
         // Error handling could be enhanced with toast notifications
@@ -298,7 +198,7 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
         setIsSubmitting(false);
       }
     },
-    [onSave, form, setUnsavedChanges, isEditMode],
+    [onSave, form, setUnsavedChanges],
   );
 
   const handleCancel = useCallback(() => {

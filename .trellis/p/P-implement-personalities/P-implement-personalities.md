@@ -1,13 +1,22 @@
 ---
 id: P-implement-personalities
 title: Implement Personalities Settings with JSON Persistence
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/CreatePersonalityForm.tsx:
+    Removed localStorage auto-save functionality, draft cleanup, draft recovery,
+    and localStorage clearing after save. Updated imports to remove unused
+    useEffect and useDebounce. Updated component documentation to remove
+    localStorage references.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - E-data-foundation-and-schema-1
+  - E-desktop-integration-and-1
+  - E-persistence-layer-and-state
+  - E-ui-components-and-user
 created: 2025-08-15T17:55:26.428Z
 updated: 2025-08-15T17:55:26.428Z
 ---

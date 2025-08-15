@@ -1,14 +1,23 @@
 ---
 id: E-data-foundation-and-schema-1
 title: Data Foundation and Schema Design
-status: open
+status: in-progress
 priority: medium
 parent: P-implement-personalities
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/CreatePersonalityForm.tsx:
+    Removed localStorage auto-save functionality, draft cleanup, draft recovery,
+    and localStorage clearing after save. Updated imports to remove unused
+    useEffect and useDebounce. Updated component documentation to remove
+    localStorage references.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-default-personalities-data
+  - F-legacy-code-cleanup-and
+  - F-persistence-schema-and-type
+  - F-personality-validation
 created: 2025-08-15T17:58:56.964Z
 updated: 2025-08-15T17:58:56.964Z
 ---

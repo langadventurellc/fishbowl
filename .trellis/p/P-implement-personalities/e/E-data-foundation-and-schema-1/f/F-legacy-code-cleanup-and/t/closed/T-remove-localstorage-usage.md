@@ -1,12 +1,21 @@
 ---
 id: T-remove-localstorage-usage
 title: Remove localStorage usage from personalities
-status: open
+status: done
 priority: high
 parent: F-legacy-code-cleanup-and
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/CreatePersonalityForm.tsx:
+    Removed localStorage auto-save functionality, draft cleanup, draft recovery,
+    and localStorage clearing after save. Updated imports to remove unused
+    useEffect and useDebounce. Updated component documentation to remove
+    localStorage references.
+log:
+  - Successfully removed all localStorage usage from personality components.
+    Eliminated auto-save functionality, draft recovery, cleanup routines, and
+    all localStorage references while maintaining form functionality. All
+    quality checks pass and application builds successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T18:09:26.355Z
