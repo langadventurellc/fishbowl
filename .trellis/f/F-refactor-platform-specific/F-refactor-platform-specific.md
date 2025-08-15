@@ -1,13 +1,28 @@
 ---
 id: F-refactor-platform-specific
 title: Refactor platform-specific code into separate packages
-status: open
+status: in-progress
 priority: high
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/main/services/index.ts: Created barrel file for Node.js/Electron main process service implementations
+  apps/desktop/src/main/utils/index.ts: Created barrel file for Node.js/Electron main process utility functions
+  apps/desktop/src/renderer/utils/index.ts: Created barrel file for browser/Electron renderer process utility functions
+  apps/desktop/src/__tests__/directoryStructure.test.ts: Created test to verify module resolution and directory structure
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-clean-up-shared-package
+  - T-create-directory-structure
+  - T-extract-browser-crypto
+  - T-extract-browser-device-info
+  - T-extract-node-crypto-utilities
+  - T-extract-node-device-info-to
+  - T-move-nodefilesystembridge-to
+  - T-update-shared-services-for
+  - T-verify-build-passes-after
+  - T-wire-up-browser-implementation
+  - T-wire-up-node-implementations
 created: 2025-08-15T21:43:23.682Z
 updated: 2025-08-15T21:43:23.682Z
 ---
