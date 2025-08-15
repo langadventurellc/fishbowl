@@ -129,6 +129,39 @@ export function createLoggerSync(
     transports,
   };
 
-  // Create and return the logger
-  return new StructuredLogger(logConfig);
+  // Create default device info implementation (sync version)
+  const deviceInfo = {
+    getDeviceInfo: async () => ({
+      platform: undefined,
+      deviceInfo: {
+        platform: "unknown",
+        note: "Device info not available in sync logger",
+      },
+    }),
+  };
+
+  // Create default crypto utils implementation
+  const cryptoUtils = {
+    randomBytes: async (size: number): Promise<Uint8Array> => {
+      // Fallback to Math.random for sync logger
+      const bytes = new Uint8Array(size);
+      for (let i = 0; i < size; i++) {
+        bytes[i] = Math.floor(Math.random() * 256);
+      }
+      return bytes;
+    },
+    generateId: (): string => {
+      return (
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15)
+      );
+    },
+    getByteLength: async (str: string): Promise<number> => {
+      // Simple fallback for sync logger
+      return str.length;
+    },
+  };
+
+  // Create and return the logger with injected implementations
+  return new StructuredLogger(deviceInfo, cryptoUtils, logConfig);
 }

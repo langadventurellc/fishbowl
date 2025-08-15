@@ -12,6 +12,7 @@ import { getDefaultConfig, mergeConfig } from "./config";
 import { getDeviceInfo } from "./utils/getDeviceInfo";
 import { convertLogLevel } from "./convertLogLevel";
 import { createTransport } from "./createTransport";
+import { getByteLength } from "../utils/getByteLength";
 
 /**
  * Creates a structured logger with comprehensive context and async device info gathering.
@@ -136,6 +137,28 @@ export async function createLogger(
     transports,
   };
 
-  // Create and return the logger
-  return new StructuredLogger(logConfig);
+  // Create default device info implementation for logger injection
+  const deviceInfo = {
+    getDeviceInfo: async () => await getDeviceInfo(),
+  };
+
+  // Create default crypto utils implementation for logger injection
+  const cryptoUtils = {
+    randomBytes: async (size: number): Promise<Uint8Array> => {
+      const { randomBytes: nodeRandomBytes } = await import("crypto");
+      return new Uint8Array(nodeRandomBytes(size));
+    },
+    generateId: (): string => {
+      return (
+        Math.random().toString(36).substring(2, 15) +
+        Math.random().toString(36).substring(2, 15)
+      );
+    },
+    getByteLength: async (str: string): Promise<number> => {
+      return await getByteLength(str);
+    },
+  };
+
+  // Create and return the logger with injected implementations
+  return new StructuredLogger(deviceInfo, cryptoUtils, logConfig);
 }

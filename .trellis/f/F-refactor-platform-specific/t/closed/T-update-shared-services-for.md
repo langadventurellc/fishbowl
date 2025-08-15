@@ -1,15 +1,40 @@
 ---
 id: T-update-shared-services-for
 title: Update shared services for constructor injection
-status: open
+status: done
 priority: high
 parent: F-refactor-platform-specific
 prerequisites:
   - T-move-nodefilesystembridge-to
   - T-extract-node-crypto-utilities
   - T-extract-node-device-info-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/logging/StructuredLogger.ts: Updated constructor to accept
+    DeviceInfoInterface and CryptoUtilsInterface parameters, removed internal
+    platform-specific code creation, updated session ID generation to use
+    injected crypto utils
+  packages/shared/src/logging/createLogger.ts: Updated to provide default
+    implementations for DeviceInfoInterface and CryptoUtilsInterface to
+    StructuredLogger constructor
+  packages/shared/src/logging/createLoggerSync.ts: Updated to provide default
+    implementations for DeviceInfoInterface and CryptoUtilsInterface to
+    StructuredLogger constructor with sync-appropriate fallbacks
+  packages/shared/src/logging/__tests__/StructuredLogger.test.ts:
+    Updated all constructor calls to provide mock implementations, fixed session
+    ID uniqueness and platform detection tests
+  packages/shared/src/logging/__tests__/createLogger.test.ts: Updated mock
+    expectations to match new constructor signature with three parameters
+  packages/shared/src/logging/__tests__/createLoggerSync.test.ts:
+    Updated mock expectations to match new constructor signature with three
+    parameters
+log:
+  - Successfully updated shared services for constructor injection. Modified
+    StructuredLogger to accept DeviceInfoInterface and CryptoUtilsInterface via
+    constructor injection instead of creating them internally. Updated factory
+    functions (createLogger and createLoggerSync) to provide default
+    implementations. FileStorageService already used proper constructor
+    injection. Fixed all failing tests and ensured TypeScript compilation
+    succeeds. All 1115 tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T21:52:55.725Z

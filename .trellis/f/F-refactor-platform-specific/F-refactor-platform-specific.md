@@ -68,12 +68,29 @@ affectedFiles:
   apps/desktop/src/main/utils/__tests__/NodeDeviceInfo.test.ts:
     Comprehensive unit tests with mocked electron and os modules covering all
     functionality and error cases
+  packages/shared/src/logging/StructuredLogger.ts: Updated constructor to accept
+    DeviceInfoInterface and CryptoUtilsInterface parameters, removed internal
+    platform-specific code creation, updated session ID generation to use
+    injected crypto utils
+  packages/shared/src/logging/createLogger.ts: Updated to provide default
+    implementations for DeviceInfoInterface and CryptoUtilsInterface to
+    StructuredLogger constructor
+  packages/shared/src/logging/createLoggerSync.ts: Updated to provide default
+    implementations for DeviceInfoInterface and CryptoUtilsInterface to
+    StructuredLogger constructor with sync-appropriate fallbacks
+  packages/shared/src/logging/__tests__/StructuredLogger.test.ts:
+    Updated all constructor calls to provide mock implementations, fixed session
+    ID uniqueness and platform detection tests
+  packages/shared/src/logging/__tests__/createLogger.test.ts: Updated mock
+    expectations to match new constructor signature with three parameters
+  packages/shared/src/logging/__tests__/createLoggerSync.test.ts:
+    Updated mock expectations to match new constructor signature with three
+    parameters
 log: []
 schema: v1.0
 childrenIds:
   - T-clean-up-shared-package
   - T-extract-browser-device-info
-  - T-extract-node-device-info-to
   - T-update-shared-services-for
   - T-verify-build-passes-after
   - T-wire-up-browser-implementation
@@ -81,6 +98,7 @@ childrenIds:
   - T-create-directory-structure
   - T-extract-browser-crypto
   - T-extract-node-crypto-utilities
+  - T-extract-node-device-info-to
   - T-move-nodefilesystembridge-to
 created: 2025-08-15T21:43:23.682Z
 updated: 2025-08-15T21:43:23.682Z

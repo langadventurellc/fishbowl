@@ -70,6 +70,12 @@ describe("createLogger", () => {
       expect(mockGetDefaultConfig).toHaveBeenCalled();
       expect(mockMergeConfig).toHaveBeenCalledWith(mockDefaultConfig, {});
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "info",
           namespace: "test-logger",
@@ -101,6 +107,12 @@ describe("createLogger", () => {
         userConfig,
       );
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "debug",
           namespace: "custom-logger",
@@ -131,6 +143,12 @@ describe("createLogger", () => {
 
       expect(mockGetDeviceInfo).toHaveBeenCalled();
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           context: expect.objectContaining({
             platform: "desktop",
@@ -181,6 +199,12 @@ describe("createLogger", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           transports: expect.arrayContaining([expect.any(Object)]),
         }),
@@ -196,6 +220,12 @@ describe("createLogger", () => {
       await createLogger();
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           transports: expect.arrayContaining([expect.any(Object)]),
         }),
@@ -232,6 +262,12 @@ describe("createLogger", () => {
       await createLogger();
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           context: expect.objectContaining({
             metadata: expect.objectContaining({
@@ -256,6 +292,12 @@ describe("createLogger", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           context: expect.objectContaining({
             metadata: expect.objectContaining({
@@ -276,6 +318,12 @@ describe("createLogger", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "warn",
         }),
@@ -288,6 +336,12 @@ describe("createLogger", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "warn",
         }),
@@ -300,6 +354,12 @@ describe("createLogger", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: undefined,
         }),

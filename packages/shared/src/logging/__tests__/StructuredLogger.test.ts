@@ -1,5 +1,7 @@
 import { StructuredLogger } from "../StructuredLogger";
 import type { LogEntry, Transport, Formatter, ErrorInfo } from "../types";
+import type { DeviceInfoInterface } from "../DeviceInfoInterface";
+import type { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
 
 // Mock dependencies at module level
 jest.mock("../utils/detectPlatform", () => ({
@@ -43,6 +45,13 @@ describe("StructuredLogger", () => {
   let mockLogger: jest.Mocked<log.Logger>;
   let mockTransport: Transport;
   let mockFormatter: Formatter;
+  let mockDeviceInfo: jest.Mocked<DeviceInfoInterface>;
+  let mockCryptoUtils: jest.Mocked<CryptoUtilsInterface>;
+
+  // Helper function to create logger with mocks
+  const createTestLogger = (config?: Record<string, unknown>) => {
+    return new StructuredLogger(mockDeviceInfo, mockCryptoUtils, config);
+  };
 
   beforeEach(() => {
     // Reset all mocks
@@ -95,6 +104,24 @@ describe("StructuredLogger", () => {
 
     (log.getLogger as jest.Mock).mockReturnValue(mockLogger);
 
+    // Set up mock device info
+    mockDeviceInfo = {
+      getDeviceInfo: jest.fn().mockResolvedValue({
+        platform: "desktop",
+        deviceInfo: { platform: "test" },
+      }),
+    };
+
+    // Set up mock crypto utils
+    let idCounter = 0;
+    mockCryptoUtils = {
+      randomBytes: jest.fn().mockResolvedValue(new Uint8Array([1, 2, 3])),
+      generateId: jest
+        .fn()
+        .mockImplementation(() => `test-session-id-${++idCounter}`),
+      getByteLength: jest.fn().mockResolvedValue(10),
+    };
+
     // Set up mock transport
     mockTransport = {
       name: "TestTransport",
@@ -118,27 +145,26 @@ describe("StructuredLogger", () => {
 
   describe("constructor", () => {
     it("should create logger with default configuration", () => {
-      new StructuredLogger();
+      new StructuredLogger(mockDeviceInfo, mockCryptoUtils);
 
       expect(log.getLogger).toHaveBeenCalledWith("app");
-      expect(mockDetectPlatform).toHaveBeenCalled();
     });
 
     it("should create logger with custom namespace", () => {
-      new StructuredLogger({ namespace: "custom-logger" });
+      createTestLogger({ namespace: "custom-logger" });
 
       expect(log.getLogger).toHaveBeenCalledWith("custom-logger");
     });
 
     it("should set custom log level", () => {
-      new StructuredLogger({ level: "debug" });
+      createTestLogger({ level: "debug" });
 
       expect(mockLogger.setLevel).toHaveBeenCalledWith("debug");
     });
 
     it("should initialize with custom context", () => {
       const customContext = { userId: "123", app: "test" };
-      const logger = new StructuredLogger({ context: customContext });
+      const logger = createTestLogger({ context: customContext });
 
       // Test by logging and checking if context is included
       logger.addTransport(mockTransport);
@@ -150,7 +176,7 @@ describe("StructuredLogger", () => {
     });
 
     it("should set up formatter and transports from config", () => {
-      const logger = new StructuredLogger({
+      const logger = createTestLogger({
         formatter: mockFormatter,
         transports: [mockTransport],
       });
@@ -161,7 +187,7 @@ describe("StructuredLogger", () => {
       expect(mockTransport.write).toHaveBeenCalled();
     });
 
-    it("should detect mobile platform correctly", () => {
+    it("should detect mobile platform correctly", async () => {
       // Set up mobile platform before creating logger
       mockDetectPlatform.mockReturnValue({
         type: "react-native",
@@ -172,8 +198,35 @@ describe("StructuredLogger", () => {
         isWeb: false,
       });
 
-      const logger = new StructuredLogger();
+      // Create custom mock deviceInfo for mobile
+      let resolveDeviceInfo: (value: {
+        platform: "mobile";
+        deviceInfo: { platform: string };
+      }) => void;
+      const deviceInfoPromise = new Promise((resolve) => {
+        resolveDeviceInfo = resolve;
+      });
+
+      const mobileDeviceInfo = {
+        getDeviceInfo: jest.fn().mockImplementation(() => {
+          const result = {
+            platform: "mobile" as const,
+            deviceInfo: { platform: "react-native" },
+          };
+          resolveDeviceInfo(result);
+          return Promise.resolve(result);
+        }),
+      };
+
+      const logger = new StructuredLogger(
+        mobileDeviceInfo as DeviceInfoInterface,
+        mockCryptoUtils,
+      );
       logger.addTransport(mockTransport);
+
+      // Wait for the device info to be resolved
+      await deviceInfoPromise;
+
       logger.info("test");
 
       expect(mockTransport.write).toHaveBeenCalledWith(
@@ -186,7 +239,7 @@ describe("StructuredLogger", () => {
     let logger: StructuredLogger;
 
     beforeEach(() => {
-      logger = new StructuredLogger();
+      logger = createTestLogger();
     });
 
     it("should set log level", () => {
@@ -210,7 +263,7 @@ describe("StructuredLogger", () => {
     let logger: StructuredLogger;
 
     beforeEach(() => {
-      logger = new StructuredLogger();
+      logger = createTestLogger();
       logger.addTransport(mockTransport);
     });
 
@@ -303,7 +356,7 @@ describe("StructuredLogger", () => {
     });
 
     it("should include namespace in log entries", () => {
-      const namedLogger = new StructuredLogger({ namespace: "test-ns" });
+      const namedLogger = createTestLogger({ namespace: "test-ns" });
       namedLogger.addTransport(mockTransport);
       namedLogger.info("namespaced message");
 
@@ -317,7 +370,7 @@ describe("StructuredLogger", () => {
     let logger: StructuredLogger;
 
     beforeEach(() => {
-      logger = new StructuredLogger();
+      logger = createTestLogger();
       logger.addTransport(mockTransport);
     });
 
@@ -366,7 +419,7 @@ describe("StructuredLogger", () => {
     });
 
     it("should inherit configuration in child logger", () => {
-      const parentLogger = new StructuredLogger({
+      const parentLogger = createTestLogger({
         level: "warn",
         formatter: mockFormatter,
       });
@@ -380,7 +433,7 @@ describe("StructuredLogger", () => {
     let logger: StructuredLogger;
 
     beforeEach(() => {
-      logger = new StructuredLogger();
+      logger = createTestLogger();
     });
 
     it("should add transport", () => {
@@ -469,7 +522,7 @@ describe("StructuredLogger", () => {
     let logger: StructuredLogger;
 
     beforeEach(() => {
-      logger = new StructuredLogger();
+      logger = createTestLogger();
       logger.addTransport(mockTransport);
     });
 
@@ -509,7 +562,7 @@ describe("StructuredLogger", () => {
     let logger: StructuredLogger;
 
     beforeEach(() => {
-      logger = new StructuredLogger();
+      logger = createTestLogger();
       logger.addTransport(mockTransport);
     });
 
@@ -541,8 +594,8 @@ describe("StructuredLogger", () => {
 
   describe("performance", () => {
     it("should generate unique session IDs", () => {
-      const logger1 = new StructuredLogger();
-      const logger2 = new StructuredLogger();
+      const logger1 = createTestLogger();
+      const logger2 = createTestLogger();
 
       logger1.addTransport(mockTransport);
       logger1.info("test");
@@ -562,7 +615,7 @@ describe("StructuredLogger", () => {
     });
 
     it("should handle high volume logging", () => {
-      const logger = new StructuredLogger();
+      const logger = createTestLogger();
       logger.addTransport(mockTransport);
 
       // Log 1000 messages rapidly
