@@ -1,5 +1,5 @@
 import { NodeFileSystemBridge } from "../NodeFileSystemBridge";
-import { FileSystemBridge } from "../FileSystemBridge";
+import { FileSystemBridge } from "@fishbowl-ai/shared";
 import * as fs from "fs/promises";
 
 // Mock fs/promises for unit tests

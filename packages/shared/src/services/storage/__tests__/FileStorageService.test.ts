@@ -405,8 +405,9 @@ describe("FileStorageService", () => {
       expect(result).toEqual(testData);
     });
 
-    it("should create with default NodeFileSystemBridge when no bridge provided", () => {
-      const defaultService = new FileStorageService();
+    it("should create with provided FileSystemBridge", () => {
+      const mockBridge = new MockFileSystemBridge();
+      const defaultService = new FileStorageService(mockBridge);
 
       // Test that it's a valid FileStorageService instance
       expect(defaultService).toBeInstanceOf(FileStorageService);

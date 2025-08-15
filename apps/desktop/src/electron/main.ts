@@ -1,9 +1,9 @@
 import {
   createLogger,
   FileStorageService,
-  NodeFileSystemBridge,
   SettingsRepository,
 } from "@fishbowl-ai/shared";
+import { NodeFileSystemBridge } from "../main/services/NodeFileSystemBridge.js";
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";

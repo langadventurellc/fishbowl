@@ -207,18 +207,18 @@ describe("createFileBackup", () => {
     });
   });
 
-  describe("default filesystem bridge", () => {
-    it("should use default filesystem bridge when none provided", async () => {
-      // This is more of an integration test to ensure the default parameter works
-      // We can't easily test the NodeFileSystemBridge without mocking modules
+  describe("filesystem bridge parameter", () => {
+    it("should require filesystem bridge parameter", async () => {
       const originalPath = "/test.json";
 
-      // Create a spy to see if createFileBackup attempts to call methods
-      // Since we're using the default parameter, we expect it to work
-      const result = await createFileBackup(originalPath);
+      // Mock filesystem to throw error to test error handling
+      mockFs.readFile.mockRejectedValue(new Error("File not found"));
 
-      // Should return null because the file doesn't exist in our test environment
+      const result = await createFileBackup(originalPath, mockFs);
+
+      // Should return null because the file doesn't exist
       expect(result).toBeNull();
+      expect(mockFs.readFile).toHaveBeenCalledWith(originalPath, "utf8");
     });
   });
 });

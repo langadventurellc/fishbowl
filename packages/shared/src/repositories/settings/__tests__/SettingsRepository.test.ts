@@ -3,6 +3,7 @@ import {
   SettingsValidationError,
 } from "../../../services/storage/errors";
 import { FileStorageService } from "../../../services/storage/FileStorageService";
+import { FileSystemBridge } from "../../../services/storage/FileSystemBridge";
 import { createDefaultPersistedSettings } from "../../../types/settings/createDefaultPersistedSettings";
 import type { PersistedSettingsData } from "../../../types/settings/PersistedSettingsData";
 import { SettingsRepository } from "../SettingsRepository";
@@ -19,8 +20,10 @@ describe("SettingsRepository", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockFileStorageService =
-      new MockedFileStorageService() as jest.Mocked<FileStorageService>;
+    const mockFS = {} as FileSystemBridge; // Mock FileSystemBridge
+    mockFileStorageService = new MockedFileStorageService(
+      mockFS,
+    ) as jest.Mocked<FileStorageService>;
     repository = new SettingsRepository(mockFileStorageService);
   });
 

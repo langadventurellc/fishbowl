@@ -5,7 +5,9 @@ status: in-progress
 priority: high
 prerequisites: []
 affectedFiles:
-  apps/desktop/src/main/services/index.ts: Created barrel file for Node.js/Electron main process service implementations
+  apps/desktop/src/main/services/index.ts: Created barrel file for
+    Node.js/Electron main process service implementations; Modified - added
+    export for NodeFileSystemBridge
   apps/desktop/src/main/utils/index.ts: Created barrel file for Node.js/Electron
     main process utility functions; Added export for NodeCryptoUtils class
   apps/desktop/src/renderer/utils/index.ts: Created barrel file for
@@ -29,11 +31,38 @@ affectedFiles:
     Added comprehensive unit tests with 28 test cases covering all
     functionality, error handling, interface compliance, and cryptographic
     quality
+  apps/desktop/src/main/services/NodeFileSystemBridge.ts: Enhanced - moved from
+    shared package and added comprehensive Node.js-specific operations
+    (setFilePermissions, checkFilePermissions, getDirectoryStats,
+    ensureDirectoryExists) with full validation and error handling
+  packages/shared/src/services/storage/FileSystemBridge.ts: Enhanced - added
+    optional Node.js-specific methods to interface for proper dependency
+    injection
+  packages/shared/src/services/storage/FileStorageService.ts: Modified - updated
+    to use FileSystemBridge interface methods with fallback behavior and proper
+    error conversion, made FileSystemBridge parameter required
+  packages/shared/src/services/storage/utils/index.ts: Cleaned up - removed exports for deleted Node.js-specific utility functions
+  packages/shared/src/services/storage/utils/ensureDirectoryExists.ts: Deleted - moved functionality to NodeFileSystemBridge
+  packages/shared/src/services/storage/utils/setFilePermissions.ts: Deleted - moved functionality to NodeFileSystemBridge
+  packages/shared/src/services/storage/utils/checkFilePermissions.ts: Deleted - moved functionality to NodeFileSystemBridge
+  packages/shared/src/services/storage/utils/getDirectoryStats.ts: Deleted - moved functionality to NodeFileSystemBridge
+  packages/shared/src/services/storage/utils/__tests__/ensureDirectoryExists.test.ts: Deleted - moved with functionality to desktop app
+  packages/shared/src/services/storage/utils/__tests__/setFilePermissions.test.ts: Deleted - moved with functionality to desktop app
+  packages/shared/src/services/storage/utils/__tests__/checkFilePermissions.test.ts: Deleted - moved with functionality to desktop app
+  packages/shared/src/services/storage/utils/__tests__/getDirectoryStats.test.ts: Deleted - moved with functionality to desktop app
+  apps/desktop/src/main/services/__tests__/NodeFileSystemBridge.test.ts: Updated - maintained existing tests and functionality in desktop app
+  apps/desktop/src/electron/main.ts: Modified - updated import to use NodeFileSystemBridge from local services
+  apps/desktop/src/electron/services/LlmStorageService.ts: Modified - updated import to use NodeFileSystemBridge from local services
+  apps/desktop/src/data/repositories/RolesRepository.ts: Modified - added
+    NodeFileSystemBridge and updated constructor to provide FileSystemBridge
+    parameter
+  packages/shared/src/services/storage/RolesFileRecoveryService.ts: Modified - added FileSystemBridge constructor parameter
+  packages/shared/src/services/storage/utils/createFileBackup.ts: Modified - made FileSystemBridge parameter required
+  packages/shared/src/services/storage/index.ts: Modified - removed NodeFileSystemBridge export
 log: []
 schema: v1.0
 childrenIds:
   - T-clean-up-shared-package
-  - T-extract-browser-crypto
   - T-extract-browser-device-info
   - T-extract-node-device-info-to
   - T-move-nodefilesystembridge-to
@@ -42,6 +71,7 @@ childrenIds:
   - T-wire-up-browser-implementation
   - T-wire-up-node-implementations
   - T-create-directory-structure
+  - T-extract-browser-crypto
   - T-extract-node-crypto-utilities
 created: 2025-08-15T21:43:23.682Z
 updated: 2025-08-15T21:43:23.682Z

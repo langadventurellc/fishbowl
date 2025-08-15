@@ -1,4 +1,5 @@
 import { FileStorageService } from "../../../services/storage/FileStorageService";
+import { FileSystemBridge } from "../../../services/storage/FileSystemBridge";
 import {
   FileNotFoundError,
   WritePermissionError,
@@ -39,7 +40,8 @@ describe("LlmConfigRepository", () => {
     jest.clearAllMocks();
 
     // Setup mock file storage
-    mockFileStorage = new MockedFileStorageService() as jest.Mocked<
+    const mockFS = {} as FileSystemBridge; // Mock FileSystemBridge
+    mockFileStorage = new MockedFileStorageService(mockFS) as jest.Mocked<
       FileStorageService<LlmConfigMetadata[]>
     >;
 

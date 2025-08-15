@@ -1,4 +1,5 @@
 import { FileStorageService } from "./FileStorageService";
+import { FileSystemBridge } from "./FileSystemBridge";
 import { SettingsValidationError } from "./errors/SettingsValidationError";
 import type { PersistedRolesSettingsData } from "../../types/settings";
 import { persistedRolesSettingsSchema } from "../../types/settings/rolesSettingsSchema";
@@ -14,6 +15,7 @@ const logger = createLoggerSync({
 export class RolesFileRecoveryService {
   constructor(
     private readonly fileStorage: FileStorageService<PersistedRolesSettingsData>,
+    private readonly fileSystem: FileSystemBridge,
   ) {}
 
   async loadRolesWithRecovery(filePath: string): Promise<{
@@ -44,7 +46,7 @@ export class RolesFileRecoveryService {
         errorCount: error.fieldErrors.length,
       });
 
-      const backupPath = await createFileBackup(filePath);
+      const backupPath = await createFileBackup(filePath, this.fileSystem);
 
       const rawData = await this.fileStorage.readJsonFile(filePath);
       const recoveryResult = recoverFromInvalidRolesFile(

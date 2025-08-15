@@ -2,12 +2,11 @@ import * as path from "path";
 import { randomBytesHex } from "../../utils/randomBytesHex";
 import { getByteLength } from "../../utils/getByteLength";
 import { FileSystemBridge } from "./FileSystemBridge";
-import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
 import { FileStorageError } from "./errors/FileStorageError";
 import { ErrorFactory } from "./errors/ErrorFactory";
 import { SystemError } from "../../types/SystemError";
 import { FileStorageOptions } from "./FileStorageOptions";
-import { validatePathStrict, ensureDirectoryExists } from "./utils";
+import { validatePathStrict } from "./utils";
 import { safeJsonStringify } from "../../validation/safeJsonStringify";
 import { createLoggerSync } from "../../logging/createLoggerSync";
 
@@ -26,7 +25,7 @@ export class FileStorageService<T = unknown> {
   });
 
   constructor(
-    private fs: FileSystemBridge = new NodeFileSystemBridge(),
+    private fs: FileSystemBridge,
     options: FileStorageOptions = {},
   ) {
     this.maxFileSizeBytes = options.maxFileSizeBytes ?? 10 * 1024 * 1024; // 10MB
@@ -140,7 +139,24 @@ export class FileStorageService<T = unknown> {
    * Ensure directory exists, creating if necessary.
    */
   private async ensureDirectoryExists(dirPath: string): Promise<void> {
-    await ensureDirectoryExists(dirPath, this.fs);
+    if (this.fs.ensureDirectoryExists) {
+      await this.fs.ensureDirectoryExists(dirPath);
+    } else {
+      // Fallback for FileSystemBridge implementations that don't support ensureDirectoryExists
+      try {
+        await this.fs.mkdir(dirPath, { recursive: true });
+      } catch (error) {
+        // Handle race conditions - directory might exist
+        const sysErr = error as SystemError;
+        if (sysErr.code !== "EEXIST") {
+          throw ErrorFactory.fromNodeError(
+            sysErr,
+            "ensureDirectoryExists",
+            dirPath,
+          );
+        }
+      }
+    }
   }
 
   /**

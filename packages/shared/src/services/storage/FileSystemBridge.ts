@@ -53,4 +53,39 @@ export interface FileSystemBridge {
    * @returns Promise resolving when rename completes
    */
   rename(oldPath: string, newPath: string): Promise<void>;
+
+  /**
+   * Set file permissions (Node.js-specific).
+   * @param path - File path
+   * @param permissions - Octal permissions (e.g., 0o600)
+   * @returns Promise resolving when permissions are set
+   */
+  setFilePermissions?(path: string, permissions: number): Promise<void>;
+
+  /**
+   * Check file permissions (Node.js-specific).
+   * @param path - File path to check
+   * @returns Promise resolving to read/write permissions
+   */
+  checkFilePermissions?(
+    path: string,
+  ): Promise<{ read: boolean; write: boolean }>;
+
+  /**
+   * Get directory statistics (Node.js-specific).
+   * @param path - Directory path to check
+   * @returns Promise resolving to directory stats
+   */
+  getDirectoryStats?(path: string): Promise<{
+    exists: boolean;
+    isDirectory: boolean;
+    isWritable: boolean;
+  }>;
+
+  /**
+   * Ensure directory exists, creating parent directories if needed (Node.js-specific).
+   * @param path - Directory path to create
+   * @returns Promise resolving when directory creation completes
+   */
+  ensureDirectoryExists?(path: string): Promise<void>;
 }

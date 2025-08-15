@@ -3,13 +3,13 @@ import * as path from "path";
 import {
   LlmConfigRepository,
   FileStorageService,
-  NodeFileSystemBridge,
   type LlmConfig,
   type LlmConfigInput,
   type LlmConfigMetadata,
   type StorageResult,
   createLoggerSync,
 } from "@fishbowl-ai/shared";
+import { NodeFileSystemBridge } from "../../main/services/NodeFileSystemBridge";
 import { ZodError } from "zod";
 import { LlmSecureStorage } from "./LlmSecureStorage";
 import { TestSecureStorage } from "./TestSecureStorage";
