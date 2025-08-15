@@ -1,13 +1,27 @@
 ---
 id: T-extract-node-device-info-to
 title: Extract Node device info to main process
-status: open
+status: done
 priority: medium
 parent: F-refactor-platform-specific
 prerequisites:
   - T-create-directory-structure
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/logging/DeviceInfoInterface.ts: Created interface for device info collection services
+  packages/shared/src/logging/index.ts: Added export for DeviceInfoInterface
+  apps/desktop/src/main/utils/NodeDeviceInfo.ts:
+    Implemented Node.js/Electron main
+    process device info service with direct imports and hostname sanitization
+  apps/desktop/src/main/utils/index.ts: Added export for NodeDeviceInfo class
+  apps/desktop/src/main/utils/__tests__/NodeDeviceInfo.test.ts:
+    Comprehensive unit tests with mocked electron and os modules covering all
+    functionality and error cases
+log:
+  - Successfully extracted Node.js device info logic from shared package into a
+    dedicated main process implementation. Created DeviceInfoInterface for clean
+    abstraction, implemented NodeDeviceInfo class with direct imports (no eval
+    statements), and comprehensive unit tests with mocked dependencies. All
+    quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T21:52:27.390Z

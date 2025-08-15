@@ -9,7 +9,8 @@ affectedFiles:
     Node.js/Electron main process service implementations; Modified - added
     export for NodeFileSystemBridge
   apps/desktop/src/main/utils/index.ts: Created barrel file for Node.js/Electron
-    main process utility functions; Added export for NodeCryptoUtils class
+    main process utility functions; Added export for NodeCryptoUtils class;
+    Added export for NodeDeviceInfo class
   apps/desktop/src/renderer/utils/index.ts: Created barrel file for
     browser/Electron renderer process utility functions; Updated barrel file to
     export BrowserCryptoUtils class
@@ -59,13 +60,20 @@ affectedFiles:
   packages/shared/src/services/storage/RolesFileRecoveryService.ts: Modified - added FileSystemBridge constructor parameter
   packages/shared/src/services/storage/utils/createFileBackup.ts: Modified - made FileSystemBridge parameter required
   packages/shared/src/services/storage/index.ts: Modified - removed NodeFileSystemBridge export
+  packages/shared/src/logging/DeviceInfoInterface.ts: Created interface for device info collection services
+  packages/shared/src/logging/index.ts: Added export for DeviceInfoInterface
+  apps/desktop/src/main/utils/NodeDeviceInfo.ts:
+    Implemented Node.js/Electron main
+    process device info service with direct imports and hostname sanitization
+  apps/desktop/src/main/utils/__tests__/NodeDeviceInfo.test.ts:
+    Comprehensive unit tests with mocked electron and os modules covering all
+    functionality and error cases
 log: []
 schema: v1.0
 childrenIds:
   - T-clean-up-shared-package
   - T-extract-browser-device-info
   - T-extract-node-device-info-to
-  - T-move-nodefilesystembridge-to
   - T-update-shared-services-for
   - T-verify-build-passes-after
   - T-wire-up-browser-implementation
@@ -73,6 +81,7 @@ childrenIds:
   - T-create-directory-structure
   - T-extract-browser-crypto
   - T-extract-node-crypto-utilities
+  - T-move-nodefilesystembridge-to
 created: 2025-08-15T21:43:23.682Z
 updated: 2025-08-15T21:43:23.682Z
 ---

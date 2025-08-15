@@ -2,4 +2,4 @@
 // Export platform-specific utility functions here
 
 export * from "./NodeCryptoUtils";
-// export * from './NodeDeviceInfo';
+export * from "./NodeDeviceInfo";
