@@ -1,13 +1,34 @@
 ---
 id: T-extract-node-crypto-utilities
 title: Extract Node crypto utilities to main process
-status: open
+status: done
 priority: high
 parent: F-refactor-platform-specific
 prerequisites:
   - T-create-directory-structure
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/utils/CryptoUtilsInterface.ts: Created interface for
+    platform-agnostic crypto operations with randomBytes, generateId, and
+    getByteLength methods
+  packages/shared/src/utils/index.ts: Added export for CryptoUtilsInterface
+  apps/desktop/src/main/utils/NodeCryptoUtils.ts: Implemented NodeCryptoUtils
+    class with direct Node.js crypto imports, no dynamic imports or eval
+    statements
+  apps/desktop/src/main/utils/index.ts: Added export for NodeCryptoUtils class
+  apps/desktop/src/main/utils/__tests__/NodeCryptoUtils.test.ts:
+    Created comprehensive unit tests covering all crypto utility functions,
+    interface compliance, and error handling
+log:
+  - Successfully extracted Node.js-specific crypto implementations from shared
+    package and created clean Node.js implementations in the main process.
+    Implemented NodeCryptoUtils class with direct Node.js crypto/buffer imports,
+    removing all platform detection and dynamic imports. Created comprehensive
+    CryptoUtilsInterface for platform-agnostic crypto operations. All crypto
+    utilities (randomBytes, generateId, getByteLength) work correctly with
+    cryptographically secure implementations. Added extensive unit tests
+    covering various input sizes, edge cases, UUID v4 compliance, and error
+    handling. All quality checks pass including linting, formatting, and type
+    checking.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T21:51:58.132Z
