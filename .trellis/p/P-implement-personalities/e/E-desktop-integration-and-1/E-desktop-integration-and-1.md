@@ -1,0 +1,169 @@
+---
+id: E-desktop-integration-and-1
+title: Desktop Integration and Services
+status: open
+priority: medium
+parent: P-implement-personalities
+prerequisites:
+  - E-persistence-layer-and-state
+affectedFiles: {}
+log: []
+schema: v1.0
+childrenIds: []
+created: 2025-08-15T17:59:56.660Z
+updated: 2025-08-15T17:59:56.660Z
+---
+
+# Desktop Integration and Services
+
+## Purpose and Goals
+
+Implement the desktop-specific integration layer for personalities, including the Electron IPC handlers, desktop adapter implementation, and React context provider. This epic connects the UI store to the file system through Electron's secure IPC channels, following the proven Roles pattern.
+
+## Major Components and Deliverables
+
+### Desktop Adapter (`apps/desktop`)
+
+- Implement `DesktopPersonalitiesAdapter` class
+- Connect to Electron IPC for file operations
+- Handle load, save, and reset operations
+- Proper error handling and type conversion
+
+### Electron IPC Handlers
+
+- Add personalities IPC channel handlers in main process
+- Integrate with existing FileStorageService
+- Handle file read/write with proper error handling
+- Ensure security with input validation
+
+### Context Provider (`apps/desktop`)
+
+- Create `PersonalitiesProvider` React component
+- Initialize store with desktop adapter on mount
+- Load initial personalities data
+- Handle initialization errors gracefully
+
+### File Operations
+
+- Ensure `personalities.json` created on first run
+- Load default personalities if no file exists
+- Handle file corruption recovery
+- Implement backup before destructive operations
+
+## Detailed Acceptance Criteria
+
+### Functional Deliverables
+
+- [ ] Desktop adapter implements all three methods (save, load, reset)
+- [ ] IPC handlers validate all input before file operations
+- [ ] Context provider initializes store on application start
+- [ ] Default personalities load on first application run
+- [ ] File corruption handled with recovery to defaults
+- [ ] Backup created before reset operations
+
+### Integration Requirements
+
+- [ ] Adapter integrates with existing FileStorageService
+- [ ] IPC channels follow existing naming conventions
+- [ ] Context provider works with existing app structure
+- [ ] Error messages propagate correctly to UI
+- [ ] File operations respect user data directory
+
+### Security Standards
+
+- [ ] IPC input validation prevents injection attacks
+- [ ] File paths sanitized before operations
+- [ ] No direct file system access from renderer
+- [ ] Proper error messages without exposing system paths
+
+### Quality Standards
+
+- [ ] Full TypeScript coverage
+- [ ] Unit tests for adapter methods
+- [ ] Integration tests for IPC communication
+- [ ] Error scenarios properly tested
+
+## Technical Considerations
+
+### Desktop Adapter Implementation
+
+```typescript
+export class DesktopPersonalitiesAdapter
+  implements PersonalitiesPersistenceAdapter
+{
+  async save(personalities: PersistedPersonalitiesSettingsData): Promise<void> {
+    await window.electronAPI.personalities.save(personalities);
+  }
+
+  async load(): Promise<PersistedPersonalitiesSettingsData | null> {
+    return await window.electronAPI.personalities.load();
+  }
+
+  async reset(): Promise<void> {
+    await window.electronAPI.personalities.reset();
+  }
+}
+```
+
+### IPC Channel Structure
+
+```typescript
+// Main process
+ipcMain.handle("personalities:save", async (event, data) => {
+  // Validate and save using FileStorageService
+});
+
+ipcMain.handle("personalities:load", async () => {
+  // Load from file or return defaults
+});
+
+ipcMain.handle("personalities:reset", async () => {
+  // Backup and reset to defaults
+});
+```
+
+### Context Provider Pattern
+
+```typescript
+export const PersonalitiesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [isInitializing, setIsInitializing] = useState(true);
+  const { initialize } = usePersonalitiesStore();
+
+  useEffect(() => {
+    initialize(desktopPersonalitiesAdapter)
+      .finally(() => setIsInitializing(false));
+  }, []);
+
+  if (isInitializing) return <LoadingSpinner />;
+
+  return (
+    <PersonalitiesContext.Provider value={desktopPersonalitiesAdapter}>
+      {children}
+    </PersonalitiesContext.Provider>
+  );
+};
+```
+
+### File Management
+
+- File path: `app.getPath('userData')/personalities.json`
+- Backup path: `app.getPath('userData')/personalities.backup.json`
+- Default data loaded from bundled `defaultPersonalities.json`
+- File operations atomic with write-rename pattern
+
+## Dependencies
+
+- **E-persistence-layer-and-state**: Requires store and adapter interface
+
+## Estimated Scale
+
+- 3-4 features covering adapter, IPC, provider, and file operations
+- Approximately 6-8 development hours
+- Enables UI integration to begin
+
+## User Stories
+
+- As a user, I want my personalities to persist between application sessions
+- As a user, I want default personalities available on first launch
+- As a developer, I need secure IPC communication for file operations
+- As a user, I want my data recovered if the file becomes corrupted
