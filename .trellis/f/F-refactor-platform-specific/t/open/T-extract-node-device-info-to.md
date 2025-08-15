@@ -49,7 +49,7 @@ export class NodeDeviceInfo implements DeviceInfoInterface {
 
 ## Technical Approach
 
-1. Create `DeviceInfoInterface` in shared package
+1. Create `DeviceInfoInterface` in `packages/shared/src/logging/DeviceInfoInterface.ts`
 2. Extract and clean up `getElectronMainInfo` logic
 3. Use direct imports for `os` and `electron` modules
 4. Remove all platform detection and dynamic imports

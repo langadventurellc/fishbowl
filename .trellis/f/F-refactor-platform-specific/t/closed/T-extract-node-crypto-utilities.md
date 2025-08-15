@@ -81,7 +81,7 @@ export interface CryptoUtilsInterface {
 
 ## Technical Approach
 
-1. Create interface in `packages/shared/src/interfaces/CryptoUtilsInterface.ts`
+1. Create interface in `packages/shared/src/utils/CryptoUtilsInterface.ts`
 2. Implement `NodeCryptoUtils` class with direct Node.js imports
 3. Remove all platform detection and dynamic imports
 4. Use standard Node.js crypto module throughout

@@ -36,8 +36,8 @@ Move the existing `NodeFileSystemBridge` class from the shared package to the ma
 
 ### Interface Verification:
 
-- Ensure `FileSystemBridge` interface remains in shared package
-- Verify `NodeFileSystemBridge` properly implements the interface
+- Ensure `FileSystemBridge` interface remains in `packages/shared/src/services/storage/FileSystemBridge.ts`
+- Verify `NodeFileSystemBridge` properly implements the `FileSystemBridge` interface from `@fishbowl-ai/shared/services/storage`
 - Maintain all existing method signatures and functionality
 
 ## Technical Approach
