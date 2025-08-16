@@ -39,6 +39,7 @@ export * from "./Personality";
 export * from "./PersonalityCardProps";
 export * from "./PersonalityFormData";
 export * from "./PersonalityNameInputProps";
+export * from "./PersonalityViewModel";
 export * from "./PredefinedRole";
 export * from "./providers";
 export * from "./RoleCardProps";

@@ -122,7 +122,9 @@ affectedFiles:
   packages/ui-shared/src/types/settings/InteractiveTabsProps.ts: Removed unused type definition (no references found)
   packages/ui-shared/src/types/settings/TabSectionConfiguration.ts: Removed unused type definition (no references found)
   packages/ui-shared/src/types/settings/PersonalitiesSectionProps.ts: Removed empty interface that was no longer needed
-  packages/ui-shared/src/types/settings/index.ts: Updated exports to remove references to deleted type definitions
+  packages/ui-shared/src/types/settings/index.ts: Updated exports to remove
+    references to deleted type definitions; Added export for
+    PersonalityViewModel type
   packages/ui-shared/src/types/personalities/persistence/PersonalitiesPersistenceError.ts:
     Created new error class extending Error with operation and cause properties,
     following RolesPersistenceError pattern
@@ -137,6 +139,24 @@ affectedFiles:
   packages/ui-shared/src/types/personalities/persistence/PersonalitiesPersistenceAdapter.ts:
     Created new interface with save(), load(), and reset() methods,
     comprehensive JSDoc with personality-specific examples
+  packages/ui-shared/src/types/settings/PersonalityViewModel.ts:
+    Created new PersonalityViewModel interface extending PersonalityFormData
+    with id and timestamp fields, following RoleViewModel pattern
+  packages/ui-shared/src/mapping/personalities/mapSinglePersonalityPersistenceToUI.ts:
+    Implemented function to convert persisted personality data to UI format with
+    null timestamp handling, ID generation, and Big Five/behaviors preservation
+  packages/ui-shared/src/mapping/personalities/mapSinglePersonalityUIToPersistence.ts:
+    Implemented function to convert UI personality data to persistence format
+    with timestamp generation and field preservation
+  packages/ui-shared/src/mapping/personalities/index.ts: Created barrel exports for both mapping functions
+  packages/ui-shared/src/mapping/personalities/__tests__/mapSinglePersonalityPersistenceToUI.test.ts:
+    Created comprehensive unit tests covering complete transformations,
+    timestamp handling, ID generation, Big Five traits, behaviors, field
+    defaults, and edge cases
+  packages/ui-shared/src/mapping/personalities/__tests__/mapSinglePersonalityUIToPersistence.test.ts:
+    Created comprehensive unit tests covering complete transformations,
+    timestamp handling, ID generation, field preservation, and return type
+    validation
 log: []
 schema: v1.0
 childrenIds:
