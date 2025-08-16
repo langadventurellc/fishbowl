@@ -56,10 +56,18 @@ affectedFiles:
   packages/shared/src/services/storage/utils/personalities/validateSinglePersonality.ts:
     Created main validation function that uses existing Zod schema and
     ValidationResult interface for comprehensive personality validation
-  packages/shared/src/services/storage/utils/personalities/index.ts: Created barrel export file for personalities validation utilities
+  packages/shared/src/services/storage/utils/personalities/index.ts:
+    Created barrel export file for personalities validation utilities; Updated
+    barrel file to export new validation functions
   packages/shared/src/services/storage/utils/personalities/__tests__/validateSinglePersonality.test.ts:
     Created comprehensive test suite with 37 test cases covering all validation
     scenarios, edge cases, and error conditions
+  packages/shared/src/services/storage/utils/personalities/validateBigFiveTraits.ts:
+    Main validation function for Big Five traits with comprehensive error
+    handling
+  packages/shared/src/services/storage/utils/personalities/bigFiveTraits.ts: Constant array of required Big Five trait names
+  packages/shared/src/services/storage/utils/personalities/validateBigFiveTrait.ts: Helper function for validating individual trait values
+  packages/shared/src/services/storage/utils/personalities/__tests__/validateBigFiveTraits.test.ts: Comprehensive test suite with 21 test cases covering all validation scenarios
 log: []
 schema: v1.0
 childrenIds:

@@ -1,13 +1,28 @@
 ---
 id: T-create-big-five-traits
 title: Create Big Five traits validation utility
-status: open
+status: done
 priority: medium
 parent: F-personality-validation
 prerequisites:
   - T-create-validation-types-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/services/storage/utils/personalities/validateBigFiveTraits.ts:
+    Main validation function for Big Five traits with comprehensive error
+    handling
+  packages/shared/src/services/storage/utils/personalities/bigFiveTraits.ts: Constant array of required Big Five trait names
+  packages/shared/src/services/storage/utils/personalities/validateBigFiveTrait.ts: Helper function for validating individual trait values
+  packages/shared/src/services/storage/utils/personalities/index.ts: Updated barrel file to export new validation functions
+  packages/shared/src/services/storage/utils/personalities/__tests__/validateBigFiveTraits.test.ts: Comprehensive test suite with 21 test cases covering all validation scenarios
+log:
+  - Successfully implemented Big Five traits validation utility with
+    comprehensive validation logic and test coverage. Created specialized
+    validation for all 5 Big Five personality traits (openness,
+    conscientiousness, extraversion, agreeableness, neuroticism) with detailed
+    error messaging. Implemented range validation (0-100), type checking, and
+    proper handling of edge cases like NaN and Infinity. All 21 tests pass with
+    100% coverage of validation scenarios. Follows project's one-export-per-file
+    rule with separate modules for each export.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T18:08:32.117Z
