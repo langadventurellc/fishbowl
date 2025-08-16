@@ -1,14 +1,27 @@
 ---
 id: F-persistence-schema-and-type
 title: Persistence Schema and Type Definitions
-status: open
+status: in-progress
 priority: medium
 parent: E-data-foundation-and-schema-1
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/types/settings/personalitiesSettingsSchema.ts:
+    Created new Zod schema file with persistedPersonalitySchema and
+    persistedPersonalitiesSettingsSchema including schema versioning,
+    comprehensive validation rules, security limits, and clear error messages
+    following rolesSettingsSchema.ts pattern
+  packages/shared/src/types/settings/__tests__/personalitiesSettingsSchema.test.ts:
+    Created comprehensive unit test suite with 82 tests covering valid data
+    validation, field validation for all properties, error message validation,
+    type inference, passthrough functionality, malformed data handling, and
+    complete file structure validation
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-core-zod-schemas-for
+  - T-create-default-personalities
+  - T-create-typescript-type
 created: 2025-08-15T18:02:56.211Z
 updated: 2025-08-15T18:02:56.211Z
 ---
