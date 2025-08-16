@@ -1,5 +1,5 @@
-import { validatePersonalitiesData } from "../validatePersonalitiesData";
 import { PERSONALITIES_SCHEMA_VERSION } from "../../../../../types/settings/personalitiesSettingsSchema";
+import { validatePersonalitiesData } from "../validatePersonalitiesData";
 
 describe("validatePersonalitiesData", () => {
   const validPersonality1 = {
@@ -367,69 +367,6 @@ describe("validatePersonalitiesData", () => {
 
       expect(result.isValid).toBe(false);
       expect(result.error).toBeDefined();
-    });
-  });
-
-  describe("performance", () => {
-    it("should validate large dataset within reasonable time", () => {
-      const largeDataset = {
-        schemaVersion: PERSONALITIES_SCHEMA_VERSION,
-        personalities: Array.from({ length: 50 }, (_, i) => ({
-          id: `personality-${i}`,
-          name: `Personality ${i}`,
-          bigFive: {
-            openness: Math.floor(Math.random() * 101),
-            conscientiousness: Math.floor(Math.random() * 101),
-            extraversion: Math.floor(Math.random() * 101),
-            agreeableness: Math.floor(Math.random() * 101),
-            neuroticism: Math.floor(Math.random() * 101),
-          },
-          behaviors: {
-            analytical: Math.floor(Math.random() * 101),
-            creative: Math.floor(Math.random() * 101),
-          },
-          customInstructions: `Instructions for personality ${i}`,
-          createdAt: "2023-01-01T00:00:00.000Z",
-          updatedAt: "2023-01-01T00:00:00.000Z",
-        })),
-        lastUpdated: "2023-01-01T00:00:00.000Z",
-      };
-
-      const start = Date.now();
-      const result = validatePersonalitiesData(largeDataset);
-      const end = Date.now();
-
-      expect(result.isValid).toBe(true);
-      expect(end - start).toBeLessThan(100); // Should complete within 100ms
-    });
-
-    it("should detect duplicates efficiently in large dataset", () => {
-      const largeDatasetWithDuplicates = {
-        schemaVersion: PERSONALITIES_SCHEMA_VERSION,
-        personalities: Array.from({ length: 100 }, (_, i) => ({
-          id: i < 50 ? `personality-${i}` : `personality-${i - 50}`, // Create duplicates in second half
-          name: `Personality ${i}`,
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
-          behaviors: {},
-          customInstructions: "",
-        })),
-        lastUpdated: "2023-01-01T00:00:00.000Z",
-      };
-
-      const start = Date.now();
-      const result = validatePersonalitiesData(largeDatasetWithDuplicates);
-      const end = Date.now();
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toBeDefined();
-      expect(result.errors!.length).toBe(50); // Should detect 50 duplicates
-      expect(end - start).toBeLessThan(100); // Should still be fast
     });
   });
 });

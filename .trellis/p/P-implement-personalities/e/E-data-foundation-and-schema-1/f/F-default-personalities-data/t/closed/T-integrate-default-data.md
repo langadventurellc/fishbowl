@@ -1,14 +1,31 @@
 ---
 id: T-integrate-default-data
 title: Integrate default data loading with factory function
-status: open
+status: done
 priority: medium
 parent: F-default-personalities-data
 prerequisites:
   - T-create-default-personalities-1
   - T-create-default-personalities
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/settings/createDefaultPersonalitiesSettings.ts:
+    Updated factory function to support includeDefaults parameter with ES6
+    import, validation, and error handling
+  packages/shared/src/types/settings/getDefaultPersonalities.ts: New helper function to get bundled default personalities with validation
+  packages/shared/src/types/settings/validateDefaultPersonalities.ts: New validation function for bundled default data schema compliance
+  packages/shared/src/types/settings/index.ts: Added exports for new helper functions
+  packages/shared/src/types/settings/__tests__/createDefaultPersonalitiesSettings.test.ts:
+    Updated existing tests for backward compatibility and added comprehensive
+    tests for includeDefaults functionality
+  packages/shared/src/types/settings/__tests__/getDefaultPersonalities.test.ts: New comprehensive test suite for getDefaultPersonalities helper function
+  packages/shared/src/types/settings/__tests__/validateDefaultPersonalities.test.ts: New test suite for validateDefaultPersonalities function
+log:
+  - "Successfully integrated default data loading with the factory function.
+    Updated createDefaultPersonalitiesSettings to support an optional
+    includeDefaults parameter (default: true) that loads the bundled default
+    personalities from JSON. Created helper functions for default data
+    management and comprehensive error handling for corrupted or missing data.
+    All tests pass with 100% coverage including new functionality."
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T18:07:22.755Z

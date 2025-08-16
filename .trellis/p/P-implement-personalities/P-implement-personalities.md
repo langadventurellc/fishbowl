@@ -30,15 +30,19 @@ affectedFiles:
     Created comprehensive unit tests covering type correctness, schema
     compatibility, edge cases, and export functionality with 11 test cases
   packages/shared/src/types/settings/index.ts: Updated to export both new
-    personality types and schema constants following established patterns
+    personality types and schema constants following established patterns; Added
+    exports for new helper functions
   packages/shared/src/types/settings/createDefaultPersonalitiesSettings.ts:
     Created factory function that generates default personalities settings
     structure with empty personalities array, schema version 1.0.0, and current
-    timestamp
+    timestamp; Updated factory function to support includeDefaults parameter
+    with ES6 import, validation, and error handling
   packages/shared/src/types/settings/__tests__/createDefaultPersonalitiesSettings.test.ts:
     Added comprehensive unit tests with 31 test cases covering basic
     functionality, schema validation, timestamp generation, function purity,
-    error handling, and edge cases
+    error handling, and edge cases; Updated existing tests for backward
+    compatibility and added comprehensive tests for includeDefaults
+    functionality
   packages/shared/src/services/storage/utils/validatePersonalitiesData.ts:
     Created personality validation function following the same pattern as
     validateRolesData and validateSettingsData, using existing ValidationResult
@@ -84,6 +88,10 @@ affectedFiles:
     Created comprehensive test suite with 40 tests validating JSON structure,
     schema compliance, trait diversity, behavior patterns, and acceptance
     criteria
+  packages/shared/src/types/settings/getDefaultPersonalities.ts: New helper function to get bundled default personalities with validation
+  packages/shared/src/types/settings/validateDefaultPersonalities.ts: New validation function for bundled default data schema compliance
+  packages/shared/src/types/settings/__tests__/getDefaultPersonalities.test.ts: New comprehensive test suite for getDefaultPersonalities helper function
+  packages/shared/src/types/settings/__tests__/validateDefaultPersonalities.test.ts: New test suite for validateDefaultPersonalities function
 log: []
 schema: v1.0
 childrenIds:

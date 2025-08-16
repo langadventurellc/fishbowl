@@ -48,15 +48,15 @@ describe("createDefaultPersonalitiesSettings", () => {
   });
 
   describe("personalities array", () => {
-    it("should return empty personalities array for clean start", () => {
-      const config = createDefaultPersonalitiesSettings();
+    it("should return empty personalities array for clean start when includeDefaults=false", () => {
+      const config = createDefaultPersonalitiesSettings(false);
 
       expect(config.personalities).toHaveLength(0);
       expect(config.personalities).toEqual([]);
     });
 
     it("should return a mutable array", () => {
-      const config = createDefaultPersonalitiesSettings();
+      const config = createDefaultPersonalitiesSettings(false);
 
       // Should be able to push items without errors
       config.personalities.push({
@@ -172,7 +172,7 @@ describe("createDefaultPersonalitiesSettings", () => {
       });
 
       // Second config should be unaffected
-      expect(config2.personalities).toHaveLength(0); // Still empty
+      expect(config2.personalities).toHaveLength(5); // Still has defaults
     });
 
     it("should not share references between calls", () => {
@@ -248,8 +248,8 @@ describe("createDefaultPersonalitiesSettings", () => {
     });
 
     it("should handle empty personalities array in schema validation", () => {
-      // Test that empty personalities array is valid by schema (which is our default)
-      const config = createDefaultPersonalitiesSettings();
+      // Test that empty personalities array is valid by schema when explicitly requested
+      const config = createDefaultPersonalitiesSettings(false);
 
       const result = persistedPersonalitiesSettingsSchema.safeParse(config);
       expect(result.success).toBe(true);
@@ -295,7 +295,7 @@ describe("createDefaultPersonalitiesSettings", () => {
   describe("data integrity and consistency", () => {
     it("should maintain consistent structure across calls", () => {
       const configs = Array.from({ length: 5 }, () =>
-        createDefaultPersonalitiesSettings(),
+        createDefaultPersonalitiesSettings(false),
       );
 
       configs.forEach((config) => {
@@ -322,9 +322,9 @@ describe("createDefaultPersonalitiesSettings", () => {
       });
     });
 
-    it("should always return empty personalities array", () => {
+    it("should always return empty personalities array when includeDefaults=false", () => {
       const configs = Array.from({ length: 10 }, () =>
-        createDefaultPersonalitiesSettings(),
+        createDefaultPersonalitiesSettings(false),
       );
 
       configs.forEach((config) => {
@@ -424,6 +424,105 @@ describe("createDefaultPersonalitiesSettings", () => {
         invalidInstructionsData,
       );
       expect(result.success).toBe(false);
+    });
+  });
+
+  describe("includeDefaults parameter", () => {
+    it("should return default personalities when includeDefaults=true (default)", () => {
+      const config = createDefaultPersonalitiesSettings();
+
+      expect(config.personalities).toHaveLength(5);
+      expect(config.personalities[0]).toHaveProperty("id", "creative-thinker");
+      expect(config.personalities[1]).toHaveProperty(
+        "id",
+        "analytical-strategist",
+      );
+      expect(config.personalities[2]).toHaveProperty(
+        "id",
+        "empathetic-supporter",
+      );
+      expect(config.personalities[3]).toHaveProperty("id", "dynamic-leader");
+      expect(config.personalities[4]).toHaveProperty(
+        "id",
+        "thoughtful-advisor",
+      );
+    });
+
+    it("should return default personalities when includeDefaults=true explicitly", () => {
+      const config = createDefaultPersonalitiesSettings(true);
+
+      expect(config.personalities).toHaveLength(5);
+      expect(config.personalities[0]).toHaveProperty(
+        "name",
+        "Creative Thinker",
+      );
+      expect(config.personalities[1]).toHaveProperty(
+        "name",
+        "Analytical Strategist",
+      );
+      expect(config.personalities[2]).toHaveProperty(
+        "name",
+        "Empathetic Supporter",
+      );
+      expect(config.personalities[3]).toHaveProperty("name", "Dynamic Leader");
+      expect(config.personalities[4]).toHaveProperty(
+        "name",
+        "Thoughtful Advisor",
+      );
+    });
+
+    it("should return empty array when includeDefaults=false", () => {
+      const config = createDefaultPersonalitiesSettings(false);
+
+      expect(config.personalities).toHaveLength(0);
+      expect(config.personalities).toEqual([]);
+    });
+
+    it("should validate all default personalities against schema", () => {
+      const config = createDefaultPersonalitiesSettings(true);
+
+      const result = persistedPersonalitiesSettingsSchema.safeParse(config);
+      expect(result.success).toBe(true);
+
+      // Each personality should have all required fields
+      config.personalities.forEach((personality) => {
+        expect(personality).toHaveProperty("id");
+        expect(personality).toHaveProperty("name");
+        expect(personality).toHaveProperty("bigFive");
+        expect(personality).toHaveProperty("behaviors");
+        expect(personality).toHaveProperty("customInstructions");
+        expect(personality).toHaveProperty("createdAt");
+        expect(personality).toHaveProperty("updatedAt");
+      });
+    });
+
+    it("should have diverse Big Five trait profiles in defaults", () => {
+      const config = createDefaultPersonalitiesSettings(true);
+
+      // Check that we have diversity in traits
+      const opennessValues = config.personalities.map(
+        (p) => p.bigFive.openness,
+      );
+      const extraversionValues = config.personalities.map(
+        (p) => p.bigFive.extraversion,
+      );
+
+      expect(
+        Math.max(...opennessValues) - Math.min(...opennessValues),
+      ).toBeGreaterThan(20);
+      expect(
+        Math.max(...extraversionValues) - Math.min(...extraversionValues),
+      ).toBeGreaterThan(30);
+    });
+
+    it("should include meaningful custom instructions for each personality", () => {
+      const config = createDefaultPersonalitiesSettings(true);
+
+      config.personalities.forEach((personality) => {
+        expect(personality.customInstructions).toBeTruthy();
+        expect(personality.customInstructions.length).toBeGreaterThan(50);
+        expect(personality.customInstructions.length).toBeLessThanOrEqual(500);
+      });
     });
   });
 });
