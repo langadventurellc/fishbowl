@@ -2,7 +2,7 @@ import { useSettingsModal } from "@fishbowl-ai/ui-shared";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import React from "react";
 import { SettingsModal } from "./components/settings/SettingsModal";
-import { SettingsProvider, RolesProvider } from "./contexts";
+import { SettingsProvider, RolesProvider, useServices } from "./contexts";
 import { RolesErrorBoundary } from "./components/errors/RolesErrorBoundary";
 import { useElectronIPC } from "./hooks/useElectronIPC";
 import { setupTestHelpers } from "./utils/testHelpers";
@@ -11,17 +11,11 @@ import { useDesktopSettingsPersistence } from "./adapters/useDesktopSettingsPers
 import Home from "./pages/Home";
 import ComponentShowcase from "./pages/showcase/ComponentShowcase";
 import LayoutShowcase from "./pages/showcase/LayoutShowcase";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-// Initialize structured logger for renderer process
-const logger = createLoggerSync({
-  config: {
-    name: "desktop-renderer",
-    level: "debug",
-  },
-});
 
 export default function App() {
+  // Get configured services from context
+  const { logger } = useServices();
+
   // Initialize IPC integration for settings modal
   useElectronIPC();
 
@@ -50,7 +44,7 @@ export default function App() {
       }
     };
     loadInitialTheme();
-  }, [settings]);
+  }, [settings, logger]);
 
   // Log app initialization and setup test helpers
   React.useEffect(() => {
@@ -61,12 +55,12 @@ export default function App() {
 
     // Setup test helpers for E2E testing
     setupTestHelpers();
-  }, []);
+  }, [logger]);
 
   // Log settings modal state changes
   React.useEffect(() => {
     logger.debug("Settings modal state changed", { isOpen });
-  }, [isOpen]);
+  }, [isOpen, logger]);
 
   return (
     <SettingsProvider>
