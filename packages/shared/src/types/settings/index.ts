@@ -8,6 +8,12 @@ export {
   ROLES_SCHEMA_VERSION,
   CURRENT_ROLES_SCHEMA_VERSION,
 } from "./rolesSettingsSchema";
+export {
+  persistedPersonalitySchema,
+  persistedPersonalitiesSettingsSchema,
+  PERSONALITIES_SCHEMA_VERSION,
+  CURRENT_PERSONALITIES_SCHEMA_VERSION,
+} from "./personalitiesSettingsSchema";
 export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
 export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettings";
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
@@ -25,6 +31,8 @@ export type { PersistedGeneralSettingsData } from "./PersistedGeneralSettingsDat
 export type { PersistedRole } from "./PersistedRole";
 export type { PersistedRoleData } from "./PersistedRoleData";
 export type { PersistedRolesSettingsData } from "./PersistedRolesSettingsData";
+export type { PersistedPersonalityData } from "./PersistedPersonalityData";
+export type { PersistedPersonalitiesSettingsData } from "./PersistedPersonalitiesSettingsData";
 export type { ShowTimestamps } from "./ShowTimestamps";
 export { SHOW_TIMESTAMPS_OPTIONS } from "./ShowTimestamps";
 export type { ThemeMode } from "./ThemeMode";
