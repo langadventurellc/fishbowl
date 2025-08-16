@@ -108,7 +108,6 @@ describe("validateSinglePersonality", () => {
     });
 
     it("should reject missing ID", () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { id, ...invalid } = validPersonality;
       const result = validateSinglePersonality(invalid);
 
@@ -164,7 +163,6 @@ describe("validateSinglePersonality", () => {
 
   describe("Big Five traits validation", () => {
     it("should reject missing Big Five object", () => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { bigFive, ...invalid } = validPersonality;
       const result = validateSinglePersonality(invalid);
 
