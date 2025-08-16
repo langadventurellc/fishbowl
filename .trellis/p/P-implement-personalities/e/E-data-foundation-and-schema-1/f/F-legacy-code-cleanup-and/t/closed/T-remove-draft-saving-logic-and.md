@@ -1,13 +1,30 @@
 ---
 id: T-remove-draft-saving-logic-and
 title: Remove draft saving logic and components
-status: open
+status: done
 priority: medium
 parent: F-legacy-code-cleanup-and
 prerequisites:
   - T-remove-localstorage-usage
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/CreatePersonalityForm.tsx:
+    Removed all TEMPORARILY DISABLED draft saving logic including lastSavedData
+    state, initialDataRef, draft comparison functions, and related useEffect
+    hooks. Simplified comments for cleaner code.
+  apps/desktop/src/pages/showcase/ComponentShowcase.tsx: Removed 'Save Draft'
+    button from component showcase examples to eliminate draft-related UI
+    components.
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Removed unsaved changes confirmation dialog when switching tabs, eliminated
+    useUnsavedChanges hook usage, and removed useConfirmationDialog import.
+    Simplified tab navigation without draft-specific protection.
+log:
+  - Successfully removed all draft saving logic and components from the
+    personality management system. Eliminated commented-out draft tracking code,
+    removed "Save Draft" button from showcase, and removed unsaved changes
+    confirmation dialog. Simplified form submission flow without draft
+    considerations while maintaining existing unsaved changes state management
+    for forms.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T18:09:48.814Z
@@ -18,7 +35,7 @@ updated: 2025-08-15T18:09:48.814Z
 
 ## Context
 
-Remove all draft personality saving mechanisms, unsaved changes tracking, and related UI components that are no longer needed with the new file-based persistence approach.
+Remove all draft personality saving mechanisms and related UI components that are no longer needed with the new file-based persistence approach.
 
 ## Implementation Requirements
 
@@ -29,12 +46,7 @@ Remove all draft personality saving mechanisms, unsaved changes tracking, and re
    - Remove draft recovery prompts and dialogs
    - Remove "Save Draft" buttons and functionality
 
-2. **Unsaved Changes Tracking**:
-   - Remove unsaved changes state management
-   - Remove "unsaved changes" warning dialogs
-   - Remove beforeunload handlers for unsaved personality data
-
-3. **Draft Recovery Mechanisms**:
+2. **Draft Recovery Mechanisms**:
    - Remove draft recovery on app restart
    - Remove draft restoration prompts
    - Remove draft cleanup on successful save
@@ -44,12 +56,11 @@ Remove all draft personality saving mechanisms, unsaved changes tracking, and re
 ```
 apps/desktop/src/components/settings/personalities/
 ├── CreatePersonalityForm.tsx     # Remove draft saving logic
-├── PersonalityForm.tsx          # Remove unsaved changes tracking
+├── PersonalityForm.tsx          # Remove draft saving logic
 └── Draft-related components      # Remove entirely if they exist
 
 packages/ui-shared/src/
 ├── hooks/useDraftSaving.ts       # Remove if exists
-├── hooks/useUnsavedChanges.ts    # Remove if exists
 └── utils/draftUtils.ts           # Remove if exists
 ```
 
@@ -64,28 +75,16 @@ packages/ui-shared/src/
 
 ```typescript
 // Remove patterns like these:
-const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 const saveDraft = () => { ... };
 const loadDraft = () => { ... };
 const clearDraft = () => { ... };
-
-// Remove unsaved changes warnings:
-window.addEventListener('beforeunload', (e) => {
-  if (hasUnsavedChanges) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
-});
 ```
 
 ## Acceptance Criteria
 
 - [ ] No draft saving UI components remain
-- [ ] No unsaved changes tracking state exists
 - [ ] No "Save Draft" buttons or functionality remain
-- [ ] No unsaved changes warning dialogs exist
 - [ ] No draft recovery mechanisms on app restart
-- [ ] No beforeunload handlers for personality drafts
 - [ ] No draft-related hooks or utilities remain
 - [ ] No draft persistence state in stores
 - [ ] Application builds successfully after removal
@@ -95,14 +94,12 @@ window.addEventListener('beforeunload', (e) => {
 ## UI Changes Required
 
 - Remove "Save Draft" buttons from personality forms
-- Remove unsaved changes indicators (asterisks, warning text)
 - Remove draft recovery dialogs and prompts
 - Simplify form submission flow without draft considerations
 
 ## Testing Requirements (include in this task)
 
 - Test personality forms work without draft saving
-- Test no unsaved changes warnings appear
 - Test form navigation works without draft prompts
 - Test application restart doesn't attempt draft recovery
 - Update unit tests to remove draft-related test cases

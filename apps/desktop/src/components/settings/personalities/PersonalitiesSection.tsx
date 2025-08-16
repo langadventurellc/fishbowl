@@ -3,7 +3,6 @@
  *
  * Features:
  * - Tab navigation between Saved and Create New tabs
- * - Unsaved changes protection when switching tabs
  * - Integration with settings modal navigation state
  * - Responsive design and accessibility compliance
  *
@@ -11,15 +10,12 @@
  */
 
 import {
-  useSettingsNavigation,
-  useUnsavedChanges,
   type PersonalitiesSectionProps,
   type Personality,
   type PersonalityFormData,
   type TabConfiguration,
 } from "@fishbowl-ai/ui-shared";
 import React, { useCallback } from "react";
-import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { TabContainer } from "../TabContainer";
 import { CreatePersonalityForm } from "./CreatePersonalityForm";
 import { SavedPersonalitiesTab } from "./SavedPersonalitiesTab";
@@ -30,10 +26,6 @@ const logger = createLoggerSync({
 });
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
-  const { activeSubTab } = useSettingsNavigation();
-  const { hasUnsavedChanges } = useUnsavedChanges();
-  const { showConfirmation } = useConfirmationDialog();
-
   const handleEditPersonality = useCallback((personality: Personality) => {
     // Switch to Create New tab with pre-filled data for editing
     // This will be implemented when the form component is ready
@@ -60,21 +52,6 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
     // Cancel editing and return to previous tab or Saved tab
     logger.info("Cancel editing requested");
   }, []);
-
-  const handleTabChange = useCallback(async () => {
-    // Check for unsaved changes when leaving Create New tab
-    if (activeSubTab === "create-new" && hasUnsavedChanges) {
-      const shouldProceed = await showConfirmation({
-        title: "Unsaved Changes",
-        message: "You have unsaved changes. Do you want to discard them?",
-        confirmText: "Discard Changes",
-        cancelText: "Keep Editing",
-      });
-      if (!shouldProceed) return;
-    }
-
-    // Tab change will be handled by store via TabContainer
-  }, [activeSubTab, hasUnsavedChanges, showConfirmation]);
 
   const tabs: TabConfiguration[] = [
     {
@@ -113,7 +90,6 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
         useStore={true}
         animationDuration={200}
         className="personalities-tabs"
-        onTabChange={handleTabChange}
       />
     </div>
   );

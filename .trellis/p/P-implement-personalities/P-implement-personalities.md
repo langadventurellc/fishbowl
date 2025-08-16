@@ -9,7 +9,10 @@ affectedFiles:
     Removed localStorage auto-save functionality, draft cleanup, draft recovery,
     and localStorage clearing after save. Updated imports to remove unused
     useEffect and useDebounce. Updated component documentation to remove
-    localStorage references.
+    localStorage references.; Removed all TEMPORARILY DISABLED draft saving
+    logic including lastSavedData state, initialDataRef, draft comparison
+    functions, and related useEffect hooks. Simplified comments for cleaner
+    code.
   packages/shared/src/types/settings/personalitiesSettingsSchema.ts:
     Created new Zod schema file with persistedPersonalitySchema and
     persistedPersonalitiesSettingsSchema including schema versioning,
@@ -92,6 +95,13 @@ affectedFiles:
   packages/shared/src/types/settings/validateDefaultPersonalities.ts: New validation function for bundled default data schema compliance
   packages/shared/src/types/settings/__tests__/getDefaultPersonalities.test.ts: New comprehensive test suite for getDefaultPersonalities helper function
   packages/shared/src/types/settings/__tests__/validateDefaultPersonalities.test.ts: New test suite for validateDefaultPersonalities function
+  apps/desktop/src/pages/showcase/ComponentShowcase.tsx: Removed 'Save Draft'
+    button from component showcase examples to eliminate draft-related UI
+    components.
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Removed unsaved changes confirmation dialog when switching tabs, eliminated
+    useUnsavedChanges hook usage, and removed useConfirmationDialog import.
+    Simplified tab navigation without draft-specific protection.
 log: []
 schema: v1.0
 childrenIds:

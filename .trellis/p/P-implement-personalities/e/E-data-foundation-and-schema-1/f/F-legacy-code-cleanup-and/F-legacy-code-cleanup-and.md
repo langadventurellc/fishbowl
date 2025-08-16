@@ -10,14 +10,24 @@ affectedFiles:
     Removed localStorage auto-save functionality, draft cleanup, draft recovery,
     and localStorage clearing after save. Updated imports to remove unused
     useEffect and useDebounce. Updated component documentation to remove
-    localStorage references.
+    localStorage references.; Removed all TEMPORARILY DISABLED draft saving
+    logic including lastSavedData state, initialDataRef, draft comparison
+    functions, and related useEffect hooks. Simplified comments for cleaner
+    code.
+  apps/desktop/src/pages/showcase/ComponentShowcase.tsx: Removed 'Save Draft'
+    button from component showcase examples to eliminate draft-related UI
+    components.
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Removed unsaved changes confirmation dialog when switching tabs, eliminated
+    useUnsavedChanges hook usage, and removed useConfirmationDialog import.
+    Simplified tab navigation without draft-specific protection.
 log: []
 schema: v1.0
 childrenIds:
   - T-clean-up-unused-imports-and
   - T-remove-draft-saving-logic-and
-  - T-remove-localstorage-usage
   - T-remove-tab-navigation-system
+  - T-remove-localstorage-usage
 created: 2025-08-15T18:04:15.427Z
 updated: 2025-08-15T18:04:15.427Z
 ---

@@ -48,13 +48,8 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   initialData,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // TEMPORARILY DISABLED: lastSavedData for unsaved changes tracking
-  // const [lastSavedData, setLastSavedData] =
-  //   useState<PersonalityFormData | null>(null);
   const { setUnsavedChanges } = useUnsavedChanges();
   const isEditMode = !!initialData;
-  // TEMPORARILY DISABLED: initialDataRef for unsaved changes tracking
-  // const initialDataRef = useRef(initialData);
 
   // Mock data for uniqueness validation - will be replaced with store data
   const savedPersonalities = [
@@ -161,34 +156,12 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
     mode: "onChange",
   });
 
-  // TEMPORARILY DISABLED: Simple object comparison for unsaved changes detection
-  // const isEqual = (a: PersonalityFormData | null, b: PersonalityFormData) => {
-  //   return JSON.stringify(a) === JSON.stringify(b);
-  // };
-
-  // DISABLED: Unsaved changes tracking causes form reset issues
-  // Will implement this properly in a future iteration
-  // useEffect(() => {
-  //   setUnsavedChanges(form.formState.isDirty);
-  // }, [form.formState.isDirty, setUnsavedChanges]);
-
-  // TEMPORARILY DISABLED: Set initial saved data for comparison
-  // useEffect(() => {
-  //   if (initialDataRef.current) {
-  //     setLastSavedData(initialDataRef.current as PersonalityFormData);
-  //   } else {
-  //     // For create mode, set lastSavedData to the current form defaults
-  //     setLastSavedData(form.getValues());
-  //   }
-  // }, [form]);
-
   const handleSave = useCallback(
     async (data: PersonalityFormData) => {
       setIsSubmitting(true);
       try {
         await onSave(data);
         // Reset form dirty state after successful save
-        // setLastSavedData is not needed since we use form.formState.isDirty
         form.reset(data);
         setUnsavedChanges(false);
       } catch (error) {
@@ -202,7 +175,7 @@ export const CreatePersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   );
 
   const handleCancel = useCallback(() => {
-    // Simplified cancel handler - unsaved changes tracking disabled for now
+    // Cancel handler
     onCancel();
   }, [onCancel]);
 
