@@ -31,7 +31,9 @@ affectedFiles:
   packages/ui-shared/src/mapping/personalities/mapSinglePersonalityUIToPersistence.ts:
     Implemented function to convert UI personality data to persistence format
     with timestamp generation and field preservation
-  packages/ui-shared/src/mapping/personalities/index.ts: Created barrel exports for both mapping functions
+  packages/ui-shared/src/mapping/personalities/index.ts: Created barrel exports
+    for both mapping functions; Updated barrel exports to include new array
+    mapping functions
   packages/ui-shared/src/mapping/personalities/__tests__/mapSinglePersonalityPersistenceToUI.test.ts:
     Created comprehensive unit tests covering complete transformations,
     timestamp handling, ID generation, Big Five traits, behaviors, field
@@ -40,6 +42,18 @@ affectedFiles:
     Created comprehensive unit tests covering complete transformations,
     timestamp handling, ID generation, field preservation, and return type
     validation
+  packages/ui-shared/src/mapping/personalities/mapPersonalitiesPersistenceToUI.ts:
+    Created array mapping function to transform persisted personalities data to
+    UI view model format, handling null/undefined input gracefully
+  packages/ui-shared/src/mapping/personalities/mapPersonalitiesUIToPersistence.ts:
+    Created array mapping function to transform UI personality view models to
+    persistence format with schema validation
+  packages/ui-shared/src/mapping/personalities/__tests__/mapPersonalitiesPersistenceToUI.test.ts:
+    Created comprehensive test suite covering transformation scenarios, edge
+    cases, large datasets, unicode handling, and data integrity verification
+  packages/ui-shared/src/mapping/personalities/__tests__/mapPersonalitiesUIToPersistence.test.ts:
+    Created comprehensive test suite covering validation, field processing,
+    performance, error handling, and round-trip data integrity
 log: []
 schema: v1.0
 childrenIds:
