@@ -1,4 +1,4 @@
-export interface PersonalitiesErrorState {
+export interface ErrorState {
   message: string | null;
   operation: "save" | "load" | "sync" | "import" | "reset" | null;
   isRetryable: boolean;

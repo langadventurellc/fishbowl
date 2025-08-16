@@ -1,11 +1,11 @@
 import { RoleViewModel, RolesPersistenceAdapter } from "../types";
 import { PendingOperation } from "../types/roles/PendingOperation";
-import { RolesErrorState } from "./RolesErrorState";
+import { ErrorState } from "./ErrorState";
 
 export interface RolesState {
   roles: RoleViewModel[];
   isLoading: boolean;
-  error: RolesErrorState | null;
+  error: ErrorState | null;
   // New adapter integration state
   adapter: RolesPersistenceAdapter | null;
   isInitialized: boolean;

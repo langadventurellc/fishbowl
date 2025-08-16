@@ -17,7 +17,7 @@ import { PersonalitiesPersistenceAdapter } from "../types/personalities/persiste
 import { PersonalitiesPersistenceError } from "../types/personalities/persistence/PersonalitiesPersistenceError";
 // import { PersonalityFormData } from "../types/settings/PersonalityFormData";
 import { PersonalityViewModel } from "../types/settings/PersonalityViewModel";
-import { PersonalitiesErrorState } from "./PersonalitiesErrorState";
+import { ErrorState } from "./ErrorState";
 import { type PersonalitiesStore } from "./PersonalitiesStore";
 
 // Lazy logger creation to avoid process access in browser context
@@ -78,7 +78,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
     operation: "save" | "load" | "sync" | "import" | "reset" | null = null,
     isRetryable: boolean = false,
     retryCount: number = 0,
-  ): PersonalitiesErrorState => ({
+  ): ErrorState => ({
     message,
     operation,
     isRetryable,
@@ -89,8 +89,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
   /**
    * Create a clear error state (no error)
    */
-  const _clearErrorState = (): PersonalitiesErrorState =>
-    _createErrorState(null);
+  const _clearErrorState = (): ErrorState => _createErrorState(null);
 
   /**
    * Determines if an error is retryable based on its type and characteristics

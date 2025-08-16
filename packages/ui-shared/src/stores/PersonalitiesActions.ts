@@ -4,7 +4,7 @@ import {
   PersonalityViewModel,
   PersonalitiesPersistenceAdapter,
 } from "../types";
-import { PersonalitiesErrorState } from "./PersonalitiesErrorState";
+import { ErrorState } from "./ErrorState";
 
 export interface PersonalitiesActions {
   createPersonality: (personalityData: PersonalityFormData) => string;
@@ -30,5 +30,5 @@ export interface PersonalitiesActions {
   // Error recovery methods
   retryLastOperation: () => Promise<void>;
   clearErrorState: () => void;
-  getErrorDetails: () => PersonalitiesErrorState;
+  getErrorDetails: () => ErrorState;
 }

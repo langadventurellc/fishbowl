@@ -17,7 +17,7 @@ import { RolesPersistenceAdapter } from "../types/roles/persistence/RolesPersist
 import { RolesPersistenceError } from "../types/roles/persistence/RolesPersistenceError";
 import { RoleFormData } from "../types/settings/RoleFormData";
 import { RoleViewModel } from "../types/settings/RoleViewModel";
-import { RolesErrorState } from "./RolesErrorState";
+import { ErrorState } from "./ErrorState";
 import { type RolesStore } from "./RolesStore";
 
 // Lazy logger creation to avoid process access in browser context
@@ -113,7 +113,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     operation: "save" | "load" | "sync" | "import" | "reset" | null = null,
     isRetryable: boolean = false,
     retryCount: number = 0,
-  ): RolesErrorState => ({
+  ): ErrorState => ({
     message,
     operation,
     isRetryable,
@@ -124,7 +124,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
   /**
    * Create a clear error state (no error)
    */
-  const _clearErrorState = (): RolesErrorState => _createErrorState(null);
+  const _clearErrorState = (): ErrorState => _createErrorState(null);
 
   const _isRetryableError = (error: unknown): boolean => {
     // Never retry validation errors
