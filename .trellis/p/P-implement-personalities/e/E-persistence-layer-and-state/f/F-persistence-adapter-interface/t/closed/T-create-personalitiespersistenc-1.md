@@ -1,12 +1,28 @@
 ---
 id: T-create-personalitiespersistenc-1
 title: Create PersonalitiesPersistenceError class with unit tests
-status: open
+status: done
 priority: high
 parent: F-persistence-adapter-interface
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/personalities/persistence/PersonalitiesPersistenceError.ts:
+    Created new error class extending Error with operation and cause properties,
+    following RolesPersistenceError pattern
+  packages/ui-shared/src/types/personalities/persistence/__tests__/PersonalitiesPersistenceError.test.ts:
+    Comprehensive unit tests covering all constructor scenarios, operation
+    types, error inheritance, and stack trace handling
+  packages/ui-shared/src/types/personalities/persistence/index.ts: Export barrel file for personalities persistence types
+  packages/ui-shared/src/types/personalities/index.ts: Export barrel file for personalities types
+  packages/ui-shared/src/types/index.ts: Added personalities export to main types barrel file
+log:
+  - Implemented PersonalitiesPersistenceError class with comprehensive unit
+    tests, following the exact pattern from RolesPersistenceError. The error
+    class provides structured error handling for personalities persistence
+    operations with operation context ("save", "load", "reset") and cause
+    tracking. All requirements met including proper TypeScript types, JSDoc
+    documentation, V8 stack trace handling, and 100% test coverage. All quality
+    checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-16T21:03:49.943Z

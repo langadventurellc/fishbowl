@@ -1,0 +1,1 @@
+export { PersonalitiesPersistenceError } from "./PersonalitiesPersistenceError";

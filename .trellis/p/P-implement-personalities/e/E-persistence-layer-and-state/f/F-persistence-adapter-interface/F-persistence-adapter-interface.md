@@ -1,14 +1,26 @@
 ---
 id: F-persistence-adapter-interface
 title: Persistence Adapter Interface
-status: open
+status: in-progress
 priority: medium
 parent: E-persistence-layer-and-state
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/personalities/persistence/PersonalitiesPersistenceError.ts:
+    Created new error class extending Error with operation and cause properties,
+    following RolesPersistenceError pattern
+  packages/ui-shared/src/types/personalities/persistence/__tests__/PersonalitiesPersistenceError.test.ts:
+    Comprehensive unit tests covering all constructor scenarios, operation
+    types, error inheritance, and stack trace handling
+  packages/ui-shared/src/types/personalities/persistence/index.ts: Export barrel file for personalities persistence types
+  packages/ui-shared/src/types/personalities/index.ts: Export barrel file for personalities types
+  packages/ui-shared/src/types/index.ts: Added personalities export to main types barrel file
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-personalitiespersistenc-1
+  - T-create-personalitiespersistenc
+  - T-setup-directory-structure-and
 created: 2025-08-16T20:58:21.418Z
 updated: 2025-08-16T20:58:21.418Z
 ---
