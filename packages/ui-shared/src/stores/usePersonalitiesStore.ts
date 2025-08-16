@@ -12,10 +12,10 @@ import { createLoggerSync } from "@fishbowl-ai/shared";
 import { create } from "zustand";
 // import { mapPersonalitiesPersistenceToUI } from "../mapping/personalities/mapPersonalitiesPersistenceToUI";
 // import { mapPersonalitiesUIToPersistence } from "../mapping/personalities/mapPersonalitiesUIToPersistence";
-// import { personalitySchema } from "../schemas/personalitySchema";
+import { personalitySchema } from "../schemas/personalitySchema";
 import { PersonalitiesPersistenceAdapter } from "../types/personalities/persistence/PersonalitiesPersistenceAdapter";
 import { PersonalitiesPersistenceError } from "../types/personalities/persistence/PersonalitiesPersistenceError";
-// import { PersonalityFormData } from "../types/settings/PersonalityFormData";
+import { PersonalityFormData } from "../types/settings/PersonalityFormData";
 import { PersonalityViewModel } from "../types/settings/PersonalityViewModel";
 import { ErrorState } from "./ErrorState";
 import { type PersonalitiesStore } from "./PersonalitiesStore";
@@ -69,6 +69,36 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
 
   // Store snapshot for rollback
   let _rollbackSnapshot: PersonalityViewModel[] | null = null;
+
+  /**
+   * Internal debounced save function
+   * Batches rapid changes and persists after delay
+   */
+  const _debouncedSave = () => {
+    // Clear existing timer
+    if (_debounceTimer) {
+      clearTimeout(_debounceTimer);
+    }
+
+    // Set new timer
+    _debounceTimer = setTimeout(async () => {
+      const { adapter } = get();
+      if (!adapter) {
+        _getLogger().warn("Cannot save: no adapter configured");
+        return;
+      }
+
+      // Perform the actual save
+      try {
+        await get().persistChanges();
+      } catch (error) {
+        _getLogger().error(
+          "Auto-save failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+      }
+    }, _DEBOUNCE_DELAY_MS);
+  };
 
   /**
    * Create a properly formatted error state
@@ -210,25 +240,165 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
     pendingOperations: [],
     retryTimers: new Map(),
 
-    // CRUD operations - to be implemented in separate task
-    createPersonality: () => {
-      throw new Error("createPersonality not yet implemented");
+    // CRUD operations
+    createPersonality: (personalityData: PersonalityFormData) => {
+      try {
+        // Validate input data
+        const validatedData = personalitySchema.parse(personalityData);
+
+        // Check name uniqueness
+        const { isPersonalityNameUnique } = get();
+        if (!isPersonalityNameUnique(validatedData.name)) {
+          set({
+            error: _createErrorState(
+              "A personality with this name already exists",
+            ),
+          });
+          return "";
+        }
+
+        const newPersonality: PersonalityViewModel = {
+          id: _generateId(),
+          ...validatedData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        };
+
+        const operationId = _generateId();
+        set((state) => ({
+          personalities: [...state.personalities, newPersonality],
+          error: _clearErrorState(),
+          pendingOperations: [
+            ...state.pendingOperations,
+            {
+              id: operationId,
+              type: "create",
+              personalityId: newPersonality.id,
+              timestamp: new Date().toISOString(),
+              rollbackData: undefined, // No rollback for create
+              status: "pending" as const,
+            },
+          ],
+        }));
+
+        // Trigger auto-save
+        _debouncedSave();
+
+        return newPersonality.id;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to create personality";
+        set({ error: _createErrorState(errorMessage) });
+        return "";
+      }
     },
 
-    updatePersonality: () => {
-      throw new Error("updatePersonality not yet implemented");
+    updatePersonality: (id: string, personalityData: PersonalityFormData) => {
+      try {
+        const validatedData = personalitySchema.parse(personalityData);
+        const { personalities, isPersonalityNameUnique } = get();
+
+        const existingPersonality = personalities.find(
+          (personality) => personality.id === id,
+        );
+        if (!existingPersonality) {
+          set({ error: _createErrorState("Personality not found") });
+          return;
+        }
+
+        // Check name uniqueness (excluding current personality)
+        if (!isPersonalityNameUnique(validatedData.name, id)) {
+          set({
+            error: _createErrorState(
+              "A personality with this name already exists",
+            ),
+          });
+          return;
+        }
+
+        const operationId = _generateId();
+        set((state) => ({
+          personalities: state.personalities.map((personality) =>
+            personality.id === id
+              ? {
+                  ...personality,
+                  ...validatedData,
+                  updatedAt: new Date().toISOString(),
+                }
+              : personality,
+          ),
+          error: _clearErrorState(),
+          pendingOperations: [
+            ...state.pendingOperations,
+            {
+              id: operationId,
+              type: "update",
+              personalityId: id,
+              timestamp: new Date().toISOString(),
+              rollbackData: existingPersonality, // Store original for potential rollback
+              status: "pending" as const,
+            },
+          ],
+        }));
+
+        // Trigger auto-save
+        _debouncedSave();
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? error.message
+            : "Failed to update personality";
+        set({ error: _createErrorState(errorMessage) });
+      }
     },
 
-    deletePersonality: () => {
-      throw new Error("deletePersonality not yet implemented");
+    deletePersonality: (id: string) => {
+      const { personalities } = get();
+      const personalityToDelete = personalities.find(
+        (personality) => personality.id === id,
+      );
+
+      if (!personalityToDelete) {
+        set({ error: _createErrorState("Personality not found") });
+        return;
+      }
+
+      const operationId = _generateId();
+      set((state) => ({
+        personalities: state.personalities.filter(
+          (personality) => personality.id !== id,
+        ),
+        error: _clearErrorState(),
+        pendingOperations: [
+          ...state.pendingOperations,
+          {
+            id: operationId,
+            type: "delete",
+            personalityId: id,
+            timestamp: new Date().toISOString(),
+            rollbackData: personalityToDelete, // Store for potential restoration
+            status: "pending",
+          },
+        ],
+      }));
+
+      // Trigger auto-save
+      _debouncedSave();
     },
 
-    getPersonalityById: () => {
-      throw new Error("getPersonalityById not yet implemented");
+    getPersonalityById: (id: string) => {
+      return get().personalities.find((personality) => personality.id === id);
     },
 
-    isPersonalityNameUnique: () => {
-      throw new Error("isPersonalityNameUnique not yet implemented");
+    isPersonalityNameUnique: (name: string, excludeId?: string) => {
+      const { personalities } = get();
+      return !personalities.some(
+        (personality) =>
+          personality.name.toLowerCase() === name.toLowerCase() &&
+          personality.id !== excludeId,
+      );
     },
 
     // State management

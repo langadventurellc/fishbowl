@@ -262,39 +262,6 @@ describe("usePersonalitiesStore", () => {
   });
 
   describe("unimplemented methods", () => {
-    it("should throw errors for unimplemented CRUD methods", () => {
-      const store = usePersonalitiesStore.getState();
-
-      const mockPersonalityFormData = {
-        name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
-        behaviors: {},
-        customInstructions: "",
-      };
-
-      expect(() => store.createPersonality(mockPersonalityFormData)).toThrow(
-        "createPersonality not yet implemented",
-      );
-      expect(() =>
-        store.updatePersonality("id", mockPersonalityFormData),
-      ).toThrow("updatePersonality not yet implemented");
-      expect(() => store.deletePersonality("id")).toThrow(
-        "deletePersonality not yet implemented",
-      );
-      expect(() => store.getPersonalityById("id")).toThrow(
-        "getPersonalityById not yet implemented",
-      );
-      expect(() => store.isPersonalityNameUnique("name")).toThrow(
-        "isPersonalityNameUnique not yet implemented",
-      );
-    });
-
     it("should throw errors for unimplemented persistence methods", async () => {
       const store = usePersonalitiesStore.getState();
 

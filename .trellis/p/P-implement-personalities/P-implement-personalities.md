@@ -183,10 +183,16 @@ affectedFiles:
   packages/ui-shared/src/stores/PersonalitiesStore.ts: Created PersonalitiesStore type definition combining state and actions
   packages/ui-shared/src/stores/usePersonalitiesStore.ts: Implemented complete
     usePersonalitiesStore with Zustand, error handling utilities, state
-    management, and foundation for future CRUD operations
+    management, and foundation for future CRUD operations; Implemented full CRUD
+    operations (create, update, delete, get, isNameUnique) with validation,
+    error handling, and auto-save triggers following roles store patterns
   packages/ui-shared/src/stores/__tests__/usePersonalitiesStore.test.ts:
     Created comprehensive unit tests covering all basic functionality, error
-    handling, and TypeScript compliance
+    handling, and TypeScript compliance; Removed obsolete test expecting CRUD
+    methods to throw 'not implemented' errors since they are now implemented
+  packages/ui-shared/src/stores/__tests__/personalitiesStore.test.ts:
+    Added comprehensive unit tests covering all CRUD operations, validation,
+    error handling, pending operations, and timestamp management
 log: []
 schema: v1.0
 childrenIds:
