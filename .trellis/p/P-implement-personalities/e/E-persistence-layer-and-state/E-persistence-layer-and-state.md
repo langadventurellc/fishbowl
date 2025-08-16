@@ -80,7 +80,6 @@ Implement the persistence adapter pattern and Zustand store for personalities, f
 - [ ] Full TypeScript coverage with proper generics
 - [ ] Comprehensive error handling
 - [ ] Unit tests for all store actions
-- [ ] Integration tests for persistence flow
 
 ## Technical Considerations
 
