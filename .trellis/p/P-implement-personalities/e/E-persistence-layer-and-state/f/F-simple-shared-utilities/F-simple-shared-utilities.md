@@ -23,7 +23,6 @@ Extract minimal common patterns from the roles and personalities stores into sim
 ## Key Components
 
 - Simple timestamp conversion utility
-- Basic auto-save wrapper function
 - Common retry logic helper
 - Shared error handling patterns
 
@@ -57,16 +56,7 @@ Utilities to create:
    function mapTimestampsToISO(date: Date | null): string | null;
    ```
 
-2. **withAutoSave** - Minimal wrapper for auto-save behavior
-
-   ```typescript
-   function withAutoSave(
-     saveFunction: () => Promise<void>,
-     delayMs: number = 1000,
-   ): { triggerSave: () => void; cancelSave: () => void };
-   ```
-
-3. **retryWithBackoff** - Simple retry helper
+2. **retryWithBackoff** - Simple retry helper
    ```typescript
    function retryWithBackoff<T>(
      fn: () => Promise<T>,
@@ -92,4 +82,4 @@ These utilities should be so simple that they're obviously correct.
 
 ## Dependencies
 
-- F-state-store-with-auto-save (to identify duplication patterns)
+- F-state-store (to identify duplication patterns)

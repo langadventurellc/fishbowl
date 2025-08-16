@@ -19,14 +19,13 @@ updated: 2025-08-10T21:34:59.547Z
 
 ## Purpose and Functionality
 
-Refactor the existing Zustand roles store to integrate with the persistence adapter pattern, adding auto-save functionality, proper loading states, and comprehensive error handling. The store will maintain the same public API while internally using the adapter for all persistence operations.
+Refactor the existing Zustand roles store to integrate with the persistence adapter pattern, adding proper loading states and comprehensive error handling. The store will maintain the same public API while internally using the adapter for all persistence operations.
 
 ## Key Components to Implement
 
 ### Store Enhancements (`packages/ui-shared/src/stores/`)
 
 - **Adapter Integration**: Add adapter property and initialization
-- **Auto-save Logic**: Implement debounced save on state changes
 - **Loading States**: Add proper async operation handling
 - **Error Recovery**: Implement retry logic and error boundaries
 
@@ -47,15 +46,6 @@ Refactor the existing Zustand roles store to integrate with the persistence adap
 - [ ] Add `lastSyncTime` for tracking persistence state
 - [ ] Preserve all existing methods and signatures
 - [ ] Add adapter property with proper typing
-
-### Auto-save Behavior
-
-- [ ] Auto-save triggers on any role modification
-- [ ] Debounce saves by 500ms to batch rapid changes
-- [ ] Show saving indicator during persistence
-- [ ] Handle save failures with retry logic
-- [ ] Queue changes during save operations
-- [ ] Rollback optimistic updates on save failure
 
 ### Loading and Initialization
 
@@ -112,7 +102,6 @@ interface RolesStore extends RolesState, RolesActions {
 ### Implementation Patterns
 
 - Use the same patterns as settings stores
-- Implement middleware for auto-save
 - Use immer for immutable updates if available
 - Follow existing error handling patterns
 - Maintain backward compatibility
@@ -128,7 +117,6 @@ interface RolesStore extends RolesState, RolesActions {
 
 - Unit tests for all store methods
 - Integration tests with mock adapter
-- Auto-save behavior tests
 - Error recovery scenario tests
 - Concurrency tests for multiple operations
 - Memory leak tests for subscribers
@@ -144,7 +132,6 @@ interface RolesStore extends RolesState, RolesActions {
 ## Performance Requirements
 
 - Initial load completes in < 100ms
-- Auto-save debounce prevents excessive writes
 - Store operations remain synchronous for UI
 - Memory usage stable with 100+ roles
 - No UI blocking during persistence operations

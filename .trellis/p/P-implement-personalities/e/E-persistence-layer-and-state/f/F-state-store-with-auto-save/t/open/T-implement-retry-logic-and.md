@@ -1,0 +1,163 @@
+---
+id: T-implement-retry-logic-and
+title: Implement retry logic and comprehensive error handling
+status: open
+priority: medium
+parent: F-state-store-with-auto-save
+prerequisites:
+  - T-implement-crud-operations
+affectedFiles: {}
+log: []
+schema: v1.0
+childrenIds: []
+created: 2025-08-16T22:01:52.331Z
+updated: 2025-08-16T22:01:52.331Z
+---
+
+# Implement Retry Logic and Comprehensive Error Handling
+
+## Context
+
+This task implements sophisticated error handling with exponential backoff retry logic for the personalities store. This includes rollback capabilities, comprehensive error recovery, and robust persistence error management following the roles store pattern.
+
+## Technical Approach
+
+Implement the advanced error handling following the exact pattern from `useRolesStore.ts`:
+
+1. **Retry Operation Framework**: Generic retry logic with exponential backoff
+2. **Save Error Handling**: Rollback and retry for failed save operations
+3. **Error Classification**: Determine retryable vs. non-retryable errors
+4. **Error Recovery**: Manual retry capabilities and error state management
+5. **Timer Management**: Cleanup and lifecycle for retry timers
+6. **Rollback System**: State restoration on failed operations
+
+## Implementation Requirements
+
+- Use `MAX_RETRY_ATTEMPTS = 3` and `RETRY_BASE_DELAY_MS = 1000`
+- Implement exponential backoff: 1s, 2s, 4s delays
+- Follow exact error handling patterns from `useRolesStore.ts`
+- Comprehensive error classification (validation, file system, network)
+- Rollback capabilities with state snapshots
+- Timer cleanup for memory leak prevention
+
+## Detailed Acceptance Criteria
+
+### Retry Operation Framework (`_retryOperation`)
+
+- [ ] Generic retry function with configurable max attempts
+- [ ] Exponential backoff calculation: `baseDelay * Math.pow(2, retryCount - 1)`
+- [ ] Retryable error classification using `_isRetryableError`
+- [ ] Progress tracking with retry count in error state
+- [ ] Timer management with cleanup capabilities
+- [ ] Success path clears error state
+- [ ] Failure path preserves final error
+
+### Error Classification (`_isRetryableError`)
+
+- [ ] Never retry validation errors (ZodError)
+- [ ] Never retry permission errors (EACCES, EPERM)
+- [ ] Never retry space errors (ENOSPC)
+- [ ] Retry network errors (ETIMEDOUT, ECONNREFUSED)
+- [ ] Retry temporary file system errors
+- [ ] Handle `PersonalitiesPersistenceError` appropriately
+- [ ] Default to retryable for unknown errors
+
+### Save Error Handling (`_handleSaveError`)
+
+- [ ] Rollback to previous state on save failure
+- [ ] Update pending operations to failed status
+- [ ] Implement retry with exponential backoff
+- [ ] Reset retry count on eventual success
+- [ ] Log rollback and retry attempts
+- [ ] Handle final failure after max retries
+
+### Error Recovery Methods
+
+- [ ] `retryLastOperation()` manually retries failed operations
+- [ ] `clearErrorState()` cleans error state and timers
+- [ ] `getErrorDetails()` provides current error information
+- [ ] Support retry for save, load, sync, import, reset operations
+
+### Error Message Formatting (`_getErrorMessage`)
+
+- [ ] User-friendly messages for validation errors
+- [ ] Descriptive messages for file system errors
+- [ ] Clear messages for network and permission issues
+- [ ] Context-aware messages based on operation type
+- [ ] Fallback messages for unknown errors
+
+### Comprehensive Error Handling (`_handlePersistenceError`)
+
+- [ ] Create properly formatted error states
+- [ ] Extract field errors from validation failures
+- [ ] Log detailed error information
+- [ ] Update store error state appropriately
+- [ ] Preserve error context and metadata
+
+### Timer and Memory Management
+
+- [ ] `retryTimers` Map for tracking active retry timers
+- [ ] Proper cleanup of timers on success or final failure
+- [ ] Memory leak prevention for long-running operations
+- [ ] Timer cleanup on store destruction or reset
+
+## Unit Tests
+
+Create comprehensive tests covering:
+
+- [ ] Retry operation with various error types
+- [ ] Exponential backoff timing verification
+- [ ] Error classification for different error types
+- [ ] Save error handling with rollback
+- [ ] Manual retry operation functionality
+- [ ] Error state clearing and cleanup
+- [ ] Timer management and cleanup
+- [ ] Memory leak prevention
+- [ ] Error message formatting
+- [ ] Persistence error handling
+- [ ] Edge cases and boundary conditions
+- [ ] Concurrent operation handling
+
+## Dependencies
+
+- Requires completion of T-implement-auto-save-and
+- Requires `PersonalitiesPersistenceError` class from adapter interface
+- Requires logger utility from shared package
+
+## Technical Notes
+
+- Focus on robustness and error recovery
+- Maintain consistency with roles store patterns
+- Ensure memory efficiency with proper cleanup
+- Handle edge cases gracefully
+- Preserve user data integrity during failures
+
+## Files to Modify
+
+- Extend: `packages/ui-shared/src/stores/usePersonalitiesStore.ts`
+- Add comprehensive unit tests for error handling scenarios
+
+## Performance Considerations
+
+- Efficient retry timing with exponential backoff
+- Minimal memory overhead for error tracking
+- Proper timer cleanup to prevent resource leaks
+- Fast error classification without blocking operations
+- Optimized rollback operations for large personality lists
+
+## Security Considerations
+
+- Don't expose sensitive error details in user messages
+- Validate error data before processing
+- Sanitize logged error information
+- Handle malicious input gracefully in error paths
+- Prevent error injection through persistence layer
+
+## Testing Requirements
+
+- Test all error classification scenarios
+- Verify retry timing and backoff calculations
+- Test rollback functionality with various data sizes
+- Verify memory cleanup and leak prevention
+- Test concurrent error conditions
+- Validate error message formatting and security
