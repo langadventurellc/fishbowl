@@ -1,0 +1,1 @@
+export { validateSinglePersonality } from "./validateSinglePersonality";
