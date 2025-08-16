@@ -2,4 +2,4 @@
 // Export platform-specific utility functions here
 
 export * from "./BrowserCryptoUtils";
-// export * from './BrowserDeviceInfo';
+export * from "./BrowserDeviceInfo";
