@@ -1,9 +1,4 @@
-import {
-  createLogger,
-  FileStorageService,
-  NodeFileSystemBridge,
-  SettingsRepository,
-} from "@fishbowl-ai/shared";
+import { MainProcessServices } from "../main/services/MainProcessServices.js";
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -43,8 +38,8 @@ if (process.env.CI) {
 
 let mainWindow: BrowserWindow | null = null;
 
-// Create main process logger (will be initialized in app.whenReady)
-let mainLogger: Awaited<ReturnType<typeof createLogger>> | null = null;
+// Create main process services container
+let mainProcessServices: MainProcessServices | null = null;
 
 function createMainWindow(): void {
   mainWindow = new BrowserWindow({
@@ -99,16 +94,18 @@ function openSettingsModal(): void {
 
       // Debug logging for development
       if (process.env.NODE_ENV === "development") {
-        mainLogger?.debug("Settings modal IPC message sent successfully");
+        mainProcessServices?.logger?.debug(
+          "Settings modal IPC message sent successfully",
+        );
       }
     } catch (error) {
-      mainLogger?.error(
+      mainProcessServices?.logger?.error(
         "Failed to send open-settings IPC message",
         error as Error,
       );
     }
   } else {
-    mainLogger?.warn(
+    mainProcessServices?.logger?.warn(
       "Cannot open settings: main window not available or destroyed",
     );
   }
@@ -116,29 +113,23 @@ function openSettingsModal(): void {
 
 // eslint-disable-next-line statement-count/function-statement-count-warn
 app.whenReady().then(async () => {
-  // Initialize logger first
+  // Initialize main process services container
   try {
-    mainLogger = await createLogger({
-      config: { name: "desktop-main", level: "info" },
-      context: {
-        platform: "desktop",
-        metadata: { process: "main", pid: process.pid },
-      },
-    });
-    mainLogger.info("Electron main process starting", {
+    mainProcessServices = new MainProcessServices();
+    mainProcessServices.logger.info("Electron main process starting", {
       platform: process.platform,
       nodeVersion: process.versions.node,
       electronVersion: process.versions.electron,
     });
   } catch (error) {
-    // Cannot use structured logger here since logger initialization failed
-    console.error("Failed to initialize logger:", error);
+    // Cannot use structured logger here since service container initialization failed
+    console.error("Failed to initialize main process services:", error);
   }
 
   createMainWindow();
 
   // Log window creation
-  mainLogger?.info("Main window created", {
+  mainProcessServices?.logger?.info("Main window created", {
     width: 1200,
     height: 800,
     title: "Fishbowl",
@@ -150,37 +141,43 @@ app.whenReady().then(async () => {
     const userDataPath = app.getPath("userData");
     const settingsFilePath = path.join(userDataPath, "preferences.json");
 
-    // Create file storage service with filesystem bridge
-    const fileSystemBridge = new NodeFileSystemBridge();
-    const fileStorage = new FileStorageService(fileSystemBridge);
-
-    // Create repository with userData directory path
-    const repository = new SettingsRepository(fileStorage, settingsFilePath);
+    // Create repository using the configured services from the container
+    const repository =
+      mainProcessServices!.createSettingsRepository(settingsFilePath);
 
     // Set repository using settings manager
     settingsRepositoryManager.set(repository);
 
-    mainLogger?.info("Settings repository initialized successfully", {
-      storageType: "FileStorage",
-      settingsPath: settingsFilePath,
-    });
+    mainProcessServices?.logger?.info(
+      "Settings repository initialized successfully",
+      {
+        storageType: "FileStorage",
+        settingsPath: settingsFilePath,
+      },
+    );
 
     // Initialize roles repository manager with userData path
     const { rolesRepositoryManager } = await import(
       "../data/repositories/rolesRepositoryManager.js"
     );
     rolesRepositoryManager.initialize(userDataPath);
-    mainLogger?.info("Roles repository initialized successfully", {
-      dataPath: userDataPath,
-    });
+    mainProcessServices?.logger?.info(
+      "Roles repository initialized successfully",
+      {
+        dataPath: userDataPath,
+      },
+    );
 
     // Initialize LLM storage service
     const llmStorageService = new LlmStorageService();
     llmStorageServiceManager.set(llmStorageService);
 
-    mainLogger?.info("LLM storage service initialized successfully", {
-      secureStorageAvailable: llmStorageService.isSecureStorageAvailable(),
-    });
+    mainProcessServices?.logger?.info(
+      "LLM storage service initialized successfully",
+      {
+        secureStorageAvailable: llmStorageService.isSecureStorageAvailable(),
+      },
+    );
 
     // Initialize LLM configuration service
     const llmConfigService = new LlmConfigService(llmStorageService);
@@ -189,11 +186,11 @@ app.whenReady().then(async () => {
     // Register IPC handlers BEFORE service initialization
     try {
       setupLlmConfigHandlers(ipcMain, llmConfigService);
-      mainLogger?.info(
+      mainProcessServices?.logger?.info(
         "LLM configuration IPC handlers registered successfully",
       );
     } catch (error) {
-      mainLogger?.error(
+      mainProcessServices?.logger?.error(
         "Failed to register LLM configuration IPC handlers",
         error as Error,
       );
@@ -204,18 +201,21 @@ app.whenReady().then(async () => {
     try {
       await llmConfigService.initialize();
       const configs = await llmConfigService.list();
-      mainLogger?.info("LLM configuration service initialized successfully", {
-        configCount: configs.length,
-      });
+      mainProcessServices?.logger?.info(
+        "LLM configuration service initialized successfully",
+        {
+          configCount: configs.length,
+        },
+      );
     } catch (error) {
-      mainLogger?.error(
+      mainProcessServices?.logger?.error(
         "Failed to initialize LLM configuration service",
         error as Error,
       );
       // Continue startup - app can function without pre-cached configs
     }
   } catch (error) {
-    mainLogger?.error(
+    mainProcessServices?.logger?.error(
       "Failed to initialize settings repository",
       error as Error,
     ) || console.error("Failed to initialize settings repository:", error);
@@ -225,9 +225,11 @@ app.whenReady().then(async () => {
   // Setup IPC handlers
   try {
     setupSettingsHandlers();
-    mainLogger?.debug("Settings IPC handlers registered successfully");
+    mainProcessServices?.logger?.debug(
+      "Settings IPC handlers registered successfully",
+    );
   } catch (error) {
-    mainLogger?.error(
+    mainProcessServices?.logger?.error(
       "Failed to register settings IPC handlers",
       error as Error,
     );
@@ -237,9 +239,14 @@ app.whenReady().then(async () => {
   // Setup Roles IPC handlers
   try {
     setupRolesHandlers();
-    mainLogger?.debug("Roles IPC handlers registered successfully");
+    mainProcessServices?.logger?.debug(
+      "Roles IPC handlers registered successfully",
+    );
   } catch (error) {
-    mainLogger?.error("Failed to register roles IPC handlers", error as Error);
+    mainProcessServices?.logger?.error(
+      "Failed to register roles IPC handlers",
+      error as Error,
+    );
     // Continue startup - app can function without roles handlers
   }
 

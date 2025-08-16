@@ -1,13 +1,12 @@
-import * as path from "path";
 import { randomBytesHex } from "../../utils/randomBytesHex";
-import { getByteLength } from "../../utils/getByteLength";
+import type { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
+import type { PathUtilsInterface } from "../../utils/PathUtilsInterface";
 import { FileSystemBridge } from "./FileSystemBridge";
-import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
 import { FileStorageError } from "./errors/FileStorageError";
 import { ErrorFactory } from "./errors/ErrorFactory";
 import { SystemError } from "../../types/SystemError";
 import { FileStorageOptions } from "./FileStorageOptions";
-import { validatePathStrict, ensureDirectoryExists } from "./utils";
+import { validatePathStrict } from "./utils";
 import { safeJsonStringify } from "../../validation/safeJsonStringify";
 import { createLoggerSync } from "../../logging/createLoggerSync";
 
@@ -26,7 +25,9 @@ export class FileStorageService<T = unknown> {
   });
 
   constructor(
-    private fs: FileSystemBridge = new NodeFileSystemBridge(),
+    private fs: FileSystemBridge,
+    private cryptoUtils: CryptoUtilsInterface,
+    private pathUtils: PathUtilsInterface,
     options: FileStorageOptions = {},
   ) {
     this.maxFileSizeBytes = options.maxFileSizeBytes ?? 10 * 1024 * 1024; // 10MB
@@ -89,7 +90,7 @@ export class FileStorageService<T = unknown> {
     await this.validateWriteInput(data);
 
     // Ensure parent directory exists
-    await this.ensureDirectoryExists(path.dirname(absolutePath));
+    await this.ensureDirectoryExists(this.pathUtils.dirname(absolutePath));
 
     // Generate temporary file path
     const tempPath = await this.generateTempFilePath(absolutePath);
@@ -128,7 +129,7 @@ export class FileStorageService<T = unknown> {
     if (!serialized) {
       throw new Error("Data is not JSON serializable");
     }
-    const byteLength = await getByteLength(serialized);
+    const byteLength = await this.cryptoUtils.getByteLength(serialized);
     if (byteLength > this.maxFileSizeBytes) {
       throw new Error(
         `Data size exceeds limit: ${this.maxFileSizeBytes} bytes`,
@@ -140,17 +141,37 @@ export class FileStorageService<T = unknown> {
    * Ensure directory exists, creating if necessary.
    */
   private async ensureDirectoryExists(dirPath: string): Promise<void> {
-    await ensureDirectoryExists(dirPath, this.fs);
+    if (this.fs.ensureDirectoryExists) {
+      await this.fs.ensureDirectoryExists(dirPath);
+    } else {
+      // Fallback for FileSystemBridge implementations that don't support ensureDirectoryExists
+      try {
+        await this.fs.mkdir(dirPath, { recursive: true });
+      } catch (error) {
+        // Handle race conditions - directory might exist
+        const sysErr = error as SystemError;
+        if (sysErr.code !== "EEXIST") {
+          throw ErrorFactory.fromNodeError(
+            sysErr,
+            "ensureDirectoryExists",
+            dirPath,
+          );
+        }
+      }
+    }
   }
 
   /**
    * Generate secure temporary file path.
    */
   private async generateTempFilePath(targetPath: string): Promise<string> {
-    const dir = path.dirname(targetPath);
-    const ext = path.extname(targetPath);
-    const randomSuffix = await randomBytesHex(16);
-    return path.join(dir, `${this.tempFilePrefix}${randomSuffix}${ext}`);
+    const dir = this.pathUtils.dirname(targetPath);
+    const ext = this.pathUtils.extname(targetPath);
+    const randomSuffix = await randomBytesHex(this.cryptoUtils, 16);
+    return this.pathUtils.join(
+      dir,
+      `${this.tempFilePrefix}${randomSuffix}${ext}`,
+    );
   }
 
   /**
@@ -285,8 +306,8 @@ export class FileStorageService<T = unknown> {
    */
   private validateAndResolvePath(filePath: string): string {
     try {
-      validatePathStrict(filePath);
-      return path.resolve(filePath);
+      validatePathStrict(this.pathUtils, filePath);
+      return this.pathUtils.resolve(filePath);
     } catch (error) {
       if (error instanceof Error) {
         // Convert PathValidationError messages to match original format

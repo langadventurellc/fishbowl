@@ -36,7 +36,11 @@ import { testConfig } from "./testConfig";
  * @since 1.0.0
  */
 export function getDefaultConfig(environment?: string): LoggerConfig {
-  const env = environment || process.env.NODE_ENV || "development";
+  // Use provided environment or fallback to development for platform-agnostic operation
+  const env =
+    environment ||
+    (typeof process !== "undefined" && process.env?.NODE_ENV) ||
+    "development";
 
   switch (env) {
     case "production":

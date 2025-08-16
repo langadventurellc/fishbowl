@@ -48,3 +48,4 @@ export * from "./transports";
 export * from "./utils";
 export * from "./config";
 export { StructuredLogger } from "./StructuredLogger";
+export type { DeviceInfoInterface } from "./DeviceInfoInterface";

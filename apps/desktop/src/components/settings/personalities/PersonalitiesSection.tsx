@@ -1,26 +1,19 @@
 /**
- * PersonalitiesSection component integrates personalities management with TabContainer.
+ * PersonalitiesSection component provides unified personalities management interface.
  *
  * Features:
- * - Tab navigation between Saved and Create New tabs
- * - Unsaved changes protection when switching tabs
- * - Integration with settings modal navigation state
+ * - Unified view showing saved personalities and create form
  * - Responsive design and accessibility compliance
+ * - Simplified single-screen layout
  *
  * @module components/settings/PersonalitiesSection
  */
 
 import {
-  useSettingsNavigation,
-  useUnsavedChanges,
-  type PersonalitiesSectionProps,
   type Personality,
   type PersonalityFormData,
-  type TabConfiguration,
 } from "@fishbowl-ai/ui-shared";
 import React, { useCallback } from "react";
-import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
-import { TabContainer } from "../TabContainer";
 import { CreatePersonalityForm } from "./CreatePersonalityForm";
 import { SavedPersonalitiesTab } from "./SavedPersonalitiesTab";
 import { createLoggerSync } from "@fishbowl-ai/shared";
@@ -29,14 +22,9 @@ const logger = createLoggerSync({
   config: { name: "PersonalitiesSection", level: "info" },
 });
 
-export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
-  const { activeSubTab } = useSettingsNavigation();
-  const { hasUnsavedChanges } = useUnsavedChanges();
-  const { showConfirmation } = useConfirmationDialog();
-
+export const PersonalitiesSection: React.FC = () => {
   const handleEditPersonality = useCallback((personality: Personality) => {
-    // Switch to Create New tab with pre-filled data for editing
-    // This will be implemented when the form component is ready
+    // TODO: Implement editing functionality
     logger.info("Edit personality requested", {
       personalityId: personality.id,
       personalityName: personality.name,
@@ -44,7 +32,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
   }, []);
 
   const handleClonePersonality = useCallback((personality: Personality) => {
-    // Switch to Create New tab with cloned data
+    // TODO: Implement cloning functionality
     logger.info("Clone personality requested", {
       personalityId: personality.id,
       personalityName: personality.name,
@@ -52,52 +40,14 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
   }, []);
 
   const handleSavePersonality = useCallback((data: PersonalityFormData) => {
-    // Save personality and switch back to Saved tab
+    // TODO: Implement save functionality
     logger.info("Save personality requested", { personalityName: data.name });
   }, []);
 
   const handleCancelEditing = useCallback(() => {
-    // Cancel editing and return to previous tab or Saved tab
+    // TODO: Implement cancel functionality
     logger.info("Cancel editing requested");
   }, []);
-
-  const handleTabChange = useCallback(async () => {
-    // Check for unsaved changes when leaving Create New tab
-    if (activeSubTab === "create-new" && hasUnsavedChanges) {
-      const shouldProceed = await showConfirmation({
-        title: "Unsaved Changes",
-        message: "You have unsaved changes. Do you want to discard them?",
-        confirmText: "Discard Changes",
-        cancelText: "Keep Editing",
-      });
-      if (!shouldProceed) return;
-    }
-
-    // Tab change will be handled by store via TabContainer
-  }, [activeSubTab, hasUnsavedChanges, showConfirmation]);
-
-  const tabs: TabConfiguration[] = [
-    {
-      id: "saved",
-      label: "Saved",
-      content: () => (
-        <SavedPersonalitiesTab
-          onEdit={handleEditPersonality}
-          onClone={handleClonePersonality}
-        />
-      ),
-    },
-    {
-      id: "create-new",
-      label: "Create New",
-      content: () => (
-        <CreatePersonalityForm
-          onSave={handleSavePersonality}
-          onCancel={handleCancelEditing}
-        />
-      ),
-    },
-  ];
 
   return (
     <div className="space-y-6">
@@ -108,13 +58,22 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
         </p>
       </div>
 
-      <TabContainer
-        tabs={tabs}
-        useStore={true}
-        animationDuration={200}
-        className="personalities-tabs"
-        onTabChange={handleTabChange}
-      />
+      <div className="space-y-8">
+        {/* Saved Personalities Section */}
+        <SavedPersonalitiesTab
+          onEdit={handleEditPersonality}
+          onClone={handleClonePersonality}
+        />
+
+        {/* Create New Personality Section */}
+        <div className="border-t pt-8">
+          <h2 className="text-xl font-semibold mb-4">Create New Personality</h2>
+          <CreatePersonalityForm
+            onSave={handleSavePersonality}
+            onCancel={handleCancelEditing}
+          />
+        </div>
+      </div>
     </div>
   );
 };

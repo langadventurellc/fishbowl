@@ -3,13 +3,15 @@ import * as path from "path";
 import {
   LlmConfigRepository,
   FileStorageService,
-  NodeFileSystemBridge,
   type LlmConfig,
   type LlmConfigInput,
   type LlmConfigMetadata,
   type StorageResult,
   createLoggerSync,
 } from "@fishbowl-ai/shared";
+import { NodeFileSystemBridge } from "../../main/services/NodeFileSystemBridge";
+import { NodeCryptoUtils } from "../../main/utils/NodeCryptoUtils";
+import { NodePathUtils } from "../../main/utils/NodePathUtils";
 import { ZodError } from "zod";
 import { LlmSecureStorage } from "./LlmSecureStorage";
 import { TestSecureStorage } from "./TestSecureStorage";
@@ -42,8 +44,12 @@ export class LlmStorageService {
   constructor() {
     // Initialize file storage service for metadata
     const fileSystemBridge = new NodeFileSystemBridge();
+    const cryptoUtils = new NodeCryptoUtils();
+    const pathUtils = new NodePathUtils();
     const fileStorage = new FileStorageService<LlmConfigMetadata[]>(
       fileSystemBridge,
+      cryptoUtils,
+      pathUtils,
     );
 
     // Initialize secure storage for API keys
@@ -61,6 +67,7 @@ export class LlmStorageService {
     this.repository = new LlmConfigRepository(
       fileStorage,
       secureStorage,
+      cryptoUtils,
       configFilePath,
     );
 

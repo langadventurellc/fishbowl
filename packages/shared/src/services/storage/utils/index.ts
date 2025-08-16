@@ -1,17 +1,13 @@
 export { PathValidationError } from "./PathValidationError";
-export { validatePathStrict } from "./validatePathStrict";
 export { resolvePath } from "./resolvePath";
+export { validatePathStrict } from "./validatePathStrict";
 
 // Validation utilities
 export { createFieldErrors } from "./createFieldErrors";
-export { validateSettingsData } from "./validateSettingsData";
-export { validateRolesData } from "./validateRolesData";
-export { formatRolesValidationErrors } from "./formatRolesValidationErrors";
 export { createRolesValidationSummary } from "./createRolesValidationSummary";
+export { formatRolesValidationErrors } from "./formatRolesValidationErrors";
+export { validateRolesData } from "./validateRolesData";
+export { validateSettingsData } from "./validateSettingsData";
 
 // File system utilities
-export { ensureDirectoryExists } from "./ensureDirectoryExists";
-export { checkFilePermissions } from "./checkFilePermissions";
-export { setFilePermissions } from "./setFilePermissions";
-export { getDirectoryStats } from "./getDirectoryStats";
-export { createTempFile } from "./createTempFile";
+// (no longer needed - platform-specific functionality moved to FileSystemBridge implementations)

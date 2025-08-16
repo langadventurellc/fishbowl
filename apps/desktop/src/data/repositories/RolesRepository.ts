@@ -6,6 +6,9 @@ import {
   FileStorageService,
   FileStorageError,
 } from "@fishbowl-ai/shared";
+import { NodeFileSystemBridge } from "../../main/services/NodeFileSystemBridge";
+import { NodeCryptoUtils } from "../../main/utils/NodeCryptoUtils";
+import { NodePathUtils } from "../../main/utils/NodePathUtils";
 
 /**
  * Repository for managing roles data persistence in the desktop application.
@@ -30,7 +33,14 @@ export class RolesRepository {
       dataPath,
       RolesRepository.DEFAULT_ROLES_FILE_NAME,
     );
-    this.fileStorageService = new FileStorageService();
+    const fileSystemBridge = new NodeFileSystemBridge();
+    const cryptoUtils = new NodeCryptoUtils();
+    const pathUtils = new NodePathUtils();
+    this.fileStorageService = new FileStorageService(
+      fileSystemBridge,
+      cryptoUtils,
+      pathUtils,
+    );
   }
 
   /**

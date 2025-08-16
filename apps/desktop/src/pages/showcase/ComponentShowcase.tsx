@@ -345,12 +345,6 @@ export default function ComponentShowcase() {
                   Copy
                 </Button>
                 <Button
-                  variant="secondary"
-                  onClick={() => logger.info("Save draft")}
-                >
-                  Save Draft
-                </Button>
-                <Button
                   variant="toggle"
                   size="small"
                   onClick={() => logger.info("Toggle sidebar")}

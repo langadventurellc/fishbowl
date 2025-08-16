@@ -6,10 +6,11 @@ import type {
   LogConfig,
 } from "./types";
 import type { CreateLoggerOptions } from "./CreateLoggerOptions";
+import type { DeviceInfoInterface } from "./DeviceInfoInterface";
+import type { CryptoUtilsInterface } from "../utils/CryptoUtilsInterface";
 import { ConsoleTransport } from "./transports/ConsoleTransport";
 import { SimpleFormatter } from "./formatters";
 import { getDefaultConfig, mergeConfig } from "./config";
-import { getDeviceInfo } from "./utils/getDeviceInfo";
 import { convertLogLevel } from "./convertLogLevel";
 import { createTransport } from "./createTransport";
 
@@ -62,6 +63,8 @@ import { createTransport } from "./createTransport";
  * @since 1.0.0
  */
 export async function createLogger(
+  deviceInfo: DeviceInfoInterface,
+  cryptoUtils: CryptoUtilsInterface,
   options: CreateLoggerOptions = {},
 ): Promise<IStructuredLogger> {
   // Get default config and merge with user options
@@ -100,7 +103,7 @@ export async function createLogger(
   // Add device info if enabled
   if (config.includeDeviceInfo) {
     try {
-      const deviceContext = await getDeviceInfo();
+      const deviceContext = await deviceInfo.getDeviceInfo();
       if (deviceContext.deviceInfo) {
         context.deviceInfo = deviceContext.deviceInfo;
       }
@@ -113,20 +116,7 @@ export async function createLogger(
     }
   }
 
-  // Add metadata for process info
-  context = {
-    ...context,
-    metadata: {
-      ...context.metadata,
-      process: {
-        pid: process.pid,
-        ppid: process.ppid,
-        version: process.version,
-        platform: process.platform,
-        nodeVersion: process.versions.node,
-      },
-    },
-  };
+  // Platform-agnostic logger - process info provided via injected device info
 
   // Convert LoggerConfig to LogConfig for StructuredLogger
   const logConfig: LogConfig = {
@@ -136,6 +126,6 @@ export async function createLogger(
     transports,
   };
 
-  // Create and return the logger
-  return new StructuredLogger(logConfig);
+  // Create and return the logger with injected implementations
+  return new StructuredLogger(deviceInfo, cryptoUtils, logConfig);
 }

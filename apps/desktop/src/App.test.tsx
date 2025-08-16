@@ -71,6 +71,22 @@ jest.mock("./contexts", () => ({
   RolesProvider: jest.fn(({ children }) => (
     <div data-testid="roles-provider">{children}</div>
   )),
+  useServices: jest.fn(() => ({
+    logger: {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
+    cryptoUtils: {
+      randomBytes: jest.fn(),
+      generateId: jest.fn(),
+      getByteLength: jest.fn(),
+    },
+    deviceInfo: {
+      getDeviceInfo: jest.fn(),
+    },
+  })),
 }));
 
 // Mock logger

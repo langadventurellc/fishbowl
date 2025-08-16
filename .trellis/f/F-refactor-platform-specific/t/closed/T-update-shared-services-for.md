@@ -1,0 +1,125 @@
+---
+id: T-update-shared-services-for
+title: Update shared services for constructor injection
+status: done
+priority: high
+parent: F-refactor-platform-specific
+prerequisites:
+  - T-move-nodefilesystembridge-to
+  - T-extract-node-crypto-utilities
+  - T-extract-node-device-info-to
+affectedFiles:
+  packages/shared/src/logging/StructuredLogger.ts: Updated constructor to accept
+    DeviceInfoInterface and CryptoUtilsInterface parameters, removed internal
+    platform-specific code creation, updated session ID generation to use
+    injected crypto utils
+  packages/shared/src/logging/createLogger.ts: Updated to provide default
+    implementations for DeviceInfoInterface and CryptoUtilsInterface to
+    StructuredLogger constructor
+  packages/shared/src/logging/createLoggerSync.ts: Updated to provide default
+    implementations for DeviceInfoInterface and CryptoUtilsInterface to
+    StructuredLogger constructor with sync-appropriate fallbacks
+  packages/shared/src/logging/__tests__/StructuredLogger.test.ts:
+    Updated all constructor calls to provide mock implementations, fixed session
+    ID uniqueness and platform detection tests
+  packages/shared/src/logging/__tests__/createLogger.test.ts: Updated mock
+    expectations to match new constructor signature with three parameters
+  packages/shared/src/logging/__tests__/createLoggerSync.test.ts:
+    Updated mock expectations to match new constructor signature with three
+    parameters
+log:
+  - Successfully updated shared services for constructor injection. Modified
+    StructuredLogger to accept DeviceInfoInterface and CryptoUtilsInterface via
+    constructor injection instead of creating them internally. Updated factory
+    functions (createLogger and createLoggerSync) to provide default
+    implementations. FileStorageService already used proper constructor
+    injection. Fixed all failing tests and ensured TypeScript compilation
+    succeeds. All 1115 tests pass.
+schema: v1.0
+childrenIds: []
+created: 2025-08-15T21:52:55.725Z
+updated: 2025-08-15T21:52:55.725Z
+---
+
+# Update Shared Services for Constructor Injection
+
+## Context
+
+Modify shared package services to accept platform-specific implementations via constructor injection instead of creating them internally. This enables the services to remain platform-agnostic while using the appropriate implementations.
+
+**Affected Services:**
+
+- `FileStorageService` - needs `FileSystemBridge` injection
+- `StructuredLogger` - needs `DeviceInfoInterface` and `CryptoUtilsInterface` injection
+- Any other services using the moved utilities
+
+## Implementation Requirements
+
+### Update FileStorageService:
+
+```typescript
+export class FileStorageService {
+  constructor(
+    private fileSystem: FileSystemBridge,
+    private options?: FileStorageOptions,
+  ) {}
+  // Remove internal NodeFileSystemBridge creation
+}
+```
+
+### Update StructuredLogger:
+
+```typescript
+export class StructuredLogger {
+  constructor(
+    private deviceInfo: DeviceInfoInterface,
+    private cryptoUtils: CryptoUtilsInterface,
+    private config: LogConfig,
+  ) {}
+  // Remove internal device info and crypto logic
+}
+```
+
+### Update Service Factory Functions:
+
+- Modify `createLogger()` to accept implementations
+- Update any factory functions that internally create platform-specific code
+- Maintain backward compatibility where possible
+
+## Technical Approach
+
+1. Identify all services that use platform-specific implementations
+2. Add constructor parameters for interface dependencies
+3. Remove internal platform-specific code creation
+4. Update factory functions to accept implementations
+5. Maintain existing public APIs where possible
+6. Update unit tests to use mock implementations
+7. Update type definitions and exports
+
+## Acceptance Criteria
+
+- [ ] All shared services accept implementations via constructor
+- [ ] No platform-specific code created internally in shared services
+- [ ] Factory functions updated to accept implementations
+- [ ] Existing public APIs maintained where possible
+- [ ] Unit tests updated with mock implementations
+- [ ] TypeScript compilation succeeds
+- [ ] Interface contracts clearly defined
+
+## Dependencies
+
+- Requires platform implementations to be moved first
+- Requires interfaces to be defined
+
+## Security Considerations
+
+- Validate injected implementations implement required interfaces
+- Maintain existing security validations in services
+- Ensure dependency injection doesn't expose internals
+
+## Testing Requirements
+
+- Unit test services with mock implementations
+- Test constructor parameter validation
+- Test that services work with both Node and browser implementations
+- Verify existing functionality is preserved

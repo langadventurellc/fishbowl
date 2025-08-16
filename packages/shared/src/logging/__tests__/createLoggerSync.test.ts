@@ -57,6 +57,12 @@ describe("createLoggerSync", () => {
       expect(mockGetDefaultConfig).toHaveBeenCalled();
       expect(mockMergeConfig).toHaveBeenCalledWith(mockDefaultConfig, {});
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "info",
           namespace: "test-logger-sync",
@@ -88,6 +94,12 @@ describe("createLoggerSync", () => {
         userConfig,
       );
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "debug",
           namespace: "custom-sync-logger",
@@ -125,6 +137,12 @@ describe("createLoggerSync", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           transports: expect.arrayContaining([expect.any(Object)]),
         }),
@@ -140,25 +158,32 @@ describe("createLoggerSync", () => {
       createLoggerSync();
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           transports: expect.arrayContaining([expect.any(Object)]),
         }),
       );
     });
 
-    it("should include process info in context", () => {
+    it("should create platform-agnostic logger without process metadata", () => {
       createLoggerSync();
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
         expect.objectContaining({
-          context: expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
+        expect.objectContaining({
+          context: expect.not.objectContaining({
             metadata: expect.objectContaining({
-              process: expect.objectContaining({
-                pid: process.pid,
-                platform: process.platform,
-                version: process.version,
-                nodeVersion: process.versions.node,
-              }),
+              process: expect.anything(),
             }),
           }),
         }),
@@ -174,6 +199,12 @@ describe("createLoggerSync", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           context: expect.objectContaining({
             metadata: expect.objectContaining({
@@ -220,6 +251,12 @@ describe("createLoggerSync", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "error",
         }),
@@ -232,6 +269,12 @@ describe("createLoggerSync", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: "error",
         }),
@@ -244,6 +287,12 @@ describe("createLoggerSync", () => {
       });
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
+        expect.objectContaining({ getDeviceInfo: expect.any(Function) }),
+        expect.objectContaining({
+          generateId: expect.any(Function),
+          randomBytes: expect.any(Function),
+          getByteLength: expect.any(Function),
+        }),
         expect.objectContaining({
           level: undefined,
         }),

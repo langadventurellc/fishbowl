@@ -9,18 +9,13 @@ import type {
   Transport,
   ErrorInfo,
 } from "./types";
-import { detectPlatform } from "./utils/detectPlatform";
 import { serializeError } from "./utils/errorSerializer";
+import type { DeviceInfoInterface } from "./DeviceInfoInterface";
+import type { CryptoUtilsInterface } from "../utils/CryptoUtilsInterface";
 
 /**
  * Generates a random session ID without external dependencies
  */
-function generateSessionId(): string {
-  return (
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  );
-}
 
 /**
  * Core StructuredLogger implementation that provides structured logging capabilities
@@ -95,10 +90,14 @@ export class StructuredLogger implements IStructuredLogger {
   private formatter?: Formatter;
   private transports: Transport[] = [];
 
-  constructor(config: LogConfig = {}) {
+  constructor(
+    private deviceInfo: DeviceInfoInterface,
+    private cryptoUtils: CryptoUtilsInterface,
+    config: LogConfig = {},
+  ) {
     this.namespace = config.namespace || "app";
     this.baseLogger = log.getLogger(this.namespace);
-    this.sessionId = generateSessionId();
+    this.sessionId = this.cryptoUtils.generateId();
 
     // Set up initial log level
     if (config.level) {
@@ -110,12 +109,11 @@ export class StructuredLogger implements IStructuredLogger {
       this.globalContext = { ...config.context };
     }
 
-    // Add session and platform info to global context
+    // Add session info to global context
     this.globalContext.sessionId = this.sessionId;
-    const platformInfo = detectPlatform();
-    this.globalContext.platform = platformInfo.isReactNative
-      ? "mobile"
-      : "desktop";
+
+    // Initialize platform info - will be set asynchronously
+    this.initializePlatformInfo();
 
     // Set up formatter
     if (config.formatter) {
@@ -125,6 +123,29 @@ export class StructuredLogger implements IStructuredLogger {
     // Set up transports
     if (config.transports) {
       config.transports.forEach((transport) => this.addTransport(transport));
+    }
+  }
+
+  /**
+   * Initialize platform information asynchronously.
+   * Called during construction to set platform context.
+   */
+  private async initializePlatformInfo(): Promise<void> {
+    try {
+      const deviceContext = await this.deviceInfo.getDeviceInfo();
+
+      // Update global context with device information
+      if (deviceContext.platform) {
+        this.globalContext.platform = deviceContext.platform;
+      }
+
+      if (deviceContext.deviceInfo) {
+        this.globalContext.deviceInfo = deviceContext.deviceInfo;
+      }
+    } catch (error) {
+      // Log device info gathering failure but don't fail logger creation
+      console.warn("Failed to gather device info:", error);
+      this.globalContext.platform = undefined;
     }
   }
 
@@ -400,11 +421,15 @@ export class StructuredLogger implements IStructuredLogger {
    * - Changes to child logger don't affect parent or sibling loggers
    */
   child(context: Partial<LogContext>): StructuredLogger {
-    const childLogger = new StructuredLogger({
-      namespace: this.namespace,
-      formatter: this.formatter,
-      transports: [...this.transports],
-    });
+    const childLogger = new StructuredLogger(
+      this.deviceInfo,
+      this.cryptoUtils,
+      {
+        namespace: this.namespace,
+        formatter: this.formatter,
+        transports: [...this.transports],
+      },
+    );
 
     // Inherit parent's log level
     childLogger.setLevel(this.getLevel());

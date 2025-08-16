@@ -156,21 +156,162 @@ How to structure code across shared packages and platform-specific applications.
 - Import from package names, not relative paths across packages
 - Use barrel exports in shared packages
 
-### 5. Platform Bridges
+### 5. Platform Abstraction Pattern
 
-For platform-specific features, use the bridge pattern:
+For platform-specific functionality, use the established abstraction pattern. This ensures clean separation between business logic and platform-specific implementations.
+
+#### Platform Architecture
+
+The monorepo supports **three distinct execution environments:**
+
+1. **Desktop Main Process** (Node.js) - File system, native APIs, Electron main
+2. **Desktop Renderer Process** (Browser) - Web APIs only, Electron renderer
+3. **Mobile** (React Native/Expo) - Mobile-specific APIs and storage
+
+Each environment requires different platform implementations due to different available APIs.
+
+#### Pattern Overview
+
+1. **Define Interfaces in Shared Package** (`packages/shared/src/services/`)
+2. **Implement in Platform Apps** (`apps/desktop/src/main/`, `apps/desktop/src/renderer/`, `apps/mobile/src/`)
+3. **Inject via Dependency Injection** (constructor injection)
+4. **Keep All Business Logic in Shared** (no platform-specific code in shared)
+
+#### Step-by-Step Implementation
+
+**1. Define Interface in Shared Package**
 
 ```typescript
-// In shared package - define interface
-export interface StorageBridge {
-  get<T>(key: string): Promise<T | null>;
-  set<T>(key: string, value: T): Promise<void>;
+// packages/shared/src/services/storage/MyServiceBridge.ts
+export interface MyServiceBridge {
+  doSomething(param: string): Promise<Result>;
+}
+```
+
+**2. Implement in Each Platform Folder**
+
+```typescript
+// apps/desktop/src/main/utils/NodeMyService.ts (Main Process)
+import { MyServiceBridge } from "@fishbowl-ai/shared";
+
+export class NodeMyService implements MyServiceBridge {
+  async doSomething(param: string): Promise<Result> {
+    // Node.js/Electron main process implementation
+    // Uses fs, path, native APIs
+  }
 }
 
-// In platform apps - implement
-// Desktop: uses Electron secure storage
-// Mobile: uses Expo SecureStore
+// apps/desktop/src/renderer/utils/BrowserMyService.ts (Renderer Process)
+import { MyServiceBridge } from "@fishbowl-ai/shared";
+
+export class BrowserMyService implements MyServiceBridge {
+  async doSomething(param: string): Promise<Result> {
+    // Browser/Web APIs implementation
+    // Uses Web Crypto, localStorage, etc.
+  }
+}
+
+// apps/mobile/src/utils/ExpoMyService.ts (Mobile)
+import { MyServiceBridge } from "@fishbowl-ai/shared";
+
+export class ExpoMyService implements MyServiceBridge {
+  async doSomething(param: string): Promise<Result> {
+    // React Native/Expo-specific implementation
+  }
+}
 ```
+
+**3. Use in Shared Services via Dependency Injection**
+
+```typescript
+// packages/shared/src/services/MyBusinessService.ts
+export class MyBusinessService {
+  constructor(private bridge: MyServiceBridge) {}
+
+  async performBusinessLogic(input: Input): Promise<Output> {
+    // All business logic here - no platform-specific code
+    const result = await this.bridge.doSomething(input.value);
+    return this.processResult(result);
+  }
+}
+```
+
+**4. Wire Up in Platform Services**
+
+```typescript
+// apps/desktop/src/main/services/MainProcessServices.ts (Node.js)
+export class MainProcessServices {
+  readonly myService: MyBusinessService;
+
+  constructor() {
+    const bridge = new NodeMyService();
+    this.myService = new MyBusinessService(bridge);
+  }
+}
+
+// apps/desktop/src/renderer/services/RendererProcessServices.ts (Browser)
+export class RendererProcessServices {
+  readonly myService: MyBusinessService;
+
+  constructor() {
+    const bridge = new BrowserMyService();
+    this.myService = new MyBusinessService(bridge);
+  }
+}
+
+// apps/mobile/src/services/MobileServices.ts (React Native/Expo)
+export class MobileServices {
+  readonly myService: MyBusinessService;
+
+  constructor() {
+    const bridge = new ExpoMyService();
+    this.myService = new MyBusinessService(bridge);
+  }
+}
+```
+
+#### Existing Bridge Examples
+
+- **File System**: `FileSystemBridge` → `NodeFileSystemBridge` (main process only)
+- **Secure Storage**: `SecureStorageInterface` → `LlmSecureStorage`/`TestSecureStorage` (main process only)
+- **Crypto Utils**: `CryptoUtilsInterface` → `NodeCryptoUtils` (main) / `BrowserCryptoUtils` (renderer)
+- **Device Info**: Platform detection → `NodeDeviceInfo` (main) / `BrowserDeviceInfo` (renderer)
+
+**Note**: Some services like file system and secure storage are only available in the main process due to security restrictions in the renderer process.
+
+#### Platform-Specific Service Instantiation
+
+Each platform naturally uses its own implementation:
+
+```typescript
+// Main Process - uses Node.js implementations
+export class MainProcessServices {
+  constructor() {
+    this.cryptoUtils = new NodeCryptoUtils();
+    this.deviceInfo = new NodeDeviceInfo();
+    this.fileSystemBridge = new NodeFileSystemBridge();
+  }
+}
+
+// Renderer Process - uses Browser implementations
+export class RendererProcessServices {
+  constructor() {
+    this.cryptoUtils = new BrowserCryptoUtils();
+    this.deviceInfo = new BrowserDeviceInfo();
+    // No file system bridge - not available in renderer
+  }
+}
+```
+
+#### Best Practices
+
+- ✅ **All business logic in shared package**
+- ✅ **Platform-specific APIs abstracted via interfaces**
+- ✅ **Dependency injection for testability**
+- ✅ **Implementations in platform folders** (not in shared)
+- ✅ **Error handling at implementation level** (convert platform errors to shared types)
+- ❌ **No platform imports in shared package**
+- ❌ **No conditional platform code in business logic**
 
 ### 7. Testing Strategy
 

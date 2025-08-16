@@ -6,12 +6,12 @@ import type {
 } from "../../types/llmConfig";
 import type { LlmConfigRepositoryInterface } from "./LlmConfigRepositoryInterface";
 import type { LlmConfigStorageInterface } from "./LlmConfigStorageInterface";
+import type { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
 import { llmConfigInputSchema } from "../../types/llmConfig";
 import { FileStorageService } from "../../services/storage/FileStorageService";
 import type { SecureStorageInterface } from "../../services/storage/SecureStorageInterface";
 import { FileStorageError } from "../../services/storage/errors";
 import { createLoggerSync } from "../../logging/createLoggerSync";
-import { generateId } from "../../utils/generateId";
 
 /**
  * Repository for LLM configuration persistence operations.
@@ -35,11 +35,13 @@ export class LlmConfigRepository
    *
    * @param fileStorageService File storage service for JSON operations
    * @param secureStorage Secure storage service for API key encryption
+   * @param cryptoUtils Crypto utilities for ID generation
    * @param configFilePath Optional custom path for config file (defaults to "llm_config.json")
    */
   constructor(
     private fileStorageService: FileStorageService<LlmConfigMetadata[]>,
     private secureStorage: SecureStorageInterface,
+    private cryptoUtils: CryptoUtilsInterface,
     configFilePath?: string,
   ) {
     this.configFilePath =
@@ -58,7 +60,7 @@ export class LlmConfigRepository
     const validatedInput = llmConfigInputSchema.parse(config);
 
     // Use provided ID or generate new one
-    const id = providedId || generateId();
+    const id = providedId || this.cryptoUtils.generateId();
     const now = new Date().toISOString();
 
     // Check secure storage availability
@@ -270,7 +272,7 @@ export class LlmConfigRepository
   ): Promise<StorageResult<string>> {
     try {
       // Generate unique ID
-      const id = generateId();
+      const id = this.cryptoUtils.generateId();
       const now = new Date().toISOString();
 
       // Create complete configuration metadata

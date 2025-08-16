@@ -1,12 +1,16 @@
-import * as path from "path";
+import type { PathUtilsInterface } from "../utils/PathUtilsInterface";
 
 /**
  * Sanitizes a file path by removing dangerous characters and normalizing separators.
  *
+ * @param pathUtils - Path utilities implementation
  * @param filePath - The file path to sanitize
  * @returns Sanitized path string
  */
-export function sanitizePath(filePath: string): string {
+export function sanitizePath(
+  pathUtils: PathUtilsInterface,
+  filePath: string,
+): string {
   if (!filePath || filePath.trim() === "") {
     return "";
   }
@@ -27,7 +31,7 @@ export function sanitizePath(filePath: string): string {
   sanitized = sanitized.replace(/[<>:"|?*]/g, "");
 
   // Normalize path separators for current platform
-  sanitized = path.normalize(sanitized);
+  sanitized = pathUtils.normalize(sanitized);
 
   // Remove any remaining traversal attempts while preserving path structure
   sanitized = sanitized.replace(/\.\.[\\/]/g, "");

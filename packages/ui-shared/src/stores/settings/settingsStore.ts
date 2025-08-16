@@ -62,8 +62,6 @@ const VALID_SUB_TABS: readonly (SettingsSubTab | null)[] = [
   "library",
   "templates",
   "defaults",
-  "saved",
-  "create-new",
   null,
 ] as const;
 

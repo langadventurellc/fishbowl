@@ -1,5 +1,4 @@
 import { FileSystemBridge } from "../FileSystemBridge";
-import { NodeFileSystemBridge } from "../NodeFileSystemBridge";
 import { createLoggerSync } from "../../../logging";
 
 const logger = createLoggerSync({
@@ -8,7 +7,7 @@ const logger = createLoggerSync({
 
 export async function createFileBackup(
   filePath: string,
-  fs: FileSystemBridge = new NodeFileSystemBridge(),
+  fs: FileSystemBridge,
 ): Promise<string | null> {
   try {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
