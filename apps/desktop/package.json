@@ -101,6 +101,8 @@
     ],
     "compression": "maximum",
     "buildDependenciesFromSource": false,
+    "nodeGypRebuild": false,
+    "npmRebuild": false,
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true

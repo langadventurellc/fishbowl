@@ -1,6 +1,6 @@
-import * as path from "path";
 import { randomBytesHex } from "../../utils/randomBytesHex";
 import type { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
+import type { PathUtilsInterface } from "../../utils/PathUtilsInterface";
 import { FileSystemBridge } from "./FileSystemBridge";
 import { FileStorageError } from "./errors/FileStorageError";
 import { ErrorFactory } from "./errors/ErrorFactory";
@@ -27,6 +27,7 @@ export class FileStorageService<T = unknown> {
   constructor(
     private fs: FileSystemBridge,
     private cryptoUtils: CryptoUtilsInterface,
+    private pathUtils: PathUtilsInterface,
     options: FileStorageOptions = {},
   ) {
     this.maxFileSizeBytes = options.maxFileSizeBytes ?? 10 * 1024 * 1024; // 10MB
@@ -89,7 +90,7 @@ export class FileStorageService<T = unknown> {
     await this.validateWriteInput(data);
 
     // Ensure parent directory exists
-    await this.ensureDirectoryExists(path.dirname(absolutePath));
+    await this.ensureDirectoryExists(this.pathUtils.dirname(absolutePath));
 
     // Generate temporary file path
     const tempPath = await this.generateTempFilePath(absolutePath);
@@ -164,10 +165,13 @@ export class FileStorageService<T = unknown> {
    * Generate secure temporary file path.
    */
   private async generateTempFilePath(targetPath: string): Promise<string> {
-    const dir = path.dirname(targetPath);
-    const ext = path.extname(targetPath);
+    const dir = this.pathUtils.dirname(targetPath);
+    const ext = this.pathUtils.extname(targetPath);
     const randomSuffix = await randomBytesHex(this.cryptoUtils, 16);
-    return path.join(dir, `${this.tempFilePrefix}${randomSuffix}${ext}`);
+    return this.pathUtils.join(
+      dir,
+      `${this.tempFilePrefix}${randomSuffix}${ext}`,
+    );
   }
 
   /**
@@ -302,8 +306,8 @@ export class FileStorageService<T = unknown> {
    */
   private validateAndResolvePath(filePath: string): string {
     try {
-      validatePathStrict(filePath);
-      return path.resolve(filePath);
+      validatePathStrict(this.pathUtils, filePath);
+      return this.pathUtils.resolve(filePath);
     } catch (error) {
       if (error instanceof Error) {
         // Convert PathValidationError messages to match original format

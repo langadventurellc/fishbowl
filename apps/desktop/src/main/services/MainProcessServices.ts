@@ -6,6 +6,7 @@ import {
 } from "@fishbowl-ai/shared";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
 import { NodeCryptoUtils } from "../utils/NodeCryptoUtils";
+import { NodePathUtils } from "../utils/NodePathUtils";
 import { NodeDeviceInfo } from "../utils/NodeDeviceInfo";
 
 /**
@@ -40,9 +41,14 @@ export class MainProcessServices {
     this.fileSystemBridge = new NodeFileSystemBridge();
     this.cryptoUtils = new NodeCryptoUtils();
     this.deviceInfo = new NodeDeviceInfo();
+    const pathUtils = new NodePathUtils();
 
     // Create file storage service with Node.js file system bridge
-    this.fileStorage = new FileStorageService(this.fileSystemBridge);
+    this.fileStorage = new FileStorageService(
+      this.fileSystemBridge,
+      this.cryptoUtils,
+      pathUtils,
+    );
 
     // Create logger with Node.js implementations
     // Using createLogger for consistent configuration

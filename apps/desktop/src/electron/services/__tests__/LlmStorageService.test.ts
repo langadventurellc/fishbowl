@@ -33,6 +33,14 @@ jest.mock("../TestSecureStorage", () => ({
   })),
 }));
 
+// Mock NodeCryptoUtils
+jest.mock("../../../main/utils/NodeCryptoUtils", () => ({
+  NodeCryptoUtils: jest.fn().mockImplementation(() => ({
+    generateId: jest.fn().mockReturnValue("mock-id"),
+    getByteLength: jest.fn().mockReturnValue(100),
+  })),
+}));
+
 // Import the mocked classes
 const { LlmConfigRepository } = jest.requireMock("@fishbowl-ai/shared");
 
@@ -463,6 +471,7 @@ describe("LlmStorageService", () => {
       expect(LlmConfigRepository).toHaveBeenCalledWith(
         expect.any(Object), // FileStorageService
         expect.any(Object), // SecureStorage (TestSecureStorage in test env, LlmSecureStorage in prod)
+        expect.any(Object), // CryptoUtils
         "/mock/user/data/llm_config.json", // Config file path
       );
     });

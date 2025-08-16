@@ -1,5 +1,5 @@
-import * as path from "path";
 import { PathValidationError } from "./PathValidationError";
+import type { PathUtilsInterface } from "../../../utils/PathUtilsInterface";
 
 const reserved = [
   "con",
@@ -29,10 +29,14 @@ const reserved = [
 /**
  * Validates a file path and throws detailed errors for invalid paths.
  *
+ * @param pathUtils - Path utilities implementation
  * @param filePath - The file path to validate
  * @throws PathValidationError for invalid paths
  */
-export function validatePathStrict(filePath: string): void {
+export function validatePathStrict(
+  pathUtils: PathUtilsInterface,
+  filePath: string,
+): void {
   if (!filePath || filePath.trim() === "") {
     throw new PathValidationError(filePath, "validate", "Path cannot be empty");
   }
@@ -79,7 +83,7 @@ export function validatePathStrict(filePath: string): void {
   }
 
   // Normalize path for traversal detection
-  const normalized = path.normalize(decoded);
+  const normalized = pathUtils.normalize(decoded);
 
   // Check for directory traversal attempts
   if (normalized.includes("..")) {
@@ -100,7 +104,7 @@ export function validatePathStrict(filePath: string): void {
   }
 
   // Check for Windows reserved names
-  const basename = path.basename(normalized).toLowerCase();
+  const basename = pathUtils.basename(normalized).toLowerCase();
   const baseNameWithoutExt = basename.split(".")[0] || "";
   if (reserved.includes(basename) || reserved.includes(baseNameWithoutExt)) {
     throw new PathValidationError(

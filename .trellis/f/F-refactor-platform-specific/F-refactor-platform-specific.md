@@ -1,7 +1,7 @@
 ---
 id: F-refactor-platform-specific
 title: Refactor platform-specific code into separate packages
-status: in-progress
+status: done
 priority: high
 prerequisites: []
 affectedFiles:
@@ -59,10 +59,14 @@ affectedFiles:
     NodeFileSystemBridge from local services; Updated main process startup to
     use MainProcessServices container, replaced direct service instantiation
     with explicit dependency injection
-  apps/desktop/src/electron/services/LlmStorageService.ts: Modified - updated import to use NodeFileSystemBridge from local services
+  apps/desktop/src/electron/services/LlmStorageService.ts: Modified - updated
+    import to use NodeFileSystemBridge from local services; Added
+    NodeCryptoUtils import and updated FileStorageService and
+    LlmConfigRepository constructors to include cryptoUtils parameter
   apps/desktop/src/data/repositories/RolesRepository.ts: Modified - added
     NodeFileSystemBridge and updated constructor to provide FileSystemBridge
-    parameter
+    parameter; Added NodeCryptoUtils import and updated FileStorageService
+    constructor to include cryptoUtils parameter
   packages/shared/src/services/storage/RolesFileRecoveryService.ts: Modified - added FileSystemBridge constructor parameter
   packages/shared/src/services/storage/utils/createFileBackup.ts: Modified - made FileSystemBridge parameter required
   packages/shared/src/services/storage/index.ts: Modified - removed NodeFileSystemBridge export
@@ -98,7 +102,8 @@ affectedFiles:
   apps/desktop/src/main/services/MainProcessServices.ts:
     Created service container
     class that implements dependency injection pattern for main process, wires
-    Node.js implementations into shared services
+    Node.js implementations into shared services; Updated FileStorageService
+    constructor to include cryptoUtils parameter for proper dependency injection
   apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
     Added comprehensive unit tests verifying service container initialization,
     dependency injection, and service integration
@@ -140,11 +145,14 @@ affectedFiles:
   packages/shared/src/repositories/llmConfig/LlmConfigRepository.ts: Updated constructor to use dependency injection for crypto utilities
   packages/shared/src/logging/config/getDefaultConfig.ts: Added safe guard for process.env access to be platform-agnostic
   packages/shared/src/utils/randomBytesHex.ts: Updated to use dependency injection for crypto utilities
-log: []
+  apps/desktop/src/electron/services/__tests__/LlmStorageService.test.ts:
+    Added NodeCryptoUtils mock and updated test expectations to include
+    cryptoUtils parameter in constructor calls
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-clean-up-shared-package
-  - T-verify-build-passes-after
   - T-create-directory-structure
   - T-extract-browser-crypto
   - T-extract-browser-device-info
@@ -152,6 +160,7 @@ childrenIds:
   - T-extract-node-device-info-to
   - T-move-nodefilesystembridge-to
   - T-update-shared-services-for
+  - T-verify-build-passes-after
   - T-wire-up-browser-implementation
   - T-wire-up-node-implementations
 created: 2025-08-15T21:43:23.682Z

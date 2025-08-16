@@ -9,6 +9,7 @@ import {
   sanitizePath,
   validatePath,
 } from "@fishbowl-ai/shared";
+import { NodePathUtils } from "../utils/NodePathUtils";
 
 /**
  * Node.js implementation of FileSystemBridge using fs/promises.
@@ -18,6 +19,7 @@ import {
  * All native fs errors bubble up for handling at higher service layers.
  */
 export class NodeFileSystemBridge implements FileSystemBridge {
+  private readonly pathUtils = new NodePathUtils();
   /**
    * Read file content as string using fs.readFile.
    */
@@ -78,14 +80,14 @@ export class NodeFileSystemBridge implements FileSystemBridge {
     }
 
     // Validate original path first, then sanitize
-    if (!validatePath(filePath)) {
+    if (!validatePath(this.pathUtils, filePath)) {
       throw new PathValidationError(
         filePath,
         "setFilePermissions",
         "Invalid file path",
       );
     }
-    const sanitized = sanitizePath(filePath);
+    const sanitized = sanitizePath(this.pathUtils, filePath);
 
     try {
       await fs.chmod(sanitized, permissions);
@@ -106,14 +108,14 @@ export class NodeFileSystemBridge implements FileSystemBridge {
     filePath: string,
   ): Promise<{ read: boolean; write: boolean }> {
     // Validate original path first, then sanitize
-    if (!validatePath(filePath)) {
+    if (!validatePath(this.pathUtils, filePath)) {
       throw new PathValidationError(
         filePath,
         "checkFilePermissions",
         "Invalid file path",
       );
     }
-    const sanitized = sanitizePath(filePath);
+    const sanitized = sanitizePath(this.pathUtils, filePath);
 
     let read = false;
     let write = false;
@@ -145,14 +147,14 @@ export class NodeFileSystemBridge implements FileSystemBridge {
     isWritable: boolean;
   }> {
     // Validate original path first, then sanitize
-    if (!validatePath(dirPath)) {
+    if (!validatePath(this.pathUtils, dirPath)) {
       throw new PathValidationError(
         dirPath,
         "getDirectoryStats",
         "Invalid directory path",
       );
     }
-    const sanitized = sanitizePath(dirPath);
+    const sanitized = sanitizePath(this.pathUtils, dirPath);
 
     try {
       const stats = await fs.stat(sanitized);
@@ -184,14 +186,14 @@ export class NodeFileSystemBridge implements FileSystemBridge {
    */
   async ensureDirectoryExists(dirPath: string): Promise<void> {
     // Validate original path first, then sanitize
-    if (!validatePath(dirPath)) {
+    if (!validatePath(this.pathUtils, dirPath)) {
       throw new PathValidationError(
         dirPath,
         "ensureDirectoryExists",
         "Invalid directory path",
       );
     }
-    const sanitized = sanitizePath(dirPath);
+    const sanitized = sanitizePath(this.pathUtils, dirPath);
 
     try {
       await fs.mkdir(sanitized, { recursive: true });

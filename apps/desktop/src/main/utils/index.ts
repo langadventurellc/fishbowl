@@ -3,3 +3,4 @@
 
 export * from "./NodeCryptoUtils";
 export * from "./NodeDeviceInfo";
+export * from "./NodePathUtils";
