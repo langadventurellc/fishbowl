@@ -1,7 +1,7 @@
 ---
 id: F-legacy-code-cleanup-and
 title: Legacy Code Cleanup and Preparation
-status: in-progress
+status: done
 priority: medium
 parent: E-data-foundation-and-schema-1
 prerequisites: []
@@ -23,7 +23,8 @@ affectedFiles:
     Simplified tab navigation without draft-specific protection.; Completely
     removed TabContainer usage and replaced with unified layout showing both
     SavedPersonalitiesTab and CreatePersonalityForm components in a single view
-    with visual separation
+    with visual separation; Removed unused import and simplified component type
+    annotation
   packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
     'create-new' tab types from SettingsSubTab since personalities no longer
     uses tabs
@@ -34,13 +35,21 @@ affectedFiles:
   apps/desktop/src/components/settings/__tests__/TabsIntegration.test.tsx:
     Removed personalities-specific tab test and updated roles test to use valid
     tab types
-log: []
+  packages/eslint-config/index.js: Updated TypeScript ESLint configuration to
+    allow underscore variables for intentionally unused destructured variables
+  packages/shared/src/services/storage/utils/personalities/__tests__/validatePersonalitiesData.test.ts: Removed ESLint disable comments in favor of proper configuration
+  packages/ui-shared/src/types/settings/InteractiveTabsProps.ts: Removed unused type definition (no references found)
+  packages/ui-shared/src/types/settings/TabSectionConfiguration.ts: Removed unused type definition (no references found)
+  packages/ui-shared/src/types/settings/PersonalitiesSectionProps.ts: Removed empty interface that was no longer needed
+  packages/ui-shared/src/types/settings/index.ts: Updated exports to remove references to deleted type definitions
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-clean-up-unused-imports-and
-  - T-remove-tab-navigation-system
   - T-remove-draft-saving-logic-and
   - T-remove-localstorage-usage
+  - T-remove-tab-navigation-system
 created: 2025-08-15T18:04:15.427Z
 updated: 2025-08-15T18:04:15.427Z
 ---

@@ -10,7 +10,6 @@
  */
 
 import {
-  type PersonalitiesSectionProps,
   type Personality,
   type PersonalityFormData,
 } from "@fishbowl-ai/ui-shared";
@@ -23,7 +22,7 @@ const logger = createLoggerSync({
   config: { name: "PersonalitiesSection", level: "info" },
 });
 
-export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = () => {
+export const PersonalitiesSection: React.FC = () => {
   const handleEditPersonality = useCallback((personality: Personality) => {
     // TODO: Implement editing functionality
     logger.info("Edit personality requested", {

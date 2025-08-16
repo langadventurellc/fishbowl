@@ -134,6 +134,7 @@ describe("validatePersonalitiesData", () => {
     });
 
     it("should reject missing personalities array", () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { personalities: _, ...invalid } = validCompleteData;
       const result = validatePersonalitiesData(invalid);
 
@@ -154,6 +155,7 @@ describe("validatePersonalitiesData", () => {
     });
 
     it("should reject missing lastUpdated", () => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { lastUpdated: _, ...invalid } = validCompleteData;
       const result = validatePersonalitiesData(invalid);
 
