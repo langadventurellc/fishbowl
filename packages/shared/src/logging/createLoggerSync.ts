@@ -6,6 +6,8 @@ import type {
   LogConfig,
 } from "./types";
 import type { CreateLoggerOptions } from "./CreateLoggerOptions";
+import type { DeviceInfoInterface } from "./DeviceInfoInterface";
+import type { CryptoUtilsInterface } from "../utils/CryptoUtilsInterface";
 import { ConsoleTransport } from "./transports/ConsoleTransport";
 import { SimpleFormatter } from "./formatters";
 import { getDefaultConfig, mergeConfig } from "./config";
@@ -103,23 +105,7 @@ export function createLoggerSync(
     });
   }
 
-  // Add metadata for process info (synchronous, with safe fallbacks for renderer)
-  context = {
-    ...context,
-    metadata: {
-      ...context.metadata,
-      process: {
-        pid: typeof process !== "undefined" ? process.pid : undefined,
-        ppid: typeof process !== "undefined" ? process.ppid : undefined,
-        version: typeof process !== "undefined" ? process.version : undefined,
-        platform: typeof process !== "undefined" ? process.platform : "unknown",
-        nodeVersion:
-          typeof process !== "undefined" && process.versions
-            ? process.versions.node
-            : undefined,
-      },
-    },
-  };
+  // Platform-agnostic logger - no process-specific metadata in sync version
 
   // Convert LoggerConfig to LogConfig for StructuredLogger
   const logConfig: LogConfig = {
@@ -130,7 +116,7 @@ export function createLoggerSync(
   };
 
   // Create default device info implementation (sync version)
-  const deviceInfo = {
+  const deviceInfo: DeviceInfoInterface = {
     getDeviceInfo: async () => ({
       platform: undefined,
       deviceInfo: {
@@ -141,7 +127,7 @@ export function createLoggerSync(
   };
 
   // Create default crypto utils implementation
-  const cryptoUtils = {
+  const cryptoUtils: CryptoUtilsInterface = {
     randomBytes: async (size: number): Promise<Uint8Array> => {
       // Fallback to Math.random for sync logger
       const bytes = new Uint8Array(size);

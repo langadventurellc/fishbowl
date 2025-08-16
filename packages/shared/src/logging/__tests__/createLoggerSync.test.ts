@@ -170,7 +170,7 @@ describe("createLoggerSync", () => {
       );
     });
 
-    it("should include process info in context", () => {
+    it("should create platform-agnostic logger without process metadata", () => {
       createLoggerSync();
 
       expect(MockStructuredLogger).toHaveBeenCalledWith(
@@ -181,14 +181,9 @@ describe("createLoggerSync", () => {
           getByteLength: expect.any(Function),
         }),
         expect.objectContaining({
-          context: expect.objectContaining({
+          context: expect.not.objectContaining({
             metadata: expect.objectContaining({
-              process: expect.objectContaining({
-                pid: process.pid,
-                platform: process.platform,
-                version: process.version,
-                nodeVersion: process.versions.node,
-              }),
+              process: expect.anything(),
             }),
           }),
         }),

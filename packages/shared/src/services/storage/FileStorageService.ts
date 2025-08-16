@@ -1,6 +1,6 @@
 import * as path from "path";
 import { randomBytesHex } from "../../utils/randomBytesHex";
-import { getByteLength } from "../../utils/getByteLength";
+import type { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
 import { FileSystemBridge } from "./FileSystemBridge";
 import { FileStorageError } from "./errors/FileStorageError";
 import { ErrorFactory } from "./errors/ErrorFactory";
@@ -26,6 +26,7 @@ export class FileStorageService<T = unknown> {
 
   constructor(
     private fs: FileSystemBridge,
+    private cryptoUtils: CryptoUtilsInterface,
     options: FileStorageOptions = {},
   ) {
     this.maxFileSizeBytes = options.maxFileSizeBytes ?? 10 * 1024 * 1024; // 10MB
@@ -127,7 +128,7 @@ export class FileStorageService<T = unknown> {
     if (!serialized) {
       throw new Error("Data is not JSON serializable");
     }
-    const byteLength = await getByteLength(serialized);
+    const byteLength = await this.cryptoUtils.getByteLength(serialized);
     if (byteLength > this.maxFileSizeBytes) {
       throw new Error(
         `Data size exceeds limit: ${this.maxFileSizeBytes} bytes`,
@@ -165,7 +166,7 @@ export class FileStorageService<T = unknown> {
   private async generateTempFilePath(targetPath: string): Promise<string> {
     const dir = path.dirname(targetPath);
     const ext = path.extname(targetPath);
-    const randomSuffix = await randomBytesHex(16);
+    const randomSuffix = await randomBytesHex(this.cryptoUtils, 16);
     return path.join(dir, `${this.tempFilePrefix}${randomSuffix}${ext}`);
   }
 

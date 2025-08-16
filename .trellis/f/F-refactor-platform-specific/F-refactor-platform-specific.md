@@ -19,7 +19,8 @@ affectedFiles:
   packages/shared/src/utils/CryptoUtilsInterface.ts: Created interface for
     platform-agnostic crypto operations with randomBytes, generateId, and
     getByteLength methods
-  packages/shared/src/utils/index.ts: Added export for CryptoUtilsInterface
+  packages/shared/src/utils/index.ts: Added export for CryptoUtilsInterface;
+    Updated barrel exports to remove deleted utility files
   apps/desktop/src/main/utils/NodeCryptoUtils.ts: Implemented NodeCryptoUtils
     class with direct Node.js crypto imports, no dynamic imports or eval
     statements
@@ -42,7 +43,8 @@ affectedFiles:
     injection
   packages/shared/src/services/storage/FileStorageService.ts: Modified - updated
     to use FileSystemBridge interface methods with fallback behavior and proper
-    error conversion, made FileSystemBridge parameter required
+    error conversion, made FileSystemBridge parameter required; Updated
+    constructor to use dependency injection for crypto utilities
   packages/shared/src/services/storage/utils/index.ts: Cleaned up - removed exports for deleted Node.js-specific utility functions
   packages/shared/src/services/storage/utils/ensureDirectoryExists.ts: Deleted - moved functionality to NodeFileSystemBridge
   packages/shared/src/services/storage/utils/setFilePermissions.ts: Deleted - moved functionality to NodeFileSystemBridge
@@ -78,10 +80,13 @@ affectedFiles:
     injected crypto utils
   packages/shared/src/logging/createLogger.ts: Updated to provide default
     implementations for DeviceInfoInterface and CryptoUtilsInterface to
-    StructuredLogger constructor
+    StructuredLogger constructor; Updated to use dependency injection for device
+    info and crypto utilities, removed direct process access
   packages/shared/src/logging/createLoggerSync.ts: Updated to provide default
     implementations for DeviceInfoInterface and CryptoUtilsInterface to
-    StructuredLogger constructor with sync-appropriate fallbacks
+    StructuredLogger constructor with sync-appropriate fallbacks; Updated to use
+    dependency injection interfaces and removed platform-specific process
+    metadata collection
   packages/shared/src/logging/__tests__/StructuredLogger.test.ts:
     Updated all constructor calls to provide mock implementations, fixed session
     ID uniqueness and platform detection tests
@@ -89,7 +94,7 @@ affectedFiles:
     expectations to match new constructor signature with three parameters
   packages/shared/src/logging/__tests__/createLoggerSync.test.ts:
     Updated mock expectations to match new constructor signature with three
-    parameters
+    parameters; Updated test to reflect platform-agnostic logger behavior
   apps/desktop/src/main/services/MainProcessServices.ts:
     Created service container
     class that implements dependency injection pattern for main process, wires
@@ -122,12 +127,24 @@ affectedFiles:
     implementations, logger configuration, and fallback behavior
   apps/desktop/src/App.test.tsx: Fixed failing tests by adding mock for
     useServices hook to provide necessary test context
+  packages/shared/src/utils/randomBytes.ts: Removed platform-specific random bytes implementation
+  packages/shared/src/utils/generateId.ts: Removed platform-specific ID generation implementation
+  packages/shared/src/utils/getByteLength.ts: Removed platform-specific byte length implementation
+  packages/shared/src/logging/utils/getDeviceInfo.ts: Removed platform-specific device info implementation
+  packages/shared/src/logging/utils/detectPlatform.ts: Removed platform-specific platform detection implementation
+  packages/shared/src/logging/utils/getCachedDeviceInfo.ts: Removed cached device info that depended on deleted getDeviceInfo
+  packages/shared/src/logging/utils/PlatformCache.ts: Removed platform cache that depended on deleted detectPlatform
+  packages/shared/src/logging/utils/getPlatform.ts: Removed getPlatform utility that depended on deleted PlatformCache
+  packages/shared/src/logging/utils/resetPlatformCache.ts: Removed resetPlatformCache utility that depended on deleted PlatformCache
+  packages/shared/src/logging/utils/index.ts: Updated barrel exports to remove deleted logging utility files
+  packages/shared/src/repositories/llmConfig/LlmConfigRepository.ts: Updated constructor to use dependency injection for crypto utilities
+  packages/shared/src/logging/config/getDefaultConfig.ts: Added safe guard for process.env access to be platform-agnostic
+  packages/shared/src/utils/randomBytesHex.ts: Updated to use dependency injection for crypto utilities
 log: []
 schema: v1.0
 childrenIds:
   - T-clean-up-shared-package
   - T-verify-build-passes-after
-  - T-wire-up-browser-implementation
   - T-create-directory-structure
   - T-extract-browser-crypto
   - T-extract-browser-device-info
@@ -135,6 +152,7 @@ childrenIds:
   - T-extract-node-device-info-to
   - T-move-nodefilesystembridge-to
   - T-update-shared-services-for
+  - T-wire-up-browser-implementation
   - T-wire-up-node-implementations
 created: 2025-08-15T21:43:23.682Z
 updated: 2025-08-15T21:43:23.682Z

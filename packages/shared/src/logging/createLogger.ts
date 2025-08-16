@@ -6,13 +6,13 @@ import type {
   LogConfig,
 } from "./types";
 import type { CreateLoggerOptions } from "./CreateLoggerOptions";
+import type { DeviceInfoInterface } from "./DeviceInfoInterface";
+import type { CryptoUtilsInterface } from "../utils/CryptoUtilsInterface";
 import { ConsoleTransport } from "./transports/ConsoleTransport";
 import { SimpleFormatter } from "./formatters";
 import { getDefaultConfig, mergeConfig } from "./config";
-import { getDeviceInfo } from "./utils/getDeviceInfo";
 import { convertLogLevel } from "./convertLogLevel";
 import { createTransport } from "./createTransport";
-import { getByteLength } from "../utils/getByteLength";
 
 /**
  * Creates a structured logger with comprehensive context and async device info gathering.
@@ -63,6 +63,8 @@ import { getByteLength } from "../utils/getByteLength";
  * @since 1.0.0
  */
 export async function createLogger(
+  deviceInfo: DeviceInfoInterface,
+  cryptoUtils: CryptoUtilsInterface,
   options: CreateLoggerOptions = {},
 ): Promise<IStructuredLogger> {
   // Get default config and merge with user options
@@ -101,7 +103,7 @@ export async function createLogger(
   // Add device info if enabled
   if (config.includeDeviceInfo) {
     try {
-      const deviceContext = await getDeviceInfo();
+      const deviceContext = await deviceInfo.getDeviceInfo();
       if (deviceContext.deviceInfo) {
         context.deviceInfo = deviceContext.deviceInfo;
       }
@@ -114,20 +116,7 @@ export async function createLogger(
     }
   }
 
-  // Add metadata for process info
-  context = {
-    ...context,
-    metadata: {
-      ...context.metadata,
-      process: {
-        pid: process.pid,
-        ppid: process.ppid,
-        version: process.version,
-        platform: process.platform,
-        nodeVersion: process.versions.node,
-      },
-    },
-  };
+  // Platform-agnostic logger - process info provided via injected device info
 
   // Convert LoggerConfig to LogConfig for StructuredLogger
   const logConfig: LogConfig = {
@@ -135,28 +124,6 @@ export async function createLogger(
     namespace: config.name,
     context,
     transports,
-  };
-
-  // Create default device info implementation for logger injection
-  const deviceInfo = {
-    getDeviceInfo: async () => await getDeviceInfo(),
-  };
-
-  // Create default crypto utils implementation for logger injection
-  const cryptoUtils = {
-    randomBytes: async (size: number): Promise<Uint8Array> => {
-      const { randomBytes: nodeRandomBytes } = await import("crypto");
-      return new Uint8Array(nodeRandomBytes(size));
-    },
-    generateId: (): string => {
-      return (
-        Math.random().toString(36).substring(2, 15) +
-        Math.random().toString(36).substring(2, 15)
-      );
-    },
-    getByteLength: async (str: string): Promise<number> => {
-      return await getByteLength(str);
-    },
   };
 
   // Create and return the logger with injected implementations

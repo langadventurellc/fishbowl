@@ -1,14 +1,44 @@
 ---
 id: T-clean-up-shared-package
 title: Clean up shared package platform-specific code
-status: open
+status: done
 priority: high
 parent: F-refactor-platform-specific
 prerequisites:
   - T-wire-up-node-implementations
   - T-wire-up-browser-implementation
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/utils/randomBytes.ts: Removed platform-specific random bytes implementation
+  packages/shared/src/utils/generateId.ts: Removed platform-specific ID generation implementation
+  packages/shared/src/utils/getByteLength.ts: Removed platform-specific byte length implementation
+  packages/shared/src/logging/utils/getDeviceInfo.ts: Removed platform-specific device info implementation
+  packages/shared/src/logging/utils/detectPlatform.ts: Removed platform-specific platform detection implementation
+  packages/shared/src/logging/utils/getCachedDeviceInfo.ts: Removed cached device info that depended on deleted getDeviceInfo
+  packages/shared/src/logging/utils/PlatformCache.ts: Removed platform cache that depended on deleted detectPlatform
+  packages/shared/src/logging/utils/getPlatform.ts: Removed getPlatform utility that depended on deleted PlatformCache
+  packages/shared/src/logging/utils/resetPlatformCache.ts: Removed resetPlatformCache utility that depended on deleted PlatformCache
+  packages/shared/src/utils/index.ts: Updated barrel exports to remove deleted utility files
+  packages/shared/src/logging/utils/index.ts: Updated barrel exports to remove deleted logging utility files
+  packages/shared/src/services/storage/FileStorageService.ts: Updated constructor to use dependency injection for crypto utilities
+  packages/shared/src/repositories/llmConfig/LlmConfigRepository.ts: Updated constructor to use dependency injection for crypto utilities
+  packages/shared/src/logging/createLogger.ts:
+    Updated to use dependency injection
+    for device info and crypto utilities, removed direct process access
+  packages/shared/src/logging/createLoggerSync.ts: Updated to use dependency
+    injection interfaces and removed platform-specific process metadata
+    collection
+  packages/shared/src/logging/config/getDefaultConfig.ts: Added safe guard for process.env access to be platform-agnostic
+  packages/shared/src/utils/randomBytesHex.ts: Updated to use dependency injection for crypto utilities
+  packages/shared/src/logging/__tests__/createLoggerSync.test.ts: Updated test to reflect platform-agnostic logger behavior
+log:
+  - Successfully cleaned up shared package platform-specific code by removing
+    all platform-specific implementations and replacing them with dependency
+    injection interfaces. All platform-specific utilities (randomBytes,
+    generateId, getByteLength, getDeviceInfo, detectPlatform) have been moved to
+    desktop app directories and replaced with interfaces in the shared package.
+    Updated constructor signatures to use dependency injection pattern and made
+    all remaining code platform-agnostic with proper guards. All tests pass and
+    TypeScript compilation succeeds.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T21:53:46.223Z
