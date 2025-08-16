@@ -20,13 +20,26 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
     Removed unsaved changes confirmation dialog when switching tabs, eliminated
     useUnsavedChanges hook usage, and removed useConfirmationDialog import.
-    Simplified tab navigation without draft-specific protection.
+    Simplified tab navigation without draft-specific protection.; Completely
+    removed TabContainer usage and replaced with unified layout showing both
+    SavedPersonalitiesTab and CreatePersonalityForm components in a single view
+    with visual separation
+  packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
+    'create-new' tab types from SettingsSubTab since personalities no longer
+    uses tabs
+  packages/ui-shared/src/stores/settings/settingsStore.ts: Updated VALID_SUB_TABS array to remove the removed tab types
+  apps/desktop/src/components/settings/SettingsNavigation.tsx:
+    "Changed personalities section from hasSubTabs: true to hasSubTabs: false
+    and removed subTabs array"
+  apps/desktop/src/components/settings/__tests__/TabsIntegration.test.tsx:
+    Removed personalities-specific tab test and updated roles test to use valid
+    tab types
 log: []
 schema: v1.0
 childrenIds:
   - T-clean-up-unused-imports-and
-  - T-remove-draft-saving-logic-and
   - T-remove-tab-navigation-system
+  - T-remove-draft-saving-logic-and
   - T-remove-localstorage-usage
 created: 2025-08-15T18:04:15.427Z
 updated: 2025-08-15T18:04:15.427Z

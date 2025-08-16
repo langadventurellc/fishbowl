@@ -40,11 +40,7 @@ const navigationSections = [
   {
     id: "personalities" as const,
     label: "Personalities",
-    hasSubTabs: true,
-    subTabs: [
-      { id: "saved" as const, label: "Saved" },
-      { id: "create-new" as const, label: "Create New" },
-    ],
+    hasSubTabs: false,
   },
   { id: "roles" as const, label: "Roles", hasSubTabs: false },
   { id: "advanced" as const, label: "Advanced", hasSubTabs: false },

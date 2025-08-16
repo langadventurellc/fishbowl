@@ -1,12 +1,32 @@
 ---
 id: T-remove-tab-navigation-system
 title: Remove tab navigation system from personalities
-status: open
+status: done
 priority: medium
 parent: F-legacy-code-cleanup-and
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Completely removed TabContainer usage and replaced with unified layout
+    showing both SavedPersonalitiesTab and CreatePersonalityForm components in a
+    single view with visual separation
+  packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
+    'create-new' tab types from SettingsSubTab since personalities no longer
+    uses tabs
+  packages/ui-shared/src/stores/settings/settingsStore.ts: Updated VALID_SUB_TABS array to remove the removed tab types
+  apps/desktop/src/components/settings/SettingsNavigation.tsx:
+    "Changed personalities section from hasSubTabs: true to hasSubTabs: false
+    and removed subTabs array"
+  apps/desktop/src/components/settings/__tests__/TabsIntegration.test.tsx:
+    Removed personalities-specific tab test and updated roles test to use valid
+    tab types
+log:
+  - Successfully removed the tab navigation system from personalities section
+    and converted it to a unified single-screen layout. Eliminated "Saved" and
+    "Create New" tabs, removed tab-related types from SettingsSubTab, updated
+    navigation configuration, and cleaned up tests. The personalities section
+    now displays both saved personalities and the create form in a single view
+    with clear visual separation.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T18:10:09.607Z

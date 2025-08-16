@@ -69,45 +69,24 @@ describe("Tabs Integration with Settings", () => {
     expect(screen.getByText("Agent Library Content")).toBeVisible();
   });
 
-  test("renders with personalities section tab structure", () => {
-    render(
-      <Tabs defaultValue="saved">
-        <TabsList>
-          <TabsTrigger value="saved">Saved</TabsTrigger>
-          <TabsTrigger value="create-new">Create New</TabsTrigger>
-        </TabsList>
-        <TabsContent value="saved">
-          <div>Saved Personalities Content</div>
-        </TabsContent>
-        <TabsContent value="create-new">
-          <div>Create New Personality Content</div>
-        </TabsContent>
-      </Tabs>,
-    );
-
-    expect(screen.getByText("Saved")).toBeInTheDocument();
-    expect(screen.getByText("Create New")).toBeInTheDocument();
-    expect(screen.getByText("Saved Personalities Content")).toBeVisible();
-  });
-
   test("renders with roles section tab structure", () => {
     render(
       <Tabs defaultValue="library">
         <TabsList>
           <TabsTrigger value="library">Library</TabsTrigger>
-          <TabsTrigger value="create-new">Create New</TabsTrigger>
+          <TabsTrigger value="templates">Templates</TabsTrigger>
         </TabsList>
         <TabsContent value="library">
           <div>Roles Library Content</div>
         </TabsContent>
-        <TabsContent value="create-new">
-          <div>Create New Role Content</div>
+        <TabsContent value="templates">
+          <div>Role Templates Content</div>
         </TabsContent>
       </Tabs>,
     );
 
     expect(screen.getByText("Library")).toBeInTheDocument();
-    expect(screen.getByText("Create New")).toBeInTheDocument();
+    expect(screen.getByText("Templates")).toBeInTheDocument();
     expect(screen.getByText("Roles Library Content")).toBeVisible();
   });
 
