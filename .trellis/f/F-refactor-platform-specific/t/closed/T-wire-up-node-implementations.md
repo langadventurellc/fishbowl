@@ -1,15 +1,33 @@
 ---
 id: T-wire-up-node-implementations
 title: Wire up Node implementations in main process
-status: open
+status: done
 priority: high
 parent: F-refactor-platform-specific
 prerequisites:
   - T-update-shared-services-for
   - T-extract-node-crypto-utilities
   - T-extract-node-device-info-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts:
+    Created service container
+    class that implements dependency injection pattern for main process, wires
+    Node.js implementations into shared services
+  apps/desktop/src/electron/main.ts: Updated main process startup to use
+    MainProcessServices container, replaced direct service instantiation with
+    explicit dependency injection
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests verifying service container initialization,
+    dependency injection, and service integration
+log:
+  - Successfully implemented dependency injection system for Electron main
+    process with MainProcessServices container class. Created service container
+    that wires up Node.js implementations (NodeFileSystemBridge,
+    NodeCryptoUtils, NodeDeviceInfo) into shared services (FileStorageService,
+    StructuredLogger) using explicit constructor injection. Updated main.ts to
+    use the service container instead of direct service instantiation. All
+    quality checks pass and comprehensive unit tests verify correct service
+    wiring and functionality.
 schema: v1.0
 childrenIds: []
 created: 2025-08-15T21:53:12.006Z

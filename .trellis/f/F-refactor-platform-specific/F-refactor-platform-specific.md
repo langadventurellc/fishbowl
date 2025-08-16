@@ -52,7 +52,10 @@ affectedFiles:
   packages/shared/src/services/storage/utils/__tests__/checkFilePermissions.test.ts: Deleted - moved with functionality to desktop app
   packages/shared/src/services/storage/utils/__tests__/getDirectoryStats.test.ts: Deleted - moved with functionality to desktop app
   apps/desktop/src/main/services/__tests__/NodeFileSystemBridge.test.ts: Updated - maintained existing tests and functionality in desktop app
-  apps/desktop/src/electron/main.ts: Modified - updated import to use NodeFileSystemBridge from local services
+  apps/desktop/src/electron/main.ts: Modified - updated import to use
+    NodeFileSystemBridge from local services; Updated main process startup to
+    use MainProcessServices container, replaced direct service instantiation
+    with explicit dependency injection
   apps/desktop/src/electron/services/LlmStorageService.ts: Modified - updated import to use NodeFileSystemBridge from local services
   apps/desktop/src/data/repositories/RolesRepository.ts: Modified - added
     NodeFileSystemBridge and updated constructor to provide FileSystemBridge
@@ -86,12 +89,18 @@ affectedFiles:
   packages/shared/src/logging/__tests__/createLoggerSync.test.ts:
     Updated mock expectations to match new constructor signature with three
     parameters
+  apps/desktop/src/main/services/MainProcessServices.ts:
+    Created service container
+    class that implements dependency injection pattern for main process, wires
+    Node.js implementations into shared services
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests verifying service container initialization,
+    dependency injection, and service integration
 log: []
 schema: v1.0
 childrenIds:
   - T-clean-up-shared-package
   - T-extract-browser-device-info
-  - T-update-shared-services-for
   - T-verify-build-passes-after
   - T-wire-up-browser-implementation
   - T-wire-up-node-implementations
@@ -100,6 +109,7 @@ childrenIds:
   - T-extract-node-crypto-utilities
   - T-extract-node-device-info-to
   - T-move-nodefilesystembridge-to
+  - T-update-shared-services-for
 created: 2025-08-15T21:43:23.682Z
 updated: 2025-08-15T21:43:23.682Z
 ---
