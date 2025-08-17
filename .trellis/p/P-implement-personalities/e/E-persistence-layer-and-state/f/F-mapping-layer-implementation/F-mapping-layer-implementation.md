@@ -1,15 +1,51 @@
 ---
 id: F-mapping-layer-implementation
 title: Mapping Layer Implementation
-status: open
+status: done
 priority: medium
 parent: E-persistence-layer-and-state
 prerequisites:
   - F-persistence-adapter-interface
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/settings/PersonalityViewModel.ts:
+    Created new PersonalityViewModel interface extending PersonalityFormData
+    with id and timestamp fields, following RoleViewModel pattern
+  packages/ui-shared/src/types/settings/index.ts: Added export for PersonalityViewModel type
+  packages/ui-shared/src/mapping/personalities/mapSinglePersonalityPersistenceToUI.ts:
+    Implemented function to convert persisted personality data to UI format with
+    null timestamp handling, ID generation, and Big Five/behaviors preservation
+  packages/ui-shared/src/mapping/personalities/mapSinglePersonalityUIToPersistence.ts:
+    Implemented function to convert UI personality data to persistence format
+    with timestamp generation and field preservation
+  packages/ui-shared/src/mapping/personalities/index.ts: Created barrel exports
+    for both mapping functions; Updated barrel exports to include new array
+    mapping functions
+  packages/ui-shared/src/mapping/personalities/__tests__/mapSinglePersonalityPersistenceToUI.test.ts:
+    Created comprehensive unit tests covering complete transformations,
+    timestamp handling, ID generation, Big Five traits, behaviors, field
+    defaults, and edge cases
+  packages/ui-shared/src/mapping/personalities/__tests__/mapSinglePersonalityUIToPersistence.test.ts:
+    Created comprehensive unit tests covering complete transformations,
+    timestamp handling, ID generation, field preservation, and return type
+    validation
+  packages/ui-shared/src/mapping/personalities/mapPersonalitiesPersistenceToUI.ts:
+    Created array mapping function to transform persisted personalities data to
+    UI view model format, handling null/undefined input gracefully
+  packages/ui-shared/src/mapping/personalities/mapPersonalitiesUIToPersistence.ts:
+    Created array mapping function to transform UI personality view models to
+    persistence format with schema validation
+  packages/ui-shared/src/mapping/personalities/__tests__/mapPersonalitiesPersistenceToUI.test.ts:
+    Created comprehensive test suite covering transformation scenarios, edge
+    cases, large datasets, unicode handling, and data integrity verification
+  packages/ui-shared/src/mapping/personalities/__tests__/mapPersonalitiesUIToPersistence.test.ts:
+    Created comprehensive test suite covering validation, field processing,
+    performance, error handling, and round-trip data integrity
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-implement-array-mapping
+  - T-setup-directory-structure-and-1
 created: 2025-08-16T20:58:40.449Z
 updated: 2025-08-16T20:58:40.449Z
 ---

@@ -1,6 +1,6 @@
 import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
 import { RoleFormData, RoleViewModel, RolesPersistenceAdapter } from "../types";
-import { RolesErrorState } from "./RolesErrorState";
+import { ErrorState } from "./ErrorState";
 
 export interface RolesActions {
   createRole: (roleData: RoleFormData) => string;
@@ -24,5 +24,5 @@ export interface RolesActions {
   // Error recovery methods
   retryLastOperation: () => Promise<void>;
   clearErrorState: () => void;
-  getErrorDetails: () => RolesErrorState;
+  getErrorDetails: () => ErrorState;
 }

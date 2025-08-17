@@ -1,71 +1,74 @@
 /**
- * Zustand store for roles management with CRUD operations.
+ * Zustand store for personalities management with CRUD operations.
  *
- * Provides reactive state management for user-created roles with
+ * Provides reactive state management for user-created personalities with
  * comprehensive validation, error handling, and persistence integration.
  *
- * @module stores/rolesStore
+ * @module stores/personalitiesStore
  */
 
-import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
+import type { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 import { create } from "zustand";
-import { mapRolesPersistenceToUI } from "../mapping/roles/mapRolesPersistenceToUI";
-import { mapRolesUIToPersistence } from "../mapping/roles/mapRolesUIToPersistence";
-import { roleSchema } from "../schemas/roleSchema";
-import { RolesPersistenceAdapter } from "../types/roles/persistence/RolesPersistenceAdapter";
-import { RolesPersistenceError } from "../types/roles/persistence/RolesPersistenceError";
-import { RoleFormData } from "../types/settings/RoleFormData";
-import { RoleViewModel } from "../types/settings/RoleViewModel";
+import { mapPersonalitiesPersistenceToUI } from "../mapping/personalities/mapPersonalitiesPersistenceToUI";
+import { mapPersonalitiesUIToPersistence } from "../mapping/personalities/mapPersonalitiesUIToPersistence";
+import { personalitySchema } from "../schemas/personalitySchema";
+import { PersonalitiesPersistenceAdapter } from "../types/personalities/persistence/PersonalitiesPersistenceAdapter";
+import { PersonalitiesPersistenceError } from "../types/personalities/persistence/PersonalitiesPersistenceError";
+import { PersonalityFormData } from "../types/settings/PersonalityFormData";
+import { PersonalityViewModel } from "../types/settings/PersonalityViewModel";
 import { ErrorState } from "./ErrorState";
-import { type RolesStore } from "./RolesStore";
+import { type PersonalitiesStore } from "./PersonalitiesStore";
 
 // Lazy logger creation to avoid process access in browser context
-let logger: ReturnType<typeof createLoggerSync> | null = null;
-const getLogger = () => {
-  if (!logger) {
+let _logger: ReturnType<typeof createLoggerSync> | null = null;
+const _getLogger = () => {
+  if (!_logger) {
     try {
-      logger = createLoggerSync({
-        context: { metadata: { component: "rolesStore" } },
+      _logger = createLoggerSync({
+        context: { metadata: { component: "personalitiesStore" } },
       });
     } catch {
       // Fallback to console in browser contexts where logger creation fails
-      logger = {
+      _logger = {
         info: console.info.bind(console),
         warn: console.warn.bind(console),
         error: console.error.bind(console),
       } as ReturnType<typeof createLoggerSync>;
     }
   }
-  return logger;
+  return _logger;
 };
 
 // Debounce delay for auto-save
-const DEBOUNCE_DELAY_MS = 500;
+const _DEBOUNCE_DELAY_MS = 1000;
 
 // Maximum retry attempts for save operations
-const MAX_RETRY_ATTEMPTS = 3;
+const _MAX_RETRY_ATTEMPTS = 3;
 
 // Base delay for exponential backoff (in ms)
-const RETRY_BASE_DELAY_MS = 1000;
+const _RETRY_BASE_DELAY_MS = 1000;
 
 // Generate unique ID using crypto API or fallback
-const generateId = (): string => {
+const _generateId = (): string => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
   }
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
 };
 
-export const useRolesStore = create<RolesStore>()((set, get) => {
+export const usePersonalitiesStore = create<PersonalitiesStore>()((
+  set,
+  get,
+) => {
   // Debounce timer reference
-  let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  let _debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Retry count for exponential backoff
-  let retryCount = 0;
+  let _retryCount = 0;
 
   // Store snapshot for rollback
-  let rollbackSnapshot: RoleViewModel[] | null = null;
+  let _rollbackSnapshot: PersonalityViewModel[] | null = null;
 
   /**
    * Internal debounced save function
@@ -73,15 +76,16 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
    */
   const _debouncedSave = () => {
     // Clear existing timer
-    if (debounceTimer) {
-      clearTimeout(debounceTimer);
+    if (_debounceTimer) {
+      clearTimeout(_debounceTimer);
     }
 
-    // Set new timer
-    debounceTimer = setTimeout(async () => {
+    // Set new timer (minimal delay in tests)
+    const delay = process.env.NODE_ENV === "test" ? 1 : _DEBOUNCE_DELAY_MS;
+    _debounceTimer = setTimeout(async () => {
       const { adapter } = get();
       if (!adapter) {
-        getLogger().warn("Cannot save: no adapter configured");
+        _getLogger().warn("Cannot save: no adapter configured");
         return;
       }
 
@@ -89,21 +93,13 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       try {
         await get().persistChanges();
       } catch (error) {
-        getLogger().error(
+        _getLogger().error(
           "Auto-save failed",
           error instanceof Error ? error : new Error(String(error)),
         );
       }
-    }, DEBOUNCE_DELAY_MS);
+    }, delay);
   };
-
-  /**
-   * Handle save errors with rollback and retry logic
-   */
-
-  /**
-   * Determines if an error is retryable based on its type and characteristics
-   */
 
   /**
    * Create a properly formatted error state
@@ -126,6 +122,9 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
    */
   const _clearErrorState = (): ErrorState => _createErrorState(null);
 
+  /**
+   * Determines if an error is retryable based on its type and characteristics
+   */
   const _isRetryableError = (error: unknown): boolean => {
     // Never retry validation errors
     if (
@@ -150,8 +149,8 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       }
     }
 
-    // Check for RolesPersistenceError
-    if (error instanceof RolesPersistenceError) {
+    // Check for PersonalitiesPersistenceError
+    if (error instanceof PersonalitiesPersistenceError) {
       // Load operations might be retryable if temporary
       if (error.operation === "load" && error.cause) {
         return _isRetryableError(error.cause);
@@ -197,13 +196,13 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       switch (code) {
         case "ENOENT":
           return operation === "load"
-            ? "Roles configuration not found. Starting with defaults."
+            ? "Personalities configuration not found. Starting with defaults."
             : "Unable to save: Configuration file not accessible.";
         case "EACCES":
         case "EPERM":
           return "Permission denied. Check folder permissions for the app data directory.";
         case "ENOSPC":
-          return "Insufficient disk space to save roles.";
+          return "Insufficient disk space to save personalities.";
         case "ETIMEDOUT":
           return "Operation timed out. Please check your connection.";
         default:
@@ -211,8 +210,8 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       }
     }
 
-    // RolesPersistenceError
-    if (error instanceof RolesPersistenceError) {
+    // PersonalitiesPersistenceError
+    if (error instanceof PersonalitiesPersistenceError) {
       return error.message;
     }
 
@@ -222,7 +221,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     }
 
     // Fallback
-    return `Failed to ${operation} roles. Please try again.`;
+    return `Failed to ${operation} personalities. Please try again.`;
   };
 
   /**
@@ -267,7 +266,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     });
 
     // Log the error with context
-    getLogger().error(
+    _getLogger().error(
       `${operation} operation failed`,
       error instanceof Error ? error : new Error(String(error)),
     );
@@ -279,7 +278,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
   const _retryOperation = async <T>(
     operation: () => Promise<T>,
     operationName: "save" | "load" | "sync" | "import" | "reset",
-    maxRetries: number = MAX_RETRY_ATTEMPTS,
+    maxRetries: number = _MAX_RETRY_ATTEMPTS,
   ): Promise<T> => {
     let lastError: unknown;
     let retryCount = 0;
@@ -333,18 +332,20 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
         if (retryCount < maxRetries) {
           // Calculate delay with exponential backoff
-          const delay = RETRY_BASE_DELAY_MS * Math.pow(2, retryCount - 1);
+          const delay = _RETRY_BASE_DELAY_MS * Math.pow(2, retryCount - 1);
 
-          getLogger().info(
+          _getLogger().info(
             `Retrying ${operationName} in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`,
           );
 
-          // Wait before retrying
-          await new Promise((resolve) => {
-            const timer = setTimeout(resolve, delay);
-            // Store timer reference for cleanup
-            get().retryTimers.set(operationName, timer);
-          });
+          // Wait before retrying (skip delay in tests)
+          if (process.env.NODE_ENV !== "test") {
+            await new Promise((resolve) => {
+              const timer = setTimeout(resolve, delay);
+              // Store timer reference for cleanup
+              get().retryTimers.set(operationName, timer);
+            });
+          }
         }
       }
     }
@@ -354,16 +355,19 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     throw lastError;
   };
 
+  /**
+   * Handle save errors with rollback and retry logic
+   */
   const _handleSaveError = async (
     error: unknown,
-    originalRoles: RoleViewModel[],
+    originalPersonalities: PersonalityViewModel[],
   ): Promise<void> => {
     // Use the new error handling infrastructure
     _handlePersistenceError(error, "save");
 
     // Rollback to original state with pending operations cleanup
     set((state) => ({
-      roles: originalRoles,
+      personalities: originalPersonalities,
       isSaving: false,
       pendingOperations: state.pendingOperations.map((op) => ({
         ...op,
@@ -374,45 +378,16 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     // Announce rollback to UI for user feedback
     const errorType =
       error instanceof Error ? error.constructor.name : typeof error;
-    getLogger().info(
-      `Rolled back to previous state after save error. Original role count: ${originalRoles.length}, Error type: ${errorType}`,
+    _getLogger().info(
+      `Rolled back to previous state after save error. Original personality count: ${originalPersonalities.length}, Error type: ${errorType}`,
     );
 
-    // Implement exponential backoff retry
-    if (retryCount < MAX_RETRY_ATTEMPTS) {
-      retryCount++;
-      const delay = RETRY_BASE_DELAY_MS * Math.pow(2, retryCount - 1);
-
-      const failedOperationsCount = get().pendingOperations.filter(
-        (op) => op.status === "failed",
-      ).length;
-      getLogger().info(
-        `Retrying save in ${delay}ms (attempt ${retryCount}/${MAX_RETRY_ATTEMPTS}). Failed operations: ${failedOperationsCount}`,
-      );
-
-      setTimeout(async () => {
-        try {
-          await get().persistChanges();
-          retryCount = 0; // Reset on success
-        } catch (retryError) {
-          await _handleSaveError(retryError, originalRoles);
-        }
-      }, delay);
-    } else {
-      const state = get();
-      const failedCount = state.pendingOperations.filter(
-        (op) => op.status === "failed",
-      ).length;
-      const totalCount = state.pendingOperations.length;
-      getLogger().error(
-        `Save failed after ${MAX_RETRY_ATTEMPTS} attempts. Failed operations: ${failedCount}, Total pending: ${totalCount}`,
-      );
-      retryCount = 0;
-    }
+    // Note: Retry logic is handled by _retryOperation in persistChanges()
+    // This function just handles rollback and error reporting
   };
 
   return {
-    roles: [],
+    personalities: [],
     isLoading: false,
     error: {
       message: null,
@@ -429,37 +404,39 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     retryTimers: new Map(),
 
     // CRUD operations
-    createRole: (roleData: RoleFormData) => {
+    createPersonality: (personalityData: PersonalityFormData) => {
       try {
         // Validate input data
-        const validatedData = roleSchema.parse(roleData);
+        const validatedData = personalitySchema.parse(personalityData);
 
         // Check name uniqueness
-        const { isRoleNameUnique } = get();
-        if (!isRoleNameUnique(validatedData.name)) {
+        const { isPersonalityNameUnique } = get();
+        if (!isPersonalityNameUnique(validatedData.name)) {
           set({
-            error: _createErrorState("A role with this name already exists"),
+            error: _createErrorState(
+              "A personality with this name already exists",
+            ),
           });
           return "";
         }
 
-        const newRole: RoleViewModel = {
-          id: generateId(),
+        const newPersonality: PersonalityViewModel = {
+          id: _generateId(),
           ...validatedData,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
 
-        const operationId = generateId();
+        const operationId = _generateId();
         set((state) => ({
-          roles: [...state.roles, newRole],
+          personalities: [...state.personalities, newPersonality],
           error: _clearErrorState(),
           pendingOperations: [
             ...state.pendingOperations,
             {
               id: operationId,
               type: "create",
-              roleId: newRole.id,
+              personalityId: newPersonality.id,
               timestamp: new Date().toISOString(),
               rollbackData: undefined, // No rollback for create
               status: "pending" as const,
@@ -470,44 +447,50 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         // Trigger auto-save
         _debouncedSave();
 
-        return newRole.id;
+        return newPersonality.id;
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to create role";
+          error instanceof Error
+            ? error.message
+            : "Failed to create personality";
         set({ error: _createErrorState(errorMessage) });
         return "";
       }
     },
 
-    updateRole: (id: string, roleData: RoleFormData) => {
+    updatePersonality: (id: string, personalityData: PersonalityFormData) => {
       try {
-        const validatedData = roleSchema.parse(roleData);
-        const { roles, isRoleNameUnique } = get();
+        const validatedData = personalitySchema.parse(personalityData);
+        const { personalities, isPersonalityNameUnique } = get();
 
-        const existingRole = roles.find((role) => role.id === id);
-        if (!existingRole) {
-          set({ error: _createErrorState("Role not found") });
+        const existingPersonality = personalities.find(
+          (personality) => personality.id === id,
+        );
+        if (!existingPersonality) {
+          set({ error: _createErrorState("Personality not found") });
           return;
         }
 
-        // Check name uniqueness (excluding current role)
-        if (!isRoleNameUnique(validatedData.name, id)) {
+        // Check name uniqueness (excluding current personality)
+        if (!isPersonalityNameUnique(validatedData.name, id)) {
           set({
-            error: _createErrorState("A role with this name already exists"),
+            error: _createErrorState(
+              "A personality with this name already exists",
+            ),
           });
           return;
         }
 
-        const operationId = generateId();
+        const operationId = _generateId();
         set((state) => ({
-          roles: state.roles.map((role) =>
-            role.id === id
+          personalities: state.personalities.map((personality) =>
+            personality.id === id
               ? {
-                  ...role,
+                  ...personality,
                   ...validatedData,
                   updatedAt: new Date().toISOString(),
                 }
-              : role,
+              : personality,
           ),
           error: _clearErrorState(),
           pendingOperations: [
@@ -515,9 +498,9 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
             {
               id: operationId,
               type: "update",
-              roleId: id,
+              personalityId: id,
               timestamp: new Date().toISOString(),
-              rollbackData: existingRole, // Store original for potential rollback
+              rollbackData: existingPersonality, // Store original for potential rollback
               status: "pending" as const,
             },
           ],
@@ -527,32 +510,38 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         _debouncedSave();
       } catch (error) {
         const errorMessage =
-          error instanceof Error ? error.message : "Failed to update role";
+          error instanceof Error
+            ? error.message
+            : "Failed to update personality";
         set({ error: _createErrorState(errorMessage) });
       }
     },
 
-    deleteRole: (id: string) => {
-      const { roles } = get();
-      const roleToDelete = roles.find((role) => role.id === id);
+    deletePersonality: (id: string) => {
+      const { personalities } = get();
+      const personalityToDelete = personalities.find(
+        (personality) => personality.id === id,
+      );
 
-      if (!roleToDelete) {
-        set({ error: _createErrorState("Role not found") });
+      if (!personalityToDelete) {
+        set({ error: _createErrorState("Personality not found") });
         return;
       }
 
-      const operationId = generateId();
+      const operationId = _generateId();
       set((state) => ({
-        roles: state.roles.filter((role) => role.id !== id),
+        personalities: state.personalities.filter(
+          (personality) => personality.id !== id,
+        ),
         error: _clearErrorState(),
         pendingOperations: [
           ...state.pendingOperations,
           {
             id: operationId,
             type: "delete",
-            roleId: id,
+            personalityId: id,
             timestamp: new Date().toISOString(),
-            rollbackData: roleToDelete, // Store for potential restoration
+            rollbackData: personalityToDelete, // Store for potential restoration
             status: "pending",
           },
         ],
@@ -562,16 +551,16 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       _debouncedSave();
     },
 
-    getRoleById: (id: string) => {
-      return get().roles.find((role) => role.id === id);
+    getPersonalityById: (id: string) => {
+      return get().personalities.find((personality) => personality.id === id);
     },
 
-    isRoleNameUnique: (name: string, excludeId?: string) => {
-      const { roles } = get();
-      return !roles.some(
-        (role) =>
-          role.name.toLowerCase() === name.toLowerCase() &&
-          role.id !== excludeId,
+    isPersonalityNameUnique: (name: string, excludeId?: string) => {
+      const { personalities } = get();
+      return !personalities.some(
+        (personality) =>
+          personality.name.toLowerCase() === name.toLowerCase() &&
+          personality.id !== excludeId,
       );
     },
 
@@ -588,11 +577,11 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       set({ error: _clearErrorState() });
     },
 
-    setAdapter: (adapter: RolesPersistenceAdapter) => {
+    setAdapter: (adapter: PersonalitiesPersistenceAdapter) => {
       set({ adapter });
     },
 
-    initialize: async (adapter: RolesPersistenceAdapter) => {
+    initialize: async (adapter: PersonalitiesPersistenceAdapter) => {
       set({
         adapter,
         isLoading: true,
@@ -600,16 +589,19 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       });
 
       try {
-        // Load data from adapter
-        const persistedData: PersistedRolesSettingsData | null =
-          await adapter.load();
+        // Load data from adapter using retry logic
+        const persistedData = await _retryOperation(
+          () => adapter.load(),
+          "load",
+        );
 
         if (persistedData) {
           // Transform persistence data to UI format
-          const uiRoles = mapRolesPersistenceToUI(persistedData);
+          const uiPersonalities =
+            mapPersonalitiesPersistenceToUI(persistedData);
 
           set({
-            roles: uiRoles,
+            personalities: uiPersonalities,
             isInitialized: true,
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
@@ -618,7 +610,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         } else {
           // No persisted data, start with empty array
           set({
-            roles: [],
+            personalities: [],
             isInitialized: true,
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
@@ -628,8 +620,8 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       } catch (error) {
         const errorMessage =
           error instanceof Error
-            ? `Failed to initialize roles: ${error.message}`
-            : "Failed to initialize roles";
+            ? `Failed to initialize personalities: ${error.message}`
+            : "Failed to initialize personalities";
 
         set({
           isInitialized: false,
@@ -638,28 +630,28 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         });
 
         // Log detailed error for debugging but don't throw to avoid crashing UI
-        console.error("Roles store initialization error:", error);
+        console.error("Personalities store initialization error:", error);
       }
     },
 
     persistChanges: async () => {
-      const { adapter, roles, isSaving } = get();
+      const { adapter, personalities, isSaving } = get();
 
       // Prevent concurrent saves
       if (isSaving) {
-        getLogger().info("Save already in progress, skipping");
+        _getLogger().info("Save already in progress, skipping");
         return;
       }
 
       if (!adapter) {
-        throw new RolesPersistenceError(
+        throw new PersonalitiesPersistenceError(
           "Cannot persist changes: no adapter configured",
           "save",
         );
       }
 
       // Take snapshot for potential rollback
-      rollbackSnapshot = [...roles];
+      _rollbackSnapshot = [...personalities];
 
       set({
         isSaving: true,
@@ -667,11 +659,10 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       });
 
       try {
-        // Map to persistence format
-        const persistedData = mapRolesUIToPersistence(roles);
+        // Map to persistence format and save through adapter
+        const persistedData = mapPersonalitiesUIToPersistence(personalities);
 
-        // Save through adapter
-        await adapter.save(persistedData);
+        await _retryOperation(() => adapter.save(persistedData), "save");
 
         // Update state on success
         set((state) => ({
@@ -691,14 +682,16 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           error: _clearErrorState(),
         }));
 
-        getLogger().info(`Successfully saved ${roles.length} roles`);
+        _getLogger().info(
+          `Successfully saved ${personalities.length} personalities`,
+        );
 
         // Reset retry count on success
-        retryCount = 0;
-        rollbackSnapshot = null;
+        _retryCount = 0;
+        _rollbackSnapshot = null;
       } catch (error) {
         // Handle save error with potential retry
-        await _handleSaveError(error, rollbackSnapshot || []);
+        await _handleSaveError(error, _rollbackSnapshot || []);
 
         // Re-throw for caller handling
         throw error;
@@ -709,7 +702,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       const { adapter } = get();
 
       if (!adapter) {
-        throw new RolesPersistenceError(
+        throw new PersonalitiesPersistenceError(
           "Cannot sync: no adapter configured",
           "load",
         );
@@ -721,28 +714,34 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       });
 
       try {
-        const persistedData = await adapter.load();
+        const persistedData = await _retryOperation(
+          () => adapter.load(),
+          "sync",
+        );
 
         if (persistedData) {
-          const uiRoles = mapRolesPersistenceToUI(persistedData);
+          const uiPersonalities =
+            mapPersonalitiesPersistenceToUI(persistedData);
 
           set({
-            roles: uiRoles,
+            personalities: uiPersonalities,
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
             error: _clearErrorState(),
           });
 
-          getLogger().info(`Synced ${uiRoles.length} roles from storage`);
+          _getLogger().info(
+            `Synced ${uiPersonalities.length} personalities from storage`,
+          );
         } else {
           set({
-            roles: [],
+            personalities: [],
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
             error: _clearErrorState(),
           });
 
-          getLogger().info("No roles found in storage");
+          _getLogger().info("No personalities found in storage");
         }
       } catch (error) {
         const errorMessage =
@@ -759,26 +758,28 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       }
     },
 
-    exportRoles: async () => {
-      const { roles } = get();
+    exportPersonalities: async () => {
+      const { personalities } = get();
 
       try {
         // Transform current UI state to persistence format
-        const persistedData = mapRolesUIToPersistence(roles);
+        const persistedData = mapPersonalitiesUIToPersistence(personalities);
 
-        getLogger().info(`Exported ${roles.length} roles for backup`);
+        _getLogger().info(
+          `Exported ${personalities.length} personalities for backup`,
+        );
 
         return persistedData;
       } catch (error) {
         const errorMessage =
           error instanceof Error
-            ? `Failed to export roles: ${error.message}`
-            : "Failed to export roles";
+            ? `Failed to export personalities: ${error.message}`
+            : "Failed to export personalities";
 
         set({ error: _createErrorState(errorMessage) });
 
-        getLogger().error(
-          "Export roles failed",
+        _getLogger().error(
+          "Export personalities failed",
           error instanceof Error ? error : new Error(String(error)),
         );
 
@@ -786,12 +787,12 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       }
     },
 
-    importRoles: async (data: PersistedRolesSettingsData) => {
+    importPersonalities: async (data: PersistedPersonalitiesSettingsData) => {
       const { adapter } = get();
 
       if (!adapter) {
-        throw new RolesPersistenceError(
-          "Cannot import roles: no adapter configured",
+        throw new PersonalitiesPersistenceError(
+          "Cannot import personalities: no adapter configured",
           "save",
         );
       }
@@ -803,16 +804,16 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
       try {
         // Validate imported data structure
-        const validatedData = mapRolesUIToPersistence(
-          mapRolesPersistenceToUI(data),
+        const validatedData = mapPersonalitiesUIToPersistence(
+          mapPersonalitiesPersistenceToUI(data),
         );
 
         // Transform from persistence to UI format
-        const uiRoles = mapRolesPersistenceToUI(validatedData);
+        const uiPersonalities = mapPersonalitiesPersistenceToUI(validatedData);
 
         // Replace current store state with imported data
         set({
-          roles: uiRoles,
+          personalities: uiPersonalities,
           isSaving: false,
           lastSyncTime: new Date().toISOString(),
           pendingOperations: [],
@@ -820,22 +821,24 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         });
 
         // Save imported data to persistence
-        await adapter.save(validatedData);
+        await _retryOperation(() => adapter.save(validatedData), "import");
 
-        getLogger().info(`Successfully imported ${uiRoles.length} roles`);
+        _getLogger().info(
+          `Successfully imported ${uiPersonalities.length} personalities`,
+        );
       } catch (error) {
         const errorMessage =
           error instanceof Error
-            ? `Failed to import roles: ${error.message}`
-            : "Failed to import roles";
+            ? `Failed to import personalities: ${error.message}`
+            : "Failed to import personalities";
 
         set({
           isSaving: false,
           error: _createErrorState(errorMessage, "import"),
         });
 
-        getLogger().error(
-          "Import roles failed",
+        _getLogger().error(
+          "Import personalities failed",
           error instanceof Error ? error : new Error(String(error)),
         );
 
@@ -843,12 +846,12 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       }
     },
 
-    resetRoles: async () => {
+    resetPersonalities: async () => {
       const { adapter } = get();
 
       if (!adapter) {
-        throw new RolesPersistenceError(
-          "Cannot reset roles: no adapter configured",
+        throw new PersonalitiesPersistenceError(
+          "Cannot reset personalities: no adapter configured",
           "reset",
         );
       }
@@ -861,7 +864,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       try {
         // Clear local store state
         set({
-          roles: [],
+          personalities: [],
           isInitialized: false,
           isSaving: false,
           lastSyncTime: null,
@@ -869,23 +872,23 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           error: _clearErrorState(),
         });
 
-        // Call adapter's reset() method
-        await adapter.reset();
+        // Call adapter's reset() method with retry logic
+        await _retryOperation(() => adapter.reset(), "reset");
 
-        getLogger().info("Successfully reset all roles and storage");
+        _getLogger().info("Successfully reset all personalities and storage");
       } catch (error) {
         const errorMessage =
           error instanceof Error
-            ? `Failed to reset roles: ${error.message}`
-            : "Failed to reset roles";
+            ? `Failed to reset personalities: ${error.message}`
+            : "Failed to reset personalities";
 
         set({
           isSaving: false,
           error: _createErrorState(errorMessage, "reset"),
         });
 
-        getLogger().error(
-          "Reset roles failed",
+        _getLogger().error(
+          "Reset personalities failed",
           error instanceof Error ? error : new Error(String(error)),
         );
 
@@ -897,12 +900,12 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     retryLastOperation: async () => {
       const { error } = get();
       if (!error) {
-        getLogger().warn("No error state to retry");
+        _getLogger().warn("No error state to retry");
         return;
       }
 
       if (!error.operation || !error.isRetryable) {
-        getLogger().warn("No retryable operation found");
+        _getLogger().warn("No retryable operation found");
         return;
       }
 
@@ -927,15 +930,15 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
             break;
           case "import":
             // Import would need to store the data to retry
-            getLogger().warn("Import retry not implemented");
+            _getLogger().warn("Import retry not implemented");
             break;
           case "reset":
-            await get().resetRoles();
+            await get().resetPersonalities();
             break;
         }
       } catch (retryError) {
         // Error will be handled by the operation itself
-        getLogger().error(
+        _getLogger().error(
           "Manual retry failed",
           retryError instanceof Error
             ? retryError
