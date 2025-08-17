@@ -1,13 +1,27 @@
 ---
 id: T-integrate-personalitiesprovide
 title: Integrate PersonalitiesProvider into main app component hierarchy
-status: open
+status: done
 priority: medium
 parent: F-react-personalities-context
 prerequisites:
   - T-create-personalitiesprovider
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/contexts/index.ts: Added PersonalitiesProvider,
+    usePersonalitiesAdapter, and PersonalitiesPersistenceAdapterContext exports
+  apps/desktop/src/App.tsx:
+    Imported PersonalitiesProvider and integrated it into
+    the provider hierarchy, wrapping HashRouter and SettingsModal components
+  apps/desktop/src/App.test.tsx: Added PersonalitiesProvider to test mocks and
+    updated provider hierarchy test assertion
+log:
+  - Successfully integrated PersonalitiesProvider into the main desktop app
+    component hierarchy. Added PersonalitiesProvider to contexts/index.ts
+    exports and positioned it inside RolesProvider in App.tsx, following the
+    established provider integration pattern. Updated App.test.tsx to include
+    PersonalitiesProvider mocks. The provider now initializes during app startup
+    and provides personalities context to all child components. All quality
+    checks (lint, format, type-check) and tests are passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T03:37:47.930Z

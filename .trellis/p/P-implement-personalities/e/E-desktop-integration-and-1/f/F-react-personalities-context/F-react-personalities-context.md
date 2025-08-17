@@ -12,12 +12,19 @@ affectedFiles:
     states, and error handling following RolesProvider pattern
   packages/ui-shared/src/stores/index.ts: Added export for usePersonalitiesStore
     to make it available for import in desktop app
+  apps/desktop/src/contexts/index.ts: Added PersonalitiesProvider,
+    usePersonalitiesAdapter, and PersonalitiesPersistenceAdapterContext exports
+  apps/desktop/src/App.tsx:
+    Imported PersonalitiesProvider and integrated it into
+    the provider hierarchy, wrapping HashRouter and SettingsModal components
+  apps/desktop/src/App.test.tsx: Added PersonalitiesProvider to test mocks and
+    updated provider hierarchy test assertion
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-personalitiesprovider
   - T-integrate-personalitiesprovide
   - T-write-comprehensive-unit
+  - T-create-personalitiesprovider
 created: 2025-08-17T02:07:41.791Z
 updated: 2025-08-17T02:07:41.791Z
 ---
