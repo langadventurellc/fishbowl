@@ -1,15 +1,28 @@
 ---
 id: F-refactor-unified-personalityfo
 title: Refactor Unified PersonalityForm
-status: open
+status: in-progress
 priority: medium
 parent: E-ui-components-and-user
 prerequisites:
   - F-remove-tab-navigation-and
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/settings/PersonalityFormModalProps.ts:
+    Created new interface file with PersonalityFormModalProps following
+    RoleFormModalProps pattern
+  packages/ui-shared/src/types/settings/__tests__/PersonalityFormModalProps.test.ts:
+    Added comprehensive unit tests for interface type checking and import
+    validation
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-personalityformmodal
+  - T-create-personalityformmodalpro
+  - T-integrate-personalityformmodal
+  - T-refactor-createpersonalityform
+  - T-remove-localstorage-logic
+  - T-update-createpersonalityformpr
+  - T-update-tests-and-cleanup-for
 created: 2025-08-17T14:17:39.713Z
 updated: 2025-08-17T14:17:39.713Z
 ---

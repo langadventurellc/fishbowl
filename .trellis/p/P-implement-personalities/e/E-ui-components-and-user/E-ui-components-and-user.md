@@ -57,6 +57,12 @@ affectedFiles:
     Created new PersonalitiesList container component with responsive grid
     layout, empty state handling, loading state support, and proper
     accessibility features
+  packages/ui-shared/src/types/settings/PersonalityFormModalProps.ts:
+    Created new interface file with PersonalityFormModalProps following
+    RoleFormModalProps pattern
+  packages/ui-shared/src/types/settings/__tests__/PersonalityFormModalProps.test.ts:
+    Added comprehensive unit tests for interface type checking and import
+    validation
 log: []
 schema: v1.0
 childrenIds:
