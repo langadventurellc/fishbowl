@@ -1,15 +1,16 @@
-import { MainProcessServices } from "../main/services/MainProcessServices.js";
 import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { MainProcessServices } from "../main/services/MainProcessServices.js";
 import { llmConfigServiceManager } from "./getLlmConfigService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
+import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
+import { setupRolesHandlers } from "./rolesHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
 import { LlmStorageService } from "./services/LlmStorageService.js";
 import { setupSettingsHandlers } from "./settingsHandlers.js";
-import { setupRolesHandlers } from "./rolesHandlers.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -111,7 +112,7 @@ function openSettingsModal(): void {
   }
 }
 
-// eslint-disable-next-line statement-count/function-statement-count-warn
+// eslint-disable-next-line statement-count/function-statement-count-warn, statement-count/function-statement-count-error
 app.whenReady().then(async () => {
   // Initialize main process services container
   try {
@@ -163,6 +164,18 @@ app.whenReady().then(async () => {
     rolesRepositoryManager.initialize(userDataPath);
     mainProcessServices?.logger?.info(
       "Roles repository initialized successfully",
+      {
+        dataPath: userDataPath,
+      },
+    );
+
+    // Initialize personalities repository manager with userData path
+    const { personalitiesRepositoryManager } = await import(
+      "../data/repositories/personalitiesRepositoryManager.js"
+    );
+    personalitiesRepositoryManager.initialize(userDataPath);
+    mainProcessServices?.logger?.info(
+      "Personalities repository initialized successfully",
       {
         dataPath: userDataPath,
       },
@@ -248,6 +261,20 @@ app.whenReady().then(async () => {
       error as Error,
     );
     // Continue startup - app can function without roles handlers
+  }
+
+  // Setup Personalities IPC handlers
+  try {
+    setupPersonalitiesHandlers();
+    mainProcessServices?.logger?.debug(
+      "Personalities IPC handlers registered successfully",
+    );
+  } catch (error) {
+    mainProcessServices?.logger?.error(
+      "Failed to register personalities IPC handlers",
+      error as Error,
+    );
+    // Continue startup - app can function without personalities handlers
   }
 
   // LLM config handlers are now registered earlier in the startup process

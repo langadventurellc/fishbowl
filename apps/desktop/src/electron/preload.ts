@@ -6,6 +6,7 @@ const logger = createLoggerSync({ config: { name: "preload", level: "info" } });
 import { SETTINGS_CHANNELS } from "../shared/ipc/constants";
 import { LLM_CONFIG_CHANNELS } from "../shared/ipc/llmConfigConstants";
 import { ROLES_CHANNELS } from "../shared/ipc/rolesConstants";
+import { PERSONALITIES_CHANNELS } from "../shared/ipc/personalitiesConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -26,10 +27,15 @@ import type {
   RolesSaveRequest,
   RolesSaveResponse,
   RolesResetResponse,
+  PersonalitiesLoadResponse,
+  PersonalitiesSaveRequest,
+  PersonalitiesSaveResponse,
+  PersonalitiesResetResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
   PersistedRolesSettingsData,
+  PersistedPersonalitiesSettingsData,
   LlmConfig,
   LlmConfigInput,
   LlmConfigMetadata,
@@ -367,6 +373,74 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error resetting roles:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  personalities: {
+    load: async (): Promise<PersistedPersonalitiesSettingsData> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          PERSONALITIES_CHANNELS.LOAD,
+        )) as PersonalitiesLoadResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to load personalities",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error loading personalities:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    save: async (
+      personalities: PersistedPersonalitiesSettingsData,
+    ): Promise<void> => {
+      try {
+        const request: PersonalitiesSaveRequest = { personalities };
+        const response = (await ipcRenderer.invoke(
+          PERSONALITIES_CHANNELS.SAVE,
+          request,
+        )) as PersonalitiesSaveResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to save personalities",
+          );
+        }
+      } catch (error) {
+        logger.error(
+          "Error saving personalities:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    reset: async (): Promise<PersistedPersonalitiesSettingsData> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          PERSONALITIES_CHANNELS.RESET,
+        )) as PersonalitiesResetResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to reset personalities",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error resetting personalities:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

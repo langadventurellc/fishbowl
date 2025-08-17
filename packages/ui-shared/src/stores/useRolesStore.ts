@@ -71,7 +71,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
    * Internal debounced save function
    * Batches rapid changes and persists after delay
    */
-  const _debouncedSave = () => {
+  const debouncedSave = () => {
     // Clear existing timer
     if (debounceTimer) {
       clearTimeout(debounceTimer);
@@ -108,7 +108,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
   /**
    * Create a properly formatted error state
    */
-  const _createErrorState = (
+  const createErrorState = (
     message: string | null,
     operation: "save" | "load" | "sync" | "import" | "reset" | null = null,
     isRetryable: boolean = false,
@@ -124,9 +124,9 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
   /**
    * Create a clear error state (no error)
    */
-  const _clearErrorState = (): ErrorState => _createErrorState(null);
+  const clearErrorState = (): ErrorState => createErrorState(null);
 
-  const _isRetryableError = (error: unknown): boolean => {
+  const isRetryableError = (error: unknown): boolean => {
     // Never retry validation errors
     if (
       error &&
@@ -154,7 +154,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     if (error instanceof RolesPersistenceError) {
       // Load operations might be retryable if temporary
       if (error.operation === "load" && error.cause) {
-        return _isRetryableError(error.cause);
+        return isRetryableError(error.cause);
       }
       // Save operations are potentially retryable
       if (error.operation === "save") {
@@ -172,7 +172,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
   /**
    * Gets a user-friendly error message based on error type and operation
    */
-  const _getErrorMessage = (error: unknown, operation: string): string => {
+  const getErrorMessage = (error: unknown, operation: string): string => {
     // Validation errors
     if (
       error &&
@@ -228,12 +228,12 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
   /**
    * Central error handler for all persistence operations
    */
-  const _handlePersistenceError = (
+  const handlePersistenceError = (
     error: unknown,
     operation: "save" | "load" | "sync" | "import" | "reset",
   ): void => {
-    const isRetryable = _isRetryableError(error);
-    const message = _getErrorMessage(error, operation);
+    const isRetryable = isRetryableError(error);
+    const message = getErrorMessage(error, operation);
 
     // Extract field errors if validation error
     let fieldErrors: Array<{ field: string; message: string }> | undefined;
@@ -273,93 +273,12 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     );
   };
 
-  /**
-   * Retry an operation with exponential backoff
-   */
-  const _retryOperation = async <T>(
-    operation: () => Promise<T>,
-    operationName: "save" | "load" | "sync" | "import" | "reset",
-    maxRetries: number = MAX_RETRY_ATTEMPTS,
-  ): Promise<T> => {
-    let lastError: unknown;
-    let retryCount = 0;
-
-    while (retryCount < maxRetries) {
-      try {
-        // Clear any existing retry timer for this operation
-        const { retryTimers } = get();
-        const existingTimer = retryTimers.get(operationName);
-        if (existingTimer) {
-          clearTimeout(existingTimer);
-          retryTimers.delete(operationName);
-        }
-
-        // Attempt the operation
-        const result = await operation();
-
-        // Success - clear error state
-        set({
-          error: {
-            message: null,
-            operation: null,
-            isRetryable: false,
-            retryCount: 0,
-            timestamp: null,
-          },
-        });
-
-        return result;
-      } catch (error) {
-        lastError = error;
-
-        // Check if error is retryable
-        if (!_isRetryableError(error)) {
-          _handlePersistenceError(error, operationName);
-          throw error;
-        }
-
-        retryCount++;
-
-        // Update error state with retry count
-        const currentError = get().error;
-        set({
-          error: _createErrorState(
-            `${_getErrorMessage(error, operationName)} (Retry ${retryCount}/${maxRetries})`,
-            currentError?.operation || operationName,
-            currentError?.isRetryable || _isRetryableError(error),
-            retryCount,
-          ),
-        });
-
-        if (retryCount < maxRetries) {
-          // Calculate delay with exponential backoff
-          const delay = RETRY_BASE_DELAY_MS * Math.pow(2, retryCount - 1);
-
-          getLogger().info(
-            `Retrying ${operationName} in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`,
-          );
-
-          // Wait before retrying
-          await new Promise((resolve) => {
-            const timer = setTimeout(resolve, delay);
-            // Store timer reference for cleanup
-            get().retryTimers.set(operationName, timer);
-          });
-        }
-      }
-    }
-
-    // All retries exhausted
-    _handlePersistenceError(lastError, operationName);
-    throw lastError;
-  };
-
-  const _handleSaveError = async (
+  const handleSaveError = async (
     error: unknown,
     originalRoles: RoleViewModel[],
   ): Promise<void> => {
     // Use the new error handling infrastructure
-    _handlePersistenceError(error, "save");
+    handlePersistenceError(error, "save");
 
     // Rollback to original state with pending operations cleanup
     set((state) => ({
@@ -395,7 +314,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           await get().persistChanges();
           retryCount = 0; // Reset on success
         } catch (retryError) {
-          await _handleSaveError(retryError, originalRoles);
+          await handleSaveError(retryError, originalRoles);
         }
       }, delay);
     } else {
@@ -438,7 +357,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         const { isRoleNameUnique } = get();
         if (!isRoleNameUnique(validatedData.name)) {
           set({
-            error: _createErrorState("A role with this name already exists"),
+            error: createErrorState("A role with this name already exists"),
           });
           return "";
         }
@@ -453,7 +372,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         const operationId = generateId();
         set((state) => ({
           roles: [...state.roles, newRole],
-          error: _clearErrorState(),
+          error: clearErrorState(),
           pendingOperations: [
             ...state.pendingOperations,
             {
@@ -468,13 +387,13 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         }));
 
         // Trigger auto-save
-        _debouncedSave();
+        debouncedSave();
 
         return newRole.id;
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Failed to create role";
-        set({ error: _createErrorState(errorMessage) });
+        set({ error: createErrorState(errorMessage) });
         return "";
       }
     },
@@ -486,14 +405,14 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
         const existingRole = roles.find((role) => role.id === id);
         if (!existingRole) {
-          set({ error: _createErrorState("Role not found") });
+          set({ error: createErrorState("Role not found") });
           return;
         }
 
         // Check name uniqueness (excluding current role)
         if (!isRoleNameUnique(validatedData.name, id)) {
           set({
-            error: _createErrorState("A role with this name already exists"),
+            error: createErrorState("A role with this name already exists"),
           });
           return;
         }
@@ -509,7 +428,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
                 }
               : role,
           ),
-          error: _clearErrorState(),
+          error: clearErrorState(),
           pendingOperations: [
             ...state.pendingOperations,
             {
@@ -524,11 +443,11 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         }));
 
         // Trigger auto-save
-        _debouncedSave();
+        debouncedSave();
       } catch (error) {
         const errorMessage =
           error instanceof Error ? error.message : "Failed to update role";
-        set({ error: _createErrorState(errorMessage) });
+        set({ error: createErrorState(errorMessage) });
       }
     },
 
@@ -537,14 +456,14 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       const roleToDelete = roles.find((role) => role.id === id);
 
       if (!roleToDelete) {
-        set({ error: _createErrorState("Role not found") });
+        set({ error: createErrorState("Role not found") });
         return;
       }
 
       const operationId = generateId();
       set((state) => ({
         roles: state.roles.filter((role) => role.id !== id),
-        error: _clearErrorState(),
+        error: clearErrorState(),
         pendingOperations: [
           ...state.pendingOperations,
           {
@@ -559,7 +478,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       }));
 
       // Trigger auto-save
-      _debouncedSave();
+      debouncedSave();
     },
 
     getRoleById: (id: string) => {
@@ -581,11 +500,11 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     },
 
     setError: (error: string | null) => {
-      set({ error: error ? _createErrorState(error) : _clearErrorState() });
+      set({ error: error ? createErrorState(error) : clearErrorState() });
     },
 
     clearError: () => {
-      set({ error: _clearErrorState() });
+      set({ error: clearErrorState() });
     },
 
     setAdapter: (adapter: RolesPersistenceAdapter) => {
@@ -596,7 +515,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       set({
         adapter,
         isLoading: true,
-        error: _clearErrorState(),
+        error: clearErrorState(),
       });
 
       try {
@@ -613,7 +532,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
             isInitialized: true,
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
-            error: _clearErrorState(),
+            error: clearErrorState(),
           });
         } else {
           // No persisted data, start with empty array
@@ -622,7 +541,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
             isInitialized: true,
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
-            error: _clearErrorState(),
+            error: clearErrorState(),
           });
         }
       } catch (error) {
@@ -634,7 +553,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         set({
           isInitialized: false,
           isLoading: false,
-          error: _createErrorState(errorMessage, "load"),
+          error: createErrorState(errorMessage, "load"),
         });
 
         // Log detailed error for debugging but don't throw to avoid crashing UI
@@ -663,7 +582,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
       set({
         isSaving: true,
-        error: _clearErrorState(),
+        error: clearErrorState(),
       });
 
       try {
@@ -688,7 +607,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
               const cutoff = Date.now() - 60000; // Keep for 1 minute
               return opTime > cutoff;
             }),
-          error: _clearErrorState(),
+          error: clearErrorState(),
         }));
 
         getLogger().info(`Successfully saved ${roles.length} roles`);
@@ -698,7 +617,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
         rollbackSnapshot = null;
       } catch (error) {
         // Handle save error with potential retry
-        await _handleSaveError(error, rollbackSnapshot || []);
+        await handleSaveError(error, rollbackSnapshot || []);
 
         // Re-throw for caller handling
         throw error;
@@ -717,7 +636,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
       set({
         isLoading: true,
-        error: _clearErrorState(),
+        error: clearErrorState(),
       });
 
       try {
@@ -730,7 +649,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
             roles: uiRoles,
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
-            error: _clearErrorState(),
+            error: clearErrorState(),
           });
 
           getLogger().info(`Synced ${uiRoles.length} roles from storage`);
@@ -739,7 +658,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
             roles: [],
             isLoading: false,
             lastSyncTime: new Date().toISOString(),
-            error: _clearErrorState(),
+            error: clearErrorState(),
           });
 
           getLogger().info("No roles found in storage");
@@ -752,7 +671,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
         set({
           isLoading: false,
-          error: _createErrorState(errorMessage, "sync"),
+          error: createErrorState(errorMessage, "sync"),
         });
 
         throw error;
@@ -775,7 +694,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
             ? `Failed to export roles: ${error.message}`
             : "Failed to export roles";
 
-        set({ error: _createErrorState(errorMessage) });
+        set({ error: createErrorState(errorMessage) });
 
         getLogger().error(
           "Export roles failed",
@@ -798,7 +717,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
       set({
         isSaving: true,
-        error: _clearErrorState(),
+        error: clearErrorState(),
       });
 
       try {
@@ -816,7 +735,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           isSaving: false,
           lastSyncTime: new Date().toISOString(),
           pendingOperations: [],
-          error: _clearErrorState(),
+          error: clearErrorState(),
         });
 
         // Save imported data to persistence
@@ -831,7 +750,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
         set({
           isSaving: false,
-          error: _createErrorState(errorMessage, "import"),
+          error: createErrorState(errorMessage, "import"),
         });
 
         getLogger().error(
@@ -855,7 +774,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
       set({
         isSaving: true,
-        error: _clearErrorState(),
+        error: clearErrorState(),
       });
 
       try {
@@ -866,7 +785,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
           isSaving: false,
           lastSyncTime: null,
           pendingOperations: [],
-          error: _clearErrorState(),
+          error: clearErrorState(),
         });
 
         // Call adapter's reset() method
@@ -881,7 +800,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
         set({
           isSaving: false,
-          error: _createErrorState(errorMessage, "reset"),
+          error: createErrorState(errorMessage, "reset"),
         });
 
         getLogger().error(
@@ -908,7 +827,7 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
 
       // Clear existing error to show fresh state
       set({
-        error: _createErrorState(
+        error: createErrorState(
           `Retrying ${error.operation}...`,
           error.operation,
           error.isRetryable,
@@ -951,12 +870,12 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       retryTimers.clear();
 
       set({
-        error: _clearErrorState(),
+        error: clearErrorState(),
       });
     },
 
     getErrorDetails: () => {
-      return get().error || _clearErrorState();
+      return get().error || clearErrorState();
     },
   };
 });

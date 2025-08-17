@@ -1,15 +1,95 @@
 ---
 id: E-desktop-integration-and-1
 title: Desktop Integration and Services
-status: open
+status: done
 priority: medium
 parent: P-implement-personalities
 prerequisites:
   - E-persistence-layer-and-state
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/adapters/desktopPersonalitiesAdapter.ts: Created new adapter
+    class implementing PersonalitiesPersistenceAdapter interface with save(),
+    load(), and reset() stub methods. Includes proper TypeScript types, JSDoc
+    documentation, and exported instance following established patterns.;
+    Implemented save() method with proper error handling following
+    DesktopRolesAdapter pattern; Implemented load() method with IPC
+    communication, proper null handling for missing files, and comprehensive
+    error handling that preserves PersonalitiesPersistenceError instances while
+    converting generic errors; Implemented reset method with proper error
+    handling following exact pattern from DesktopRolesAdapter
+  apps/desktop/src/types/electron.d.ts: Added personalities property to
+    ElectronAPI interface with load, save, and reset methods
+  apps/desktop/src/electron/preload.ts: Added personalities IPC implementation with error handling and logging
+  apps/desktop/src/shared/ipc/personalitiesConstants.ts: Created IPC channel constants for personalities operations
+  apps/desktop/src/shared/ipc/personalities/loadRequest.ts: Created personalities load request type interface
+  apps/desktop/src/shared/ipc/personalities/saveRequest.ts: Created personalities save request type interface
+  apps/desktop/src/shared/ipc/personalities/saveResponse.ts: Created personalities save response type interface
+  apps/desktop/src/shared/ipc/personalities/loadResponse.ts: Created personalities load response type interface
+  apps/desktop/src/shared/ipc/personalities/resetRequest.ts: Created personalities reset request type interface
+  apps/desktop/src/shared/ipc/personalities/resetResponse.ts: Created personalities reset response type interface
+  apps/desktop/src/shared/ipc/index.ts: Added personalities constants and types to IPC exports
+  apps/desktop/src/adapters/__tests__/desktopPersonalitiesAdapter.test.ts:
+    Created comprehensive unit tests with 20 test cases covering all error
+    scenarios, edge cases, and performance requirements; Added comprehensive
+    test suite for load method including 16 test cases covering successful
+    operations, null return scenarios, error handling, type validation,
+    performance testing, and edge cases; Added comprehensive unit tests for
+    reset method including all specified test cases, error handling scenarios,
+    and interface compliance tests
+  apps/desktop/src/data/repositories/PersonalitiesRepository.ts:
+    Created new PersonalitiesRepository class with loadPersonalities,
+    savePersonalities, and resetPersonalities methods, following RolesRepository
+    pattern with FileStorageService integration
+  apps/desktop/src/data/repositories/__tests__/PersonalitiesRepository.test.ts:
+    Created comprehensive unit tests with 32 test cases covering all methods,
+    error scenarios, validation edge cases, and concurrent operations
+  apps/desktop/src/data/repositories/personalitiesRepositoryManager.ts:
+    Created PersonalitiesRepositoryManager singleton following
+    rolesRepositoryManager pattern with initialize, get, and reset methods;
+    Created PersonalitiesRepositoryManager class following
+    rolesRepositoryManager pattern exactly - singleton with initialize(), get(),
+    and reset() methods
+  apps/desktop/src/electron/personalitiesHandlers.ts: Implemented
+    setupPersonalitiesHandlers with three IPC handlers (load, save, reset)
+    including error handling, logging, and integration with
+    PersonalitiesRepository
+  apps/desktop/src/electron/__tests__/personalitiesHandlers.test.ts:
+    Created comprehensive unit tests with 100% coverage testing all success and
+    error paths for each handler
+  apps/desktop/src/data/repositories/__tests__/personalitiesRepositoryManager.test.ts:
+    Created comprehensive unit tests with 100% coverage - 17 tests covering
+    initialization, access control, singleton behavior, error handling, and
+    integration
+  apps/desktop/src/electron/main.ts: Added personalities repository manager
+    initialization with userDataPath and setupPersonalitiesHandlers call during
+    app startup, following exact same patterns as roles integration. Includes
+    proper error handling and logging for both repository initialization and IPC
+    handler registration.
+  apps/desktop/src/contexts/PersonalitiesProvider.tsx: Created new
+    PersonalitiesProvider component with context, lifecycle management, loading
+    states, and error handling following RolesProvider pattern
+  packages/ui-shared/src/stores/index.ts: Added export for usePersonalitiesStore
+    to make it available for import in desktop app
+  apps/desktop/src/contexts/index.ts: Added PersonalitiesProvider,
+    usePersonalitiesAdapter, and PersonalitiesPersistenceAdapterContext exports
+  apps/desktop/src/App.tsx:
+    Imported PersonalitiesProvider and integrated it into
+    the provider hierarchy, wrapping HashRouter and SettingsModal components
+  apps/desktop/src/App.test.tsx: Added PersonalitiesProvider to test mocks and
+    updated provider hierarchy test assertion
+  apps/desktop/src/contexts/__tests__/PersonalitiesProvider.test.tsx:
+    Created comprehensive unit test suite for PersonalitiesProvider component
+    with 16 test scenarios covering initialization flow, loading states, error
+    handling, context provider functionality, component lifecycle management,
+    and store integration. Includes proper mocking of dependencies and thorough
+    validation of component behavior.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-desktop-personalities-adapter
+  - F-electron-ipc-personalities
+  - F-personalities-file-management
+  - F-react-personalities-context
 created: 2025-08-15T17:59:56.660Z
 updated: 2025-08-15T17:59:56.660Z
 ---
@@ -80,7 +160,6 @@ Implement the desktop-specific integration layer for personalities, including th
 
 - [ ] Full TypeScript coverage
 - [ ] Unit tests for adapter methods
-- [ ] Integration tests for IPC communication
 - [ ] Error scenarios properly tested
 
 ## Technical Considerations

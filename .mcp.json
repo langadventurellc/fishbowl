@@ -11,12 +11,6 @@
       ],
       "env": {}
     },
-    "shadcn-ui": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["@jpisnice/shadcn-ui-mcp-server"],
-      "env": {}
-    },
     "serena": {
       "type": "stdio",
       "command": "uvx",

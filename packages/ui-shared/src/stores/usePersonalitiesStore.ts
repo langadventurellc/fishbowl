@@ -43,12 +43,6 @@ const _getLogger = () => {
 // Debounce delay for auto-save
 const _DEBOUNCE_DELAY_MS = 1000;
 
-// Maximum retry attempts for save operations
-const _MAX_RETRY_ATTEMPTS = 3;
-
-// Base delay for exponential backoff (in ms)
-const _RETRY_BASE_DELAY_MS = 1000;
-
 // Generate unique ID using crypto API or fallback
 const _generateId = (): string => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -63,9 +57,6 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
 ) => {
   // Debounce timer reference
   let _debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-  // Retry count for exponential backoff
-  let _retryCount = 0;
 
   // Store snapshot for rollback
   let _rollbackSnapshot: PersonalityViewModel[] | null = null;
@@ -273,89 +264,6 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
   };
 
   /**
-   * Retry an operation with exponential backoff
-   */
-  const _retryOperation = async <T>(
-    operation: () => Promise<T>,
-    operationName: "save" | "load" | "sync" | "import" | "reset",
-    maxRetries: number = _MAX_RETRY_ATTEMPTS,
-  ): Promise<T> => {
-    let lastError: unknown;
-    let retryCount = 0;
-
-    while (retryCount < maxRetries) {
-      try {
-        // Clear any existing retry timer for this operation
-        const { retryTimers } = get();
-        const existingTimer = retryTimers.get(operationName);
-        if (existingTimer) {
-          clearTimeout(existingTimer);
-          retryTimers.delete(operationName);
-        }
-
-        // Attempt the operation
-        const result = await operation();
-
-        // Success - clear error state
-        set({
-          error: {
-            message: null,
-            operation: null,
-            isRetryable: false,
-            retryCount: 0,
-            timestamp: null,
-          },
-        });
-
-        return result;
-      } catch (error) {
-        lastError = error;
-
-        // Check if error is retryable
-        if (!_isRetryableError(error)) {
-          _handlePersistenceError(error, operationName);
-          throw error;
-        }
-
-        retryCount++;
-
-        // Update error state with retry count
-        const currentError = get().error;
-        set({
-          error: _createErrorState(
-            `${_getErrorMessage(error, operationName)} (Retry ${retryCount}/${maxRetries})`,
-            currentError?.operation || operationName,
-            currentError?.isRetryable || _isRetryableError(error),
-            retryCount,
-          ),
-        });
-
-        if (retryCount < maxRetries) {
-          // Calculate delay with exponential backoff
-          const delay = _RETRY_BASE_DELAY_MS * Math.pow(2, retryCount - 1);
-
-          _getLogger().info(
-            `Retrying ${operationName} in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`,
-          );
-
-          // Wait before retrying (skip delay in tests)
-          if (process.env.NODE_ENV !== "test") {
-            await new Promise((resolve) => {
-              const timer = setTimeout(resolve, delay);
-              // Store timer reference for cleanup
-              get().retryTimers.set(operationName, timer);
-            });
-          }
-        }
-      }
-    }
-
-    // All retries exhausted
-    _handlePersistenceError(lastError, operationName);
-    throw lastError;
-  };
-
-  /**
    * Handle save errors with rollback and retry logic
    */
   const _handleSaveError = async (
@@ -382,8 +290,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       `Rolled back to previous state after save error. Original personality count: ${originalPersonalities.length}, Error type: ${errorType}`,
     );
 
-    // Note: Retry logic is handled by _retryOperation in persistChanges()
-    // This function just handles rollback and error reporting
+    // This function handles rollback and error reporting
   };
 
   return {
@@ -589,11 +496,8 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       });
 
       try {
-        // Load data from adapter using retry logic
-        const persistedData = await _retryOperation(
-          () => adapter.load(),
-          "load",
-        );
+        // Load data from adapter
+        const persistedData = await adapter.load();
 
         if (persistedData) {
           // Transform persistence data to UI format
@@ -662,7 +566,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
         // Map to persistence format and save through adapter
         const persistedData = mapPersonalitiesUIToPersistence(personalities);
 
-        await _retryOperation(() => adapter.save(persistedData), "save");
+        await adapter.save(persistedData);
 
         // Update state on success
         set((state) => ({
@@ -686,8 +590,6 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
           `Successfully saved ${personalities.length} personalities`,
         );
 
-        // Reset retry count on success
-        _retryCount = 0;
         _rollbackSnapshot = null;
       } catch (error) {
         // Handle save error with potential retry
@@ -714,10 +616,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       });
 
       try {
-        const persistedData = await _retryOperation(
-          () => adapter.load(),
-          "sync",
-        );
+        const persistedData = await adapter.load();
 
         if (persistedData) {
           const uiPersonalities =
@@ -821,7 +720,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
         });
 
         // Save imported data to persistence
-        await _retryOperation(() => adapter.save(validatedData), "import");
+        await adapter.save(validatedData);
 
         _getLogger().info(
           `Successfully imported ${uiPersonalities.length} personalities`,
@@ -872,8 +771,8 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
           error: _clearErrorState(),
         });
 
-        // Call adapter's reset() method with retry logic
-        await _retryOperation(() => adapter.reset(), "reset");
+        // Call adapter's reset() method
+        await adapter.reset();
 
         _getLogger().info("Successfully reset all personalities and storage");
       } catch (error) {

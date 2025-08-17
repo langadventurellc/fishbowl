@@ -124,6 +124,34 @@ export interface ElectronAPI {
      */
     reset(): Promise<import("@fishbowl-ai/shared").PersistedRolesSettingsData>;
   };
+  /**
+   * Personalities persistence operations for managing personality configurations.
+   * Provides async methods for loading, saving, and resetting personalities data.
+   */
+  personalities: {
+    /**
+     * Load personalities from persistent storage.
+     * @returns Promise resolving to personalities data
+     */
+    load(): Promise<
+      import("@fishbowl-ai/shared").PersistedPersonalitiesSettingsData
+    >;
+    /**
+     * Save personalities to persistent storage.
+     * @param personalities - Personalities data to persist
+     * @returns Promise resolving when save is complete
+     */
+    save(
+      personalities: import("@fishbowl-ai/shared").PersistedPersonalitiesSettingsData,
+    ): Promise<void>;
+    /**
+     * Reset personalities to default values.
+     * @returns Promise resolving to reset personalities data
+     */
+    reset(): Promise<
+      import("@fishbowl-ai/shared").PersistedPersonalitiesSettingsData
+    >;
+  };
 }
 
 declare global {
