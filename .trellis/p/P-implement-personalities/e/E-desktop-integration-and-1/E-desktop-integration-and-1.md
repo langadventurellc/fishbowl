@@ -36,6 +36,13 @@ affectedFiles:
     performance testing, and edge cases; Added comprehensive unit tests for
     reset method including all specified test cases, error handling scenarios,
     and interface compliance tests
+  apps/desktop/src/data/repositories/PersonalitiesRepository.ts:
+    Created new PersonalitiesRepository class with loadPersonalities,
+    savePersonalities, and resetPersonalities methods, following RolesRepository
+    pattern with FileStorageService integration
+  apps/desktop/src/data/repositories/__tests__/PersonalitiesRepository.test.ts:
+    Created comprehensive unit tests with 32 test cases covering all methods,
+    error scenarios, validation edge cases, and concurrent operations
 log: []
 schema: v1.0
 childrenIds:
