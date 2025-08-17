@@ -80,7 +80,6 @@ Implement the desktop-specific integration layer for personalities, including th
 
 - [ ] Full TypeScript coverage
 - [ ] Unit tests for adapter methods
-- [ ] Integration tests for IPC communication
 - [ ] Error scenarios properly tested
 
 ## Technical Considerations
