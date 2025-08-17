@@ -8,7 +8,22 @@ affectedFiles:
   tests/desktop/helpers/settings/setupPersonalitiesTestSuite.ts:
     Created new test infrastructure setup function following roles pattern with
     personalities-specific configuration and data reset
-  tests/desktop/helpers/index.ts: Added export for setupPersonalitiesTestSuite function
+  tests/desktop/helpers/index.ts: Added export for setupPersonalitiesTestSuite
+    function; Updated to export all new personality helper functions with proper
+    naming to avoid conflicts with existing roles helpers
+  tests/desktop/helpers/settings/openPersonalitiesSection.ts: Created navigation
+    helper that opens settings modal and navigates to personalities section,
+    following exact pattern from openRolesSection.ts but adapted for
+    personalities tab
+  tests/desktop/helpers/settings/waitForPersonalitiesList.ts:
+    Created list waiting
+    helpers including waitForPersonalitiesList, waitForPersonalitiesEmptyState,
+    and waitForPersonality functions for managing different list states and
+    specific personality detection
+  tests/desktop/helpers/settings/waitForPersonalityModal.ts: Created modal
+    interaction helpers including waitForPersonalityModal, waitForDeleteDialog,
+    and waitForModalToClose for handling personality creation/editing and
+    deletion workflows
 log: []
 schema: v1.0
 childrenIds:
@@ -18,8 +33,8 @@ childrenIds:
   - T-create-personalities-editing
   - T-create-personalities-mock
   - T-create-personalities-test-1
-  - T-create-personalities-test
   - T-create-personalities
+  - T-create-personalities-test
 created: 2025-08-17T21:07:54.536Z
 updated: 2025-08-17T21:07:54.536Z
 ---

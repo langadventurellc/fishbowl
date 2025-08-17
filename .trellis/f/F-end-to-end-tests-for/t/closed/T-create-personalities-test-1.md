@@ -1,13 +1,38 @@
 ---
 id: T-create-personalities-test-1
 title: Create Personalities Test Helper Functions
-status: open
+status: done
 priority: high
 parent: F-end-to-end-tests-for
 prerequisites:
   - T-create-personalities-test
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/helpers/settings/openPersonalitiesSection.ts: Created navigation
+    helper that opens settings modal and navigates to personalities section,
+    following exact pattern from openRolesSection.ts but adapted for
+    personalities tab
+  tests/desktop/helpers/settings/waitForPersonalitiesList.ts:
+    Created list waiting
+    helpers including waitForPersonalitiesList, waitForPersonalitiesEmptyState,
+    and waitForPersonality functions for managing different list states and
+    specific personality detection
+  tests/desktop/helpers/settings/waitForPersonalityModal.ts: Created modal
+    interaction helpers including waitForPersonalityModal, waitForDeleteDialog,
+    and waitForModalToClose for handling personality creation/editing and
+    deletion workflows
+  tests/desktop/helpers/index.ts: Updated to export all new personality helper
+    functions with proper naming to avoid conflicts with existing roles helpers
+log:
+  - Successfully implemented personalities test helper functions following the
+    exact patterns from roles helpers. Created openPersonalitiesSection.ts for
+    navigation, waitForPersonalitiesList.ts for list state management with
+    support for populated lists, empty states, and waiting for specific
+    personalities, and waitForPersonalityModal.ts for modal interactions
+    including create/edit modals and delete confirmations. All functions include
+    proper error handling, debug logging, and consistent timeout values. Updated
+    test helpers index to export all new functions with appropriate naming to
+    avoid conflicts. All quality checks pass and TypeScript compilation
+    succeeded.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T21:15:31.271Z
