@@ -25,9 +25,9 @@ childrenIds:
   - T-integrate-personalityformmodal
   - T-refactor-createpersonalityform
   - T-remove-localstorage-logic
-  - T-update-createpersonalityformpr
   - T-update-tests-and-cleanup-for
   - T-create-personalityformmodalpro
+  - T-update-createpersonalityformpr
 created: 2025-08-17T14:17:39.713Z
 updated: 2025-08-17T14:17:39.713Z
 ---
