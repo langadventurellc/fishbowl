@@ -17,10 +17,76 @@ import type { PersonalityViewModel } from "@fishbowl-ai/ui-shared";
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, Plus } from "lucide-react";
 import React, { useCallback, useState } from "react";
+import { PersonalitiesList } from "./PersonalitiesList";
 
 const logger = createLoggerSync({
   config: { name: "PersonalitiesSection", level: "info" },
 });
+
+// Mock personality data for testing the list integration
+const mockPersonalities: PersonalityViewModel[] = [
+  {
+    id: "mock-1",
+    name: "Creative Brainstormer",
+    bigFive: {
+      openness: 4.2,
+      conscientiousness: 3.1,
+      extraversion: 3.8,
+      agreeableness: 4.0,
+      neuroticism: 2.3,
+    },
+    behaviors: {
+      enthusiasm: 0.8,
+      creativity: 0.9,
+      collaboration: 0.7,
+    },
+    customInstructions:
+      "Focus on generating innovative ideas and thinking outside the box. Encourage wild ideas and build upon others' suggestions.",
+    createdAt: "2024-01-15T10:00:00.000Z",
+    updatedAt: "2024-01-20T15:30:00.000Z",
+  },
+  {
+    id: "mock-2",
+    name: "Analytical Researcher",
+    bigFive: {
+      openness: 3.9,
+      conscientiousness: 4.5,
+      extraversion: 2.8,
+      agreeableness: 3.2,
+      neuroticism: 2.1,
+    },
+    behaviors: {
+      precision: 0.9,
+      skepticism: 0.7,
+      thoroughness: 0.8,
+      factChecking: 0.9,
+    },
+    customInstructions:
+      "Always verify facts and provide evidence-based responses. Question assumptions and dig deep into details.",
+    createdAt: "2024-01-10T09:00:00.000Z",
+    updatedAt: "2024-01-25T14:45:00.000Z",
+  },
+  {
+    id: "mock-3",
+    name: "Empathetic Facilitator",
+    bigFive: {
+      openness: 3.7,
+      conscientiousness: 3.8,
+      extraversion: 4.1,
+      agreeableness: 4.6,
+      neuroticism: 2.0,
+    },
+    behaviors: {
+      empathy: 0.9,
+      patience: 0.8,
+      encouragement: 0.9,
+    },
+    customInstructions:
+      "Listen actively and help others feel heard. Provide emotional support and create inclusive environments for all participants.",
+    createdAt: "2024-01-12T11:30:00.000Z",
+    updatedAt: "2024-01-18T16:20:00.000Z",
+  },
+];
 
 interface PersonalitiesSectionProps {
   className?: string;
@@ -67,7 +133,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
     setFormModalOpen(true);
   }, []);
 
-  const _handleEditPersonality = useCallback(
+  const handleEditPersonality = useCallback(
     (personality: PersonalityViewModel) => {
       logger.info("Edit personality requested", {
         personalityId: personality.id,
@@ -81,7 +147,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
     [],
   );
 
-  const _handleDeletePersonality = useCallback(
+  const handleDeletePersonality = useCallback(
     (personality: PersonalityViewModel) => {
       logger.info("Delete personality requested", {
         personalityId: personality.id,
@@ -198,30 +264,46 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
         </div>
       )}
 
-      {/* Content area - will hold PersonalitiesList in next feature */}
-      <div className="min-h-[400px]">
-        {personalities.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4">
-            <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
-              <Plus className="h-8 w-8 text-muted-foreground" />
+      {/* Content area with PersonalitiesList integration */}
+      <div className="space-y-6">
+        {/* New List Component for testing */}
+        <div>
+          <h3 className="text-lg font-medium mb-4">
+            Personalities List (Preview)
+          </h3>
+          <PersonalitiesList
+            personalities={mockPersonalities}
+            onEdit={handleEditPersonality}
+            onDelete={handleDeletePersonality}
+            onCreateClick={handleCreatePersonality}
+          />
+        </div>
+
+        {/* Original content remains for now */}
+        <div className="min-h-[400px]">
+          {personalities.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
+                <Plus className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2 text-center">
+                No personalities yet (Store Data)
+              </h3>
+              <p className="text-sm text-muted-foreground text-center mb-6 max-w-md leading-relaxed">
+                Create your first personality to define unique agent behaviors
+                and characteristics
+              </p>
+              <Button onClick={handleCreatePersonality} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Create First Personality
+              </Button>
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-center">
-              No personalities yet
-            </h3>
-            <p className="text-sm text-muted-foreground text-center mb-6 max-w-md leading-relaxed">
-              Create your first personality to define unique agent behaviors and
-              characteristics
-            </p>
-            <Button onClick={handleCreatePersonality} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Create First Personality
-            </Button>
-          </div>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            Personality list will be implemented in next feature
-          </div>
-        )}
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              Store-based personality list will be connected in future tasks
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

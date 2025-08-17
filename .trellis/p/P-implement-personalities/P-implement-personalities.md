@@ -113,7 +113,11 @@ affectedFiles:
     comprehensive error state display with retry functionality following
     RolesSection pattern; Restructured component layout with new header design,
     create button, modal handlers, and content area structure matching
-    RolesSection pattern
+    RolesSection pattern; Updated to import PersonalitiesList component, added
+    mock personality data with realistic test cases, adapted existing handlers
+    (handleEditPersonality, handleDeletePersonality) for list integration, and
+    integrated PersonalitiesList component alongside existing content with
+    proper layout and spacing
   packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
     'create-new' tab types from SettingsSubTab since personalities no longer
     uses tabs
@@ -297,7 +301,11 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
     Created comprehensive test suite covering header layout, button
     functionality, component structure, accessibility, and layout implementation
-    verification
+    verification; Added comprehensive test suite for PersonalitiesList
+    integration including tests for mock data rendering, personality card
+    display, edit/delete button functionality, Big Five traits display, and dual
+    content area layout. Fixed store mocking to properly handle Zustand
+    selectors and ensured all 23 tests pass
   apps/desktop/src/components/settings/personalities/EmptyState.tsx:
     Created new EmptyState component following app patterns with Users icon,
     clear messaging, and create button

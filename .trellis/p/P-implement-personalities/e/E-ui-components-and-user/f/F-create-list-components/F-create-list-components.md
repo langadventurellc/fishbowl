@@ -1,7 +1,7 @@
 ---
 id: F-create-list-components
 title: Create List Components
-status: in-progress
+status: done
 priority: medium
 parent: E-ui-components-and-user
 prerequisites:
@@ -36,13 +36,26 @@ affectedFiles:
     Created new PersonalitiesList container component with responsive grid
     layout, empty state handling, loading state support, and proper
     accessibility features
-log: []
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Updated to import PersonalitiesList component, added mock personality data
+    with realistic test cases, adapted existing handlers (handleEditPersonality,
+    handleDeletePersonality) for list integration, and integrated
+    PersonalitiesList component alongside existing content with proper layout
+    and spacing
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
+    Added comprehensive test suite for PersonalitiesList integration including
+    tests for mock data rendering, personality card display, edit/delete button
+    functionality, Big Five traits display, and dual content area layout. Fixed
+    store mocking to properly handle Zustand selectors and ensured all 23 tests
+    pass
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-create-personalitieslist
-  - T-update-personalitiessection
   - T-create-emptystate-component
+  - T-create-personalitieslist
   - T-create-personalitycard
+  - T-update-personalitiessection
 created: 2025-08-17T14:17:05.414Z
 updated: 2025-08-17T14:17:05.414Z
 ---

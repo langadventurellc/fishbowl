@@ -10,7 +10,7 @@
  */
 
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { PersonalitiesSection } from "../PersonalitiesSection";
 
 // Mock the store hook
@@ -45,7 +45,12 @@ describe("PersonalitiesSection Component", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    usePersonalitiesStore.mockReturnValue(defaultMockStore);
+    usePersonalitiesStore.mockImplementation((selector: any) => {
+      if (typeof selector === "function") {
+        return selector(defaultMockStore);
+      }
+      return defaultMockStore;
+    });
   });
 
   describe("Header Layout and Structure", () => {
@@ -212,6 +217,139 @@ describe("PersonalitiesSection Component", () => {
       expect(
         screen.queryByRole("heading", { level: 1 }),
       ).not.toBeInTheDocument();
+    });
+  });
+
+  describe("PersonalitiesList Integration", () => {
+    it("renders PersonalitiesList preview section", () => {
+      render(<PersonalitiesSection />);
+
+      const previewHeading = screen.getByText("Personalities List (Preview)");
+      expect(previewHeading).toBeInTheDocument();
+      expect(previewHeading).toHaveClass("text-lg", "font-medium", "mb-4");
+    });
+
+    it("displays mock personalities in the list", () => {
+      render(<PersonalitiesSection />);
+
+      // Check for mock personality names
+      expect(screen.getByText("Creative Brainstormer")).toBeInTheDocument();
+      expect(screen.getByText("Analytical Researcher")).toBeInTheDocument();
+      expect(screen.getByText("Empathetic Facilitator")).toBeInTheDocument();
+    });
+
+    it("renders personality cards with proper information", () => {
+      render(<PersonalitiesSection />);
+
+      // Find a specific personality card
+      const creativeCard = screen
+        .getByText("Creative Brainstormer")
+        .closest("[role='gridcell']") as HTMLElement;
+      expect(creativeCard).toBeInTheDocument();
+
+      if (creativeCard) {
+        const cardContent = within(creativeCard);
+        // Check for behavior count and custom instructions preview
+        expect(cardContent.getByText(/3 behaviors/)).toBeInTheDocument();
+        expect(
+          cardContent.getByText(/Focus on generating innovative/),
+        ).toBeInTheDocument();
+      }
+    });
+
+    it("renders edit and delete buttons for each personality", () => {
+      render(<PersonalitiesSection />);
+
+      // Should have edit buttons for each mock personality (3 total)
+      const editButtons = screen.getAllByText("Edit");
+      expect(editButtons).toHaveLength(3);
+
+      // Should have delete buttons for each mock personality (3 total)
+      const deleteButtons = screen.getAllByText("Delete");
+      expect(deleteButtons).toHaveLength(3);
+    });
+
+    it("handles edit button clicks", () => {
+      render(<PersonalitiesSection />);
+
+      const editButtons = screen.getAllByText("Edit");
+      expect(editButtons.length).toBeGreaterThan(0);
+      const firstEditButton = editButtons[0] as HTMLElement;
+
+      expect(firstEditButton).toBeInTheDocument();
+      // Should not throw when clicked
+      fireEvent.click(firstEditButton);
+    });
+
+    it("handles delete button clicks", () => {
+      render(<PersonalitiesSection />);
+
+      const deleteButtons = screen.getAllByText("Delete");
+      expect(deleteButtons.length).toBeGreaterThan(0);
+      const firstDeleteButton = deleteButtons[0] as HTMLElement;
+
+      expect(firstDeleteButton).toBeInTheDocument();
+      // Should not throw when clicked
+      fireEvent.click(firstDeleteButton);
+    });
+
+    it("shows both preview list and original content areas", () => {
+      render(<PersonalitiesSection />);
+
+      // Should show preview section
+      expect(
+        screen.getByText("Personalities List (Preview)"),
+      ).toBeInTheDocument();
+
+      // Should show original store data section (empty state since no store personalities)
+      expect(
+        screen.getByText("No personalities yet (Store Data)"),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          /Create your first personality to define unique agent behaviors/,
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("renders create button in both sections", () => {
+      render(<PersonalitiesSection />);
+
+      // Multiple create buttons should exist
+      const createButtons = screen.getAllByText(/Create.*Personality/);
+      expect(createButtons.length).toBeGreaterThanOrEqual(2);
+    });
+
+    it("displays Big Five traits for personalities", () => {
+      render(<PersonalitiesSection />);
+
+      // Should show Big Five trait summaries in the cards
+      // Look for trait format like "O:4.2 C:3.1 E:3.8 A:4 N:2.3"
+      expect(
+        screen.getByText(/O:4\.2 C:3\.1 E:3\.8 A:4 N:2\.3/),
+      ).toBeInTheDocument();
+    });
+
+    it("maintains existing functionality alongside new list", () => {
+      render(<PersonalitiesSection />);
+
+      // Should still have the main header
+      expect(
+        screen.getByRole("heading", { level: 2, name: "Personalities" }),
+      ).toBeInTheDocument();
+
+      // Should still have the original create button in header
+      const headerArea = screen
+        .getByRole("heading", { level: 2 })
+        .closest("div")?.parentElement;
+      expect(headerArea).toBeInTheDocument();
+
+      if (headerArea) {
+        const headerCreateButton = within(headerArea).getByRole("button", {
+          name: /create personality/i,
+        });
+        expect(headerCreateButton).toBeInTheDocument();
+      }
     });
   });
 });

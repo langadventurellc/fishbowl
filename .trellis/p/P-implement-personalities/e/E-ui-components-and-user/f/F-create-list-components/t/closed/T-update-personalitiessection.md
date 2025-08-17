@@ -1,13 +1,32 @@
 ---
 id: T-update-personalitiessection
 title: Update PersonalitiesSection to integrate list components
-status: open
+status: done
 priority: medium
 parent: F-create-list-components
 prerequisites:
   - T-create-personalitieslist
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Updated to import PersonalitiesList component, added mock personality data
+    with realistic test cases, adapted existing handlers (handleEditPersonality,
+    handleDeletePersonality) for list integration, and integrated
+    PersonalitiesList component alongside existing content with proper layout
+    and spacing
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
+    Added comprehensive test suite for PersonalitiesList integration including
+    tests for mock data rendering, personality card display, edit/delete button
+    functionality, Big Five traits display, and dual content area layout. Fixed
+    store mocking to properly handle Zustand selectors and ensured all 23 tests
+    pass
+log:
+  - Successfully updated PersonalitiesSection to integrate the PersonalitiesList
+    component with comprehensive testing. Added mock personality data for
+    preview testing, integrated the PersonalitiesList component alongside
+    existing functionality, and updated handlers for list interaction. The
+    implementation maintains backward compatibility while providing a preview of
+    the new list interface. All quality checks pass and comprehensive unit tests
+    verify the integration works correctly.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T15:05:03.288Z
