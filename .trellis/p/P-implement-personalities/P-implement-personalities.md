@@ -106,7 +106,9 @@ affectedFiles:
     removed TabContainer usage and replaced with unified layout showing both
     SavedPersonalitiesTab and CreatePersonalityForm components in a single view
     with visual separation; Removed unused import and simplified component type
-    annotation
+    annotation; Removed tab component imports and usage, eliminated handler
+    functions, simplified JSX structure to clean foundation with placeholder
+    content area
   packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
     'create-new' tab types from SettingsSubTab since personalities no longer
     uses tabs

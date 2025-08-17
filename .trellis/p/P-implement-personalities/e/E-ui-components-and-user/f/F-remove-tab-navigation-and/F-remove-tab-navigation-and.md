@@ -1,14 +1,21 @@
 ---
 id: F-remove-tab-navigation-and
 title: Remove Tab Navigation and Restructure
-status: open
+status: in-progress
 priority: medium
 parent: E-ui-components-and-user
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Removed tab component imports and usage, eliminated handler functions,
+    simplified JSX structure to clean foundation with placeholder content area
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-comprehensive-unit-tests
+  - T-add-store-integration-and
+  - T-remove-tab-components-and
+  - T-restructure-layout-with
 created: 2025-08-17T14:15:36.190Z
 updated: 2025-08-17T14:15:36.190Z
 ---
