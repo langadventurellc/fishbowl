@@ -72,13 +72,21 @@ affectedFiles:
     Renamed from CreatePersonalityForm.tsx and refactored to unified component
     with create/edit modes, advanced change detection, field-level dirty
     tracking, and inline form actions
+  apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx:
+    Created new PersonalityFormModal component that wraps PersonalityForm with
+    modal state management, unsaved changes protection, focus management, and
+    keyboard shortcuts following the exact RoleFormModal pattern
+  packages/ui-shared/src/hooks/usePersonalities.ts: Created new usePersonalities
+    hook to provide a convenient interface to the personalities store with
+    memoized callbacks, matching the useRoles pattern
+  packages/ui-shared/src/hooks/index.ts: Added export for usePersonalities hook
+  packages/ui-shared/src/types/settings/index.ts: Added export for PersonalityFormModalProps interface
 log: []
 schema: v1.0
 childrenIds:
   - F-create-list-components
   - F-implement-user-interactions
   - F-refactor-unified-personalityfo
-  - F-remove-localstorage-and
   - F-remove-tab-navigation-and
 created: 2025-08-15T18:00:30.244Z
 updated: 2025-08-15T18:00:30.244Z

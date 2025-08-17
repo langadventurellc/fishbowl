@@ -38,6 +38,7 @@ export * from "./persistence";
 export * from "./Personality";
 export * from "./PersonalityCardProps";
 export * from "./PersonalityFormData";
+export * from "./PersonalityFormModalProps";
 export * from "./PersonalityNameInputProps";
 export * from "./PersonalityViewModel";
 export * from "./PredefinedRole";

@@ -1,13 +1,28 @@
 ---
 id: T-create-personalityformmodal
 title: Create PersonalityFormModal wrapper component
-status: open
+status: done
 priority: medium
 parent: F-refactor-unified-personalityfo
 prerequisites:
   - T-refactor-createpersonalityform
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx:
+    Created new PersonalityFormModal component that wraps PersonalityForm with
+    modal state management, unsaved changes protection, focus management, and
+    keyboard shortcuts following the exact RoleFormModal pattern
+  packages/ui-shared/src/hooks/usePersonalities.ts: Created new usePersonalities
+    hook to provide a convenient interface to the personalities store with
+    memoized callbacks, matching the useRoles pattern
+  packages/ui-shared/src/hooks/index.ts: Added export for usePersonalities hook
+  packages/ui-shared/src/types/settings/index.ts: Added export for PersonalityFormModalProps interface
+log:
+  - Successfully implemented PersonalityFormModal wrapper component following
+    the exact pattern of RoleFormModal. Created the modal interface with
+    comprehensive features including unsaved changes protection, keyboard
+    shortcuts, focus management, accessibility support, and proper integration
+    with the PersonalityForm component. Also created the missing
+    usePersonalities hook to maintain consistency with the roles pattern.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T15:58:42.097Z

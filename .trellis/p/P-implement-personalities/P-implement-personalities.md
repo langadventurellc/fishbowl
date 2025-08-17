@@ -135,7 +135,8 @@ affectedFiles:
   packages/ui-shared/src/types/settings/PersonalitiesSectionProps.ts: Removed empty interface that was no longer needed
   packages/ui-shared/src/types/settings/index.ts: Updated exports to remove
     references to deleted type definitions; Added export for
-    PersonalityViewModel type
+    PersonalityViewModel type; Added export for PersonalityFormModalProps
+    interface
   packages/ui-shared/src/types/personalities/persistence/PersonalitiesPersistenceError.ts:
     Created new error class extending Error with operation and cause properties,
     following RolesPersistenceError pattern
@@ -350,6 +351,14 @@ affectedFiles:
     Renamed from CreatePersonalityForm.tsx and refactored to unified component
     with create/edit modes, advanced change detection, field-level dirty
     tracking, and inline form actions
+  apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx:
+    Created new PersonalityFormModal component that wraps PersonalityForm with
+    modal state management, unsaved changes protection, focus management, and
+    keyboard shortcuts following the exact RoleFormModal pattern
+  packages/ui-shared/src/hooks/usePersonalities.ts: Created new usePersonalities
+    hook to provide a convenient interface to the personalities store with
+    memoized callbacks, matching the useRoles pattern
+  packages/ui-shared/src/hooks/index.ts: Added export for usePersonalities hook
 log: []
 schema: v1.0
 childrenIds:
