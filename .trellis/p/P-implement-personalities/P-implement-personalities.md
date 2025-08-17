@@ -108,7 +108,10 @@ affectedFiles:
     with visual separation; Removed unused import and simplified component type
     annotation; Removed tab component imports and usage, eliminated handler
     functions, simplified JSX structure to clean foundation with placeholder
-    content area
+    content area; Added complete store integration with usePersonalitiesStore
+    hook, modal state management variables, loading state handling, and
+    comprehensive error state display with retry functionality following
+    RolesSection pattern
   packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
     'create-new' tab types from SettingsSubTab since personalities no longer
     uses tabs
