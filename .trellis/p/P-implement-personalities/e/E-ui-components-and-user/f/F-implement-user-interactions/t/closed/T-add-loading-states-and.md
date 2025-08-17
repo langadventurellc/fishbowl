@@ -1,12 +1,24 @@
 ---
 id: T-add-loading-states-and
 title: Add loading states and disabled button management
-status: open
+status: done
 priority: medium
 parent: F-implement-user-interactions
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Updated button loading logic to use isLoading prop instead of isSubmitting
+    for loading state display, and changed loading text to 'Creating...' or
+    'Updating...' to match roles pattern
+log:
+  - Successfully implemented loading states following the roles pattern. After
+    analysis, found that PersonalityFormModal and DeletePersonalityDialog
+    already correctly followed the pattern with isLoading props and proper
+    loading text/icons. The only issue was in PersonalityForm component which
+    was using isSubmitting for button loading display instead of isLoading.
+    Fixed the PersonalityForm to use isLoading prop for button loading states
+    and changed text to "Creating..." or "Updating..." to match the exact roles
+    pattern. All quality checks and tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T18:48:38.384Z

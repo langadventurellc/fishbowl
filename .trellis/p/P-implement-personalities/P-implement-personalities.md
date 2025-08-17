@@ -360,7 +360,10 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
     Renamed from CreatePersonalityForm.tsx and refactored to unified component
     with create/edit modes, advanced change detection, field-level dirty
-    tracking, and inline form actions
+    tracking, and inline form actions; Updated button loading logic to use
+    isLoading prop instead of isSubmitting for loading state display, and
+    changed loading text to 'Creating...' or 'Updating...' to match roles
+    pattern
   apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx:
     Created new PersonalityFormModal component that wraps PersonalityForm with
     modal state management, unsaved changes protection, focus management, and

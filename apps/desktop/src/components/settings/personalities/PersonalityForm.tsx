@@ -130,7 +130,7 @@ export const PersonalityForm: React.FC<CreatePersonalityFormProps> = ({
     async (data: PersonalityFormData) => {
       setIsSubmitting(true);
       try {
-        await onSave(data);
+        onSave(data);
         // Reset form with new values after successful save
         form.reset(data, {
           keepDefaultValues: false,
@@ -276,10 +276,10 @@ export const PersonalityForm: React.FC<CreatePersonalityFormProps> = ({
               }
               className="min-w-[var(--dt-button-min-width)]"
             >
-              {isSubmitting ? (
+              {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
+                  {isEditMode ? "Updating..." : "Creating..."}
                 </>
               ) : (
                 <>{isEditMode ? "Update" : "Create"} Personality</>
