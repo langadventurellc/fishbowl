@@ -1,13 +1,36 @@
 ---
 id: F-personalities-file-management
 title: Personalities File Management System
-status: open
+status: wont-do
 priority: medium
 parent: E-desktop-integration-and-1
 prerequisites:
   - F-electron-ipc-personalities
 affectedFiles: {}
-log: []
+log:
+  - >-
+    Feature marked as "wont-do" after analysis comparing with existing roles
+    implementation. 
+
+
+    Key findings:
+
+    - Roles use simple FileStorageService pattern (load/save/reset) and work
+    reliably
+
+    - FileStorageService already provides atomic writes, data validation, JSON
+    error handling, and security features
+
+    - This feature specification adds significant complexity with backup
+    systems, corruption recovery, and rotation that roles don't need
+
+    - No evidence of file corruption issues in current codebase
+
+    - Over-engineered compared to proven, working roles pattern
+
+
+    Decision: Implement personalities using the same simple, reliable pattern as
+    roles rather than adding unnecessary complexity.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T02:08:19.715Z

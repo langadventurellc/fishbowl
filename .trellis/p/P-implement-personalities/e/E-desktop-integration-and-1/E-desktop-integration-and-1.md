@@ -1,7 +1,7 @@
 ---
 id: E-desktop-integration-and-1
 title: Desktop Integration and Services
-status: in-progress
+status: done
 priority: medium
 parent: P-implement-personalities
 prerequisites:
