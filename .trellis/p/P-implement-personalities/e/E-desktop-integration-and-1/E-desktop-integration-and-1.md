@@ -60,6 +60,11 @@ affectedFiles:
     Created comprehensive unit tests with 100% coverage - 17 tests covering
     initialization, access control, singleton behavior, error handling, and
     integration
+  apps/desktop/src/electron/main.ts: Added personalities repository manager
+    initialization with userDataPath and setupPersonalitiesHandlers call during
+    app startup, following exact same patterns as roles integration. Includes
+    proper error handling and logging for both repository initialization and IPC
+    handler registration.
 log: []
 schema: v1.0
 childrenIds:

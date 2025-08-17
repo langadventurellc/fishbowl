@@ -1,14 +1,25 @@
 ---
 id: T-integrate-personalities
 title: Integrate personalities handlers with main process initialization
-status: open
+status: done
 priority: medium
 parent: F-electron-ipc-personalities
 prerequisites:
   - T-implement-setuppersonalitiesha
   - T-create-personalitiesrepository-1
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/main.ts: Added personalities repository manager
+    initialization with userDataPath and setupPersonalitiesHandlers call during
+    app startup, following exact same patterns as roles integration. Includes
+    proper error handling and logging for both repository initialization and IPC
+    handler registration.
+log:
+  - Successfully integrated personalities handlers with main process
+    initialization following the exact patterns used for roles integration.
+    Added personalities repository manager initialization and
+    setupPersonalitiesHandlers call to main.ts during app startup. The
+    integration includes proper error handling and logging, maintaining
+    consistency with existing patterns. All quality checks pass successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T03:00:28.869Z
