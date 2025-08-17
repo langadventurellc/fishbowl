@@ -260,38 +260,4 @@ describe("usePersonalitiesStore", () => {
       expect(state.retryTimers instanceof Map).toBe(true);
     });
   });
-
-  describe("unimplemented methods", () => {
-    it("should throw errors for unimplemented persistence methods", async () => {
-      const store = usePersonalitiesStore.getState();
-
-      const mockPersistedData = {
-        schemaVersion: "1.0.0",
-        personalities: [],
-        lastUpdated: new Date().toISOString(),
-      };
-
-      await expect(
-        store.initialize({} as PersonalitiesPersistenceAdapter),
-      ).rejects.toThrow("initialize not yet implemented");
-      await expect(store.persistChanges()).rejects.toThrow(
-        "persistChanges not yet implemented",
-      );
-      await expect(store.syncWithStorage()).rejects.toThrow(
-        "syncWithStorage not yet implemented",
-      );
-      await expect(store.exportPersonalities()).rejects.toThrow(
-        "exportPersonalities not yet implemented",
-      );
-      await expect(
-        store.importPersonalities(mockPersistedData),
-      ).rejects.toThrow("importPersonalities not yet implemented");
-      await expect(store.resetPersonalities()).rejects.toThrow(
-        "resetPersonalities not yet implemented",
-      );
-      await expect(store.retryLastOperation()).rejects.toThrow(
-        "retryLastOperation not yet implemented",
-      );
-    });
-  });
 });

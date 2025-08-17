@@ -5,11 +5,6 @@
 import { mapSinglePersonalityPersistenceToUI } from "../mapSinglePersonalityPersistenceToUI";
 import type { PersistedPersonalityData } from "@fishbowl-ai/shared";
 
-// Mock nanoid to return predictable IDs for testing
-jest.mock("nanoid", () => ({
-  nanoid: jest.fn(() => "generated-id-123"),
-}));
-
 describe("mapSinglePersonalityPersistenceToUI", () => {
   const mockDate = "2025-01-15T10:00:00.000Z";
 
@@ -151,7 +146,7 @@ describe("mapSinglePersonalityPersistenceToUI", () => {
 
       const result = mapSinglePersonalityPersistenceToUI(persistedPersonality);
 
-      expect(result.id).toBe("generated-id-123");
+      expect(result.id).toBe("");
     });
 
     it("should preserve existing ID", () => {

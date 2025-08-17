@@ -7,11 +7,11 @@
  * @module stores/personalitiesStore
  */
 
-// import type { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
+import type { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 import { create } from "zustand";
-// import { mapPersonalitiesPersistenceToUI } from "../mapping/personalities/mapPersonalitiesPersistenceToUI";
-// import { mapPersonalitiesUIToPersistence } from "../mapping/personalities/mapPersonalitiesUIToPersistence";
+import { mapPersonalitiesPersistenceToUI } from "../mapping/personalities/mapPersonalitiesPersistenceToUI";
+import { mapPersonalitiesUIToPersistence } from "../mapping/personalities/mapPersonalitiesUIToPersistence";
 import { personalitySchema } from "../schemas/personalitySchema";
 import { PersonalitiesPersistenceAdapter } from "../types/personalities/persistence/PersonalitiesPersistenceAdapter";
 import { PersonalitiesPersistenceError } from "../types/personalities/persistence/PersonalitiesPersistenceError";
@@ -80,7 +80,8 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       clearTimeout(_debounceTimer);
     }
 
-    // Set new timer
+    // Set new timer (minimal delay in tests)
+    const delay = process.env.NODE_ENV === "test" ? 1 : _DEBOUNCE_DELAY_MS;
     _debounceTimer = setTimeout(async () => {
       const { adapter } = get();
       if (!adapter) {
@@ -97,7 +98,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
           error instanceof Error ? error : new Error(String(error)),
         );
       }
-    }, _DEBOUNCE_DELAY_MS);
+    }, delay);
   };
 
   /**
@@ -221,6 +222,168 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
 
     // Fallback
     return `Failed to ${operation} personalities. Please try again.`;
+  };
+
+  /**
+   * Central error handler for all persistence operations
+   */
+  const _handlePersistenceError = (
+    error: unknown,
+    operation: "save" | "load" | "sync" | "import" | "reset",
+  ): void => {
+    const isRetryable = _isRetryableError(error);
+    const message = _getErrorMessage(error, operation);
+
+    // Extract field errors if validation error
+    let fieldErrors: Array<{ field: string; message: string }> | undefined;
+    if (
+      error &&
+      typeof error === "object" &&
+      "name" in error &&
+      error.name === "ZodError"
+    ) {
+      const zodError = error as {
+        issues?: Array<{ path: Array<string | number>; message: string }>;
+      };
+      if (zodError.issues && Array.isArray(zodError.issues)) {
+        fieldErrors = zodError.issues.map((issue) => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        }));
+      }
+    }
+
+    // Update error state
+    set({
+      error: {
+        message,
+        operation,
+        isRetryable,
+        retryCount: 0,
+        timestamp: new Date().toISOString(),
+        fieldErrors,
+      },
+    });
+
+    // Log the error with context
+    _getLogger().error(
+      `${operation} operation failed`,
+      error instanceof Error ? error : new Error(String(error)),
+    );
+  };
+
+  /**
+   * Retry an operation with exponential backoff
+   */
+  const _retryOperation = async <T>(
+    operation: () => Promise<T>,
+    operationName: "save" | "load" | "sync" | "import" | "reset",
+    maxRetries: number = _MAX_RETRY_ATTEMPTS,
+  ): Promise<T> => {
+    let lastError: unknown;
+    let retryCount = 0;
+
+    while (retryCount < maxRetries) {
+      try {
+        // Clear any existing retry timer for this operation
+        const { retryTimers } = get();
+        const existingTimer = retryTimers.get(operationName);
+        if (existingTimer) {
+          clearTimeout(existingTimer);
+          retryTimers.delete(operationName);
+        }
+
+        // Attempt the operation
+        const result = await operation();
+
+        // Success - clear error state
+        set({
+          error: {
+            message: null,
+            operation: null,
+            isRetryable: false,
+            retryCount: 0,
+            timestamp: null,
+          },
+        });
+
+        return result;
+      } catch (error) {
+        lastError = error;
+
+        // Check if error is retryable
+        if (!_isRetryableError(error)) {
+          _handlePersistenceError(error, operationName);
+          throw error;
+        }
+
+        retryCount++;
+
+        // Update error state with retry count
+        const currentError = get().error;
+        set({
+          error: _createErrorState(
+            `${_getErrorMessage(error, operationName)} (Retry ${retryCount}/${maxRetries})`,
+            currentError?.operation || operationName,
+            currentError?.isRetryable || _isRetryableError(error),
+            retryCount,
+          ),
+        });
+
+        if (retryCount < maxRetries) {
+          // Calculate delay with exponential backoff
+          const delay = _RETRY_BASE_DELAY_MS * Math.pow(2, retryCount - 1);
+
+          _getLogger().info(
+            `Retrying ${operationName} in ${delay}ms (attempt ${retryCount + 1}/${maxRetries})`,
+          );
+
+          // Wait before retrying (skip delay in tests)
+          if (process.env.NODE_ENV !== "test") {
+            await new Promise((resolve) => {
+              const timer = setTimeout(resolve, delay);
+              // Store timer reference for cleanup
+              get().retryTimers.set(operationName, timer);
+            });
+          }
+        }
+      }
+    }
+
+    // All retries exhausted
+    _handlePersistenceError(lastError, operationName);
+    throw lastError;
+  };
+
+  /**
+   * Handle save errors with rollback and retry logic
+   */
+  const _handleSaveError = async (
+    error: unknown,
+    originalPersonalities: PersonalityViewModel[],
+  ): Promise<void> => {
+    // Use the new error handling infrastructure
+    _handlePersistenceError(error, "save");
+
+    // Rollback to original state with pending operations cleanup
+    set((state) => ({
+      personalities: originalPersonalities,
+      isSaving: false,
+      pendingOperations: state.pendingOperations.map((op) => ({
+        ...op,
+        status: op.status === "pending" ? "failed" : op.status,
+      })),
+    }));
+
+    // Announce rollback to UI for user feedback
+    const errorType =
+      error instanceof Error ? error.constructor.name : typeof error;
+    _getLogger().info(
+      `Rolled back to previous state after save error. Original personality count: ${originalPersonalities.length}, Error type: ${errorType}`,
+    );
+
+    // Note: Retry logic is handled by _retryOperation in persistChanges()
+    // This function just handles rollback and error reporting
   };
 
   return {
@@ -418,32 +581,370 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       set({ adapter });
     },
 
-    initialize: async () => {
-      throw new Error("initialize not yet implemented");
+    initialize: async (adapter: PersonalitiesPersistenceAdapter) => {
+      set({
+        adapter,
+        isLoading: true,
+        error: _clearErrorState(),
+      });
+
+      try {
+        // Load data from adapter using retry logic
+        const persistedData = await _retryOperation(
+          () => adapter.load(),
+          "load",
+        );
+
+        if (persistedData) {
+          // Transform persistence data to UI format
+          const uiPersonalities =
+            mapPersonalitiesPersistenceToUI(persistedData);
+
+          set({
+            personalities: uiPersonalities,
+            isInitialized: true,
+            isLoading: false,
+            lastSyncTime: new Date().toISOString(),
+            error: _clearErrorState(),
+          });
+        } else {
+          // No persisted data, start with empty array
+          set({
+            personalities: [],
+            isInitialized: true,
+            isLoading: false,
+            lastSyncTime: new Date().toISOString(),
+            error: _clearErrorState(),
+          });
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to initialize personalities: ${error.message}`
+            : "Failed to initialize personalities";
+
+        set({
+          isInitialized: false,
+          isLoading: false,
+          error: _createErrorState(errorMessage, "load"),
+        });
+
+        // Log detailed error for debugging but don't throw to avoid crashing UI
+        console.error("Personalities store initialization error:", error);
+      }
     },
 
     persistChanges: async () => {
-      throw new Error("persistChanges not yet implemented");
+      const { adapter, personalities, isSaving } = get();
+
+      // Prevent concurrent saves
+      if (isSaving) {
+        _getLogger().info("Save already in progress, skipping");
+        return;
+      }
+
+      if (!adapter) {
+        throw new PersonalitiesPersistenceError(
+          "Cannot persist changes: no adapter configured",
+          "save",
+        );
+      }
+
+      // Take snapshot for potential rollback
+      _rollbackSnapshot = [...personalities];
+
+      set({
+        isSaving: true,
+        error: _clearErrorState(),
+      });
+
+      try {
+        // Map to persistence format and save through adapter
+        const persistedData = mapPersonalitiesUIToPersistence(personalities);
+
+        await _retryOperation(() => adapter.save(persistedData), "save");
+
+        // Update state on success
+        set((state) => ({
+          isSaving: false,
+          lastSyncTime: new Date().toISOString(),
+          pendingOperations: state.pendingOperations
+            .map((op) => ({
+              ...op,
+              status: "completed" as const,
+            }))
+            .filter((op) => {
+              // Keep recent completed operations for audit trail (optional)
+              const opTime = new Date(op.timestamp).getTime();
+              const cutoff = Date.now() - 60000; // Keep for 1 minute
+              return opTime > cutoff;
+            }),
+          error: _clearErrorState(),
+        }));
+
+        _getLogger().info(
+          `Successfully saved ${personalities.length} personalities`,
+        );
+
+        // Reset retry count on success
+        _retryCount = 0;
+        _rollbackSnapshot = null;
+      } catch (error) {
+        // Handle save error with potential retry
+        await _handleSaveError(error, _rollbackSnapshot || []);
+
+        // Re-throw for caller handling
+        throw error;
+      }
     },
 
     syncWithStorage: async () => {
-      throw new Error("syncWithStorage not yet implemented");
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new PersonalitiesPersistenceError(
+          "Cannot sync: no adapter configured",
+          "load",
+        );
+      }
+
+      set({
+        isLoading: true,
+        error: _clearErrorState(),
+      });
+
+      try {
+        const persistedData = await _retryOperation(
+          () => adapter.load(),
+          "sync",
+        );
+
+        if (persistedData) {
+          const uiPersonalities =
+            mapPersonalitiesPersistenceToUI(persistedData);
+
+          set({
+            personalities: uiPersonalities,
+            isLoading: false,
+            lastSyncTime: new Date().toISOString(),
+            error: _clearErrorState(),
+          });
+
+          _getLogger().info(
+            `Synced ${uiPersonalities.length} personalities from storage`,
+          );
+        } else {
+          set({
+            personalities: [],
+            isLoading: false,
+            lastSyncTime: new Date().toISOString(),
+            error: _clearErrorState(),
+          });
+
+          _getLogger().info("No personalities found in storage");
+        }
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to sync with storage: ${error.message}`
+            : "Failed to sync with storage";
+
+        set({
+          isLoading: false,
+          error: _createErrorState(errorMessage, "sync"),
+        });
+
+        throw error;
+      }
     },
 
     exportPersonalities: async () => {
-      throw new Error("exportPersonalities not yet implemented");
+      const { personalities } = get();
+
+      try {
+        // Transform current UI state to persistence format
+        const persistedData = mapPersonalitiesUIToPersistence(personalities);
+
+        _getLogger().info(
+          `Exported ${personalities.length} personalities for backup`,
+        );
+
+        return persistedData;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to export personalities: ${error.message}`
+            : "Failed to export personalities";
+
+        set({ error: _createErrorState(errorMessage) });
+
+        _getLogger().error(
+          "Export personalities failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+
+        throw error;
+      }
     },
 
-    importPersonalities: async () => {
-      throw new Error("importPersonalities not yet implemented");
+    importPersonalities: async (data: PersistedPersonalitiesSettingsData) => {
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new PersonalitiesPersistenceError(
+          "Cannot import personalities: no adapter configured",
+          "save",
+        );
+      }
+
+      set({
+        isSaving: true,
+        error: _clearErrorState(),
+      });
+
+      try {
+        // Validate imported data structure
+        const validatedData = mapPersonalitiesUIToPersistence(
+          mapPersonalitiesPersistenceToUI(data),
+        );
+
+        // Transform from persistence to UI format
+        const uiPersonalities = mapPersonalitiesPersistenceToUI(validatedData);
+
+        // Replace current store state with imported data
+        set({
+          personalities: uiPersonalities,
+          isSaving: false,
+          lastSyncTime: new Date().toISOString(),
+          pendingOperations: [],
+          error: _clearErrorState(),
+        });
+
+        // Save imported data to persistence
+        await _retryOperation(() => adapter.save(validatedData), "import");
+
+        _getLogger().info(
+          `Successfully imported ${uiPersonalities.length} personalities`,
+        );
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to import personalities: ${error.message}`
+            : "Failed to import personalities";
+
+        set({
+          isSaving: false,
+          error: _createErrorState(errorMessage, "import"),
+        });
+
+        _getLogger().error(
+          "Import personalities failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+
+        throw error;
+      }
     },
 
     resetPersonalities: async () => {
-      throw new Error("resetPersonalities not yet implemented");
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new PersonalitiesPersistenceError(
+          "Cannot reset personalities: no adapter configured",
+          "reset",
+        );
+      }
+
+      set({
+        isSaving: true,
+        error: _clearErrorState(),
+      });
+
+      try {
+        // Clear local store state
+        set({
+          personalities: [],
+          isInitialized: false,
+          isSaving: false,
+          lastSyncTime: null,
+          pendingOperations: [],
+          error: _clearErrorState(),
+        });
+
+        // Call adapter's reset() method with retry logic
+        await _retryOperation(() => adapter.reset(), "reset");
+
+        _getLogger().info("Successfully reset all personalities and storage");
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error
+            ? `Failed to reset personalities: ${error.message}`
+            : "Failed to reset personalities";
+
+        set({
+          isSaving: false,
+          error: _createErrorState(errorMessage, "reset"),
+        });
+
+        _getLogger().error(
+          "Reset personalities failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+
+        throw error;
+      }
     },
 
+    // Error recovery methods
     retryLastOperation: async () => {
-      throw new Error("retryLastOperation not yet implemented");
+      const { error } = get();
+      if (!error) {
+        _getLogger().warn("No error state to retry");
+        return;
+      }
+
+      if (!error.operation || !error.isRetryable) {
+        _getLogger().warn("No retryable operation found");
+        return;
+      }
+
+      // Clear existing error to show fresh state
+      set({
+        error: _createErrorState(
+          `Retrying ${error.operation}...`,
+          error.operation,
+          error.isRetryable,
+          0,
+        ),
+      });
+
+      try {
+        switch (error.operation) {
+          case "save":
+            await get().persistChanges();
+            break;
+          case "load":
+          case "sync":
+            await get().syncWithStorage();
+            break;
+          case "import":
+            // Import would need to store the data to retry
+            _getLogger().warn("Import retry not implemented");
+            break;
+          case "reset":
+            await get().resetPersonalities();
+            break;
+        }
+      } catch (retryError) {
+        // Error will be handled by the operation itself
+        _getLogger().error(
+          "Manual retry failed",
+          retryError instanceof Error
+            ? retryError
+            : new Error(String(retryError)),
+        );
+      }
     },
 
     clearErrorState: () => {

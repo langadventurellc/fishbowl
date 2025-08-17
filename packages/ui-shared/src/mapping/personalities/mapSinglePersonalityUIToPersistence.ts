@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
 import type { PersonalityViewModel } from "../../types/settings/PersonalityViewModel";
 import type { PersistedPersonalityData } from "@fishbowl-ai/shared";
 
@@ -38,7 +37,7 @@ export function mapSinglePersonalityUIToPersistence(
   personality: PersonalityViewModel,
 ): PersistedPersonalityData {
   return {
-    id: personality.id || nanoid(),
+    id: personality.id || "",
     name: personality.name,
     bigFive: personality.bigFive,
     behaviors: personality.behaviors,
