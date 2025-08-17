@@ -1,13 +1,25 @@
 ---
 id: F-end-to-end-tests-for
 title: End-to-End Tests for Personalities Section
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  tests/desktop/helpers/settings/setupPersonalitiesTestSuite.ts:
+    Created new test infrastructure setup function following roles pattern with
+    personalities-specific configuration and data reset
+  tests/desktop/helpers/index.ts: Added export for setupPersonalitiesTestSuite function
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-personalities-creation
+  - T-create-personalities-default
+  - T-create-personalities-deletion
+  - T-create-personalities-editing
+  - T-create-personalities-mock
+  - T-create-personalities-test-1
+  - T-create-personalities-test
+  - T-create-personalities
 created: 2025-08-17T21:07:54.536Z
 updated: 2025-08-17T21:07:54.536Z
 ---

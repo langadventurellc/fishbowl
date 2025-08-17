@@ -23,6 +23,7 @@ export { waitForConfigurationList } from "./settings/waitForConfigurationList";
 export { waitForEmptyState } from "./settings/waitForEmptyState";
 export { openRolesSection } from "./settings/openRolesSection";
 export { setupRolesTestSuite } from "./settings/setupRolesTestSuite";
+export { setupPersonalitiesTestSuite } from "./settings/setupPersonalitiesTestSuite";
 export {
   waitForRolesList,
   waitForRolesEmptyState,

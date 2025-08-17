@@ -1,12 +1,24 @@
 ---
 id: T-create-personalities-test
 title: Create Personalities Test Infrastructure Setup
-status: open
+status: done
 priority: high
 parent: F-end-to-end-tests-for
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/helpers/settings/setupPersonalitiesTestSuite.ts:
+    Created new test infrastructure setup function following roles pattern with
+    personalities-specific configuration and data reset
+  tests/desktop/helpers/index.ts: Added export for setupPersonalitiesTestSuite function
+log:
+  - Successfully implemented personalities test infrastructure setup following
+    the exact pattern from setupRolesTestSuite.ts. Created the
+    setupPersonalitiesTestSuite function that provides fresh Electron app
+    instances for each test with clean personalities data reset from the source
+    defaultPersonalities.json file. The infrastructure handles proper
+    application lifecycle management, storage cleanup, and error handling. All
+    quality checks pass and the function is properly exported from the test
+    helpers index.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T21:14:33.680Z
