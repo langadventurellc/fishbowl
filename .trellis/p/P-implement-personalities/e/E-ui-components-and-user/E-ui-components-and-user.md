@@ -19,6 +19,13 @@ affectedFiles:
     Created comprehensive test suite covering header layout, button
     functionality, component structure, accessibility, and layout implementation
     verification
+  apps/desktop/src/components/settings/personalities/EmptyState.tsx:
+    Created new EmptyState component following app patterns with Users icon,
+    clear messaging, and create button
+  apps/desktop/src/components/settings/personalities/index.ts: Added EmptyState export to personalities module
+  apps/desktop/src/components/settings/personalities/__tests__/EmptyState.test.tsx:
+    Created comprehensive unit tests covering rendering, interactions,
+    accessibility, and responsive behavior
 log: []
 schema: v1.0
 childrenIds:
