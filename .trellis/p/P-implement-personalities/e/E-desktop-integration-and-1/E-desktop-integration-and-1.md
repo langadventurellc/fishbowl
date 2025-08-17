@@ -77,6 +77,12 @@ affectedFiles:
     the provider hierarchy, wrapping HashRouter and SettingsModal components
   apps/desktop/src/App.test.tsx: Added PersonalitiesProvider to test mocks and
     updated provider hierarchy test assertion
+  apps/desktop/src/contexts/__tests__/PersonalitiesProvider.test.tsx:
+    Created comprehensive unit test suite for PersonalitiesProvider component
+    with 16 test scenarios covering initialization flow, loading states, error
+    handling, context provider functionality, component lifecycle management,
+    and store integration. Includes proper mocking of dependencies and thorough
+    validation of component behavior.
 log: []
 schema: v1.0
 childrenIds:

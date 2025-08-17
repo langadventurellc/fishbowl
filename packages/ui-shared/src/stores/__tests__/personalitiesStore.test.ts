@@ -988,44 +988,22 @@ describe("personalitiesStore", () => {
       });
     });
 
-    describe("_retryOperation with exponential backoff", () => {
-      it("should retry failed operations with exponential backoff", async () => {
+    describe("direct operation behavior (no automatic retries)", () => {
+      it("should fail immediately on operation error", async () => {
         const mockAdapter = createMockAdapter();
-        let attemptCount = 0;
-        mockAdapter.load.mockImplementation(() => {
-          attemptCount++;
-          if (attemptCount < 3) {
-            throw new Error("Temporary failure");
-          }
-          return Promise.resolve({ personalities: [] });
-        });
+        mockAdapter.load.mockRejectedValue(new Error("Operation failed"));
 
         usePersonalitiesStore.setState({ adapter: mockAdapter });
         const store = usePersonalitiesStore.getState();
 
-        // With real timers, just wait for the operation to complete with retries
-        await store.syncWithStorage();
-
-        expect(mockAdapter.load).toHaveBeenCalledTimes(3);
-        const state = usePersonalitiesStore.getState();
-        expect(state.error?.message).toBe(null);
-      });
-
-      it("should stop retrying after max attempts", async () => {
-        const mockAdapter = createMockAdapter();
-        mockAdapter.load.mockRejectedValue(new Error("Persistent failure"));
-
-        usePersonalitiesStore.setState({ adapter: mockAdapter });
-        const store = usePersonalitiesStore.getState();
-
-        // With real timers, just wait for all retries to complete and fail
+        // Operations now fail immediately without automatic retries
         await expect(store.syncWithStorage()).rejects.toThrow(
-          "Persistent failure",
+          "Operation failed",
         );
-        expect(mockAdapter.load).toHaveBeenCalledTimes(3); // Initial + 2 retries
+        expect(mockAdapter.load).toHaveBeenCalledTimes(1); // Only called once
       });
 
-      it("should clear retry timers on successful operation", async () => {
+      it("should succeed immediately on operation success", async () => {
         const mockAdapter = createMockAdapter();
         mockAdapter.load.mockResolvedValue({ personalities: [] });
 
@@ -1034,8 +1012,9 @@ describe("personalitiesStore", () => {
 
         await store.syncWithStorage();
 
+        expect(mockAdapter.load).toHaveBeenCalledTimes(1);
         const state = usePersonalitiesStore.getState();
-        expect(state.retryTimers.size).toBe(0);
+        expect(state.error?.message).toBe(null);
       });
     });
 
@@ -1093,16 +1072,9 @@ describe("personalitiesStore", () => {
         expect(state.pendingOperations[0]?.status).toBe("failed");
       });
 
-      it("should reset retry count on successful save after retries", async () => {
+      it("should fail immediately on save error (no automatic retries)", async () => {
         const mockAdapter = createMockAdapter();
-        let attemptCount = 0;
-        mockAdapter.save.mockImplementation(() => {
-          attemptCount++;
-          if (attemptCount < 2) {
-            throw new Error("Temporary save failure");
-          }
-          return Promise.resolve();
-        });
+        mockAdapter.save.mockRejectedValue(new Error("Save failure"));
 
         usePersonalitiesStore.setState({
           personalities: [],
@@ -1111,11 +1083,9 @@ describe("personalitiesStore", () => {
 
         const store = usePersonalitiesStore.getState();
 
-        await store.persistChanges();
-
-        const state = usePersonalitiesStore.getState();
-        expect(state.error?.message).toBe(null);
-        expect(mockAdapter.save).toHaveBeenCalledTimes(2);
+        // Expect immediate failure without retries
+        await expect(store.persistChanges()).rejects.toThrow("Save failure");
+        expect(mockAdapter.save).toHaveBeenCalledTimes(1); // Only called once
       });
     });
 
@@ -1510,26 +1480,21 @@ describe("personalitiesStore", () => {
         expect(state.retryTimers.size).toBe(0);
       });
 
-      it("should replace existing timers for same operation", async () => {
+      it("should have no retry timers after immediate operation failure", async () => {
         const mockAdapter = createMockAdapter();
-        let attemptCount = 0;
-        mockAdapter.load.mockImplementation(() => {
-          attemptCount++;
-          if (attemptCount < 3) {
-            throw new Error("Retry needed");
-          }
-          return Promise.resolve({ personalities: [] });
-        });
+        mockAdapter.load.mockRejectedValue(new Error("Operation failed"));
 
         usePersonalitiesStore.setState({ adapter: mockAdapter });
 
         const store = usePersonalitiesStore.getState();
 
-        // Wait for retries to complete naturally with real timers
-        await store.syncWithStorage();
+        // Operations fail immediately, no timers are created
+        await expect(store.syncWithStorage()).rejects.toThrow(
+          "Operation failed",
+        );
 
         const state = usePersonalitiesStore.getState();
-        expect(state.retryTimers.size).toBe(0); // All timers cleaned up
+        expect(state.retryTimers.size).toBe(0); // No timers created
       });
     });
 
@@ -1652,7 +1617,7 @@ describe("personalitiesStore", () => {
         expect(state.error?.message).toBe(null);
       });
 
-      it("should handle maximum retry attempts correctly", async () => {
+      it("should fail immediately on persistent errors (no retries)", async () => {
         const mockAdapter = createMockAdapter();
         mockAdapter.load.mockRejectedValue(new Error("Always fails"));
 
@@ -1660,9 +1625,9 @@ describe("personalitiesStore", () => {
 
         const store = usePersonalitiesStore.getState();
 
-        // Wait for all retry attempts to complete and fail naturally
+        // Operations fail immediately without retries
         await expect(store.syncWithStorage()).rejects.toThrow("Always fails");
-        expect(mockAdapter.load).toHaveBeenCalledTimes(3);
+        expect(mockAdapter.load).toHaveBeenCalledTimes(1); // Only called once
       });
     });
   });
