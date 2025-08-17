@@ -28,7 +28,24 @@ export class DesktopPersonalitiesAdapter
   }
 
   async load(): Promise<PersistedPersonalitiesSettingsData | null> {
-    throw new Error("Method not implemented");
+    try {
+      const data = await window.electronAPI.personalities.load();
+      return data;
+    } catch (error) {
+      // Check if this is a "no personalities found" case and return null
+      if (
+        error instanceof Error &&
+        error.message.includes("Failed to load personalities")
+      ) {
+        return null;
+      }
+      if (error instanceof PersonalitiesPersistenceError) {
+        throw error;
+      }
+      const message =
+        error instanceof Error ? error.message : "Failed to load personalities";
+      throw new PersonalitiesPersistenceError(message, "load", error);
+    }
   }
 
   async reset(): Promise<void> {

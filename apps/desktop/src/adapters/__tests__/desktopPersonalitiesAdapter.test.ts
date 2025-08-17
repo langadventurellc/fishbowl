@@ -199,6 +199,245 @@ describe("DesktopPersonalitiesAdapter", () => {
     });
   });
 
+  describe("load method", () => {
+    it("should return personalities data when file exists", async () => {
+      const mockData: PersistedPersonalitiesSettingsData = {
+        schemaVersion: "1.0.0",
+        personalities: [
+          {
+            id: "personality-1",
+            name: "Analyst",
+            bigFive: {
+              openness: 85,
+              conscientiousness: 90,
+              extraversion: 40,
+              agreeableness: 70,
+              neuroticism: 20,
+            },
+            behaviors: {
+              analytical: 95,
+              methodical: 90,
+              detail_oriented: 85,
+            },
+            customInstructions: "Focus on data analysis and logical reasoning",
+            createdAt: "2025-01-01T00:00:00.000Z",
+            updatedAt: "2025-01-01T00:00:00.000Z",
+          },
+        ],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+      mockPersonalitiesLoad.mockResolvedValue(mockData);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const result = await adapter.load();
+
+      expect(result).toEqual(mockData);
+      expect(mockPersonalitiesLoad).toHaveBeenCalledTimes(1);
+      expect(mockPersonalitiesLoad).toHaveBeenCalledWith();
+    });
+
+    it("should return null when no personalities file exists", async () => {
+      const fileNotFoundError = new Error(
+        "Failed to load personalities: File not found",
+      );
+      mockPersonalitiesLoad.mockRejectedValue(fileNotFoundError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const result = await adapter.load();
+
+      expect(result).toBeNull();
+      expect(mockPersonalitiesLoad).toHaveBeenCalledTimes(1);
+    });
+
+    it("should return null for 'no personalities found' error messages", async () => {
+      const noPersonalitiesError = new Error(
+        "Failed to load personalities: No data available",
+      );
+      mockPersonalitiesLoad.mockRejectedValue(noPersonalitiesError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const result = await adapter.load();
+
+      expect(result).toBeNull();
+    });
+
+    it("should return empty personalities array when file contains empty data", async () => {
+      const emptyData: PersistedPersonalitiesSettingsData = {
+        schemaVersion: "1.0.0",
+        personalities: [],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+      mockPersonalitiesLoad.mockResolvedValue(emptyData);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const result = await adapter.load();
+
+      expect(result).toEqual(emptyData);
+      expect(result?.personalities).toEqual([]);
+    });
+
+    it("should preserve PersonalitiesPersistenceError instances without rewrapping", async () => {
+      const originalError = new PersonalitiesPersistenceError(
+        "Database corruption detected",
+        "load",
+      );
+      mockPersonalitiesLoad.mockRejectedValue(originalError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toBe(originalError);
+    });
+
+    it("should convert generic errors to PersonalitiesPersistenceError with 'load' operation", async () => {
+      const genericError = new Error("Invalid JSON in personalities file");
+      mockPersonalitiesLoad.mockRejectedValue(genericError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.load()).rejects.toMatchObject({
+        operation: "load",
+        message: "Invalid JSON in personalities file",
+      });
+    });
+
+    it("should throw PersonalitiesPersistenceError for file corruption", async () => {
+      const corruptionError = new Error("Invalid JSON in personalities file");
+      mockPersonalitiesLoad.mockRejectedValue(corruptionError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.load()).rejects.toMatchObject({
+        operation: "load",
+        message: "Invalid JSON in personalities file",
+      });
+    });
+
+    it("should throw PersonalitiesPersistenceError for permission errors", async () => {
+      const permissionError = new Error(
+        "Permission denied accessing personalities file",
+      );
+      mockPersonalitiesLoad.mockRejectedValue(permissionError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.load()).rejects.toMatchObject({
+        operation: "load",
+        message: "Permission denied accessing personalities file",
+      });
+    });
+
+    it("should include original error as cause in PersonalitiesPersistenceError", async () => {
+      const originalError = new Error("Original error");
+      mockPersonalitiesLoad.mockRejectedValue(originalError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      try {
+        await adapter.load();
+      } catch (error) {
+        expect(error).toBeInstanceOf(PersonalitiesPersistenceError);
+        expect((error as PersonalitiesPersistenceError).cause).toBe(
+          originalError,
+        );
+      }
+    });
+
+    it("should handle non-Error objects with generic message", async () => {
+      mockPersonalitiesLoad.mockRejectedValue("String error");
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.load()).rejects.toMatchObject({
+        operation: "load",
+        message: "Failed to load personalities",
+      });
+    });
+
+    it("should handle null error objects", async () => {
+      mockPersonalitiesLoad.mockRejectedValue(null);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toMatchObject({
+        operation: "load",
+        message: "Failed to load personalities",
+      });
+    });
+
+    it("should handle undefined error objects", async () => {
+      mockPersonalitiesLoad.mockRejectedValue(undefined);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toMatchObject({
+        operation: "load",
+        message: "Failed to load personalities",
+      });
+    });
+
+    it("should handle undefined electronAPI gracefully", async () => {
+      delete (window as any).electronAPI;
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.load()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+    });
+
+    it("should complete load operation within reasonable time", async () => {
+      mockPersonalitiesLoad.mockResolvedValue(mockPersonalitiesData);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const startTime = Date.now();
+
+      await adapter.load();
+
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+
+      // Should complete within 100ms for typical dataset
+      expect(duration).toBeLessThan(100);
+    });
+
+    it("should return correct types from load method", async () => {
+      mockPersonalitiesLoad.mockResolvedValue(mockPersonalitiesData);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      // load should return Promise<PersistedPersonalitiesSettingsData | null>
+      const loadResult = adapter.load();
+      expect(loadResult).toBeInstanceOf(Promise);
+      await expect(loadResult).resolves.toEqual(mockPersonalitiesData);
+    });
+
+    it("should return null type correctly", async () => {
+      const fileNotFoundError = new Error(
+        "Failed to load personalities: File not found",
+      );
+      mockPersonalitiesLoad.mockRejectedValue(fileNotFoundError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      // load should return Promise<PersistedPersonalitiesSettingsData | null>
+      const loadResult = adapter.load();
+      expect(loadResult).toBeInstanceOf(Promise);
+      await expect(loadResult).resolves.toBeNull();
+    });
+  });
+
   describe("Interface Compliance", () => {
     it("should implement all PersonalitiesPersistenceAdapter methods", () => {
       const adapter = new DesktopPersonalitiesAdapter();
