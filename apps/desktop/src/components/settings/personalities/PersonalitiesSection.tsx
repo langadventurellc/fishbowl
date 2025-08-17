@@ -20,6 +20,7 @@ import type {
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, Plus } from "lucide-react";
 import React, { useCallback, useState } from "react";
+import { DeletePersonalityDialog } from "./DeletePersonalityDialog";
 import { PersonalitiesList } from "./PersonalitiesList";
 import { PersonalityFormModal } from "./PersonalityFormModal";
 
@@ -112,7 +113,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
   const updatePersonality = usePersonalitiesStore(
     (state) => state.updatePersonality,
   );
-  const _deletePersonality = usePersonalitiesStore(
+  const deletePersonality = usePersonalitiesStore(
     (state) => state.deletePersonality,
   );
   const clearError = usePersonalitiesStore((state) => state.clearError);
@@ -125,7 +126,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
     PersonalityViewModel | undefined
   >(undefined);
   const [formModalOpen, setFormModalOpen] = useState(false);
-  const [_deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
 
   // Modal opening handlers - will connect to modals in future features
@@ -178,11 +179,11 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
 
         if (formMode === "create") {
           // Create new personality
-          await createPersonality(data);
+          createPersonality(data);
           logger.info("Personality created successfully");
         } else if (selectedPersonality?.id) {
           // Update existing personality
-          await updatePersonality(selectedPersonality.id, data);
+          updatePersonality(selectedPersonality.id, data);
           logger.info("Personality updated successfully", {
             personalityId: selectedPersonality.id,
           });
@@ -206,6 +207,39 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
       updatePersonality,
       clearError,
     ],
+  );
+
+  // Delete confirmation handler - executes personality deletion
+  const handleConfirmDelete = useCallback(
+    async (personality: PersonalityViewModel) => {
+      logger.info("Confirming personality deletion", {
+        personalityId: personality.id,
+        personalityName: personality.name,
+      });
+
+      try {
+        // Clear any existing errors
+        clearError();
+
+        // Execute deletion
+        deletePersonality(personality.id);
+        logger.info("Personality deleted successfully", {
+          personalityId: personality.id,
+        });
+
+        // Close dialog and clear selection
+        setDeleteDialogOpen(false);
+        setSelectedPersonality(undefined);
+      } catch (error) {
+        // Error handling - dialog stays open for retry
+        logger.error(
+          "Failed to delete personality",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        // DeletePersonalityDialog will handle showing the error to user
+      }
+    },
+    [deletePersonality, clearError],
   );
 
   // Show loading state
@@ -361,6 +395,15 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
         mode={formMode}
         personality={selectedPersonality}
         onSave={handleFormSave}
+        isLoading={isSaving}
+      />
+
+      {/* Personality deletion confirmation dialog */}
+      <DeletePersonalityDialog
+        isOpen={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        personality={selectedPersonality || null}
+        onConfirm={handleConfirmDelete}
         isLoading={isSaving}
       />
     </div>

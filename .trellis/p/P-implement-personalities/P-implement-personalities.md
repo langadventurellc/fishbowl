@@ -122,7 +122,10 @@ affectedFiles:
     PersonalityFormData types. Activated modal state variables and store
     methods. Implemented handleFormSave callback for create/edit operations with
     proper error handling. Added PersonalityFormModal JSX component with all
-    required props.
+    required props.; Added handleConfirmDelete function, imported
+    DeletePersonalityDialog component, removed underscore from deleteDialogOpen
+    state variable, and integrated DeletePersonalityDialog component in JSX with
+    proper props following established patterns
   packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
     'create-new' tab types from SettingsSubTab since personalities no longer
     uses tabs

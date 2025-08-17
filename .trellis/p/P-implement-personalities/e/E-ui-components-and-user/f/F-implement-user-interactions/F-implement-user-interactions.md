@@ -23,15 +23,20 @@ affectedFiles:
     Created new shared interface for PersonalityDeleteDialog props matching
     RoleDeleteDialog pattern
   packages/ui-shared/src/types/settings/index.ts: Added export for PersonalityDeleteDialogProps
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Added handleConfirmDelete function, imported DeletePersonalityDialog
+    component, removed underscore from deleteDialogOpen state variable, and
+    integrated DeletePersonalityDialog component in JSX with proper props
+    following established patterns
 log: []
 schema: v1.0
 childrenIds:
   - T-add-loading-states-and
-  - T-create-deletepersonalitydialog
   - T-implement-comprehensive-error
-  - T-implement-personalityformmodal
   - T-implement-user-interaction
   - T-integrate-all-components-and
+  - T-create-deletepersonalitydialog
+  - T-implement-personalityformmodal
 created: 2025-08-17T14:18:16.845Z
 updated: 2025-08-17T14:18:16.845Z
 ---
