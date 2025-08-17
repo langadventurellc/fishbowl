@@ -1,14 +1,27 @@
 ---
 id: T-create-personalitieslist
 title: Create PersonalitiesList container component
-status: open
+status: done
 priority: medium
 parent: F-create-list-components
 prerequisites:
   - T-create-emptystate-component
   - T-create-personalitycard
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitiesList.tsx:
+    Created new PersonalitiesList container component with responsive grid
+    layout, empty state handling, loading state support, and proper
+    accessibility features
+  apps/desktop/src/components/settings/personalities/index.ts:
+    Added exports for PersonalitiesList and PersonalityCard components to
+    complete the barrel exports
+log:
+  - Successfully implemented PersonalitiesList container component with
+    responsive grid layout, empty state handling, and proper callback
+    management. The component follows project patterns from RolesList with a
+    responsive grid (1/2/3 columns) instead of vertical list. Added loading
+    state support, accessibility features, and proper exports. All quality
+    checks and tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T15:04:42.050Z

@@ -301,7 +301,10 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/EmptyState.tsx:
     Created new EmptyState component following app patterns with Users icon,
     clear messaging, and create button
-  apps/desktop/src/components/settings/personalities/index.ts: Added EmptyState export to personalities module
+  apps/desktop/src/components/settings/personalities/index.ts:
+    Added EmptyState export to personalities module; Added exports for
+    PersonalitiesList and PersonalityCard components to complete the barrel
+    exports
   apps/desktop/src/components/settings/personalities/__tests__/EmptyState.test.tsx:
     Created comprehensive unit tests covering rendering, interactions,
     accessibility, and responsive behavior
@@ -320,6 +323,10 @@ affectedFiles:
     Updated all tests to match new component structure and added tests for
     behavior count calculation, custom instructions truncation, and empty state
     handling
+  apps/desktop/src/components/settings/personalities/PersonalitiesList.tsx:
+    Created new PersonalitiesList container component with responsive grid
+    layout, empty state handling, loading state support, and proper
+    accessibility features
 log: []
 schema: v1.0
 childrenIds:
