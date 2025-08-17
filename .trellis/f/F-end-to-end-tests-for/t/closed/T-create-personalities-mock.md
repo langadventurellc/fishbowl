@@ -1,13 +1,24 @@
 ---
 id: T-create-personalities-mock
 title: Create Personalities Mock Data Generators
-status: open
+status: done
 priority: medium
 parent: F-end-to-end-tests-for
 prerequisites:
   - T-create-personalities-test-1
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/helpers/settings/MockPersonalityData.ts: Type interface for personality mock data with BigFive traits and behaviors
+  tests/desktop/helpers/settings/createMockPersonalityData.ts: Main generator with balanced trait distributions (45-65 range)
+  tests/desktop/helpers/settings/createMinimalPersonalityData.ts: Minimal valid data generator (neutral 50 values) for edge case testing
+  tests/desktop/helpers/settings/createInvalidPersonalityData.ts: Invalid data scenarios for validation testing (out-of-range, empty fields)
+  tests/desktop/helpers/settings/createDuplicateNamePersonalityData.ts: Duplicate name generator for validation testing
+  tests/desktop/helpers/index.ts: Added exports for all personality mock data generators
+log:
+  - Created comprehensive personality mock data generators for e2e testing
+    following roles test patterns. Implemented 5 generator functions with
+    complete trait coverage (BigFive + 14 behaviors), validation scenarios, and
+    realistic data generation. All quality checks pass with full test coverage
+    maintained.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T21:16:30.002Z

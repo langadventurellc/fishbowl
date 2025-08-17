@@ -10,7 +10,8 @@ affectedFiles:
     personalities-specific configuration and data reset
   tests/desktop/helpers/index.ts: Added export for setupPersonalitiesTestSuite
     function; Updated to export all new personality helper functions with proper
-    naming to avoid conflicts with existing roles helpers
+    naming to avoid conflicts with existing roles helpers; Added exports for all
+    personality mock data generators
   tests/desktop/helpers/settings/openPersonalitiesSection.ts: Created navigation
     helper that opens settings modal and navigates to personalities section,
     following exact pattern from openRolesSection.ts but adapted for
@@ -24,6 +25,11 @@ affectedFiles:
     interaction helpers including waitForPersonalityModal, waitForDeleteDialog,
     and waitForModalToClose for handling personality creation/editing and
     deletion workflows
+  tests/desktop/helpers/settings/MockPersonalityData.ts: Type interface for personality mock data with BigFive traits and behaviors
+  tests/desktop/helpers/settings/createMockPersonalityData.ts: Main generator with balanced trait distributions (45-65 range)
+  tests/desktop/helpers/settings/createMinimalPersonalityData.ts: Minimal valid data generator (neutral 50 values) for edge case testing
+  tests/desktop/helpers/settings/createInvalidPersonalityData.ts: Invalid data scenarios for validation testing (out-of-range, empty fields)
+  tests/desktop/helpers/settings/createDuplicateNamePersonalityData.ts: Duplicate name generator for validation testing
 log: []
 schema: v1.0
 childrenIds:
@@ -32,8 +38,8 @@ childrenIds:
   - T-create-personalities-deletion
   - T-create-personalities-editing
   - T-create-personalities-mock
-  - T-create-personalities-test-1
   - T-create-personalities
+  - T-create-personalities-test-1
   - T-create-personalities-test
 created: 2025-08-17T21:07:54.536Z
 updated: 2025-08-17T21:07:54.536Z

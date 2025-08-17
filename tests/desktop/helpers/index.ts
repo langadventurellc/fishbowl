@@ -52,3 +52,8 @@ export type { MockLlmConfig } from "./settings/MockLlmConfig";
 export type { Provider } from "./settings/Provider";
 export type { StoredLlmConfig } from "./settings/StoredLlmConfig";
 export type { MockRoleData } from "./settings/MockRoleData";
+export type { MockPersonalityData } from "./settings/MockPersonalityData";
+export { createMockPersonalityData } from "./settings/createMockPersonalityData";
+export { createMinimalPersonalityData } from "./settings/createMinimalPersonalityData";
+export { createInvalidPersonalityData } from "./settings/createInvalidPersonalityData";
+export { createDuplicateNamePersonalityData } from "./settings/createDuplicateNamePersonalityData";
