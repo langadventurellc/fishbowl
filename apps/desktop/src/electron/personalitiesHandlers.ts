@@ -30,9 +30,9 @@ export function setupPersonalitiesHandlers(): void {
         const personalities = await repository.loadPersonalities();
 
         logger.debug("Personalities loaded successfully", {
-          personalityCount: personalities?.personalities?.length || 0,
+          personalityCount: personalities.personalities?.length || 0,
         });
-        return { success: true, data: personalities || undefined };
+        return { success: true, data: personalities };
       } catch (error) {
         logger.error("Failed to load personalities", error as Error);
         return { success: false, error: serializeError(error) };
