@@ -13,27 +13,30 @@ created: 2025-08-17T18:48:06.074Z
 updated: 2025-08-17T18:48:06.074Z
 ---
 
-# Implement User Interaction Handlers
+# Implement User Interaction Handlers Following Roles Pattern
 
 ## Context
 
-Create the core interaction logic that handles create, edit, and delete operations for personalities. This includes state management for modals, form submission handling, and integration with the personalities store following the handler patterns specified in the feature requirements.
+Create the core interaction logic that handles create, edit, and delete operations for personalities. This must exactly follow the established patterns from the roles section to ensure consistency across the application.
 
 ## Implementation Requirements
 
 ### State Management
 
-Add state variables to track:
+Add state variables following the exact pattern from RolesSection:
 
-- Form modal open/closed state
-- Delete dialog open/closed state
-- Form mode (create vs edit)
-- Selected personality for edit/delete
-- Loading states for async operations
+```tsx
+const [selectedPersonality, setSelectedPersonality] = useState<
+  PersonalityViewModel | undefined
+>(undefined);
+const [formModalOpen, setFormModalOpen] = useState(false);
+const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+const [formMode, setFormMode] = useState<"create" | "edit">("create");
+```
 
 ### Handler Functions
 
-Implement these core handlers following the feature specification patterns:
+Implement these core handlers following the exact patterns from RolesSection:
 
 1. **handleCreatePersonality** - Opens form modal in create mode
 2. **handleEditPersonality** - Opens form modal with selected personality data
@@ -41,100 +44,129 @@ Implement these core handlers following the feature specification patterns:
 4. **handleSavePersonality** - Processes form submission for create/edit
 5. **handleConfirmDelete** - Executes personality deletion
 
-### Integration Points
+### Handler Implementation Patterns
+
+**Create Handler (match RolesSection exactly):**
+
+```tsx
+const handleCreatePersonality = useCallback(() => {
+  logger.info("Opening create personality modal");
+  setFormMode("create");
+  setSelectedPersonality(undefined);
+  setDeleteDialogOpen(false); // Ensure only one modal open
+  setFormModalOpen(true);
+}, []);
+```
+
+**Edit Handler (match RolesSection exactly):**
+
+```tsx
+const handleEditPersonality = useCallback(
+  (personality: PersonalityViewModel) => {
+    logger.info("Opening edit personality modal", {
+      personalityId: personality.id,
+      personalityName: personality.name,
+    });
+    setFormMode("edit");
+    setSelectedPersonality(personality);
+    setDeleteDialogOpen(false); // Ensure only one modal open
+    setFormModalOpen(true);
+  },
+  [],
+);
+```
+
+**Delete Handler (match RolesSection exactly):**
+
+```tsx
+const handleDeletePersonality = useCallback(
+  (personality: PersonalityViewModel) => {
+    logger.info("Opening delete confirmation dialog", {
+      personalityId: personality.id,
+      personalityName: personality.name,
+    });
+    setSelectedPersonality(personality);
+    setFormModalOpen(false); // Ensure only one modal open
+    setDeleteDialogOpen(true);
+  },
+  [],
+);
+```
+
+### Store Integration
 
 - Connect to personalities store actions (createPersonality, updatePersonality, deletePersonality)
 - Use store loading/error states appropriately
-- Handle success/error feedback with toast notifications
-- Manage modal state transitions properly
+- Follow exact error handling patterns from RolesSection
+- Use same logging patterns and performance measurement
+
+### Component Integration
+
+**Modal Integration (match RolesSection exactly):**
+
+```tsx
+{
+  /* Personality creation/editing modal */
+}
+<PersonalityFormModal
+  isOpen={formModalOpen}
+  onOpenChange={setFormModalOpen}
+  mode={formMode}
+  personality={selectedPersonality}
+  onSave={handleSavePersonality}
+  isLoading={isSaving}
+/>;
+
+{
+  /* Personality deletion confirmation dialog */
+}
+<DeletePersonalityDialog
+  isOpen={deleteDialogOpen}
+  onOpenChange={setDeleteDialogOpen}
+  personality={selectedPersonality || null}
+  onConfirm={handleConfirmDelete}
+  isLoading={isSaving}
+/>;
+```
 
 ## Technical Approach
 
-1. Add state management to PersonalitiesSection:
-
-   ```tsx
-   const [formModalOpen, setFormModalOpen] = useState(false);
-   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-   const [formMode, setFormMode] = useState<"create" | "edit">("create");
-   const [selectedPersonality, setSelectedPersonality] =
-     useState<PersonalityViewModel>();
-   ```
-
-2. Implement handlers following feature specification:
-
-   ```tsx
-   const handleCreatePersonality = () => {
-     setFormMode("create");
-     setSelectedPersonality(undefined);
-     setFormModalOpen(true);
-   };
-
-   const handleEditPersonality = (personality: PersonalityViewModel) => {
-     setFormMode("edit");
-     setSelectedPersonality(personality);
-     setFormModalOpen(true);
-   };
-
-   const handleSavePersonality = async (data: PersonalityFormData) => {
-     try {
-       if (formMode === "create") {
-         await createPersonality(data);
-       } else {
-         await updatePersonality(selectedPersonality.id, data);
-       }
-       setFormModalOpen(false);
-       toast.success(
-         `Personality ${formMode === "create" ? "created" : "updated"}`,
-       );
-     } catch (error) {
-       toast.error(error.message);
-     }
-   };
-   ```
-
-3. Handle loading states from store
-4. Implement proper error handling and success feedback
+1. **Copy State Management Pattern** from RolesSection
+2. **Copy Handler Implementations** from RolesSection with personality-specific adaptations
+3. **Use Same Store Integration Pattern** as RolesSection
+4. **Follow Exact Logging Patterns** including performance measurement
+5. **Handle Loading States** exactly like RolesSection
 
 ## Acceptance Criteria
 
 ### State Management
 
-- [ ] Form modal state properly tracks open/closed
-- [ ] Delete dialog state properly tracks open/closed
+- [ ] State variables match RolesSection pattern exactly
+- [ ] Modal state properly tracks open/closed
 - [ ] Form mode correctly switches between create/edit
 - [ ] Selected personality properly set for edit/delete operations
 - [ ] State resets appropriately after operations
 
-### Create Flow
+### Handler Functions
 
-- [ ] Create button opens form modal in create mode
-- [ ] Form renders empty for new personality
-- [ ] Save creates new personality via store action
-- [ ] Success closes modal and shows success toast
-- [ ] Error keeps modal open and shows error toast
+- [ ] All handlers follow exact RolesSection patterns
+- [ ] Logging includes same level of detail as roles
+- [ ] Error handling matches roles implementation
+- [ ] Performance measurement included where appropriate
+- [ ] Modal mutual exclusion logic implemented
 
-### Edit Flow
+### Store Integration
 
-- [ ] Edit button opens form modal in edit mode
-- [ ] Form pre-populates with selected personality data
-- [ ] Save updates existing personality via store action
-- [ ] Success closes modal and shows success toast
-- [ ] Error keeps modal open and shows error toast
+- [ ] Store actions called correctly (createPersonality, updatePersonality, deletePersonality)
+- [ ] Loading states used from store (isSaving, isLoading)
+- [ ] Error handling follows roles patterns
+- [ ] Success/error feedback implemented
 
-### Delete Flow
+### Component Integration
 
-- [ ] Delete button opens confirmation dialog
-- [ ] Dialog shows correct personality name
-- [ ] Confirm executes deletion via store action
-- [ ] Success closes dialog and shows success toast
-- [ ] Error shows error toast but may close dialog
-
-### Error Handling
-
-- [ ] All store errors properly caught and displayed
-- [ ] Toast notifications show appropriate messages
-- [ ] Loading states prevent duplicate operations
-- [ ] Network errors handled gracefully
+- [ ] PersonalityFormModal receives correct props following roles pattern
+- [ ] DeletePersonalityDialog receives correct props following roles pattern
+- [ ] Prop names match established patterns (isOpen, isLoading, etc.)
 
 ## Testing Requirements
 
@@ -143,18 +175,26 @@ Implement these core handlers following the feature specification patterns:
 - Test form mode switches correctly
 - Test store integration for create/update/delete
 - Test success and error scenarios
-- Test toast notifications appear correctly
-- Test loading state management
+- Test logging output matches roles patterns
 
 ## Dependencies
 
 - personalities store with createPersonality, updatePersonality, deletePersonality actions
 - PersonalityViewModel and PersonalityFormData types
-- Toast notification system
-- React state management (useState)
+- PersonalityFormModal component (already exists and follows correct pattern)
+- DeletePersonalityDialog component (needs to be updated to follow correct pattern)
+- Logger utility from @fishbowl-ai/shared
 
 ## Files to Modify
 
-- Update: `apps/desktop/src/renderer/components/personalities/PersonalitiesSection.tsx`
+- Update: `apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx`
 - Add unit tests for handler functions
 - Integration tests for complete user flows
+
+## Prerequisites
+
+- DeletePersonalityDialog must be updated to use correct props (T-create-deletepersonalitydialog)
+
+## Priority
+
+**HIGH** - Core functionality needed for user interactions

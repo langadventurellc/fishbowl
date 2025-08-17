@@ -16,174 +16,198 @@ created: 2025-08-17T18:49:48.645Z
 updated: 2025-08-17T18:49:48.645Z
 ---
 
-# Integrate All Components and Complete User Interactions
+# Integrate Components Following Roles Architecture
 
 ## Context
 
-Complete the user interactions feature by integrating all modal components with PersonalitiesSection, adding keyboard navigation support, and ensuring the complete user flow works seamlessly. This final task brings together all the individual components into a cohesive user experience.
+Integrate all personality components into a cohesive PersonalitiesSection that exactly mirrors the architecture and patterns established in the roles section. This ensures consistency across the application.
 
 ## Implementation Requirements
 
-### Component Integration
+### PersonalitiesSection Architecture
 
-- Wire PersonalityFormModal into PersonalitiesSection
-- Wire DeletePersonalityDialog into PersonalitiesSection
-- Connect all handler functions to appropriate components
-- Pass props correctly between components
-- Ensure modal state management works end-to-end
+Create PersonalitiesSection.tsx following the exact structure of RolesSection.tsx:
 
-### Keyboard Navigation
+1. **Import Structure** - Match roles imports exactly
+2. **Store Integration** - Use personalities store with same patterns as roles store
+3. **State Management** - Copy state management patterns exactly
+4. **Handler Functions** - Implement handlers following roles patterns
+5. **Component Structure** - Match component layout and integration
+6. **Error Handling** - Use same error display and handling
+7. **Loading States** - Match loading state management
+8. **Empty State** - Create personalities empty state matching roles
 
-- ESC key closes modals (built into Dialog components)
-- Enter key submits forms when appropriate
-- Tab navigation works within modals
-- Focus management between modals and main content
-- Keyboard accessibility throughout interaction flows
+### Component Integration Pattern
 
-### PersonalitiesSection Updates
+**Follow RolesSection Component Structure Exactly:**
 
-- Add Create button that opens form modal
-- Pass edit/delete handlers to PersonalitiesList
-- Render both modal components with proper state
-- Handle all modal state transitions
-- Integrate with loading and error states
+```tsx
+export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({ className }) => {
+  // Store subscriptions (match roles exactly)
+  const personalities = usePersonalitiesStore((state) => state.personalities);
+  const isLoading = usePersonalitiesStore((state) => state.isLoading);
+  const error = usePersonalitiesStore((state) => state.error);
+  const isSaving = usePersonalitiesStore((state) => state.isSaving);
 
-### User Flow Completion
+  // Store methods (match roles exactly)
+  const createPersonality = usePersonalitiesStore((state) => state.createPersonality);
+  const updatePersonality = usePersonalitiesStore((state) => state.updatePersonality);
+  const deletePersonality = usePersonalitiesStore((state) => state.deletePersonality);
+  const clearError = usePersonalitiesStore((state) => state.clearError);
+  const retryLastOperation = usePersonalitiesStore((state) => state.retryLastOperation);
 
-- Create personality: button → modal → form → success
-- Edit personality: edit button → modal → form → success
-- Delete personality: delete button → dialog → confirmation → success
-- All error scenarios handled gracefully
-- Loading states work throughout flows
+  // Modal state management (match roles exactly)
+  const [selectedPersonality, setSelectedPersonality] = useState<PersonalityViewModel | undefined>(undefined);
+  const [formModalOpen, setFormModalOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
 
-## Technical Approach
+  // Handlers (copy from roles with personality adaptations)
+  // ... handlers implementation
 
-1. **PersonalitiesSection Integration**
+  return (
+    <div className={cn("personalities-section space-y-6", className)}>
+      {/* Header (match roles) */}
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Personalities</h1>
+        <p className="text-muted-foreground mb-6">
+          Define and configure agent personalities and characteristics.
+        </p>
+      </div>
 
-   ```tsx
-   const PersonalitiesSection = () => {
-     // State management
-     const [formModalOpen, setFormModalOpen] = useState(false);
-     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-     const [formMode, setFormMode] = useState<"create" | "edit">("create");
-     const [selectedPersonality, setSelectedPersonality] = useState<PersonalityViewModel>();
+      {/* Error display (match roles exactly) */}
+      {error?.message && (
+        /* Error component matching roles */
+      )}
 
-     // Handlers
-     const handleCreatePersonality = () => { ... };
-     const handleEditPersonality = (personality) => { ... };
-     const handleDeletePersonality = (personality) => { ... };
-     const handleSavePersonality = async (data) => { ... };
-     const handleConfirmDelete = async (personality) => { ... };
+      {/* Loading state (match roles) */}
+      {/* Empty state or list (match roles) */}
 
-     return (
-       <div>
-         <PersonalitiesHeader onCreateClick={handleCreatePersonality} />
-         <PersonalitiesList
-           personalities={personalities}
-           onEdit={handleEditPersonality}
-           onDelete={handleDeletePersonality}
-         />
+      {/* Modals (match roles integration) */}
+      <PersonalityFormModal
+        isOpen={formModalOpen}
+        onOpenChange={setFormModalOpen}
+        mode={formMode}
+        personality={selectedPersonality}
+        onSave={handleSavePersonality}
+        isLoading={isSaving}
+      />
 
-         <PersonalityFormModal
-           open={formModalOpen}
-           onOpenChange={setFormModalOpen}
-           mode={formMode}
-           personality={selectedPersonality}
-           onSave={handleSavePersonality}
-           onCancel={() => setFormModalOpen(false)}
-           isSaving={isLoading}
-         />
+      <DeletePersonalityDialog
+        isOpen={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        personality={selectedPersonality || null}
+        onConfirm={handleConfirmDelete}
+        isLoading={isSaving}
+      />
+    </div>
+  );
+};
+```
 
-         <DeletePersonalityDialog
-           open={deleteDialogOpen}
-           onOpenChange={setDeleteDialogOpen}
-           personality={selectedPersonality}
-           onConfirm={handleConfirmDelete}
-           isDeleting={isLoading}
-         />
-       </div>
-     );
-   };
-   ```
+### Keyboard Navigation Support
 
-2. **Keyboard Navigation Setup**
-   - Ensure Dialog components handle ESC properly
-   - Add keyboard event listeners where needed
-   - Test tab order within modals
-   - Verify focus management
+Following roles section patterns:
 
-3. **Props and State Flow**
-   - Pass store states to components
-   - Handle modal state changes correctly
-   - Ensure proper prop drilling
-   - Test all component interactions
+- Tab navigation between interactive elements
+- ESC key closes modals (handled by Dialog components)
+- Enter key activates buttons
+- Ctrl/Cmd+S saves forms (if implemented in forms)
+- Focus management during modal operations
+
+### PersonalitiesList Component
+
+Create PersonalitiesList component matching RolesList:
+
+- Display personality cards in grid/list layout
+- Handle create/edit/delete button callbacks
+- Proper accessibility attributes
+- Loading states for individual items
+- Empty state when no personalities
 
 ## Acceptance Criteria
 
-### Complete User Flows
+### Architecture Consistency
 
-- [ ] Create flow: Create button opens modal, form submission creates personality, modal closes on success
-- [ ] Edit flow: Edit button opens modal with data, form submission updates personality, modal closes on success
-- [ ] Delete flow: Delete button opens dialog, confirmation deletes personality, dialog closes on success
-- [ ] Cancel flow: Cancel buttons close modals without saving
-- [ ] All flows handle errors appropriately
+- [ ] PersonalitiesSection structure matches RolesSection exactly
+- [ ] Store integration patterns match roles implementation
+- [ ] State management follows same patterns as roles
+- [ ] Handler functions follow same patterns as roles
+- [ ] Error handling matches roles section exactly
+- [ ] Loading states match roles implementation
 
 ### Component Integration
 
-- [ ] PersonalityFormModal renders and functions correctly
-- [ ] DeletePersonalityDialog renders and functions correctly
-- [ ] PersonalitiesList passes correct handlers to cards
-- [ ] PersonalityCard buttons trigger correct actions
-- [ ] All modal state transitions work properly
+- [ ] PersonalityFormModal integrated with correct props
+- [ ] DeletePersonalityDialog integrated with correct props
+- [ ] PersonalitiesList component created and integrated
+- [ ] All prop names match established patterns (isOpen, isLoading, etc.)
+- [ ] Modal state management prevents multiple modals open
+
+### User Experience
+
+- [ ] Create button opens modal in create mode
+- [ ] Edit buttons open modal with pre-populated data
+- [ ] Delete buttons show confirmation dialog
+- [ ] ESC key closes modals properly
+- [ ] Clicking backdrop closes modals
+- [ ] Focus management works correctly
+- [ ] Loading states prevent race conditions
 
 ### Keyboard Navigation
 
-- [ ] ESC key closes modals in all scenarios
-- [ ] Tab navigation works within modals
-- [ ] Enter key submits forms appropriately
-- [ ] Focus returns to appropriate element after modal close
-- [ ] Keyboard accessibility meets standards
+- [ ] Tab navigation works between all interactive elements
+- [ ] ESC key closes modals
+- [ ] Enter key activates focused buttons
+- [ ] Keyboard shortcuts work (if implemented)
+- [ ] Focus trapping works in modals
+- [ ] Focus restoration after modal close
 
-### State Management
+### Visual Consistency
 
-- [ ] Modal open/close states managed correctly
-- [ ] Form mode switches appropriately
-- [ ] Selected personality set correctly for edit/delete
-- [ ] Loading states integrated properly
-- [ ] Error states handled correctly
-
-### Visual Polish
-
-- [ ] Modals animate smoothly
-- [ ] Focus indicators visible and appropriate
-- [ ] Loading states provide good feedback
-- [ ] No layout shifts or flickering
-- [ ] Consistent styling throughout
+- [ ] Layout matches roles section structure
+- [ ] Styling consistent with roles section
+- [ ] Empty state matches roles empty state
+- [ ] Error display matches roles error display
+- [ ] Loading states match roles loading states
 
 ## Testing Requirements
 
-- Test complete create personality flow
-- Test complete edit personality flow
-- Test complete delete personality flow
-- Test cancel scenarios for all modals
-- Test keyboard navigation and accessibility
+- Integration tests for complete user flows
 - Test modal state management
-- Test error scenarios for all flows
-- Test loading state integration
-- Test rapid interaction scenarios
+- Test keyboard navigation
+- Test error scenarios
+- Test loading states
+- Test accessibility features
+- Test component interactions
 
 ## Dependencies
 
-- PersonalityFormModal component (T-implement-personalityformmodal)
-- DeletePersonalityDialog component (T-create-deletepersonalitydialog)
-- Interaction handlers (T-implement-user-interaction)
-- PersonalitiesList and PersonalityCard components (from F-create-list-components)
-- personalities store integration
+- PersonalityFormModal (verified to follow correct patterns)
+- DeletePersonalityDialog (needs prop updates)
+- PersonalitiesList component (to be created)
+- PersonalityCard components
+- personalities store
+- All handler implementations from previous tasks
 
-## Files to Modify
+## Files to Create/Modify
 
-- Update: `apps/desktop/src/renderer/components/personalities/PersonalitiesSection.tsx`
-- Update: `apps/desktop/src/renderer/components/personalities/PersonalitiesHeader.tsx` (add create button)
+- Create: `apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx`
+- Create: `apps/desktop/src/components/settings/personalities/PersonalitiesList.tsx` (if not exists)
+- Update: Any existing personality list components
 - Add comprehensive integration tests
-- Add end-to-end tests for complete user flows
-- Update unit tests for all modified components
+
+## Prerequisites
+
+- T-implement-user-interaction (handlers implementation)
+- T-create-deletepersonalitydialog (prop fixes)
+- T-add-loading-states-and (loading state management)
+- T-implement-comprehensive-error (error handling)
+
+## Priority
+
+**MEDIUM** - Final integration bringing all components together
+
+## Notes
+
+This task focuses on ensuring the personalities section exactly matches the roles section architecture, providing consistency across the application and ensuring maintainability.

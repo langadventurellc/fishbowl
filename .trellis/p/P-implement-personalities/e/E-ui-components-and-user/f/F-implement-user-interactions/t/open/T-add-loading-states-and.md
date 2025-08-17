@@ -13,100 +13,112 @@ created: 2025-08-17T18:48:38.384Z
 updated: 2025-08-17T18:48:38.384Z
 ---
 
-# Implement Loading States and Button Management
+# Implement Loading States Following Roles Pattern
 
 ## Context
 
-Add comprehensive loading state management to prevent race conditions, duplicate submissions, and provide visual feedback during async operations. This includes button states, loading overlays, and proper loading text as specified in the feature requirements.
+Add comprehensive loading state management following the exact patterns established in the roles section. This ensures consistency in loading behavior and prevents race conditions across the application.
 
 ## Implementation Requirements
 
 ### Loading State Sources
 
-- Use personalities store loading states for async operations
-- Track local loading states for specific operations when needed
+- Use personalities store loading states for async operations following roles pattern
+- Use `isSaving` and `isLoading` states from store (matching roles)
 - Disable form submissions during save operations
 - Show loading overlays on cards during deletion
 - Display appropriate loading text ("Creating...", "Updating...", "Deleting...")
 
-### Button State Management
+### Button State Management Following Roles Pattern
 
-- Disable save button during form submission
-- Disable delete buttons during deletion operations
-- Show spinner icons during loading
+- Disable save button during form submission using `isLoading` prop
+- Disable delete buttons during deletion operations using `isLoading` prop
+- Show spinner icons during loading (Loader2 from lucide-react)
 - Change button text to indicate current operation
 - Prevent rapid clicking and duplicate submissions
 
-### Visual Loading Indicators
+### Visual Loading Indicators Following Roles Pattern
 
-- Form save button: disabled state + spinner + "Creating..."/"Updating..." text
-- Delete button in dialog: disabled state + "Deleting..." text
-- Card overlay during deletion (optional enhancement)
-- Form fields disabled during save (optional enhancement)
+**Form Save Button (match RoleFormModal pattern):**
+
+```tsx
+<Button type="submit" disabled={isLoading || isSubmitting} className="w-full">
+  {isLoading ? (
+    <>
+      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      {mode === "create" ? "Creating..." : "Updating..."}
+    </>
+  ) : mode === "create" ? (
+    "Create Personality"
+  ) : (
+    "Update Personality"
+  )}
+</Button>
+```
+
+**Delete Button in Dialog (match RoleDeleteDialog pattern):**
+
+```tsx
+<AlertDialogAction onClick={handleConfirmDelete} disabled={isLoading}>
+  {isLoading ? (
+    <>
+      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+      Deleting...
+    </>
+  ) : (
+    "Delete"
+  )}
+</AlertDialogAction>
+```
 
 ## Technical Approach
 
-1. **Form Modal Loading States**
+1. **PersonalityFormModal Loading States**
+   - Use `isLoading` prop (not `isSaving`) to match roles pattern
+   - Pass loading state to PersonalityForm component
+   - Ensure save button shows correct loading state
 
-   ```tsx
-   // In PersonalityFormModal and PersonalityForm
-   <Button type="submit" disabled={isSaving || isSubmitting} className="w-full">
-     {isSaving ? (
-       <>
-         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-         {mode === "create" ? "Creating..." : "Updating..."}
-       </>
-     ) : mode === "create" ? (
-       "Create Personality"
-     ) : (
-       "Update Personality"
-     )}
-   </Button>
-   ```
-
-2. **Delete Dialog Loading States**
-
-   ```tsx
-   // In DeletePersonalityDialog
-   <AlertDialogAction onClick={handleConfirmDelete} disabled={isDeleting}>
-     {isDeleting ? (
-       <>
-         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-         Deleting...
-       </>
-     ) : (
-       "Delete"
-     )}
-   </AlertDialogAction>
-   ```
+2. **DeletePersonalityDialog Loading States**
+   - Use `isLoading` prop (not `isDeleting`) to match roles pattern
+   - Show spinner and "Deleting..." text during operation
+   - Disable button during deletion
 
 3. **Store Integration**
-   - Use store `isLoading` state for overall operations
-   - Track specific operation states if store doesn't provide granular states
+   - Use store `isSaving` state for operations
+   - Pass as `isLoading` prop to components
    - Integrate with store error states for proper error handling
 
 4. **Card Loading States** (optional enhancement)
-   - Add overlay div during deletion
-   - Fade out card or show deletion in progress
+   - Add overlay div during deletion if needed
+   - Follow roles section implementation
+
+## Prop Name Corrections
+
+**IMPORTANT**: Ensure all prop names match the roles pattern:
+
+- ✅ Use `isLoading` (not `isSaving` or `isDeleting`)
+- ✅ Use `isOpen` (not `open`)
+- ✅ Follow exact prop interface from roles components
 
 ## Acceptance Criteria
 
 ### Form Loading States
 
-- [ ] Save button disabled during form submission
-- [ ] Save button shows spinner icon during loading
+- [ ] Save button disabled during form submission using `isLoading` prop
+- [ ] Save button shows spinner icon during loading (Loader2)
 - [ ] Save button text changes to "Creating..." or "Updating..."
 - [ ] Form submission prevented during loading
-- [ ] Form fields optionally disabled during save
 - [ ] Loading state clears on success or error
+- [ ] Props match PersonalityFormModal interface exactly
 
 ### Delete Loading States
 
-- [ ] Delete button in dialog disabled during deletion
+- [ ] Delete button in dialog disabled during deletion using `isLoading` prop
 - [ ] Delete button shows "Deleting..." text during operation
-- [ ] Delete button shows spinner icon during loading
+- [ ] Delete button shows spinner icon during loading (Loader2)
 - [ ] Deletion operation cannot be triggered multiple times
 - [ ] Loading state clears after deletion completes
+- [ ] Props match corrected DeletePersonalityDialog interface
 
 ### Button Interaction Prevention
 
@@ -117,10 +129,10 @@ Add comprehensive loading state management to prevent race conditions, duplicate
 
 ### Visual Consistency
 
-- [ ] Loading spinners use consistent icon (Loader2)
+- [ ] Loading spinners use Loader2 icon (consistent with roles)
 - [ ] Loading text follows pattern: "[Action]ing..."
 - [ ] Disabled states use consistent styling
-- [ ] Loading states match existing app patterns
+- [ ] Loading states match roles section patterns exactly
 
 ## Testing Requirements
 
@@ -136,13 +148,22 @@ Add comprehensive loading state management to prevent race conditions, duplicate
 
 - Loader2 icon from lucide-react
 - Button component from shadcn/ui
-- personalities store loading states
+- personalities store loading states (isSaving, isLoading)
 - React state management for local loading tracking
 
 ## Files to Modify
 
-- Update: `apps/desktop/src/renderer/components/personalities/PersonalityFormModal.tsx`
-- Update: `apps/desktop/src/renderer/components/personalities/DeletePersonalityDialog.tsx`
-- Update: `apps/desktop/src/renderer/components/personalities/PersonalityForm.tsx` (if needed)
-- Update: `apps/desktop/src/renderer/components/personalities/PersonalityCard.tsx` (if adding card overlays)
+- Update: `apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx` (verify loading states)
+- Update: `apps/desktop/src/components/settings/personalities/DeletePersonalityDialog.tsx` (fix prop names)
+- Update: `apps/desktop/src/components/settings/personalities/PersonalityForm.tsx` (if needed)
+- Update: `apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx` (ensure correct props passed)
 - Add unit tests for loading state behavior
+
+## Prerequisites
+
+- DeletePersonalityDialog props must be corrected first (T-create-deletepersonalitydialog)
+- PersonalityFormModal already follows correct pattern
+
+## Priority
+
+**MEDIUM** - Important for user experience and preventing race conditions
