@@ -65,6 +65,11 @@ affectedFiles:
     app startup, following exact same patterns as roles integration. Includes
     proper error handling and logging for both repository initialization and IPC
     handler registration.
+  apps/desktop/src/contexts/PersonalitiesProvider.tsx: Created new
+    PersonalitiesProvider component with context, lifecycle management, loading
+    states, and error handling following RolesProvider pattern
+  packages/ui-shared/src/stores/index.ts: Added export for usePersonalitiesStore
+    to make it available for import in desktop app
 log: []
 schema: v1.0
 childrenIds:
