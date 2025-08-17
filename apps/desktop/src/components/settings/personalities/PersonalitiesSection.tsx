@@ -18,7 +18,7 @@ import type {
   PersonalityFormData,
 } from "@fishbowl-ai/ui-shared";
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
-import { AlertCircle, Plus } from "lucide-react";
+import { AlertCircle, Plus, RotateCcw, X } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { DeletePersonalityDialog } from "./DeletePersonalityDialog";
 import { PersonalitiesList } from "./PersonalitiesList";
@@ -165,7 +165,54 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
     [],
   );
 
-  // Form save handler - connects to store operations
+  // Helper to detect which fields changed for verification and logging
+  const getChangedFields = useCallback(
+    (
+      original: PersonalityViewModel,
+      updated: PersonalityFormData,
+    ): string[] => {
+      const changed: string[] = [];
+
+      if (original.name !== updated.name) changed.push("name");
+      if (original.bigFive.openness !== updated.bigFive.openness)
+        changed.push("bigFive.openness");
+      if (
+        original.bigFive.conscientiousness !== updated.bigFive.conscientiousness
+      )
+        changed.push("bigFive.conscientiousness");
+      if (original.bigFive.extraversion !== updated.bigFive.extraversion)
+        changed.push("bigFive.extraversion");
+      if (original.bigFive.agreeableness !== updated.bigFive.agreeableness)
+        changed.push("bigFive.agreeableness");
+      if (original.bigFive.neuroticism !== updated.bigFive.neuroticism)
+        changed.push("bigFive.neuroticism");
+
+      // Compare behaviors if they exist
+      if (original.behaviors || updated.behaviors) {
+        const originalBehaviors = original.behaviors || {};
+        const updatedBehaviors = updated.behaviors || {};
+
+        const allBehaviorKeys = new Set([
+          ...Object.keys(originalBehaviors),
+          ...Object.keys(updatedBehaviors),
+        ]);
+
+        for (const key of allBehaviorKeys) {
+          if (originalBehaviors[key] !== updatedBehaviors[key]) {
+            changed.push(`behaviors.${key}`);
+          }
+        }
+      }
+
+      if (original.customInstructions !== updated.customInstructions)
+        changed.push("customInstructions");
+
+      return changed;
+    },
+    [],
+  );
+
+  // Real save handler using store operations
   const handleFormSave = useCallback(
     async (data: PersonalityFormData) => {
       logger.info("Saving personality", {
@@ -179,25 +226,72 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
 
         if (formMode === "create") {
           // Create new personality
-          createPersonality(data);
-          logger.info("Personality created successfully");
+          const newPersonalityId = createPersonality(data);
+
+          if (newPersonalityId) {
+            logger.info("Personality created successfully", {
+              personalityId: newPersonalityId,
+            });
+            // Close modal only on successful creation
+            setFormModalOpen(false);
+            setSelectedPersonality(undefined);
+          } else {
+            // Creation failed - error is already set in store
+            logger.warn(
+              "Personality creation failed - name might not be unique",
+            );
+          }
         } else if (selectedPersonality?.id) {
+          // Track changes for performance measurement and verification
+          const startTime = performance.now();
+          const changedFields = getChangedFields(selectedPersonality, data);
+
           // Update existing personality
           updatePersonality(selectedPersonality.id, data);
-          logger.info("Personality updated successfully", {
-            personalityId: selectedPersonality.id,
-          });
-        }
 
-        // Modal closes automatically via PersonalityFormModal's onSave handler
-        setSelectedPersonality(undefined);
+          // Check if update succeeded by checking error state
+          const currentError = usePersonalitiesStore.getState().error;
+          const updateTime = performance.now() - startTime;
+
+          if (!currentError?.message) {
+            // Verify timestamp was updated
+            const updatedPersonality = usePersonalitiesStore
+              .getState()
+              .personalities.find((p) => p.id === selectedPersonality.id);
+            const timestampUpdated =
+              updatedPersonality &&
+              updatedPersonality.updatedAt &&
+              selectedPersonality.updatedAt
+                ? new Date(updatedPersonality.updatedAt) >
+                  new Date(selectedPersonality.updatedAt)
+                : false;
+
+            logger.info("Personality updated successfully", {
+              personalityId: selectedPersonality.id,
+              updateTime: `${updateTime.toFixed(2)}ms`,
+              fieldsChanged: changedFields,
+              timestampUpdated,
+              changedFieldCount: changedFields.length,
+            });
+
+            // Close modal only on successful update
+            setFormModalOpen(false);
+            setSelectedPersonality(undefined);
+          } else {
+            logger.warn("Personality update failed", {
+              error: currentError.message,
+              updateTime: `${updateTime.toFixed(2)}ms`,
+              attemptedChanges: changedFields,
+            });
+          }
+        }
       } catch (error) {
-        // Error handling - modal stays open for retry
+        // Handle unexpected errors
         logger.error(
           "Failed to save personality",
           error instanceof Error ? error : new Error(String(error)),
         );
-        // PersonalityFormModal will handle showing the error to user
+        // Keep modal open on error
       }
     },
     [
@@ -206,13 +300,13 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
       createPersonality,
       updatePersonality,
       clearError,
+      getChangedFields,
     ],
   );
 
-  // Delete confirmation handler - executes personality deletion
   const handleConfirmDelete = useCallback(
     async (personality: PersonalityViewModel) => {
-      logger.info("Confirming personality deletion", {
+      logger.info("Deleting personality", {
         personalityId: personality.id,
         personalityName: personality.name,
       });
@@ -221,22 +315,33 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
         // Clear any existing errors
         clearError();
 
-        // Execute deletion
+        // Perform the actual deletion
         deletePersonality(personality.id);
-        logger.info("Personality deleted successfully", {
-          personalityId: personality.id,
-        });
 
-        // Close dialog and clear selection
-        setDeleteDialogOpen(false);
-        setSelectedPersonality(undefined);
+        // Check if deletion succeeded by checking error state
+        const currentError = usePersonalitiesStore.getState().error;
+        if (!currentError?.message) {
+          logger.info("Personality deleted successfully", {
+            personalityId: personality.id,
+            personalityName: personality.name,
+          });
+          // Close dialog only on successful deletion
+          setDeleteDialogOpen(false);
+          setSelectedPersonality(undefined);
+        } else {
+          logger.warn("Personality deletion failed", {
+            error: currentError.message,
+            personalityId: personality.id,
+          });
+          // Keep dialog open on error
+        }
       } catch (error) {
-        // Error handling - dialog stays open for retry
+        // Handle unexpected errors
         logger.error(
           "Failed to delete personality",
           error instanceof Error ? error : new Error(String(error)),
         );
-        // DeletePersonalityDialog will handle showing the error to user
+        // Keep dialog open on error
       }
     },
     [deletePersonality, clearError],
@@ -332,15 +437,36 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
                       : "Error"}
                   </p>
                   <p className="text-sm text-destructive/80">{error.message}</p>
+                  {error.retryCount > 0 && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Retry attempt {error.retryCount}
+                    </p>
+                  )}
                 </div>
-                <button
-                  onClick={retryLastOperation}
-                  className="text-sm text-destructive hover:text-destructive/80 underline"
-                  aria-label="Retry last operation"
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearError}
+                  className="h-6 w-6 p-0 text-destructive hover:text-destructive/80 hover:bg-destructive/10"
+                  aria-label="Dismiss error"
                 >
-                  Retry
-                </button>
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
+              {error.isRetryable && error.operation && (
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={retryLastOperation}
+                    className="h-7 text-xs border-destructive/20 text-destructive hover:bg-destructive/10"
+                    disabled={isSaving || isLoading}
+                  >
+                    <RotateCcw className="h-3 w-3 mr-1" />
+                    Retry
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </div>

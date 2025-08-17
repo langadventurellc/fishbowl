@@ -27,7 +27,11 @@ affectedFiles:
     Added handleConfirmDelete function, imported DeletePersonalityDialog
     component, removed underscore from deleteDialogOpen state variable, and
     integrated DeletePersonalityDialog component in JSX with proper props
-    following established patterns
+    following established patterns; Updated error handling patterns to match
+    RolesSection exactly - added comprehensive error checking after operations,
+    performance measurement with getChangedFields helper, enhanced error display
+    with retry/dismiss buttons, proper modal behavior that stays open on errors,
+    and detailed logging that matches roles patterns
   apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
     Created comprehensive test suite covering header layout, button
     functionality, component structure, accessibility, and layout implementation

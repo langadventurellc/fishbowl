@@ -125,7 +125,11 @@ affectedFiles:
     required props.; Added handleConfirmDelete function, imported
     DeletePersonalityDialog component, removed underscore from deleteDialogOpen
     state variable, and integrated DeletePersonalityDialog component in JSX with
-    proper props following established patterns
+    proper props following established patterns; Updated error handling patterns
+    to match RolesSection exactly - added comprehensive error checking after
+    operations, performance measurement with getChangedFields helper, enhanced
+    error display with retry/dismiss buttons, proper modal behavior that stays
+    open on errors, and detailed logging that matches roles patterns
   packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
     'create-new' tab types from SettingsSubTab since personalities no longer
     uses tabs

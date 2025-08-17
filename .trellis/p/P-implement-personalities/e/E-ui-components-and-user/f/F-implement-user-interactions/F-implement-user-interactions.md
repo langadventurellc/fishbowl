@@ -27,7 +27,11 @@ affectedFiles:
     Added handleConfirmDelete function, imported DeletePersonalityDialog
     component, removed underscore from deleteDialogOpen state variable, and
     integrated DeletePersonalityDialog component in JSX with proper props
-    following established patterns
+    following established patterns; Updated error handling patterns to match
+    RolesSection exactly - added comprehensive error checking after operations,
+    performance measurement with getChangedFields helper, enhanced error display
+    with retry/dismiss buttons, proper modal behavior that stays open on errors,
+    and detailed logging that matches roles patterns
   apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
     Updated button loading logic to use isLoading prop instead of isSubmitting
     for loading state display, and changed loading text to 'Creating...' or
@@ -35,9 +39,9 @@ affectedFiles:
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-loading-states-and
   - T-implement-comprehensive-error
   - T-integrate-all-components-and
+  - T-add-loading-states-and
   - T-create-deletepersonalitydialog
   - T-implement-personalityformmodal
   - T-implement-user-interaction
