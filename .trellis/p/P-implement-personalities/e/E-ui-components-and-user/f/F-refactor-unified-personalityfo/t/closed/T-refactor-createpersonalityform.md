@@ -1,13 +1,27 @@
 ---
 id: T-refactor-createpersonalityform
 title: Refactor CreatePersonalityForm to unified PersonalityForm with modes
-status: open
+status: done
 priority: high
 parent: F-refactor-unified-personalityfo
 prerequisites:
   - T-remove-localstorage-logic
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Renamed from CreatePersonalityForm.tsx and refactored to unified component
+    with create/edit modes, advanced change detection, field-level dirty
+    tracking, and inline form actions
+  apps/desktop/src/components/settings/personalities/index.ts: Added PersonalityForm export to barrel file
+log:
+  - Successfully refactored CreatePersonalityForm to unified PersonalityForm
+    with modes following the exact CreateRoleForm pattern. Implemented advanced
+    change detection with meaningful comparison, field-level dirty state
+    tracking, and proper form state management. Updated form submission handling
+    with async error management, enhanced unsaved changes integration, and
+    replaced FormActions with inline buttons matching the reference
+    implementation. All acceptance criteria completed including proper
+    mode-aware functionality, sophisticated change detection, React Hook Form
+    integration with zodResolver, and comprehensive form reset/cancel logic.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T15:58:18.731Z

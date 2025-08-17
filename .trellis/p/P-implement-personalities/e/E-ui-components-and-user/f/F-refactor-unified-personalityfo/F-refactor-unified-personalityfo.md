@@ -18,15 +18,20 @@ affectedFiles:
     (create|edit), changed initialData type to PersonalityViewModel, added
     existingPersonalities and isLoading props, enhanced JSDoc documentation with
     usage examples and default value information"
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Renamed from CreatePersonalityForm.tsx and refactored to unified component
+    with create/edit modes, advanced change detection, field-level dirty
+    tracking, and inline form actions
+  apps/desktop/src/components/settings/personalities/index.ts: Added PersonalityForm export to barrel file
 log: []
 schema: v1.0
 childrenIds:
   - T-create-personalityformmodal
   - T-integrate-personalityformmodal
   - T-refactor-createpersonalityform
-  - T-remove-localstorage-logic
   - T-update-tests-and-cleanup-for
   - T-create-personalityformmodalpro
+  - T-remove-localstorage-logic
   - T-update-createpersonalityformpr
 created: 2025-08-17T14:17:39.713Z
 updated: 2025-08-17T14:17:39.713Z

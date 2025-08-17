@@ -34,7 +34,7 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/index.ts:
     Added EmptyState export to personalities module; Added exports for
     PersonalitiesList and PersonalityCard components to complete the barrel
-    exports
+    exports; Added PersonalityForm export to barrel file
   apps/desktop/src/components/settings/personalities/__tests__/EmptyState.test.tsx:
     Created comprehensive unit tests covering rendering, interactions,
     accessibility, and responsive behavior
@@ -68,6 +68,10 @@ affectedFiles:
     (create|edit), changed initialData type to PersonalityViewModel, added
     existingPersonalities and isLoading props, enhanced JSDoc documentation with
     usage examples and default value information"
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Renamed from CreatePersonalityForm.tsx and refactored to unified component
+    with create/edit modes, advanced change detection, field-level dirty
+    tracking, and inline form actions
 log: []
 schema: v1.0
 childrenIds:
