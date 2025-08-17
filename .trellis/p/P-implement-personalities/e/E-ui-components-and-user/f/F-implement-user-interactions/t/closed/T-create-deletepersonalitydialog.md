@@ -1,7 +1,7 @@
 ---
 id: T-create-deletepersonalitydialog
 title: Create DeletePersonalityDialog confirmation modal
-status: open
+status: done
 priority: high
 parent: F-implement-user-interactions
 prerequisites: []
@@ -9,12 +9,18 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/DeletePersonalityDialog.tsx:
     Created new DeletePersonalityDialog component with AlertDialog structure,
     loading states, keyboard shortcuts, accessibility features, and proper
-    TypeScript interfaces
+    TypeScript interfaces; Updated component to use isOpen instead of open,
+    isLoading instead of isDeleting, and import interface from shared package
   apps/desktop/src/components/settings/personalities/index.ts: Added DeletePersonalityDialog export to make component available for import
   apps/desktop/src/components/settings/personalities/__tests__/DeletePersonalityDialog.test.tsx:
     Created comprehensive test suite covering dialog rendering, user
     interactions, loading states, keyboard navigation, edge cases, and
-    accessibility features
+    accessibility features; Updated unit tests to use new prop names and
+    interface patterns
+  packages/ui-shared/src/types/settings/PersonalityDeleteDialogProps.ts:
+    Created new shared interface for PersonalityDeleteDialog props matching
+    RoleDeleteDialog pattern
+  packages/ui-shared/src/types/settings/index.ts: Added export for PersonalityDeleteDialogProps
 log:
   - 'Successfully implemented DeletePersonalityDialog confirmation modal
     component following the AlertDialog pattern specified in the feature
@@ -26,6 +32,15 @@ log:
     patterns. Added comprehensive unit tests covering all behavior scenarios
     including edge cases. All quality checks (lint, format, type-check) and
     tests are passing.'
+  - 'Successfully implemented DeletePersonalityDialog confirmation modal
+    component following the established patterns. Fixed props interface to match
+    RoleDeleteDialog pattern: changed `open` to `isOpen`, `isDeleting` to
+    `isLoading`, and moved interface to shared package. Component now uses
+    consistent prop names across the application, implements proper loading
+    states with disabled buttons and "Deleting..." text, supports keyboard
+    navigation (Enter to confirm, ESC to cancel), includes proper accessibility
+    attributes, and follows destructive action styling patterns. All unit tests
+    updated and passing, quality checks (lint, format, type-check) passing.'
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T18:47:38.643Z

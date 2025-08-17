@@ -37,6 +37,7 @@ export * from "./NavigationItemProps";
 export * from "./persistence";
 export * from "./Personality";
 export * from "./PersonalityCardProps";
+export * from "./PersonalityDeleteDialogProps";
 export * from "./PersonalityFormData";
 export * from "./PersonalityFormModalProps";
 export * from "./PersonalityNameInputProps";

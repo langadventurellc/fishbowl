@@ -11,7 +11,7 @@
  * @module components/settings/personalities/DeletePersonalityDialog
  */
 
-import type { PersonalityViewModel } from "@fishbowl-ai/ui-shared";
+import type { PersonalityDeleteDialogProps } from "@fishbowl-ai/ui-shared";
 import { Loader2 } from "lucide-react";
 import { memo, useEffect } from "react";
 import {
@@ -25,28 +25,20 @@ import {
   AlertDialogTitle,
 } from "../../ui/alert-dialog";
 
-export interface DeletePersonalityDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  personality?: PersonalityViewModel;
-  onConfirm: (personality: PersonalityViewModel) => Promise<void>;
-  isDeleting?: boolean;
-}
-
-export const DeletePersonalityDialog = memo<DeletePersonalityDialogProps>(
+export const DeletePersonalityDialog = memo<PersonalityDeleteDialogProps>(
   function DeletePersonalityDialog({
-    open,
+    isOpen,
     onOpenChange,
     personality,
     onConfirm,
-    isDeleting = false,
+    isLoading = false,
   }) {
     // Handle keyboard shortcuts
     useEffect(() => {
-      if (!open) return;
+      if (!isOpen) return;
 
       const handleKeyDown = (event: KeyboardEvent) => {
-        if (event.key === "Enter" && !isDeleting && personality) {
+        if (event.key === "Enter" && !isLoading && personality) {
           event.preventDefault();
           onConfirm(personality);
         }
@@ -54,22 +46,22 @@ export const DeletePersonalityDialog = memo<DeletePersonalityDialogProps>(
 
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [open, isDeleting, personality, onConfirm]);
+    }, [isOpen, isLoading, personality, onConfirm]);
 
     // Prevent dialog closing during operation
     const handleOpenChange = (newOpen: boolean) => {
-      if (isDeleting) return;
+      if (isLoading) return;
       onOpenChange(newOpen);
     };
 
     const handleConfirmDelete = () => {
-      if (personality && !isDeleting) {
+      if (personality && !isLoading) {
         onConfirm(personality);
       }
     };
 
     return (
-      <AlertDialog open={open} onOpenChange={handleOpenChange}>
+      <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Personality</AlertDialogTitle>
@@ -88,10 +80,10 @@ export const DeletePersonalityDialog = memo<DeletePersonalityDialogProps>(
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isLoading}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
-              disabled={isDeleting || !personality}
+              disabled={isLoading || !personality}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               aria-label={
                 personality
@@ -99,8 +91,8 @@ export const DeletePersonalityDialog = memo<DeletePersonalityDialogProps>(
                   : "Delete personality"
               }
             >
-              {isDeleting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isLoading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+              {isLoading ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

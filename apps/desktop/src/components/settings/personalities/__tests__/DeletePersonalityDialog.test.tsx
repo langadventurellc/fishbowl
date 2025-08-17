@@ -23,11 +23,11 @@ const mockPersonality: PersonalityViewModel = {
 };
 
 const defaultProps = {
-  open: true,
+  isOpen: true,
   onOpenChange: jest.fn(),
   personality: mockPersonality,
   onConfirm: jest.fn(),
-  isDeleting: false,
+  isLoading: false,
 };
 
 describe("DeletePersonalityDialog Component", () => {
@@ -82,14 +82,14 @@ describe("DeletePersonalityDialog Component", () => {
   });
 
   it("shows loading state during deletion", () => {
-    render(<DeletePersonalityDialog {...defaultProps} isDeleting={true} />);
+    render(<DeletePersonalityDialog {...defaultProps} isLoading={true} />);
 
     expect(screen.getByText("Deleting...")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Delete/ })).toBeInTheDocument();
   });
 
   it("disables buttons during deletion", () => {
-    render(<DeletePersonalityDialog {...defaultProps} isDeleting={true} />);
+    render(<DeletePersonalityDialog {...defaultProps} isLoading={true} />);
 
     const cancelButton = screen.getByText("Cancel");
     const deleteButton = screen.getByText("Deleting...");
@@ -99,7 +99,7 @@ describe("DeletePersonalityDialog Component", () => {
   });
 
   it("prevents dialog closing during deletion", () => {
-    render(<DeletePersonalityDialog {...defaultProps} isDeleting={true} />);
+    render(<DeletePersonalityDialog {...defaultProps} isLoading={true} />);
 
     const cancelButton = screen.getByText("Cancel");
     fireEvent.click(cancelButton);
@@ -118,7 +118,7 @@ describe("DeletePersonalityDialog Component", () => {
   });
 
   it("does not confirm deletion on Enter when loading", async () => {
-    render(<DeletePersonalityDialog {...defaultProps} isDeleting={true} />);
+    render(<DeletePersonalityDialog {...defaultProps} isLoading={true} />);
 
     fireEvent.keyDown(document, { key: "Enter" });
 
@@ -128,9 +128,7 @@ describe("DeletePersonalityDialog Component", () => {
   });
 
   it("handles missing personality gracefully", () => {
-    render(
-      <DeletePersonalityDialog {...defaultProps} personality={undefined} />,
-    );
+    render(<DeletePersonalityDialog {...defaultProps} personality={null} />);
 
     expect(
       screen.getByText(
@@ -143,9 +141,7 @@ describe("DeletePersonalityDialog Component", () => {
   });
 
   it("disables Delete button when no personality provided", () => {
-    render(
-      <DeletePersonalityDialog {...defaultProps} personality={undefined} />,
-    );
+    render(<DeletePersonalityDialog {...defaultProps} personality={null} />);
 
     const deleteButton = screen.getByText("Delete");
     expect(deleteButton).toBeDisabled();
@@ -162,7 +158,7 @@ describe("DeletePersonalityDialog Component", () => {
   });
 
   it("does not render when dialog is closed", () => {
-    render(<DeletePersonalityDialog {...defaultProps} open={false} />);
+    render(<DeletePersonalityDialog {...defaultProps} isOpen={false} />);
 
     expect(screen.queryByText("Delete Personality")).not.toBeInTheDocument();
   });
@@ -183,7 +179,7 @@ describe("DeletePersonalityDialog Component", () => {
 
     const removeEventListenerSpy = jest.spyOn(document, "removeEventListener");
 
-    rerender(<DeletePersonalityDialog {...defaultProps} open={false} />);
+    rerender(<DeletePersonalityDialog {...defaultProps} isOpen={false} />);
 
     expect(removeEventListenerSpy).toHaveBeenCalledWith(
       "keydown",

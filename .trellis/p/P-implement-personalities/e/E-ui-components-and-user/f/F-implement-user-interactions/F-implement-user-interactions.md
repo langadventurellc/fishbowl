@@ -11,12 +11,18 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/DeletePersonalityDialog.tsx:
     Created new DeletePersonalityDialog component with AlertDialog structure,
     loading states, keyboard shortcuts, accessibility features, and proper
-    TypeScript interfaces
+    TypeScript interfaces; Updated component to use isOpen instead of open,
+    isLoading instead of isDeleting, and import interface from shared package
   apps/desktop/src/components/settings/personalities/index.ts: Added DeletePersonalityDialog export to make component available for import
   apps/desktop/src/components/settings/personalities/__tests__/DeletePersonalityDialog.test.tsx:
     Created comprehensive test suite covering dialog rendering, user
     interactions, loading states, keyboard navigation, edge cases, and
-    accessibility features
+    accessibility features; Updated unit tests to use new prop names and
+    interface patterns
+  packages/ui-shared/src/types/settings/PersonalityDeleteDialogProps.ts:
+    Created new shared interface for PersonalityDeleteDialog props matching
+    RoleDeleteDialog pattern
+  packages/ui-shared/src/types/settings/index.ts: Added export for PersonalityDeleteDialogProps
 log: []
 schema: v1.0
 childrenIds:
