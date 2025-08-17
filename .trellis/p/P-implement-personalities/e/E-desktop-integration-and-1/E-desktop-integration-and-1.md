@@ -1,15 +1,23 @@
 ---
 id: E-desktop-integration-and-1
 title: Desktop Integration and Services
-status: open
+status: in-progress
 priority: medium
 parent: P-implement-personalities
 prerequisites:
   - E-persistence-layer-and-state
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/adapters/desktopPersonalitiesAdapter.ts: Created new adapter
+    class implementing PersonalitiesPersistenceAdapter interface with save(),
+    load(), and reset() stub methods. Includes proper TypeScript types, JSDoc
+    documentation, and exported instance following established patterns.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-desktop-personalities-adapter
+  - F-electron-ipc-personalities
+  - F-personalities-file-management
+  - F-react-personalities-context
 created: 2025-08-15T17:59:56.660Z
 updated: 2025-08-15T17:59:56.660Z
 ---
