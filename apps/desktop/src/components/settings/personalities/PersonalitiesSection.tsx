@@ -1,101 +1,35 @@
 /**
- * PersonalitiesSection component provides personalities management interface.
+ * PersonalitiesSection component displays a unified list of personalities.
  *
  * Features:
- * - Store integration with usePersonalitiesStore
- * - Modal state management for forms and dialogs
- * - Loading and error state handling with retry functionality
- * - Foundation layout ready for personality list implementation
+ * - Single unified list view of all personalities (no tab distinction)
+ * - Displays sample personalities data for demonstration
+ * - Modal infrastructure preserved for future functionality
+ * - Integration with settings modal navigation state
+ * - Responsive design and accessibility compliance
+ * - Edit/Delete buttons present but functional with store operations
  *
  * @module components/settings/PersonalitiesSection
  */
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import type {
   PersonalityViewModel,
   PersonalityFormData,
+  PersonalitiesSectionProps,
 } from "@fishbowl-ai/ui-shared";
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
-import { AlertCircle, Plus, RotateCcw, X } from "lucide-react";
-import React, { useCallback, useState } from "react";
-import { DeletePersonalityDialog } from "./DeletePersonalityDialog";
+import React, { useCallback, useState, useMemo } from "react";
+import { UserPlus, Plus, AlertCircle, RotateCcw, X } from "lucide-react";
+import { cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
 import { PersonalitiesList } from "./PersonalitiesList";
+import { DeletePersonalityDialog } from "./DeletePersonalityDialog";
 import { PersonalityFormModal } from "./PersonalityFormModal";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 
 const logger = createLoggerSync({
   config: { name: "PersonalitiesSection", level: "info" },
 });
-
-// Mock personality data for testing the list integration
-const mockPersonalities: PersonalityViewModel[] = [
-  {
-    id: "mock-1",
-    name: "Creative Brainstormer",
-    bigFive: {
-      openness: 4.2,
-      conscientiousness: 3.1,
-      extraversion: 3.8,
-      agreeableness: 4.0,
-      neuroticism: 2.3,
-    },
-    behaviors: {
-      enthusiasm: 0.8,
-      creativity: 0.9,
-      collaboration: 0.7,
-    },
-    customInstructions:
-      "Focus on generating innovative ideas and thinking outside the box. Encourage wild ideas and build upon others' suggestions.",
-    createdAt: "2024-01-15T10:00:00.000Z",
-    updatedAt: "2024-01-20T15:30:00.000Z",
-  },
-  {
-    id: "mock-2",
-    name: "Analytical Researcher",
-    bigFive: {
-      openness: 3.9,
-      conscientiousness: 4.5,
-      extraversion: 2.8,
-      agreeableness: 3.2,
-      neuroticism: 2.1,
-    },
-    behaviors: {
-      precision: 0.9,
-      skepticism: 0.7,
-      thoroughness: 0.8,
-      factChecking: 0.9,
-    },
-    customInstructions:
-      "Always verify facts and provide evidence-based responses. Question assumptions and dig deep into details.",
-    createdAt: "2024-01-10T09:00:00.000Z",
-    updatedAt: "2024-01-25T14:45:00.000Z",
-  },
-  {
-    id: "mock-3",
-    name: "Empathetic Facilitator",
-    bigFive: {
-      openness: 3.7,
-      conscientiousness: 3.8,
-      extraversion: 4.1,
-      agreeableness: 4.6,
-      neuroticism: 2.0,
-    },
-    behaviors: {
-      empathy: 0.9,
-      patience: 0.8,
-      encouragement: 0.9,
-    },
-    customInstructions:
-      "Listen actively and help others feel heard. Provide emotional support and create inclusive environments for all participants.",
-    createdAt: "2024-01-12T11:30:00.000Z",
-    updatedAt: "2024-01-18T16:20:00.000Z",
-  },
-];
-
-interface PersonalitiesSectionProps {
-  className?: string;
-}
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
   className,
@@ -129,12 +63,12 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
 
-  // Modal opening handlers - will connect to modals in future features
+  // Modal opening handlers - opens modals with appropriate data
   const handleCreatePersonality = useCallback(() => {
-    logger.info("Create personality button clicked");
+    logger.info("Opening create personality modal");
     setFormMode("create");
     setSelectedPersonality(undefined);
-    setDeleteDialogOpen(false);
+    setDeleteDialogOpen(false); // Ensure only one modal open
     setFormModalOpen(true);
   }, []);
 
@@ -347,72 +281,67 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
     [deletePersonality, clearError],
   );
 
-  // Show loading state
+  // Render empty state when no personalities exist
+  const renderEmptyState = useMemo(() => {
+    if (!isLoading && personalities.length === 0) {
+      return (
+        <div className="flex flex-col items-center justify-center py-16 px-4">
+          <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
+            <UserPlus className="h-8 w-8 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-semibold mb-2 text-center">
+            No personalities configured
+          </h3>
+          <p className="text-sm text-muted-foreground text-center mb-6 max-w-md leading-relaxed">
+            Create your first personality to define custom agent behaviors and
+            characteristics
+          </p>
+          <Button
+            onClick={handleCreatePersonality}
+            className="gap-2"
+            aria-label="Create your first personality"
+          >
+            <Plus className="h-4 w-4" />
+            Create First Personality
+          </Button>
+        </div>
+      );
+    }
+    return null;
+  }, [isLoading, personalities.length, handleCreatePersonality]);
+
+  // Early return for loading state
   if (isLoading) {
     return (
-      <div className={cn("space-y-6 p-6", className)}>
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Personalities</h2>
-            <p className="text-muted-foreground">
-              Manage agent personalities and their characteristics.
+      <div className={cn("personalities-section space-y-6", className)}>
+        <div>
+          <h1 className="text-2xl font-bold mb-2">Personalities</h1>
+          <p className="text-muted-foreground mb-6">
+            Define and configure agent personalities and characteristics.
+          </p>
+        </div>
+        <div className="flex items-center justify-center min-h-[200px]">
+          <div className="text-center">
+            <div
+              className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-2"
+              aria-label="Loading personalities..."
+            />
+            <p className="text-sm text-muted-foreground">
+              Loading personalities...
             </p>
           </div>
-          <Button onClick={handleCreatePersonality} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Create Personality
-          </Button>
-        </div>
-        <div className="flex items-center justify-center py-8">
-          <div className="text-muted-foreground">Loading personalities...</div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show error state with retry option
-  if (error?.message) {
-    return (
-      <div className={cn("space-y-6 p-6", className)}>
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-3xl font-bold tracking-tight">Personalities</h2>
-            <p className="text-muted-foreground">
-              Manage agent personalities and their characteristics.
-            </p>
-          </div>
-          <Button onClick={handleCreatePersonality} className="gap-2">
-            <Plus className="h-4 w-4" />
-            Create Personality
-          </Button>
-        </div>
-        <div className="flex flex-col items-center justify-center py-8 space-y-4">
-          <div className="text-destructive">Error: {error.message}</div>
-          <button
-            onClick={retryLastOperation}
-            className="text-primary hover:underline"
-          >
-            Retry
-          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={cn("space-y-6 p-6", className)}>
-      {/* Header section with create button */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold tracking-tight">Personalities</h2>
-          <p className="text-muted-foreground">
-            Manage agent personalities and their characteristics.
-          </p>
-        </div>
-        <Button onClick={handleCreatePersonality} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Create Personality
-        </Button>
+    <div className={cn("personalities-section space-y-6", className)}>
+      <div>
+        <h1 className="text-2xl font-bold mb-2">Personalities</h1>
+        <p className="text-muted-foreground mb-6">
+          Define and configure agent personalities and characteristics.
+        </p>
       </div>
 
       {/* Error state display */}
@@ -472,49 +401,17 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
         </div>
       )}
 
-      {/* Content area with PersonalitiesList integration */}
-      <div className="space-y-6">
-        {/* New List Component for testing */}
-        <div>
-          <h3 className="text-lg font-medium mb-4">
-            Personalities List (Preview)
-          </h3>
-          <PersonalitiesList
-            personalities={mockPersonalities}
-            onEdit={handleEditPersonality}
-            onDelete={handleDeletePersonality}
-            onCreateClick={handleCreatePersonality}
-          />
-        </div>
+      {/* Conditionally render empty state or personalities list */}
+      {renderEmptyState || (
+        <PersonalitiesList
+          personalities={personalities}
+          onCreateClick={handleCreatePersonality}
+          onEdit={handleEditPersonality}
+          onDelete={handleDeletePersonality}
+        />
+      )}
 
-        {/* Original content remains for now */}
-        <div className="min-h-[400px]">
-          {personalities.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 px-4">
-              <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
-                <Plus className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-xl font-semibold mb-2 text-center">
-                No personalities yet (Store Data)
-              </h3>
-              <p className="text-sm text-muted-foreground text-center mb-6 max-w-md leading-relaxed">
-                Create your first personality to define unique agent behaviors
-                and characteristics
-              </p>
-              <Button onClick={handleCreatePersonality} className="gap-2">
-                <Plus className="h-4 w-4" />
-                Create First Personality
-              </Button>
-            </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              Store-based personality list will be connected in future tasks
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Personality Form Modal */}
+      {/* Personality creation/editing modal */}
       <PersonalityFormModal
         isOpen={formModalOpen}
         onOpenChange={setFormModalOpen}

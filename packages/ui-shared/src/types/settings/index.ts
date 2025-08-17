@@ -41,6 +41,7 @@ export * from "./PersonalityDeleteDialogProps";
 export * from "./PersonalityFormData";
 export * from "./PersonalityFormModalProps";
 export * from "./PersonalityNameInputProps";
+export * from "./PersonalitiesSectionProps";
 export * from "./PersonalityViewModel";
 export * from "./PredefinedRole";
 export * from "./providers";

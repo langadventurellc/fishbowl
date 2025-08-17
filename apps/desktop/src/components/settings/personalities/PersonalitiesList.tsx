@@ -1,79 +1,90 @@
 /**
- * PersonalitiesList component serves as the main container for displaying all personalities
- * in a responsive grid layout.
+ * PersonalitiesList component displays all personalities in a single list interface.
  *
  * Features:
- * - Responsive grid layout (1/2/3 columns)
- * - Empty state handling with EmptyState component
- * - Loading state support
- * - Passes callbacks to individual PersonalityCard components
- * - Proper accessibility and performance optimizations
+ * - Single list view for all personalities
+ * - Static personality data (no loading states)
+ * - All personalities editable (no read-only restrictions)
+ * - Alphabetical sorting by name
+ * - Responsive design with accessibility support
+ * - Memoized for performance
  *
- * @module components/settings/personalities/PersonalitiesList
+ * @module components/settings/PersonalitiesList
  */
 
 import type { PersonalityViewModel } from "@fishbowl-ai/ui-shared";
-import React from "react";
+import { Plus } from "lucide-react";
+import { memo, useMemo } from "react";
 import { cn } from "../../../lib/utils";
-import { EmptyState } from "./EmptyState";
+import { Button } from "../../ui/button";
 import { PersonalityCard } from "./PersonalityCard";
 
 interface PersonalitiesListProps {
-  /** Array of personalities to display */
-  personalities: PersonalityViewModel[];
-  /** Callback when a personality's edit button is clicked */
-  onEdit: (personality: PersonalityViewModel) => void;
-  /** Callback when a personality's delete button is clicked */
-  onDelete: (personality: PersonalityViewModel) => void;
-  /** Callback when create button is clicked in empty state */
-  onCreateClick: () => void;
-  /** Optional loading state indicator */
-  isLoading?: boolean;
-  /** Additional CSS class names */
+  personalities: readonly PersonalityViewModel[];
+  onCreateClick?: () => void;
+  onEdit?: (personality: PersonalityViewModel) => void;
+  onDelete?: (personality: PersonalityViewModel) => void;
   className?: string;
 }
 
-export const PersonalitiesList: React.FC<PersonalitiesListProps> = ({
-  personalities,
-  onEdit,
-  onDelete,
-  onCreateClick,
-  isLoading = false,
-  className,
-}) => {
-  // Simple loading state (can be enhanced with skeleton cards if needed)
-  if (isLoading) {
+export const PersonalitiesList = memo<PersonalitiesListProps>(
+  function PersonalitiesList({
+    personalities,
+    onCreateClick = () => {},
+    onEdit = () => {},
+    onDelete = () => {},
+    className,
+  }) {
+    // Sort personalities alphabetically by name
+    const sortedPersonalities = useMemo(() => {
+      return [...personalities].sort((a, b) => a.name.localeCompare(b.name));
+    }, [personalities]);
+
     return (
-      <div
-        className={cn("flex items-center justify-center py-16", className)}
-        aria-label="Loading personalities"
-      >
-        <div className="text-sm text-muted-foreground">Loading...</div>
+      <div className={cn("personalities-list flex flex-col h-full", className)}>
+        {/* Accessible heading for screen readers */}
+        <h2 className="sr-only">All Personalities List</h2>
+
+        {/* Personality list area */}
+        <div className="flex-1">
+          <div
+            className="space-y-4"
+            role="list"
+            aria-label={`${sortedPersonalities.length} personalities available`}
+            aria-describedby="personalities-list-description"
+          >
+            {/* Hidden description for screen readers */}
+            <div id="personalities-list-description" className="sr-only">
+              List of {sortedPersonalities.length} available personalities. Use
+              Tab to navigate through personality items and their action
+              buttons.
+            </div>
+
+            {sortedPersonalities.map((personality) => (
+              <div key={personality.id} role="listitem">
+                <PersonalityCard
+                  personality={personality}
+                  onEdit={onEdit}
+                  onDelete={onDelete}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Create button container - always visible at bottom */}
+        <div className="pt-6 border-t border-border mt-6">
+          <Button
+            onClick={onCreateClick}
+            className="w-full gap-2"
+            size="lg"
+            aria-label="Create a new personality"
+          >
+            <Plus className="h-4 w-4" />
+            Create Personality
+          </Button>
+        </div>
       </div>
     );
-  }
-
-  // Show empty state when no personalities exist
-  if (personalities.length === 0) {
-    return <EmptyState onCreateClick={onCreateClick} className={className} />;
-  }
-
-  // Render grid of personality cards
-  return (
-    <div
-      className={cn("grid gap-4 md:grid-cols-2 lg:grid-cols-3", className)}
-      role="grid"
-      aria-label={`${personalities.length} personalities available`}
-    >
-      {personalities.map((personality) => (
-        <div key={personality.id} role="gridcell">
-          <PersonalityCard
-            personality={personality}
-            onEdit={onEdit}
-            onDelete={onDelete}
-          />
-        </div>
-      ))}
-    </div>
-  );
-};
+  },
+);

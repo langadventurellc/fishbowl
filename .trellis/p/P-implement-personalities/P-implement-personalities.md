@@ -1,7 +1,7 @@
 ---
 id: P-implement-personalities
 title: Implement Personalities Settings with JSON Persistence
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -100,7 +100,7 @@ affectedFiles:
     button from component showcase examples to eliminate draft-related UI
     components.
   apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
-    Removed unsaved changes confirmation dialog when switching tabs, eliminated
+    "Removed unsaved changes confirmation dialog when switching tabs, eliminated
     useUnsavedChanges hook usage, and removed useConfirmationDialog import.
     Simplified tab navigation without draft-specific protection.; Completely
     removed TabContainer usage and replaced with unified layout showing both
@@ -129,7 +129,10 @@ affectedFiles:
     to match RolesSection exactly - added comprehensive error checking after
     operations, performance measurement with getChangedFields helper, enhanced
     error display with retry/dismiss buttons, proper modal behavior that stays
-    open on errors, and detailed logging that matches roles patterns
+    open on errors, and detailed logging that matches roles patterns; Complete
+    restructure to match RolesSection patterns: updated imports, store
+    integration, modal state management, error handling, empty state rendering,
+    and component layout"
   packages/ui-shared/src/stores/settings/settingsSubTab.ts: Removed 'saved' and
     'create-new' tab types from SettingsSubTab since personalities no longer
     uses tabs
@@ -144,11 +147,15 @@ affectedFiles:
     allow underscore variables for intentionally unused destructured variables
   packages/ui-shared/src/types/settings/InteractiveTabsProps.ts: Removed unused type definition (no references found)
   packages/ui-shared/src/types/settings/TabSectionConfiguration.ts: Removed unused type definition (no references found)
-  packages/ui-shared/src/types/settings/PersonalitiesSectionProps.ts: Removed empty interface that was no longer needed
+  packages/ui-shared/src/types/settings/PersonalitiesSectionProps.ts:
+    Removed empty interface that was no longer needed; Created new props
+    interface for PersonalitiesSection component following RolesSectionProps
+    pattern
   packages/ui-shared/src/types/settings/index.ts: Updated exports to remove
     references to deleted type definitions; Added export for
     PersonalityViewModel type; Added export for PersonalityFormModalProps
-    interface; Added export for PersonalityDeleteDialogProps
+    interface; Added export for PersonalityDeleteDialogProps; Added export for
+    PersonalitiesSectionProps interface
   packages/ui-shared/src/types/personalities/persistence/PersonalitiesPersistenceError.ts:
     Created new error class extending Error with operation and cause properties,
     following RolesPersistenceError pattern
@@ -319,7 +326,9 @@ affectedFiles:
     display, edit/delete button functionality, Big Five traits display, and dual
     content area layout. Fixed store mocking to properly handle Zustand
     selectors and ensured all 23 tests pass; Added mock for PersonalityFormModal
-    component to prevent test failures after integration.
+    component to prevent test failures after integration.; Updated test suite to
+    match new component structure, fixed button references and expectations to
+    align with implementation
   apps/desktop/src/components/settings/personalities/EmptyState.tsx:
     Created new EmptyState component following app patterns with Users icon,
     clear messaging, and create button
@@ -347,9 +356,11 @@ affectedFiles:
     behavior count calculation, custom instructions truncation, and empty state
     handling
   apps/desktop/src/components/settings/personalities/PersonalitiesList.tsx:
-    Created new PersonalitiesList container component with responsive grid
+    "Created new PersonalitiesList container component with responsive grid
     layout, empty state handling, loading state support, and proper
-    accessibility features
+    accessibility features; Refactored from grid layout to vertical list layout
+    following RolesList patterns: added alphabetical sorting, integrated create
+    button, proper accessibility attributes, and performance memoization"
   packages/ui-shared/src/types/settings/PersonalityFormModalProps.ts:
     Created new interface file with PersonalityFormModalProps following
     RoleFormModalProps pattern
@@ -389,7 +400,8 @@ affectedFiles:
   packages/ui-shared/src/types/settings/PersonalityDeleteDialogProps.ts:
     Created new shared interface for PersonalityDeleteDialog props matching
     RoleDeleteDialog pattern
-log: []
+log:
+  - "Auto-completed: All child epics are complete"
 schema: v1.0
 childrenIds:
   - E-data-foundation-and-schema-1
