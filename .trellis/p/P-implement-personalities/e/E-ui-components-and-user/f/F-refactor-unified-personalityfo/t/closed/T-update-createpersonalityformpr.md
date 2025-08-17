@@ -1,13 +1,26 @@
 ---
 id: T-update-createpersonalityformpr
 title: Update CreatePersonalityFormProps to match roles pattern
-status: open
+status: done
 priority: high
 parent: F-refactor-unified-personalityfo
 prerequisites:
   - T-create-personalityformmodalpro
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/settings/CreatePersonalityFormProps.ts:
+    "Updated interface to match CreateRoleFormProps pattern: added mode prop
+    (create|edit), changed initialData type to PersonalityViewModel, added
+    existingPersonalities and isLoading props, enhanced JSDoc documentation with
+    usage examples and default value information"
+log:
+  - Successfully updated CreatePersonalityFormProps interface to match the
+    CreateRoleFormProps pattern. Added mode prop for create/edit distinction,
+    updated initialData type to use PersonalityViewModel for edit mode, added
+    existingPersonalities prop for validation, and isLoading prop for state
+    management. Enhanced JSDoc documentation with comprehensive usage guidance.
+    All existing functionality remains compatible through optional props.
+    Interface now supports unified form component pattern with proper type
+    safety and backwards compatibility.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T15:57:39.285Z

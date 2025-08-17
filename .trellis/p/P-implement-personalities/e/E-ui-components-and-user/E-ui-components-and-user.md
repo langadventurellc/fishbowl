@@ -63,6 +63,11 @@ affectedFiles:
   packages/ui-shared/src/types/settings/__tests__/PersonalityFormModalProps.test.ts:
     Added comprehensive unit tests for interface type checking and import
     validation
+  packages/ui-shared/src/types/settings/CreatePersonalityFormProps.ts:
+    "Updated interface to match CreateRoleFormProps pattern: added mode prop
+    (create|edit), changed initialData type to PersonalityViewModel, added
+    existingPersonalities and isLoading props, enhanced JSDoc documentation with
+    usage examples and default value information"
 log: []
 schema: v1.0
 childrenIds:
