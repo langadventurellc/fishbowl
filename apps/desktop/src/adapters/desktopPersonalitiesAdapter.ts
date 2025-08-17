@@ -1,5 +1,8 @@
 import type { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
-import { PersonalitiesPersistenceAdapter } from "@fishbowl-ai/ui-shared";
+import {
+  PersonalitiesPersistenceAdapter,
+  PersonalitiesPersistenceError,
+} from "@fishbowl-ai/ui-shared";
 
 /**
  * Desktop implementation of PersonalitiesPersistenceAdapter that uses Electron IPC
@@ -11,10 +14,17 @@ import { PersonalitiesPersistenceAdapter } from "@fishbowl-ai/ui-shared";
 export class DesktopPersonalitiesAdapter
   implements PersonalitiesPersistenceAdapter
 {
-  async save(
-    _personalities: PersistedPersonalitiesSettingsData,
-  ): Promise<void> {
-    throw new Error("Method not implemented");
+  async save(personalities: PersistedPersonalitiesSettingsData): Promise<void> {
+    try {
+      await window.electronAPI.personalities.save(personalities);
+    } catch (error) {
+      if (error instanceof PersonalitiesPersistenceError) {
+        throw error;
+      }
+      const message =
+        error instanceof Error ? error.message : "Failed to save personalities";
+      throw new PersonalitiesPersistenceError(message, "save", error);
+    }
   }
 
   async load(): Promise<PersistedPersonalitiesSettingsData | null> {
