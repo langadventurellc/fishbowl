@@ -1,0 +1,151 @@
+---
+id: F-create-list-components
+title: Create List Components
+status: open
+priority: medium
+parent: E-ui-components-and-user
+prerequisites:
+  - F-remove-tab-navigation-and
+affectedFiles: {}
+log: []
+schema: v1.0
+childrenIds: []
+created: 2025-08-17T14:17:05.414Z
+updated: 2025-08-17T14:17:05.414Z
+---
+
+# Create PersonalitiesList and PersonalityCard Components
+
+## Purpose and Goals
+
+Create the new list view components that display all personalities in a unified interface. This includes the PersonalitiesList container, individual PersonalityCard components, and an EmptyState component for when no personalities exist.
+
+## Key Components to Implement
+
+### PersonalitiesList Component
+
+- Grid/list container for personality cards
+- Handles empty state rendering
+- Accepts personalities array, onEdit, and onDelete callbacks
+- Responsive layout with proper spacing
+
+### PersonalityCard Component
+
+- Displays individual personality information
+- Shows name, Big Five traits summary, behavior count
+- Includes Edit and Delete action buttons
+- Uses Card component from shadcn/ui
+- Matches RoleCard visual design
+
+### EmptyState Component
+
+- Helpful message when no personalities exist
+- Prominent "Create your first personality" call-to-action
+- Icon and descriptive text
+- Follows app's empty state patterns
+
+## Detailed Acceptance Criteria
+
+### PersonalitiesList Requirements
+
+- [ ] Renders grid of PersonalityCard components
+- [ ] Shows EmptyState when personalities array is empty
+- [ ] Passes edit/delete handlers to cards
+- [ ] Uses responsive grid (1 column mobile, 2 columns tablet, 3 columns desktop)
+- [ ] Proper spacing between cards (gap-4)
+- [ ] Handles loading state appropriately
+
+### PersonalityCard Requirements
+
+- [ ] Displays personality name prominently
+- [ ] Shows Big Five trait averages or key traits
+- [ ] Displays behavior trait count
+- [ ] Custom instructions preview (truncated)
+- [ ] Edit button with Pencil icon
+- [ ] Delete button with Trash icon
+- [ ] Hover states on action buttons
+- [ ] Card uses consistent padding and shadows
+
+### EmptyState Requirements
+
+- [ ] Clear message: "No personalities yet"
+- [ ] Helpful subtext explaining personalities purpose
+- [ ] Large, prominent create button
+- [ ] Uses muted colors for text
+- [ ] Centers content appropriately
+- [ ] Matches other empty states in app
+
+### Visual Requirements
+
+- [ ] Cards match Role cards in size and style
+- [ ] Consistent icon usage (lucide-react icons)
+- [ ] Proper text truncation with ellipsis
+- [ ] Action buttons aligned consistently
+- [ ] Responsive breakpoints work correctly
+
+## Implementation Guidance
+
+### PersonalitiesList Structure
+
+```tsx
+export const PersonalitiesList = ({
+  personalities,
+  onEdit,
+  onDelete,
+  onCreateClick,
+}) => {
+  if (personalities.length === 0) {
+    return <EmptyState onCreateClick={onCreateClick} />;
+  }
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      {personalities.map((personality) => (
+        <PersonalityCard
+          key={personality.id}
+          personality={personality}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
+      ))}
+    </div>
+  );
+};
+```
+
+### PersonalityCard Structure
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>{personality.name}</CardTitle>
+    <CardDescription>
+      {behaviorCount} behaviors • {customInstructionsPreview}
+    </CardDescription>
+  </CardHeader>
+  <CardContent>{/* Big Five traits summary */}</CardContent>
+  <CardFooter>
+    <Button variant="outline" size="sm" onClick={handleEdit}>
+      <Pencil className="h-4 w-4" />
+      Edit
+    </Button>
+    <Button variant="outline" size="sm" onClick={handleDelete}>
+      <Trash className="h-4 w-4" />
+      Delete
+    </Button>
+  </CardFooter>
+</Card>
+```
+
+## Testing Requirements
+
+- List renders correct number of cards
+- Empty state shows when no personalities
+- Edit/Delete buttons trigger callbacks
+- Cards display all personality data
+- Responsive layout adjusts properly
+- Text truncation works correctly
+
+## Dependencies
+
+- **F-remove-tab-navigation-and**: Requires restructured PersonalitiesSection to integrate into
