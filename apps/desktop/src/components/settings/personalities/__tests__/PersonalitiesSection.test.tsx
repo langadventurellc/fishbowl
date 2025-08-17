@@ -28,6 +28,11 @@ jest.mock("@fishbowl-ai/shared", () => ({
   })),
 }));
 
+// Mock the PersonalityFormModal component
+jest.mock("../PersonalityFormModal", () => ({
+  PersonalityFormModal: jest.fn(() => null),
+}));
+
 const { usePersonalitiesStore } = require("@fishbowl-ai/ui-shared");
 
 describe("PersonalitiesSection Component", () => {

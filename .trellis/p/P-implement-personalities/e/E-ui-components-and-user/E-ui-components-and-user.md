@@ -19,7 +19,11 @@ affectedFiles:
     realistic test cases, adapted existing handlers (handleEditPersonality,
     handleDeletePersonality) for list integration, and integrated
     PersonalitiesList component alongside existing content with proper layout
-    and spacing
+    and spacing; Integrated PersonalityFormModal component with store
+    operations. Added imports for PersonalityFormModal and PersonalityFormData
+    types. Activated modal state variables and store methods. Implemented
+    handleFormSave callback for create/edit operations with proper error
+    handling. Added PersonalityFormModal JSX component with all required props.
   apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
     Created comprehensive test suite covering header layout, button
     functionality, component structure, accessibility, and layout implementation
@@ -27,7 +31,8 @@ affectedFiles:
     integration including tests for mock data rendering, personality card
     display, edit/delete button functionality, Big Five traits display, and dual
     content area layout. Fixed store mocking to properly handle Zustand
-    selectors and ensured all 23 tests pass
+    selectors and ensured all 23 tests pass; Added mock for PersonalityFormModal
+    component to prevent test failures after integration.
   apps/desktop/src/components/settings/personalities/EmptyState.tsx:
     Created new EmptyState component following app patterns with Users icon,
     clear messaging, and create button

@@ -1,13 +1,52 @@
 ---
 id: T-integrate-personalityformmodal
 title: Integrate PersonalityFormModal into PersonalitiesSection
-status: open
+status: done
 priority: medium
 parent: F-refactor-unified-personalityfo
 prerequisites:
   - T-create-personalityformmodal
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Integrated PersonalityFormModal component with store operations. Added
+    imports for PersonalityFormModal and PersonalityFormData types. Activated
+    modal state variables and store methods. Implemented handleFormSave callback
+    for create/edit operations with proper error handling. Added
+    PersonalityFormModal JSX component with all required props.
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
+    Added mock for PersonalityFormModal component to prevent test failures after
+    integration.
+log:
+  - >-
+    Successfully integrated PersonalityFormModal into PersonalitiesSection
+    component. The integration includes:
+
+
+    - Added PersonalityFormModal import and PersonalityFormData type import
+
+    - Activated modal state variables (formModalOpen, formMode,
+    selectedPersonality) and store methods (createPersonality,
+    updatePersonality, clearError, isSaving)
+
+    - Implemented handleFormSave callback that routes create vs edit operations
+    to appropriate store actions with proper error handling and logging
+
+    - Added PersonalityFormModal component to JSX with correct props: isOpen,
+    onOpenChange, mode, personality, onSave, and isLoading
+
+    - Modal closes automatically on successful operations and stays open on
+    errors for retry
+
+    - Updated tests to properly mock PersonalityFormModal component
+
+    - All acceptance criteria met including store integration, modal state
+    management, error handling, and user experience requirements
+
+    - Quality checks (lint, format, type-check) and all tests pass successfully
+
+
+    The create and edit personality workflows are now fully connected to the
+    store and ready for end-to-end testing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T15:59:03.839Z

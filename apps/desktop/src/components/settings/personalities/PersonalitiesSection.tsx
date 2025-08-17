@@ -13,11 +13,15 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { createLoggerSync } from "@fishbowl-ai/shared";
-import type { PersonalityViewModel } from "@fishbowl-ai/ui-shared";
+import type {
+  PersonalityViewModel,
+  PersonalityFormData,
+} from "@fishbowl-ai/ui-shared";
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, Plus } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { PersonalitiesList } from "./PersonalitiesList";
+import { PersonalityFormModal } from "./PersonalityFormModal";
 
 const logger = createLoggerSync({
   config: { name: "PersonalitiesSection", level: "info" },
@@ -99,30 +103,30 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
   const personalities = usePersonalitiesStore((state) => state.personalities);
   const isLoading = usePersonalitiesStore((state) => state.isLoading);
   const error = usePersonalitiesStore((state) => state.error);
-  const _isSaving = usePersonalitiesStore((state) => state.isSaving);
+  const isSaving = usePersonalitiesStore((state) => state.isSaving);
 
   // Subscribe to store methods
-  const _createPersonality = usePersonalitiesStore(
+  const createPersonality = usePersonalitiesStore(
     (state) => state.createPersonality,
   );
-  const _updatePersonality = usePersonalitiesStore(
+  const updatePersonality = usePersonalitiesStore(
     (state) => state.updatePersonality,
   );
   const _deletePersonality = usePersonalitiesStore(
     (state) => state.deletePersonality,
   );
-  const _clearError = usePersonalitiesStore((state) => state.clearError);
+  const clearError = usePersonalitiesStore((state) => state.clearError);
   const retryLastOperation = usePersonalitiesStore(
     (state) => state.retryLastOperation,
   );
 
   // Modal state management - centralized to ensure only one modal open
-  const [_selectedPersonality, setSelectedPersonality] = useState<
+  const [selectedPersonality, setSelectedPersonality] = useState<
     PersonalityViewModel | undefined
   >(undefined);
-  const [_formModalOpen, setFormModalOpen] = useState(false);
+  const [formModalOpen, setFormModalOpen] = useState(false);
   const [_deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [_formMode, setFormMode] = useState<"create" | "edit">("create");
+  const [formMode, setFormMode] = useState<"create" | "edit">("create");
 
   // Modal opening handlers - will connect to modals in future features
   const handleCreatePersonality = useCallback(() => {
@@ -158,6 +162,50 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
       setDeleteDialogOpen(true);
     },
     [],
+  );
+
+  // Form save handler - connects to store operations
+  const handleFormSave = useCallback(
+    async (data: PersonalityFormData) => {
+      logger.info("Saving personality", {
+        mode: formMode,
+        personalityId: selectedPersonality?.id,
+      });
+
+      try {
+        // Clear any existing errors
+        clearError();
+
+        if (formMode === "create") {
+          // Create new personality
+          await createPersonality(data);
+          logger.info("Personality created successfully");
+        } else if (selectedPersonality?.id) {
+          // Update existing personality
+          await updatePersonality(selectedPersonality.id, data);
+          logger.info("Personality updated successfully", {
+            personalityId: selectedPersonality.id,
+          });
+        }
+
+        // Modal closes automatically via PersonalityFormModal's onSave handler
+        setSelectedPersonality(undefined);
+      } catch (error) {
+        // Error handling - modal stays open for retry
+        logger.error(
+          "Failed to save personality",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        // PersonalityFormModal will handle showing the error to user
+      }
+    },
+    [
+      formMode,
+      selectedPersonality,
+      createPersonality,
+      updatePersonality,
+      clearError,
+    ],
   );
 
   // Show loading state
@@ -305,6 +353,16 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
           )}
         </div>
       </div>
+
+      {/* Personality Form Modal */}
+      <PersonalityFormModal
+        isOpen={formModalOpen}
+        onOpenChange={setFormModalOpen}
+        mode={formMode}
+        personality={selectedPersonality}
+        onSave={handleFormSave}
+        isLoading={isSaving}
+      />
     </div>
   );
 };

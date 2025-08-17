@@ -1,7 +1,7 @@
 ---
 id: F-refactor-unified-personalityfo
 title: Refactor Unified PersonalityForm
-status: in-progress
+status: done
 priority: medium
 parent: E-ui-components-and-user
 prerequisites:
@@ -32,13 +32,22 @@ affectedFiles:
     memoized callbacks, matching the useRoles pattern
   packages/ui-shared/src/hooks/index.ts: Added export for usePersonalities hook
   packages/ui-shared/src/types/settings/index.ts: Added export for PersonalityFormModalProps interface
-log: []
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Integrated PersonalityFormModal component with store operations. Added
+    imports for PersonalityFormModal and PersonalityFormData types. Activated
+    modal state variables and store methods. Implemented handleFormSave callback
+    for create/edit operations with proper error handling. Added
+    PersonalityFormModal JSX component with all required props.
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
+    Added mock for PersonalityFormModal component to prevent test failures after
+    integration.
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-create-personalityformmodal
-  - T-integrate-personalityformmodal
-  - T-update-tests-and-cleanup-for
   - T-create-personalityformmodalpro
+  - T-integrate-personalityformmodal
   - T-refactor-createpersonalityform
   - T-remove-localstorage-logic
   - T-update-createpersonalityformpr
