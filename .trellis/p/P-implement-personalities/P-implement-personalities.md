@@ -319,7 +319,8 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/index.ts:
     Added EmptyState export to personalities module; Added exports for
     PersonalitiesList and PersonalityCard components to complete the barrel
-    exports; Added PersonalityForm export to barrel file
+    exports; Added PersonalityForm export to barrel file; Added
+    DeletePersonalityDialog export to make component available for import
   apps/desktop/src/components/settings/personalities/__tests__/EmptyState.test.tsx:
     Created comprehensive unit tests covering rendering, interactions,
     accessibility, and responsive behavior
@@ -365,6 +366,14 @@ affectedFiles:
     hook to provide a convenient interface to the personalities store with
     memoized callbacks, matching the useRoles pattern
   packages/ui-shared/src/hooks/index.ts: Added export for usePersonalities hook
+  apps/desktop/src/components/settings/personalities/DeletePersonalityDialog.tsx:
+    Created new DeletePersonalityDialog component with AlertDialog structure,
+    loading states, keyboard shortcuts, accessibility features, and proper
+    TypeScript interfaces
+  apps/desktop/src/components/settings/personalities/__tests__/DeletePersonalityDialog.test.tsx:
+    Created comprehensive test suite covering dialog rendering, user
+    interactions, loading states, keyboard navigation, edge cases, and
+    accessibility features
 log: []
 schema: v1.0
 childrenIds:

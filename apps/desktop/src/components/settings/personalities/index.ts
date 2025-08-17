@@ -3,3 +3,4 @@ export { PersonalitiesList } from "./PersonalitiesList";
 export { PersonalityCard } from "./PersonalityCard";
 export { PersonalityForm } from "./PersonalityForm";
 export { EmptyState } from "./EmptyState";
+export { DeletePersonalityDialog } from "./DeletePersonalityDialog";
