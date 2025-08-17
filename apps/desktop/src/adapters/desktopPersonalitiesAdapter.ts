@@ -49,7 +49,19 @@ export class DesktopPersonalitiesAdapter
   }
 
   async reset(): Promise<void> {
-    throw new Error("Method not implemented");
+    try {
+      // Call reset but ignore the returned data since interface expects void
+      await window.electronAPI.personalities.reset();
+    } catch (error) {
+      if (error instanceof PersonalitiesPersistenceError) {
+        throw error;
+      }
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to reset personalities";
+      throw new PersonalitiesPersistenceError(message, "reset", error);
+    }
   }
 }
 

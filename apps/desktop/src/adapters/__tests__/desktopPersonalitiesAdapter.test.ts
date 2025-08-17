@@ -438,6 +438,208 @@ describe("DesktopPersonalitiesAdapter", () => {
     });
   });
 
+  describe("reset method", () => {
+    it("should call IPC reset and return void", async () => {
+      mockPersonalitiesReset.mockResolvedValue(undefined);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const result = await adapter.reset();
+
+      expect(result).toBeUndefined();
+      expect(mockPersonalitiesReset).toHaveBeenCalledTimes(1);
+      expect(mockPersonalitiesReset).toHaveBeenCalledWith();
+    });
+
+    it("should ignore IPC return data and return void", async () => {
+      // Even if IPC returns data, method should return void
+      mockPersonalitiesReset.mockResolvedValue({ some: "data" });
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const result = await adapter.reset();
+
+      expect(result).toBeUndefined();
+    });
+
+    it("should convert generic errors to PersonalitiesPersistenceError", async () => {
+      const genericError = new Error("Backup failed");
+      mockPersonalitiesReset.mockRejectedValue(genericError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+
+      const thrownError = await adapter.reset().catch((e) => e);
+      expect(thrownError.operation).toBe("reset");
+      expect(thrownError.cause).toBe(genericError);
+    });
+
+    it("should preserve PersonalitiesPersistenceError instances", async () => {
+      const persistenceError = new PersonalitiesPersistenceError(
+        "Reset failed",
+        "reset",
+      );
+      mockPersonalitiesReset.mockRejectedValue(persistenceError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(persistenceError);
+    });
+
+    it("should throw PersonalitiesPersistenceError when electronAPI.personalities.reset throws", async () => {
+      const errorMessage = "Reset operation failed";
+      mockPersonalitiesReset.mockRejectedValue(new Error(errorMessage));
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.reset()).rejects.toMatchObject({
+        operation: "reset",
+        message: errorMessage,
+      });
+
+      expect(mockPersonalitiesReset).toHaveBeenCalledTimes(2);
+    });
+
+    it("should throw PersonalitiesPersistenceError with generic message for non-Error objects", async () => {
+      mockPersonalitiesReset.mockRejectedValue("String error");
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.reset()).rejects.toMatchObject({
+        operation: "reset",
+        message: "Failed to reset personalities",
+      });
+    });
+
+    it("should include original error as cause in PersonalitiesPersistenceError", async () => {
+      const originalError = new Error("Original error");
+      mockPersonalitiesReset.mockRejectedValue(originalError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      try {
+        await adapter.reset();
+      } catch (error) {
+        expect(error).toBeInstanceOf(PersonalitiesPersistenceError);
+        expect((error as PersonalitiesPersistenceError).cause).toBe(
+          originalError,
+        );
+      }
+    });
+
+    it("should handle backup failure scenarios", async () => {
+      const backupError = new Error("Backup creation failed");
+      mockPersonalitiesReset.mockRejectedValue(backupError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.reset()).rejects.toMatchObject({
+        operation: "reset",
+        message: "Backup creation failed",
+      });
+    });
+
+    it("should handle permission errors gracefully", async () => {
+      const permissionError = new Error(
+        "Permission denied accessing personalities file",
+      );
+      mockPersonalitiesReset.mockRejectedValue(permissionError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.reset()).rejects.toMatchObject({
+        operation: "reset",
+        message: "Permission denied accessing personalities file",
+      });
+    });
+
+    it("should handle disk space errors", async () => {
+      const diskSpaceError = new Error("Insufficient disk space");
+      mockPersonalitiesReset.mockRejectedValue(diskSpaceError);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+      await expect(adapter.reset()).rejects.toMatchObject({
+        operation: "reset",
+        message: "Insufficient disk space",
+      });
+    });
+
+    it("should handle null error objects", async () => {
+      mockPersonalitiesReset.mockRejectedValue(null);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toMatchObject({
+        operation: "reset",
+        message: "Failed to reset personalities",
+      });
+    });
+
+    it("should handle undefined error objects", async () => {
+      mockPersonalitiesReset.mockRejectedValue(undefined);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toMatchObject({
+        operation: "reset",
+        message: "Failed to reset personalities",
+      });
+    });
+
+    it("should handle undefined electronAPI gracefully", async () => {
+      delete (window as any).electronAPI;
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      await expect(adapter.reset()).rejects.toThrow(
+        PersonalitiesPersistenceError,
+      );
+    });
+
+    it("should complete reset operation within reasonable time", async () => {
+      mockPersonalitiesReset.mockResolvedValue(undefined);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+      const startTime = Date.now();
+
+      await adapter.reset();
+
+      const endTime = Date.now();
+      const duration = endTime - startTime;
+
+      // Should complete within 500ms for typical operations
+      expect(duration).toBeLessThan(500);
+    });
+
+    it("should return correct types from reset method", async () => {
+      mockPersonalitiesReset.mockResolvedValue(undefined);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      // reset should return Promise<void>
+      const resetResult = adapter.reset();
+      expect(resetResult).toBeInstanceOf(Promise);
+      await expect(resetResult).resolves.toBeUndefined();
+    });
+  });
+
   describe("Interface Compliance", () => {
     it("should implement all PersonalitiesPersistenceAdapter methods", () => {
       const adapter = new DesktopPersonalitiesAdapter();
@@ -457,6 +659,17 @@ describe("DesktopPersonalitiesAdapter", () => {
       expect(saveResult).toBeInstanceOf(Promise);
       await expect(saveResult).resolves.toBeUndefined();
     });
+
+    it("should return correct types from reset method", async () => {
+      mockPersonalitiesReset.mockResolvedValue(undefined);
+
+      const adapter = new DesktopPersonalitiesAdapter();
+
+      // reset should return Promise<void>
+      const resetResult = adapter.reset();
+      expect(resetResult).toBeInstanceOf(Promise);
+      await expect(resetResult).resolves.toBeUndefined();
+    });
   });
 
   describe("Singleton Instance", () => {
@@ -466,12 +679,22 @@ describe("DesktopPersonalitiesAdapter", () => {
 
     it("should work correctly with the singleton instance", async () => {
       mockPersonalitiesSave.mockResolvedValue(undefined);
+      mockPersonalitiesLoad.mockResolvedValue(mockPersonalitiesData);
+      mockPersonalitiesReset.mockResolvedValue(undefined);
 
       await expect(
         desktopPersonalitiesAdapter.save(mockPersonalitiesData),
       ).resolves.toBeUndefined();
+      await expect(desktopPersonalitiesAdapter.load()).resolves.toEqual(
+        mockPersonalitiesData,
+      );
+      await expect(
+        desktopPersonalitiesAdapter.reset(),
+      ).resolves.toBeUndefined();
 
       expect(mockPersonalitiesSave).toHaveBeenCalledWith(mockPersonalitiesData);
+      expect(mockPersonalitiesLoad).toHaveBeenCalled();
+      expect(mockPersonalitiesReset).toHaveBeenCalled();
     });
   });
 

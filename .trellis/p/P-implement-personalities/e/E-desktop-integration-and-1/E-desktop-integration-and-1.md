@@ -15,7 +15,8 @@ affectedFiles:
     DesktopRolesAdapter pattern; Implemented load() method with IPC
     communication, proper null handling for missing files, and comprehensive
     error handling that preserves PersonalitiesPersistenceError instances while
-    converting generic errors
+    converting generic errors; Implemented reset method with proper error
+    handling following exact pattern from DesktopRolesAdapter
   apps/desktop/src/types/electron.d.ts: Added personalities property to
     ElectronAPI interface with load, save, and reset methods
   apps/desktop/src/electron/preload.ts: Added personalities IPC implementation with error handling and logging
@@ -32,7 +33,9 @@ affectedFiles:
     scenarios, edge cases, and performance requirements; Added comprehensive
     test suite for load method including 16 test cases covering successful
     operations, null return scenarios, error handling, type validation,
-    performance testing, and edge cases
+    performance testing, and edge cases; Added comprehensive unit tests for
+    reset method including all specified test cases, error handling scenarios,
+    and interface compliance tests
 log: []
 schema: v1.0
 childrenIds:
