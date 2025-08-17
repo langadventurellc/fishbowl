@@ -305,6 +305,21 @@ affectedFiles:
   apps/desktop/src/components/settings/personalities/__tests__/EmptyState.test.tsx:
     Created comprehensive unit tests covering rendering, interactions,
     accessibility, and responsive behavior
+  packages/ui-shared/src/types/settings/PersonalityCardProps.ts:
+    Updated interface to use PersonalityViewModel and onDelete instead of
+    onClone callback
+  packages/ui-shared/src/types/settings/SavedPersonalitiesTabProps.ts:
+    Updated interface to use PersonalityViewModel and onDelete instead of
+    onClone callback
+  apps/desktop/src/components/settings/personalities/PersonalityCard.tsx:
+    Completely restructured component with CardDescription for behavior count
+    and custom instructions preview, CardContent for Big Five traits, and
+    CardFooter for Edit/Delete buttons
+  apps/desktop/src/components/settings/personalities/SavedPersonalitiesTab.tsx: Updated to use new interface with onDelete instead of onClone
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalityCard.test.tsx:
+    Updated all tests to match new component structure and added tests for
+    behavior count calculation, custom instructions truncation, and empty state
+    handling
 log: []
 schema: v1.0
 childrenIds:

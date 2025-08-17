@@ -1,12 +1,35 @@
 ---
 id: T-create-personalitycard
 title: Create PersonalityCard component for list display
-status: open
+status: done
 priority: medium
 parent: F-create-list-components
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/settings/PersonalityCardProps.ts:
+    Updated interface to use PersonalityViewModel and onDelete instead of
+    onClone callback
+  packages/ui-shared/src/types/settings/SavedPersonalitiesTabProps.ts:
+    Updated interface to use PersonalityViewModel and onDelete instead of
+    onClone callback
+  apps/desktop/src/components/settings/personalities/PersonalityCard.tsx:
+    Completely restructured component with CardDescription for behavior count
+    and custom instructions preview, CardContent for Big Five traits, and
+    CardFooter for Edit/Delete buttons
+  apps/desktop/src/components/settings/personalities/SavedPersonalitiesTab.tsx: Updated to use new interface with onDelete instead of onClone
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalityCard.test.tsx:
+    Updated all tests to match new component structure and added tests for
+    behavior count calculation, custom instructions truncation, and empty state
+    handling
+log:
+  - Successfully updated PersonalityCard component to match new requirements for
+    list display. The component now features a structured layout with CardHeader
+    showing personality name and description (behavior count + custom
+    instructions preview), CardContent displaying Big Five traits summary, and
+    CardFooter containing Edit and Delete action buttons. Implemented behavior
+    count calculation, custom instructions truncation at 50 characters with
+    ellipsis, and updated all interfaces to use PersonalityViewModel and
+    onDelete callback. All tests pass and quality checks are clean.
 schema: v1.0
 childrenIds: []
 created: 2025-08-17T15:04:23.161Z

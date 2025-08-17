@@ -12,7 +12,7 @@
  */
 
 import type {
-  Personality,
+  PersonalityViewModel,
   SavedPersonalitiesTabProps,
 } from "@fishbowl-ai/ui-shared";
 import { User } from "lucide-react";
@@ -21,10 +21,10 @@ import { PersonalityCard } from "./PersonalityCard";
 
 export const SavedPersonalitiesTab: React.FC<SavedPersonalitiesTabProps> = ({
   onEdit,
-  onClone,
+  onDelete,
 }) => {
   // Mock data for UI evaluation - will be replaced with actual store data
-  const personalities: Personality[] = [
+  const personalities: PersonalityViewModel[] = [
     {
       id: "analytical-researcher",
       name: "Analytical Researcher",
@@ -216,7 +216,7 @@ export const SavedPersonalitiesTab: React.FC<SavedPersonalitiesTabProps> = ({
             key={personality.id}
             personality={personality}
             onEdit={onEdit}
-            onClone={onClone}
+            onDelete={onDelete}
           />
         ))}
       </div>

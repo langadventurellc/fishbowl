@@ -3,13 +3,13 @@
  *
  * @module types/ui/settings/PersonalityCardProps
  */
-import type { Personality } from "./Personality";
+import type { PersonalityViewModel } from "./PersonalityViewModel";
 
 export interface PersonalityCardProps {
   /** Personality data to display */
-  personality: Personality;
+  personality: PersonalityViewModel;
   /** Callback when edit button is clicked */
-  onEdit: (personality: Personality) => void;
-  /** Callback when clone button is clicked */
-  onClone: (personality: Personality) => void;
+  onEdit: (personality: PersonalityViewModel) => void;
+  /** Callback when delete button is clicked */
+  onDelete: (personality: PersonalityViewModel) => void;
 }

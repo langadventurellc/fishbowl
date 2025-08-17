@@ -1,9 +1,9 @@
-import type { Personality } from "@fishbowl-ai/ui-shared";
+import type { PersonalityViewModel } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { PersonalityCard } from "../PersonalityCard";
 
-const mockPersonality: Personality = {
+const mockPersonality: PersonalityViewModel = {
   id: "test-personality-1",
   name: "Creative Thinker",
   bigFive: {
@@ -18,12 +18,14 @@ const mockPersonality: Personality = {
     analytical: 70,
   },
   customInstructions: "Be creative and think outside the box",
+  createdAt: "2024-01-01T00:00:00Z",
+  updatedAt: "2024-01-01T00:00:00Z",
 };
 
 const defaultProps = {
   personality: mockPersonality,
   onEdit: jest.fn(),
-  onClone: jest.fn(),
+  onDelete: jest.fn(),
 };
 
 describe("PersonalityCard Component", () => {
@@ -36,7 +38,15 @@ describe("PersonalityCard Component", () => {
 
     const nameElement = screen.getByText("Creative Thinker");
     expect(nameElement).toBeInTheDocument();
-    expect(nameElement).toHaveClass("text-lg");
+  });
+
+  it("displays behavior count and custom instructions preview", () => {
+    render(<PersonalityCard {...defaultProps} />);
+
+    const descriptionText = screen.getByText(
+      "2 behaviors • Be creative and think outside the box",
+    );
+    expect(descriptionText).toBeInTheDocument();
   });
 
   it("displays Big Five traits in correct format", () => {
@@ -48,38 +58,34 @@ describe("PersonalityCard Component", () => {
     expect(traitsText).toHaveClass("text-muted-foreground");
   });
 
-  it("renders edit and clone buttons with proper accessibility", () => {
+  it("renders edit and delete buttons with proper accessibility", () => {
     render(<PersonalityCard {...defaultProps} />);
 
-    const editButton = screen.getByLabelText("Edit Creative Thinker");
-    const cloneButton = screen.getByLabelText("Clone Creative Thinker");
+    const editButton = screen.getByRole("button", { name: /edit/i });
+    const deleteButton = screen.getByRole("button", { name: /delete/i });
 
     expect(editButton).toBeInTheDocument();
-    expect(cloneButton).toBeInTheDocument();
-
-    // Check button styling
-    expect(editButton).toHaveClass("h-8", "w-8", "p-0");
-    expect(cloneButton).toHaveClass("h-8", "w-8", "p-0");
+    expect(deleteButton).toBeInTheDocument();
   });
 
   it("calls onEdit when edit button is clicked", () => {
     render(<PersonalityCard {...defaultProps} />);
 
-    const editButton = screen.getByLabelText("Edit Creative Thinker");
+    const editButton = screen.getByRole("button", { name: /edit/i });
     fireEvent.click(editButton);
 
     expect(defaultProps.onEdit).toHaveBeenCalledWith(mockPersonality);
     expect(defaultProps.onEdit).toHaveBeenCalledTimes(1);
   });
 
-  it("calls onClone when clone button is clicked", () => {
+  it("calls onDelete when delete button is clicked", () => {
     render(<PersonalityCard {...defaultProps} />);
 
-    const cloneButton = screen.getByLabelText("Clone Creative Thinker");
-    fireEvent.click(cloneButton);
+    const deleteButton = screen.getByRole("button", { name: /delete/i });
+    fireEvent.click(deleteButton);
 
-    expect(defaultProps.onClone).toHaveBeenCalledWith(mockPersonality);
-    expect(defaultProps.onClone).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onDelete).toHaveBeenCalledWith(mockPersonality);
+    expect(defaultProps.onDelete).toHaveBeenCalledTimes(1);
   });
 
   it("applies hover effects with transition classes", () => {
@@ -92,7 +98,7 @@ describe("PersonalityCard Component", () => {
   });
 
   it("formats Big Five traits correctly with different values", () => {
-    const customPersonality: Personality = {
+    const customPersonality: PersonalityViewModel = {
       ...mockPersonality,
       bigFive: {
         openness: 100,
@@ -112,7 +118,7 @@ describe("PersonalityCard Component", () => {
   });
 
   it("handles long personality names appropriately", () => {
-    const longNamePersonality: Personality = {
+    const longNamePersonality: PersonalityViewModel = {
       ...mockPersonality,
       name: "A Very Long Personality Name That Might Wrap",
     };
@@ -136,10 +142,71 @@ describe("PersonalityCard Component", () => {
       .closest('[data-slot="card"]');
     expect(cardElement).toBeInTheDocument();
 
-    // Check button container structure
-    const buttonContainer = screen.getByLabelText(
-      "Edit Creative Thinker",
-    ).parentElement;
-    expect(buttonContainer).toHaveClass("flex", "gap-2");
+    // Check that both edit and delete buttons are present
+    const editButton = screen.getByRole("button", { name: /edit/i });
+    const deleteButton = screen.getByRole("button", { name: /delete/i });
+
+    expect(editButton).toBeInTheDocument();
+    expect(deleteButton).toBeInTheDocument();
+  });
+
+  it("calculates behavior count correctly", () => {
+    const personalityWithManyBehaviors: PersonalityViewModel = {
+      ...mockPersonality,
+      behaviors: {
+        creativity: 90,
+        analytical: 70,
+        patience: 80,
+        enthusiasm: 65,
+        formality: 45,
+      },
+    };
+
+    render(
+      <PersonalityCard
+        {...defaultProps}
+        personality={personalityWithManyBehaviors}
+      />,
+    );
+
+    expect(screen.getByText(/5 behaviors/)).toBeInTheDocument();
+  });
+
+  it("truncates long custom instructions", () => {
+    const personalityWithLongInstructions: PersonalityViewModel = {
+      ...mockPersonality,
+      customInstructions:
+        "This is a very long custom instruction that should be truncated at exactly 50 characters and show ellipsis",
+    };
+
+    render(
+      <PersonalityCard
+        {...defaultProps}
+        personality={personalityWithLongInstructions}
+      />,
+    );
+
+    // Check that the text contains ellipsis indicating truncation
+    const descriptionElement = screen.getByText(/behaviors •/);
+    expect(descriptionElement.textContent).toContain("...");
+    expect(descriptionElement.textContent).not.toContain(
+      "should be truncated at exactly 50 characters and show ellipsis",
+    );
+  });
+
+  it("handles empty custom instructions", () => {
+    const personalityWithoutInstructions: PersonalityViewModel = {
+      ...mockPersonality,
+      customInstructions: "",
+    };
+
+    render(
+      <PersonalityCard
+        {...defaultProps}
+        personality={personalityWithoutInstructions}
+      />,
+    );
+
+    expect(screen.getByText(/No custom instructions/)).toBeInTheDocument();
   });
 });
