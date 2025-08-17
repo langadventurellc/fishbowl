@@ -1,7 +1,7 @@
 ---
 id: E-persistence-layer-and-state
 title: Persistence Layer and State Management
-status: in-progress
+status: done
 priority: medium
 parent: P-implement-personalities
 prerequisites:
