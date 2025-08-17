@@ -43,6 +43,16 @@ affectedFiles:
   apps/desktop/src/data/repositories/__tests__/PersonalitiesRepository.test.ts:
     Created comprehensive unit tests with 32 test cases covering all methods,
     error scenarios, validation edge cases, and concurrent operations
+  apps/desktop/src/data/repositories/personalitiesRepositoryManager.ts:
+    Created PersonalitiesRepositoryManager singleton following
+    rolesRepositoryManager pattern with initialize, get, and reset methods
+  apps/desktop/src/electron/personalitiesHandlers.ts: Implemented
+    setupPersonalitiesHandlers with three IPC handlers (load, save, reset)
+    including error handling, logging, and integration with
+    PersonalitiesRepository
+  apps/desktop/src/electron/__tests__/personalitiesHandlers.test.ts:
+    Created comprehensive unit tests with 100% coverage testing all success and
+    error paths for each handler
 log: []
 schema: v1.0
 childrenIds:
