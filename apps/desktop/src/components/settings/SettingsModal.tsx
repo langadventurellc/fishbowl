@@ -49,13 +49,10 @@ import {
   useSettingsActions,
 } from "@fishbowl-ai/ui-shared";
 import React, { useEffect } from "react";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 
-const logger = createLoggerSync({
-  config: { name: "SettingsModal", level: "info" },
-});
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../hooks/useGlobalKeyboardShortcuts";
+import { useServices } from "../../contexts";
 import { ModalFooter } from "./ModalFooter";
 import { ModalHeader } from "./ModalHeader";
 import { SettingsContent } from "./SettingsContent";
@@ -124,6 +121,9 @@ export function SettingsModal({
   title = "Settings",
   description = "Configure application settings including general preferences, LLM setup, appearance, agents, personalities, roles, and advanced options.",
 }: SettingsModalProps) {
+  // Get services for logger
+  const { logger } = useServices();
+
   // Generate consistent ARIA IDs using accessibility utilities
   const dialogIds = generateDialogAriaIds("settings-modal");
 

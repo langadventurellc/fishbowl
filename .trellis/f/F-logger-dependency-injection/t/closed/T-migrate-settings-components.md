@@ -1,13 +1,37 @@
 ---
 id: T-migrate-settings-components
 title: Migrate settings components to use useServices() hook
-status: open
+status: done
 priority: medium
 parent: F-logger-dependency-injection
 prerequisites:
   - T-update-settingsstore-for
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/SettingsContent.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependencies in
+    useCallback hooks
+  apps/desktop/src/components/settings/TabContainer.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependency in
+    useEffect hook
+  apps/desktop/src/components/settings/SettingsModal.tsx: Migrated from
+    createLoggerSync to useServices() hook, added proper import structure
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Migrated from createLoggerSync to useServices() hook in main component and
+    child components (AgentGrid, TemplatesTab), fixed missing logger dependency
+    in useCallback
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependency in
+    useCallback hook
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx: Added useServices mock to fix failing tests after migration
+  apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx: Added useServices mock to fix failing tests after SettingsContent migration
+log:
+  - Successfully migrated all 5 settings components to use useServices() hook
+    instead of createLoggerSync. Removed module-level logger creation from
+    SettingsContent.tsx, TabContainer.tsx, SettingsModal.tsx, AgentsSection.tsx,
+    and AgentForm.tsx. Added useServices() hooks inside React component
+    functions and fixed all missing dependency arrays for useCallback and
+    useEffect hooks. Updated test files with proper useServices mocks to ensure
+    all tests pass. All quality checks pass with no errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:27:50.644Z

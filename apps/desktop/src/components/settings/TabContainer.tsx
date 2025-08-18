@@ -22,16 +22,13 @@ import {
   type SettingsSubTab,
   type TabContainerProps,
 } from "@fishbowl-ai/ui-shared";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
-const logger = createLoggerSync({
-  config: { name: "TabContainer", level: "info" },
-});
 import { cn } from "../../lib/utils";
 import { COMMON_FOCUS_CLASSES } from "../../styles/focus";
 import { useAccessibilityAnnouncements } from "../../utils/useAccessibilityAnnouncements";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { useServices } from "../../contexts";
 
 /**
  * Reusable tab container component for settings sections.
@@ -70,6 +67,9 @@ export const TabContainer = React.memo(function TabContainer({
   activationMode = "automatic",
   disabled = false,
 }: TabContainerProps) {
+  // Get services for logger
+  const { logger } = useServices();
+
   // Get store state when using store integration
   const { activeSubTab: storeActiveTab, setActiveSubTab } =
     useSettingsNavigation();
@@ -88,7 +88,7 @@ export const TabContainer = React.memo(function TabContainer({
         );
       }
     }
-  }, [useStore, propActiveTab, propOnTabChange]);
+  }, [useStore, propActiveTab, propOnTabChange, logger]);
 
   // Determine active tab source (store or props)
   const activeTab = useStore ? storeActiveTab : propActiveTab;

@@ -63,6 +63,18 @@ jest.mock("../AgentFormModal", () => ({
     isOpen ? <div data-testid="agent-form-modal">Agent Form Modal</div> : null,
 }));
 
+// Mock useServices hook
+jest.mock("../../../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      debug: jest.fn(),
+    },
+  })),
+}));
+
 describe("AgentsSection", () => {
   test("renders without crashing", () => {
     render(<AgentsSection />);

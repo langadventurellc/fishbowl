@@ -3,7 +3,6 @@
  */
 
 import { getAccessibleDescription } from "@/utils";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import {
   type AdvancedSettingsFormData,
   advancedSettingsSchema,
@@ -21,7 +20,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
-import { useSettingsPersistenceAdapter } from "../../contexts";
+import { useSettingsPersistenceAdapter, useServices } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { AdvancedSettings } from "./AdvancedSettings";
 import { AgentsSection } from "./agents/AgentsSection";
@@ -31,10 +30,6 @@ import { GeneralSettings } from "./GeneralSettings";
 import { LlmSetupSection } from "./llm-setup";
 import { PersonalitiesSection } from "./personalities";
 import { RolesSection } from "./roles/RolesSection";
-
-const logger = createLoggerSync({
-  config: { name: "SettingsContent", level: "info" },
-});
 
 const sectionComponents = {
   "llm-setup": LlmSetupSection,
@@ -48,6 +43,9 @@ export function SettingsContent({
   className,
   contentId = "settings-content",
 }: SettingsContentProps) {
+  // Get services for logger
+  const { logger } = useServices();
+
   // Get persistence adapter
   const adapter = useSettingsPersistenceAdapter();
 
@@ -166,7 +164,7 @@ export function SettingsContent({
         advancedErrors: advancedForm.formState.errors,
       });
     },
-    [generalForm, appearanceForm, advancedForm],
+    [generalForm, appearanceForm, advancedForm, logger],
   );
   // Collects form data and saves settings
   const saveValidatedSettings = useCallback(async () => {
@@ -243,6 +241,7 @@ export function SettingsContent({
     handleValidationErrors,
     saveValidatedSettings,
     resetFormsAfterSave,
+    logger,
   ]);
 
   // Add event listener for settings-save event from ModalFooter

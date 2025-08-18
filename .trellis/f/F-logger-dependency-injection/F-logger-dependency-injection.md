@@ -110,10 +110,26 @@ affectedFiles:
   apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.basic.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
   apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
   apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.changeDetection.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/SettingsContent.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependencies in
+    useCallback hooks
+  apps/desktop/src/components/settings/TabContainer.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependency in
+    useEffect hook
+  apps/desktop/src/components/settings/SettingsModal.tsx: Migrated from
+    createLoggerSync to useServices() hook, added proper import structure
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Migrated from createLoggerSync to useServices() hook in main component and
+    child components (AgentGrid, TemplatesTab), fixed missing logger dependency
+    in useCallback
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependency in
+    useCallback hook
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx: Added useServices mock to fix failing tests after migration
+  apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx: Added useServices mock to fix failing tests after SettingsContent migration
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-roles-components-to
   - T-migrate-settings-components
   - T-update-personalitiesprovider
   - T-update-rolesprovider-to-use
@@ -121,6 +137,7 @@ childrenIds:
   - T-migrate-desktop-hooks-to-use
   - T-migrate-layout-and-error
   - T-migrate-personalities
+  - T-migrate-roles-components-to
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
   - T-update-userolesstore-for

@@ -43,11 +43,7 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "AgentForm", level: "info" },
-});
+import { useServices } from "../../../contexts";
 
 // Helper function to extract role from template description
 const extractRoleFromDescription = (description?: string): string => {
@@ -63,6 +59,8 @@ export const AgentForm: React.FC<AgentFormProps> = ({
   onCancel,
   isLoading = false,
 }) => {
+  // Get services for logger
+  const { logger } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
   const isEditMode = mode === "edit";
@@ -124,7 +122,7 @@ export const AgentForm: React.FC<AgentFormProps> = ({
         setIsSubmitting(false);
       }
     },
-    [onSave, form, setUnsavedChanges],
+    [onSave, form, setUnsavedChanges, logger],
   );
 
   const handleCancel = useCallback(() => {
