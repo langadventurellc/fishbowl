@@ -51,7 +51,9 @@ affectedFiles:
     useCallback and useEffect dependencies
   apps/desktop/src/contexts/RolesProvider.tsx: Updated to use useServices() for
     logger and pass logger to store.initialize(), removed logger from useEffect
-    dependencies to prevent infinite loops
+    dependencies to prevent infinite loops; Added ESLint disable comment for
+    exhaustive-deps rule to match PersonalitiesProvider pattern and prevent
+    infinite initialization loops
   apps/desktop/src/contexts/PersonalitiesProvider.tsx: Updated to use
     useServices() for logger and pass logger to store.initialize(), removed
     logger from useEffect dependencies to prevent infinite loops; Added ESLint
@@ -132,7 +134,6 @@ affectedFiles:
 log: []
 schema: v1.0
 childrenIds:
-  - T-update-personalitiesprovider
   - T-update-rolesprovider-to-use
   - T-validate-logger-dependency
   - T-migrate-desktop-hooks-to-use
@@ -140,6 +141,7 @@ childrenIds:
   - T-migrate-personalities
   - T-migrate-roles-components-to
   - T-migrate-settings-components
+  - T-update-personalitiesprovider
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
   - T-update-userolesstore-for

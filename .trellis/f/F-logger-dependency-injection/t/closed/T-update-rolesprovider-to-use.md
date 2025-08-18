@@ -1,14 +1,24 @@
 ---
 id: T-update-rolesprovider-to-use
 title: Update RolesProvider to use services and inject logger
-status: open
+status: done
 priority: medium
 parent: F-logger-dependency-injection
 prerequisites:
   - T-update-userolesstore-for
   - T-migrate-roles-components-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/contexts/RolesProvider.tsx: Added ESLint disable comment for
+    exhaustive-deps rule to match PersonalitiesProvider pattern and prevent
+    infinite initialization loops
+log:
+  - Updated RolesProvider to properly handle logger dependency injection by
+    adding the missing ESLint disable comment. The provider was already using
+    the useServices() pattern and injecting logger into store initialization,
+    but was missing the ESLint disable comment to silence the exhaustive-deps
+    warning. This matches the pattern established in PersonalitiesProvider and
+    prevents infinite re-initialization loops that would occur if logger was
+    added to the effect dependencies.
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:29:26.363Z

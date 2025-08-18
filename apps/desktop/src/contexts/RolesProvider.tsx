@@ -92,6 +92,7 @@ export const RolesProvider: React.FC<RolesProviderProps> = ({ children }) => {
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array ensures single initialization
 
   // Show loading state during initialization
