@@ -28,6 +28,17 @@ affectedFiles:
     Updated tests to pass mock logger to initialize method, added
     createMockLogger helper function, and provided default mock logger in
     beforeEach setup
+  packages/ui-shared/src/stores/RolesState.ts: "Added logger: StructuredLogger property to store state interface"
+  packages/ui-shared/src/stores/RolesActions.ts: Updated initialize method
+    signature to accept logger parameter alongside adapter
+  packages/ui-shared/src/stores/useRolesStore.ts: Removed module-level logger
+    variable and getLogger function, updated initialize method to accept and
+    store logger, replaced all getLogger() calls with get().logger?.method()
+    pattern using optional chaining for defensive null checks
+  packages/ui-shared/src/stores/__tests__/rolesStorePersistence.test.ts:
+    Updated test setup to include mock logger in store state and pass logger to
+    initialize method calls
+  packages/ui-shared/src/stores/__tests__/rolesStore.test.ts: Updated test setup to include mock logger in store state initialization
 log: []
 schema: v1.0
 childrenIds:
@@ -38,10 +49,10 @@ childrenIds:
   - T-migrate-settings-components
   - T-update-personalitiesprovider
   - T-update-rolesprovider-to-use
-  - T-update-usepersonalitiesstore
   - T-update-userolesstore-for
   - T-validate-logger-dependency
   - T-update-settingsstore-for
+  - T-update-usepersonalitiesstore
 created: 2025-08-17T14:04:13.529Z
 updated: 2025-08-17T14:04:13.529Z
 ---

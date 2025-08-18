@@ -1,12 +1,28 @@
 ---
 id: T-update-userolesstore-for
 title: Update useRolesStore for logger dependency injection
-status: open
+status: done
 priority: high
 parent: F-logger-dependency-injection
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/RolesState.ts: "Added logger: StructuredLogger property to store state interface"
+  packages/ui-shared/src/stores/RolesActions.ts: Updated initialize method
+    signature to accept logger parameter alongside adapter
+  packages/ui-shared/src/stores/useRolesStore.ts: Removed module-level logger
+    variable and getLogger function, updated initialize method to accept and
+    store logger, replaced all getLogger() calls with get().logger?.method()
+    pattern using optional chaining for defensive null checks
+  packages/ui-shared/src/stores/__tests__/rolesStorePersistence.test.ts:
+    Updated test setup to include mock logger in store state and pass logger to
+    initialize method calls
+  packages/ui-shared/src/stores/__tests__/rolesStore.test.ts: Updated test setup to include mock logger in store state initialization
+log:
+  - Successfully implemented logger dependency injection for useRolesStore
+    following the PersonalitiesStore pattern. Removed lazy logger creation and
+    fallback patterns, added logger parameter to initialization method, and
+    updated all logging calls to use injected logger with defensive null checks.
+    All existing functionality works unchanged and all tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:27:13.980Z

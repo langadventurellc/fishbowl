@@ -5,7 +5,10 @@
  * retry logic, error handling, and sync operations.
  */
 
-import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
+import type {
+  PersistedRolesSettingsData,
+  StructuredLogger,
+} from "@fishbowl-ai/shared";
 import type { RoleFormData, RoleViewModel } from "../../";
 import type { RolesPersistenceAdapter } from "../../types/roles/persistence/RolesPersistenceAdapter";
 import { RolesPersistenceError } from "../../types/roles/persistence/RolesPersistenceError";
@@ -175,6 +178,7 @@ const sampleRoleFormData: RoleFormData = {
 
 describe("Roles Store Persistence", () => {
   let mockAdapter: MockRolesPersistenceAdapter;
+  let mockLogger: StructuredLogger;
 
   beforeEach(() => {
     // Reset store to clean state
@@ -189,6 +193,7 @@ describe("Roles Store Persistence", () => {
         timestamp: null,
       },
       adapter: null,
+      logger: null as unknown as StructuredLogger,
       isInitialized: false,
       isSaving: false,
       lastSyncTime: null,
@@ -198,6 +203,13 @@ describe("Roles Store Persistence", () => {
 
     // Create fresh mock adapter
     mockAdapter = new MockRolesPersistenceAdapter();
+
+    // Create mock logger
+    mockLogger = {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    } as unknown as StructuredLogger;
   });
 
   afterEach(() => {
@@ -232,7 +244,7 @@ describe("Roles Store Persistence", () => {
       it("should successfully initialize with empty storage", async () => {
         const { initialize } = useRolesStore.getState();
 
-        await initialize(mockAdapter);
+        await initialize(mockAdapter, mockLogger);
 
         const state = useRolesStore.getState();
         expect(state.adapter).toBe(mockAdapter);
@@ -248,7 +260,7 @@ describe("Roles Store Persistence", () => {
         mockAdapter.setStorageData(samplePersistedData);
         const { initialize } = useRolesStore.getState();
 
-        await initialize(mockAdapter);
+        await initialize(mockAdapter, mockLogger);
 
         const state = useRolesStore.getState();
         expect(state.isInitialized).toBe(true);
@@ -262,7 +274,7 @@ describe("Roles Store Persistence", () => {
         mockAdapter.failureType = "network";
         const { initialize } = useRolesStore.getState();
 
-        await initialize(mockAdapter);
+        await initialize(mockAdapter, mockLogger);
 
         const state = useRolesStore.getState();
         expect(state.isInitialized).toBe(false);
@@ -275,7 +287,7 @@ describe("Roles Store Persistence", () => {
         mockAdapter.loadDelay = 100;
         const { initialize } = useRolesStore.getState();
 
-        const initPromise = initialize(mockAdapter);
+        const initPromise = initialize(mockAdapter, mockLogger);
 
         // Check loading state immediately
         const loadingState = useRolesStore.getState();
