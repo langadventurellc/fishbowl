@@ -54,7 +54,9 @@ affectedFiles:
     dependencies to prevent infinite loops
   apps/desktop/src/contexts/PersonalitiesProvider.tsx: Updated to use
     useServices() for logger and pass logger to store.initialize(), removed
-    logger from useEffect dependencies to prevent infinite loops
+    logger from useEffect dependencies to prevent infinite loops; Added ESLint
+    disable comment to acknowledge intentionally excluding logger from useEffect
+    dependencies to prevent infinite re-renders during initialization
   apps/desktop/src/components/settings/roles/__tests__/RolesSection.error.test.tsx:
     Added proper StructuredLogger mock using createMockLogger pattern to fix
     test type errors; Updated test mocks to mock useServices hook instead of
@@ -130,7 +132,6 @@ affectedFiles:
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-settings-components
   - T-update-personalitiesprovider
   - T-update-rolesprovider-to-use
   - T-validate-logger-dependency
@@ -138,6 +139,7 @@ childrenIds:
   - T-migrate-layout-and-error
   - T-migrate-personalities
   - T-migrate-roles-components-to
+  - T-migrate-settings-components
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
   - T-update-userolesstore-for

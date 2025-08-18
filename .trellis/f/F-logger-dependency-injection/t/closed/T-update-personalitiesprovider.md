@@ -1,14 +1,24 @@
 ---
 id: T-update-personalitiesprovider
 title: Update PersonalitiesProvider to use services and inject logger
-status: open
+status: done
 priority: medium
 parent: F-logger-dependency-injection
 prerequisites:
   - T-update-usepersonalitiesstore
   - T-migrate-personalities
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/contexts/PersonalitiesProvider.tsx: Added ESLint disable
+    comment to acknowledge intentionally excluding logger from useEffect
+    dependencies to prevent infinite re-renders during initialization
+log:
+  - Successfully updated PersonalitiesProvider to use useServices() hook for
+    logger dependency injection. The provider was already mostly updated but had
+    a critical issue with the useEffect dependency array. Initially tried adding
+    logger to dependencies which caused infinite re-renders due to logger
+    reference changing on every render. Fixed by maintaining the original empty
+    dependency array since this is an initialization-only effect that should run
+    once on mount. All tests pass and quality checks are clean.
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:29:12.593Z

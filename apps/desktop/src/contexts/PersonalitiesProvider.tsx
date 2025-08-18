@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
 import type { PersonalitiesPersistenceAdapter } from "@fishbowl-ai/ui-shared";
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
+import React, { createContext, useContext, useEffect, useState } from "react";
 import { desktopPersonalitiesAdapter } from "../adapters/desktopPersonalitiesAdapter";
 import { useServices } from "./useServices";
 
@@ -97,6 +97,7 @@ export const PersonalitiesProvider: React.FC<PersonalitiesProviderProps> = ({
     return () => {
       mounted = false;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array ensures single initialization
 
   // Show loading state during initialization
