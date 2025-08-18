@@ -30,6 +30,9 @@ affectedFiles:
   tests/desktop/helpers/settings/createMinimalPersonalityData.ts: Minimal valid data generator (neutral 50 values) for edge case testing
   tests/desktop/helpers/settings/createInvalidPersonalityData.ts: Invalid data scenarios for validation testing (out-of-range, empty fields)
   tests/desktop/helpers/settings/createDuplicateNamePersonalityData.ts: Duplicate name generator for validation testing
+  tests/desktop/features/settings/personalities/personalities-default-loading.spec.ts:
+    Created comprehensive test file with 7 test cases for personalities default
+    loading functionality following roles pattern exactly
 log: []
 schema: v1.0
 childrenIds:
@@ -37,8 +40,8 @@ childrenIds:
   - T-create-personalities-default
   - T-create-personalities-deletion
   - T-create-personalities-editing
-  - T-create-personalities-mock
   - T-create-personalities
+  - T-create-personalities-mock
   - T-create-personalities-test-1
   - T-create-personalities-test
 created: 2025-08-17T21:07:54.536Z

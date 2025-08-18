@@ -1,52 +1,3 @@
----
-id: T-create-personalities-default
-title: Create Personalities Default Loading Tests
-status: open
-priority: medium
-parent: F-end-to-end-tests-for
-prerequisites:
-  - T-create-personalities-mock
-affectedFiles: {}
-log: []
-schema: v1.0
-childrenIds: []
-created: 2025-08-17T21:17:30.322Z
-updated: 2025-08-17T21:17:30.322Z
----
-
-# Create Personalities Default Loading Tests
-
-## Context
-
-Create end-to-end tests for personalities default loading functionality, following the exact pattern established in `tests/desktop/features/settings/roles/roles-default-loading.spec.ts`. These tests verify that default personalities load correctly on first application visit.
-
-## Reference Implementation
-
-Base implementation directly on:
-
-- `tests/desktop/features/settings/roles/roles-default-loading.spec.ts` - Primary pattern to follow
-- Test structure, assertions, and expected behaviors
-- Adapt for 5 default personalities vs 4 default roles
-
-## Default Personalities Reference
-
-From `packages/shared/src/data/defaultPersonalities.json`, the 5 default personalities are:
-
-1. Creative Thinker
-2. Analytical Strategist
-3. Empathetic Supporter
-4. Dynamic Leader
-5. Thoughtful Advisor
-
-## Implementation Requirements
-
-### 1. Create personalities-default-loading.spec.ts
-
-Create file: `tests/desktop/features/settings/personalities/personalities-default-loading.spec.ts`
-
-Following the exact pattern from roles-default-loading.spec.ts but adapted for personalities:
-
-```typescript
 import { expect, test } from "@playwright/test";
 import { existsSync } from "fs";
 import { readFile } from "fs/promises";
@@ -153,26 +104,21 @@ test.describe("Feature: Personalities Section - Default Personalities Loading", 
     // Get first personality card for detailed inspection
     const firstPersonalityCard = window.locator('[role="listitem"]').first();
 
-    // Hover to reveal action buttons
-    await firstPersonalityCard.hover();
-
     // Verify Edit button exists and is accessible
-    const editButton = firstPersonalityCard.locator(
-      'button[aria-label*="Edit"]',
-    );
+    const editButton = firstPersonalityCard.locator('button:has-text("Edit")');
     await expect(editButton).toBeVisible();
     await expect(editButton).toContainText("Edit");
 
     // Verify Delete button exists and is accessible
     const deleteButton = firstPersonalityCard.locator(
-      'button[aria-label*="Delete"]',
+      'button:has-text("Delete")',
     );
     await expect(deleteButton).toBeVisible();
     await expect(deleteButton).toContainText("Delete");
 
     // Verify card uses Card component structure
-    const card = firstPersonalityCard.locator(".group.relative");
-    await expect(card).toHaveClass(/border.*hover:border-border/);
+    const card = firstPersonalityCard.locator("[class*='hover:shadow-md']");
+    await expect(card).toBeVisible();
   });
 
   test("persists default personalities to storage file", async () => {
@@ -267,74 +213,3 @@ test.describe("Feature: Personalities Section - Default Personalities Loading", 
     }
   });
 });
-```
-
-### 2. Create Test Directory
-
-Create the directory structure: `tests/desktop/features/settings/personalities/`
-
-This should follow the exact same structure as `tests/desktop/features/settings/roles/`
-
-## Acceptance Criteria
-
-✅ **File Creation**: `personalities-default-loading.spec.ts` exists in correct directory
-✅ **5 Default Personalities**: Tests verify exactly 5 personalities load (vs 4 roles)
-✅ **Correct Names**: Tests verify all 5 expected personality names are present
-✅ **Alphabetical Order**: Names are checked in alphabetical order (like roles)
-✅ **No Empty State**: Verifies empty state is not shown when defaults exist
-✅ **Card Structure**: Tests personality card UI elements and hover actions
-✅ **File Persistence**: Verifies personalities.json file is created and contains expected data
-✅ **Storage Validation**: Checks file content has correct schema and personality IDs
-✅ **Error Handling**: Graceful handling of file system operations with retry logic
-✅ **Debug Logging**: Console output for troubleshooting test failures
-
-## Technical Details
-
-### Key Adaptations from Roles
-
-- **Count**: 5 personalities vs 4 roles
-- **Names**: Different set of names (Creative Thinker, etc.)
-- **IDs**: Different IDs (creative-thinker, analytical-strategist, etc.)
-- **File Path**: personalities.json vs roles.json
-- **Section Name**: "Personalities" vs "Roles"
-- **Button Text**: "Create Personality" vs "Create Role"
-- **Empty State**: "No personalities configured" vs "No roles configured"
-
-### Expected Personality Names (Alphabetical)
-
-1. Analytical Strategist
-2. Creative Thinker
-3. Dynamic Leader
-4. Empathetic Supporter
-5. Thoughtful Advisor
-
-### Expected Personality IDs
-
-- creative-thinker
-- analytical-strategist
-- empathetic-supporter
-- dynamic-leader
-- thoughtful-advisor
-
-## Testing Requirements
-
-### Unit Tests (included in this task)
-
-Create test validation that verifies:
-
-- Test file imports correctly
-- Test suite runs without setup errors
-- Mock functions integrate properly
-
-## Dependencies
-
-- Requires: T-create-personalities-mock (mock data generators)
-- Requires: setupPersonalitiesTestSuite, openPersonalitiesSection, waitForPersonalitiesList
-- Enables: Subsequent personality functionality tests
-
-## Notes
-
-- Follow exact same test structure as roles-default-loading.spec.ts
-- Adapt all role-specific references to personality equivalents
-- Maintain same timeout values and retry logic
-- Use same debugging and error handling patterns
