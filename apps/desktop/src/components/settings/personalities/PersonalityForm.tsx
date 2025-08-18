@@ -36,13 +36,9 @@ import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
 import { BigFiveSliders } from "./BigFiveSliders";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 import { PersonalityNameInput } from "./PersonalityNameInput";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import { Loader2 } from "lucide-react";
 import { Button } from "../../ui/button";
-
-const logger = createLoggerSync({
-  config: { name: "PersonalityForm", level: "info" },
-});
+import { useServices } from "../../../contexts";
 
 export const PersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   mode,
@@ -52,6 +48,7 @@ export const PersonalityForm: React.FC<CreatePersonalityFormProps> = ({
   existingPersonalities = [],
   isLoading = false,
 }) => {
+  const { logger } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
   const isEditMode = mode === "edit";
@@ -145,7 +142,7 @@ export const PersonalityForm: React.FC<CreatePersonalityFormProps> = ({
         setIsSubmitting(false);
       }
     },
-    [onSave, form, setUnsavedChanges],
+    [onSave, form, setUnsavedChanges, logger],
   );
 
   const handleCancel = useCallback(() => {

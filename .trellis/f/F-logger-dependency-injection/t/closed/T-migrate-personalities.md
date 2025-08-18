@@ -1,13 +1,77 @@
 ---
 id: T-migrate-personalities
 title: Migrate personalities components to use useServices() hook
-status: open
+status: done
 priority: medium
 parent: F-logger-dependency-injection
 prerequisites:
   - T-update-usepersonalitiesstore
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Migrated from module-level createLoggerSync to useServices() hook pattern.
+    Removed createLoggerSync import, added useServices import, moved logger
+    access inside component function, and added logger to handleSave dependency
+    array.
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Migrated from module-level createLoggerSync to useServices() hook pattern.
+    Removed createLoggerSync import, added useServices import, moved logger
+    access inside component function, and added logger to dependency arrays for
+    handleCreatePersonality, handleEditPersonality, handleDeletePersonality,
+    handleFormSave, and handleConfirmDelete callbacks.
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
+    Updated test mocks to use useServices hook pattern instead of
+    createLoggerSync. Changed mock path to ../../../../contexts and replaced
+    createLoggerSync mock with useServices mock returning a logger object.
+log:
+  - >-
+    Successfully migrated both PersonalityForm and PersonalitiesSection
+    components to use useServices() hook for logger dependency injection.
+
+
+    ✅ **Key Changes Made:**
+
+    - Removed `createLoggerSync` imports from both components
+
+    - Added `useServices` imports with correct relative paths
+
+    - Replaced module-level logger creation with hook-based access inside
+    component functions
+
+    - Added logger to all React Hook dependency arrays to satisfy ESLint rules
+
+    - Fixed test file to use `useServices` mock instead of `createLoggerSync`
+    mock
+
+
+    ✅ **Technical Implementation:**
+
+    - PersonalityForm.tsx: Migrated logger access and fixed dependency array in
+    handleSave callback
+
+    - PersonalitiesSection.tsx: Migrated logger access and fixed dependency
+    arrays in 5 useCallback hooks
+
+    - PersonalitiesSection.test.tsx: Updated test mocks to use useServices
+    pattern
+
+    - All existing logging functionality preserved with identical behavior
+
+    - Components now properly consume logger from ServicesProvider context
+
+
+    ✅ **Quality Assurance:**
+
+    - All ESLint warnings resolved for modified components
+
+    - TypeScript compilation successful  
+
+    - All unit tests passing (including updated PersonalitiesSection test)
+
+    - Prettier formatting applied
+
+    - All existing personalities features work exactly as before
+
+    - Logger configuration now centralized through dependency injection pattern
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:28:17.421Z

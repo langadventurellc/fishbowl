@@ -85,10 +85,24 @@ affectedFiles:
   apps/desktop/src/components/errors/__tests__/RolesErrorBoundary.test.tsx:
     Updated all test cases to provide mock logger prop to RolesErrorBoundary
     component.
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Migrated from module-level createLoggerSync to useServices() hook pattern.
+    Removed createLoggerSync import, added useServices import, moved logger
+    access inside component function, and added logger to handleSave dependency
+    array.
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Migrated from module-level createLoggerSync to useServices() hook pattern.
+    Removed createLoggerSync import, added useServices import, moved logger
+    access inside component function, and added logger to dependency arrays for
+    handleCreatePersonality, handleEditPersonality, handleDeletePersonality,
+    handleFormSave, and handleConfirmDelete callbacks.
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
+    Updated test mocks to use useServices hook pattern instead of
+    createLoggerSync. Changed mock path to ../../../../contexts and replaced
+    createLoggerSync mock with useServices mock returning a logger object.
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-layout-and-error
   - T-migrate-personalities
   - T-migrate-roles-components-to
   - T-migrate-settings-components
@@ -96,6 +110,7 @@ childrenIds:
   - T-update-rolesprovider-to-use
   - T-validate-logger-dependency
   - T-migrate-desktop-hooks-to-use
+  - T-migrate-layout-and-error
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
   - T-update-userolesstore-for
