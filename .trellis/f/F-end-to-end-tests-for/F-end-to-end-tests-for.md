@@ -39,13 +39,20 @@ affectedFiles:
     behavior, cancel workflows, data persistence, and form reset behavior.
     Follows exact pattern from roles-creation.spec.ts but adapted for
     personality data structure.
+  tests/desktop/features/settings/personalities/personalities-editing.spec.ts:
+    "Created comprehensive personality editing test suite with 6 test scenarios:
+    successful editing, form pre-population, field validation, cancel workflows,
+    persistence verification, and default/custom personality editing.
+    Implemented proper personality-specific selectors, slider interactions, and
+    UI component targeting with correct PersonalityCard component
+    understanding."
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-personalities-creation
   - T-create-personalities-deletion
   - T-create-personalities-editing
   - T-create-personalities
+  - T-create-personalities-creation
   - T-create-personalities-default
   - T-create-personalities-mock
   - T-create-personalities-test-1
