@@ -1,4 +1,7 @@
-import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
+import type {
+  PersistedRolesSettingsData,
+  StructuredLogger,
+} from "@fishbowl-ai/shared";
 import { RoleFormData, RoleViewModel, RolesPersistenceAdapter } from "../types";
 import { ErrorState } from "./ErrorState";
 
@@ -13,7 +16,10 @@ export interface RolesActions {
   clearError: () => void;
   // Adapter integration methods
   setAdapter: (adapter: RolesPersistenceAdapter) => void;
-  initialize: (adapter: RolesPersistenceAdapter) => Promise<void>;
+  initialize: (
+    adapter: RolesPersistenceAdapter,
+    logger: StructuredLogger,
+  ) => Promise<void>;
   // Auto-save methods
   persistChanges: () => Promise<void>;
   syncWithStorage: () => Promise<void>;
@@ -25,4 +31,6 @@ export interface RolesActions {
   retryLastOperation: () => Promise<void>;
   clearErrorState: () => void;
   getErrorDetails: () => ErrorState;
+  // Cleanup method to prevent memory leaks
+  destroy: () => void;
 }

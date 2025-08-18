@@ -41,11 +41,7 @@ import {
   TemplateCard,
 } from "./";
 import { AgentFormModal } from "./AgentFormModal";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "AgentsSection", level: "info" },
-});
+import { useServices } from "../../../contexts";
 
 // Mock agent data for demonstration
 const mockAgents: AgentCardType[] = [
@@ -108,6 +104,7 @@ interface AgentGridProps {
 }
 
 const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
+  const { logger } = useServices();
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const gridRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -481,6 +478,8 @@ interface TemplatesTabProps {
 }
 
 const TemplatesTab: React.FC<TemplatesTabProps> = ({ openTemplateModal }) => {
+  const { logger } = useServices();
+
   return (
     <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
       {/* Header Section */}
@@ -815,6 +814,9 @@ const DefaultsTab: React.FC = () => {
 };
 
 export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
+  // Get services for logger
+  const { logger } = useServices();
+
   // Modal state management
   const [agentModalState, setAgentModalState] = useState<{
     isOpen: boolean;
@@ -883,7 +885,7 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
         "polite",
       );
     },
-    [agentModalState.mode],
+    [agentModalState.mode, logger],
   );
 
   // Tab configuration following established patterns

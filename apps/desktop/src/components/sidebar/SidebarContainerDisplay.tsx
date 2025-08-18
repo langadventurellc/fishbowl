@@ -1,10 +1,6 @@
 import { SidebarContainerDisplayProps } from "@fishbowl-ai/ui-shared";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import React from "react";
-
-const logger = createLoggerSync({
-  config: { name: "SidebarContainerDisplay", level: "info" },
-});
+import { useServices } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { Button } from "../input/Button";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
@@ -41,6 +37,7 @@ export function SidebarContainerDisplay({
   style = {},
   conversations,
 }: SidebarContainerDisplayProps) {
+  const { logger } = useServices();
   // Width configurations matching design requirements
   const getWidthForVariant = (variant: typeof widthVariant) => {
     switch (variant) {

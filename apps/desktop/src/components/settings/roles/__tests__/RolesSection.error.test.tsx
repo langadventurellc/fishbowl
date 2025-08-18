@@ -5,6 +5,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { useRolesStore } from "@fishbowl-ai/ui-shared";
+import type { StructuredLogger } from "@fishbowl-ai/shared";
 import { RolesSection } from "../RolesSection";
 
 // Mock the useRolesStore hook
@@ -22,12 +23,14 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
   })),
 }));
 
-// Mock logger
-jest.mock("@fishbowl-ai/shared", () => ({
-  createLoggerSync: jest.fn(() => ({
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
+// Mock useServices hook
+jest.mock("../../../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
   })),
 }));
 
@@ -59,6 +62,22 @@ describe("RolesSection Error Handling", () => {
   const mockUpdateRole = jest.fn();
   const mockDeleteRole = jest.fn();
 
+  const createMockLogger = (): StructuredLogger =>
+    ({
+      trace: jest.fn(),
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      fatal: jest.fn(),
+      setLevel: jest.fn(),
+      getLevel: jest.fn().mockReturnValue("info"),
+      child: jest.fn().mockReturnThis(),
+      addTransport: jest.fn(),
+      removeTransport: jest.fn(),
+      setFormatter: jest.fn(),
+    }) as unknown as StructuredLogger;
+
   const defaultStoreState = {
     roles: [],
     isLoading: false,
@@ -69,6 +88,7 @@ describe("RolesSection Error Handling", () => {
     lastSyncTime: null,
     pendingOperations: [],
     retryTimers: new Map(),
+    logger: createMockLogger(),
     createRole: mockCreateRole,
     updateRole: mockUpdateRole,
     deleteRole: mockDeleteRole,
@@ -87,6 +107,7 @@ describe("RolesSection Error Handling", () => {
     resetRoles: jest.fn(),
     clearErrorState: jest.fn(),
     getErrorDetails: jest.fn(),
+    destroy: jest.fn(),
   };
 
   beforeEach(() => {

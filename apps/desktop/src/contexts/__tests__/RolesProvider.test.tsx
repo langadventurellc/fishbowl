@@ -23,16 +23,20 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
       roles: [],
       error: null,
       initialize: mockInitialize,
+      destroy: jest.fn(),
     }),
   },
 }));
 
-// Mock the logger
-jest.mock("@fishbowl-ai/shared", () => ({
-  createLoggerSync: jest.fn(() => ({
-    info: jest.fn(),
-    error: jest.fn(),
-    debug: jest.fn(),
+// Mock useServices hook
+jest.mock("../useServices", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
   })),
 }));
 
@@ -63,7 +67,15 @@ describe("RolesProvider", () => {
     );
 
     await waitFor(() => {
-      expect(mockInitialize).toHaveBeenCalledWith(desktopRolesAdapter);
+      expect(mockInitialize).toHaveBeenCalledWith(
+        desktopRolesAdapter,
+        expect.objectContaining({
+          debug: expect.any(Function),
+          info: expect.any(Function),
+          warn: expect.any(Function),
+          error: expect.any(Function),
+        }),
+      );
     });
   });
 

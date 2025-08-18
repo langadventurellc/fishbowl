@@ -7,7 +7,10 @@
  * @module stores/__tests__/rolesStore.test
  */
 
-import type { PersistedRolesSettingsData } from "@fishbowl-ai/shared";
+import type {
+  PersistedRolesSettingsData,
+  StructuredLogger,
+} from "@fishbowl-ai/shared";
 import type { RoleFormData, RoleViewModel } from "../../";
 import type { RolesPersistenceAdapter } from "../../types/roles/persistence/RolesPersistenceAdapter";
 import { RolesPersistenceError } from "../../types/roles/persistence/RolesPersistenceError";
@@ -29,6 +32,11 @@ beforeEach(() => {
       timestamp: null,
     },
     adapter: null,
+    logger: {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    } as unknown as StructuredLogger,
     isInitialized: false,
     isSaving: false,
     lastSyncTime: null,

@@ -7,24 +7,31 @@
  * @module stores/settings/__tests__/settingsStore.test
  */
 
-// Mock the createLoggerSync function to return a mock logger
-const mockLoggerWarn = jest.fn();
-const mockLoggerInfo = jest.fn();
-jest.mock("@fishbowl-ai/shared", () => ({
-  ...jest.requireActual("@fishbowl-ai/shared"),
-  createLoggerSync: jest.fn(() => ({
-    warn: mockLoggerWarn,
-    info: mockLoggerInfo,
-  })),
-}));
-
 import { useSettingsModalStore } from "../settingsStore";
 import { defaultSettingsModalState } from "../defaultSettingsModalState";
 import type { SettingsSection, SettingsSubTab } from "../index";
+import type { StructuredLogger as IStructuredLogger } from "@fishbowl-ai/shared";
+
+// Mock logger for dependency injection
+const mockLoggerWarn = jest.fn();
+const mockLoggerInfo = jest.fn();
+const mockLogger: IStructuredLogger = {
+  warn: mockLoggerWarn,
+  info: mockLoggerInfo,
+  error: jest.fn(),
+  debug: jest.fn(),
+  trace: jest.fn(),
+  child: jest.fn(),
+  setLogLevel: jest.fn(),
+  getLogLevel: jest.fn(),
+} as unknown as IStructuredLogger;
 
 beforeEach(() => {
   // Reset store to defaults before each test
   useSettingsModalStore.getState().resetToDefaults();
+
+  // Initialize logger for each test
+  useSettingsModalStore.getState().initialize(mockLogger);
 
   // Reset logger mocks
   mockLoggerWarn.mockClear();
@@ -48,7 +55,7 @@ describe("settingsStore", () => {
       expect(state.lastOpenedSection).toBe("general");
     });
 
-    it("should match the default state constant", () => {
+    it("should match the default state constant (excluding logger)", () => {
       const state = useSettingsModalStore.getState();
 
       const currentState = {
@@ -60,7 +67,16 @@ describe("settingsStore", () => {
         lastOpenedSection: state.lastOpenedSection,
       };
 
-      expect(currentState).toEqual(defaultSettingsModalState);
+      const expectedState = {
+        isOpen: defaultSettingsModalState.isOpen,
+        activeSection: defaultSettingsModalState.activeSection,
+        activeSubTab: defaultSettingsModalState.activeSubTab,
+        navigationHistory: defaultSettingsModalState.navigationHistory,
+        hasUnsavedChanges: defaultSettingsModalState.hasUnsavedChanges,
+        lastOpenedSection: defaultSettingsModalState.lastOpenedSection,
+      };
+
+      expect(currentState).toEqual(expectedState);
     });
   });
 

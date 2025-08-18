@@ -18,13 +18,15 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
   usePersonalitiesStore: jest.fn(),
 }));
 
-// Mock the logger
-jest.mock("@fishbowl-ai/shared", () => ({
-  createLoggerSync: jest.fn(() => ({
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
+// Mock the useServices hook
+jest.mock("../../../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+    },
   })),
 }));
 

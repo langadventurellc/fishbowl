@@ -7,12 +7,32 @@
  * @module stores/__tests__/personalitiesStore.test
  */
 
-import type { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
+import type {
+  PersistedPersonalitiesSettingsData,
+  StructuredLogger,
+} from "@fishbowl-ai/shared";
 import type { PersonalityFormData, PersonalityViewModel } from "../../";
 import { usePersonalitiesStore } from "../usePersonalitiesStore";
 
 // Mock console methods
 const mockConsoleError = jest.fn();
+
+// Mock logger for tests
+const createMockLogger = (): StructuredLogger =>
+  ({
+    trace: jest.fn(),
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    fatal: jest.fn(),
+    setLevel: jest.fn(),
+    getLevel: jest.fn().mockReturnValue("info"),
+    child: jest.fn().mockReturnThis(),
+    addTransport: jest.fn(),
+    removeTransport: jest.fn(),
+    setFormatter: jest.fn(),
+  }) as unknown as StructuredLogger;
 
 beforeEach(() => {
   // Reset store to clean state
@@ -27,6 +47,7 @@ beforeEach(() => {
       timestamp: null,
     },
     adapter: null,
+    logger: createMockLogger(), // Provide default mock logger
     isInitialized: false,
     isSaving: false,
     lastSyncTime: null,
@@ -1098,7 +1119,7 @@ describe("personalitiesStore", () => {
 
           const store = usePersonalitiesStore.getState();
 
-          await store.initialize(mockAdapter);
+          await store.initialize(mockAdapter, createMockLogger());
 
           const state = usePersonalitiesStore.getState();
           expect(state.adapter).toBe(mockAdapter);
@@ -1119,7 +1140,7 @@ describe("personalitiesStore", () => {
 
           const store = usePersonalitiesStore.getState();
 
-          await store.initialize(mockAdapter);
+          await store.initialize(mockAdapter, createMockLogger());
 
           const state = usePersonalitiesStore.getState();
           expect(state.isInitialized).toBe(false);
@@ -1136,7 +1157,7 @@ describe("personalitiesStore", () => {
 
           const store = usePersonalitiesStore.getState();
 
-          await store.initialize(mockAdapter);
+          await store.initialize(mockAdapter, createMockLogger());
 
           const state = usePersonalitiesStore.getState();
           expect(state.personalities).toEqual([]);

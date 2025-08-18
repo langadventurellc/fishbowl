@@ -9,6 +9,7 @@
 
 import type { SettingsSection } from "./settingsSection";
 import type { SettingsSubTab } from "./settingsSubTab";
+import type { StructuredLogger as IStructuredLogger } from "@fishbowl-ai/shared";
 
 export interface SettingsModalActions {
   /**
@@ -121,4 +122,19 @@ export interface SettingsModalActions {
    * ```
    */
   resetToDefaults: () => void;
+
+  /**
+   * Initializes the settings store with a logger instance via dependency injection.
+   *
+   * Must be called before any logging operations are performed. Sets the logger
+   * in the store state to enable logging throughout the settings modal.
+   *
+   * @param logger - The structured logger instance to use for logging
+   *
+   * @example
+   * ```typescript
+   * initialize(loggerInstance);
+   * ```
+   */
+  initialize: (logger: IStructuredLogger) => void;
 }

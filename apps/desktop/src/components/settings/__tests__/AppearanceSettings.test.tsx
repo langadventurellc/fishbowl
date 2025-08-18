@@ -4,6 +4,19 @@ import React from "react";
 import { SettingsContent } from "../SettingsContent";
 import { SettingsProvider } from "../../../contexts";
 
+// Mock useServices hook
+jest.mock("../../../contexts", () => ({
+  ...jest.requireActual("../../../contexts"),
+  useServices: jest.fn(() => ({
+    logger: {
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+      debug: jest.fn(),
+    },
+  })),
+}));
+
 // Mock window.matchMedia for system theme detection
 Object.defineProperty(window, "matchMedia", {
   writable: true,

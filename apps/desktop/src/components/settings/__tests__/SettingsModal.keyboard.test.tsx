@@ -28,6 +28,18 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
   SettingsModalProps: {},
 }));
 
+// Mock useServices hook
+jest.mock("../../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
+  })),
+}));
+
 // Mock child components to focus on keyboard integration
 jest.mock("../SettingsNavigation", () => ({
   SettingsNavigation: () => (

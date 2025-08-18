@@ -7,7 +7,7 @@
  * ## Quick Start
  *
  * ```typescript
- * import { createLogger } from '@fishbowl-ai/shared/logging';
+ * import { createLogger, ConsoleLogger } from '@fishbowl-ai/shared/logging';
  *
  * // Create a logger (async - includes device info)
  * const logger = await createLogger({
@@ -18,6 +18,9 @@
  * const syncLogger = createLoggerSync({
  *   config: { name: 'my-app', level: 'info' }
  * });
+ *
+ * // Create a simple console logger for fallbacks
+ * const consoleLogger = new ConsoleLogger({ component: 'fallback' });
  *
  * // Use the logger
  * logger.info('Application started', { userId: '123' });
@@ -48,4 +51,5 @@ export * from "./transports";
 export * from "./utils";
 export * from "./config";
 export { StructuredLogger } from "./StructuredLogger";
+export { ConsoleLogger } from "./ConsoleLogger";
 export type { DeviceInfoInterface } from "./DeviceInfoInterface";

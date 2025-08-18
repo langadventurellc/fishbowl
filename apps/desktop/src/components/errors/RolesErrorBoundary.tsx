@@ -1,12 +1,9 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "RolesErrorBoundary", level: "error" },
-});
+import { StructuredLogger } from "@fishbowl-ai/shared";
 
 interface Props {
   children: ReactNode;
+  logger?: StructuredLogger;
   fallback?: (error: Error, resetError: () => void) => ReactNode;
 }
 
@@ -26,7 +23,7 @@ export class RolesErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    logger.error("Roles error boundary caught error", error, {
+    this.props.logger?.error("Roles error boundary caught error", error, {
       componentStack: errorInfo.componentStack,
     });
   }

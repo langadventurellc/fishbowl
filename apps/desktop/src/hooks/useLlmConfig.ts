@@ -10,16 +10,12 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  createLoggerSync,
   type LlmConfig,
   type LlmConfigInput,
   type LlmConfigMetadata,
 } from "@fishbowl-ai/shared";
 import type { UseLlmConfigHook } from "./types/UseLlmConfigHook";
-
-const logger = createLoggerSync({
-  config: { name: "useLlmConfig", level: "info" },
-});
+import { useServices } from "../contexts";
 
 /**
  * Custom hook for managing LLM configurations.
@@ -53,6 +49,7 @@ const logger = createLoggerSync({
  * ```
  */
 export function useLlmConfig(): UseLlmConfigHook {
+  const { logger } = useServices();
   const [configurations, setConfigurations] = useState<LlmConfigMetadata[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -88,7 +85,7 @@ export function useLlmConfig(): UseLlmConfigHook {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [logger]);
 
   // Initial load
   useEffect(() => {
@@ -140,7 +137,7 @@ export function useLlmConfig(): UseLlmConfigHook {
         throw err;
       }
     },
-    [],
+    [logger],
   );
 
   // Update configuration with optimistic update
@@ -209,7 +206,7 @@ export function useLlmConfig(): UseLlmConfigHook {
         throw err;
       }
     },
-    [loadConfigurations],
+    [loadConfigurations, logger],
   );
 
   // Delete configuration with optimistic update
@@ -246,7 +243,7 @@ export function useLlmConfig(): UseLlmConfigHook {
         throw err;
       }
     },
-    [loadConfigurations],
+    [loadConfigurations, logger],
   );
 
   // Get configuration with API key for editing
@@ -278,7 +275,7 @@ export function useLlmConfig(): UseLlmConfigHook {
         throw err;
       }
     },
-    [],
+    [logger],
   );
 
   // Refresh configurations

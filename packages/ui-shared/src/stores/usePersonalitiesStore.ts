@@ -7,8 +7,11 @@
  * @module stores/personalitiesStore
  */
 
-import type { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
-import { createLoggerSync } from "@fishbowl-ai/shared";
+import type {
+  StructuredLogger as IStructuredLogger,
+  PersistedPersonalitiesSettingsData,
+} from "@fishbowl-ai/shared";
+import { ConsoleLogger } from "@fishbowl-ai/shared";
 import { create } from "zustand";
 import { mapPersonalitiesPersistenceToUI } from "../mapping/personalities/mapPersonalitiesPersistenceToUI";
 import { mapPersonalitiesUIToPersistence } from "../mapping/personalities/mapPersonalitiesUIToPersistence";
@@ -19,26 +22,6 @@ import { PersonalityFormData } from "../types/settings/PersonalityFormData";
 import { PersonalityViewModel } from "../types/settings/PersonalityViewModel";
 import { ErrorState } from "./ErrorState";
 import { type PersonalitiesStore } from "./PersonalitiesStore";
-
-// Lazy logger creation to avoid process access in browser context
-let _logger: ReturnType<typeof createLoggerSync> | null = null;
-const _getLogger = () => {
-  if (!_logger) {
-    try {
-      _logger = createLoggerSync({
-        context: { metadata: { component: "personalitiesStore" } },
-      });
-    } catch {
-      // Fallback to console in browser contexts where logger creation fails
-      _logger = {
-        info: console.info.bind(console),
-        warn: console.warn.bind(console),
-        error: console.error.bind(console),
-      } as ReturnType<typeof createLoggerSync>;
-    }
-  }
-  return _logger;
-};
 
 // Debounce delay for auto-save
 const _DEBOUNCE_DELAY_MS = 1000;
@@ -76,7 +59,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
     _debounceTimer = setTimeout(async () => {
       const { adapter } = get();
       if (!adapter) {
-        _getLogger().warn("Cannot save: no adapter configured");
+        get().logger.warn("Cannot save: no adapter configured");
         return;
       }
 
@@ -84,7 +67,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       try {
         await get().persistChanges();
       } catch (error) {
-        _getLogger().error(
+        get().logger.error(
           "Auto-save failed",
           error instanceof Error ? error : new Error(String(error)),
         );
@@ -257,7 +240,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
     });
 
     // Log the error with context
-    _getLogger().error(
+    get().logger.error(
       `${operation} operation failed`,
       error instanceof Error ? error : new Error(String(error)),
     );
@@ -286,7 +269,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
     // Announce rollback to UI for user feedback
     const errorType =
       error instanceof Error ? error.constructor.name : typeof error;
-    _getLogger().info(
+    get().logger.info(
       `Rolled back to previous state after save error. Original personality count: ${originalPersonalities.length}, Error type: ${errorType}`,
     );
 
@@ -304,6 +287,9 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       timestamp: null,
     },
     adapter: null,
+    logger: new ConsoleLogger({
+      metadata: { component: "personalities-store" },
+    }) as unknown as IStructuredLogger,
     isInitialized: false,
     isSaving: false,
     lastSyncTime: null,
@@ -488,9 +474,13 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       set({ adapter });
     },
 
-    initialize: async (adapter: PersonalitiesPersistenceAdapter) => {
+    initialize: async (
+      adapter: PersonalitiesPersistenceAdapter,
+      logger: IStructuredLogger,
+    ) => {
       set({
         adapter,
+        logger,
         isLoading: true,
         error: _clearErrorState(),
       });
@@ -543,7 +533,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
 
       // Prevent concurrent saves
       if (isSaving) {
-        _getLogger().info("Save already in progress, skipping");
+        get().logger.info("Save already in progress, skipping");
         return;
       }
 
@@ -586,7 +576,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
           error: _clearErrorState(),
         }));
 
-        _getLogger().info(
+        get().logger.info(
           `Successfully saved ${personalities.length} personalities`,
         );
 
@@ -629,7 +619,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
             error: _clearErrorState(),
           });
 
-          _getLogger().info(
+          get().logger.info(
             `Synced ${uiPersonalities.length} personalities from storage`,
           );
         } else {
@@ -640,7 +630,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
             error: _clearErrorState(),
           });
 
-          _getLogger().info("No personalities found in storage");
+          get().logger.info("No personalities found in storage");
         }
       } catch (error) {
         const errorMessage =
@@ -664,7 +654,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
         // Transform current UI state to persistence format
         const persistedData = mapPersonalitiesUIToPersistence(personalities);
 
-        _getLogger().info(
+        get().logger.info(
           `Exported ${personalities.length} personalities for backup`,
         );
 
@@ -677,7 +667,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
 
         set({ error: _createErrorState(errorMessage) });
 
-        _getLogger().error(
+        get().logger.error(
           "Export personalities failed",
           error instanceof Error ? error : new Error(String(error)),
         );
@@ -722,7 +712,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
         // Save imported data to persistence
         await adapter.save(validatedData);
 
-        _getLogger().info(
+        get().logger.info(
           `Successfully imported ${uiPersonalities.length} personalities`,
         );
       } catch (error) {
@@ -736,7 +726,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
           error: _createErrorState(errorMessage, "import"),
         });
 
-        _getLogger().error(
+        get().logger.error(
           "Import personalities failed",
           error instanceof Error ? error : new Error(String(error)),
         );
@@ -774,7 +764,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
         // Call adapter's reset() method
         await adapter.reset();
 
-        _getLogger().info("Successfully reset all personalities and storage");
+        get().logger.info("Successfully reset all personalities and storage");
       } catch (error) {
         const errorMessage =
           error instanceof Error
@@ -786,7 +776,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
           error: _createErrorState(errorMessage, "reset"),
         });
 
-        _getLogger().error(
+        get().logger.error(
           "Reset personalities failed",
           error instanceof Error ? error : new Error(String(error)),
         );
@@ -799,12 +789,12 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
     retryLastOperation: async () => {
       const { error } = get();
       if (!error) {
-        _getLogger().warn("No error state to retry");
+        get().logger.warn("No error state to retry");
         return;
       }
 
       if (!error.operation || !error.isRetryable) {
-        _getLogger().warn("No retryable operation found");
+        get().logger.warn("No retryable operation found");
         return;
       }
 
@@ -829,7 +819,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
             break;
           case "import":
             // Import would need to store the data to retry
-            _getLogger().warn("Import retry not implemented");
+            get().logger.warn("Import retry not implemented");
             break;
           case "reset":
             await get().resetPersonalities();
@@ -837,7 +827,7 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
         }
       } catch (retryError) {
         // Error will be handled by the operation itself
-        _getLogger().error(
+        get().logger.error(
           "Manual retry failed",
           retryError instanceof Error
             ? retryError

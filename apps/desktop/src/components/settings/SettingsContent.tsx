@@ -3,24 +3,12 @@
  */
 
 import { getAccessibleDescription } from "@/utils";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import {
-  type AdvancedSettingsFormData,
-  advancedSettingsSchema,
-  type AppearanceSettingsFormData,
-  appearanceSettingsSchema,
-  defaultAdvancedSettings,
-  defaultAppearanceSettings,
-  defaultGeneralSettings,
-  type GeneralSettingsFormData,
-  generalSettingsSchema,
   type SettingsContentProps,
   useSettingsActions,
   useSettingsPersistence,
 } from "@fishbowl-ai/ui-shared";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useCallback, useEffect } from "react";
 import { useSettingsPersistenceAdapter } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { AdvancedSettings } from "./AdvancedSettings";
@@ -28,13 +16,14 @@ import { AgentsSection } from "./agents/AgentsSection";
 import { AppearanceSettings } from "./AppearanceSettings";
 import { DefaultSettings } from "./DefaultSettings";
 import { GeneralSettings } from "./GeneralSettings";
+import {
+  useFormInitialization,
+  useSettingsForms,
+  useSettingsFormValidation,
+} from "./hooks";
 import { LlmSetupSection } from "./llm-setup";
 import { PersonalitiesSection } from "./personalities";
 import { RolesSection } from "./roles/RolesSection";
-
-const logger = createLoggerSync({
-  config: { name: "SettingsContent", level: "info" },
-});
 
 const sectionComponents = {
   "llm-setup": LlmSetupSection,
@@ -70,180 +59,32 @@ export function SettingsContent({
     onError,
   });
 
-  // Create form instance for GeneralSettings
-  const generalForm = useForm<GeneralSettingsFormData>({
-    resolver: zodResolver(generalSettingsSchema),
-    defaultValues: settings?.general || defaultGeneralSettings,
-    mode: "onChange",
+  // Initialize forms using custom hook
+  const { generalForm, appearanceForm, advancedForm, formsAreDirty } =
+    useSettingsForms({ settings });
+
+  // Initialize form validation and save logic
+  const { handleUnifiedSave } = useSettingsFormValidation({
+    generalForm,
+    appearanceForm,
+    advancedForm,
+    settings,
+    saveSettings: _saveSettings,
   });
 
-  // Create form instance for AppearanceSettings
-  const appearanceForm = useForm<AppearanceSettingsFormData>({
-    resolver: zodResolver(appearanceSettingsSchema),
-    defaultValues: settings?.appearance || defaultAppearanceSettings,
-    mode: "onChange",
+  // Initialize form reset logic to prevent infinite loops
+  useFormInitialization({
+    activeSection,
+    settings,
+    generalForm,
+    appearanceForm,
+    advancedForm,
   });
-
-  // Create form instance for AdvancedSettings
-  const advancedForm = useForm<AdvancedSettingsFormData>({
-    resolver: zodResolver(advancedSettingsSchema),
-    defaultValues: settings?.advanced || defaultAdvancedSettings,
-    mode: "onChange",
-  });
-
-  // Use ref to track if forms have been initialized to prevent infinite loops
-  const hasInitializedForm = useRef(false);
-  const hasInitializedAppearanceForm = useRef(false);
-  const hasInitializedAdvancedForm = useRef(false);
-
-  // Track form dirty state to update unsaved changes
-  const formsAreDirty =
-    generalForm.formState.isDirty ||
-    appearanceForm.formState.isDirty ||
-    advancedForm.formState.isDirty;
 
   // Update unsaved changes state when forms become dirty or clean
   useEffect(() => {
     setUnsavedChanges(formsAreDirty);
   }, [formsAreDirty, setUnsavedChanges]);
-
-  // Unified save handler that validates and saves all forms atomically
-  // Validates all forms and returns validation results
-  const validateAllForms = useCallback(async () => {
-    const [generalValid, appearanceValid, advancedValid] = await Promise.all([
-      generalForm.trigger(),
-      appearanceForm.trigger(),
-      advancedForm.trigger(),
-    ]);
-
-    return {
-      generalValid,
-      appearanceValid,
-      advancedValid,
-      allValid: generalValid && appearanceValid && advancedValid,
-    };
-  }, [generalForm, appearanceForm, advancedForm]);
-  // Handles validation errors by focusing on the first error field
-  const handleValidationErrors = useCallback(
-    (validationResults: {
-      generalValid: boolean;
-      appearanceValid: boolean;
-      advancedValid: boolean;
-    }) => {
-      const { generalValid, appearanceValid, advancedValid } =
-        validationResults;
-
-      // Find first form with errors and focus first error field
-      if (!generalValid && generalForm.formState.errors) {
-        const firstErrorField = Object.keys(generalForm.formState.errors)[0];
-        if (firstErrorField) {
-          generalForm.setFocus(
-            firstErrorField as keyof GeneralSettingsFormData,
-          );
-        }
-      } else if (!appearanceValid && appearanceForm.formState.errors) {
-        const firstErrorField = Object.keys(appearanceForm.formState.errors)[0];
-        if (firstErrorField) {
-          appearanceForm.setFocus(
-            firstErrorField as keyof AppearanceSettingsFormData,
-          );
-        }
-      } else if (!advancedValid && advancedForm.formState.errors) {
-        const firstErrorField = Object.keys(advancedForm.formState.errors)[0];
-        if (firstErrorField) {
-          advancedForm.setFocus(
-            firstErrorField as keyof AdvancedSettingsFormData,
-          );
-        }
-      }
-
-      logger.warn("Validation failed for forms", {
-        generalValid,
-        appearanceValid,
-        advancedValid,
-        generalErrors: generalForm.formState.errors,
-        appearanceErrors: appearanceForm.formState.errors,
-        advancedErrors: advancedForm.formState.errors,
-      });
-    },
-    [generalForm, appearanceForm, advancedForm],
-  );
-  // Collects form data and saves settings
-  const saveValidatedSettings = useCallback(async () => {
-    // Get validated data from forms
-    const generalData = generalForm.getValues();
-    const appearanceData = appearanceForm.getValues();
-    const advancedData = advancedForm.getValues();
-
-    // Update existing settings with form data
-    const updatedSettings = {
-      ...settings,
-      general: generalData,
-      appearance: appearanceData,
-      advanced: advancedData,
-    };
-
-    // Save the updated settings atomically
-    await _saveSettings(updatedSettings);
-
-    return { generalData, appearanceData, advancedData };
-  }, [generalForm, appearanceForm, advancedForm, settings, _saveSettings]);
-
-  // Resets all forms to pristine state after successful save
-  const resetFormsAfterSave = useCallback(
-    (data: {
-      generalData: GeneralSettingsFormData;
-      appearanceData: AppearanceSettingsFormData;
-      advancedData: AdvancedSettingsFormData;
-    }) => {
-      const { generalData, appearanceData, advancedData } = data;
-
-      // Reset form states to mark as pristine after successful save
-      generalForm.reset(generalData);
-      appearanceForm.reset(appearanceData);
-      advancedForm.reset(advancedData);
-
-      // Reset unsaved changes state to disable save button
-      setUnsavedChanges(false);
-    },
-    [generalForm, appearanceForm, advancedForm, setUnsavedChanges],
-  );
-  const handleUnifiedSave = useCallback(async (): Promise<void> => {
-    if (!settings) {
-      logger.warn("No settings available for saving");
-      return;
-    }
-
-    try {
-      // Validate all forms
-      const validationResults = await validateAllForms();
-
-      // If validation fails, handle errors and return early
-      if (!validationResults.allValid) {
-        handleValidationErrors(validationResults);
-        return;
-      }
-
-      // Save the validated settings and get the data
-      const savedData = await saveValidatedSettings();
-
-      // Reset forms to pristine state after successful save
-      resetFormsAfterSave(savedData);
-
-      logger.info("Settings saved successfully via unified handler");
-    } catch (error) {
-      logger.error(
-        "Failed to save settings via unified handler",
-        error as Error,
-      );
-    }
-  }, [
-    settings,
-    validateAllForms,
-    handleValidationErrors,
-    saveValidatedSettings,
-    resetFormsAfterSave,
-  ]);
 
   // Add event listener for settings-save event from ModalFooter
   useEffect(() => {
@@ -256,57 +97,6 @@ export function SettingsContent({
       window.removeEventListener("settings-save", handleSettingsSave);
     };
   }, [handleUnifiedSave]);
-
-  // Reset form when settings are loaded, but only for general section
-  useEffect(() => {
-    if (
-      activeSection === "general" &&
-      settings?.general &&
-      !hasInitializedForm.current
-    ) {
-      generalForm.reset(settings.general);
-      hasInitializedForm.current = true;
-    }
-
-    // Reset the flag when switching away from general section
-    if (activeSection !== "general") {
-      hasInitializedForm.current = false;
-    }
-  }, [activeSection, settings?.general]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Reset appearance form when settings are loaded, but only for appearance section
-  useEffect(() => {
-    if (
-      activeSection === "appearance" &&
-      settings?.appearance &&
-      !hasInitializedAppearanceForm.current
-    ) {
-      appearanceForm.reset(settings.appearance);
-      hasInitializedAppearanceForm.current = true;
-    }
-
-    // Reset the flag when switching away from appearance section
-    if (activeSection !== "appearance") {
-      hasInitializedAppearanceForm.current = false;
-    }
-  }, [activeSection, settings?.appearance]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // Reset advanced form when settings are loaded, but only for advanced section
-  useEffect(() => {
-    if (
-      activeSection === "advanced" &&
-      settings?.advanced &&
-      !hasInitializedAdvancedForm.current
-    ) {
-      advancedForm.reset(settings.advanced);
-      hasInitializedAdvancedForm.current = true;
-    }
-
-    // Reset the flag when switching away from advanced section
-    if (activeSection !== "advanced") {
-      hasInitializedAdvancedForm.current = false;
-    }
-  }, [activeSection, settings?.advanced]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Get the component for the active section
   const getActiveComponent = () => {

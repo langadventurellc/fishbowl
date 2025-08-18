@@ -1,13 +1,151 @@
 ---
 id: F-logger-dependency-injection
 title: Logger Dependency Injection Refactor
-status: open
+status: done
 priority: medium
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/settings/settingsModalState.ts:
+    Added logger property (IStructuredLogger | null) to state interface with
+    proper documentation
+  packages/ui-shared/src/stores/settings/settingsModalActions.ts: Added initialize method to actions interface for logger dependency injection
+  packages/ui-shared/src/stores/settings/defaultSettingsModalState.ts: "Added logger: null to default state to satisfy interface requirement"
+  packages/ui-shared/src/stores/settings/settingsStore.ts: Complete refactor -
+    removed createLoggerSync import and all fallback patterns, implemented clean
+    dependency injection with initialize method, replaced all logging calls with
+    get().logger! non-null assertion, assuming logger is always injected before
+    use
+  packages/ui-shared/src/stores/settings/__tests__/settingsStore.test.ts:
+    Updated test file to use proper mock logger dependency injection instead of
+    mocking createLoggerSync, fixed test assertions to account for new logger
+    property in state
+  packages/ui-shared/src/stores/PersonalitiesState.ts: "Added logger: StructuredLogger | null property to state interface"
+  packages/ui-shared/src/stores/PersonalitiesActions.ts: Updated initialize method signature to accept logger parameter
+  packages/ui-shared/src/stores/usePersonalitiesStore.ts: Removed lazy logger
+    pattern, updated all logging calls to use injected logger instance, added
+    logger to initial state and initialize method
+  packages/ui-shared/src/stores/__tests__/personalitiesStore.test.ts:
+    Updated tests to pass mock logger to initialize method, added
+    createMockLogger helper function, and provided default mock logger in
+    beforeEach setup
+  packages/ui-shared/src/stores/RolesState.ts: "Added logger: StructuredLogger property to store state interface"
+  packages/ui-shared/src/stores/RolesActions.ts: Updated initialize method
+    signature to accept logger parameter alongside adapter
+  packages/ui-shared/src/stores/useRolesStore.ts: Removed module-level logger
+    variable and getLogger function, updated initialize method to accept and
+    store logger, replaced all getLogger() calls with get().logger?.method()
+    pattern using optional chaining for defensive null checks
+  packages/ui-shared/src/stores/__tests__/rolesStorePersistence.test.ts:
+    Updated test setup to include mock logger in store state and pass logger to
+    initialize method calls
+  packages/ui-shared/src/stores/__tests__/rolesStore.test.ts: Updated test setup to include mock logger in store state initialization
+  apps/desktop/src/hooks/useLlmConfig.ts: Migrated to use useServices() pattern,
+    removed createLoggerSync import and module-level logger, added logger to all
+    useCallback dependencies (except clearError which doesn't use logger)
+  apps/desktop/src/hooks/useElectronIPC.ts:
+    Migrated to use useServices() pattern,
+    removed createLoggerSync import and module-level logger, added logger to
+    useEffect dependencies
+  apps/desktop/src/hooks/useFocusTrap.ts: Migrated to use useServices() pattern,
+    removed createLoggerSync import and module-level logger, added logger to
+    useCallback and useEffect dependencies
+  apps/desktop/src/contexts/RolesProvider.tsx: Updated to use useServices() for
+    logger and pass logger to store.initialize(), removed logger from useEffect
+    dependencies to prevent infinite loops; Added ESLint disable comment for
+    exhaustive-deps rule to match PersonalitiesProvider pattern and prevent
+    infinite initialization loops
+  apps/desktop/src/contexts/PersonalitiesProvider.tsx: Updated to use
+    useServices() for logger and pass logger to store.initialize(), removed
+    logger from useEffect dependencies to prevent infinite loops; Added ESLint
+    disable comment to acknowledge intentionally excluding logger from useEffect
+    dependencies to prevent infinite re-renders during initialization
+  apps/desktop/src/components/settings/roles/__tests__/RolesSection.error.test.tsx:
+    Added proper StructuredLogger mock using createMockLogger pattern to fix
+    test type errors; Updated test mocks to mock useServices hook instead of
+    createLoggerSync
+  apps/desktop/src/hooks/__tests__/useElectronIPC.test.ts: Added useServices mock with correct import path to prevent test failures
+  apps/desktop/src/hooks/__tests__/useFocusTrap.test.ts: Added useServices mock with correct import path to prevent test failures
+  apps/desktop/src/hooks/__tests__/useLlmConfig.test.tsx: Added useServices mock
+    with stable logger reference to prevent memory leak and infinite re-renders,
+    added proper mock cleanup
+  apps/desktop/src/contexts/__tests__/RolesProvider.test.tsx:
+    Updated mock to use
+    useServices and updated test assertions to expect both adapter and logger
+    arguments
+  apps/desktop/src/contexts/__tests__/PersonalitiesProvider.test.tsx:
+    Updated mock to use useServices and updated test assertions to expect both
+    adapter and logger arguments
+  apps/desktop/src/components/settings/__tests__/SettingsModal.keyboard.test.tsx: Added useServices mock with correct import path to prevent test failures
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Removed createLoggerSync import and module-level logger creation. Added
+    useServices() hook usage inside component to get logger.
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Removed createLoggerSync import and module-level logger creation. Added
+    useServices() hook usage inside component to get logger.
+  apps/desktop/src/components/errors/RolesErrorBoundary.tsx: Removed
+    createLoggerSync import and module-level logger creation. Updated to accept
+    optional logger prop and use this.props.logger?.error() in
+    componentDidCatch.
+  apps/desktop/src/App.tsx: Updated RolesErrorBoundary usage to pass logger prop from useServices() hook.
+  apps/desktop/src/components/errors/__tests__/RolesErrorBoundary.test.tsx:
+    Updated all test cases to provide mock logger prop to RolesErrorBoundary
+    component.
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Migrated from module-level createLoggerSync to useServices() hook pattern.
+    Removed createLoggerSync import, added useServices import, moved logger
+    access inside component function, and added logger to handleSave dependency
+    array.
+  apps/desktop/src/components/settings/personalities/PersonalitiesSection.tsx:
+    Migrated from module-level createLoggerSync to useServices() hook pattern.
+    Removed createLoggerSync import, added useServices import, moved logger
+    access inside component function, and added logger to dependency arrays for
+    handleCreatePersonality, handleEditPersonality, handleDeletePersonality,
+    handleFormSave, and handleConfirmDelete callbacks.
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalitiesSection.test.tsx:
+    Updated test mocks to use useServices hook pattern instead of
+    createLoggerSync. Changed mock path to ../../../../contexts and replaced
+    createLoggerSync mock with useServices mock returning a logger object.
+  apps/desktop/src/components/settings/roles/CreateRoleForm.tsx:
+    Migrated from createLoggerSync to useServices() hook, moved logger access
+    inside component function, added logger to useCallback dependency array
+  apps/desktop/src/components/settings/roles/RolesSection.tsx:
+    Migrated from createLoggerSync to useServices() hook, moved logger access
+    inside component function, added logger to all useCallback dependency arrays
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.basic.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.changeDetection.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/SettingsContent.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependencies in
+    useCallback hooks
+  apps/desktop/src/components/settings/TabContainer.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependency in
+    useEffect hook
+  apps/desktop/src/components/settings/SettingsModal.tsx: Migrated from
+    createLoggerSync to useServices() hook, added proper import structure
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Migrated from createLoggerSync to useServices() hook in main component and
+    child components (AgentGrid, TemplatesTab), fixed missing logger dependency
+    in useCallback
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Migrated from
+    createLoggerSync to useServices() hook, fixed missing logger dependency in
+    useCallback hook
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx: Added useServices mock to fix failing tests after migration
+  apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx: Added useServices mock to fix failing tests after SettingsContent migration
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-migrate-desktop-hooks-to-use
+  - T-migrate-layout-and-error
+  - T-migrate-personalities
+  - T-migrate-roles-components-to
+  - T-migrate-settings-components
+  - T-update-personalitiesprovider
+  - T-update-rolesprovider-to-use
+  - T-update-settingsstore-for
+  - T-update-usepersonalitiesstore
+  - T-update-userolesstore-for
+  - T-validate-logger-dependency
 created: 2025-08-17T14:04:13.529Z
 updated: 2025-08-17T14:04:13.529Z
 ---

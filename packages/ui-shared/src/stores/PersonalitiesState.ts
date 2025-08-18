@@ -1,6 +1,7 @@
+import type { StructuredLogger } from "@fishbowl-ai/shared";
 import {
-  PersonalityViewModel,
   PersonalitiesPersistenceAdapter,
+  PersonalityViewModel,
 } from "../types";
 import { PendingOperation } from "../types/personalities/PendingOperation";
 import { ErrorState } from "./ErrorState";
@@ -11,6 +12,7 @@ export interface PersonalitiesState {
   error: ErrorState | null;
   // New adapter integration state
   adapter: PersonalitiesPersistenceAdapter | null;
+  logger: StructuredLogger;
   isInitialized: boolean;
   isSaving: boolean;
   lastSyncTime: string | null;

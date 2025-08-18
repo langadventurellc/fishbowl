@@ -25,15 +25,12 @@ import { Button } from "../../ui/button";
 import { PersonalitiesList } from "./PersonalitiesList";
 import { DeletePersonalityDialog } from "./DeletePersonalityDialog";
 import { PersonalityFormModal } from "./PersonalityFormModal";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "PersonalitiesSection", level: "info" },
-});
+import { useServices } from "../../../contexts";
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
   className,
 }) => {
+  const { logger } = useServices();
   // Subscribe to store state
   const personalities = usePersonalitiesStore((state) => state.personalities);
   const isLoading = usePersonalitiesStore((state) => state.isLoading);
@@ -70,7 +67,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
     setSelectedPersonality(undefined);
     setDeleteDialogOpen(false); // Ensure only one modal open
     setFormModalOpen(true);
-  }, []);
+  }, [logger]);
 
   const handleEditPersonality = useCallback(
     (personality: PersonalityViewModel) => {
@@ -83,7 +80,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
       setDeleteDialogOpen(false);
       setFormModalOpen(true);
     },
-    [],
+    [logger],
   );
 
   const handleDeletePersonality = useCallback(
@@ -96,7 +93,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
       setFormModalOpen(false);
       setDeleteDialogOpen(true);
     },
-    [],
+    [logger],
   );
 
   // Helper to detect which fields changed for verification and logging
@@ -235,6 +232,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
       updatePersonality,
       clearError,
       getChangedFields,
+      logger,
     ],
   );
 
@@ -278,7 +276,7 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
         // Keep dialog open on error
       }
     },
-    [deletePersonality, clearError],
+    [deletePersonality, clearError, logger],
   );
 
   // Render empty state when no personalities exist

@@ -25,13 +25,10 @@ import { Button } from "../../ui/button";
 import { RolesList } from "./RolesList";
 import { RoleDeleteDialog } from "./RoleDeleteDialog";
 import { RoleFormModal } from "./RoleFormModal";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "RolesSection", level: "info" },
-});
+import { useServices } from "../../../contexts";
 
 export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
+  const { logger } = useServices();
   // Subscribe to store state
   const roles = useRolesStore((state) => state.roles);
   const isLoading = useRolesStore((state) => state.isLoading);
@@ -60,28 +57,34 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
     setSelectedRole(undefined);
     setDeleteDialogOpen(false); // Ensure only one modal open
     setFormModalOpen(true);
-  }, []);
+  }, [logger]);
 
-  const handleEditRole = useCallback((role: RoleViewModel) => {
-    logger.info("Opening edit role modal", {
-      roleId: role.id,
-      roleName: role.name,
-    });
-    setFormMode("edit");
-    setSelectedRole(role);
-    setDeleteDialogOpen(false); // Ensure only one modal open
-    setFormModalOpen(true);
-  }, []);
+  const handleEditRole = useCallback(
+    (role: RoleViewModel) => {
+      logger.info("Opening edit role modal", {
+        roleId: role.id,
+        roleName: role.name,
+      });
+      setFormMode("edit");
+      setSelectedRole(role);
+      setDeleteDialogOpen(false); // Ensure only one modal open
+      setFormModalOpen(true);
+    },
+    [logger],
+  );
 
-  const handleDeleteRole = useCallback((role: RoleViewModel) => {
-    logger.info("Opening delete confirmation dialog", {
-      roleId: role.id,
-      roleName: role.name,
-    });
-    setSelectedRole(role);
-    setFormModalOpen(false); // Ensure only one modal open
-    setDeleteDialogOpen(true);
-  }, []);
+  const handleDeleteRole = useCallback(
+    (role: RoleViewModel) => {
+      logger.info("Opening delete confirmation dialog", {
+        roleId: role.id,
+        roleName: role.name,
+      });
+      setSelectedRole(role);
+      setFormModalOpen(false); // Ensure only one modal open
+      setDeleteDialogOpen(true);
+    },
+    [logger],
+  );
 
   // Helper to detect which fields changed for verification and logging
   const getChangedFields = useCallback(
@@ -182,6 +185,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
       updateRole,
       clearError,
       getChangedFields,
+      logger,
     ],
   );
 
@@ -225,7 +229,7 @@ export const RolesSection: React.FC<RolesSectionProps> = ({ className }) => {
         // Keep dialog open on error
       }
     },
-    [deleteRole, clearError],
+    [deleteRole, clearError, logger],
   );
 
   // Render empty state when no roles exist

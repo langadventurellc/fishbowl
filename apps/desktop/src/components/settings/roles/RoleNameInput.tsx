@@ -92,19 +92,25 @@ export const RoleNameInput: React.FC<RoleNameInputProps> = ({
     [existingRoles, currentRoleId],
   );
 
-  // Debounced validation
-  const debouncedValidate = useDebounce((...args: unknown[]) => {
-    const name = args[0] as string;
-    const result = validateName(name);
-    setValidation(result);
+  // Stable callback for debounced validation
+  const handleValidation = useCallback(
+    (...args: unknown[]) => {
+      const name = args[0] as string;
+      const result = validateName(name);
+      setValidation(result);
 
-    // Announce validation result to screen readers
-    if (result.errors.length > 0 && result.errors[0]) {
-      announceToScreenReader(result.errors[0], "assertive");
-    } else if (result.isValid) {
-      announceToScreenReader("Valid role name", "polite");
-    }
-  }, 300);
+      // Announce validation result to screen readers
+      if (result.errors.length > 0 && result.errors[0]) {
+        announceToScreenReader(result.errors[0], "assertive");
+      } else if (result.isValid) {
+        announceToScreenReader("Valid role name", "polite");
+      }
+    },
+    [validateName],
+  );
+
+  // Debounced validation
+  const debouncedValidate = useDebounce(handleValidation, 300);
 
   // Trigger validation on value change
   useEffect(() => {
