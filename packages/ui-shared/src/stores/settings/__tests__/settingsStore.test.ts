@@ -65,10 +65,18 @@ describe("settingsStore", () => {
         navigationHistory: state.navigationHistory,
         hasUnsavedChanges: state.hasUnsavedChanges,
         lastOpenedSection: state.lastOpenedSection,
-        logger: null, // Compare against default null state, not injected logger
       };
 
-      expect(currentState).toEqual(defaultSettingsModalState);
+      const expectedState = {
+        isOpen: defaultSettingsModalState.isOpen,
+        activeSection: defaultSettingsModalState.activeSection,
+        activeSubTab: defaultSettingsModalState.activeSubTab,
+        navigationHistory: defaultSettingsModalState.navigationHistory,
+        hasUnsavedChanges: defaultSettingsModalState.hasUnsavedChanges,
+        lastOpenedSection: defaultSettingsModalState.lastOpenedSection,
+      };
+
+      expect(currentState).toEqual(expectedState);
     });
   });
 

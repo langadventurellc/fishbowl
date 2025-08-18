@@ -1,6 +1,7 @@
 import {
   createLoggerSync,
   type StructuredLogger as IStructuredLogger,
+  ConsoleLogger,
 } from "@fishbowl-ai/shared";
 import { BrowserCryptoUtils } from "../utils/BrowserCryptoUtils";
 import { BrowserDeviceInfo } from "../utils/BrowserDeviceInfo";
@@ -73,39 +74,10 @@ export class RendererProcessServices {
       // Fallback to console logging if logger creation fails
       console.error("Failed to create configured logger:", error);
 
-      // Create minimal logger fallback
-      return {
-        debug: (msg: string, meta?: unknown) => console.debug(msg, meta),
-        info: (msg: string, meta?: unknown) => console.info(msg, meta),
-        warn: (msg: string, meta?: unknown) => console.warn(msg, meta),
-        error: (msg: string, error?: Error | unknown, meta?: unknown) =>
-          console.error(msg, error, meta),
-        setLevel: () => {},
-        getLevel: () => "info" as const,
-        trace: (msg: string, meta?: unknown) => console.debug(msg, meta),
-        fatal: (msg: string, error?: Error | unknown, meta?: unknown) =>
-          console.error(msg, error, meta),
-        child: () =>
-          ({
-            debug: (msg: string, meta?: unknown) => console.debug(msg, meta),
-            info: (msg: string, meta?: unknown) => console.info(msg, meta),
-            warn: (msg: string, meta?: unknown) => console.warn(msg, meta),
-            error: (msg: string, error?: Error | unknown, meta?: unknown) =>
-              console.error(msg, error, meta),
-            setLevel: () => {},
-            getLevel: () => "info" as const,
-            trace: (msg: string, meta?: unknown) => console.debug(msg, meta),
-            fatal: (msg: string, error?: Error | unknown, meta?: unknown) =>
-              console.error(msg, error, meta),
-            child: () => ({}) as IStructuredLogger,
-            addTransport: () => {},
-            removeTransport: () => {},
-            setFormatter: () => {},
-          }) as unknown as IStructuredLogger,
-        addTransport: () => {},
-        removeTransport: () => {},
-        setFormatter: () => {},
-      } as unknown as IStructuredLogger;
+      // Create console logger fallback
+      return new ConsoleLogger({
+        metadata: { component: "renderer-services-fallback" },
+      }) as unknown as IStructuredLogger;
     }
   }
 }

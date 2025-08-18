@@ -2,9 +2,21 @@ import { RendererProcessServices } from "../RendererProcessServices";
 import { BrowserCryptoUtils } from "../../utils/BrowserCryptoUtils";
 import { BrowserDeviceInfo } from "../../utils/BrowserDeviceInfo";
 
-// Mock the createLoggerSync function to avoid actual logger creation
+// Mock the createLoggerSync function and ConsoleLogger to avoid actual logger creation
 jest.mock("@fishbowl-ai/shared", () => ({
   createLoggerSync: jest.fn(() => ({
+    debug: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    setLevel: jest.fn(),
+    getLevel: jest.fn(),
+    child: jest.fn(),
+    addTransport: jest.fn(),
+    removeTransport: jest.fn(),
+    setFormatter: jest.fn(),
+  })),
+  ConsoleLogger: jest.fn().mockImplementation(() => ({
     debug: jest.fn(),
     info: jest.fn(),
     warn: jest.fn(),
@@ -114,7 +126,7 @@ describe("RendererProcessServices", () => {
       expect(typeof fallbackServices.logger.error).toBe("function");
     });
 
-    it("should use console methods in fallback logger", () => {
+    it("should use logger methods in fallback logger", () => {
       const fallbackServices = new RendererProcessServices();
 
       fallbackServices.logger.debug("test debug", { data: "test" });
@@ -124,12 +136,16 @@ describe("RendererProcessServices", () => {
         data: "test",
       });
 
-      expect(console.debug).toHaveBeenCalledWith("test debug", {
+      expect(fallbackServices.logger.debug).toHaveBeenCalledWith("test debug", {
         data: "test",
       });
-      expect(console.info).toHaveBeenCalledWith("test info", { data: "test" });
-      expect(console.warn).toHaveBeenCalledWith("test warn", { data: "test" });
-      expect(console.error).toHaveBeenCalledWith(
+      expect(fallbackServices.logger.info).toHaveBeenCalledWith("test info", {
+        data: "test",
+      });
+      expect(fallbackServices.logger.warn).toHaveBeenCalledWith("test warn", {
+        data: "test",
+      });
+      expect(fallbackServices.logger.error).toHaveBeenCalledWith(
         "test error",
         new Error("test error"),
         { data: "test" },

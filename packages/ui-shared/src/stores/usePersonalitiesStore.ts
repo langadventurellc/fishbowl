@@ -11,6 +11,7 @@ import type {
   StructuredLogger as IStructuredLogger,
   PersistedPersonalitiesSettingsData,
 } from "@fishbowl-ai/shared";
+import { ConsoleLogger } from "@fishbowl-ai/shared";
 import { create } from "zustand";
 import { mapPersonalitiesPersistenceToUI } from "../mapping/personalities/mapPersonalitiesPersistenceToUI";
 import { mapPersonalitiesUIToPersistence } from "../mapping/personalities/mapPersonalitiesUIToPersistence";
@@ -286,7 +287,9 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
       timestamp: null,
     },
     adapter: null,
-    logger: null as unknown as IStructuredLogger, // Will be set during initialization
+    logger: new ConsoleLogger({
+      metadata: { component: "personalities-store" },
+    }) as unknown as IStructuredLogger,
     isInitialized: false,
     isSaving: false,
     lastSyncTime: null,

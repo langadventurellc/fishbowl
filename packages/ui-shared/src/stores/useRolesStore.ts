@@ -11,6 +11,7 @@ import type {
   PersistedRolesSettingsData,
   StructuredLogger,
 } from "@fishbowl-ai/shared";
+import { ConsoleLogger } from "@fishbowl-ai/shared";
 import { create } from "zustand";
 import { mapRolesPersistenceToUI } from "../mapping/roles/mapRolesPersistenceToUI";
 import { mapRolesUIToPersistence } from "../mapping/roles/mapRolesUIToPersistence";
@@ -323,7 +324,9 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
       timestamp: null,
     },
     adapter: null,
-    logger: null as unknown as StructuredLogger, // Will be set during initialization
+    logger: new ConsoleLogger({
+      metadata: { component: "roles-store" },
+    }) as unknown as StructuredLogger,
     isInitialized: false,
     isSaving: false,
     lastSyncTime: null,

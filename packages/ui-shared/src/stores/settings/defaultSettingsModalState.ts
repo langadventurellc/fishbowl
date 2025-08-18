@@ -8,6 +8,7 @@
  */
 
 import type { StructuredLogger } from "@fishbowl-ai/shared";
+import { ConsoleLogger } from "@fishbowl-ai/shared";
 import type { SettingsModalState } from "./settingsModalState";
 
 export const defaultSettingsModalState: SettingsModalState = {
@@ -17,5 +18,7 @@ export const defaultSettingsModalState: SettingsModalState = {
   navigationHistory: [],
   hasUnsavedChanges: false,
   lastOpenedSection: "general",
-  logger: null as unknown as StructuredLogger,
+  logger: new ConsoleLogger({
+    metadata: { component: "settings-store" },
+  }) as unknown as StructuredLogger,
 };
