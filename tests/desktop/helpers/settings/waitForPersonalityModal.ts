@@ -4,38 +4,41 @@ import type { TestWindow } from "../TestWindow";
 /**
  * Wait for the personality modal (create/edit) to be visible and ready for interaction.
  */
-export const waitForPersonalityModal = async (window: TestWindow) => {
-  // Wait for modal to be present in DOM
-  const modal = window.locator('[data-testid="personality-modal"]');
-  await expect(modal).toBeVisible({ timeout: 5000 });
-
-  // Wait for modal content to be stable
-  await window.waitForTimeout(300);
-
-  // Verify essential form elements are present
-  await expect(window.locator('input[name="name"]')).toBeVisible();
+export const waitForPersonalityModal = async (
+  window: TestWindow,
+  mode: "create" | "edit" = "create",
+) => {
+  const modalTitle =
+    mode === "create" ? "Create Personality" : "Edit Personality";
+  // Wait for the personality modal with the specified title
   await expect(
-    window.locator('textarea[name="customInstructions"]'),
-  ).toBeVisible();
-
-  // Verify save button is present
-  await expect(
-    window.locator("button").filter({ hasText: "Save" }),
-  ).toBeVisible();
+    window.locator('[role="dialog"]').filter({
+      has: window.locator(`h2:has-text("${modalTitle}")`),
+    }),
+  ).toBeVisible({ timeout: 5000 });
 };
 
 /**
  * Wait for the delete confirmation dialog to be visible.
  */
 export const waitForDeleteDialog = async (window: TestWindow) => {
-  // Wait for the delete confirmation dialog
-  const deleteDialog = window.locator('[role="dialog"]').filter({
-    has: window.locator("text=Delete Personality"),
+  // Wait for the dialog overlay
+  await expect(window.locator('[data-slot="dialog-overlay"]')).toBeVisible({
+    timeout: 3000,
   });
 
-  await expect(deleteDialog).toBeVisible({ timeout: 3000 });
+  // Wait for delete confirmation content
+  await expect(
+    window.locator('[role="alertdialog"], [role="dialog"]').filter({
+      has: window.locator("text=/delete.*personality/i"),
+    }),
+  ).toBeVisible({ timeout: 2000 });
 
-  // Verify delete confirmation button is present
+  // Verify Cancel and Delete buttons are present
+  await expect(
+    window.locator("button").filter({ hasText: "Cancel" }),
+  ).toBeVisible();
+
   await expect(
     window.locator("button").filter({ hasText: "Delete" }),
   ).toBeVisible();
@@ -45,32 +48,15 @@ export const waitForDeleteDialog = async (window: TestWindow) => {
  * Wait for any modal to close completely.
  */
 export const waitForModalToClose = async (window: TestWindow) => {
-  // Wait for personality modal to disappear
-  try {
-    await expect(
-      window.locator('[data-testid="personality-modal"]'),
-    ).not.toBeVisible({ timeout: 3000 });
-  } catch {
-    // Modal wasn't open, continue
-  }
+  // Wait for personality modals (either Create or Edit) to disappear
+  await expect(
+    window.locator('[role="dialog"]').filter({
+      has: window.locator(
+        'h2:has-text("Create Personality"), h2:has-text("Edit Personality")',
+      ),
+    }),
+  ).not.toBeVisible({ timeout: 3000 });
 
-  // Wait for delete dialog to disappear
-  try {
-    await expect(
-      window.locator('[role="dialog"]').filter({
-        has: window.locator("text=Delete Personality"),
-      }),
-    ).not.toBeVisible({ timeout: 3000 });
-  } catch {
-    // Dialog wasn't open, continue
-  }
-
-  // Wait for any overlay to disappear
-  try {
-    await expect(
-      window.locator('[data-slot="dialog-overlay"]'),
-    ).not.toBeVisible({ timeout: 2000 });
-  } catch {
-    // No overlay present, continue
-  }
+  // Additional wait for animations
+  await window.waitForTimeout(200);
 };

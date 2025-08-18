@@ -33,14 +33,20 @@ affectedFiles:
   tests/desktop/features/settings/personalities/personalities-default-loading.spec.ts:
     Created comprehensive test file with 7 test cases for personalities default
     loading functionality following roles pattern exactly
+  tests/desktop/features/settings/personalities/personalities-creation.spec.ts:
+    Created comprehensive test suite for personality creation functionality with
+    11 test cases covering form validation, trait slider interactions, modal
+    behavior, cancel workflows, data persistence, and form reset behavior.
+    Follows exact pattern from roles-creation.spec.ts but adapted for
+    personality data structure.
 log: []
 schema: v1.0
 childrenIds:
   - T-create-personalities-creation
-  - T-create-personalities-default
   - T-create-personalities-deletion
   - T-create-personalities-editing
   - T-create-personalities
+  - T-create-personalities-default
   - T-create-personalities-mock
   - T-create-personalities-test-1
   - T-create-personalities-test
