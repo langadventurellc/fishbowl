@@ -96,6 +96,7 @@ export const PersonalitiesProvider: React.FC<PersonalitiesProviderProps> = ({
 
     return () => {
       mounted = false;
+      usePersonalitiesStore.getState().destroy();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Empty dependency array ensures single initialization

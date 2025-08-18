@@ -31,4 +31,6 @@ export interface RolesActions {
   retryLastOperation: () => Promise<void>;
   clearErrorState: () => void;
   getErrorDetails: () => ErrorState;
+  // Cleanup method to prevent memory leaks
+  destroy: () => void;
 }

@@ -23,6 +23,7 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
       roles: [],
       error: null,
       initialize: mockInitialize,
+      destroy: jest.fn(),
     }),
   },
 }));

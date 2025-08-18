@@ -867,5 +867,22 @@ export const useRolesStore = create<RolesStore>()((set, get) => {
     getErrorDetails: () => {
       return get().error || clearErrorState();
     },
+
+    // Cleanup method to prevent memory leaks
+    destroy: () => {
+      // Clear any pending debounce timer
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+        debounceTimer = null;
+      }
+
+      // Clear any pending retry timers
+      const { retryTimers } = get();
+      retryTimers.forEach((timer) => clearTimeout(timer));
+      retryTimers.clear();
+
+      // Clear rollback snapshot
+      rollbackSnapshot = null;
+    },
   };
 });

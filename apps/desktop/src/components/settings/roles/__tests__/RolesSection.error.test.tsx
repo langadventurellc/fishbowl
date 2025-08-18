@@ -107,6 +107,7 @@ describe("RolesSection Error Handling", () => {
     resetRoles: jest.fn(),
     clearErrorState: jest.fn(),
     getErrorDetails: jest.fn(),
+    destroy: jest.fn(),
   };
 
   beforeEach(() => {

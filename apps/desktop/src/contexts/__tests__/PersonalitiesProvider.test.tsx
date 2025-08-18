@@ -31,6 +31,7 @@ const mockStoreState = {
   personalities: [] as Array<{ id: string; name: string; [key: string]: any }>,
   error: null,
   initialize: mockInitialize,
+  destroy: jest.fn(),
 };
 
 jest.mock("@fishbowl-ai/ui-shared", () => ({
