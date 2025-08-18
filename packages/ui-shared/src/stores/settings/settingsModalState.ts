@@ -8,9 +8,9 @@
  * @module stores/settings/settingsModalState
  */
 
+import type { StructuredLogger as IStructuredLogger } from "@fishbowl-ai/shared";
 import type { SettingsSection } from "./settingsSection";
 import type { SettingsSubTab } from "./settingsSubTab";
-import type { StructuredLogger as IStructuredLogger } from "@fishbowl-ai/shared";
 
 export interface SettingsModalState {
   /**
@@ -69,5 +69,5 @@ export interface SettingsModalState {
    *
    * @default null
    */
-  logger: IStructuredLogger | null;
+  logger: IStructuredLogger;
 }

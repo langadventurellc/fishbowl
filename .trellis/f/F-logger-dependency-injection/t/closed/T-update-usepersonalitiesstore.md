@@ -1,12 +1,26 @@
 ---
 id: T-update-usepersonalitiesstore
 title: Update usePersonalitiesStore for logger dependency injection
-status: open
+status: done
 priority: high
 parent: F-logger-dependency-injection
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/PersonalitiesState.ts: "Added logger: StructuredLogger | null property to state interface"
+  packages/ui-shared/src/stores/PersonalitiesActions.ts: Updated initialize method signature to accept logger parameter
+  packages/ui-shared/src/stores/usePersonalitiesStore.ts: Removed lazy logger
+    pattern, updated all logging calls to use injected logger instance, added
+    logger to initial state and initialize method
+  packages/ui-shared/src/stores/__tests__/personalitiesStore.test.ts:
+    Updated tests to pass mock logger to initialize method, added
+    createMockLogger helper function, and provided default mock logger in
+    beforeEach setup
+log:
+  - Successfully updated usePersonalitiesStore to use logger dependency
+    injection. Removed lazy logger pattern and fallback logic, updated all
+    interfaces to accept logger parameter, and ensured all internal logging uses
+    injected logger instance with clean `get().logger!.method()` pattern. All
+    quality checks and tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:27:01.525Z

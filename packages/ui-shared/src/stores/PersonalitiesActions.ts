@@ -1,4 +1,7 @@
-import type { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
+import type {
+  PersistedPersonalitiesSettingsData,
+  StructuredLogger as IStructuredLogger,
+} from "@fishbowl-ai/shared";
 import {
   PersonalityFormData,
   PersonalityViewModel,
@@ -17,7 +20,10 @@ export interface PersonalitiesActions {
   clearError: () => void;
   // Adapter integration methods
   setAdapter: (adapter: PersonalitiesPersistenceAdapter) => void;
-  initialize: (adapter: PersonalitiesPersistenceAdapter) => Promise<void>;
+  initialize: (
+    adapter: PersonalitiesPersistenceAdapter,
+    logger: IStructuredLogger,
+  ) => Promise<void>;
   // Auto-save methods
   persistChanges: () => Promise<void>;
   syncWithStorage: () => Promise<void>;

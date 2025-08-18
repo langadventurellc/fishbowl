@@ -8,12 +8,12 @@
  * @module stores/settings/settingsStore
  */
 
+import type { StructuredLogger as IStructuredLogger } from "@fishbowl-ai/shared";
 import { create } from "zustand";
+import { defaultSettingsModalState } from "./defaultSettingsModalState";
 import type { SettingsModalStore } from "./settingsModalStore";
 import type { SettingsSection } from "./settingsSection";
 import type { SettingsSubTab } from "./settingsSubTab";
-import { defaultSettingsModalState } from "./defaultSettingsModalState";
-import type { StructuredLogger as IStructuredLogger } from "@fishbowl-ai/shared";
 
 /**
  * Maximum number of entries allowed in navigation history.
@@ -122,7 +122,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()((
 
       // Validate section if provided
       if (section && !isValidSection(section)) {
-        get().logger!.warn(`Invalid section provided to openModal: ${section}`);
+        get().logger.warn(`Invalid section provided to openModal: ${section}`);
         return;
       }
 
@@ -149,7 +149,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()((
     setActiveSection: (section: SettingsSection) => {
       // Validate section
       if (!isValidSection(section)) {
-        get().logger!.warn(
+        get().logger.warn(
           `Invalid section provided to setActiveSection: ${section}`,
         );
         return;
@@ -166,7 +166,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()((
     setActiveSubTab: (tab: SettingsSubTab) => {
       // Validate sub-tab
       if (!isValidSubTab(tab)) {
-        get().logger!.warn(
+        get().logger.warn(
           `Invalid sub-tab provided to setActiveSubTab: ${tab}`,
         );
         return;
@@ -182,7 +182,7 @@ export const useSettingsModalStore = create<SettingsModalStore>()((
 
       // Handle empty history gracefully
       if (navigationHistory.length <= 1) {
-        get().logger!.info("No previous section in navigation history");
+        get().logger.info("No previous section in navigation history");
         return;
       }
 
