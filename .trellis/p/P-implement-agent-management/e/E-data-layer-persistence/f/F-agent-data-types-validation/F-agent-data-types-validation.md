@@ -1,14 +1,31 @@
 ---
 id: F-agent-data-types-validation
 title: Agent Data Types & Validation
-status: open
+status: in-progress
 priority: medium
 parent: E-data-layer-persistence
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/schemas/agentSchema.ts: Updated agent validation schema
+    to match task requirements with flattened structure - name (2-100 chars,
+    alphanumeric), model/role/personality (required strings), temperature (0-2),
+    maxTokens (1-4000, integer), topP (0-1), systemPrompt (optional, max 5000
+    chars)
+  packages/ui-shared/src/types/settings/AgentViewModel.ts:
+    Created new agent view
+    model interface extending AgentFormData with id and timestamp fields
+    following RoleViewModel pattern
+  packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
+    Completely rewrote test file to match new schema structure with
+    comprehensive coverage of all validation rules, boundary values, edge cases,
+    and type inference following roleSchema test patterns
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-agent-data-types-and
+  - T-create-agent-mapping-utilities
+  - T-create-barrel-exports-and
+  - T-create-persistence-data-types
 created: 2025-08-18T23:04:10.560Z
 updated: 2025-08-18T23:04:10.560Z
 ---

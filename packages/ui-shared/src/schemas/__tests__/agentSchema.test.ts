@@ -1,482 +1,395 @@
 /**
- * Unit tests for agent schema validation
+ * Unit tests for agentSchema validation.
+ *
+ * Tests schema validation for agent creation and editing,
+ * following the pattern from roleSchema tests.
  *
  * @module schemas/__tests__/agentSchema.test
  */
+
 import { agentSchema } from "../agentSchema";
+import type { AgentFormData } from "../../types/settings/AgentFormData";
 
 describe("agentSchema", () => {
   describe("valid data", () => {
-    it("should validate correct agent data", () => {
+    it("should validate complete agent data with all fields", () => {
       const validData = {
-        name: "Research Assistant",
-        model: "gpt-4",
-        role: "Research and analysis specialist",
-        configuration: {
-          temperature: 0.7,
-          maxTokens: 2000,
-          topP: 0.9,
-          systemPrompt: "You are a helpful research assistant.",
-        },
+        name: "AI Assistant",
+        model: "Claude 3.5 Sonnet",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+        systemPrompt: "You are a helpful assistant.",
       };
 
       const result = agentSchema.safeParse(validData);
+
       expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(validData);
+      }
     });
 
     it("should validate agent data without optional systemPrompt", () => {
       const validData = {
-        name: "Code Assistant",
-        model: "claude-3-haiku",
-        role: "Code review and debugging",
-        configuration: {
-          temperature: 0.3,
-          maxTokens: 1500,
-          topP: 0.95,
-        },
+        name: "Simple Agent",
+        model: "GPT-4",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 0.7,
+        maxTokens: 1500,
+        topP: 0.9,
       };
 
       const result = agentSchema.safeParse(validData);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.name).toBe(validData.name);
+        expect(result.data.model).toBe(validData.model);
+        expect(result.data.role).toBe(validData.role);
+        expect(result.data.personality).toBe(validData.personality);
+        expect(result.data.systemPrompt).toBeUndefined();
+      }
+    });
+
+    it("should accept name with valid characters", () => {
+      const validData = {
+        name: "AI-Assistant_v2 Agent",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+        systemPrompt: "Test system prompt",
+      };
+
+      const result = agentSchema.safeParse(validData);
+
       expect(result.success).toBe(true);
     });
 
-    it("should validate agent data with boundary values", () => {
+    it("should accept name with 100 characters", () => {
       const validData = {
-        name: "A", // minimum length
-        model: "test-model",
-        role: "Test", // near minimum length
-        configuration: {
-          temperature: 0, // minimum
-          maxTokens: 1, // minimum
-          topP: 0, // minimum
-        },
+        name: "A".repeat(100),
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+        systemPrompt: "Test system prompt",
       };
 
       const result = agentSchema.safeParse(validData);
+
       expect(result.success).toBe(true);
     });
 
-    it("should validate agent data with maximum boundary values", () => {
+    it("should accept systemPrompt with 5000 characters", () => {
       const validData = {
-        name: "A".repeat(50), // maximum length
-        model: "test-model",
-        role: "A".repeat(100), // maximum length
-        configuration: {
-          temperature: 2, // maximum
-          maxTokens: 4000, // maximum
-          topP: 1, // maximum
-        },
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+        systemPrompt: "A".repeat(5000),
       };
 
       const result = agentSchema.safeParse(validData);
+
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept valid boundary values", () => {
+      const validData = {
+        name: "Ab", // minimum length
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 0, // minimum
+        maxTokens: 1, // minimum
+        topP: 0, // minimum
+      };
+
+      const result = agentSchema.safeParse(validData);
+
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept maximum boundary values", () => {
+      const validData = {
+        name: "A".repeat(100), // maximum length
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 2, // maximum
+        maxTokens: 4000, // maximum
+        topP: 1, // maximum
+        systemPrompt: "A".repeat(5000), // maximum
+      };
+
+      const result = agentSchema.safeParse(validData);
+
       expect(result.success).toBe(true);
     });
   });
 
-  describe("name validation", () => {
+  describe("invalid data", () => {
     it("should reject empty name", () => {
       const invalidData = {
         name: "",
-        model: "gpt-4",
-        role: "Assistant",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]!.message).toBe("Agent name is required");
-      }
     });
 
-    it("should reject names over 50 characters", () => {
-      const invalidData = {
-        name: "A".repeat(51),
-        model: "gpt-4",
-        role: "Assistant",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]!.message).toBe(
-          "Agent name must be 50 characters or less",
-        );
-      }
-    });
-
-    it("should reject whitespace-only name", () => {
+    it("should reject name with only whitespace", () => {
       const invalidData = {
         name: "   ",
-        model: "gpt-4",
-        role: "Assistant",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]!.message).toBe("Agent name is required");
-      }
     });
 
-    it("should trim and validate name", () => {
-      const validData = {
-        name: "  Valid Name  ",
-        model: "gpt-4",
-        role: "Assistant",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+    it("should reject name longer than 100 characters", () => {
+      const invalidData = {
+        name: "A".repeat(101),
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
-      const result = agentSchema.safeParse(validData);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.name).toBe("Valid Name");
-      }
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
     });
-  });
 
-  describe("model validation", () => {
+    it("should reject name shorter than 2 characters", () => {
+      const invalidData = {
+        name: "A",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject name with invalid characters", () => {
+      const invalidData = {
+        name: "Agent@Name!",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
     it("should reject empty model", () => {
       const invalidData = {
-        name: "Assistant",
+        name: "Valid Name",
         model: "",
-        role: "Helper",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]!.message).toBe(
-          "Model selection is required",
-        );
-      }
     });
 
-    it("should accept any non-empty model string", () => {
-      const validData = {
-        name: "Assistant",
-        model: "custom-model-v1.0",
-        role: "Helper",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
-      };
-
-      const result = agentSchema.safeParse(validData);
-      expect(result.success).toBe(true);
-    });
-  });
-
-  describe("role validation", () => {
     it("should reject empty role", () => {
       const invalidData = {
-        name: "Assistant",
-        model: "gpt-4",
+        name: "Valid Name",
+        model: "Claude",
         role: "",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]!.message).toBe("Role is required");
-      }
     });
 
-    it("should reject roles over 100 characters", () => {
+    it("should reject empty personality", () => {
       const invalidData = {
-        name: "Assistant",
-        model: "gpt-4",
-        role: "A".repeat(101),
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]!.message).toBe(
-          "Role must be 100 characters or less",
-        );
-      }
     });
 
-    it("should reject whitespace-only role", () => {
+    it("should reject temperature below 0", () => {
       const invalidData = {
-        name: "Assistant",
-        model: "gpt-4",
-        role: "   ",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: -0.1,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]!.message).toBe("Role is required");
-      }
     });
 
-    it("should trim and validate role", () => {
-      const validData = {
-        name: "Assistant",
-        model: "gpt-4",
-        role: "  Helper Role  ",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+    it("should reject temperature above 2", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 2.1,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
-      const result = agentSchema.safeParse(validData);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.role).toBe("Helper Role");
-      }
-    });
-  });
-
-  describe("configuration validation", () => {
-    describe("temperature", () => {
-      it("should reject temperature below 0", () => {
-        const invalidData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: -0.1, maxTokens: 2000, topP: 0.9 },
-        };
-
-        const result = agentSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.issues[0]!.message).toBe(
-            "Temperature must be between 0 and 2",
-          );
-        }
-      });
-
-      it("should reject temperature above 2", () => {
-        const invalidData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 2.1, maxTokens: 2000, topP: 0.9 },
-        };
-
-        const result = agentSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.issues[0]!.message).toBe(
-            "Temperature must be between 0 and 2",
-          );
-        }
-      });
-
-      it("should accept temperature at boundaries", () => {
-        const validData1 = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0, maxTokens: 2000, topP: 0.9 },
-        };
-
-        const validData2 = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 2, maxTokens: 2000, topP: 0.9 },
-        };
-
-        expect(agentSchema.safeParse(validData1).success).toBe(true);
-        expect(agentSchema.safeParse(validData2).success).toBe(true);
-      });
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
     });
 
-    describe("maxTokens", () => {
-      it("should reject maxTokens below 1", () => {
-        const invalidData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 0, topP: 0.9 },
-        };
+    it("should reject maxTokens below 1", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 0,
+        topP: 0.95,
+      };
 
-        const result = agentSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.issues[0]!.message).toBe(
-            "Max tokens must be at least 1",
-          );
-        }
-      });
-
-      it("should reject maxTokens above 4000", () => {
-        const invalidData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 4001, topP: 0.9 },
-        };
-
-        const result = agentSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.issues[0]!.message).toBe(
-            "Max tokens must be 4000 or less",
-          );
-        }
-      });
-
-      it("should reject non-integer maxTokens", () => {
-        const invalidData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 1500.5, topP: 0.9 },
-        };
-
-        const result = agentSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.issues[0]!.message).toBe(
-            "Max tokens must be a whole number",
-          );
-        }
-      });
-
-      it("should accept maxTokens at boundaries", () => {
-        const validData1 = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 1, topP: 0.9 },
-        };
-
-        const validData2 = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 4000, topP: 0.9 },
-        };
-
-        expect(agentSchema.safeParse(validData1).success).toBe(true);
-        expect(agentSchema.safeParse(validData2).success).toBe(true);
-      });
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
     });
 
-    describe("topP", () => {
-      it("should reject topP below 0", () => {
-        const invalidData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 2000, topP: -0.1 },
-        };
+    it("should reject maxTokens above 4000", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 4001,
+        topP: 0.95,
+      };
 
-        const result = agentSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.issues[0]!.message).toBe(
-            "Top P must be between 0 and 1",
-          );
-        }
-      });
-
-      it("should reject topP above 1", () => {
-        const invalidData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 2000, topP: 1.1 },
-        };
-
-        const result = agentSchema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(result.error.issues[0]!.message).toBe(
-            "Top P must be between 0 and 1",
-          );
-        }
-      });
-
-      it("should accept topP at boundaries", () => {
-        const validData1 = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 2000, topP: 0 },
-        };
-
-        const validData2 = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: { temperature: 0.7, maxTokens: 2000, topP: 1 },
-        };
-
-        expect(agentSchema.safeParse(validData1).success).toBe(true);
-        expect(agentSchema.safeParse(validData2).success).toBe(true);
-      });
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
     });
 
-    describe("systemPrompt", () => {
-      it("should accept empty systemPrompt", () => {
-        const validData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: {
-            temperature: 0.7,
-            maxTokens: 2000,
-            topP: 0.9,
-            systemPrompt: "",
-          },
-        };
+    it("should reject non-integer maxTokens", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 1500.5,
+        topP: 0.95,
+      };
 
-        const result = agentSchema.safeParse(validData);
-        expect(result.success).toBe(true);
-      });
-
-      it("should accept long systemPrompt", () => {
-        const validData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: {
-            temperature: 0.7,
-            maxTokens: 2000,
-            topP: 0.9,
-            systemPrompt: "A".repeat(1000),
-          },
-        };
-
-        const result = agentSchema.safeParse(validData);
-        expect(result.success).toBe(true);
-      });
-
-      it("should work without systemPrompt field", () => {
-        const validData = {
-          name: "Assistant",
-          model: "gpt-4",
-          role: "Helper",
-          configuration: {
-            temperature: 0.7,
-            maxTokens: 2000,
-            topP: 0.9,
-          },
-        };
-
-        const result = agentSchema.safeParse(validData);
-        expect(result.success).toBe(true);
-        if (result.success) {
-          expect(result.data.configuration.systemPrompt).toBeUndefined();
-        }
-      });
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
     });
-  });
 
-  describe("missing required fields", () => {
+    it("should reject topP below 0", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: -0.1,
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject topP above 1", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 1.1,
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject systemPrompt longer than 5000 characters", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+        systemPrompt: "A".repeat(5001),
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
     it("should reject missing name", () => {
       const invalidData = {
-        model: "gpt-4",
-        role: "Helper",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -485,9 +398,12 @@ describe("agentSchema", () => {
 
     it("should reject missing model", () => {
       const invalidData = {
-        name: "Assistant",
-        role: "Helper",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        name: "Valid Name",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -496,36 +412,140 @@ describe("agentSchema", () => {
 
     it("should reject missing role", () => {
       const invalidData = {
-        name: "Assistant",
-        model: "gpt-4",
-        configuration: { temperature: 0.7, maxTokens: 2000, topP: 0.9 },
+        name: "Valid Name",
+        model: "Claude",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
     });
 
-    it("should reject missing configuration", () => {
+    it("should reject missing personality", () => {
       const invalidData = {
-        name: "Assistant",
-        model: "gpt-4",
-        role: "Helper",
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
     });
 
-    it("should reject missing configuration fields", () => {
+    it("should reject missing temperature", () => {
       const invalidData = {
-        name: "Assistant",
-        model: "gpt-4",
-        role: "Helper",
-        configuration: { temperature: 0.7 }, // missing maxTokens and topP
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        maxTokens: 2000,
+        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
+    });
+
+    it("should reject missing maxTokens", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        topP: 0.95,
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject missing topP", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+  });
+
+  describe("type inference", () => {
+    it("should infer correct TypeScript types", () => {
+      const validData = {
+        name: "Test Agent",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+        systemPrompt: "Test prompt",
+      };
+
+      const result = agentSchema.safeParse(validData);
+
+      if (result.success) {
+        // These should compile without TypeScript errors
+        const name: string = result.data.name;
+        const model: string = result.data.model;
+        const role: string = result.data.role;
+        const personality: string = result.data.personality;
+        const temperature: number = result.data.temperature;
+        const maxTokens: number = result.data.maxTokens;
+        const topP: number = result.data.topP;
+        const systemPrompt: string | undefined = result.data.systemPrompt;
+
+        expect(name).toBe(validData.name);
+        expect(model).toBe(validData.model);
+        expect(role).toBe(validData.role);
+        expect(personality).toBe(validData.personality);
+        expect(temperature).toBe(validData.temperature);
+        expect(maxTokens).toBe(validData.maxTokens);
+        expect(topP).toBe(validData.topP);
+        expect(systemPrompt).toBe(validData.systemPrompt);
+      }
+    });
+
+    it("should work with AgentFormData type", () => {
+      const agentFormData: AgentFormData = {
+        name: "Test Agent",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+        systemPrompt: "Test prompt",
+      };
+
+      const result = agentSchema.safeParse(agentFormData);
+      expect(result.success).toBe(true);
+
+      // Test without systemPrompt
+      const agentFormDataWithoutPrompt: AgentFormData = {
+        name: "Test Agent",
+        model: "Claude",
+        role: "role-id",
+        personality: "personality-id",
+        temperature: 1.0,
+        maxTokens: 2000,
+        topP: 0.95,
+      };
+
+      const result2 = agentSchema.safeParse(agentFormDataWithoutPrompt);
+      expect(result2.success).toBe(true);
     });
   });
 });
