@@ -13,6 +13,7 @@ export interface PersonalityNameInputProps {
   value: string;
   onChange: (value: string) => void;
   existingPersonalities?: Personality[];
+  currentPersonalityId?: string;
   showCharacterCounter?: boolean;
   disabled?: boolean;
   className?: string;

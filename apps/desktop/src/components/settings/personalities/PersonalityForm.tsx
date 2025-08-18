@@ -176,6 +176,9 @@ export const PersonalityForm: React.FC<CreatePersonalityFormProps> = ({
                     value={field.value}
                     onChange={field.onChange}
                     existingPersonalities={existingPersonalities}
+                    currentPersonalityId={
+                      isEditMode ? initialData?.id : undefined
+                    }
                     showCharacterCounter={true}
                     disabled={isSubmitting || isLoading}
                     aria-describedby={
