@@ -1,14 +1,73 @@
 ---
 id: T-create-agent-mapping-utilities
 title: Create Agent Mapping Utilities
-status: open
+status: done
 priority: medium
 parent: F-agent-data-types-validation
 prerequisites:
   - T-create-agent-data-types-and
   - T-create-persistence-data-types
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/mapping/agents/mapAgentsPersistenceToUI.ts:
+    Created mapping function to transform persistence agent data to UI view
+    models
+  packages/ui-shared/src/mapping/agents/mapAgentsUIToPersistence.ts:
+    Created mapping function to transform UI agent data to persistence format
+    with schema validation
+  packages/ui-shared/src/mapping/agents/mapSingleAgentPersistenceToUI.ts:
+    Created utility function for mapping individual agents from persistence to
+    UI format with field normalization
+  packages/ui-shared/src/mapping/agents/mapSingleAgentUIToPersistence.ts:
+    Created utility function for mapping individual agents from UI to
+    persistence format
+  packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts: Created field normalization utility to ensure data constraints and quality
+  packages/ui-shared/src/mapping/agents/index.ts: Created barrel export file for all agent mapping functions
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Created comprehensive unit tests for persistence-to-UI mapping function
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts: Created unit tests for UI-to-persistence mapping function
+  packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
+    Created round-trip data integrity tests to ensure data preservation through
+    conversion cycles
+  packages/shared/src/types/settings/index.ts: Added exports for agent types and
+    schemas to make them available to other packages
+log:
+  - >-
+    Successfully implemented agent mapping utilities following the exact
+    patterns from roles and personalities implementations. Created comprehensive
+    mapping functions to convert between UI and persistence data formats for
+    agent configurations, ensuring data integrity during transformation between
+    different data layers.
+
+
+    Key accomplishments:
+
+    - Created mapAgentsPersistenceToUI function that transforms persistence data
+    to UI view models
+
+    - Created mapAgentsUIToPersistence function that transforms UI data to
+    persistence format with schema validation
+
+    - Implemented mapSingleAgentPersistenceToUI utility for individual agent
+    transformation with timestamp and field normalization
+
+    - Added mapSingleAgentUIToPersistence for individual agent UI-to-persistence
+    conversion
+
+    - Created normalizeAgentFields utility to ensure field constraints and data
+    quality
+
+    - Implemented comprehensive unit tests covering all transformation
+    scenarios, edge cases, and round-trip data integrity
+
+    - All quality checks pass (linting, formatting, type checking)
+
+    - All 8 unit tests pass successfully
+
+    - Follows exact patterns established by roles/personalities mapping
+    functions
+
+    - Proper error handling and schema validation implemented
+
+    - Supports optional fields, timestamp handling, and data normalization
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T23:09:28.373Z

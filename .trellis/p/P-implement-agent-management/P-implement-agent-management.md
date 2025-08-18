@@ -29,6 +29,27 @@ affectedFiles:
   packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
     Created extensive unit tests for schema validation including edge cases and
     validation failures
+  packages/ui-shared/src/mapping/agents/mapAgentsPersistenceToUI.ts:
+    Created mapping function to transform persistence agent data to UI view
+    models
+  packages/ui-shared/src/mapping/agents/mapAgentsUIToPersistence.ts:
+    Created mapping function to transform UI agent data to persistence format
+    with schema validation
+  packages/ui-shared/src/mapping/agents/mapSingleAgentPersistenceToUI.ts:
+    Created utility function for mapping individual agents from persistence to
+    UI format with field normalization
+  packages/ui-shared/src/mapping/agents/mapSingleAgentUIToPersistence.ts:
+    Created utility function for mapping individual agents from UI to
+    persistence format
+  packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts: Created field normalization utility to ensure data constraints and quality
+  packages/ui-shared/src/mapping/agents/index.ts: Created barrel export file for all agent mapping functions
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Created comprehensive unit tests for persistence-to-UI mapping function
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts: Created unit tests for UI-to-persistence mapping function
+  packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
+    Created round-trip data integrity tests to ensure data preservation through
+    conversion cycles
+  packages/shared/src/types/settings/index.ts: Added exports for agent types and
+    schemas to make them available to other packages
 log: []
 schema: v1.0
 childrenIds:
