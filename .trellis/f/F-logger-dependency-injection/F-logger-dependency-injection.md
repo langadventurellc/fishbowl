@@ -1,7 +1,7 @@
 ---
 id: F-logger-dependency-injection
 title: Logger Dependency Injection Refactor
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -131,20 +131,21 @@ affectedFiles:
     useCallback hook
   apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx: Added useServices mock to fix failing tests after migration
   apps/desktop/src/components/settings/__tests__/AppearanceSettings.test.tsx: Added useServices mock to fix failing tests after SettingsContent migration
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-update-rolesprovider-to-use
-  - T-validate-logger-dependency
   - T-migrate-desktop-hooks-to-use
   - T-migrate-layout-and-error
   - T-migrate-personalities
   - T-migrate-roles-components-to
   - T-migrate-settings-components
   - T-update-personalitiesprovider
+  - T-update-rolesprovider-to-use
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
   - T-update-userolesstore-for
+  - T-validate-logger-dependency
 created: 2025-08-17T14:04:13.529Z
 updated: 2025-08-17T14:04:13.529Z
 ---
