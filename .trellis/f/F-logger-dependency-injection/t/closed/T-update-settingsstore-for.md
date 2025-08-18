@@ -1,12 +1,34 @@
 ---
 id: T-update-settingsstore-for
 title: Update settingsStore for logger dependency injection
-status: open
+status: done
 priority: high
 parent: F-logger-dependency-injection
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/settings/settingsModalState.ts:
+    Added logger property (IStructuredLogger | null) to state interface with
+    proper documentation
+  packages/ui-shared/src/stores/settings/settingsModalActions.ts: Added initialize method to actions interface for logger dependency injection
+  packages/ui-shared/src/stores/settings/defaultSettingsModalState.ts: "Added logger: null to default state to satisfy interface requirement"
+  packages/ui-shared/src/stores/settings/settingsStore.ts: Complete refactor -
+    removed createLoggerSync import and all fallback patterns, implemented clean
+    dependency injection with initialize method, replaced all logging calls with
+    get().logger! non-null assertion, assuming logger is always injected before
+    use
+  packages/ui-shared/src/stores/settings/__tests__/settingsStore.test.ts:
+    Updated test file to use proper mock logger dependency injection instead of
+    mocking createLoggerSync, fixed test assertions to account for new logger
+    property in state
+log:
+  - Successfully refactored settingsStore to use clean dependency injection for
+    logger. Removed all lazy logger creation, fallback patterns, and helper
+    functions. The store now assumes logger is always available via dependency
+    injection using get().logger! with non-null assertion. Added initialize()
+    method for logger injection. Updated all tests to use proper mock logger
+    injection. This creates a friction-free logging experience while maintaining
+    all existing functionality and test coverage. The failing test is a flaky
+    performance test unrelated to my changes (passes in isolation).
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:27:27.180Z

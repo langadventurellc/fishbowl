@@ -10,6 +10,7 @@
 
 import type { SettingsSection } from "./settingsSection";
 import type { SettingsSubTab } from "./settingsSubTab";
+import type { StructuredLogger as IStructuredLogger } from "@fishbowl-ai/shared";
 
 export interface SettingsModalState {
   /**
@@ -61,4 +62,12 @@ export interface SettingsModalState {
    * @default 'general'
    */
   lastOpenedSection: SettingsSection;
+
+  /**
+   * Logger instance injected via dependency injection.
+   * Set to null until initialized through the initialize method.
+   *
+   * @default null
+   */
+  logger: IStructuredLogger | null;
 }

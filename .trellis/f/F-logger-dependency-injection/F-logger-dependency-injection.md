@@ -1,13 +1,38 @@
 ---
 id: F-logger-dependency-injection
 title: Logger Dependency Injection Refactor
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/stores/settings/settingsModalState.ts:
+    Added logger property (IStructuredLogger | null) to state interface with
+    proper documentation
+  packages/ui-shared/src/stores/settings/settingsModalActions.ts: Added initialize method to actions interface for logger dependency injection
+  packages/ui-shared/src/stores/settings/defaultSettingsModalState.ts: "Added logger: null to default state to satisfy interface requirement"
+  packages/ui-shared/src/stores/settings/settingsStore.ts: Complete refactor -
+    removed createLoggerSync import and all fallback patterns, implemented clean
+    dependency injection with initialize method, replaced all logging calls with
+    get().logger! non-null assertion, assuming logger is always injected before
+    use
+  packages/ui-shared/src/stores/settings/__tests__/settingsStore.test.ts:
+    Updated test file to use proper mock logger dependency injection instead of
+    mocking createLoggerSync, fixed test assertions to account for new logger
+    property in state
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-migrate-desktop-hooks-to-use
+  - T-migrate-layout-and-error
+  - T-migrate-personalities
+  - T-migrate-roles-components-to
+  - T-migrate-settings-components
+  - T-update-personalitiesprovider
+  - T-update-rolesprovider-to-use
+  - T-update-settingsstore-for
+  - T-update-usepersonalitiesstore
+  - T-update-userolesstore-for
+  - T-validate-logger-dependency
 created: 2025-08-17T14:04:13.529Z
 updated: 2025-08-17T14:04:13.529Z
 ---

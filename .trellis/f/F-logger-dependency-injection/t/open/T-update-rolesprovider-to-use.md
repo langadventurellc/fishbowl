@@ -100,8 +100,8 @@ useEffect(() => {
 ### Error Handling
 
 - Maintain existing error handling for adapter initialization
-- Add appropriate error handling for missing services context
-- Preserve any existing fallback patterns (except logger creation)
+- Add appropriate error handling for missing services context (should throw/fail fast)
+- Remove any logger-related fallback patterns completely
 
 ### Context Provision
 
@@ -132,9 +132,9 @@ useEffect(() => {
 ### Integration Requirements
 
 - [ ] Provider must be used within ServicesProvider context
-- [ ] Works with updated useRolesStore (dependency injection)
+- [ ] Works with updated useRolesStore (clean dependency injection)
 - [ ] Child components receive properly initialized roles context
-- [ ] Error handling when services context not available
+- [ ] Fails fast when services context not available (no graceful degradation)
 
 ## Unit Testing Requirements
 
@@ -154,6 +154,8 @@ useEffect(() => {
 ## Success Metrics
 
 1. **Code Consistency**: Provider uses single logger configuration source
-2. **Proper Integration**: Store receives logger via dependency injection
-3. **Testability**: Easier mocking with centralized services
-4. **Functionality**: All existing roles features work exactly as before
+2. **Proper Integration**: Store receives logger via clean dependency injection
+3. **Friction-free Architecture**: No fallback logic or graceful degradation patterns
+4. **Fail-fast Design**: Provider fails immediately if services not available
+5. **Testability**: Easier mocking with centralized services
+6. **Functionality**: All existing roles features work exactly as before

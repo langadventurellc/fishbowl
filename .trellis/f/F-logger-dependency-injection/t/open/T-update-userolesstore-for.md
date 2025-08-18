@@ -42,14 +42,17 @@ const getLogger = () => {
 };
 ```
 
-### Target Pattern:
+### Target Pattern (Clean Dependency Injection):
 
 ```typescript
-// Store accepts logger via dependency injection
+// Store accepts logger via dependency injection with no fallback logic
 interface RolesStore {
   // ... existing properties
   initialize: (adapter: RolesAdapter, logger: IStructuredLogger) => void;
 }
+
+// In store implementation - assume logger is always available
+get().logger!.warn("message"); // No null checks needed
 ```
 
 ## Specific Implementation Requirements
@@ -65,7 +68,7 @@ interface RolesStore {
 
 - Add logger parameter to store initialization method
 - Update store state interface to include logger
-- Replace all internal `getLogger()` calls with injected logger usage
+- Replace all internal `getLogger()` calls with `get().logger!` (non-null assertion, assuming logger always injected)
 
 ### 3. Update Store Initialization
 
@@ -121,5 +124,7 @@ None - this is a foundational change that other components will build upon.
 
 1. **Code Consistency**: Store uses dependency-injected logger exclusively
 2. **No Browser Context Issues**: Eliminates try/catch fallback patterns
-3. **Testability**: Logger easily mocked in tests
-4. **Functionality**: All existing features work exactly as before
+3. **Friction-free Logging**: All logging calls use simple `get().logger!.method()` pattern
+4. **Clean Architecture**: No helper functions or null checks - assumes logger always available
+5. **Testability**: Logger easily mocked in tests via dependency injection
+6. **Functionality**: All existing features work exactly as before

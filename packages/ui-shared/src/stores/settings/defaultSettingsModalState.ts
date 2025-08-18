@@ -16,4 +16,5 @@ export const defaultSettingsModalState: SettingsModalState = {
   navigationHistory: [],
   hasUnsavedChanges: false,
   lastOpenedSection: "general",
+  logger: null,
 };
