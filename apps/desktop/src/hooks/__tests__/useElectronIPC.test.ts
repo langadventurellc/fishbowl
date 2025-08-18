@@ -16,6 +16,18 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
   useSettingsModal: jest.fn(),
 }));
 
+// Mock useServices hook
+jest.mock("../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
+  })),
+}));
+
 const mockUseSettingsModal = useSettingsModal as jest.MockedFunction<
   typeof useSettingsModal
 >;

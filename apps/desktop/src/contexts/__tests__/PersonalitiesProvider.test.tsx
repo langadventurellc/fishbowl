@@ -39,11 +39,15 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
   },
 }));
 
-// Mock the logger
-jest.mock("@fishbowl-ai/shared", () => ({
-  createLoggerSync: jest.fn(() => ({
-    info: jest.fn(),
-    error: jest.fn(),
+// Mock useServices hook
+jest.mock("../useServices", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
   })),
 }));
 
@@ -85,7 +89,15 @@ describe("PersonalitiesProvider", () => {
       });
 
       expect(screen.getByText("Test Child")).toBeInTheDocument();
-      expect(mockInitialize).toHaveBeenCalledWith(desktopPersonalitiesAdapter);
+      expect(mockInitialize).toHaveBeenCalledWith(
+        desktopPersonalitiesAdapter,
+        expect.objectContaining({
+          debug: expect.any(Function),
+          info: expect.any(Function),
+          warn: expect.any(Function),
+          error: expect.any(Function),
+        }),
+      );
     });
 
     it("should skip initialization if store is already initialized", async () => {
@@ -402,7 +414,15 @@ describe("PersonalitiesProvider", () => {
       });
 
       // Should reinitialize on remount
-      expect(mockInitialize).toHaveBeenCalledWith(desktopPersonalitiesAdapter);
+      expect(mockInitialize).toHaveBeenCalledWith(
+        desktopPersonalitiesAdapter,
+        expect.objectContaining({
+          debug: expect.any(Function),
+          info: expect.any(Function),
+          warn: expect.any(Function),
+          error: expect.any(Function),
+        }),
+      );
     });
   });
 
@@ -419,6 +439,12 @@ describe("PersonalitiesProvider", () => {
       await waitFor(() => {
         expect(mockInitialize).toHaveBeenCalledWith(
           desktopPersonalitiesAdapter,
+          expect.objectContaining({
+            debug: expect.any(Function),
+            info: expect.any(Function),
+            warn: expect.any(Function),
+            error: expect.any(Function),
+          }),
         );
       });
     });
@@ -447,7 +473,15 @@ describe("PersonalitiesProvider", () => {
       });
 
       // Verify initialization completed successfully
-      expect(mockInitialize).toHaveBeenCalledWith(desktopPersonalitiesAdapter);
+      expect(mockInitialize).toHaveBeenCalledWith(
+        desktopPersonalitiesAdapter,
+        expect.objectContaining({
+          debug: expect.any(Function),
+          info: expect.any(Function),
+          warn: expect.any(Function),
+          error: expect.any(Function),
+        }),
+      );
     });
 
     it("should log errors with proper metadata", async () => {
@@ -467,7 +501,15 @@ describe("PersonalitiesProvider", () => {
       });
 
       // Verify error was handled properly
-      expect(mockInitialize).toHaveBeenCalledWith(desktopPersonalitiesAdapter);
+      expect(mockInitialize).toHaveBeenCalledWith(
+        desktopPersonalitiesAdapter,
+        expect.objectContaining({
+          debug: expect.any(Function),
+          info: expect.any(Function),
+          warn: expect.any(Function),
+          error: expect.any(Function),
+        }),
+      );
     });
 
     it("should provide correct adapter interface after initialization", async () => {

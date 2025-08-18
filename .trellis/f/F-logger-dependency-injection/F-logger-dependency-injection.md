@@ -39,6 +39,38 @@ affectedFiles:
     Updated test setup to include mock logger in store state and pass logger to
     initialize method calls
   packages/ui-shared/src/stores/__tests__/rolesStore.test.ts: Updated test setup to include mock logger in store state initialization
+  apps/desktop/src/hooks/useLlmConfig.ts: Migrated to use useServices() pattern,
+    removed createLoggerSync import and module-level logger, added logger to all
+    useCallback dependencies (except clearError which doesn't use logger)
+  apps/desktop/src/hooks/useElectronIPC.ts:
+    Migrated to use useServices() pattern,
+    removed createLoggerSync import and module-level logger, added logger to
+    useEffect dependencies
+  apps/desktop/src/hooks/useFocusTrap.ts: Migrated to use useServices() pattern,
+    removed createLoggerSync import and module-level logger, added logger to
+    useCallback and useEffect dependencies
+  apps/desktop/src/contexts/RolesProvider.tsx: Updated to use useServices() for
+    logger and pass logger to store.initialize(), removed logger from useEffect
+    dependencies to prevent infinite loops
+  apps/desktop/src/contexts/PersonalitiesProvider.tsx: Updated to use
+    useServices() for logger and pass logger to store.initialize(), removed
+    logger from useEffect dependencies to prevent infinite loops
+  apps/desktop/src/components/settings/roles/__tests__/RolesSection.error.test.tsx:
+    Added proper StructuredLogger mock using createMockLogger pattern to fix
+    test type errors
+  apps/desktop/src/hooks/__tests__/useElectronIPC.test.ts: Added useServices mock with correct import path to prevent test failures
+  apps/desktop/src/hooks/__tests__/useFocusTrap.test.ts: Added useServices mock with correct import path to prevent test failures
+  apps/desktop/src/hooks/__tests__/useLlmConfig.test.tsx: Added useServices mock
+    with stable logger reference to prevent memory leak and infinite re-renders,
+    added proper mock cleanup
+  apps/desktop/src/contexts/__tests__/RolesProvider.test.tsx:
+    Updated mock to use
+    useServices and updated test assertions to expect both adapter and logger
+    arguments
+  apps/desktop/src/contexts/__tests__/PersonalitiesProvider.test.tsx:
+    Updated mock to use useServices and updated test assertions to expect both
+    adapter and logger arguments
+  apps/desktop/src/components/settings/__tests__/SettingsModal.keyboard.test.tsx: Added useServices mock with correct import path to prevent test failures
 log: []
 schema: v1.0
 childrenIds:
@@ -49,10 +81,10 @@ childrenIds:
   - T-migrate-settings-components
   - T-update-personalitiesprovider
   - T-update-rolesprovider-to-use
-  - T-update-userolesstore-for
   - T-validate-logger-dependency
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
+  - T-update-userolesstore-for
 created: 2025-08-17T14:04:13.529Z
 updated: 2025-08-17T14:04:13.529Z
 ---

@@ -11,6 +11,18 @@ import { act, renderHook } from "@testing-library/react";
 import type { FocusTrapOptions } from "../types/FocusTrapOptions";
 import { useFocusTrap } from "../useFocusTrap";
 
+// Mock useServices hook
+jest.mock("../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      debug: jest.fn(),
+      info: jest.fn(),
+      warn: jest.fn(),
+      error: jest.fn(),
+    },
+  })),
+}));
+
 beforeEach(() => {
   jest.clearAllMocks();
 

@@ -2,11 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import type { RolesPersistenceAdapter } from "@fishbowl-ai/ui-shared";
 import { useRolesStore } from "@fishbowl-ai/ui-shared";
 import { desktopRolesAdapter } from "../adapters/desktopRolesAdapter";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "RolesProvider", level: "info" },
-});
+import { useServices } from "./useServices";
 
 interface RolesProviderProps {
   children: React.ReactNode;
@@ -29,6 +25,7 @@ export const useRolesAdapter = (): RolesPersistenceAdapter => {
 };
 
 export const RolesProvider: React.FC<RolesProviderProps> = ({ children }) => {
+  const { logger } = useServices();
   const [providerState, setProviderState] = useState<RolesProviderState>({
     isInitializing: true,
     initError: null,
@@ -62,7 +59,7 @@ export const RolesProvider: React.FC<RolesProviderProps> = ({ children }) => {
       logger.info("Initializing roles store with desktop adapter");
 
       try {
-        await store.initialize(desktopRolesAdapter);
+        await store.initialize(desktopRolesAdapter, logger);
 
         if (mounted) {
           logger.info("Roles store initialized successfully", {

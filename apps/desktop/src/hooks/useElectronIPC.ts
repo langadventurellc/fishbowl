@@ -9,12 +9,8 @@
  */
 
 import { useSettingsModal } from "@fishbowl-ai/ui-shared";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import { useEffect, useRef } from "react";
-
-const logger = createLoggerSync({
-  config: { name: "useElectronIPC", level: "info" },
-});
+import { useServices } from "../contexts";
 
 /**
  * Hook that integrates Electron IPC events with the settings modal store.
@@ -33,6 +29,7 @@ const logger = createLoggerSync({
  * ```
  */
 export function useElectronIPC(): void {
+  const { logger } = useServices();
   const { openModal } = useSettingsModal();
   const cleanupRef = useRef<(() => void) | null>(null);
 
@@ -89,5 +86,5 @@ export function useElectronIPC(): void {
         }
       }
     };
-  }, [openModal]);
+  }, [openModal, logger]);
 }

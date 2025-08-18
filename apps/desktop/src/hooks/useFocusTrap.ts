@@ -10,13 +10,9 @@
  */
 
 import { useRef, useEffect, useCallback } from "react";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import type { FocusTrapOptions } from "./types/FocusTrapOptions";
 import type { FocusTrapReturn } from "./types/FocusTrapReturn";
-
-const logger = createLoggerSync({
-  config: { name: "useFocusTrap", level: "info" },
-});
+import { useServices } from "../contexts";
 
 /**
  * Selector for finding focusable elements within a container.
@@ -62,6 +58,7 @@ const FOCUSABLE_SELECTOR = [
  * ```
  */
 export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
+  const { logger } = useServices();
   const { isActive, restoreFocus = true, initialFocusSelector } = options;
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,27 +93,30 @@ export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
       logger.warn("Error finding focusable elements");
       return [];
     }
-  }, []);
+  }, [logger]);
 
   /**
    * Sets the initial focus element programmatically.
    * Validates that the element is within the container before storing.
    */
-  const setInitialFocus = useCallback((element: HTMLElement | null) => {
-    if (!element) {
-      initialFocusRef.current = null;
-      return;
-    }
+  const setInitialFocus = useCallback(
+    (element: HTMLElement | null) => {
+      if (!element) {
+        initialFocusRef.current = null;
+        return;
+      }
 
-    // Validate element is within container
-    if (containerRef.current?.contains(element)) {
-      initialFocusRef.current = element;
-    } else {
-      logger.warn(
-        "Initial focus element is not within the focus trap container",
-      );
-    }
-  }, []);
+      // Validate element is within container
+      if (containerRef.current?.contains(element)) {
+        initialFocusRef.current = element;
+      } else {
+        logger.warn(
+          "Initial focus element is not within the focus trap container",
+        );
+      }
+    },
+    [logger],
+  );
 
   /**
    * Handles Tab and Shift+Tab key navigation within the container.
@@ -246,6 +246,7 @@ export function useFocusTrap(options: FocusTrapOptions): FocusTrapReturn {
     initialFocusSelector,
     handleKeyDown,
     getFocusableElements,
+    logger,
   ]);
 
   return {

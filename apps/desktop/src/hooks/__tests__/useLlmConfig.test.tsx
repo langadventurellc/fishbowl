@@ -14,6 +14,21 @@ import type {
 } from "@fishbowl-ai/shared";
 import { useLlmConfig } from "../useLlmConfig";
 
+// Create stable mock logger to prevent infinite re-renders
+const mockLogger = {
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+};
+
+// Mock useServices hook
+jest.mock("../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: mockLogger,
+  })),
+}));
+
 // Mock data for testing
 const mockLlmConfigInput: LlmConfigInput = {
   customName: "Test OpenAI",
@@ -54,6 +69,10 @@ const mockList = jest.fn();
 beforeEach(() => {
   // Reset mocks
   mockCreate.mockClear();
+  mockLogger.debug.mockClear();
+  mockLogger.info.mockClear();
+  mockLogger.warn.mockClear();
+  mockLogger.error.mockClear();
   mockRead.mockClear();
   mockUpdate.mockClear();
   mockDelete.mockClear();

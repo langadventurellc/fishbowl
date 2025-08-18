@@ -2,11 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import type { PersonalitiesPersistenceAdapter } from "@fishbowl-ai/ui-shared";
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
 import { desktopPersonalitiesAdapter } from "../adapters/desktopPersonalitiesAdapter";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "PersonalitiesProvider", level: "info" },
-});
+import { useServices } from "./useServices";
 
 interface PersonalitiesProviderProps {
   children: React.ReactNode;
@@ -33,6 +29,7 @@ export const usePersonalitiesAdapter = (): PersonalitiesPersistenceAdapter => {
 export const PersonalitiesProvider: React.FC<PersonalitiesProviderProps> = ({
   children,
 }) => {
+  const { logger } = useServices();
   const [providerState, setProviderState] =
     useState<PersonalitiesProviderState>({
       isInitializing: true,
@@ -67,7 +64,7 @@ export const PersonalitiesProvider: React.FC<PersonalitiesProviderProps> = ({
       logger.info("Initializing personalities store with desktop adapter");
 
       try {
-        await store.initialize(desktopPersonalitiesAdapter);
+        await store.initialize(desktopPersonalitiesAdapter, logger);
 
         if (mounted) {
           logger.info("Personalities store initialized successfully", {
