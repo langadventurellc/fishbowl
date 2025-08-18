@@ -35,11 +35,7 @@ import {
 import { RoleDescriptionTextarea } from "./RoleDescriptionTextarea";
 import { RoleNameInput } from "./RoleNameInput";
 import { RoleSystemPromptTextarea } from "./RoleSystemPromptTextarea";
-import { createLoggerSync } from "@fishbowl-ai/shared";
-
-const logger = createLoggerSync({
-  config: { name: "CreateRoleForm", level: "info" },
-});
+import { useServices } from "../../../contexts";
 
 export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
   mode,
@@ -49,6 +45,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
   existingRoles = [],
   isLoading = false,
 }) => {
+  const { logger } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
   const isEditMode = mode === "edit";
@@ -103,7 +100,7 @@ export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
         setIsSubmitting(false);
       }
     },
-    [onSave, form, setUnsavedChanges],
+    [onSave, form, setUnsavedChanges, logger],
   );
 
   const handleCancel = useCallback(() => {

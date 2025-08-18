@@ -1,13 +1,27 @@
 ---
 id: T-migrate-roles-components-to
 title: Migrate roles components to use useServices() hook
-status: open
+status: done
 priority: medium
 parent: F-logger-dependency-injection
 prerequisites:
   - T-update-userolesstore-for
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/CreateRoleForm.tsx:
+    Migrated from createLoggerSync to useServices() hook, moved logger access
+    inside component function, added logger to useCallback dependency array
+  apps/desktop/src/components/settings/roles/RolesSection.tsx:
+    Migrated from createLoggerSync to useServices() hook, moved logger access
+    inside component function, added logger to all useCallback dependency arrays
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.basic.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.changeDetection.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/roles/__tests__/RolesSection.error.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+log:
+  - Successfully migrated both roles components from createLoggerSync to
+    useServices() hook pattern. Replaced module-level logger creation with
+    component-level hook usage, updated all useCallback dependency arrays, and
+    fixed all test mocks. All 91 roles tests pass and quality checks are clean.
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:28:05.069Z

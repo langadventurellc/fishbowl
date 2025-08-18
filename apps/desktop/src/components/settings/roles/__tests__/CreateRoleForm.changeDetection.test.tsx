@@ -24,13 +24,16 @@ jest.mock("../../../../utils/announceToScreenReader", () => ({
   announceToScreenReader: jest.fn(),
 }));
 
-jest.mock("@fishbowl-ai/shared", () => ({
-  createLoggerSync: () => ({
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
-  }),
+// Mock useServices hook
+jest.mock("../../../../contexts", () => ({
+  useServices: jest.fn(() => ({
+    logger: {
+      info: jest.fn(),
+      error: jest.fn(),
+      warn: jest.fn(),
+      debug: jest.fn(),
+    },
+  })),
 }));
 
 jest.mock("@hookform/resolvers/zod", () => ({

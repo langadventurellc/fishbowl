@@ -57,7 +57,8 @@ affectedFiles:
     logger from useEffect dependencies to prevent infinite loops
   apps/desktop/src/components/settings/roles/__tests__/RolesSection.error.test.tsx:
     Added proper StructuredLogger mock using createMockLogger pattern to fix
-    test type errors
+    test type errors; Updated test mocks to mock useServices hook instead of
+    createLoggerSync
   apps/desktop/src/hooks/__tests__/useElectronIPC.test.ts: Added useServices mock with correct import path to prevent test failures
   apps/desktop/src/hooks/__tests__/useFocusTrap.test.ts: Added useServices mock with correct import path to prevent test failures
   apps/desktop/src/hooks/__tests__/useLlmConfig.test.tsx: Added useServices mock
@@ -100,10 +101,18 @@ affectedFiles:
     Updated test mocks to use useServices hook pattern instead of
     createLoggerSync. Changed mock path to ../../../../contexts and replaced
     createLoggerSync mock with useServices mock returning a logger object.
+  apps/desktop/src/components/settings/roles/CreateRoleForm.tsx:
+    Migrated from createLoggerSync to useServices() hook, moved logger access
+    inside component function, added logger to useCallback dependency array
+  apps/desktop/src/components/settings/roles/RolesSection.tsx:
+    Migrated from createLoggerSync to useServices() hook, moved logger access
+    inside component function, added logger to all useCallback dependency arrays
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.basic.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.edit.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
+  apps/desktop/src/components/settings/roles/__tests__/CreateRoleForm.changeDetection.test.tsx: Updated test mocks to mock useServices hook instead of createLoggerSync
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-personalities
   - T-migrate-roles-components-to
   - T-migrate-settings-components
   - T-update-personalitiesprovider
@@ -111,6 +120,7 @@ childrenIds:
   - T-validate-logger-dependency
   - T-migrate-desktop-hooks-to-use
   - T-migrate-layout-and-error
+  - T-migrate-personalities
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
   - T-update-userolesstore-for
