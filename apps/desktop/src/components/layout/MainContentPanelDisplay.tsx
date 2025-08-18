@@ -1,10 +1,6 @@
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
-import { createLoggerSync } from "@fishbowl-ai/shared";
 import React, { useState } from "react";
-
-const logger = createLoggerSync({
-  config: { name: "MainContentPanelDisplay", level: "info" },
-});
+import { useServices } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
@@ -26,6 +22,8 @@ export const MainContentPanelDisplay: React.FC<
   className,
   style,
 }) => {
+  const { logger } = useServices();
+
   // Internal state management for input
   const [inputText] = useState(defaultInputText);
   const [isManualMode] = useState(defaultManualMode);

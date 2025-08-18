@@ -2,13 +2,23 @@ import "@testing-library/jest-dom";
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { RolesErrorBoundary } from "../RolesErrorBoundary";
+import { StructuredLogger } from "@fishbowl-ai/shared";
 
-// Mock the logger
-jest.mock("@fishbowl-ai/shared", () => ({
-  createLoggerSync: jest.fn(() => ({
-    error: jest.fn(),
-  })),
-}));
+// Create mock logger using type assertion for testing
+const mockLogger = {
+  error: jest.fn(),
+  info: jest.fn(),
+  debug: jest.fn(),
+  warn: jest.fn(),
+  trace: jest.fn(),
+  fatal: jest.fn(),
+  setLevel: jest.fn(),
+  getLevel: jest.fn(),
+  child: jest.fn(),
+  addTransport: jest.fn(),
+  removeTransport: jest.fn(),
+  setFormatter: jest.fn(),
+} as unknown as StructuredLogger;
 
 const ThrowingComponent: React.FC<{ shouldThrow: boolean }> = ({
   shouldThrow,
@@ -32,7 +42,7 @@ describe("RolesErrorBoundary", () => {
 
   it("renders children when there is no error", () => {
     render(
-      <RolesErrorBoundary>
+      <RolesErrorBoundary logger={mockLogger}>
         <ThrowingComponent shouldThrow={false} />
       </RolesErrorBoundary>,
     );

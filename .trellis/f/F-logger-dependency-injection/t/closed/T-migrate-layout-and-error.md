@@ -1,12 +1,33 @@
 ---
 id: T-migrate-layout-and-error
 title: Migrate layout and error components to use useServices() hook
-status: open
+status: done
 priority: medium
 parent: F-logger-dependency-injection
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Removed createLoggerSync import and module-level logger creation. Added
+    useServices() hook usage inside component to get logger.
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Removed createLoggerSync import and module-level logger creation. Added
+    useServices() hook usage inside component to get logger.
+  apps/desktop/src/components/errors/RolesErrorBoundary.tsx: Removed
+    createLoggerSync import and module-level logger creation. Updated to accept
+    optional logger prop and use this.props.logger?.error() in
+    componentDidCatch.
+  apps/desktop/src/App.tsx: Updated RolesErrorBoundary usage to pass logger prop from useServices() hook.
+  apps/desktop/src/components/errors/__tests__/RolesErrorBoundary.test.tsx:
+    Updated all test cases to provide mock logger prop to RolesErrorBoundary
+    component.
+log:
+  - Successfully migrated 3 components to use useServices() hook for logger
+    dependency injection instead of createLoggerSync. Two function components
+    (SidebarContainerDisplay and MainContentPanelDisplay) now use the
+    useServices() hook directly. RolesErrorBoundary was updated to accept logger
+    as an optional prop since class components can't use hooks, and App.tsx was
+    updated to pass the logger from useServices(). All tests pass and quality
+    checks show only unrelated lint warnings.
 schema: v1.0
 childrenIds: []
 created: 2025-08-18T15:28:34.852Z

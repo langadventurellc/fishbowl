@@ -71,10 +71,23 @@ affectedFiles:
     Updated mock to use useServices and updated test assertions to expect both
     adapter and logger arguments
   apps/desktop/src/components/settings/__tests__/SettingsModal.keyboard.test.tsx: Added useServices mock with correct import path to prevent test failures
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Removed createLoggerSync import and module-level logger creation. Added
+    useServices() hook usage inside component to get logger.
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Removed createLoggerSync import and module-level logger creation. Added
+    useServices() hook usage inside component to get logger.
+  apps/desktop/src/components/errors/RolesErrorBoundary.tsx: Removed
+    createLoggerSync import and module-level logger creation. Updated to accept
+    optional logger prop and use this.props.logger?.error() in
+    componentDidCatch.
+  apps/desktop/src/App.tsx: Updated RolesErrorBoundary usage to pass logger prop from useServices() hook.
+  apps/desktop/src/components/errors/__tests__/RolesErrorBoundary.test.tsx:
+    Updated all test cases to provide mock logger prop to RolesErrorBoundary
+    component.
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-desktop-hooks-to-use
   - T-migrate-layout-and-error
   - T-migrate-personalities
   - T-migrate-roles-components-to
@@ -82,6 +95,7 @@ childrenIds:
   - T-update-personalitiesprovider
   - T-update-rolesprovider-to-use
   - T-validate-logger-dependency
+  - T-migrate-desktop-hooks-to-use
   - T-update-settingsstore-for
   - T-update-usepersonalitiesstore
   - T-update-userolesstore-for

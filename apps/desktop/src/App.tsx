@@ -69,7 +69,7 @@ export default function App() {
 
   return (
     <SettingsProvider>
-      <RolesErrorBoundary>
+      <RolesErrorBoundary logger={logger}>
         <RolesProvider>
           <PersonalitiesProvider>
             <HashRouter>
