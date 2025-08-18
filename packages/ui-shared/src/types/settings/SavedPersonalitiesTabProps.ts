@@ -4,9 +4,9 @@
  * @module types/ui/components/SavedPersonalitiesTabProps
  */
 
-import { Personality } from "./Personality";
+import { PersonalityViewModel } from "./PersonalityViewModel";
 
 export interface SavedPersonalitiesTabProps {
-  onEdit: (personality: Personality) => void;
-  onClone: (personality: Personality) => void;
+  onEdit: (personality: PersonalityViewModel) => void;
+  onDelete: (personality: PersonalityViewModel) => void;
 }

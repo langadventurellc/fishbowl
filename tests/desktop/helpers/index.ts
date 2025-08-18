@@ -23,16 +23,28 @@ export { waitForConfigurationList } from "./settings/waitForConfigurationList";
 export { waitForEmptyState } from "./settings/waitForEmptyState";
 export { openRolesSection } from "./settings/openRolesSection";
 export { setupRolesTestSuite } from "./settings/setupRolesTestSuite";
+export { openPersonalitiesSection } from "./settings/openPersonalitiesSection";
+export { setupPersonalitiesTestSuite } from "./settings/setupPersonalitiesTestSuite";
 export {
   waitForRolesList,
   waitForRolesEmptyState,
   waitForRole,
 } from "./settings/waitForRolesList";
 export {
+  waitForPersonalitiesList,
+  waitForPersonalitiesEmptyState,
+  waitForPersonality,
+} from "./settings/waitForPersonalitiesList";
+export {
   waitForRoleModal,
   waitForDeleteDialog,
   waitForModalToClose,
 } from "./settings/waitForRoleModal";
+export {
+  waitForPersonalityModal,
+  waitForDeleteDialog as waitForPersonalityDeleteDialog,
+  waitForModalToClose as waitForPersonalityModalToClose,
+} from "./settings/waitForPersonalityModal";
 export type { TestElectronApplication } from "./TestElectronApplication";
 export type { TestHelpers } from "./TestHelpers";
 export type { TestWindow } from "./TestWindow";
@@ -40,3 +52,8 @@ export type { MockLlmConfig } from "./settings/MockLlmConfig";
 export type { Provider } from "./settings/Provider";
 export type { StoredLlmConfig } from "./settings/StoredLlmConfig";
 export type { MockRoleData } from "./settings/MockRoleData";
+export type { MockPersonalityData } from "./settings/MockPersonalityData";
+export { createMockPersonalityData } from "./settings/createMockPersonalityData";
+export { createMinimalPersonalityData } from "./settings/createMinimalPersonalityData";
+export { createInvalidPersonalityData } from "./settings/createInvalidPersonalityData";
+export { createDuplicateNamePersonalityData } from "./settings/createDuplicateNamePersonalityData";

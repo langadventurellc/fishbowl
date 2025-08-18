@@ -114,8 +114,35 @@ describe("personalitiesHandlers", () => {
       expect(result).toEqual({ success: true, data: mockPersonalities });
     });
 
-    it("should handle null response when personalities file doesn't exist", async () => {
-      mockRepository.loadPersonalities.mockResolvedValue(null);
+    it("should return default personalities when personalities file doesn't exist", async () => {
+      const mockDefaultPersonalities: PersistedPersonalitiesSettingsData = {
+        schemaVersion: "1.0.0",
+        personalities: [
+          {
+            id: "default-personality",
+            name: "Default Personality",
+            bigFive: {
+              openness: 50,
+              conscientiousness: 50,
+              extraversion: 50,
+              agreeableness: 50,
+              neuroticism: 50,
+            },
+            behaviors: {
+              creativity: 50,
+              analytical: 50,
+            },
+            customInstructions: "Default instructions",
+            createdAt: null,
+            updatedAt: null,
+          },
+        ],
+        lastUpdated: "2025-01-01T00:00:00.000Z",
+      };
+
+      mockRepository.loadPersonalities.mockResolvedValue(
+        mockDefaultPersonalities,
+      );
 
       setupPersonalitiesHandlers();
       const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
@@ -125,7 +152,7 @@ describe("personalitiesHandlers", () => {
       const result: PersonalitiesLoadResponse = await handler();
 
       expect(mockRepository.loadPersonalities).toHaveBeenCalled();
-      expect(result).toEqual({ success: true, data: undefined });
+      expect(result).toEqual({ success: true, data: mockDefaultPersonalities });
     });
 
     it("should handle errors when loading fails", async () => {

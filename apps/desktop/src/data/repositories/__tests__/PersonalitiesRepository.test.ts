@@ -190,19 +190,27 @@ describe("PersonalitiesRepository", () => {
       );
     });
 
-    it("should return null when file does not exist", async () => {
+    it("should create and return default personalities when file does not exist", async () => {
       const fileNotFoundError = new (class extends FileStorageError {
         constructor() {
           super("File not found", "read", "personalities.json");
         }
       })();
       mockFileStorageService.readJsonFile.mockRejectedValue(fileNotFoundError);
+      mockFileStorageService.writeJsonFile.mockResolvedValue(undefined);
 
       const result = await repository.loadPersonalities();
 
-      expect(result).toBeNull();
+      expect(result).toEqual(mockDefaultPersonalitiesData);
       expect(mockFileStorageService.readJsonFile).toHaveBeenCalledWith(
         expectedFilePath,
+      );
+      expect(mockFileStorageService.writeJsonFile).toHaveBeenCalledWith(
+        expectedFilePath,
+        expect.objectContaining({
+          schemaVersion: "1.0.0",
+          personalities: expect.any(Array),
+        }),
       );
     });
 

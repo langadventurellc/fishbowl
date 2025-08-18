@@ -860,5 +860,22 @@ export const usePersonalitiesStore = create<PersonalitiesStore>()((
     getErrorDetails: () => {
       return get().error || _clearErrorState();
     },
+
+    // Cleanup method to prevent memory leaks
+    destroy: () => {
+      // Clear any pending debounce timer
+      if (_debounceTimer) {
+        clearTimeout(_debounceTimer);
+        _debounceTimer = null;
+      }
+
+      // Clear any pending retry timers
+      const { retryTimers } = get();
+      retryTimers.forEach((timer) => clearTimeout(timer));
+      retryTimers.clear();
+
+      // Clear rollback snapshot
+      _rollbackSnapshot = null;
+    },
   };
 });

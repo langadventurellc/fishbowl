@@ -46,14 +46,14 @@ export class PersonalitiesRepository {
   }
 
   /**
-   * Load personalities from storage.
-   * Returns null if file doesn't exist (ENOENT error).
+   * Load personalities from storage. Creates default personalities if file doesn't exist.
+   * Automatically saves default personalities to file for future loads.
    *
-   * @returns Promise resolving to personalities data or null if file not found
+   * @returns Promise resolving to personalities data (default personalities if file not found)
    * @throws FileStorageError for file system issues other than file not found
    * @throws Error for JSON parsing or validation failures
    */
-  async loadPersonalities(): Promise<PersistedPersonalitiesSettingsData | null> {
+  async loadPersonalities(): Promise<PersistedPersonalitiesSettingsData> {
     try {
       this.logger.debug("Loading personalities from file", {
         filePath: this.filePath,
@@ -71,12 +71,28 @@ export class PersonalitiesRepository {
 
       return validatedPersonalities;
     } catch (error) {
-      // Handle file not found by returning null
+      // Handle file not found by creating defaults
       if (error instanceof FileStorageError && error.operation === "read") {
-        this.logger.debug("Personalities file not found", {
-          filePath: this.filePath,
-        });
-        return null;
+        this.logger.debug(
+          "Personalities file not found, creating with defaults",
+        );
+
+        const defaultPersonalities = createDefaultPersonalitiesSettings();
+
+        // Save defaults to file for future loads
+        try {
+          await this.savePersonalities(defaultPersonalities);
+          this.logger.debug("Default personalities saved successfully", {
+            personalityCount: defaultPersonalities.personalities?.length || 0,
+          });
+        } catch (saveError) {
+          // Log but don't throw - return defaults even if save fails
+          this.logger.warn("Failed to save default personalities", {
+            error: saveError as Error,
+          });
+        }
+
+        return defaultPersonalities;
       }
 
       this.logger.error("Failed to load personalities", error as Error);

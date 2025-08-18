@@ -28,6 +28,7 @@ export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
   value,
   onChange,
   existingPersonalities = [],
+  currentPersonalityId,
   showCharacterCounter = false,
   disabled = false,
   className,
@@ -69,11 +70,13 @@ export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
         errors.push("Name cannot be only whitespace");
       }
 
-      // Uniqueness validation
+      // Uniqueness validation (exclude current personality when editing)
       if (
         trimmedName &&
         existingPersonalities.some(
-          (p) => p.name.toLowerCase() === trimmedName.toLowerCase(),
+          (p) =>
+            p.name.toLowerCase() === trimmedName.toLowerCase() &&
+            p.id !== currentPersonalityId,
         )
       ) {
         errors.push("A personality with this name already exists");
@@ -85,22 +88,28 @@ export const PersonalityNameInput: React.FC<PersonalityNameInputProps> = ({
         isValidating: false,
       };
     },
-    [existingPersonalities],
+    [existingPersonalities, currentPersonalityId],
+  );
+
+  // Stable callback for debounced validation
+  const handleValidation = useCallback(
+    (...args: unknown[]) => {
+      const name = args[0] as string;
+      const result = validateName(name);
+      setValidation(result);
+
+      // Announce validation result to screen readers
+      if (result.errors.length > 0 && result.errors[0]) {
+        announceToScreenReader(result.errors[0], "assertive");
+      } else if (result.isValid) {
+        announceToScreenReader("Valid personality name", "polite");
+      }
+    },
+    [validateName],
   );
 
   // Debounced validation
-  const debouncedValidate = useDebounce((...args: unknown[]) => {
-    const name = args[0] as string;
-    const result = validateName(name);
-    setValidation(result);
-
-    // Announce validation result to screen readers
-    if (result.errors.length > 0 && result.errors[0]) {
-      announceToScreenReader(result.errors[0], "assertive");
-    } else if (result.isValid) {
-      announceToScreenReader("Valid personality name", "polite");
-    }
-  }, 300);
+  const debouncedValidate = useDebounce(handleValidation, 300);
 
   // Trigger validation on value change
   useEffect(() => {

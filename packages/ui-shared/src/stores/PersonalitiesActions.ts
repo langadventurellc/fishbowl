@@ -31,4 +31,6 @@ export interface PersonalitiesActions {
   retryLastOperation: () => Promise<void>;
   clearErrorState: () => void;
   getErrorDetails: () => ErrorState;
+  // Cleanup method
+  destroy: () => void;
 }
