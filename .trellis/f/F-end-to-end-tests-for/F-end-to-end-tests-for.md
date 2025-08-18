@@ -1,7 +1,7 @@
 ---
 id: F-end-to-end-tests-for
 title: End-to-End Tests for Personalities Section
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -46,14 +46,19 @@ affectedFiles:
     Implemented proper personality-specific selectors, slider interactions, and
     UI component targeting with correct PersonalityCard component
     understanding."
-log: []
+  tests/desktop/features/settings/personalities/personalities-deletion.spec.ts:
+    Created complete test suite for personality deletion functionality with 8
+    comprehensive test cases covering deletion workflows, confirmation dialogs,
+    UI updates, storage persistence, empty state handling, and navigation
+    persistence
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-create-personalities-deletion
-  - T-create-personalities-editing
-  - T-create-personalities
   - T-create-personalities-creation
   - T-create-personalities-default
+  - T-create-personalities-deletion
+  - T-create-personalities-editing
   - T-create-personalities-mock
   - T-create-personalities-test-1
   - T-create-personalities-test
