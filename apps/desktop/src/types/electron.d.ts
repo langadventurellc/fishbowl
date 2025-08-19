@@ -152,6 +152,30 @@ export interface ElectronAPI {
       import("@fishbowl-ai/shared").PersistedPersonalitiesSettingsData
     >;
   };
+  /**
+   * Agents persistence operations for managing agent configurations.
+   * Provides async methods for loading, saving, and resetting agents data.
+   */
+  agents: {
+    /**
+     * Load agents from persistent storage.
+     * @returns Promise resolving to agents data
+     */
+    load(): Promise<import("@fishbowl-ai/shared").PersistedAgentsSettingsData>;
+    /**
+     * Save agents to persistent storage.
+     * @param agents - Agents data to persist
+     * @returns Promise resolving when save is complete
+     */
+    save(
+      agents: import("@fishbowl-ai/shared").PersistedAgentsSettingsData,
+    ): Promise<void>;
+    /**
+     * Reset agents to default values.
+     * @returns Promise resolving to reset agents data
+     */
+    reset(): Promise<import("@fishbowl-ai/shared").PersistedAgentsSettingsData>;
+  };
 }
 
 declare global {

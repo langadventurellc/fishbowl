@@ -7,6 +7,7 @@ import { SETTINGS_CHANNELS } from "../shared/ipc/constants";
 import { LLM_CONFIG_CHANNELS } from "../shared/ipc/llmConfigConstants";
 import { ROLES_CHANNELS } from "../shared/ipc/rolesConstants";
 import { PERSONALITIES_CHANNELS } from "../shared/ipc/personalitiesConstants";
+import { AGENTS_CHANNELS } from "../shared/ipc/agentsConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -31,11 +32,16 @@ import type {
   PersonalitiesSaveRequest,
   PersonalitiesSaveResponse,
   PersonalitiesResetResponse,
+  AgentsLoadResponse,
+  AgentsSaveRequest,
+  AgentsSaveResponse,
+  AgentsResetResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
   PersistedRolesSettingsData,
   PersistedPersonalitiesSettingsData,
+  PersistedAgentsSettingsData,
   LlmConfig,
   LlmConfigInput,
   LlmConfigMetadata,
@@ -441,6 +447,66 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error resetting personalities:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  agents: {
+    load: async (): Promise<PersistedAgentsSettingsData> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          AGENTS_CHANNELS.LOAD,
+        )) as AgentsLoadResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to load agents");
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error loading agents:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    save: async (agents: PersistedAgentsSettingsData): Promise<void> => {
+      try {
+        const request: AgentsSaveRequest = { agents };
+        const response = (await ipcRenderer.invoke(
+          AGENTS_CHANNELS.SAVE,
+          request,
+        )) as AgentsSaveResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to save agents");
+        }
+      } catch (error) {
+        logger.error(
+          "Error saving agents:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    reset: async (): Promise<PersistedAgentsSettingsData> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          AGENTS_CHANNELS.RESET,
+        )) as AgentsResetResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to reset agents");
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error resetting agents:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

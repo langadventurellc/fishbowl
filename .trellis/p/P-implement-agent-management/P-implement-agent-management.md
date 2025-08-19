@@ -143,6 +143,15 @@ affectedFiles:
   apps/desktop/src/electron/main.ts: Added import for setupAgentsHandlers and
     added function call with proper error handling and logging, following the
     exact pattern from personalities handlers setup
+  apps/desktop/src/electron/preload.ts: Added AGENTS_CHANNELS import, agent IPC
+    types (AgentsLoadResponse, AgentsSaveRequest, AgentsSaveResponse,
+    AgentsResetResponse), PersistedAgentsSettingsData type, and complete agents
+    object with load(), save(), and reset() methods following personalities
+    pattern
+  apps/desktop/src/types/electron.d.ts:
+    Added agents interface to ElectronAPI with
+    comprehensive JSDoc documentation for load, save, and reset methods with
+    proper type signatures
 log: []
 schema: v1.0
 childrenIds:

@@ -1,7 +1,7 @@
 ---
 id: F-agent-ipc-communication
 title: Agent IPC Communication
-status: in-progress
+status: done
 priority: medium
 parent: E-data-layer-persistence
 prerequisites:
@@ -46,15 +46,25 @@ affectedFiles:
   apps/desktop/src/electron/main.ts: Added import for setupAgentsHandlers and
     added function call with proper error handling and logging, following the
     exact pattern from personalities handlers setup
-log: []
+  apps/desktop/src/electron/preload.ts: Added AGENTS_CHANNELS import, agent IPC
+    types (AgentsLoadResponse, AgentsSaveRequest, AgentsSaveResponse,
+    AgentsResetResponse), PersistedAgentsSettingsData type, and complete agents
+    object with load(), save(), and reset() methods following personalities
+    pattern
+  apps/desktop/src/types/electron.d.ts:
+    Added agents interface to ElectronAPI with
+    comprehensive JSDoc documentation for load, save, and reset methods with
+    proper type signatures
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-implement-preload-script
-  - T-setup-agents-handlers
   - T-implement-agents-load-handler
   - T-implement-agents-reset
   - T-implement-agents-save-handler
   - T-implement-ipc-channel
+  - T-implement-preload-script
+  - T-setup-agents-handlers
 created: 2025-08-18T23:05:52.032Z
 updated: 2025-08-18T23:05:52.032Z
 ---
