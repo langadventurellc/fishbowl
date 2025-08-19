@@ -266,6 +266,11 @@ affectedFiles:
     required imports, mock agent data, and full functionality for displaying and
     managing agent library.
   apps/desktop/src/components/settings/SettingsNavigation.tsx: Removed templates subtab from agents navigation configuration
+  apps/desktop/src/components/settings/agents/AgentFormModal.tsx:
+    Replaced placeholder implementation with complete modal functionality
+    following RoleFormModal patterns - added focus management, accessibility
+    features, keyboard shortcuts, unsaved changes protection, and proper
+    AgentForm integration
 log: []
 schema: v1.0
 childrenIds:

@@ -1,7 +1,7 @@
 ---
 id: E-agent-management-features
 title: Agent Management Features
-status: open
+status: in-progress
 priority: medium
 parent: P-implement-agent-management
 prerequisites:
@@ -9,6 +9,11 @@ prerequisites:
   - E-ui-components
 affectedFiles:
   apps/desktop/src/components/settings/SettingsNavigation.tsx: Removed templates subtab from agents navigation configuration
+  apps/desktop/src/components/settings/agents/AgentFormModal.tsx:
+    Replaced placeholder implementation with complete modal functionality
+    following RoleFormModal patterns - added focus management, accessibility
+    features, keyboard shortcuts, unsaved changes protection, and proper
+    AgentForm integration
 log: []
 schema: v1.0
 childrenIds:

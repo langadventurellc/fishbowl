@@ -1,13 +1,25 @@
 ---
 id: T-implement-agentformmodal-with
 title: Implement AgentFormModal with complete form integration
-status: open
+status: done
 priority: high
 parent: F-create-agent-feature
 prerequisites:
   - T-complete-agentform-field
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentFormModal.tsx:
+    Replaced placeholder implementation with complete modal functionality
+    following RoleFormModal patterns - added focus management, accessibility
+    features, keyboard shortcuts, unsaved changes protection, and proper
+    AgentForm integration
+log:
+  - Implemented complete AgentFormModal component following RoleFormModal
+    patterns. Added full modal functionality including focus management,
+    accessibility features, keyboard shortcuts (Escape, Ctrl/Cmd+S), unsaved
+    changes protection with confirmation dialog, and proper integration with
+    AgentForm component. Modal supports create, edit, and template modes with
+    appropriate titles and descriptions. Includes focus trapping, screen reader
+    announcements, and proper state handling. All quality checks and tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T21:33:31.491Z

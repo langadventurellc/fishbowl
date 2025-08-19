@@ -1,15 +1,23 @@
 ---
 id: F-create-agent-feature
 title: Create Agent Feature
-status: open
+status: in-progress
 priority: medium
 parent: E-agent-management-features
 prerequisites:
   - F-settings-navigation
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentFormModal.tsx:
+    Replaced placeholder implementation with complete modal functionality
+    following RoleFormModal patterns - added focus management, accessibility
+    features, keyboard shortcuts, unsaved changes protection, and proper
+    AgentForm integration
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-implement-agentformmodal-with
+  - T-wire-up-create-new-agent
+  - T-complete-agentform-field
 created: 2025-08-19T21:13:42.425Z
 updated: 2025-08-19T21:13:42.425Z
 ---
