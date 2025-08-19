@@ -1,13 +1,70 @@
 ---
 id: T-implement-core-useagentsstore
 title: Implement Core useAgentsStore with CRUD Operations
-status: open
+status: done
 priority: high
 parent: F-agent-store-implementation
 prerequisites:
   - T-create-agent-store-state-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/useAgentsStore.ts: Created new Zustand store for
+    agent management with complete CRUD operations, auto-save, error handling,
+    and persistence integration following established patterns
+  packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts:
+    Created comprehensive unit test suite with 35 tests covering store
+    initialization, CRUD operations, error handling, validation, and edge cases
+log:
+  - >-
+    Successfully implemented the core useAgentsStore with complete CRUD
+    operations following the exact patterns from useRolesStore and
+    usePersonalitiesStore. The implementation includes:
+
+
+    **Core Store Features:**
+
+    - Zustand store with AgentsStore interface compliance
+
+    - Complete CRUD operations (create, update, delete, getById, nameUnique
+    validation)
+
+    - Auto-save with 500ms debouncing and exponential backoff retry logic
+
+    - Comprehensive error handling with rollback capability
+
+    - Loading state management and persistence adapter integration
+
+
+    **Key Implementation Details:**
+
+    - ID generation using crypto.randomUUID() with fallback
+
+    - Unique name validation (case-insensitive, excludes current agent during
+    updates)
+
+    - Optimistic updates with pending operations tracking
+
+    - Validation using agentSchema from shared package
+
+    - Error state management with user-friendly messages
+
+    - Memory leak prevention via cleanup methods
+
+
+    **Quality Assurance:**
+
+    - 35 comprehensive unit tests covering all functionality
+
+    - All tests passing with 100% coverage of CRUD operations
+
+    - TypeScript compilation successful without errors
+
+    - ESLint and Prettier compliance
+
+    - Proper error handling for edge cases and validation failures
+
+
+    The store is ready for integration with the persistence layer and UI
+    components.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T04:07:58.973Z
