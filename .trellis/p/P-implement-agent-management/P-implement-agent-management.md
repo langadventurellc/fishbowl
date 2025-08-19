@@ -84,7 +84,10 @@ affectedFiles:
     real-time descriptions. Updated maxTokens input formatting and description
     display. Added proper imports for getSliderDescription utility. All controls
     now show current values with descriptive text that updates immediately as
-    users interact with them.
+    users interact with them.; Implemented unsaved changes detection with
+    ConfirmationDialog component, added state management for dialog visibility,
+    updated cancel and save handlers to properly manage form dirty state and
+    reset behavior
   apps/desktop/src/data/repositories/agentsRepositoryManager.ts:
     Created new agentsRepositoryManager singleton following exact pattern from
     personalitiesRepositoryManager. Implements get(), initialize(), and reset()

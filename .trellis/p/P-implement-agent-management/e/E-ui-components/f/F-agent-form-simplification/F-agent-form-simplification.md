@@ -22,14 +22,17 @@ affectedFiles:
     to use shadcn/ui Slider component with real-time descriptions. Updated
     maxTokens input formatting and description display. Added proper imports for
     getSliderDescription utility. All controls now show current values with
-    descriptive text that updates immediately as users interact with them.
+    descriptive text that updates immediately as users interact with them.;
+    Implemented unsaved changes detection with ConfirmationDialog component,
+    added state management for dialog visibility, updated cancel and save
+    handlers to properly manage form dirty state and reset behavior
 log: []
 schema: v1.0
 childrenIds:
   - T-add-comprehensive-form-layout
-  - T-implement-configuration
   - T-implement-unsaved-changes
   - T-add-character-counters-for
+  - T-implement-configuration
   - T-integrate-modelselect
   - T-set-up-react-hook-form-with
 created: 2025-08-19T16:00:24.428Z

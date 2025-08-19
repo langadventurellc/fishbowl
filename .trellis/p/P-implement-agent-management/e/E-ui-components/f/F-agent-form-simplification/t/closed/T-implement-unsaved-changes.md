@@ -1,13 +1,45 @@
 ---
 id: T-implement-unsaved-changes
 title: Implement unsaved changes detection and confirmation dialog
-status: open
+status: done
 priority: medium
 parent: F-agent-form-simplification
 prerequisites:
   - T-set-up-react-hook-form-with
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Implemented unsaved
+    changes detection with ConfirmationDialog component, added state management
+    for dialog visibility, updated cancel and save handlers to properly manage
+    form dirty state and reset behavior
+log:
+  - >-
+    Implemented unsaved changes detection and confirmation dialog for the
+    AgentForm component. Replaced native browser confirm() dialog with proper
+    ConfirmationDialog component using React Hook Form's formState.isDirty for
+    change detection. The implementation includes:
+
+
+    • Added state management for unsaved changes dialog visibility
+
+    • Replaced browser confirm() with ConfirmationDialog component using
+    "destructive" variant
+
+    • Updated handleCancel to check for unsaved changes before showing dialog  
+
+    • Implemented handleConfirmCancel to reset form to original values on
+    confirmation
+
+    • Enhanced form.reset() calls with explicit options to properly clear dirty
+    state
+
+    • Integrated with existing useUnsavedChanges hook for global state
+    management
+
+
+    The dialog appears only when there are actual unsaved changes, provides
+    clear messaging about data loss, and maintains consistent behavior with
+    other forms in the application. All quality checks and tests pass
+    successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T18:26:08.213Z

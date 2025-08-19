@@ -18,6 +18,7 @@ import {
 import { useServices } from "../../../contexts";
 import { getSliderDescription } from "../../../utils/sliderDescriptions";
 import { Button } from "../../ui/button";
+import { ConfirmationDialog } from "../../ui/confirmation-dialog";
 import {
   Form,
   FormControl,
@@ -39,6 +40,7 @@ export const AgentForm: React.FC<AgentFormProps> = ({
 }) => {
   const { logger } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
   const isEditMode = mode === "edit";
 
@@ -67,7 +69,12 @@ export const AgentForm: React.FC<AgentFormProps> = ({
       setIsSubmitting(true);
       try {
         await onSave(data);
-        form.reset(data);
+        // Reset form with new values after successful save
+        form.reset(data, {
+          keepDefaultValues: false,
+          keepDirty: false,
+          keepErrors: false,
+        });
         setUnsavedChanges(false);
       } catch (error) {
         logger.error("Failed to save agent", error as Error);
@@ -80,14 +87,31 @@ export const AgentForm: React.FC<AgentFormProps> = ({
 
   const handleCancel = useCallback(() => {
     if (form.formState.isDirty) {
-      const confirmCancel = confirm(
-        "You have unsaved changes. Are you sure you want to cancel?",
-      );
-      if (!confirmCancel) return;
+      setShowUnsavedDialog(true);
+    } else {
+      setUnsavedChanges(false);
+      onCancel();
     }
-    setUnsavedChanges(false);
-    onCancel();
   }, [form.formState.isDirty, setUnsavedChanges, onCancel]);
+
+  const handleConfirmCancel = useCallback(() => {
+    // Reset form to original values
+    form.reset(
+      initialData || {
+        name: "",
+        model: "Claude 3.5 Sonnet",
+        role: "",
+        personality: "",
+        temperature: 1.0,
+        maxTokens: 1000,
+        topP: 0.95,
+        systemPrompt: "",
+      },
+    );
+    setUnsavedChanges(false);
+    setShowUnsavedDialog(false);
+    onCancel();
+  }, [form, initialData, setUnsavedChanges, onCancel]);
 
   return (
     <div className="space-y-6">
@@ -379,6 +403,18 @@ export const AgentForm: React.FC<AgentFormProps> = ({
           </div>
         </form>
       </Form>
+
+      {/* Unsaved Changes Confirmation Dialog */}
+      <ConfirmationDialog
+        open={showUnsavedDialog}
+        onOpenChange={setShowUnsavedDialog}
+        title="Unsaved Changes"
+        message="You have unsaved changes that will be lost if you continue. Are you sure you want to cancel?"
+        confirmText="Discard Changes"
+        cancelText="Keep Editing"
+        onConfirm={handleConfirmCancel}
+        variant="destructive"
+      />
     </div>
   );
 };
