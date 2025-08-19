@@ -14,24 +14,6 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
     activeSubTab: "library",
     setActiveSubTab: jest.fn(),
   }),
-  useAgentSearch: jest.fn(() => ({
-    searchTerm: "",
-    setSearchTerm: jest.fn(),
-    debouncedSearchTerm: "",
-    filteredAgents: [
-      {
-        id: "1",
-        name: "Research Assistant",
-        model: "Claude 3.5 Sonnet",
-        role: "Research and Analysis",
-      },
-      { id: "2", name: "Code Reviewer", model: "GPT-4", role: "Code Analysis" },
-    ],
-    isSearching: false,
-    resultsCount: 2,
-    clearSearch: jest.fn(),
-    handleKeyDown: jest.fn(),
-  })),
   useUnsavedChanges: () => ({
     hasUnsavedChanges: false,
     setUnsavedChanges: jest.fn(),
@@ -81,11 +63,10 @@ describe("AgentsSection", () => {
     expect(screen.getByTestId("tab-container")).toBeInTheDocument();
   });
 
-  test("renders all three tabs with correct labels", () => {
+  test("renders both tabs with correct labels", () => {
     render(<AgentsSection />);
 
     expect(screen.getByText("Library")).toBeInTheDocument();
-    expect(screen.getByText("Templates")).toBeInTheDocument();
     expect(screen.getByText("Defaults")).toBeInTheDocument();
   });
 
@@ -93,18 +74,11 @@ describe("AgentsSection", () => {
     render(<AgentsSection />);
 
     // Library tab content
-    expect(screen.getByPlaceholderText("Search agents...")).toBeInTheDocument();
     expect(screen.getByText("Create New Agent")).toBeInTheDocument();
-    expect(screen.getAllByText("Research Assistant")).toHaveLength(2); // One in Library, one in Templates
-    expect(screen.getAllByText("Code Reviewer")).toHaveLength(2); // One in Library, one in Templates
+    expect(screen.getByText("Research Assistant")).toBeInTheDocument();
+    expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
 
-    expect(screen.getByText("Agent Templates")).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "Choose from pre-configured templates to quickly create specialized agents.",
-      ),
-    ).toBeInTheDocument();
-
+    // Defaults tab content
     expect(screen.getByText("Agent Defaults")).toBeInTheDocument();
     expect(
       screen.getByText("Configure default settings for new agents."),
@@ -120,7 +94,6 @@ describe("AgentsSection", () => {
     render(<AgentsSection />);
 
     expect(screen.getByTestId("tab-library")).toBeInTheDocument();
-    expect(screen.getByTestId("tab-templates")).toBeInTheDocument();
     expect(screen.getByTestId("tab-defaults")).toBeInTheDocument();
   });
 
@@ -128,20 +101,10 @@ describe("AgentsSection", () => {
     render(<AgentsSection />);
 
     // Check that Library tab has functional content structure
-    const searchInput = screen.getByPlaceholderText("Search agents...");
-    expect(searchInput).toBeInTheDocument();
-
     const createButton = screen.getByText("Create New Agent");
     expect(createButton).toBeInTheDocument();
 
-    // Check that Templates tab has functional content structure (no longer placeholder)
-    const templatesContent = screen.getByText("Agent Templates").closest("div");
-    expect(templatesContent).toHaveClass("space-y-2");
-
-    // Check template cards are present
-    expect(screen.getAllByText("Use Template")).toHaveLength(8); // 8 template cards
-
-    // Check that Defaults tab has functional content structure (no longer placeholder)
+    // Check that Defaults tab has functional content structure
     const defaultsContent = screen.getByText("Agent Defaults").closest("div");
     expect(defaultsContent).toHaveClass("space-y-2");
 
