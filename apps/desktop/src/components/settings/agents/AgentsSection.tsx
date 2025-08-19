@@ -2,7 +2,7 @@
  * AgentsSection component provides agent management functionality with tab navigation.
  *
  * Features:
- * - Three-tab navigation: Library, Templates, Defaults
+ * - Two-tab navigation: Library, Defaults
  * - Integration with TabContainer for consistent tab behavior
  * - Settings modal navigation state integration
  * - Responsive design and accessibility compliance
@@ -17,7 +17,6 @@ import {
   type AgentDefaults,
   type AgentFormData,
   type AgentsSectionProps,
-  type AgentTemplate,
   type TabConfiguration,
 } from "@fishbowl-ai/ui-shared";
 import { Loader2, Plus, Search, X } from "lucide-react";
@@ -34,12 +33,7 @@ import { Label } from "../../ui/label";
 import { Slider } from "../../ui/slider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
 import { TabContainer } from "../TabContainer";
-import {
-  AgentCard,
-  EmptyLibraryState,
-  EmptyTemplatesState,
-  TemplateCard,
-} from "./";
+import { AgentCard, EmptyLibraryState } from "./";
 import { AgentFormModal } from "./AgentFormModal";
 import { useServices } from "../../../contexts";
 
@@ -354,172 +348,6 @@ const LibraryTab: React.FC<LibraryTabProps> = ({
   );
 };
 
-// Mock template data with 8 realistic templates across categories
-const mockTemplates: AgentTemplate[] = [
-  {
-    id: "template-research-assistant",
-    name: "Research Assistant",
-    description:
-      "Specialized in gathering information, analyzing sources, and providing comprehensive research summaries with proper citations.",
-    icon: "BookOpen",
-    configuration: {
-      temperature: 0.7,
-      maxTokens: 2000,
-      topP: 0.9,
-      model: "Claude 3.5 Sonnet",
-      systemPrompt: "You are a meticulous research assistant...",
-    },
-  },
-  {
-    id: "template-code-reviewer",
-    name: "Code Reviewer",
-    description:
-      "Expert at analyzing code quality, suggesting improvements, and identifying potential security vulnerabilities.",
-    icon: "Code",
-    configuration: {
-      temperature: 0.3,
-      maxTokens: 1500,
-      topP: 0.8,
-      model: "GPT-4",
-      systemPrompt: "You are a senior code reviewer...",
-    },
-  },
-  {
-    id: "template-content-creator",
-    name: "Content Creator",
-    description:
-      "Creative writing specialist for marketing copy, blog posts, and engaging social media content.",
-    icon: "PenTool",
-    configuration: {
-      temperature: 0.9,
-      maxTokens: 1800,
-      topP: 0.95,
-      model: "Claude 3.5 Sonnet",
-      systemPrompt: "You are a creative content writer...",
-    },
-  },
-  {
-    id: "template-data-analyst",
-    name: "Data Analyst",
-    description:
-      "Processes datasets, creates visualizations, and provides statistical insights with clear explanations.",
-    icon: "BarChart3",
-    configuration: {
-      temperature: 0.4,
-      maxTokens: 2000,
-      topP: 0.85,
-      model: "GPT-4",
-      systemPrompt: "You are an experienced data analyst...",
-    },
-  },
-  {
-    id: "template-project-manager",
-    name: "Project Manager",
-    description:
-      "Coordinates tasks, manages timelines, and facilitates communication between team members effectively.",
-    icon: "Calendar",
-    configuration: {
-      temperature: 0.6,
-      maxTokens: 1600,
-      topP: 0.9,
-      model: "Claude 3.5 Sonnet",
-      systemPrompt: "You are a professional project manager...",
-    },
-  },
-  {
-    id: "template-ux-consultant",
-    name: "UX Consultant",
-    description:
-      "Evaluates user interfaces, suggests improvements, and provides user experience best practices.",
-    icon: "Palette",
-    configuration: {
-      temperature: 0.7,
-      maxTokens: 1700,
-      topP: 0.9,
-      model: "GPT-4",
-      systemPrompt: "You are a senior UX consultant...",
-    },
-  },
-  {
-    id: "template-technical-writer",
-    name: "Technical Writer",
-    description:
-      "Creates clear documentation, API guides, and user manuals with proper structure and examples.",
-    icon: "FileText",
-    configuration: {
-      temperature: 0.5,
-      maxTokens: 2200,
-      topP: 0.85,
-      model: "Claude 3.5 Sonnet",
-      systemPrompt: "You are a technical writing specialist...",
-    },
-  },
-  {
-    id: "template-business-strategist",
-    name: "Business Strategist",
-    description:
-      "Analyzes market trends, develops strategic plans, and provides actionable business recommendations.",
-    icon: "TrendingUp",
-    configuration: {
-      temperature: 0.8,
-      maxTokens: 1900,
-      topP: 0.9,
-      model: "GPT-4",
-      systemPrompt: "You are a business strategy consultant...",
-    },
-  },
-];
-
-/**
- * Templates tab component with pre-configured template cards in responsive grid layout.
- */
-interface TemplatesTabProps {
-  openTemplateModal: (template: AgentTemplate) => void;
-}
-
-const TemplatesTab: React.FC<TemplatesTabProps> = ({ openTemplateModal }) => {
-  const { logger } = useServices();
-
-  return (
-    <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
-      {/* Header Section */}
-      <div className="space-y-2">
-        <h3 className="text-lg font-semibold">Agent Templates</h3>
-        <p className="text-sm text-muted-foreground">
-          Choose from pre-configured templates to quickly create specialized
-          agents.
-        </p>
-      </div>
-
-      {/* Templates Grid */}
-      {mockTemplates.length === 0 ? (
-        <EmptyTemplatesState
-          onAction={() => {
-            // TODO: Implement browse templates functionality
-            logger.info("Browse templates action triggered");
-          }}
-        />
-      ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-          {mockTemplates.map((template) => (
-            <TemplateCard
-              key={template.id}
-              template={template}
-              onUseTemplate={() => {
-                openTemplateModal(template);
-                announceToScreenReader(
-                  `Opening template dialog for ${template.name}`,
-                  "polite",
-                );
-              }}
-            />
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
-
 /**
  * Defaults tab component with configuration sliders and inputs.
  */
@@ -820,9 +648,8 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
   // Modal state management
   const [agentModalState, setAgentModalState] = useState<{
     isOpen: boolean;
-    mode: "create" | "edit" | "template";
+    mode: "create" | "edit";
     agent?: AgentCardType;
-    template?: AgentTemplate;
   }>({
     isOpen: false,
     mode: "create",
@@ -841,14 +668,6 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
       isOpen: true,
       mode: "edit",
       agent,
-    });
-  }, []);
-
-  const openTemplateModal = useCallback((template: AgentTemplate) => {
-    setAgentModalState({
-      isOpen: true,
-      mode: "template",
-      template,
     });
   }, []);
 
@@ -874,11 +693,7 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
 
       // Show user feedback
       const actionWord =
-        agentModalState.mode === "edit"
-          ? "updated"
-          : agentModalState.mode === "template"
-            ? "created from template"
-            : "created";
+        agentModalState.mode === "edit" ? "updated" : "created";
 
       announceToScreenReader(
         `Agent ${data.name} ${actionWord} successfully`,
@@ -899,11 +714,6 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
           openEditModal={openEditModal}
         />
       ),
-    },
-    {
-      id: "templates",
-      label: "Templates",
-      content: () => <TemplatesTab openTemplateModal={openTemplateModal} />,
     },
     {
       id: "defaults",
@@ -932,7 +742,6 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
         onOpenChange={closeModal}
         mode={agentModalState.mode}
         agent={agentModalState.agent}
-        template={agentModalState.template}
         onSave={handleAgentSave}
         isLoading={false}
       />

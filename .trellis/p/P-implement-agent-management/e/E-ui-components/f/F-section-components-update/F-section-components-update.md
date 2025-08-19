@@ -1,15 +1,28 @@
 ---
 id: F-section-components-update
 title: Section Components Update
-status: open
+status: in-progress
 priority: medium
 parent: E-ui-components
 prerequisites:
   - F-agent-form-simplification
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Removed Templates tab, mockTemplates data, TemplatesTab component,
+    template-related imports, modal state properties, and openTemplateModal
+    handler. Updated tab configuration to only include Library and Defaults
+    tabs. Updated JSDoc documentation to reflect two-tab navigation.
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Updated unit tests to reflect the new two-tab structure by removing all
+    template-related test assertions and expectations. Updated test descriptions
+    and assertions to match the Library and Defaults only structure.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-extract-defaultstab-as
+  - T-extract-librarytab-as
+  - T-remove-search-functionality
+  - T-remove-templates-tab-and
 created: 2025-08-19T16:01:11.431Z
 updated: 2025-08-19T16:01:11.431Z
 ---

@@ -228,6 +228,15 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/__tests__/SelectionComponents.integration.test.tsx:
     Created comprehensive integration test suite verifying consistent behavior
     patterns across all selection components
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Removed Templates tab, mockTemplates data, TemplatesTab component,
+    template-related imports, modal state properties, and openTemplateModal
+    handler. Updated tab configuration to only include Library and Defaults
+    tabs. Updated JSDoc documentation to reflect two-tab navigation.
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Updated unit tests to reflect the new two-tab structure by removing all
+    template-related test assertions and expectations. Updated test descriptions
+    and assertions to match the Library and Defaults only structure.
 log: []
 schema: v1.0
 childrenIds:

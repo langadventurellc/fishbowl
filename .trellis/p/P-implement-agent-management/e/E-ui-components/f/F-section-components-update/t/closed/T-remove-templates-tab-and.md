@@ -1,12 +1,27 @@
 ---
 id: T-remove-templates-tab-and
 title: Remove Templates tab and cleanup template-related code
-status: open
+status: done
 priority: high
 parent: F-section-components-update
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Removed Templates tab, mockTemplates data, TemplatesTab component,
+    template-related imports, modal state properties, and openTemplateModal
+    handler. Updated tab configuration to only include Library and Defaults
+    tabs. Updated JSDoc documentation to reflect two-tab navigation.
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Updated unit tests to reflect the new two-tab structure by removing all
+    template-related test assertions and expectations. Updated test descriptions
+    and assertions to match the Library and Defaults only structure.
+log:
+  - Successfully removed the Templates tab and all template-related code from
+    the AgentsSection component. The component now has a clean two-tab structure
+    (Library and Defaults) as specified. All template imports, mock data,
+    component definitions, modal handlers, and tab configuration have been
+    removed. Updated component documentation and tests to reflect the new
+    structure. All quality checks pass with no TypeScript or linting errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T19:25:19.885Z
