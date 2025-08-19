@@ -1,13 +1,30 @@
 ---
 id: T-remove-search-functionality
 title: Remove search functionality from LibraryTab component
-status: open
+status: done
 priority: medium
 parent: F-section-components-update
 prerequisites:
   - T-remove-templates-tab-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Removed all search functionality from LibraryTab component - removed
+    useAgentSearch hook, search imports (Search, X icons), search UI components
+    (search bar, clear button, loading indicator, results count),
+    search-specific empty states, and simplified logic to use direct agents
+    array instead of filteredAgents
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Updated tests to match new implementation without search functionality -
+    removed useAgentSearch mock and search-related test assertions while
+    preserving tests for other functionality like Create button and agent
+    display
+log:
+  - Successfully removed all search functionality from the LibraryTab component
+    while preserving the grid layout and core functionality. Removed search
+    imports, state management, UI components, and empty state logic. Updated
+    component to display all agents directly without filtering. Fixed related
+    tests to match new implementation. All quality checks and tests pass with no
+    errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T19:25:42.574Z

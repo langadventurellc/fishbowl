@@ -12,19 +12,17 @@
  */
 
 import {
-  useAgentSearch,
   type AgentCard as AgentCardType,
   type AgentFormData,
   type AgentsSectionProps,
   type TabConfiguration,
 } from "@fishbowl-ai/ui-shared";
-import { Loader2, Plus, Search, X } from "lucide-react";
+import { Plus } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 import { cn } from "../../../lib/utils";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
 import { useGridNavigation } from "../../../utils/gridNavigation";
 import { Button } from "../../ui/button";
-import { Input } from "../../ui/input";
 import { TabContainer } from "../TabContainer";
 import { AgentCard, EmptyLibraryState } from "./";
 import { AgentFormModal } from "./AgentFormModal";
@@ -188,19 +186,6 @@ const LibraryTab: React.FC<LibraryTabProps> = ({
 }) => {
   const [agents] = useState<AgentCardType[]>(mockAgents);
 
-  const {
-    searchTerm,
-    setSearchTerm,
-    filteredAgents,
-    isSearching,
-    resultsCount,
-    clearSearch,
-    handleKeyDown,
-  } = useAgentSearch({
-    agents,
-    announceToScreenReader,
-  });
-
   return (
     <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
       {/* Skip Link for Keyboard Navigation */}
@@ -214,120 +199,21 @@ const LibraryTab: React.FC<LibraryTabProps> = ({
         Skip to agents content
       </a>
 
-      {/* Search Bar with Enhanced UI */}
-      <div className="space-y-2">
-        <div className="relative max-w-md lg:max-w-lg xl:max-w-xl">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <Input
-            id="agent-search-input"
-            role="searchbox"
-            placeholder="Search agents..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleKeyDown}
-            className="pl-10 pr-10 w-full"
-            aria-label="Search agents by name, model, or role"
-            aria-describedby="search-help search-results-count"
-            aria-autocomplete="list"
-            aria-expanded={searchTerm.length > 0}
-            aria-controls="agents-grid"
-          />
-
-          {/* Hidden helper text for screen readers */}
-          <div id="search-help" className="sr-only">
-            Search will filter agents as you type. Use arrow keys to navigate
-            results, Enter to interact with agents.
-          </div>
-
-          {/* Clear Button */}
-          {searchTerm && (
-            <Button
-              onClick={clearSearch}
-              variant="ghost"
-              size="sm"
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 p-0 hover:bg-transparent"
-              aria-label="Clear search"
-              type="button"
-            >
-              <X className="h-4 w-4" aria-hidden="true" />
-            </Button>
-          )}
-
-          {/* Loading Indicator */}
-          {isSearching && (
-            <div
-              className="absolute right-8 top-1/2 transform -translate-y-1/2"
-              role="status"
-              aria-label="Searching agents"
-            >
-              <Loader2
-                className="h-4 w-4 animate-spin text-muted-foreground"
-                aria-hidden="true"
-              />
-            </div>
-          )}
-        </div>
-
-        {/* Enhanced Results Count with Live Region */}
-        {searchTerm && !isSearching && (
-          <div
-            id="search-results-count"
-            className="text-sm text-muted-foreground"
-            aria-live="polite"
-            aria-atomic="true"
-            role="status"
-          >
-            {resultsCount === 0
-              ? `No agents found for "${searchTerm}". Try different search terms.`
-              : `${resultsCount} agent${resultsCount === 1 ? "" : "s"} found for "${searchTerm}"`}
-          </div>
-        )}
-      </div>
-
       {/* Content with Enhanced Empty States */}
       <main
         id="agents-main-content"
         role="main"
         aria-label="Agents library content"
       >
-        {filteredAgents.length === 0 ? (
-          searchTerm ? (
-            <div
-              className="flex flex-col items-center justify-center py-16 px-4"
-              role="status"
-            >
-              <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
-                <Search
-                  className="h-8 w-8 text-muted-foreground"
-                  aria-hidden="true"
-                />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">
-                No agents found for "{searchTerm}"
-              </h3>
-              <p className="text-sm text-muted-foreground text-center mb-6 max-w-md">
-                Try adjusting your search terms or browse all agents.
-              </p>
-              <Button variant="outline" onClick={clearSearch}>
-                Clear Search
-              </Button>
-            </div>
-          ) : (
-            <EmptyLibraryState
-              onAction={() => {
-                openCreateModal();
-                announceToScreenReader(
-                  "Opening agent creation dialog",
-                  "polite",
-                );
-              }}
-            />
-          )
+        {agents.length === 0 ? (
+          <EmptyLibraryState
+            onAction={() => {
+              openCreateModal();
+              announceToScreenReader("Opening agent creation dialog", "polite");
+            }}
+          />
         ) : (
-          <AgentGrid agents={filteredAgents} openEditModal={openEditModal} />
+          <AgentGrid agents={agents} openEditModal={openEditModal} />
         )}
       </main>
 

@@ -14,24 +14,6 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
     activeSubTab: "library",
     setActiveSubTab: jest.fn(),
   }),
-  useAgentSearch: jest.fn(() => ({
-    searchTerm: "",
-    setSearchTerm: jest.fn(),
-    debouncedSearchTerm: "",
-    filteredAgents: [
-      {
-        id: "1",
-        name: "Research Assistant",
-        model: "Claude 3.5 Sonnet",
-        role: "Research and Analysis",
-      },
-      { id: "2", name: "Code Reviewer", model: "GPT-4", role: "Code Analysis" },
-    ],
-    isSearching: false,
-    resultsCount: 2,
-    clearSearch: jest.fn(),
-    handleKeyDown: jest.fn(),
-  })),
   useUnsavedChanges: () => ({
     hasUnsavedChanges: false,
     setUnsavedChanges: jest.fn(),
@@ -92,7 +74,6 @@ describe("AgentsSection", () => {
     render(<AgentsSection />);
 
     // Library tab content
-    expect(screen.getByPlaceholderText("Search agents...")).toBeInTheDocument();
     expect(screen.getByText("Create New Agent")).toBeInTheDocument();
     expect(screen.getByText("Research Assistant")).toBeInTheDocument();
     expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
@@ -120,9 +101,6 @@ describe("AgentsSection", () => {
     render(<AgentsSection />);
 
     // Check that Library tab has functional content structure
-    const searchInput = screen.getByPlaceholderText("Search agents...");
-    expect(searchInput).toBeInTheDocument();
-
     const createButton = screen.getByText("Create New Agent");
     expect(createButton).toBeInTheDocument();
 

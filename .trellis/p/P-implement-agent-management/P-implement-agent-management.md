@@ -239,11 +239,18 @@ affectedFiles:
     needed by DefaultsTab (removed AgentDefaults type, useMemo, useDebounce,
     getSliderDescription, createSliderKeyHandler, Label, Slider, Tooltip
     components). Preserved all other functionality and imports needed by
-    remaining components.
+    remaining components.; Removed all search functionality from LibraryTab
+    component - removed useAgentSearch hook, search imports (Search, X icons),
+    search UI components (search bar, clear button, loading indicator, results
+    count), search-specific empty states, and simplified logic to use direct
+    agents array instead of filteredAgents
   apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
     Updated unit tests to reflect the new two-tab structure by removing all
     template-related test assertions and expectations. Updated test descriptions
-    and assertions to match the Library and Defaults only structure.
+    and assertions to match the Library and Defaults only structure.; Updated
+    tests to match new implementation without search functionality - removed
+    useAgentSearch mock and search-related test assertions while preserving
+    tests for other functionality like Create button and agent display
   apps/desktop/src/components/settings/agents/DefaultsTab.tsx:
     Created new DefaultsTab component file with extracted code from
     AgentsSection.tsx. Includes all configuration controls, preview panel,
