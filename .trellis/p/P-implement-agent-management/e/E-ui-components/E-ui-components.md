@@ -33,6 +33,18 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/__tests__/RoleSelect.test.tsx:
     Created comprehensive unit tests covering all states, functionality,
     accessibility, edge cases, and component behavior with 100% test coverage
+  apps/desktop/src/hooks/useLlmModels.ts:
+    Created new hook to fetch and transform
+    LLM configurations into model options with provider information
+  apps/desktop/src/components/settings/agents/ModelSelect.tsx:
+    Created new ModelSelect component following RoleSelect pattern with provider
+    grouping and shadcn/ui Select integration
+  apps/desktop/src/hooks/__tests__/useLlmModels.test.tsx:
+    Added comprehensive unit
+    tests for useLlmModels hook covering all states and functionality
+  apps/desktop/src/components/settings/agents/__tests__/ModelSelect.test.tsx:
+    Added comprehensive unit tests for ModelSelect component covering loading,
+    error, empty, and success states
 log: []
 schema: v1.0
 childrenIds:

@@ -1,13 +1,32 @@
 ---
 id: T-create-modelselect-component
 title: Create ModelSelect Component
-status: open
+status: done
 priority: high
 parent: F-selection-components
 prerequisites:
   - T-create-roleselect-component
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/useLlmModels.ts:
+    Created new hook to fetch and transform
+    LLM configurations into model options with provider information
+  apps/desktop/src/components/settings/agents/ModelSelect.tsx:
+    Created new ModelSelect component following RoleSelect pattern with provider
+    grouping and shadcn/ui Select integration
+  apps/desktop/src/hooks/__tests__/useLlmModels.test.tsx:
+    Added comprehensive unit
+    tests for useLlmModels hook covering all states and functionality
+  apps/desktop/src/components/settings/agents/__tests__/ModelSelect.test.tsx:
+    Added comprehensive unit tests for ModelSelect component covering loading,
+    error, empty, and success states
+log:
+  - Successfully implemented ModelSelect component that integrates with the LLM
+    configuration system. The component displays available models from
+    configured LLM providers (OpenAI, Anthropic) in a user-friendly grouped
+    dropdown format showing "Model Name (Provider)". Component follows the
+    established selection component pattern with loading, error, and empty
+    states, includes comprehensive accessibility features, and passes all
+    quality checks and tests.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T16:11:43.852Z
