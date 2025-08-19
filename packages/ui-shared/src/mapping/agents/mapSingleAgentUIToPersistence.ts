@@ -1,4 +1,4 @@
-import type { AgentViewModel } from "../../types/settings/AgentViewModel";
+import type { AgentSettingsViewModel } from "../../types/settings/AgentViewModel";
 import type { PersistedAgentData } from "@fishbowl-ai/shared";
 import { normalizeAgentFields } from "./utils/normalizeAgentFields";
 
@@ -33,7 +33,7 @@ import { normalizeAgentFields } from "./utils/normalizeAgentFields";
  * ```
  */
 export function mapSingleAgentUIToPersistence(
-  agent: AgentViewModel,
+  agent: AgentSettingsViewModel,
 ): PersistedAgentData {
   const normalizedAgent = normalizeAgentFields(agent);
 

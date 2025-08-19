@@ -1,9 +1,9 @@
 import { mapAgentsUIToPersistence } from "../mapAgentsUIToPersistence";
-import type { AgentViewModel } from "../../../types/settings/AgentViewModel";
+import type { AgentSettingsViewModel } from "../../../types/settings";
 
 describe("mapAgentsUIToPersistence", () => {
   it("should map empty agents array correctly", () => {
-    const agents: AgentViewModel[] = [];
+    const agents: AgentSettingsViewModel[] = [];
     const result = mapAgentsUIToPersistence(agents);
 
     expect(result.agents).toEqual([]);
@@ -12,7 +12,7 @@ describe("mapAgentsUIToPersistence", () => {
   });
 
   it("should map agents with all fields correctly", () => {
-    const agents: AgentViewModel[] = [
+    const agents: AgentSettingsViewModel[] = [
       {
         id: "test-id",
         name: "Test Agent",
@@ -36,7 +36,7 @@ describe("mapAgentsUIToPersistence", () => {
   });
 
   it("should handle missing timestamps by adding current date", () => {
-    const agents: AgentViewModel[] = [
+    const agents: AgentSettingsViewModel[] = [
       {
         id: "test-id",
         name: "Test Agent",

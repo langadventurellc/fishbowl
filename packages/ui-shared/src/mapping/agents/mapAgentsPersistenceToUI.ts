@@ -10,12 +10,12 @@
  */
 
 import type { PersistedAgentsSettingsData } from "@fishbowl-ai/shared";
-import type { AgentViewModel } from "../../types/settings/AgentViewModel";
+import type { AgentSettingsViewModel } from "../../types/settings/AgentViewModel";
 import { mapSingleAgentPersistenceToUI } from "./mapSingleAgentPersistenceToUI";
 
 export function mapAgentsPersistenceToUI(
   persistedData: PersistedAgentsSettingsData,
-): AgentViewModel[] {
+): AgentSettingsViewModel[] {
   return persistedData.agents.map((agent) =>
     mapSingleAgentPersistenceToUI(agent),
   );

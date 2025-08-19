@@ -6,9 +6,9 @@
 import type { AgentFormData } from "./AgentFormData";
 
 /**
- * Agent with timestamps for UI display
+ * Agent with timestamps for UI display in settings
  */
-export interface AgentViewModel extends AgentFormData {
+export interface AgentSettingsViewModel extends AgentFormData {
   /** Unique identifier for the agent */
   id: string;
   /** When the agent was created (nullable) */
