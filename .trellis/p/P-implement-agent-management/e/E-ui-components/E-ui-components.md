@@ -63,6 +63,10 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/__tests__/SelectionComponents.integration.test.tsx:
     Created comprehensive integration test suite verifying consistent behavior
     patterns across all selection components
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Replaced stub
+    component with complete React Hook Form implementation using zodResolver,
+    comprehensive field validation, character counters, loading states, and
+    unsaved changes detection
 log: []
 schema: v1.0
 childrenIds:

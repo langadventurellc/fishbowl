@@ -1,12 +1,22 @@
 ---
 id: T-set-up-react-hook-form-with
 title: Set up React Hook Form with Zod validation schema
-status: open
+status: done
 priority: high
 parent: F-agent-form-simplification
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Replaced stub
+    component with complete React Hook Form implementation using zodResolver,
+    comprehensive field validation, character counters, loading states, and
+    unsaved changes detection
+log:
+  - Successfully implemented React Hook Form with comprehensive Zod validation
+    schema for AgentForm component. Created complete form infrastructure with
+    all required fields (name, model, role, personality, temperature, maxTokens,
+    topP, systemPrompt), character counters, real-time validation, unsaved
+    changes detection, and loading states. Form follows existing patterns and
+    passes all quality checks.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T18:24:24.958Z

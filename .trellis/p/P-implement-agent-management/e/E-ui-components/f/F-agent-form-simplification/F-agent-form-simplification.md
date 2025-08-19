@@ -1,15 +1,25 @@
 ---
 id: F-agent-form-simplification
 title: Agent Form Simplification
-status: open
+status: in-progress
 priority: medium
 parent: E-ui-components
 prerequisites:
   - F-selection-components
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Replaced stub
+    component with complete React Hook Form implementation using zodResolver,
+    comprehensive field validation, character counters, loading states, and
+    unsaved changes detection
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-character-counters-for
+  - T-add-comprehensive-form-layout
+  - T-implement-configuration
+  - T-implement-unsaved-changes
+  - T-integrate-modelselect
+  - T-set-up-react-hook-form-with
 created: 2025-08-19T16:00:24.428Z
 updated: 2025-08-19T16:00:24.428Z
 ---
