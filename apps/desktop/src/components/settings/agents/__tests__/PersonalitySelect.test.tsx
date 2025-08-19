@@ -130,7 +130,10 @@ describe("PersonalitySelect Component", () => {
         const mockStore = {
           personalities: [],
           isLoading: false,
-          error: { message: "Failed to load personalities from storage" },
+          error: {
+            message: "Failed to load personalities from storage",
+            isRetryable: true,
+          },
           retryLastOperation: mockRetry,
         };
         return typeof selector === "function" ? selector(mockStore) : mockStore;

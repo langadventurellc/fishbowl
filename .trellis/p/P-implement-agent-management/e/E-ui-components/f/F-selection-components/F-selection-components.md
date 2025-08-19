@@ -1,34 +1,41 @@
 ---
 id: F-selection-components
 title: Selection Components
-status: in-progress
+status: done
 priority: medium
 parent: E-ui-components
 prerequisites: []
 affectedFiles:
   apps/desktop/src/components/settings/agents/PersonalitySelect.tsx:
     Created PersonalitySelect dropdown component with loading, error, empty, and
-    success states using shadcn/ui Select and usePersonalitiesStore integration
+    success states using shadcn/ui Select and usePersonalitiesStore integration;
+    Added aria-label for accessibility consistency, conditional retry button
+    display, and consistent error handling patterns
   packages/ui-shared/src/types/settings/PersonalitySelectProps.ts:
     Added TypeScript interface for PersonalitySelect component props including
-    value, onChange, disabled, and placeholder
+    value, onChange, disabled, and placeholder; Updated to extend
+    BaseSelectProps interface
   packages/ui-shared/src/types/settings/index.ts:
     Exported PersonalitySelectProps
     type for use across the application; Added export for RoleSelectProps
-    interface
+    interface; Added exports for new shared types
   apps/desktop/src/components/settings/agents/__tests__/PersonalitySelect.test.tsx:
     Added comprehensive test suite with 23 tests covering all component states,
-    user interactions, accessibility features, and edge cases
+    user interactions, accessibility features, and edge cases; Updated test to
+    include isRetryable property in error mock to align with consistent error
+    handling patterns
   packages/ui-shared/src/types/settings/RoleSelectProps.ts:
     Created interface for
     RoleSelect component props with value, onChange, disabled, and placeholder
-    properties
+    properties; Updated to extend BaseSelectProps interface
   apps/desktop/src/components/settings/agents/RoleSelect.tsx: Created reusable
     RoleSelect dropdown component that integrates with useRolesStore, handles
     all states (loading, error, empty, success), uses shadcn/ui Select
     components, includes ARIA labels and accessibility features, shows role
     names with truncated descriptions
-  apps/desktop/src/components/settings/agents/index.ts: Added export for RoleSelect component
+  apps/desktop/src/components/settings/agents/index.ts: Added export for
+    RoleSelect component; Added ModelSelect and PersonalitySelect to barrel
+    exports
   apps/desktop/src/components/settings/agents/__tests__/RoleSelect.test.tsx:
     Created comprehensive unit tests covering all states, functionality,
     accessibility, edge cases, and component behavior with 100% test coverage
@@ -37,14 +44,26 @@ affectedFiles:
     LLM configurations into model options with provider information
   apps/desktop/src/components/settings/agents/ModelSelect.tsx:
     Created new ModelSelect component following RoleSelect pattern with provider
-    grouping and shadcn/ui Select integration
+    grouping and shadcn/ui Select integration; Updated to import types from
+    shared package instead of local definition
   apps/desktop/src/hooks/__tests__/useLlmModels.test.tsx:
     Added comprehensive unit
     tests for useLlmModels hook covering all states and functionality
   apps/desktop/src/components/settings/agents/__tests__/ModelSelect.test.tsx:
     Added comprehensive unit tests for ModelSelect component covering loading,
     error, empty, and success states
-log: []
+  packages/ui-shared/src/types/settings/BaseSelectProps.ts: Created shared base
+    interface for all selection components with consistent prop structure
+  packages/ui-shared/src/types/settings/SelectWithLoadingProps.ts:
+    Created extended interface for selection components that handle loading
+    states
+  packages/ui-shared/src/types/settings/SelectOption.ts: Created generic option structure for consistency across selection components
+  packages/ui-shared/src/types/settings/ModelSelectProps.ts: Updated to extend BaseSelectProps interface
+  apps/desktop/src/components/settings/agents/__tests__/SelectionComponents.integration.test.tsx:
+    Created comprehensive integration test suite verifying consistent behavior
+    patterns across all selection components
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-add-shared-types-and

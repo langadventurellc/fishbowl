@@ -48,21 +48,24 @@ export const PersonalitySelect: React.FC<PersonalitySelectProps> = ({
   }
 
   // Error state
-  if (error) {
+  if (error && error.message) {
     return (
       <div className="flex items-center gap-2 p-2 border rounded-md border-destructive/50 bg-destructive/10">
         <AlertCircle className="h-4 w-4 text-destructive" />
         <span className="text-sm text-destructive flex-1">
           Failed to load personalities: {error.message}
         </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={retryLastOperation}
-          className="h-auto p-1"
-        >
-          <RefreshCw className="h-3 w-3" />
-        </Button>
+        {error.isRetryable && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={retryLastOperation}
+            className="h-auto p-1"
+            aria-label="Retry loading personalities"
+          >
+            <RefreshCw className="h-3 w-3" />
+          </Button>
+        )}
       </div>
     );
   }
@@ -80,7 +83,7 @@ export const PersonalitySelect: React.FC<PersonalitySelectProps> = ({
 
   return (
     <Select value={value} onValueChange={onChange} disabled={disabled}>
-      <SelectTrigger>
+      <SelectTrigger aria-label="Select personality">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

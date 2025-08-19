@@ -8,13 +8,7 @@ import {
 } from "../../ui/select";
 import { Loader2, AlertCircle } from "lucide-react";
 import { useLlmModels } from "../../../hooks/useLlmModels";
-
-interface ModelSelectProps {
-  value: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-  placeholder?: string;
-}
+import { type ModelSelectProps } from "@fishbowl-ai/ui-shared";
 
 export const ModelSelect: React.FC<ModelSelectProps> = ({
   value,
