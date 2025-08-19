@@ -43,6 +43,7 @@ export * from "./PersonalityFormData";
 export * from "./PersonalityFormModalProps";
 export * from "./PersonalityNameInputProps";
 export * from "./PersonalitiesSectionProps";
+export * from "./PersonalitySelectProps";
 export * from "./PersonalityViewModel";
 export * from "./PredefinedRole";
 export * from "./providers";

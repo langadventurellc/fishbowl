@@ -50,7 +50,10 @@ affectedFiles:
     conversion cycles
   packages/shared/src/types/settings/index.ts: Added exports for agent types and
     schemas to make them available to other packages
-  packages/ui-shared/src/types/settings/index.ts: Added export for AgentViewModel to complete agent type exports
+  packages/ui-shared/src/types/settings/index.ts:
+    Added export for AgentViewModel
+    to complete agent type exports; Exported PersonalitySelectProps type for use
+    across the application
   packages/ui-shared/src/mapping/index.ts: Added exports for agents and personalities mapping functions
   packages/shared/src/types/agents/index.ts: Created new barrel file exporting agent persistence types and schemas
   packages/shared/src/services/storage/utils/index.ts: Added export for createDefaultAgentsSettings utility function
@@ -152,6 +155,15 @@ affectedFiles:
     Added agents interface to ElectronAPI with
     comprehensive JSDoc documentation for load, save, and reset methods with
     proper type signatures
+  apps/desktop/src/components/settings/agents/PersonalitySelect.tsx:
+    Created PersonalitySelect dropdown component with loading, error, empty, and
+    success states using shadcn/ui Select and usePersonalitiesStore integration
+  packages/ui-shared/src/types/settings/PersonalitySelectProps.ts:
+    Added TypeScript interface for PersonalitySelect component props including
+    value, onChange, disabled, and placeholder
+  apps/desktop/src/components/settings/agents/__tests__/PersonalitySelect.test.tsx:
+    Added comprehensive test suite with 23 tests covering all component states,
+    user interactions, accessibility features, and edge cases
 log: []
 schema: v1.0
 childrenIds:

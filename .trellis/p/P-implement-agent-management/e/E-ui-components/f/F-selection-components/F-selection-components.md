@@ -1,14 +1,28 @@
 ---
 id: F-selection-components
 title: Selection Components
-status: open
+status: in-progress
 priority: medium
 parent: E-ui-components
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/agents/PersonalitySelect.tsx:
+    Created PersonalitySelect dropdown component with loading, error, empty, and
+    success states using shadcn/ui Select and usePersonalitiesStore integration
+  packages/ui-shared/src/types/settings/PersonalitySelectProps.ts:
+    Added TypeScript interface for PersonalitySelect component props including
+    value, onChange, disabled, and placeholder
+  packages/ui-shared/src/types/settings/index.ts: Exported PersonalitySelectProps type for use across the application
+  apps/desktop/src/components/settings/agents/__tests__/PersonalitySelect.test.tsx:
+    Added comprehensive test suite with 23 tests covering all component states,
+    user interactions, accessibility features, and edge cases
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-shared-types-and
+  - T-create-modelselect-component
+  - T-create-personalityselect
+  - T-create-roleselect-component
 created: 2025-08-19T15:59:45.759Z
 updated: 2025-08-19T15:59:45.759Z
 ---
