@@ -100,18 +100,25 @@ export const AgentForm: React.FC<AgentFormProps> = ({
             name="name"
             render={({ field, fieldState }) => (
               <FormItem>
-                <FormLabel htmlFor="agent-name">
-                  Agent Name
-                  <span className="text-red-500 ml-1" aria-hidden="true">
-                    *
-                  </span>
-                </FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel htmlFor="agent-name">
+                    Agent Name
+                    <span className="text-red-500 ml-1" aria-hidden="true">
+                      *
+                    </span>
+                  </FormLabel>
+                  <CharacterCounter
+                    current={form.watch("name")?.length || 0}
+                    max={100}
+                  />
+                </div>
                 <FormControl>
                   <div className="relative">
                     <Input
                       id="agent-name"
                       {...field}
                       placeholder="Enter a unique name for this agent"
+                      maxLength={100}
                       disabled={isSubmitting || isLoading}
                       aria-invalid={!!fieldState.error}
                       className={cn(
@@ -130,9 +137,6 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                   </div>
                 </FormControl>
                 <FormMessage />
-                <div className="text-xs text-right text-muted-foreground">
-                  <CharacterCounter current={field.value.length} max={100} />
-                </div>
               </FormItem>
             )}
           />
@@ -321,25 +325,24 @@ export const AgentForm: React.FC<AgentFormProps> = ({
               name="systemPrompt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>System Prompt (Optional)</FormLabel>
+                  <div className="flex items-center justify-between">
+                    <FormLabel>System Prompt (Optional)</FormLabel>
+                    <CharacterCounter
+                      current={form.watch("systemPrompt")?.length || 0}
+                      max={5000}
+                    />
+                  </div>
                   <FormControl>
                     <Textarea
                       {...field}
                       placeholder="Enter a system prompt to guide the agent's behavior..."
+                      maxLength={5000}
                       rows={4}
                       disabled={isSubmitting || isLoading}
-                      className="resize-none"
+                      className="resize-none min-h-[100px]"
                     />
                   </FormControl>
-                  <div className="flex justify-between items-center">
-                    <FormMessage />
-                    <div className="text-xs text-right text-muted-foreground">
-                      <CharacterCounter
-                        current={field.value?.length || 0}
-                        max={5000}
-                      />
-                    </div>
-                  </div>
+                  <FormMessage />
                 </FormItem>
               )}
             />

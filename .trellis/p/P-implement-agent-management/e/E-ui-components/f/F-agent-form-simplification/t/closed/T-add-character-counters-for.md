@@ -1,13 +1,22 @@
 ---
 id: T-add-character-counters-for
 title: Add character counters for name and system prompt fields
-status: open
+status: done
 priority: medium
 parent: F-agent-form-simplification
 prerequisites:
   - T-set-up-react-hook-form-with
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Updated name field
+    and system prompt field to include character counters positioned in label
+    area using flex layout, added maxLength attributes (100 for name, 5000 for
+    system prompt), and implemented real-time updates using form.watch()
+log:
+  - Successfully implemented character counters for name and system prompt
+    fields in AgentForm.tsx. Updated both fields to display real-time character
+    counts in the label area using flex layout, added maxLength attributes to
+    prevent over-typing, and used form.watch() for reactive updates. All quality
+    checks and tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T18:25:11.185Z

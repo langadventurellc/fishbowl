@@ -71,7 +71,10 @@ affectedFiles:
     component using FormField and Controller integration, replaced Input field
     for personality with PersonalitySelect component using the same pattern,
     ensuring consistent component integration with proper placeholder text and
-    disabled state handling
+    disabled state handling; Updated name field and system prompt field to
+    include character counters positioned in label area using flex layout, added
+    maxLength attributes (100 for name, 5000 for system prompt), and implemented
+    real-time updates using form.watch()
 log: []
 schema: v1.0
 childrenIds:
