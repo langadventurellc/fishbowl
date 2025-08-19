@@ -1,16 +1,42 @@
 ---
 id: F-agent-ipc-communication
 title: Agent IPC Communication
-status: open
+status: in-progress
 priority: medium
 parent: E-data-layer-persistence
 prerequisites:
   - F-agent-store-implementation
   - F-agent-repository-file-storage
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/shared/ipc/agentsConstants.ts: Created agent IPC channel
+    constants (AGENTS_CHANNELS) following exact pattern from
+    PERSONALITIES_CHANNELS
+  apps/desktop/src/shared/ipc/agents/loadRequest.ts: Created AgentsLoadRequest
+    type definition for load operation (no parameters required)
+  apps/desktop/src/shared/ipc/agents/saveRequest.ts: Created AgentsSaveRequest
+    type definition for save operation with PersistedAgentsSettingsData
+  apps/desktop/src/shared/ipc/agents/resetRequest.ts: Created AgentsResetRequest
+    type definition for reset operation (no parameters required)
+  apps/desktop/src/shared/ipc/agents/loadResponse.ts: Created AgentsLoadResponse
+    type extending IPCResponse with PersistedAgentsSettingsData
+  apps/desktop/src/shared/ipc/agents/saveResponse.ts: Created AgentsSaveResponse type extending IPCResponse with void data type
+  apps/desktop/src/shared/ipc/agents/resetResponse.ts:
+    Created AgentsResetResponse
+    type extending IPCResponse with PersistedAgentsSettingsData
+  apps/desktop/src/shared/ipc/index.ts: Updated barrel file to export all agent
+    constants and types (constants, request types, response types)
+  apps/desktop/src/shared/ipc/__tests__/agentsIPC.test.ts: Created comprehensive
+    unit tests for agent IPC constants and type definitions with 9 passing test
+    cases
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-implement-agents-load-handler
+  - T-implement-agents-reset
+  - T-implement-agents-save-handler
+  - T-implement-ipc-channel
+  - T-implement-preload-script
+  - T-setup-agents-handlers
 created: 2025-08-18T23:05:52.032Z
 updated: 2025-08-18T23:05:52.032Z
 ---

@@ -105,6 +105,26 @@ affectedFiles:
     Created TestAgentsPersistenceAdapter class with comprehensive test utilities
     including error simulation, call tracking, and data verification methods
   packages/ui-shared/src/stores/index.ts: Added export for useAgentsStore to make it available to consumers
+  apps/desktop/src/shared/ipc/agentsConstants.ts: Created agent IPC channel
+    constants (AGENTS_CHANNELS) following exact pattern from
+    PERSONALITIES_CHANNELS
+  apps/desktop/src/shared/ipc/agents/loadRequest.ts: Created AgentsLoadRequest
+    type definition for load operation (no parameters required)
+  apps/desktop/src/shared/ipc/agents/saveRequest.ts: Created AgentsSaveRequest
+    type definition for save operation with PersistedAgentsSettingsData
+  apps/desktop/src/shared/ipc/agents/resetRequest.ts: Created AgentsResetRequest
+    type definition for reset operation (no parameters required)
+  apps/desktop/src/shared/ipc/agents/loadResponse.ts: Created AgentsLoadResponse
+    type extending IPCResponse with PersistedAgentsSettingsData
+  apps/desktop/src/shared/ipc/agents/saveResponse.ts: Created AgentsSaveResponse type extending IPCResponse with void data type
+  apps/desktop/src/shared/ipc/agents/resetResponse.ts:
+    Created AgentsResetResponse
+    type extending IPCResponse with PersistedAgentsSettingsData
+  apps/desktop/src/shared/ipc/index.ts: Updated barrel file to export all agent
+    constants and types (constants, request types, response types)
+  apps/desktop/src/shared/ipc/__tests__/agentsIPC.test.ts: Created comprehensive
+    unit tests for agent IPC constants and type definitions with 9 passing test
+    cases
 log: []
 schema: v1.0
 childrenIds:
