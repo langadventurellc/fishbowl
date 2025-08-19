@@ -28,15 +28,21 @@ affectedFiles:
   apps/desktop/src/shared/ipc/__tests__/agentsIPC.test.ts: Created comprehensive
     unit tests for agent IPC constants and type definitions with 9 passing test
     cases
+  apps/desktop/src/electron/agentsHandlers.ts: Created new file with
+    setupAgentsHandlers function and load handler implementation following
+    personalitiesHandlers pattern
+  apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Created
+    comprehensive test suite with 5 test cases covering success scenarios, error
+    handling, and repository integration
 log: []
 schema: v1.0
 childrenIds:
   - T-implement-agents-load-handler
   - T-implement-agents-reset
   - T-implement-agents-save-handler
-  - T-implement-ipc-channel
   - T-implement-preload-script
   - T-setup-agents-handlers
+  - T-implement-ipc-channel
 created: 2025-08-18T23:05:52.032Z
 updated: 2025-08-18T23:05:52.032Z
 ---
