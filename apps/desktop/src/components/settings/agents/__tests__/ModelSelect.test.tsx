@@ -23,25 +23,28 @@ const { useLlmModels } = require("../../../../hooks/useLlmModels");
 
 const mockModels = [
   {
-    id: "openai-config-1:gpt-4o",
+    id: "gpt-4o",
     name: "GPT-4o",
-    provider: "openai",
-    providerName: "OpenAI",
-    configId: "openai-config-1",
+    provider: "OpenAI",
+    contextLength: 128000,
+    vision: true,
+    functionCalling: true,
   },
   {
-    id: "openai-config-1:gpt-4",
+    id: "gpt-4",
     name: "GPT-4",
-    provider: "openai",
-    providerName: "OpenAI",
-    configId: "openai-config-1",
+    provider: "OpenAI",
+    contextLength: 8192,
+    vision: false,
+    functionCalling: true,
   },
   {
-    id: "anthropic-config-1:claude-3-5-sonnet-20241022",
+    id: "claude-3-5-sonnet",
     name: "Claude 3.5 Sonnet",
-    provider: "anthropic",
-    providerName: "Anthropic",
-    configId: "anthropic-config-1",
+    provider: "Anthropic",
+    contextLength: 200000,
+    vision: true,
+    functionCalling: false,
   },
 ];
 
@@ -189,7 +192,7 @@ describe("ModelSelect Component", () => {
       const option = screen.getByRole("option", { name: /GPT-4o/ });
       fireEvent.click(option);
 
-      expect(mockOnChange).toHaveBeenCalledWith("openai-config-1:gpt-4o");
+      expect(mockOnChange).toHaveBeenCalledWith("gpt-4o");
     });
 
     it("respects disabled prop", () => {
@@ -275,9 +278,7 @@ describe("ModelSelect Component", () => {
       });
       fireEvent.click(claudeOption);
 
-      expect(mockOnChange).toHaveBeenCalledWith(
-        "anthropic-config-1:claude-3-5-sonnet-20241022",
-      );
+      expect(mockOnChange).toHaveBeenCalledWith("claude-3-5-sonnet");
     });
   });
 });

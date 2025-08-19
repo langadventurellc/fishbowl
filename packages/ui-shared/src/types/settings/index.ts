@@ -18,6 +18,7 @@ export * from "./BehaviorTrait";
 export * from "./BigFiveSlidersProps";
 export * from "./BigFiveTraitsViewModel";
 export * from "./CharacterCounterProps";
+export * from "./LlmModel";
 export * from "./combined";
 export * from "./ConfigurationSliderProps";
 export * from "./CreatePersonalityFormProps";

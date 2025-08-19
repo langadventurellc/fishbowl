@@ -38,7 +38,8 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
       <div className="flex items-center gap-2 p-2 border rounded-md border-destructive/50 bg-destructive/10">
         <AlertCircle className="h-4 w-4 text-destructive" />
         <span className="text-sm text-destructive flex-1">
-          Failed to load models: {error.message}
+          Failed to load models:{" "}
+          {error instanceof Error ? error.message : error}
         </span>
       </div>
     );
@@ -58,10 +59,10 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
   // Group models by provider for better organization
   const modelsByProvider = models.reduce(
     (acc, model) => {
-      if (!acc[model.providerName]) {
-        acc[model.providerName] = [];
+      if (!acc[model.provider]) {
+        acc[model.provider] = [];
       }
-      acc[model.providerName]!.push(model);
+      acc[model.provider]!.push(model);
       return acc;
     },
     {} as Record<string, typeof models>,
@@ -85,7 +86,7 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
                     <div className="flex flex-col">
                       <span>{model.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {model.providerName}
+                        {model.provider}
                       </span>
                     </div>
                   </SelectItem>
