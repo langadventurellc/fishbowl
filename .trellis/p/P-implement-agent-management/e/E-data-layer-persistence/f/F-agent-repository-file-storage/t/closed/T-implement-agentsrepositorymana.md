@@ -1,13 +1,60 @@
 ---
 id: T-implement-agentsrepositorymana
 title: Implement agentsRepositoryManager singleton with initialization and unit tests
-status: open
+status: done
 priority: high
 parent: F-agent-repository-file-storage
 prerequisites:
   - T-implement-agentsrepository
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/data/repositories/agentsRepositoryManager.ts:
+    Created new agentsRepositoryManager singleton following exact pattern from
+    personalitiesRepositoryManager. Implements get(), initialize(), and reset()
+    methods with proper error handling and singleton pattern.
+  apps/desktop/src/data/repositories/__tests__/agentsRepositoryManager.test.ts:
+    Created comprehensive unit test suite with 17 test cases covering singleton
+    behavior, initialization/cleanup lifecycle, error handling, edge cases, and
+    integration with AgentsRepository. All tests passing.
+log:
+  - >-
+    Successfully implemented agentsRepositoryManager singleton following the
+    exact pattern from personalitiesRepositoryManager. The implementation
+    provides centralized access to the AgentsRepository instance with proper
+    initialization and cleanup through a thread-safe singleton pattern.
+
+
+    Key features implemented:
+
+    - Singleton pattern with private static instance variable
+
+    - initialize(dataPath: string) method for setup with proper error handling
+
+    - get() method returning repository instance with validation
+
+    - reset() method for testing purposes and instance cleanup
+
+    - Comprehensive error handling with clear error messages
+
+    - Dependency injection support for testing compatibility
+
+
+    Created comprehensive unit tests covering all methods and edge cases:
+
+    - Singleton behavior validation (17 test cases)
+
+    - Initialization and cleanup lifecycle testing
+
+    - Error handling for uninitialized access
+
+    - Multiple initialization prevention
+
+    - Edge cases with special characters in paths
+
+    - Integration testing with AgentsRepository
+
+
+    All quality checks pass (linting, formatting, type checking) and all 17 unit
+    tests are passing successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T00:17:14.758Z

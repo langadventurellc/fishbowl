@@ -66,6 +66,14 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/AgentForm.tsx: Replaced with
     temporary blank component to resolve type conflicts during backend
     implementation phase
+  apps/desktop/src/data/repositories/agentsRepositoryManager.ts:
+    Created new agentsRepositoryManager singleton following exact pattern from
+    personalitiesRepositoryManager. Implements get(), initialize(), and reset()
+    methods with proper error handling and singleton pattern.
+  apps/desktop/src/data/repositories/__tests__/agentsRepositoryManager.test.ts:
+    Created comprehensive unit test suite with 17 test cases covering singleton
+    behavior, initialization/cleanup lifecycle, error handling, edge cases, and
+    integration with AgentsRepository. All tests passing.
 log: []
 schema: v1.0
 childrenIds:
