@@ -128,12 +128,18 @@ affectedFiles:
   apps/desktop/src/electron/agentsHandlers.ts: Created new file with
     setupAgentsHandlers function and load handler implementation following
     personalitiesHandlers pattern; Added save handler implementation with
-    AgentsSaveRequest validation, repository integration, and error handling
+    AgentsSaveRequest validation, repository integration, and error handling;
+    Added reset handler following personalitiesHandlers pattern, with
+    AgentsResetResponse import, reset IPC handler registration, and
+    comprehensive error handling with confirmation logging
   apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Created
     comprehensive test suite with 5 test cases covering success scenarios, error
     handling, and repository integration; Added comprehensive test coverage for
     save handler including success, validation errors, repository failures, and
-    edge cases
+    edge cases; Added AgentsResetResponse import, updated mock repository with
+    resetAgents method, updated setup test to verify reset handler registration,
+    and added comprehensive reset handler test suite covering success, error,
+    and repository initialization failure scenarios
 log: []
 schema: v1.0
 childrenIds:

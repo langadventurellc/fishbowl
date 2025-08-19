@@ -5,6 +5,7 @@ import {
   type AgentsLoadResponse,
   type AgentsSaveRequest,
   type AgentsSaveResponse,
+  type AgentsResetResponse,
 } from "../../shared/ipc/index";
 import { serializeError } from "../utils/errorSerialization";
 import { agentsRepositoryManager } from "../../data/repositories/agentsRepositoryManager";
@@ -36,6 +37,7 @@ describe("agentsHandlers", () => {
   let mockRepository: {
     loadAgents: jest.Mock;
     saveAgents: jest.Mock;
+    resetAgents: jest.Mock;
   };
 
   beforeEach(() => {
@@ -45,13 +47,14 @@ describe("agentsHandlers", () => {
     mockRepository = {
       loadAgents: jest.fn(),
       saveAgents: jest.fn(),
+      resetAgents: jest.fn(),
     };
 
     (agentsRepositoryManager.get as jest.Mock).mockReturnValue(mockRepository);
   });
 
   describe("setupAgentsHandlers", () => {
-    it("should register load and save handlers", () => {
+    it("should register load, save, and reset handlers", () => {
       setupAgentsHandlers();
 
       expect(ipcMain.handle).toHaveBeenCalledWith(
@@ -60,6 +63,10 @@ describe("agentsHandlers", () => {
       );
       expect(ipcMain.handle).toHaveBeenCalledWith(
         AGENTS_CHANNELS.SAVE,
+        expect.any(Function),
+      );
+      expect(ipcMain.handle).toHaveBeenCalledWith(
+        AGENTS_CHANNELS.RESET,
         expect.any(Function),
       );
     });
@@ -271,6 +278,60 @@ describe("agentsHandlers", () => {
       )[1];
 
       const result: AgentsSaveResponse = await handler(null, saveRequest);
+
+      expect(result).toEqual({
+        success: false,
+        error: { message: error.message, code: "TEST_ERROR" },
+      });
+    });
+  });
+
+  describe("RESET handler", () => {
+    it("should reset agents and return undefined", async () => {
+      mockRepository.resetAgents.mockResolvedValue(undefined);
+
+      setupAgentsHandlers();
+      const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
+        ([channel]) => channel === AGENTS_CHANNELS.RESET,
+      )[1];
+
+      const result: AgentsResetResponse = await handler();
+
+      expect(mockRepository.resetAgents).toHaveBeenCalled();
+      expect(result).toEqual({ success: true, data: undefined });
+    });
+
+    it("should handle errors during reset operation", async () => {
+      const error = new Error("Failed to reset agents");
+      mockRepository.resetAgents.mockRejectedValue(error);
+
+      setupAgentsHandlers();
+      const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
+        ([channel]) => channel === AGENTS_CHANNELS.RESET,
+      )[1];
+
+      const result: AgentsResetResponse = await handler();
+
+      expect(mockRepository.resetAgents).toHaveBeenCalled();
+      expect(result).toEqual({
+        success: false,
+        error: { message: error.message, code: "TEST_ERROR" },
+      });
+      expect(serializeError).toHaveBeenCalledWith(error);
+    });
+
+    it("should handle repository not initialized error during reset", async () => {
+      const error = new Error("Agents repository not initialized");
+      (agentsRepositoryManager.get as jest.Mock).mockImplementation(() => {
+        throw error;
+      });
+
+      setupAgentsHandlers();
+      const handler = (ipcMain.handle as jest.Mock).mock.calls.find(
+        ([channel]) => channel === AGENTS_CHANNELS.RESET,
+      )[1];
+
+      const result: AgentsResetResponse = await handler();
 
       expect(result).toEqual({
         success: false,

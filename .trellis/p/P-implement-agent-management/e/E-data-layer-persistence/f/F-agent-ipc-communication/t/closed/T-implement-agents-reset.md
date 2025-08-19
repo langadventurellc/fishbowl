@@ -1,13 +1,30 @@
 ---
 id: T-implement-agents-reset
 title: Implement agents reset handler with confirmation
-status: open
+status: done
 priority: medium
 parent: F-agent-ipc-communication
 prerequisites:
   - T-implement-ipc-channel
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/agentsHandlers.ts: Added reset handler following
+    personalitiesHandlers pattern, with AgentsResetResponse import, reset IPC
+    handler registration, and comprehensive error handling with confirmation
+    logging
+  apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Added
+    AgentsResetResponse import, updated mock repository with resetAgents method,
+    updated setup test to verify reset handler registration, and added
+    comprehensive reset handler test suite covering success, error, and
+    repository initialization failure scenarios
+log:
+  - Implemented agents reset handler with confirmation logging and comprehensive
+    error handling. Added reset handler to agentsHandlers.ts following exact
+    pattern from personalitiesHandlers, including proper IPC channel
+    registration, atomic operation handling, error serialization for
+    cross-process communication, and comprehensive test coverage. Handler calls
+    agentsRepositoryManager.get().resetAgents() and returns AgentsResetResponse
+    with success/error status. All tests pass with 100% coverage of new
+    functionality.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T05:42:06.901Z
