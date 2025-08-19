@@ -1,13 +1,28 @@
 ---
 id: T-integrate-modelselect
 title: Integrate ModelSelect, RoleSelect, and PersonalitySelect components
-status: open
+status: done
 priority: high
 parent: F-agent-form-simplification
 prerequisites:
   - T-set-up-react-hook-form-with
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Updated imports to
+    include RoleSelect and PersonalitySelect components, replaced Input field
+    for role with RoleSelect component using FormField and Controller
+    integration, replaced Input field for personality with PersonalitySelect
+    component using the same pattern, ensuring consistent component integration
+    with proper placeholder text and disabled state handling
+log:
+  - Successfully integrated ModelSelect, RoleSelect, and PersonalitySelect
+    components into AgentForm, replacing inline dropdown logic with consistent
+    selection components that follow BaseSelectProps interface. Updated imports
+    to include RoleSelect and PersonalitySelect from the shared components
+    index. Replaced Input fields for role and personality with their respective
+    selection components, ensuring proper form integration through React Hook
+    Form Controller pattern. All components now handle their own loading states,
+    error handling, and data fetching, achieving clean separation of concerns.
+    Quality checks pass and all tests are passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T18:24:49.447Z

@@ -71,7 +71,12 @@ affectedFiles:
     temporary blank component to resolve type conflicts during backend
     implementation phase; Replaced stub component with complete React Hook Form
     implementation using zodResolver, comprehensive field validation, character
-    counters, loading states, and unsaved changes detection
+    counters, loading states, and unsaved changes detection; Updated imports to
+    include RoleSelect and PersonalitySelect components, replaced Input field
+    for role with RoleSelect component using FormField and Controller
+    integration, replaced Input field for personality with PersonalitySelect
+    component using the same pattern, ensuring consistent component integration
+    with proper placeholder text and disabled state handling
   apps/desktop/src/data/repositories/agentsRepositoryManager.ts:
     Created new agentsRepositoryManager singleton following exact pattern from
     personalitiesRepositoryManager. Implements get(), initialize(), and reset()

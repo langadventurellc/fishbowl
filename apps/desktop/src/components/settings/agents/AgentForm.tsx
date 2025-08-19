@@ -12,7 +12,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { CharacterCounter, ModelSelect } from "../";
+import {
+  CharacterCounter,
+  ModelSelect,
+  PersonalitySelect,
+  RoleSelect,
+} from "../";
 import { useServices } from "../../../contexts";
 import { Button } from "../../ui/button";
 import {
@@ -160,25 +165,20 @@ export const AgentForm: React.FC<AgentFormProps> = ({
           <FormField
             control={form.control}
             name="role"
-            render={({ field, fieldState }) => (
+            render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="agent-role">
+                <FormLabel>
                   Role
                   <span className="text-red-500 ml-1" aria-hidden="true">
                     *
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    id="agent-role"
-                    {...field}
-                    placeholder="Define the agent's area of expertise and focus"
+                  <RoleSelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select a role"
                     disabled={isSubmitting || isLoading}
-                    aria-invalid={!!fieldState.error}
-                    className={cn(
-                      fieldState.error &&
-                        "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
-                    )}
                   />
                 </FormControl>
                 <FormMessage />
@@ -190,25 +190,20 @@ export const AgentForm: React.FC<AgentFormProps> = ({
           <FormField
             control={form.control}
             name="personality"
-            render={({ field, fieldState }) => (
+            render={({ field }) => (
               <FormItem>
-                <FormLabel htmlFor="agent-personality">
+                <FormLabel>
                   Personality
                   <span className="text-red-500 ml-1" aria-hidden="true">
                     *
                   </span>
                 </FormLabel>
                 <FormControl>
-                  <Input
-                    id="agent-personality"
-                    {...field}
-                    placeholder="Describe the agent's communication style and behavior"
+                  <PersonalitySelect
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Select a personality"
                     disabled={isSubmitting || isLoading}
-                    aria-invalid={!!fieldState.error}
-                    className={cn(
-                      fieldState.error &&
-                        "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
-                    )}
                   />
                 </FormControl>
                 <FormMessage />

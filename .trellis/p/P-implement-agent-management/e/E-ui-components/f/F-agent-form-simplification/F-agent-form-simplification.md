@@ -10,7 +10,12 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/AgentForm.tsx: Replaced stub
     component with complete React Hook Form implementation using zodResolver,
     comprehensive field validation, character counters, loading states, and
-    unsaved changes detection
+    unsaved changes detection; Updated imports to include RoleSelect and
+    PersonalitySelect components, replaced Input field for role with RoleSelect
+    component using FormField and Controller integration, replaced Input field
+    for personality with PersonalitySelect component using the same pattern,
+    ensuring consistent component integration with proper placeholder text and
+    disabled state handling
 log: []
 schema: v1.0
 childrenIds:
