@@ -53,6 +53,7 @@ export * from "./RoleDescriptionTextareaProps";
 export * from "./RoleFormData";
 export * from "./RoleFormModalProps";
 export * from "./RoleNameInputProps";
+export * from "./RoleSelectProps";
 export * from "./RolesSectionProps";
 export * from "./RoleSystemPromptTextareaProps";
 export * from "./SavedPersonalitiesTabProps";

@@ -1,12 +1,32 @@
 ---
 id: T-create-roleselect-component
 title: Create RoleSelect Component
-status: open
+status: done
 priority: medium
 parent: F-selection-components
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/settings/RoleSelectProps.ts:
+    Created interface for
+    RoleSelect component props with value, onChange, disabled, and placeholder
+    properties
+  packages/ui-shared/src/types/settings/index.ts: Added export for RoleSelectProps interface
+  apps/desktop/src/components/settings/agents/RoleSelect.tsx: Created reusable
+    RoleSelect dropdown component that integrates with useRolesStore, handles
+    all states (loading, error, empty, success), uses shadcn/ui Select
+    components, includes ARIA labels and accessibility features, shows role
+    names with truncated descriptions
+  apps/desktop/src/components/settings/agents/index.ts: Added export for RoleSelect component
+  apps/desktop/src/components/settings/agents/__tests__/RoleSelect.test.tsx:
+    Created comprehensive unit tests covering all states, functionality,
+    accessibility, edge cases, and component behavior with 100% test coverage
+log:
+  - Successfully created RoleSelect component with full functionality including
+    data loading from useRolesStore, loading/error/empty state handling,
+    shadcn/ui Select integration, and comprehensive accessibility features.
+    Component includes proper TypeScript interfaces, follows established
+    patterns from PersonalitySelect, and includes comprehensive unit tests. All
+    quality checks pass (lint, format, type-check).
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T16:11:01.286Z

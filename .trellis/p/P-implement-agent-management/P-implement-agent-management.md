@@ -53,7 +53,7 @@ affectedFiles:
   packages/ui-shared/src/types/settings/index.ts:
     Added export for AgentViewModel
     to complete agent type exports; Exported PersonalitySelectProps type for use
-    across the application
+    across the application; Added export for RoleSelectProps interface
   packages/ui-shared/src/mapping/index.ts: Added exports for agents and personalities mapping functions
   packages/shared/src/types/agents/index.ts: Created new barrel file exporting agent persistence types and schemas
   packages/shared/src/services/storage/utils/index.ts: Added export for createDefaultAgentsSettings utility function
@@ -164,6 +164,19 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/__tests__/PersonalitySelect.test.tsx:
     Added comprehensive test suite with 23 tests covering all component states,
     user interactions, accessibility features, and edge cases
+  packages/ui-shared/src/types/settings/RoleSelectProps.ts:
+    Created interface for
+    RoleSelect component props with value, onChange, disabled, and placeholder
+    properties
+  apps/desktop/src/components/settings/agents/RoleSelect.tsx: Created reusable
+    RoleSelect dropdown component that integrates with useRolesStore, handles
+    all states (loading, error, empty, success), uses shadcn/ui Select
+    components, includes ARIA labels and accessibility features, shows role
+    names with truncated descriptions
+  apps/desktop/src/components/settings/agents/index.ts: Added export for RoleSelect component
+  apps/desktop/src/components/settings/agents/__tests__/RoleSelect.test.tsx:
+    Created comprehensive unit tests covering all states, functionality,
+    accessibility, edge cases, and component behavior with 100% test coverage
 log: []
 schema: v1.0
 childrenIds:
