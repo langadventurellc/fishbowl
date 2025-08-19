@@ -4,6 +4,7 @@
  * @module types
  */
 
+export * from "./agents";
 export * from "./chat";
 export * from "./components";
 export * from "./ConversationViewModel";

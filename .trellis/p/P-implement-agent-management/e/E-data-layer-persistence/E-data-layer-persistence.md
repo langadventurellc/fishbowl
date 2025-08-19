@@ -75,6 +75,24 @@ affectedFiles:
     Created comprehensive unit test suite with 17 test cases covering singleton
     behavior, initialization/cleanup lifecycle, error handling, edge cases, and
     integration with AgentsRepository. All tests passing.
+  packages/ui-shared/src/types/agents/persistence/AgentsPersistenceAdapter.ts:
+    Created persistence interface following RolesPersistenceAdapter pattern with
+    save, load, reset methods
+  packages/ui-shared/src/types/agents/persistence/AgentsPersistenceError.ts:
+    Created error class following RolesPersistenceError pattern for
+    operation-specific error handling
+  packages/ui-shared/src/types/agents/persistence/index.ts: Created barrel export for persistence types
+  packages/ui-shared/src/types/agents/PendingOperation.ts: Created PendingOperation interface for agent async operation tracking
+  packages/ui-shared/src/types/agents/index.ts: Created barrel export for all agent types
+  packages/ui-shared/src/types/index.ts: Added agents export to main types barrel
+  packages/ui-shared/src/stores/AgentsState.ts: Created AgentsState interface following RolesState pattern exactly
+  packages/ui-shared/src/stores/AgentsActions.ts:
+    Created AgentsActions interface
+    following RolesActions pattern with complete CRUD and persistence methods
+  packages/ui-shared/src/stores/AgentsStore.ts: Created AgentsStore type composition combining State and Actions
+  packages/ui-shared/src/stores/__tests__/AgentsState.test.ts: Created unit tests validating AgentsState interface structure and types
+  packages/ui-shared/src/stores/__tests__/AgentsActions.test.ts: Created unit tests validating AgentsActions interface method signatures
+  packages/ui-shared/src/stores/__tests__/AgentsStore.test.ts: Created unit tests validating AgentsStore type composition and inheritance
 log: []
 schema: v1.0
 childrenIds:
