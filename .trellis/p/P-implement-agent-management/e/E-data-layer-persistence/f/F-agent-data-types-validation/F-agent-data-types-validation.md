@@ -1,7 +1,7 @@
 ---
 id: F-agent-data-types-validation
 title: Agent Data Types & Validation
-status: in-progress
+status: done
 priority: medium
 parent: E-data-layer-persistence
 prerequisites: []
@@ -51,12 +51,20 @@ affectedFiles:
     conversion cycles
   packages/shared/src/types/settings/index.ts: Added exports for agent types and
     schemas to make them available to other packages
-log: []
+  packages/ui-shared/src/types/settings/index.ts: Added export for AgentViewModel to complete agent type exports
+  packages/ui-shared/src/mapping/index.ts: Added exports for agents and personalities mapping functions
+  packages/shared/src/types/agents/index.ts: Created new barrel file exporting agent persistence types and schemas
+  packages/shared/src/services/storage/utils/index.ts: Added export for createDefaultAgentsSettings utility function
+  packages/ui-shared/src/__tests__/agentExports.test.ts: Created integration tests verifying all agent exports are accessible
+  packages/shared/src/__tests__/agentExports.test.ts: Created tests for shared package agent exports
+  packages/ui-shared/src/__tests__/agentImportPaths.test.ts: Created tests verifying common import patterns work correctly
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
+  - T-create-agent-data-types-and
   - T-create-agent-mapping-utilities
   - T-create-barrel-exports-and
-  - T-create-agent-data-types-and
   - T-create-persistence-data-types
 created: 2025-08-18T23:04:10.560Z
 updated: 2025-08-18T23:04:10.560Z

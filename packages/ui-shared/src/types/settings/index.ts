@@ -9,6 +9,7 @@ export * from "./AgentFormProps";
 export * from "./AgentNameInputProps";
 export * from "./AgentsSectionProps";
 export * from "./AgentTemplate";
+export * from "./AgentViewModel";
 export * from "./appearanceSettings";
 export * from "./BehaviorGroup";
 export * from "./BehaviorSlidersSectionProps";
