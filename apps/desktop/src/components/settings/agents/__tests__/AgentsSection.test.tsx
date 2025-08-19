@@ -19,6 +19,11 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
     setUnsavedChanges: jest.fn(),
     clearUnsavedChanges: jest.fn(),
   }),
+  useAgentsStore: () => ({
+    createAgent: jest.fn(() => "mock-agent-id"),
+    updateAgent: jest.fn(),
+    error: null,
+  }),
 }));
 
 // Mock TabContainer to simplify testing

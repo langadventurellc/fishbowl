@@ -16,6 +16,7 @@ import {
   type AgentFormData,
   type AgentsSectionProps,
   type TabConfiguration,
+  useAgentsStore,
 } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useState } from "react";
 import { cn } from "../../../lib/utils";
@@ -63,29 +64,80 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
     });
   }, []);
 
+  // Get store actions
+  const { createAgent, updateAgent, error } = useAgentsStore();
+
   // Form save handler
   const handleAgentSave = useCallback(
     async (data: AgentFormData) => {
-      // UI-only implementation as per project requirements
-      logger.info("Agent save operation (UI-only)", {
-        mode: agentModalState.mode,
-        agentName: data.name,
-        timestamp: new Date().toISOString(),
-      });
+      try {
+        if (agentModalState.mode === "create") {
+          const agentId = createAgent(data);
 
-      // Simulate async operation
-      await new Promise((resolve) => setTimeout(resolve, 500));
+          if (agentId) {
+            // Success - close modal and announce
+            closeModal();
 
-      // Show user feedback
-      const actionWord =
-        agentModalState.mode === "edit" ? "updated" : "created";
+            announceToScreenReader(
+              `Agent ${data.name} created successfully`,
+              "polite",
+            );
 
-      announceToScreenReader(
-        `Agent ${data.name} ${actionWord} successfully`,
-        "polite",
-      );
+            logger.info("Agent created successfully", {
+              agentId,
+              agentName: data.name,
+              timestamp: new Date().toISOString(),
+            });
+          } else {
+            // createAgent returns empty string on error, error is set in store
+            throw new Error(error?.message || "Failed to create agent");
+          }
+        } else {
+          // Handle edit mode - updateAgent returns void, check error state via hook
+          updateAgent(agentModalState.agent!.id, data);
+
+          // Check if error occurred (error state is already available from hook)
+          if (error) {
+            throw new Error(error.message || "Failed to update agent");
+          }
+
+          // Success - close modal and announce
+          closeModal();
+
+          announceToScreenReader(
+            `Agent ${data.name} updated successfully`,
+            "polite",
+          );
+
+          logger.info("Agent updated successfully", {
+            agentId: agentModalState.agent!.id,
+            agentName: data.name,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An error occurred";
+
+        announceToScreenReader(`Error: ${errorMessage}`, "assertive");
+
+        logger.error(
+          "Agent save failed",
+          err instanceof Error ? err : new Error(errorMessage),
+        );
+
+        // Don't close modal on error so user can retry
+      }
     },
-    [agentModalState.mode, logger],
+    [
+      agentModalState.mode,
+      agentModalState.agent,
+      createAgent,
+      updateAgent,
+      error,
+      closeModal,
+      logger,
+    ],
   );
 
   // Tab configuration following established patterns

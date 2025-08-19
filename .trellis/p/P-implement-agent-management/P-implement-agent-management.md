@@ -247,14 +247,19 @@ affectedFiles:
     agents array instead of filteredAgents; Removed LibraryTab component
     definition, AgentGrid component definition, AgentGridProps interface, and
     mock agents data. Added import for LibraryTab from './LibraryTab'. Cleaned
-    up imports that are no longer needed.
+    up imports that are no longer needed.; Connected AgentsSection to
+    useAgentsStore for real persistence, replaced UI-only handleAgentSave with
+    full store integration including createAgent/updateAgent calls, added proper
+    error handling and accessibility announcements
   apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
     Updated unit tests to reflect the new two-tab structure by removing all
     template-related test assertions and expectations. Updated test descriptions
     and assertions to match the Library and Defaults only structure.; Updated
     tests to match new implementation without search functionality - removed
     useAgentSearch mock and search-related test assertions while preserving
-    tests for other functionality like Create button and agent display
+    tests for other functionality like Create button and agent display; Added
+    useAgentsStore mock to test file to support new store integration and ensure
+    tests pass
   apps/desktop/src/components/settings/agents/DefaultsTab.tsx:
     Created new DefaultsTab component file with extracted code from
     AgentsSection.tsx. Includes all configuration controls, preview panel,

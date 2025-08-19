@@ -14,6 +14,14 @@ affectedFiles:
     following RoleFormModal patterns - added focus management, accessibility
     features, keyboard shortcuts, unsaved changes protection, and proper
     AgentForm integration
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Connected AgentsSection to useAgentsStore for real persistence, replaced
+    UI-only handleAgentSave with full store integration including
+    createAgent/updateAgent calls, added proper error handling and accessibility
+    announcements
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Added useAgentsStore mock to test file to support new store integration and
+    ensure tests pass
 log: []
 schema: v1.0
 childrenIds:

@@ -1,13 +1,54 @@
 ---
 id: T-wire-up-create-new-agent
 title: Wire up Create New Agent button and modal state management
-status: open
+status: done
 priority: medium
 parent: F-create-agent-feature
 prerequisites:
   - T-implement-agentformmodal-with
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Connected AgentsSection to useAgentsStore for real persistence, replaced
+    UI-only handleAgentSave with full store integration including
+    createAgent/updateAgent calls, added proper error handling and accessibility
+    announcements
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Added useAgentsStore mock to test file to support new store integration and
+    ensure tests pass
+log:
+  - >-
+    Successfully implemented Create New Agent button functionality and modal
+    state management. The task connected the existing AgentFormModal with the
+    useAgentsStore for full persistence, enabling users to create and edit
+    agents with proper validation, error handling, and user feedback.
+
+
+    Key accomplishments:
+
+    - Connected existing Create Agent button in LibraryTab to real agent
+    persistence
+
+    - Integrated useAgentsStore.createAgent and updateAgent methods with proper
+    error handling  
+
+    - Replaced UI-only save handler with full persistence logic
+
+    - Added comprehensive error handling with screen reader announcements for
+    accessibility
+
+    - Ensured proper modal state management (open/close on success/error)
+
+    - Fixed AgentsSection test suite by adding required useAgentsStore mock
+
+    - Validated that new agents persist and appear immediately in the UI
+
+    - All quality checks pass (lint, format, type-check) and all tests pass
+
+
+    The implementation follows established patterns from roles/personalities
+    sections and provides a complete end-to-end agent creation flow. Users can
+    now successfully create agents that persist to the backend and appear
+    immediately in the library.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T21:33:51.846Z

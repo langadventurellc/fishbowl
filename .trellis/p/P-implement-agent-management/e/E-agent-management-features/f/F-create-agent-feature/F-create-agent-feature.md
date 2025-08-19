@@ -1,7 +1,7 @@
 ---
 id: F-create-agent-feature
 title: Create Agent Feature
-status: in-progress
+status: done
 priority: medium
 parent: E-agent-management-features
 prerequisites:
@@ -12,12 +12,21 @@ affectedFiles:
     following RoleFormModal patterns - added focus management, accessibility
     features, keyboard shortcuts, unsaved changes protection, and proper
     AgentForm integration
-log: []
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Connected AgentsSection to useAgentsStore for real persistence, replaced
+    UI-only handleAgentSave with full store integration including
+    createAgent/updateAgent calls, added proper error handling and accessibility
+    announcements
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Added useAgentsStore mock to test file to support new store integration and
+    ensure tests pass
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
+  - T-complete-agentform-field
   - T-implement-agentformmodal-with
   - T-wire-up-create-new-agent
-  - T-complete-agentform-field
 created: 2025-08-19T21:13:42.425Z
 updated: 2025-08-19T21:13:42.425Z
 ---
