@@ -87,7 +87,9 @@ affectedFiles:
     users interact with them.; Implemented unsaved changes detection with
     ConfirmationDialog component, added state management for dialog visibility,
     updated cancel and save handlers to properly manage form dirty state and
-    reset behavior
+    reset behavior; Reorganized form layout into logical sections, updated
+    button variants and text, removed unused variable, and ensured proper JSX
+    structure
   apps/desktop/src/data/repositories/agentsRepositoryManager.ts:
     Created new agentsRepositoryManager singleton following exact pattern from
     personalitiesRepositoryManager. Implements get(), initialize(), and reset()

@@ -42,7 +42,6 @@ export const AgentForm: React.FC<AgentFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
-  const isEditMode = mode === "edit";
 
   const form = useForm<AgentFormData>({
     resolver: zodResolver(agentSchema),
@@ -117,230 +116,131 @@ export const AgentForm: React.FC<AgentFormProps> = ({
     <div className="space-y-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
-          {/* Name Field */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <div className="flex items-center justify-between">
-                  <FormLabel htmlFor="agent-name">
-                    Agent Name
+          {/* Selection Components Section */}
+          <div className="space-y-4">
+            {/* Model Selection Field */}
+            <FormField
+              control={form.control}
+              name="model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel htmlFor="agent-model">
+                    Model
                     <span className="text-red-500 ml-1" aria-hidden="true">
                       *
                     </span>
                   </FormLabel>
-                  <CharacterCounter
-                    current={form.watch("name")?.length || 0}
-                    max={100}
-                  />
-                </div>
-                <FormControl>
-                  <div className="relative">
-                    <Input
-                      id="agent-name"
-                      {...field}
-                      placeholder="Enter a unique name for this agent"
-                      maxLength={100}
+                  <FormControl>
+                    <ModelSelect
+                      value={field.value}
+                      onChange={field.onChange}
                       disabled={isSubmitting || isLoading}
-                      aria-invalid={!!fieldState.error}
-                      className={cn(
-                        fieldState.error &&
-                          "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
-                      )}
                     />
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      {field.value && fieldState.error && (
-                        <AlertCircle
-                          className="h-4 w-4 text-red-600"
-                          aria-hidden="true"
-                        />
-                      )}
-                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Role Field */}
+            <FormField
+              control={form.control}
+              name="role"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Role
+                    <span className="text-red-500 ml-1" aria-hidden="true">
+                      *
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <RoleSelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Select a role"
+                      disabled={isSubmitting || isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Personality Field */}
+            <FormField
+              control={form.control}
+              name="personality"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Personality
+                    <span className="text-red-500 ml-1" aria-hidden="true">
+                      *
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <PersonalitySelect
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Select a personality"
+                      disabled={isSubmitting || isLoading}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Basic Information Section */}
+          <div className="space-y-4">
+            {/* Name Field */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <div className="flex items-center justify-between">
+                    <FormLabel htmlFor="agent-name">
+                      Agent Name
+                      <span className="text-red-500 ml-1" aria-hidden="true">
+                        *
+                      </span>
+                    </FormLabel>
+                    <CharacterCounter
+                      current={form.watch("name")?.length || 0}
+                      max={100}
+                    />
                   </div>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Model Selection Field */}
-          <FormField
-            control={form.control}
-            name="model"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel htmlFor="agent-model">
-                  Model
-                  <span className="text-red-500 ml-1" aria-hidden="true">
-                    *
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <ModelSelect
-                    value={field.value}
-                    onChange={field.onChange}
-                    disabled={isSubmitting || isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Role Field */}
-          <FormField
-            control={form.control}
-            name="role"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Role
-                  <span className="text-red-500 ml-1" aria-hidden="true">
-                    *
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <RoleSelect
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select a role"
-                    disabled={isSubmitting || isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Personality Field */}
-          <FormField
-            control={form.control}
-            name="personality"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  Personality
-                  <span className="text-red-500 ml-1" aria-hidden="true">
-                    *
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <PersonalitySelect
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Select a personality"
-                    disabled={isSubmitting || isLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {/* Configuration Section */}
-          <div className="space-y-6">
-            <div>
-              <h4 className="text-md font-semibold mb-4">Configuration</h4>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="space-y-6">
-                  {/* Temperature Field */}
-                  <FormField
-                    control={form.control}
-                    name="temperature"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Temperature</FormLabel>
-                          <span className="text-sm text-muted-foreground">
-                            {field.value?.toFixed(1)} -{" "}
-                            {getSliderDescription.temperature(field.value || 0)}
-                          </span>
-                        </div>
-                        <FormControl>
-                          <Slider
-                            value={[field.value || 0]}
-                            onValueChange={(values: number[]) =>
-                              field.onChange(values[0])
-                            }
-                            min={0}
-                            max={2}
-                            step={0.1}
-                            disabled={isSubmitting || isLoading}
-                            className="w-full"
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        id="agent-name"
+                        {...field}
+                        placeholder="Enter a unique name for this agent"
+                        maxLength={100}
+                        disabled={isSubmitting || isLoading}
+                        aria-invalid={!!fieldState.error}
+                        className={cn(
+                          fieldState.error &&
+                            "border-red-500 focus-visible:border-red-500 focus-visible:ring-red-500/20",
+                        )}
+                      />
+                      <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                        {field.value && fieldState.error && (
+                          <AlertCircle
+                            className="h-4 w-4 text-red-600"
+                            aria-hidden="true"
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Max Tokens Field */}
-                  <FormField
-                    control={form.control}
-                    name="maxTokens"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Max Tokens</FormLabel>
-                          <span className="text-sm text-muted-foreground">
-                            {getSliderDescription.maxTokens(
-                              field.value || 1000,
-                            )}
-                          </span>
-                        </div>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            value={field.value || ""}
-                            onChange={(e) =>
-                              field.onChange(parseInt(e.target.value) || 1)
-                            }
-                            min={1}
-                            max={4000}
-                            placeholder="1000"
-                            disabled={isSubmitting || isLoading}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  {/* Top P Field */}
-                  <FormField
-                    control={form.control}
-                    name="topP"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center justify-between">
-                          <FormLabel>Top P</FormLabel>
-                          <span className="text-sm text-muted-foreground">
-                            {field.value?.toFixed(2)} -{" "}
-                            {getSliderDescription.topP(field.value || 1)}
-                          </span>
-                        </div>
-                        <FormControl>
-                          <Slider
-                            value={[field.value || 1]}
-                            onValueChange={(values: number[]) =>
-                              field.onChange(values[0])
-                            }
-                            min={0}
-                            max={1}
-                            step={0.01}
-                            disabled={isSubmitting || isLoading}
-                            className="w-full"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-            </div>
+                        )}
+                      </div>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             {/* System Prompt */}
             <FormField
@@ -371,34 +271,125 @@ export const AgentForm: React.FC<AgentFormProps> = ({
             />
           </div>
 
+          {/* Configuration Section */}
+          <div className="space-y-4">
+            <h4 className="text-md font-semibold mb-4">Configuration</h4>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="space-y-6">
+                {/* Temperature Field */}
+                <FormField
+                  control={form.control}
+                  name="temperature"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Temperature</FormLabel>
+                        <span className="text-sm text-muted-foreground">
+                          {field.value?.toFixed(1)} -{" "}
+                          {getSliderDescription.temperature(field.value || 0)}
+                        </span>
+                      </div>
+                      <FormControl>
+                        <Slider
+                          value={[field.value || 0]}
+                          onValueChange={(values: number[]) =>
+                            field.onChange(values[0])
+                          }
+                          min={0}
+                          max={2}
+                          step={0.1}
+                          disabled={isSubmitting || isLoading}
+                          className="w-full"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Max Tokens Field */}
+                <FormField
+                  control={form.control}
+                  name="maxTokens"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Max Tokens</FormLabel>
+                        <span className="text-sm text-muted-foreground">
+                          {getSliderDescription.maxTokens(field.value || 1000)}
+                        </span>
+                      </div>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          value={field.value || ""}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value) || 1)
+                          }
+                          min={1}
+                          max={4000}
+                          placeholder="1000"
+                          disabled={isSubmitting || isLoading}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {/* Top P Field */}
+                <FormField
+                  control={form.control}
+                  name="topP"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Top P</FormLabel>
+                        <span className="text-sm text-muted-foreground">
+                          {field.value?.toFixed(2)} -{" "}
+                          {getSliderDescription.topP(field.value || 1)}
+                        </span>
+                      </div>
+                      <FormControl>
+                        <Slider
+                          value={[field.value || 1]}
+                          onValueChange={(values: number[]) =>
+                            field.onChange(values[0])
+                          }
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          disabled={isSubmitting || isLoading}
+                          className="w-full"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-3 pt-6 border-t">
             <Button
               type="button"
-              variant="ghost"
+              variant="outline"
               onClick={handleCancel}
-              disabled={isSubmitting || isLoading}
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={
-                !form.formState.isValid ||
-                isSubmitting ||
-                isLoading ||
-                !form.formState.isDirty
-              }
-              className="min-w-[var(--dt-button-min-width)]"
+              disabled={!form.formState.isValid || isSubmitting}
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>{isEditMode ? "Update" : "Create"} Agent</>
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
+              {mode === "edit" ? "Save Changes" : "Create Agent"}
             </Button>
           </div>
         </form>
