@@ -1,0 +1,121 @@
+---
+id: E-ui-components
+title: UI Components
+status: open
+priority: medium
+parent: P-implement-agent-management
+prerequisites:
+  - E-data-layer-persistence
+affectedFiles: {}
+log: []
+schema: v1.0
+childrenIds: []
+created: 2025-08-18T22:55:02.340Z
+updated: 2025-08-18T22:55:02.340Z
+---
+
+## Purpose and Goals
+
+Build the UI components for the agent management system, including selection dropdowns, form components, and the tab-based interface. All components follow existing patterns and use shadcn/ui consistently.
+
+## Major Components and Deliverables
+
+### Selection Components
+
+- ModelSelect component with LLM config integration
+- RoleSelect component using useRolesStore
+- PersonalitySelect component using usePersonalitiesStore
+
+### Agent Form Components
+
+- Simplified AgentForm using selection components
+- Configuration sliders for temperature, max tokens, top P
+- Character counter for text fields
+- Form validation with React Hook Form
+
+### Section Components
+
+- Modified AgentsSection with Library and Defaults tabs
+- LibraryTab component for agent list display
+- DefaultsTab component for default settings
+- Remove Templates tab from prototype
+
+## Detailed Acceptance Criteria
+
+### ModelSelect Component
+
+- ✅ Queries LLM configurations via useLlmConfig hook
+- ✅ Maps providers to available models
+- ✅ Shows "GPT-4 (OpenAI)" format with provider name
+- ✅ Handles empty state with "No LLM configurations" message
+- ✅ Updates dynamically when configs change
+- ✅ Uses shadcn/ui Select component
+
+### RoleSelect Component
+
+- ✅ Loads roles from useRolesStore
+- ✅ Shows role name with optional description preview
+- ✅ Handles loading state with spinner
+- ✅ Handles error state gracefully
+- ✅ Consistent props interface with ModelSelect
+- ✅ Uses shadcn/ui Select component
+
+### PersonalitySelect Component
+
+- ✅ Loads personalities from usePersonalitiesStore
+- ✅ Shows personality name in dropdown
+- ✅ Handles loading state with spinner
+- ✅ Handles error state gracefully
+- ✅ Consistent props interface with other selects
+- ✅ Uses shadcn/ui Select component
+
+### AgentForm Component
+
+- ✅ Uses ModelSelect, RoleSelect, PersonalitySelect components
+- ✅ Form validation with React Hook Form and Zod
+- ✅ Character counters for name and system prompt
+- ✅ Configuration sliders with real-time descriptions
+- ✅ Unsaved changes detection
+- ✅ Clean separation of concerns - no data fetching
+
+### AgentsSection Updates
+
+- ✅ Remove Templates tab completely
+- ✅ Keep Library and Defaults tabs only
+- ✅ Remove search functionality from Library
+- ✅ Use TabContainer for consistent tab behavior
+- ✅ Integration with settings modal navigation
+
+### LibraryTab Component
+
+- ✅ Grid layout for agent cards
+- ✅ Create new agent button
+- ✅ Empty state when no agents exist
+- ✅ No search box (removed per requirements)
+- ✅ Responsive design (1 column mobile, 2 columns desktop)
+
+### DefaultsTab Component
+
+- ✅ Temperature slider (0-2) with description
+- ✅ Max tokens input (1-4000) with validation
+- ✅ Top P slider (0-1) with description
+- ✅ Reset to defaults button with confirmation
+- ✅ Settings preview panel showing human-readable values
+
+## Technical Considerations
+
+- All components use existing shadcn/ui components
+- Follow existing component patterns from roles/personalities
+- Keep components focused and single-responsibility
+- No performance optimizations or memoization unless already in existing patterns
+- Use existing utilities for keyboard navigation and accessibility
+
+## Dependencies
+
+- E-data-layer-persistence (for types and stores)
+
+## Estimated Scale
+
+- 3-4 features covering selection components, form, and section updates
+- Each feature broken into 2-3 focused tasks
+- Total: ~10-12 tasks

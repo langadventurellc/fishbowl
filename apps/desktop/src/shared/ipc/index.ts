@@ -16,6 +16,10 @@ export type { RolesChannelType } from "./rolesConstants";
 export { PERSONALITIES_CHANNELS } from "./personalitiesConstants";
 export type { PersonalitiesChannelType } from "./personalitiesConstants";
 
+// Agents constants
+export { AGENTS_CHANNELS } from "./agentsConstants";
+export type { AgentsChannelType } from "./agentsConstants";
+
 // LLM Config constants
 export { LLM_CONFIG_CHANNELS } from "./llmConfigConstants";
 export type { LlmConfigChannel } from "./llmConfigConstants";
@@ -38,6 +42,11 @@ export type { RolesResetRequest } from "./roles/resetRequest";
 export type { PersonalitiesLoadRequest } from "./personalities/loadRequest";
 export type { PersonalitiesSaveRequest } from "./personalities/saveRequest";
 export type { PersonalitiesResetRequest } from "./personalities/resetRequest";
+
+// Agents request types
+export type { AgentsLoadRequest } from "./agents/loadRequest";
+export type { AgentsSaveRequest } from "./agents/saveRequest";
+export type { AgentsResetRequest } from "./agents/resetRequest";
 
 // LLM Config request types
 export type { LlmConfigCreateRequest } from "./llmConfig/createRequest";
@@ -63,6 +72,11 @@ export type { RolesResetResponse } from "./roles/resetResponse";
 export type { PersonalitiesLoadResponse } from "./personalities/loadResponse";
 export type { PersonalitiesSaveResponse } from "./personalities/saveResponse";
 export type { PersonalitiesResetResponse } from "./personalities/resetResponse";
+
+// Agents response types
+export type { AgentsLoadResponse } from "./agents/loadResponse";
+export type { AgentsSaveResponse } from "./agents/saveResponse";
+export type { AgentsResetResponse } from "./agents/resetResponse";
 
 // LLM Config response types
 export type { LlmConfigCreateResponse } from "./llmConfig/createResponse";

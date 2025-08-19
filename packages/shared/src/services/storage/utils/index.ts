@@ -9,5 +9,8 @@ export { formatRolesValidationErrors } from "./formatRolesValidationErrors";
 export { validateRolesData } from "./validateRolesData";
 export { validateSettingsData } from "./validateSettingsData";
 
+// Default settings creation utilities
+export { createDefaultAgentsSettings } from "./agents";
+
 // File system utilities
 // (no longer needed - platform-specific functionality moved to FileSystemBridge implementations)

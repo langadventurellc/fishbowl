@@ -7,6 +7,12 @@ export * from "./settings";
 // Export roles mappers
 export * from "./roles";
 
+// Export agents mappers
+export * from "./agents";
+
+// Export personalities mappers
+export * from "./personalities";
+
 // Convenience exports for most commonly used utilities
 export {
   applyDefaults,

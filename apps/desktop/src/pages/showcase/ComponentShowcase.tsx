@@ -1,10 +1,6 @@
-import { ThemeMode, createLoggerSync } from "@fishbowl-ai/shared";
-import { AgentViewModel } from "@fishbowl-ai/ui-shared";
+import { ThemeMode } from "@fishbowl-ai/shared";
 import { useState } from "react";
 
-const logger = createLoggerSync({
-  config: { name: "ComponentShowcase", level: "info" },
-});
 import {
   AgentPill,
   MessageAvatar,
@@ -49,7 +45,7 @@ export default function ComponentShowcase() {
   ];
 
   // Sample agent data for AgentPill showcase
-  const sampleAgents: AgentViewModel[] = [
+  const sampleAgents = [
     {
       name: "Ted",
       role: "Technical Advisor",
@@ -252,103 +248,47 @@ export default function ComponentShowcase() {
             <div style={styles.agentPillShowcase}>
               <div style={styles.agentPillRow}>
                 <span style={styles.agentPillLabel}>Button Variants:</span>
-                <Button
-                  variant="primary"
-                  onClick={() => logger.info("Primary clicked")}
-                >
-                  Send
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => logger.info("Secondary clicked")}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  variant="ghost"
-                  onClick={() => logger.info("Ghost clicked")}
-                >
-                  Copy
-                </Button>
-                <Button
-                  variant="toggle"
-                  onClick={() => logger.info("Toggle clicked")}
-                >
-                  ✓
-                </Button>
+                <Button variant="primary">Send</Button>
+                <Button variant="secondary">Cancel</Button>
+                <Button variant="ghost">Copy</Button>
+                <Button variant="toggle">✓</Button>
               </div>
 
               <div style={styles.agentPillRow}>
                 <span style={styles.agentPillLabel}>Button Sizes:</span>
-                <Button
-                  variant="primary"
-                  size="small"
-                  onClick={() => logger.info("Small clicked")}
-                >
+                <Button variant="primary" size="small">
                   Small
                 </Button>
-                <Button
-                  variant="primary"
-                  size="medium"
-                  onClick={() => logger.info("Medium clicked")}
-                >
+                <Button variant="primary" size="medium">
                   Medium
                 </Button>
-                <Button
-                  variant="primary"
-                  size="large"
-                  onClick={() => logger.info("Large clicked")}
-                >
+                <Button variant="primary" size="large">
                   Large
                 </Button>
               </div>
 
               <div style={styles.agentPillRow}>
                 <span style={styles.agentPillLabel}>Button States:</span>
-                <Button
-                  variant="secondary"
-                  disabled
-                  onClick={() => logger.info("Disabled clicked")}
-                >
+                <Button variant="secondary" disabled>
                   Disabled
                 </Button>
-                <Button
-                  variant="secondary"
-                  loading
-                  onClick={() => logger.info("Loading clicked")}
-                >
+                <Button variant="secondary" loading>
                   Loading
                 </Button>
-                <Button
-                  variant="ghost"
-                  icon="📁"
-                  onClick={() => logger.info("Icon clicked")}
-                >
+                <Button variant="ghost" icon="📁">
                   With Icon
                 </Button>
               </div>
 
               <div style={styles.agentPillRow}>
                 <span style={styles.agentPillLabel}>Real Examples:</span>
-                <Button
-                  variant="primary"
-                  icon="📤"
-                  onClick={() => logger.info("Send message")}
-                >
+                <Button variant="primary" icon="📤">
                   Send Message
                 </Button>
-                <Button
-                  variant="ghost"
-                  icon="📋"
-                  onClick={() => logger.info("Copy text")}
-                >
+                <Button variant="ghost" icon="📋">
                   Copy
                 </Button>
-                <Button
-                  variant="toggle"
-                  size="small"
-                  onClick={() => logger.info("Toggle sidebar")}
-                >
+                <Button variant="toggle" size="small">
                   ⚙️
                 </Button>
               </div>
@@ -1303,13 +1243,7 @@ export default function ComponentShowcase() {
               <div style={styles.agentPillRow}>
                 <span style={styles.agentPillLabel}>All Agents:</span>
                 {sampleAgents.map((agent, index) => (
-                  <AgentPill
-                    key={index}
-                    agent={agent}
-                    onClick={(agentName) =>
-                      logger.info(`Clicked: ${agentName}`)
-                    }
-                  />
+                  <AgentPill key={index} agent={agent} />
                 ))}
               </div>
 
@@ -2077,7 +2011,6 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                   currentTheme={currentTheme}
                   onToggle={(newTheme) => {
                     setCurrentTheme(newTheme);
-                    logger.info(`Theme switched to: ${newTheme}`);
                   }}
                 />
                 <span
@@ -2095,7 +2028,7 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                 <ThemeToggle
                   currentTheme="light"
                   onToggle={(theme) =>
-                    logger.info(`Light toggle clicked: ${theme}`)
+                    console.log(`Light toggle clicked: ${theme}`)
                   }
                 />
               </div>
@@ -2105,7 +2038,7 @@ Additional paragraphs should maintain proper spacing and visual hierarchy. The t
                 <ThemeToggle
                   currentTheme="dark"
                   onToggle={(theme) =>
-                    logger.info(`Dark toggle clicked: ${theme}`)
+                    console.log(`Dark toggle clicked: ${theme}`)
                   }
                 />
               </div>

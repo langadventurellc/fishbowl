@@ -14,6 +14,12 @@ export {
   PERSONALITIES_SCHEMA_VERSION,
   CURRENT_PERSONALITIES_SCHEMA_VERSION,
 } from "./personalitiesSettingsSchema";
+export {
+  persistedAgentSchema,
+  persistedAgentsSettingsSchema,
+  AGENTS_SCHEMA_VERSION,
+  CURRENT_AGENTS_SCHEMA_VERSION,
+} from "../agents/persistedAgentsSettingsSchema";
 export { createDefaultAdvancedSettings } from "./createDefaultAdvancedSettings";
 export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettings";
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
@@ -36,6 +42,8 @@ export type { PersistedRoleData } from "./PersistedRoleData";
 export type { PersistedRolesSettingsData } from "./PersistedRolesSettingsData";
 export type { PersistedPersonalityData } from "./PersistedPersonalityData";
 export type { PersistedPersonalitiesSettingsData } from "./PersistedPersonalitiesSettingsData";
+export type { PersistedAgentData } from "../agents/PersistedAgentData";
+export type { PersistedAgentsSettingsData } from "../agents/PersistedAgentsSettingsData";
 export type { ShowTimestamps } from "./ShowTimestamps";
 export { SHOW_TIMESTAMPS_OPTIONS } from "./ShowTimestamps";
 export type { ThemeMode } from "./ThemeMode";
