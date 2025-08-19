@@ -79,7 +79,12 @@ affectedFiles:
     with proper placeholder text and disabled state handling; Updated name field
     and system prompt field to include character counters positioned in label
     area using flex layout, added maxLength attributes (100 for name, 5000 for
-    system prompt), and implemented real-time updates using form.watch()
+    system prompt), and implemented real-time updates using form.watch();
+    Updated temperature and topP sliders to use shadcn/ui Slider component with
+    real-time descriptions. Updated maxTokens input formatting and description
+    display. Added proper imports for getSliderDescription utility. All controls
+    now show current values with descriptive text that updates immediately as
+    users interact with them.
   apps/desktop/src/data/repositories/agentsRepositoryManager.ts:
     Created new agentsRepositoryManager singleton following exact pattern from
     personalitiesRepositoryManager. Implements get(), initialize(), and reset()

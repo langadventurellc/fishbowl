@@ -1,9 +1,6 @@
 import { cn } from "@/lib/utils";
 import {
   agentSchema,
-  getMaxTokensDescription,
-  getTemperatureDescription,
-  getTopPDescription,
   useUnsavedChanges,
   type AgentFormData,
   type AgentFormProps,
@@ -19,6 +16,7 @@ import {
   RoleSelect,
 } from "../";
 import { useServices } from "../../../contexts";
+import { getSliderDescription } from "../../../utils/sliderDescriptions";
 import { Button } from "../../ui/button";
 import {
   Form,
@@ -29,6 +27,7 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import { Slider } from "../../ui/slider";
 import { Textarea } from "../../ui/textarea";
 
 export const AgentForm: React.FC<AgentFormProps> = ({
@@ -227,28 +226,25 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                     name="temperature"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>
-                          Temperature ({field.value.toFixed(1)})
-                        </FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Temperature</FormLabel>
+                          <span className="text-sm text-muted-foreground">
+                            {field.value?.toFixed(1)} -{" "}
+                            {getSliderDescription.temperature(field.value || 0)}
+                          </span>
+                        </div>
                         <FormControl>
-                          <div className="space-y-2">
-                            <Input
-                              type="range"
-                              min={0}
-                              max={2}
-                              step={0.1}
-                              {...field}
-                              value={field.value}
-                              onChange={(e) =>
-                                field.onChange(parseFloat(e.target.value))
-                              }
-                              disabled={isSubmitting || isLoading}
-                              className="w-full"
-                            />
-                            <div className="text-xs text-muted-foreground">
-                              {getTemperatureDescription(field.value)}
-                            </div>
-                          </div>
+                          <Slider
+                            value={[field.value || 0]}
+                            onValueChange={(values: number[]) =>
+                              field.onChange(values[0])
+                            }
+                            min={0}
+                            max={2}
+                            step={0.1}
+                            disabled={isSubmitting || isLoading}
+                            className="w-full"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -261,23 +257,27 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                     name="maxTokens"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Max Tokens</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Max Tokens</FormLabel>
+                          <span className="text-sm text-muted-foreground">
+                            {getSliderDescription.maxTokens(
+                              field.value || 1000,
+                            )}
+                          </span>
+                        </div>
                         <FormControl>
-                          <div className="space-y-2">
-                            <Input
-                              type="number"
-                              {...field}
-                              onChange={(e) =>
-                                field.onChange(parseInt(e.target.value) || 1000)
-                              }
-                              min={1}
-                              max={4000}
-                              disabled={isSubmitting || isLoading}
-                            />
-                            <div className="text-xs text-muted-foreground">
-                              {getMaxTokensDescription(field.value)}
-                            </div>
-                          </div>
+                          <Input
+                            type="number"
+                            {...field}
+                            value={field.value || ""}
+                            onChange={(e) =>
+                              field.onChange(parseInt(e.target.value) || 1)
+                            }
+                            min={1}
+                            max={4000}
+                            placeholder="1000"
+                            disabled={isSubmitting || isLoading}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -290,26 +290,25 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                     name="topP"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Top P ({field.value.toFixed(2)})</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Top P</FormLabel>
+                          <span className="text-sm text-muted-foreground">
+                            {field.value?.toFixed(2)} -{" "}
+                            {getSliderDescription.topP(field.value || 1)}
+                          </span>
+                        </div>
                         <FormControl>
-                          <div className="space-y-2">
-                            <Input
-                              type="range"
-                              min={0}
-                              max={1}
-                              step={0.01}
-                              {...field}
-                              value={field.value}
-                              onChange={(e) =>
-                                field.onChange(parseFloat(e.target.value))
-                              }
-                              disabled={isSubmitting || isLoading}
-                              className="w-full"
-                            />
-                            <div className="text-xs text-muted-foreground">
-                              {getTopPDescription(field.value)}
-                            </div>
-                          </div>
+                          <Slider
+                            value={[field.value || 1]}
+                            onValueChange={(values: number[]) =>
+                              field.onChange(values[0])
+                            }
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            disabled={isSubmitting || isLoading}
+                            className="w-full"
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
