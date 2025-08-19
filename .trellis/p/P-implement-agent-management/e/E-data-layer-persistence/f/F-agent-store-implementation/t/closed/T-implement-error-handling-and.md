@@ -1,7 +1,7 @@
 ---
 id: T-implement-error-handling-and
 title: Implement Error Handling and Rollback System
-status: open
+status: wont-do
 priority: medium
 parent: F-agent-store-implementation
 prerequisites:

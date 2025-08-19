@@ -7,5 +7,6 @@
  */
 
 export * from "./settings";
+export { useAgentsStore } from "./useAgentsStore";
 export { usePersonalitiesStore } from "./usePersonalitiesStore";
 export { useRolesStore } from "./useRolesStore";

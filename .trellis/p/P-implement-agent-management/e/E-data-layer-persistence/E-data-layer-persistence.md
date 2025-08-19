@@ -81,7 +81,10 @@ affectedFiles:
   packages/ui-shared/src/types/agents/persistence/AgentsPersistenceError.ts:
     Created error class following RolesPersistenceError pattern for
     operation-specific error handling
-  packages/ui-shared/src/types/agents/persistence/index.ts: Created barrel export for persistence types
+  packages/ui-shared/src/types/agents/persistence/index.ts:
+    Created barrel export
+    for persistence types; Added export for TestAgentsPersistenceAdapter to make
+    it available for testing
   packages/ui-shared/src/types/agents/PendingOperation.ts: Created PendingOperation interface for agent async operation tracking
   packages/ui-shared/src/types/agents/index.ts: Created barrel export for all agent types
   packages/ui-shared/src/types/index.ts: Added agents export to main types barrel
@@ -99,6 +102,10 @@ affectedFiles:
   packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts:
     Created comprehensive unit test suite with 35 tests covering store
     initialization, CRUD operations, error handling, validation, and edge cases
+  packages/ui-shared/src/types/agents/persistence/TestAgentsPersistenceAdapter.ts:
+    Created TestAgentsPersistenceAdapter class with comprehensive test utilities
+    including error simulation, call tracking, and data verification methods
+  packages/ui-shared/src/stores/index.ts: Added export for useAgentsStore to make it available to consumers
 log: []
 schema: v1.0
 childrenIds:
