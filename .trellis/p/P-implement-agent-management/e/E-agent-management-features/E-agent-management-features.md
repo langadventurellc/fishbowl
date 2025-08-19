@@ -7,10 +7,16 @@ parent: P-implement-agent-management
 prerequisites:
   - E-data-layer-persistence
   - E-ui-components
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/SettingsNavigation.tsx: Removed templates subtab from agents navigation configuration
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-create-agent-feature
+  - F-defaults-management-feature
+  - F-delete-agent-feature
+  - F-edit-agent-feature
+  - F-settings-navigation
 created: 2025-08-18T22:55:35.553Z
 updated: 2025-08-18T22:55:35.553Z
 ---

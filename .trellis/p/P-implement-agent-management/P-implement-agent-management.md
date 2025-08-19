@@ -265,6 +265,7 @@ affectedFiles:
     AgentGridProps interface extracted from AgentsSection.tsx. Includes all
     required imports, mock agent data, and full functionality for displaying and
     managing agent library.
+  apps/desktop/src/components/settings/SettingsNavigation.tsx: Removed templates subtab from agents navigation configuration
 log: []
 schema: v1.0
 childrenIds:

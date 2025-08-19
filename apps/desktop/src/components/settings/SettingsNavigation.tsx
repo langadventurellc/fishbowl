@@ -33,7 +33,6 @@ const navigationSections = [
     hasSubTabs: true,
     subTabs: [
       { id: "library" as const, label: "Library" },
-      { id: "templates" as const, label: "Templates" },
       { id: "defaults" as const, label: "Defaults" },
     ],
   },
