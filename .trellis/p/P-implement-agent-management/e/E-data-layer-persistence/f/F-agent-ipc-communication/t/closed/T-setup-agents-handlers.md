@@ -1,15 +1,24 @@
 ---
 id: T-setup-agents-handlers
 title: Setup agents handlers function and main process integration
-status: open
+status: done
 priority: high
 parent: F-agent-ipc-communication
 prerequisites:
   - T-implement-agents-load-handler
   - T-implement-agents-save-handler
   - T-implement-agents-reset
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/main.ts: Added import for setupAgentsHandlers and
+    added function call with proper error handling and logging, following the
+    exact pattern from personalities handlers setup
+log:
+  - Successfully integrated setupAgentsHandlers() function into main process
+    initialization. Added import and function call to main.ts following the
+    exact pattern from setupPersonalitiesHandlers(). The agents handlers were
+    already properly implemented with load, save, and reset handlers, proper
+    error handling, and logging. Integration includes try-catch error handling
+    and debug logging matching the existing pattern.
 schema: v1.0
 childrenIds: []
 created: 2025-08-19T05:42:27.950Z

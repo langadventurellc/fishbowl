@@ -141,6 +141,9 @@ affectedFiles:
     resetAgents method, updated setup test to verify reset handler registration,
     and added comprehensive reset handler test suite covering success, error,
     and repository initialization failure scenarios
+  apps/desktop/src/electron/main.ts: Added import for setupAgentsHandlers and
+    added function call with proper error handling and logging, following the
+    exact pattern from personalities handlers setup
 log: []
 schema: v1.0
 childrenIds:
