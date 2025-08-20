@@ -48,7 +48,6 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
         updatedAt: "2023-01-02T00:00:00Z",
       },
     ],
-    // Add the properties needed by DefaultsTab
     defaults: {
       temperature: 0.7,
       maxTokens: 2000,
@@ -109,11 +108,10 @@ describe("AgentsSection", () => {
     expect(screen.getByTestId("tab-container")).toBeInTheDocument();
   });
 
-  test("renders both tabs with correct labels", () => {
+  test("renders Library tab with correct label", () => {
     render(<AgentsSection />);
 
     expect(screen.getByText("Library")).toBeInTheDocument();
-    expect(screen.getByText("Defaults")).toBeInTheDocument();
   });
 
   test("renders tab content correctly", () => {
@@ -123,12 +121,6 @@ describe("AgentsSection", () => {
     expect(screen.getByText("Create New Agent")).toBeInTheDocument();
     expect(screen.getByText("Research Assistant")).toBeInTheDocument();
     expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
-
-    // Defaults tab content
-    expect(screen.getByText("Agent Defaults")).toBeInTheDocument();
-    expect(
-      screen.getByText("Configure default settings for new agents."),
-    ).toBeInTheDocument();
   });
 
   test("applies custom className when provided", () => {
@@ -140,7 +132,6 @@ describe("AgentsSection", () => {
     render(<AgentsSection />);
 
     expect(screen.getByTestId("tab-library")).toBeInTheDocument();
-    expect(screen.getByTestId("tab-defaults")).toBeInTheDocument();
   });
 
   test("tab content maintains expected structure", () => {
@@ -150,14 +141,8 @@ describe("AgentsSection", () => {
     const createButton = screen.getByText("Create New Agent");
     expect(createButton).toBeInTheDocument();
 
-    // Check that Defaults tab has functional content structure
-    const defaultsContent = screen.getByText("Agent Defaults").closest("div");
-    expect(defaultsContent).toHaveClass("space-y-2");
-
-    // Check that the default settings controls are present
-    expect(screen.getByText("Temperature")).toBeInTheDocument();
-    expect(screen.getByText("Max Tokens")).toBeInTheDocument();
-    expect(screen.getByText("Top P")).toBeInTheDocument();
-    expect(screen.getByText("Settings Preview")).toBeInTheDocument();
+    // Verify agent cards are rendered with expected content
+    expect(screen.getByText("Research Assistant")).toBeInTheDocument();
+    expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
   });
 });

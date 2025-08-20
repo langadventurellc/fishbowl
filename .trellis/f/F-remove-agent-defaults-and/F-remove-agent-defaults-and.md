@@ -21,10 +21,18 @@ affectedFiles:
     Modified navigationSections array to remove agents subsections - changed
     hasSubTabs from true to false and removed subTabs property containing
     Library and Defaults items
+  apps/desktop/src/components/settings/agents/DefaultsTab.tsx: Deleted - removed entire DefaultsTab component file
+  apps/desktop/src/components/settings/agents/__tests__/DefaultsTab.test.tsx: Deleted - removed DefaultsTab test file
+  apps/desktop/src/components/settings/agents/index.ts: Removed DefaultsTab export from barrel file
+  apps/desktop/src/components/settings/agents/AgentsSection.tsx:
+    Removed DefaultsTab import, removed defaults tab from tabs array, updated
+    component description to reflect library-only functionality
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Removed DefaultsTab reference comment and updated all tests to expect only
+    Library tab functionality
 log: []
 schema: v1.0
 childrenIds:
-  - T-remove-agents-subsections
   - T-remove-defaultstab-component
   - T-remove-llm-parameters-from
   - T-run-quality-checks-and-verify
@@ -33,6 +41,7 @@ childrenIds:
   - T-update-agents-store-to-remove
   - T-update-persistence-schemas-to
   - T-add-three-new-personality
+  - T-remove-agents-subsections
 created: 2025-08-20T18:18:06.361Z
 updated: 2025-08-20T18:18:06.361Z
 ---

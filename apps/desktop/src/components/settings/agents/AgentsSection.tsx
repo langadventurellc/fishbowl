@@ -2,7 +2,7 @@
  * AgentsSection component provides agent management functionality with tab navigation.
  *
  * Features:
- * - Two-tab navigation: Library, Defaults
+ * - Agent library management interface
  * - Integration with TabContainer for consistent tab behavior
  * - Settings modal navigation state integration
  * - Responsive design and accessibility compliance
@@ -23,7 +23,6 @@ import { cn } from "../../../lib/utils";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
 import { TabContainer } from "../TabContainer";
 import { AgentFormModal } from "./AgentFormModal";
-import { DefaultsTab } from "./DefaultsTab";
 import { LibraryTab } from "./LibraryTab";
 import { useServices } from "../../../contexts";
 
@@ -153,11 +152,6 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
           openEditModal={openEditModal}
         />
       ),
-    },
-    {
-      id: "defaults",
-      label: "Defaults",
-      content: () => <DefaultsTab />,
     },
   ];
 
