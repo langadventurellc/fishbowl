@@ -74,6 +74,9 @@ jest.mock("./contexts", () => ({
   PersonalitiesProvider: jest.fn(({ children }) => (
     <div data-testid="personalities-provider">{children}</div>
   )),
+  AgentsProvider: jest.fn(({ children }) => (
+    <div data-testid="agents-provider">{children}</div>
+  )),
   useServices: jest.fn(() => ({
     logger: {
       debug: jest.fn(),
@@ -325,11 +328,12 @@ describe("App", () => {
       expect(screen.getByTestId("home-page")).toBeInTheDocument();
     });
 
-    it("should be wrapped in SettingsProvider, RolesProvider, and PersonalitiesProvider", () => {
+    it("should be wrapped in SettingsProvider, RolesProvider, PersonalitiesProvider, and AgentsProvider", () => {
       render(<App />);
       expect(screen.getByTestId("settings-provider")).toBeInTheDocument();
       expect(screen.getByTestId("roles-provider")).toBeInTheDocument();
       expect(screen.getByTestId("personalities-provider")).toBeInTheDocument();
+      expect(screen.getByTestId("agents-provider")).toBeInTheDocument();
     });
   });
 
