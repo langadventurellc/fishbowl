@@ -1,13 +1,26 @@
 ---
 id: T-implement-agent-update-save
 title: Implement Agent Update Save Functionality
-status: open
+status: done
 priority: high
 parent: F-edit-agent-feature
 prerequisites:
   - T-wire-up-edit-modal-with-agent
 affectedFiles: {}
-log: []
+log:
+  - "Agent update save functionality was already fully implemented. The
+    AgentsSection component has complete handleAgentSave function that properly
+    handles both create and edit modes. For edit mode, it calls updateAgent from
+    the store, handles success by closing modal and showing success
+    announcements, and handles errors by keeping modal open for retry. The
+    store's updateAgent method implements optimistic updates with rollback on
+    failure, proper validation including name uniqueness (excluding current
+    agent), and comprehensive error handling. All acceptance criteria met: form
+    submission calls updateAgent correctly, successful save closes modal,
+    optimistic updates work, error states display appropriately, rollback works
+    on failure, success feedback shown, modal stays open on error for retry, and
+    updated agent appears immediately in library. Comprehensive test coverage
+    exists and all quality checks pass."
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T00:06:45.924Z

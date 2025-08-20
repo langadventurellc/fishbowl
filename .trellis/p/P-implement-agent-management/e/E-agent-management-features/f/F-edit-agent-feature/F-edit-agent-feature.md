@@ -1,15 +1,20 @@
 ---
 id: F-edit-agent-feature
 title: Edit Agent Feature
-status: open
+status: done
 priority: medium
 parent: E-agent-management-features
 prerequisites:
   - F-create-agent-feature
 affectedFiles: {}
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-agent-update-ipc-handlers
+  - T-add-edit-button-to-agent-cards
+  - T-implement-agent-update-save
+  - T-wire-up-edit-modal-with-agent
 created: 2025-08-19T21:14:07.563Z
 updated: 2025-08-19T21:14:07.563Z
 ---

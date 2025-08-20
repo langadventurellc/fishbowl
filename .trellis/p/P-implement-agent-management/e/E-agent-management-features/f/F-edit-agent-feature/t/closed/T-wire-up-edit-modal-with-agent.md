@@ -1,13 +1,20 @@
 ---
 id: T-wire-up-edit-modal-with-agent
 title: Wire up Edit Modal with Agent Data
-status: open
+status: done
 priority: high
 parent: F-edit-agent-feature
 prerequisites:
   - T-add-edit-button-to-agent-cards
 affectedFiles: {}
-log: []
+log:
+  - Edit modal wiring was already fully implemented. The AgentsSection has
+    complete modal state management with openEditModal function that properly
+    sets modal to edit mode with agent data. LibraryTab is correctly connected
+    to call openEditModal when edit button is clicked. AgentFormModal handles
+    edit mode with proper title ("Edit Agent") and pre-populates all form fields
+    with agent data via initialData prop. All acceptance criteria met and tests
+    passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T00:06:30.592Z
