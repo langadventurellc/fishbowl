@@ -30,10 +30,57 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
     Removed DefaultsTab reference comment and updated all tests to expect only
     Library tab functionality
+  apps/desktop/src/components/settings/agents/AgentForm.tsx:
+    Removed temperature,
+    maxTokens, and topP FormField components, cleaned up unused imports
+    (getSliderDescription, Slider, useAgentsStore), updated getDefaultValues
+    function to exclude LLM parameters, and removed defaults dependency from
+    useEffect
+  packages/ui-shared/src/schemas/agentSchema.ts: Removed temperature, maxTokens,
+    and topP validation rules from agentSchema, simplifying form validation to
+    only include name, model, role, personality, and optional systemPrompt
+    fields
+  packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
+    Removed temperature, maxTokens, and topP fields from persistedAgentSchema,
+    eliminated agentDefaultsSchema entirely, and removed defaults field from
+    persistedAgentsSettingsSchema
+  packages/shared/src/types/agents/index.ts: Removed agentDefaultsSchema export
+    since it was deleted from persistence schema
+  packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts:
+    Updated function signature and implementation to exclude LLM parameters from
+    normalization process
+  packages/ui-shared/src/mapping/agents/mapSingleAgentPersistenceToUI.ts:
+    Removed temperature, maxTokens, and topP field mappings from persistence to
+    UI transformation
+  packages/ui-shared/src/mapping/agents/mapSingleAgentUIToPersistence.ts:
+    Removed temperature, maxTokens, and topP field mappings from UI to
+    persistence transformation
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts:
+    Removed LLM parameter properties from test data objects to match updated
+    AgentSettingsViewModel interface
+  packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
+    Removed all LLM parameter validation tests (temperature, maxTokens, topP
+    range and missing field tests)
+  packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts:
+    Removed LLM parameters from test agent data and updated test expectations to
+    focus on other agent properties like name and model
+  apps/desktop/src/components/settings/agents/__tests__/LibraryTab.test.tsx:
+    Removed temperature, maxTokens, and topP properties from mock agent data and
+    test expectations to match updated AgentSettingsViewModel interface
+  packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
+    Completely rewrote test file to remove all LLM parameter validation tests
+    and replaced them with tests for remaining schema validation (required
+    fields, name validation, system prompt length limits)
+  packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
+    Removed LLM parameter properties from test data and assertions, simplified
+    to test essential agent properties only
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts:
+    Completely rewrote test file to remove LLM parameter references from test
+    data and expectations, focusing on core agent properties and optional fields
+    handling
 log: []
 schema: v1.0
 childrenIds:
-  - T-remove-defaultstab-component
   - T-remove-llm-parameters-from
   - T-run-quality-checks-and-verify
   - T-simplify-agentssection
@@ -42,6 +89,7 @@ childrenIds:
   - T-update-persistence-schemas-to
   - T-add-three-new-personality
   - T-remove-agents-subsections
+  - T-remove-defaultstab-component
 created: 2025-08-20T18:18:06.361Z
 updated: 2025-08-20T18:18:06.361Z
 ---

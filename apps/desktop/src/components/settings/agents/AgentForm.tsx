@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import {
   agentSchema,
-  useAgentsStore,
   useUnsavedChanges,
   type AgentFormData,
   type AgentFormProps,
@@ -13,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { CharacterCounter, PersonalitySelect, RoleSelect } from "../";
 import { ModelSelect } from "./ModelSelect";
 import { useServices } from "../../../contexts";
-import { getSliderDescription } from "../../../utils/sliderDescriptions";
 import { Button } from "../../ui/button";
 import {
   Form,
@@ -24,7 +22,6 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
-import { Slider } from "../../ui/slider";
 import { Textarea } from "../../ui/textarea";
 
 export const AgentForm: React.FC<AgentFormProps> = ({
@@ -37,7 +34,6 @@ export const AgentForm: React.FC<AgentFormProps> = ({
   const { logger } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
-  const { defaults } = useAgentsStore();
 
   const getDefaultValues = useCallback((): AgentFormData => {
     if (mode === "edit" && initialData) {
@@ -47,9 +43,6 @@ export const AgentForm: React.FC<AgentFormProps> = ({
         model: initialData.model || "Claude 3.5 Sonnet",
         role: initialData.role || "",
         personality: initialData.personality || "",
-        temperature: initialData.temperature ?? 1.0,
-        maxTokens: initialData.maxTokens ?? 1000,
-        topP: initialData.topP ?? 0.95,
         systemPrompt: initialData.systemPrompt || "",
       };
     }
@@ -60,12 +53,9 @@ export const AgentForm: React.FC<AgentFormProps> = ({
       model: "Claude 3.5 Sonnet",
       role: "",
       personality: "",
-      temperature: defaults.temperature,
-      maxTokens: defaults.maxTokens,
-      topP: defaults.topP,
       systemPrompt: "",
     };
-  }, [mode, initialData, defaults]);
+  }, [mode, initialData]);
 
   const form = useForm<AgentFormData>({
     resolver: zodResolver(agentSchema),
@@ -73,12 +63,12 @@ export const AgentForm: React.FC<AgentFormProps> = ({
     mode: "onChange",
   });
 
-  // Update form when defaults change (for create mode)
+  // Update form when mode changes (for create mode)
   useEffect(() => {
     if (mode === "create") {
       form.reset(getDefaultValues());
     }
-  }, [defaults, mode, form, getDefaultValues]);
+  }, [mode, form, getDefaultValues]);
 
   // Track unsaved changes
   useEffect(() => {
@@ -270,107 +260,6 @@ export const AgentForm: React.FC<AgentFormProps> = ({
                 </FormItem>
               )}
             />
-          </div>
-
-          {/* Configuration Section */}
-          <div className="space-y-4">
-            <h4 className="text-md font-semibold mb-4">Configuration</h4>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <div className="space-y-6">
-                {/* Temperature Field */}
-                <FormField
-                  control={form.control}
-                  name="temperature"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Temperature</FormLabel>
-                        <span className="text-sm text-muted-foreground">
-                          {field.value?.toFixed(1)} -{" "}
-                          {getSliderDescription.temperature(field.value || 0)}
-                        </span>
-                      </div>
-                      <FormControl>
-                        <Slider
-                          value={[field.value || 0]}
-                          onValueChange={(values: number[]) =>
-                            field.onChange(values[0])
-                          }
-                          min={0}
-                          max={2}
-                          step={0.1}
-                          disabled={isSubmitting || isLoading}
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Max Tokens Field */}
-                <FormField
-                  control={form.control}
-                  name="maxTokens"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Max Tokens</FormLabel>
-                        <span className="text-sm text-muted-foreground">
-                          {getSliderDescription.maxTokens(field.value || 1000)}
-                        </span>
-                      </div>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          value={field.value || ""}
-                          onChange={(e) =>
-                            field.onChange(parseInt(e.target.value) || 1)
-                          }
-                          min={1}
-                          max={4000}
-                          placeholder="1000"
-                          disabled={isSubmitting || isLoading}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {/* Top P Field */}
-                <FormField
-                  control={form.control}
-                  name="topP"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Top P</FormLabel>
-                        <span className="text-sm text-muted-foreground">
-                          {field.value?.toFixed(2)} -{" "}
-                          {getSliderDescription.topP(field.value || 1)}
-                        </span>
-                      </div>
-                      <FormControl>
-                        <Slider
-                          value={[field.value || 1]}
-                          onValueChange={(values: number[]) =>
-                            field.onChange(values[0])
-                          }
-                          min={0}
-                          max={1}
-                          step={0.01}
-                          disabled={isSubmitting || isLoading}
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
           </div>
 
           {/* Form Actions */}

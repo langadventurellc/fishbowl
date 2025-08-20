@@ -18,9 +18,6 @@ describe("agentSchema", () => {
         model: "Claude 3.5 Sonnet",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "You are a helpful assistant.",
       };
 
@@ -61,9 +58,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "Test system prompt",
       };
 
@@ -78,9 +72,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "Test system prompt",
       };
 
@@ -95,9 +86,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "A".repeat(5000),
       };
 
@@ -147,9 +135,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -162,9 +147,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -177,9 +159,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -192,9 +171,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -207,9 +183,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -222,9 +195,6 @@ describe("agentSchema", () => {
         model: "",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -237,9 +207,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -252,114 +219,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject temperature below 0", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: -0.1,
-        maxTokens: 2000,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject temperature above 2", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 2.1,
-        maxTokens: 2000,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject maxTokens below 1", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 0,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject maxTokens above 4000", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 4001,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject non-integer maxTokens", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 1500.5,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject topP below 0", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: -0.1,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject topP above 1", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 1.1,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -372,9 +231,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "A".repeat(5001),
       };
 
@@ -387,9 +243,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -401,9 +254,6 @@ describe("agentSchema", () => {
         name: "Valid Name",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -415,9 +265,6 @@ describe("agentSchema", () => {
         name: "Valid Name",
         model: "Claude",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -429,51 +276,6 @@ describe("agentSchema", () => {
         name: "Valid Name",
         model: "Claude",
         role: "role-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject missing temperature", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        maxTokens: 2000,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject missing maxTokens", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 1.0,
-        topP: 0.95,
-      };
-
-      const result = agentSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-    });
-
-    it("should reject missing topP", () => {
-      const invalidData = {
-        name: "Valid Name",
-        model: "Claude",
-        role: "role-id",
-        personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
       };
 
       const result = agentSchema.safeParse(invalidData);
@@ -488,9 +290,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "Test prompt",
       };
 
@@ -502,18 +301,12 @@ describe("agentSchema", () => {
         const model: string = result.data.model;
         const role: string = result.data.role;
         const personality: string = result.data.personality;
-        const temperature: number = result.data.temperature;
-        const maxTokens: number = result.data.maxTokens;
-        const topP: number = result.data.topP;
         const systemPrompt: string | undefined = result.data.systemPrompt;
 
         expect(name).toBe(validData.name);
         expect(model).toBe(validData.model);
         expect(role).toBe(validData.role);
         expect(personality).toBe(validData.personality);
-        expect(temperature).toBe(validData.temperature);
-        expect(maxTokens).toBe(validData.maxTokens);
-        expect(topP).toBe(validData.topP);
         expect(systemPrompt).toBe(validData.systemPrompt);
       }
     });
@@ -524,9 +317,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "Test prompt",
       };
 
@@ -539,9 +329,6 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       };
 
       const result2 = agentSchema.safeParse(agentFormDataWithoutPrompt);

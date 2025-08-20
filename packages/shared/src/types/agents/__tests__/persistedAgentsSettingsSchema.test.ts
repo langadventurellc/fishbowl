@@ -18,9 +18,6 @@ describe("persistedAgentsSettingsSchema", () => {
           model: "Claude 3.5 Sonnet",
           role: "role-id",
           personality: "personality-id",
-          temperature: 1.0,
-          maxTokens: 2000,
-          topP: 0.95,
           systemPrompt: "Test prompt",
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -34,78 +31,6 @@ describe("persistedAgentsSettingsSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("should fail validation for invalid temperature range", () => {
-    const invalidSettings = {
-      agents: [
-        {
-          id: "test-id",
-          name: "Test Agent",
-          model: "Claude 3.5 Sonnet",
-          role: "role-id",
-          personality: "personality-id",
-          temperature: 3.0, // Invalid: exceeds max of 2
-          maxTokens: 2000,
-          topP: 0.95,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ],
-      schemaVersion: "1.0.0",
-      lastUpdated: new Date().toISOString(),
-    };
-
-    const result = persistedAgentsSettingsSchema.safeParse(invalidSettings);
-    expect(result.success).toBe(false);
-  });
-
-  it("should fail validation for invalid maxTokens range", () => {
-    const invalidSettings = {
-      agents: [
-        {
-          id: "test-id",
-          name: "Test Agent",
-          model: "Claude 3.5 Sonnet",
-          role: "role-id",
-          personality: "personality-id",
-          temperature: 1.0,
-          maxTokens: 5000, // Invalid: exceeds max of 4000
-          topP: 0.95,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ],
-      schemaVersion: "1.0.0",
-      lastUpdated: new Date().toISOString(),
-    };
-
-    const result = persistedAgentsSettingsSchema.safeParse(invalidSettings);
-    expect(result.success).toBe(false);
-  });
-
-  it("should fail validation for invalid topP range", () => {
-    const invalidSettings = {
-      agents: [
-        {
-          id: "test-id",
-          name: "Test Agent",
-          model: "Claude 3.5 Sonnet",
-          role: "role-id",
-          personality: "personality-id",
-          temperature: 1.0,
-          maxTokens: 2000,
-          topP: 1.5, // Invalid: exceeds max of 1
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ],
-      schemaVersion: "1.0.0",
-      lastUpdated: new Date().toISOString(),
-    };
-
-    const result = persistedAgentsSettingsSchema.safeParse(invalidSettings);
-    expect(result.success).toBe(false);
-  });
-
   it("should validate optional systemPrompt field", () => {
     const settingsWithoutSystemPrompt = {
       agents: [
@@ -115,9 +40,6 @@ describe("persistedAgentsSettingsSchema", () => {
           model: "Claude 3.5 Sonnet",
           role: "role-id",
           personality: "personality-id",
-          temperature: 1.0,
-          maxTokens: 2000,
-          topP: 0.95,
           // systemPrompt is optional
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
@@ -134,12 +56,11 @@ describe("persistedAgentsSettingsSchema", () => {
   });
 
   it("should fail validation for missing required fields", () => {
-    const incompleteSettings = {
+    const invalidSettings = {
       agents: [
         {
           id: "test-id",
-          name: "Test Agent",
-          // Missing model, role, personality, temperature, maxTokens, topP
+          // Missing name, model, role, personality
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         },
@@ -148,7 +69,51 @@ describe("persistedAgentsSettingsSchema", () => {
       lastUpdated: new Date().toISOString(),
     };
 
-    const result = persistedAgentsSettingsSchema.safeParse(incompleteSettings);
+    const result = persistedAgentsSettingsSchema.safeParse(invalidSettings);
+    expect(result.success).toBe(false);
+  });
+
+  it("should fail validation for empty agent name", () => {
+    const invalidSettings = {
+      agents: [
+        {
+          id: "test-id",
+          name: "", // Empty name should fail
+          model: "Claude 3.5 Sonnet",
+          role: "role-id",
+          personality: "personality-id",
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ],
+      schemaVersion: "1.0.0",
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const result = persistedAgentsSettingsSchema.safeParse(invalidSettings);
+    expect(result.success).toBe(false);
+  });
+
+  it("should fail validation for excessively long system prompt", () => {
+    const longPrompt = "A".repeat(5001); // Exceeds 5000 character limit
+    const invalidSettings = {
+      agents: [
+        {
+          id: "test-id",
+          name: "Test Agent",
+          model: "Claude 3.5 Sonnet",
+          role: "role-id",
+          personality: "personality-id",
+          systemPrompt: longPrompt,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      ],
+      schemaVersion: "1.0.0",
+      lastUpdated: new Date().toISOString(),
+    };
+
+    const result = persistedAgentsSettingsSchema.safeParse(invalidSettings);
     expect(result.success).toBe(false);
   });
 });

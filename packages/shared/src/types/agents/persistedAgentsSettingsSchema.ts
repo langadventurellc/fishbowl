@@ -49,25 +49,6 @@ export const persistedAgentSchema = z
       .string({ message: "Personality must be a string" })
       .min(1, "Personality is required"),
 
-    // Temperature setting (0-2)
-    temperature: z
-      .number({ message: "Temperature must be a number" })
-      .min(0, "Temperature must be at least 0")
-      .max(2, "Temperature cannot exceed 2"),
-
-    // Maximum tokens setting (1-4000)
-    maxTokens: z
-      .number({ message: "Max tokens must be a number" })
-      .min(1, "Max tokens must be at least 1")
-      .max(4000, "Max tokens cannot exceed 4000")
-      .int("Max tokens must be an integer"),
-
-    // Top P setting (0-1)
-    topP: z
-      .number({ message: "Top P must be a number" })
-      .min(0, "Top P must be at least 0")
-      .max(1, "Top P cannot exceed 1"),
-
     // Optional system prompt
     systemPrompt: z
       .string({ message: "System prompt must be a string" })
@@ -88,18 +69,6 @@ export const persistedAgentSchema = z
       .optional(),
   })
   .passthrough(); // Allow unknown fields for schema evolution
-
-/**
- * Zod schema for validating agent default parameters.
- * These defaults are applied to newly created agents.
- */
-export const agentDefaultsSchema = z
-  .object({
-    temperature: z.number().min(0).max(2).default(0.7),
-    maxTokens: z.number().min(1).max(4000).int().default(2000),
-    topP: z.number().min(0).max(1).default(0.9),
-  })
-  .strict();
 
 /**
  * Master Zod schema for validating complete agents settings file.
@@ -125,13 +94,6 @@ export const persistedAgentsSettingsSchema = z
         message: "Agents must be an array of agent objects",
       })
       .default([]),
-
-    // Default values for new agents
-    defaults: agentDefaultsSchema.default({
-      temperature: 0.7,
-      maxTokens: 2000,
-      topP: 0.9,
-    }),
 
     // Metadata with automatic generation
     lastUpdated: z
