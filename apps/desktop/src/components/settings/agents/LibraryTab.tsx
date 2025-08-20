@@ -12,74 +12,26 @@
  * @module components/settings/agents/LibraryTab
  */
 
-import { type AgentCard as AgentCardType } from "@fishbowl-ai/ui-shared";
-import { Plus } from "lucide-react";
+import {
+  type AgentSettingsViewModel,
+  useAgentsStore,
+} from "@fishbowl-ai/ui-shared";
+import { AlertCircle, Loader2, Plus, RefreshCw } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
 import { cn } from "../../../lib/utils";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
 import { useGridNavigation } from "../../../utils/gridNavigation";
 import { Button } from "../../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { AgentCard, EmptyLibraryState } from "./";
 import { useServices } from "../../../contexts";
-
-// Mock agent data for demonstration
-const mockAgents: AgentCardType[] = [
-  {
-    id: "1",
-    name: "Research Assistant",
-    model: "Claude 3.5 Sonnet",
-    role: "Research and Analysis",
-  },
-  {
-    id: "2",
-    name: "Code Reviewer",
-    model: "GPT-4",
-    role: "Code Analysis",
-  },
-  {
-    id: "3",
-    name: "Creative Writer",
-    model: "Claude 3.5 Sonnet",
-    role: "Content Creation",
-  },
-  {
-    id: "4",
-    name: "Data Analyst",
-    model: "GPT-4",
-    role: "Data Analysis",
-  },
-  {
-    id: "5",
-    name: "Project Manager",
-    model: "Claude 3.5 Sonnet",
-    role: "Project Coordination",
-  },
-  {
-    id: "6",
-    name: "UX Designer",
-    model: "GPT-4",
-    role: "User Experience Design",
-  },
-  {
-    id: "7",
-    name: "Technical Writer",
-    model: "Claude 3.5 Sonnet",
-    role: "Documentation",
-  },
-  {
-    id: "8",
-    name: "Marketing Strategist",
-    model: "GPT-4",
-    role: "Marketing and Strategy",
-  },
-];
 
 /**
  * Responsive grid layout for agent cards with keyboard navigation.
  */
 interface AgentGridProps {
-  agents: AgentCardType[];
-  openEditModal: (agent: AgentCardType) => void;
+  agents: AgentSettingsViewModel[];
+  openEditModal: (agent: AgentSettingsViewModel) => void;
 }
 
 const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
@@ -170,14 +122,80 @@ const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
  */
 interface LibraryTabProps {
   openCreateModal: () => void;
-  openEditModal: (agent: AgentCardType) => void;
+  openEditModal: (agent: AgentSettingsViewModel) => void;
 }
 
 export const LibraryTab: React.FC<LibraryTabProps> = ({
   openCreateModal,
   openEditModal,
 }) => {
-  const [agents] = useState<AgentCardType[]>(mockAgents);
+  const {
+    agents,
+    isLoading,
+    error,
+    isInitialized,
+    retryLastOperation,
+    clearErrorState,
+  } = useAgentsStore();
+
+  // Loading state - show loading indicator while agents are being loaded
+  if (isLoading || !isInitialized) {
+    return (
+      <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
+        <div className="flex flex-col items-center justify-center py-12 space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <p className="text-muted-foreground">
+            {!isInitialized ? "Initializing agents..." : "Loading agents..."}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state - show error message with retry option
+  if (error?.message) {
+    return (
+      <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">
+        <Card className="border-destructive bg-destructive/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-destructive">
+              <AlertCircle className="h-4 w-4" />
+              Failed to load agents
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-destructive">{error.message}</p>
+            {error.isRetryable && (
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    retryLastOperation();
+                    announceToScreenReader("Retrying agent load", "polite");
+                  }}
+                  className="gap-2"
+                >
+                  <RefreshCw className="h-3 w-3" />
+                  Retry
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    clearErrorState();
+                    announceToScreenReader("Error cleared", "polite");
+                  }}
+                >
+                  Dismiss
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 lg:space-y-8 p-6 lg:p-8 xl:p-10">

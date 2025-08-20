@@ -1,16 +1,31 @@
 ---
 id: F-delete-agent-feature
 title: Delete Agent Feature
-status: open
+status: in-progress
 priority: medium
 parent: E-agent-management-features
 prerequisites:
   - F-create-agent-feature
   - F-edit-agent-feature
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/agents/LibraryTab.tsx: Replaced mock data
+    with useAgentsStore integration, added loading state with spinner,
+    implemented error state with retry functionality using Card components,
+    updated type imports to use AgentSettingsViewModel
+  apps/desktop/src/components/settings/agents/__tests__/LibraryTab.test.tsx:
+    Created comprehensive test suite with 25 tests covering store integration,
+    loading states, error states, empty states, component state changes, type
+    compatibility, accessibility, and edge cases
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Updated useAgentsStore mock to return proper agent data structure compatible
+    with LibraryTab changes
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-delete-agent-functionality
+  - T-add-focus-management-and
+  - T-connect-librarytab-to-real
+  - T-implement-delete-confirmation
 created: 2025-08-19T21:14:31.766Z
 updated: 2025-08-19T21:14:31.766Z
 ---

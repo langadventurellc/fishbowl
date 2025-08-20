@@ -1,12 +1,30 @@
 ---
 id: T-connect-librarytab-to-real
 title: Connect LibraryTab to Real Agent Store Data
-status: open
+status: done
 priority: high
 parent: F-delete-agent-feature
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/LibraryTab.tsx: Replaced mock data
+    with useAgentsStore integration, added loading state with spinner,
+    implemented error state with retry functionality using Card components,
+    updated type imports to use AgentSettingsViewModel
+  apps/desktop/src/components/settings/agents/__tests__/LibraryTab.test.tsx:
+    Created comprehensive test suite with 25 tests covering store integration,
+    loading states, error states, empty states, component state changes, type
+    compatibility, accessibility, and edge cases
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Updated useAgentsStore mock to return proper agent data structure compatible
+    with LibraryTab changes
+log:
+  - Successfully connected LibraryTab component to real agent store data,
+    replacing mock data with useAgentsStore integration. Implemented
+    comprehensive loading and error state handling with user-friendly UI. Added
+    complete test coverage verifying all functionality including store
+    integration, state transitions, and edge cases. Fixed related test failures
+    in AgentsSection to properly mock store state. All quality checks and unit
+    tests passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T00:51:46.499Z

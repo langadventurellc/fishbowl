@@ -259,7 +259,8 @@ affectedFiles:
     useAgentSearch mock and search-related test assertions while preserving
     tests for other functionality like Create button and agent display; Added
     useAgentsStore mock to test file to support new store integration and ensure
-    tests pass
+    tests pass; Updated useAgentsStore mock to return proper agent data
+    structure compatible with LibraryTab changes
   apps/desktop/src/components/settings/agents/DefaultsTab.tsx:
     Created new DefaultsTab component file with extracted code from
     AgentsSection.tsx. Includes all configuration controls, preview panel,
@@ -269,13 +270,20 @@ affectedFiles:
     component file containing LibraryTab component, AgentGrid component, and
     AgentGridProps interface extracted from AgentsSection.tsx. Includes all
     required imports, mock agent data, and full functionality for displaying and
-    managing agent library.
+    managing agent library.; Replaced mock data with useAgentsStore integration,
+    added loading state with spinner, implemented error state with retry
+    functionality using Card components, updated type imports to use
+    AgentSettingsViewModel
   apps/desktop/src/components/settings/SettingsNavigation.tsx: Removed templates subtab from agents navigation configuration
   apps/desktop/src/components/settings/agents/AgentFormModal.tsx:
     Replaced placeholder implementation with complete modal functionality
     following RoleFormModal patterns - added focus management, accessibility
     features, keyboard shortcuts, unsaved changes protection, and proper
     AgentForm integration
+  apps/desktop/src/components/settings/agents/__tests__/LibraryTab.test.tsx:
+    Created comprehensive test suite with 25 tests covering store integration,
+    loading states, error states, empty states, component state changes, type
+    compatibility, accessibility, and edge cases
 log: []
 schema: v1.0
 childrenIds:
