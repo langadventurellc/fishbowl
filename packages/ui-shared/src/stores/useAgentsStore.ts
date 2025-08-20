@@ -20,6 +20,7 @@ import { AgentsPersistenceAdapter } from "../types/agents/persistence/AgentsPers
 import { AgentsPersistenceError } from "../types/agents/persistence/AgentsPersistenceError";
 import { AgentFormData } from "../types/settings/AgentFormData";
 import { AgentSettingsViewModel } from "../types/settings/AgentViewModel";
+import { AgentDefaults } from "../types/settings/AgentDefaults";
 import { type AgentsStore } from "./AgentsStore";
 import { ErrorState } from "./ErrorState";
 
@@ -32,6 +33,13 @@ const MAX_RETRY_ATTEMPTS = 3;
 // Base delay for exponential backoff (in ms)
 const RETRY_BASE_DELAY_MS = 1000;
 
+// Default agent defaults
+const DEFAULT_AGENT_DEFAULTS: AgentDefaults = {
+  temperature: 1.0,
+  maxTokens: 1000,
+  topP: 0.95,
+};
+
 // Generate unique ID using crypto API or fallback
 const generateId = (): string => {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
@@ -43,6 +51,7 @@ const generateId = (): string => {
 export const useAgentsStore = create<AgentsStore>()((set, get) => {
   // Debounce timer reference
   let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+  let defaultsDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   // Retry count for exponential backoff
   let retryCount = 0;
@@ -74,6 +83,36 @@ export const useAgentsStore = create<AgentsStore>()((set, get) => {
       } catch (error) {
         logger.error(
           "Auto-save failed",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+      }
+    }, DEBOUNCE_DELAY_MS);
+  };
+
+  /**
+   * Internal debounced save function for defaults
+   * Batches rapid changes and persists after delay
+   */
+  const debouncedDefaultsSave = (defaults: AgentDefaults) => {
+    // Clear existing timer
+    if (defaultsDebounceTimer) {
+      clearTimeout(defaultsDebounceTimer);
+    }
+
+    // Set new timer
+    defaultsDebounceTimer = setTimeout(async () => {
+      const { adapter, logger } = get();
+      if (!adapter) {
+        logger.warn("Cannot save defaults: no adapter configured");
+        return;
+      }
+
+      // Perform the actual save
+      try {
+        await get().saveDefaults(defaults);
+      } catch (error) {
+        logger.error(
+          "Auto-save defaults failed",
           error instanceof Error ? error : new Error(String(error)),
         );
       }
@@ -315,6 +354,7 @@ export const useAgentsStore = create<AgentsStore>()((set, get) => {
 
   return {
     agents: [],
+    defaults: DEFAULT_AGENT_DEFAULTS,
     isLoading: false,
     error: {
       message: null,
@@ -876,6 +916,12 @@ export const useAgentsStore = create<AgentsStore>()((set, get) => {
         debounceTimer = null;
       }
 
+      // Clear any pending defaults debounce timer
+      if (defaultsDebounceTimer) {
+        clearTimeout(defaultsDebounceTimer);
+        defaultsDebounceTimer = null;
+      }
+
       // Clear any pending retry timers
       const { retryTimers } = get();
       retryTimers.forEach((timer) => clearTimeout(timer));
@@ -883,6 +929,144 @@ export const useAgentsStore = create<AgentsStore>()((set, get) => {
 
       // Clear rollback snapshot
       rollbackSnapshot = null;
+    },
+
+    // Defaults management methods
+    setDefaults: (defaults: AgentDefaults) => {
+      set({ defaults, error: clearErrorState() });
+      // Trigger auto-save
+      debouncedDefaultsSave(defaults);
+    },
+
+    getDefaults: () => {
+      return get().defaults;
+    },
+
+    loadDefaults: async () => {
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new AgentsPersistenceError(
+          "Cannot load defaults: no adapter configured",
+          "load",
+        );
+      }
+
+      set({
+        isLoading: true,
+        error: clearErrorState(),
+      });
+
+      try {
+        const persistedData = await adapter.load();
+
+        // If we have persisted data and it contains defaults, use them
+        if (
+          persistedData &&
+          "defaults" in persistedData &&
+          persistedData.defaults
+        ) {
+          set({
+            defaults: persistedData.defaults as AgentDefaults,
+            isLoading: false,
+            error: clearErrorState(),
+          });
+        } else {
+          // Use factory defaults if no persisted defaults found
+          set({
+            defaults: DEFAULT_AGENT_DEFAULTS,
+            isLoading: false,
+            error: clearErrorState(),
+          });
+        }
+
+        get().logger.info("Successfully loaded defaults");
+      } catch (error) {
+        handlePersistenceError(error, "load");
+        throw error;
+      }
+    },
+
+    saveDefaults: async (defaults: AgentDefaults) => {
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new AgentsPersistenceError(
+          "Cannot save defaults: no adapter configured",
+          "save",
+        );
+      }
+
+      set({
+        isSaving: true,
+        error: clearErrorState(),
+      });
+
+      try {
+        // Load existing data first
+        const existingData = (await adapter.load()) || {
+          schemaVersion: "1.0.0",
+          agents: [],
+          lastUpdated: new Date().toISOString(),
+        };
+
+        // Update with new defaults
+        const updatedData = {
+          ...existingData,
+          defaults,
+          lastUpdated: new Date().toISOString(),
+        };
+
+        // Save updated data
+        await adapter.save(updatedData);
+
+        set({
+          defaults,
+          isSaving: false,
+          lastSyncTime: new Date().toISOString(),
+          error: clearErrorState(),
+        });
+
+        get().logger.info("Successfully saved defaults");
+      } catch (error) {
+        handlePersistenceError(error, "save");
+        set({ isSaving: false });
+        throw error;
+      }
+    },
+
+    resetDefaults: async () => {
+      const { adapter } = get();
+
+      if (!adapter) {
+        throw new AgentsPersistenceError(
+          "Cannot reset defaults: no adapter configured",
+          "reset",
+        );
+      }
+
+      set({
+        isSaving: true,
+        error: clearErrorState(),
+      });
+
+      try {
+        // Reset to factory defaults
+        set({
+          defaults: DEFAULT_AGENT_DEFAULTS,
+          isSaving: false,
+          error: clearErrorState(),
+        });
+
+        // Save the reset defaults
+        await get().saveDefaults(DEFAULT_AGENT_DEFAULTS);
+
+        get().logger.info("Successfully reset defaults to factory values");
+      } catch (error) {
+        handlePersistenceError(error, "reset");
+        set({ isSaving: false });
+        throw error;
+      }
     },
   };
 });

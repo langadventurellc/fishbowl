@@ -12,6 +12,7 @@ import type {
   StructuredLogger,
 } from "@fishbowl-ai/shared";
 import type {
+  AgentDefaults,
   AgentFormData,
   AgentSettingsViewModel,
   AgentsPersistenceAdapter,
@@ -71,6 +72,17 @@ describe("AgentsActions Interface", () => {
 
       // Cleanup method
       destroy: (): void => {},
+
+      // Defaults management methods
+      setDefaults: (_defaults: AgentDefaults): void => {},
+      getDefaults: (): AgentDefaults => ({
+        temperature: 1.0,
+        maxTokens: 1000,
+        topP: 0.95,
+      }),
+      loadDefaults: async (): Promise<void> => {},
+      saveDefaults: async (_defaults: AgentDefaults): Promise<void> => {},
+      resetDefaults: async (): Promise<void> => {},
     };
 
     // Verify all methods are defined
@@ -93,6 +105,11 @@ describe("AgentsActions Interface", () => {
     expect(typeof mockActions.clearErrorState).toBe("function");
     expect(typeof mockActions.getErrorDetails).toBe("function");
     expect(typeof mockActions.destroy).toBe("function");
+    expect(typeof mockActions.setDefaults).toBe("function");
+    expect(typeof mockActions.getDefaults).toBe("function");
+    expect(typeof mockActions.loadDefaults).toBe("function");
+    expect(typeof mockActions.saveDefaults).toBe("function");
+    expect(typeof mockActions.resetDefaults).toBe("function");
   });
 
   it("should match RolesActions pattern structure", () => {
@@ -108,6 +125,11 @@ describe("AgentsActions Interface", () => {
       const _initialize = actions.initialize;
       const _exportAgents = actions.exportAgents;
       const _destroy = actions.destroy;
+      const _setDefaults = actions.setDefaults;
+      const _getDefaults = actions.getDefaults;
+      const _loadDefaults = actions.loadDefaults;
+      const _saveDefaults = actions.saveDefaults;
+      const _resetDefaults = actions.resetDefaults;
 
       // Test passes if TypeScript compilation succeeds
       expect(actions).toBeDefined();

@@ -9,6 +9,7 @@
 
 import type { StructuredLogger } from "@fishbowl-ai/shared";
 import type {
+  AgentDefaults,
   AgentSettingsViewModel,
   AgentsPersistenceAdapter,
 } from "../../types";
@@ -21,6 +22,11 @@ describe("AgentsState Interface", () => {
     // This test validates the interface structure exists and compiles
     const mockState: AgentsState = {
       agents: [] as AgentSettingsViewModel[],
+      defaults: {
+        temperature: 1.0,
+        maxTokens: 1000,
+        topP: 0.95,
+      } as AgentDefaults,
       isLoading: false,
       error: null as ErrorState | null,
       adapter: null as AgentsPersistenceAdapter | null,
@@ -56,10 +62,12 @@ describe("AgentsState Interface", () => {
       expect(state.lastSyncTime).toBeDefined();
       expect(state.pendingOperations).toBeDefined();
       expect(state.retryTimers).toBeDefined();
+      expect(state.defaults).toBeDefined();
     };
 
     const mockState: AgentsState = {
       agents: [],
+      defaults: { temperature: 1.0, maxTokens: 1000, topP: 0.95 },
       isLoading: false,
       error: null,
       adapter: null,
