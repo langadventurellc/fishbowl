@@ -47,18 +47,24 @@ describe("Selection Components Integration", () => {
         error: null,
       });
 
-      useRolesStore.mockReturnValue({
-        roles: [],
-        isLoading: false,
-        error: null,
-        retryLastOperation: jest.fn(),
+      useRolesStore.mockImplementation((selector: any) => {
+        const state = {
+          roles: [],
+          isLoading: false,
+          error: null,
+          retryLastOperation: jest.fn(),
+        };
+        return selector ? selector(state) : state;
       });
 
-      usePersonalitiesStore.mockReturnValue({
-        personalities: [],
-        isLoading: false,
-        error: null,
-        retryLastOperation: jest.fn(),
+      usePersonalitiesStore.mockImplementation((selector: any) => {
+        const state = {
+          personalities: [],
+          isLoading: false,
+          error: null,
+          retryLastOperation: jest.fn(),
+        };
+        return selector ? selector(state) : state;
       });
 
       const sharedProps = {
@@ -91,16 +97,22 @@ describe("Selection Components Integration", () => {
         error: null,
       });
 
-      useRolesStore.mockReturnValue({
-        roles: [],
-        isLoading: true,
-        error: null,
+      useRolesStore.mockImplementation((selector: any) => {
+        const state = {
+          roles: [],
+          isLoading: true,
+          error: null,
+        };
+        return selector ? selector(state) : state;
       });
 
-      usePersonalitiesStore.mockReturnValue({
-        personalities: [],
-        isLoading: true,
-        error: null,
+      usePersonalitiesStore.mockImplementation((selector: any) => {
+        const state = {
+          personalities: [],
+          isLoading: true,
+          error: null,
+        };
+        return selector ? selector(state) : state;
       });
 
       const props = {
@@ -140,16 +152,22 @@ describe("Selection Components Integration", () => {
         error: null,
       });
 
-      useRolesStore.mockReturnValue({
-        roles: [],
-        isLoading: false,
-        error: null,
+      useRolesStore.mockImplementation((selector: any) => {
+        const state = {
+          roles: [],
+          isLoading: false,
+          error: null,
+        };
+        return selector ? selector(state) : state;
       });
 
-      usePersonalitiesStore.mockReturnValue({
-        personalities: [],
-        isLoading: false,
-        error: null,
+      usePersonalitiesStore.mockImplementation((selector: any) => {
+        const state = {
+          personalities: [],
+          isLoading: false,
+          error: null,
+        };
+        return selector ? selector(state) : state;
       });
 
       const props = {
@@ -187,16 +205,22 @@ describe("Selection Components Integration", () => {
         error: testError,
       });
 
-      useRolesStore.mockReturnValue({
-        roles: [],
-        isLoading: false,
-        error: { message: "Test error message", isRetryable: false },
+      useRolesStore.mockImplementation((selector: any) => {
+        const state = {
+          roles: [],
+          isLoading: false,
+          error: { message: "Test error message", isRetryable: false },
+        };
+        return selector ? selector(state) : state;
       });
 
-      usePersonalitiesStore.mockReturnValue({
-        personalities: [],
-        isLoading: false,
-        error: { message: "Test error message", isRetryable: false },
+      usePersonalitiesStore.mockImplementation((selector: any) => {
+        const state = {
+          personalities: [],
+          isLoading: false,
+          error: { message: "Test error message", isRetryable: false },
+        };
+        return selector ? selector(state) : state;
       });
 
       const props = {
@@ -242,22 +266,30 @@ describe("Selection Components Integration", () => {
         error: null,
       });
 
-      useRolesStore.mockReturnValue({
-        roles: [
-          {
-            id: "test-role",
-            name: "Test Role",
-            description: "Test Description",
-          },
-        ],
-        isLoading: false,
-        error: null,
+      useRolesStore.mockImplementation((selector: any) => {
+        const state = {
+          roles: [
+            {
+              id: "test-role",
+              name: "Test Role",
+              description: "Test Description",
+            },
+          ],
+          isLoading: false,
+          error: null,
+          retryLastOperation: jest.fn(),
+        };
+        return selector ? selector(state) : state;
       });
 
-      usePersonalitiesStore.mockReturnValue({
-        personalities: [{ id: "test-personality", name: "Test Personality" }],
-        isLoading: false,
-        error: null,
+      usePersonalitiesStore.mockImplementation((selector: any) => {
+        const state = {
+          personalities: [{ id: "test-personality", name: "Test Personality" }],
+          isLoading: false,
+          error: null,
+          retryLastOperation: jest.fn(),
+        };
+        return selector ? selector(state) : state;
       });
 
       const props = {

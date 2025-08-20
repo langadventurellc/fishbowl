@@ -16,12 +16,9 @@ export const RoleSelect: React.FC<RoleSelectProps> = ({
   disabled = false,
   placeholder = "Select a role",
 }) => {
-  const { roles, isLoading, error } = useRolesStore((state) => ({
-    roles: state.roles,
-    isLoading: state.isLoading,
-    error: state.error,
-  }));
-
+  const roles = useRolesStore((state) => state.roles);
+  const isLoading = useRolesStore((state) => state.isLoading);
+  const error = useRolesStore((state) => state.error);
   const retryLastOperation = useRolesStore((state) => state.retryLastOperation);
 
   // Loading state

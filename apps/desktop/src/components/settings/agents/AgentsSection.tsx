@@ -65,7 +65,7 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
   }, []);
 
   // Get store actions
-  const { createAgent, updateAgent, error } = useAgentsStore();
+  const { createAgent, updateAgent } = useAgentsStore();
 
   // Form save handler
   const handleAgentSave = useCallback(
@@ -90,15 +90,18 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
             });
           } else {
             // createAgent returns empty string on error, error is set in store
-            throw new Error(error?.message || "Failed to create agent");
+            // Get the current error state directly from the store
+            const currentError = useAgentsStore.getState().error;
+            throw new Error(currentError?.message || "Failed to create agent");
           }
         } else {
-          // Handle edit mode - updateAgent returns void, check error state via hook
+          // Handle edit mode - updateAgent returns void, check error state after the call
           updateAgent(agentModalState.agent!.id, data);
 
-          // Check if error occurred (error state is already available from hook)
-          if (error) {
-            throw new Error(error.message || "Failed to update agent");
+          // Get the current error state directly from the store after the update
+          const currentError = useAgentsStore.getState().error;
+          if (currentError?.message) {
+            throw new Error(currentError.message || "Failed to update agent");
           }
 
           // Success - close modal and announce
@@ -134,7 +137,6 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
       agentModalState.agent,
       createAgent,
       updateAgent,
-      error,
       closeModal,
       logger,
     ],
