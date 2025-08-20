@@ -5,7 +5,7 @@ status: open
 priority: medium
 parent: F-defaults-management-feature
 prerequisites:
-  - T-create-defaults-persistence
+  - T-implement-defaults-state
 affectedFiles: {}
 log: []
 schema: v1.0
