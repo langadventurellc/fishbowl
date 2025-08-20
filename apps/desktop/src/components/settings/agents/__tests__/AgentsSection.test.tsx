@@ -48,9 +48,18 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
         updatedAt: "2023-01-02T00:00:00Z",
       },
     ],
+    // Add the properties needed by DefaultsTab
+    defaults: {
+      temperature: 0.7,
+      maxTokens: 2000,
+      topP: 0.9,
+    },
+    setDefaults: jest.fn(),
+    resetDefaults: jest.fn(),
     isLoading: false,
     error: { message: null },
     isInitialized: true,
+    isSaving: false,
     retryLastOperation: jest.fn(),
     clearErrorState: jest.fn(),
     createAgent: jest.fn(() => "mock-agent-id"),

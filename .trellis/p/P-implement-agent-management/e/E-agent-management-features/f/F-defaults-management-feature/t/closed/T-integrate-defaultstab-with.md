@@ -1,13 +1,87 @@
 ---
 id: T-integrate-defaultstab-with
 title: Integrate DefaultsTab with useAgentsStore
-status: open
+status: done
 priority: medium
 parent: F-defaults-management-feature
 prerequisites:
   - T-implement-defaults-state
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/DefaultsTab.tsx:
+    Integrated component with useAgentsStore, removed local state management,
+    added loading/error states, updated all event handlers to use store methods
+  apps/desktop/src/components/settings/agents/__tests__/DefaultsTab.test.tsx:
+    Created comprehensive test suite with 20 test cases covering store
+    integration, loading states, error handling, accessibility, and input
+    validation
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
+    Updated mock to include store properties needed by DefaultsTab (defaults,
+    setDefaults, resetDefaults, isSaving) to fix tests broken by integration
+log:
+  - >-
+    Successfully integrated DefaultsTab component with useAgentsStore for
+    complete state management and persistence of default settings.
+
+
+    ## Implementation Details
+
+
+    **Store Integration:**
+
+    - Removed local state management (`useState` for settings and isResetting)
+
+    - Connected to `useAgentsStore` for defaults, setDefaults, resetDefaults,
+    error, isLoading, isSaving
+
+    - Replaced hardcoded defaults (temperature: 1.0, maxTokens: 1000, topP:
+    0.95) with factory defaults from store (temperature: 0.7, maxTokens: 2000,
+    topP: 0.9)
+
+
+    **UI State Management:**
+
+    - Added loading spinner with proper accessibility when `isLoading` is true
+
+    - Added error display when `error.message` exists
+
+    - Updated reset button to show "Resetting..." state when `isSaving` is true
+
+    - All controls now update store immediately via `setDefaults()`
+
+
+    **Event Handlers Updated:**
+
+    - `handleTemperatureChange`: Now calls `setDefaults()` with updated
+    temperature
+
+    - `handleTopPChange`: Now calls `setDefaults()` with updated topP  
+
+    - `handleMaxTokensChange`: Now calls `setDefaults()` with updated maxTokens
+
+    - `handleReset`: Now calls `resetDefaults()` with async error handling
+
+
+    **Persistence:**
+
+    - Store automatically handles debounced persistence (500ms delay)
+
+    - All changes are saved automatically without manual save calls
+
+    - Reset functionality uses store's factory defaults
+
+
+    **Testing:**
+
+    - Created comprehensive test suite with 20 test cases covering all
+    integration points
+
+    - Tests loading states, error states, store integration, accessibility,
+    input validation, and error handling
+
+    - Fixed existing AgentsSection tests that were broken by the integration by
+    adding missing store properties to mock
+
+    - All tests pass (1362 total tests across project)
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T01:57:01.915Z

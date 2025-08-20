@@ -1,7 +1,7 @@
 ---
 id: P-implement-agent-management
 title: Implement Agent Management System for Settings
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -295,12 +295,16 @@ affectedFiles:
     tests for other functionality like Create button and agent display; Added
     useAgentsStore mock to test file to support new store integration and ensure
     tests pass; Updated useAgentsStore mock to return proper agent data
-    structure compatible with LibraryTab changes
+    structure compatible with LibraryTab changes; Updated mock to include store
+    properties needed by DefaultsTab (defaults, setDefaults, resetDefaults,
+    isSaving) to fix tests broken by integration
   apps/desktop/src/components/settings/agents/DefaultsTab.tsx:
     Created new DefaultsTab component file with extracted code from
     AgentsSection.tsx. Includes all configuration controls, preview panel,
     accessibility features, and JSDoc documentation. Component maintains exact
-    same functionality as original inline version.
+    same functionality as original inline version.; Integrated component with
+    useAgentsStore, removed local state management, added loading/error states,
+    updated all event handlers to use store methods
   apps/desktop/src/components/settings/agents/LibraryTab.tsx: Created new
     component file containing LibraryTab component, AgentGrid component, and
     AgentGridProps interface extracted from AgentsSection.tsx. Includes all
@@ -323,7 +327,12 @@ affectedFiles:
     compatibility, accessibility, and edge cases; Added comprehensive test suite
     for delete confirmation dialog functionality with 9 new test cases covering
     all user flows, error scenarios, and edge cases
-log: []
+  apps/desktop/src/components/settings/agents/__tests__/DefaultsTab.test.tsx:
+    Created comprehensive test suite with 20 test cases covering store
+    integration, loading states, error handling, accessibility, and input
+    validation
+log:
+  - "Auto-completed: All child epics are complete"
 schema: v1.0
 childrenIds:
   - E-agent-management-features

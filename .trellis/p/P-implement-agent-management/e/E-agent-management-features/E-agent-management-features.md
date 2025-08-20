@@ -1,7 +1,7 @@
 ---
 id: E-agent-management-features
 title: Agent Management Features
-status: in-progress
+status: done
 priority: medium
 parent: P-implement-agent-management
 prerequisites:
@@ -22,7 +22,9 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
     Added useAgentsStore mock to test file to support new store integration and
     ensure tests pass; Updated useAgentsStore mock to return proper agent data
-    structure compatible with LibraryTab changes
+    structure compatible with LibraryTab changes; Updated mock to include store
+    properties needed by DefaultsTab (defaults, setDefaults, resetDefaults,
+    isSaving) to fix tests broken by integration
   apps/desktop/src/components/settings/agents/LibraryTab.tsx: Replaced mock data
     with useAgentsStore integration, added loading state with spinner,
     implemented error state with retry functionality using Card components,
@@ -79,7 +81,15 @@ affectedFiles:
     Added missing defaults
     property to all test data objects that use PersistedAgentsSettingsData type
     to maintain type compatibility
-log: []
+  apps/desktop/src/components/settings/agents/DefaultsTab.tsx:
+    Integrated component with useAgentsStore, removed local state management,
+    added loading/error states, updated all event handlers to use store methods
+  apps/desktop/src/components/settings/agents/__tests__/DefaultsTab.test.tsx:
+    Created comprehensive test suite with 20 test cases covering store
+    integration, loading states, error handling, accessibility, and input
+    validation
+log:
+  - "Auto-completed: All child features are complete"
 schema: v1.0
 childrenIds:
   - F-create-agent-feature
