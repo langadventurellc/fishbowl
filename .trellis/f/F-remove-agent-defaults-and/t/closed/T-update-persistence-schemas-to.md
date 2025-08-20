@@ -2,13 +2,40 @@
 id: T-update-persistence-schemas-to
 title: Update Persistence Schemas to Remove Defaults and Support New Personality
   Behaviors
-status: open
+status: done
 priority: high
 parent: F-remove-agent-defaults-and
 prerequisites:
   - T-update-agent-types-to-remove
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
+    Added PersonalityBehaviorsSchema with full validation for all 7 personality
+    behaviors (including new responseLength, randomness, focus). Updated
+    persistedAgentSchema to include personalityBehaviors field. Schema validates
+    behavior values in -100 to 100 range with clear error messages.
+  packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
+    "Added comprehensive unit tests for PersonalityBehaviorsSchema and updated
+    persistedAgentsSettingsSchema tests. Added 8 new test cases covering all
+    validation scenarios: full behaviors, partial behaviors, empty behaviors,
+    out-of-range values, non-numeric values, boundary values, and agent schema
+    validation with personality behaviors."
+log:
+  - Analyzing task requirements against current codebase state. Found that most
+    persistence schema work has already been completed according to the
+    feature's affected files list. The persistedAgentsSettingsSchema.ts has
+    already been updated to remove AgentDefaultsSchema and LLM parameters.
+    Checking if any additional schema creation is needed.
+  - Successfully updated persistence schemas to remove agent defaults
+    functionality and support new personality behaviors. Added
+    PersonalityBehaviorsSchema with comprehensive validation for all 7 behavior
+    types (humor, formality, brevity, assertiveness, responseLength, randomness,
+    focus) with proper range validation (-100 to 100). Updated
+    persistedAgentSchema to include personalityBehaviors field. Created
+    extensive unit tests covering all validation scenarios including
+    positive/negative cases, boundary values, partial behaviors, and empty
+    states. All tests pass (16/16) and quality checks succeed. Schema now
+    properly validates the simplified agent data structure without LLM
+    parameters while supporting enhanced personality customization.
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T18:30:24.522Z

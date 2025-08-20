@@ -46,7 +46,11 @@ affectedFiles:
   packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
     Removed temperature, maxTokens, and topP fields from persistedAgentSchema,
     eliminated agentDefaultsSchema entirely, and removed defaults field from
-    persistedAgentsSettingsSchema
+    persistedAgentsSettingsSchema; Added PersonalityBehaviorsSchema with full
+    validation for all 7 personality behaviors (including new responseLength,
+    randomness, focus). Updated persistedAgentSchema to include
+    personalityBehaviors field. Schema validates behavior values in -100 to 100
+    range with clear error messages.
   packages/shared/src/types/agents/index.ts: Removed agentDefaultsSchema export
     since it was deleted from persistence schema
   packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts:
@@ -71,9 +75,14 @@ affectedFiles:
     Removed temperature, maxTokens, and topP properties from mock agent data and
     test expectations to match updated AgentSettingsViewModel interface
   packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
-    Completely rewrote test file to remove all LLM parameter validation tests
+    "Completely rewrote test file to remove all LLM parameter validation tests
     and replaced them with tests for remaining schema validation (required
-    fields, name validation, system prompt length limits)
+    fields, name validation, system prompt length limits); Added comprehensive
+    unit tests for PersonalityBehaviorsSchema and updated
+    persistedAgentsSettingsSchema tests. Added 8 new test cases covering all
+    validation scenarios: full behaviors, partial behaviors, empty behaviors,
+    out-of-range values, non-numeric values, boundary values, and agent schema
+    validation with personality behaviors."
   packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
     Removed LLM parameter properties from test data and assertions, simplified
     to test essential agent properties only
@@ -101,7 +110,6 @@ log: []
 schema: v1.0
 childrenIds:
   - T-run-quality-checks-and-verify
-  - T-update-agent-types-to-remove
   - T-update-agents-store-to-remove
   - T-update-persistence-schemas-to
   - T-add-three-new-personality
@@ -109,6 +117,7 @@ childrenIds:
   - T-remove-defaultstab-component
   - T-remove-llm-parameters-from
   - T-simplify-agentssection
+  - T-update-agent-types-to-remove
 created: 2025-08-20T18:18:06.361Z
 updated: 2025-08-20T18:18:06.361Z
 ---
