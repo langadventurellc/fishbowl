@@ -15,7 +15,6 @@ import { ModelSelect } from "./ModelSelect";
 import { useServices } from "../../../contexts";
 import { getSliderDescription } from "../../../utils/sliderDescriptions";
 import { Button } from "../../ui/button";
-import { ConfirmationDialog } from "../../ui/confirmation-dialog";
 import {
   Form,
   FormControl,
@@ -37,7 +36,6 @@ export const AgentForm: React.FC<AgentFormProps> = ({
 }) => {
   const { logger } = useServices();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
   const { defaults } = useAgentsStore();
 
@@ -109,19 +107,9 @@ export const AgentForm: React.FC<AgentFormProps> = ({
   );
 
   const handleCancel = useCallback(() => {
-    if (form.formState.isDirty) {
-      setShowUnsavedDialog(true);
-    } else {
-      setUnsavedChanges(false);
-      onCancel();
-    }
-  }, [form.formState.isDirty, setUnsavedChanges, onCancel]);
-
-  const handleConfirmCancel = useCallback(() => {
-    // Reset form to original values
+    // Reset to original values on cancel
     form.reset(getDefaultValues());
     setUnsavedChanges(false);
-    setShowUnsavedDialog(false);
     onCancel();
   }, [form, getDefaultValues, setUnsavedChanges, onCancel]);
 
@@ -407,18 +395,6 @@ export const AgentForm: React.FC<AgentFormProps> = ({
           </div>
         </form>
       </Form>
-
-      {/* Unsaved Changes Confirmation Dialog */}
-      <ConfirmationDialog
-        open={showUnsavedDialog}
-        onOpenChange={setShowUnsavedDialog}
-        title="Unsaved Changes"
-        message="You have unsaved changes that will be lost if you continue. Are you sure you want to cancel?"
-        confirmText="Discard Changes"
-        cancelText="Keep Editing"
-        onConfirm={handleConfirmCancel}
-        variant="destructive"
-      />
     </div>
   );
 };
