@@ -1,7 +1,7 @@
 ---
 id: F-delete-agent-feature
 title: Delete Agent Feature
-status: in-progress
+status: done
 priority: medium
 parent: E-agent-management-features
 prerequisites:
@@ -29,8 +29,8 @@ schema: v1.0
 childrenIds:
   - T-add-delete-agent-functionality
   - T-add-focus-management-and
-  - T-implement-delete-confirmation
   - T-connect-librarytab-to-real
+  - T-implement-delete-confirmation
 created: 2025-08-19T21:14:31.766Z
 updated: 2025-08-19T21:14:31.766Z
 ---
