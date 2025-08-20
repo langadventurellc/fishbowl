@@ -29,7 +29,10 @@ affectedFiles:
     component description to reflect library-only functionality
   apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx:
     Removed DefaultsTab reference comment and updated all tests to expect only
-    Library tab functionality
+    Library tab functionality; Updated unit tests to verify simplified component
+    structure. Added tests to ensure no tab navigation elements are present and
+    LibraryTab renders directly. Updated mocks to remove TabContainer
+    dependency.
   apps/desktop/src/components/settings/agents/AgentForm.tsx:
     Removed temperature,
     maxTokens, and topP FormField components, cleaned up unused imports
@@ -78,10 +81,13 @@ affectedFiles:
     Completely rewrote test file to remove LLM parameter references from test
     data and expectations, focusing on core agent properties and optional fields
     handling
+  apps/desktop/src/components/Settings/agents/AgentsSection.tsx:
+    Simplified component by removing TabContainer and tab navigation, displaying
+    LibraryTab directly. Removed TabConfiguration import and tabs array. Updated
+    JSDoc comments to reflect simplified architecture.
 log: []
 schema: v1.0
 childrenIds:
-  - T-remove-llm-parameters-from
   - T-run-quality-checks-and-verify
   - T-simplify-agentssection
   - T-update-agent-types-to-remove
@@ -90,6 +96,7 @@ childrenIds:
   - T-add-three-new-personality
   - T-remove-agents-subsections
   - T-remove-defaultstab-component
+  - T-remove-llm-parameters-from
 created: 2025-08-20T18:18:06.361Z
 updated: 2025-08-20T18:18:06.361Z
 ---

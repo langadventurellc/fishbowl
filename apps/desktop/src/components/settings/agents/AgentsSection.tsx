@@ -1,12 +1,10 @@
 /**
- * AgentsSection component provides agent management functionality with tab navigation.
+ * AgentsSection component provides simplified agent management functionality.
  *
  * Features:
  * - Agent library management interface
- * - Integration with TabContainer for consistent tab behavior
  * - Settings modal navigation state integration
  * - Responsive design and accessibility compliance
- * - 200ms animation transitions for smooth UX
  *
  * @module components/settings/AgentsSection
  */
@@ -15,13 +13,11 @@ import {
   type AgentCard as AgentCardType,
   type AgentFormData,
   type AgentsSectionProps,
-  type TabConfiguration,
   useAgentsStore,
 } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useState } from "react";
 import { cn } from "../../../lib/utils";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
-import { TabContainer } from "../TabContainer";
 import { AgentFormModal } from "./AgentFormModal";
 import { LibraryTab } from "./LibraryTab";
 import { useServices } from "../../../contexts";
@@ -141,20 +137,6 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
     ],
   );
 
-  // Tab configuration following established patterns
-  const tabs: TabConfiguration[] = [
-    {
-      id: "library",
-      label: "Library",
-      content: () => (
-        <LibraryTab
-          openCreateModal={openCreateModal}
-          openEditModal={openEditModal}
-        />
-      ),
-    },
-  ];
-
   return (
     <div className={cn("agents-section space-y-6", className)}>
       <div>
@@ -163,11 +145,10 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
           Configure AI agents and their behavior settings.
         </p>
       </div>
-      <TabContainer
-        tabs={tabs}
-        useStore={true}
-        animationDuration={200}
-        className="agents-tabs"
+
+      <LibraryTab
+        openCreateModal={openCreateModal}
+        openEditModal={openEditModal}
       />
 
       <AgentFormModal

@@ -10,15 +10,6 @@ import { AgentsSection } from "../AgentsSection";
 
 // Mock shared package to avoid dependency issues
 jest.mock("@fishbowl-ai/ui-shared", () => ({
-  useSettingsNavigation: () => ({
-    activeSubTab: "library",
-    setActiveSubTab: jest.fn(),
-  }),
-  useUnsavedChanges: () => ({
-    hasUnsavedChanges: false,
-    setUnsavedChanges: jest.fn(),
-    clearUnsavedChanges: jest.fn(),
-  }),
   useAgentsStore: () => ({
     agents: [
       {
@@ -48,13 +39,6 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
         updatedAt: "2023-01-02T00:00:00Z",
       },
     ],
-    defaults: {
-      temperature: 0.7,
-      maxTokens: 2000,
-      topP: 0.9,
-    },
-    setDefaults: jest.fn(),
-    resetDefaults: jest.fn(),
     isLoading: false,
     error: { message: null },
     isInitialized: true,
@@ -66,20 +50,24 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
   }),
 }));
 
-// Mock TabContainer to simplify testing
-jest.mock("../../TabContainer", () => ({
-  TabContainer: ({
-    tabs,
+// Mock LibraryTab to simplify testing
+jest.mock("../LibraryTab", () => ({
+  LibraryTab: ({
+    openCreateModal,
+    openEditModal,
   }: {
-    tabs: Array<{ id: string; label: string; content: () => React.ReactNode }>;
+    openCreateModal: () => void;
+    openEditModal: (agent: any) => void;
   }) => (
-    <div data-testid="tab-container">
-      {tabs.map((tab) => (
-        <div key={tab.id} data-testid={`tab-${tab.id}`}>
-          <button>{tab.label}</button>
-          <div>{tab.content()}</div>
-        </div>
-      ))}
+    <div data-testid="library-tab">
+      <button onClick={openCreateModal}>Create New Agent</button>
+      <div data-testid="agent-research-assistant">Research Assistant</div>
+      <div data-testid="agent-code-reviewer">Code Reviewer</div>
+      <button
+        onClick={() => openEditModal({ id: "1", name: "Research Assistant" })}
+      >
+        Edit Research Assistant
+      </button>
     </div>
   ),
 }));
@@ -105,22 +93,29 @@ jest.mock("../../../../contexts", () => ({
 describe("AgentsSection", () => {
   test("renders without crashing", () => {
     render(<AgentsSection />);
-    expect(screen.getByTestId("tab-container")).toBeInTheDocument();
+    expect(screen.getByTestId("library-tab")).toBeInTheDocument();
   });
 
-  test("renders Library tab with correct label", () => {
+  test("renders LibraryTab directly without tab navigation", () => {
     render(<AgentsSection />);
 
-    expect(screen.getByText("Library")).toBeInTheDocument();
+    // Library tab content should be present
+    expect(screen.getByTestId("library-tab")).toBeInTheDocument();
+
+    // No tab navigation elements should be present
+    expect(screen.queryByRole("tablist")).not.toBeInTheDocument();
+    expect(screen.queryByRole("tab")).not.toBeInTheDocument();
+    expect(screen.queryByText("Library")).not.toBeInTheDocument(); // No tab label
+    expect(screen.queryByText("Defaults")).not.toBeInTheDocument(); // No defaults tab
   });
 
-  test("renders tab content correctly", () => {
+  test("renders agent content correctly", () => {
     render(<AgentsSection />);
 
-    // Library tab content
+    // Agent management content
     expect(screen.getByText("Create New Agent")).toBeInTheDocument();
-    expect(screen.getByText("Research Assistant")).toBeInTheDocument();
-    expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
+    expect(screen.getByTestId("agent-research-assistant")).toBeInTheDocument();
+    expect(screen.getByTestId("agent-code-reviewer")).toBeInTheDocument();
   });
 
   test("applies custom className when provided", () => {
@@ -128,21 +123,33 @@ describe("AgentsSection", () => {
     expect(container.firstChild).toHaveClass("agents-section", "custom-class");
   });
 
-  test("has correct structure for tab configuration", () => {
-    render(<AgentsSection />);
+  test("maintains proper container styling", () => {
+    const { container } = render(<AgentsSection />);
 
-    expect(screen.getByTestId("tab-library")).toBeInTheDocument();
+    // Should have the space-y-6 class for proper spacing
+    expect(container.firstChild).toHaveClass("space-y-6");
   });
 
-  test("tab content maintains expected structure", () => {
+  test("renders section header correctly", () => {
     render(<AgentsSection />);
 
-    // Check that Library tab has functional content structure
-    const createButton = screen.getByText("Create New Agent");
-    expect(createButton).toBeInTheDocument();
+    expect(screen.getByText("Agents")).toBeInTheDocument();
+    expect(
+      screen.getByText("Configure AI agents and their behavior settings."),
+    ).toBeInTheDocument();
+  });
 
-    // Verify agent cards are rendered with expected content
-    expect(screen.getByText("Research Assistant")).toBeInTheDocument();
-    expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
+  test("passes modal control functions to LibraryTab", () => {
+    render(<AgentsSection />);
+
+    // Verify that LibraryTab receives the necessary props to control modals
+    expect(screen.getByText("Create New Agent")).toBeInTheDocument();
+    expect(screen.getByText("Edit Research Assistant")).toBeInTheDocument();
+  });
+
+  test("modal is closed by default", () => {
+    render(<AgentsSection />);
+
+    expect(screen.queryByTestId("agent-form-modal")).not.toBeInTheDocument();
   });
 });
