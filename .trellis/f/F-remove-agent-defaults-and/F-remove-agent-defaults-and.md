@@ -1,0 +1,276 @@
+---
+id: F-remove-agent-defaults-and
+title: Remove Agent Defaults and Enhance Personality Configuration
+status: open
+priority: medium
+prerequisites: []
+affectedFiles: {}
+log: []
+schema: v1.0
+childrenIds: []
+created: 2025-08-20T18:18:06.361Z
+updated: 2025-08-20T18:18:06.361Z
+---
+
+## Overview
+
+Remove the agent defaults functionality from the Fishbowl application and enhance the personality configuration system with three new behaviors: response length, randomness, and focus. This feature eliminates the defaults tab from settings and removes LLM parameters from agent configuration while expanding personality customization options.
+
+## Purpose and Functionality
+
+**Primary Goals:**
+
+1. Remove the defaults tab and associated functionality from agent settings
+2. Remove LLM parameters (temperature, max tokens, top P) from agent creation/editing
+3. Add three new personality behaviors: response length, randomness, and focus
+4. Simplify the settings navigation by eliminating sub-tabs under agents
+5. Clean up backend data structures and persistence schemas
+
+**Key Components to Implement:**
+
+### 1. UI Component Updates
+
+- **AgentsSection**: Remove tab navigation, display only AgentsTab directly
+- **SettingsSidebar**: Remove subsections under agents (no more defaults sub-tab)
+- **AgentForm**: Remove temperature, maxTokens, and topP form fields and validation
+- **PersonalityForm**: Add three new behavior sliders with appropriate labels and descriptions
+
+### 2. Backend Data Structure Updates
+
+- **Agent Store**: Remove defaultAgentSettings state and related methods
+- **Persistence Schema**: Remove AgentDefaultsSchema and defaults from AgentsDataSchema
+- **Agent Types**: Remove temperature, maxTokens, topP fields; add new personality behavior types
+
+### 3. Component Removal
+
+- **DefaultsTab**: Completely remove component and associated imports
+- Remove all imports and references to DefaultsTab throughout the codebase
+
+## Detailed Acceptance Criteria
+
+### Functional Requirements
+
+**Defaults Removal:**
+
+- [ ] Defaults tab no longer appears in Settings > Agents section
+- [ ] Settings sidebar shows only "Agents" without sub-tabs underneath
+- [ ] DefaultsTab component is completely removed from the codebase
+- [ ] Agent creation form no longer includes temperature, max tokens, or top P fields
+- [ ] Agent editing form no longer includes temperature, max tokens, or top P fields
+- [ ] Agents store no longer maintains defaultAgentSettings state
+- [ ] Persistence schema excludes AgentDefaults and related default settings
+
+**Personality Enhancement:**
+
+- [ ] PersonalityForm displays 7 total behaviors (4 existing + 3 new)
+- [ ] New "Response Length" slider with labels "Brief" to "Comprehensive"
+- [ ] New "Randomness" slider with labels "Predictable" to "Creative"
+- [ ] New "Focus" slider with labels "Exploratory" to "Focused"
+- [ ] All personality behaviors save correctly when creating/editing agents
+- [ ] New personality behaviors initialize properly to default value (0)
+- [ ] New personality behaviors persist across application restarts
+
+**Schema Updates:**
+
+- [ ] Agent schema excludes temperature, maxTokens, topP fields completely
+- [ ] Personality behaviors include all 7 behaviors (4 existing + 3 new)
+- [ ] Settings import/export works with new simplified schema (no defaults)
+
+### User Interface Requirements
+
+**Settings Navigation:**
+
+- [ ] Settings modal > Agents displays only the agents list/management interface
+- [ ] No tab navigation present in AgentsSection component
+- [ ] Sidebar navigation under "Agents" has no sub-items
+- [ ] Navigation flows smoothly without broken links or 404-style states
+
+**Agent Form Interface:**
+
+- [ ] Agent creation form excludes LLM parameter sections entirely
+- [ ] Agent editing form excludes LLM parameter sections entirely
+- [ ] Personality section shows all 7 sliders in logical order
+- [ ] Form validation works correctly with removed fields
+- [ ] Submit/save operations complete successfully
+
+**Visual Consistency:**
+
+- [ ] UI maintains consistent styling and spacing after tab removal
+- [ ] Personality sliders follow existing design patterns
+- [ ] No visual artifacts or layout issues from removed components
+- [ ] Form maintains proper responsive behavior
+
+### Technical Requirements
+
+**Code Quality:**
+
+- [ ] No TypeScript compilation errors after changes
+- [ ] All imports and references to removed components cleaned up
+- [ ] No unused imports or dead code remaining
+- [ ] Consistent naming conventions for new personality behavior types
+
+**State Management:**
+
+- [ ] Zustand store methods work correctly without defaults functionality
+- [ ] Store export/import operations handle simplified schema
+- [ ] Component re-renders work properly with updated state structure
+- [ ] No memory leaks or stale references to removed functionality
+
+**Schema Validation:**
+
+- [ ] Zod schemas validate correctly with removed and added fields
+- [ ] Personality behavior validation accepts values in expected range (-100 to 100)
+- [ ] Agent creation/editing validation works without LLM parameters
+- [ ] Data serialization/deserialization handles schema changes gracefully
+
+### Performance Requirements
+
+**Load Time:**
+
+- [ ] Settings modal opens without performance degradation
+- [ ] Agent creation/editing forms render without noticeable delay
+- [ ] No performance impact from removing defaults functionality
+
+**Memory Usage:**
+
+- [ ] Reduced memory footprint from eliminating unused defaults state
+- [ ] No memory leaks from removed component references
+- [ ] Personality form performance remains smooth with additional sliders
+
+### Security Considerations
+
+**Input Validation:**
+
+- [ ] New personality behavior values properly validated and sanitized
+- [ ] Form submission validates personality ranges (-100 to 100)
+- [ ] No security vulnerabilities introduced by schema changes
+
+**Data Protection:**
+
+- [ ] Personality behavior data stored securely in local database
+
+### Testing Requirements
+
+**Unit Testing:**
+
+- [ ] Agent store methods tested without defaults functionality
+- [ ] Personality form validation tested for all 7 behaviors
+- [ ] Schema validation tested with new structure
+- [ ] Component rendering tested for AgentsSection without tabs
+- [ ] Form submission tested without LLM parameters
+
+**Component Testing:**
+
+- [ ] PersonalityForm renders correctly with 7 sliders
+- [ ] AgentForm submission works without temperature/tokens/topP fields
+- [ ] SettingsSidebar navigation updated correctly
+- [ ] AgentsSection displays properly without tab navigation
+
+## Implementation Guidance
+
+### Technical Approach
+
+**Phase 1: UI Component Updates**
+
+1. Update `AgentsSection.tsx` to remove Tabs component and display AgentsTab directly
+2. Update `SettingsSidebar.tsx` to remove agents subsections
+3. Remove `DefaultsTab.tsx` component file entirely
+4. Clean up all imports referencing DefaultsTab
+
+**Phase 2: Form Modifications**
+
+1. Update `AgentForm.tsx` to remove temperature, maxTokens, topP FormField components
+2. Update form schema to exclude removed fields
+3. Update default values and validation logic
+4. Update `PersonalityForm.tsx` to include three new behaviors in the behaviors array
+
+**Phase 3: Backend Schema Changes**
+
+1. Update `agentsSchema.ts` to remove AgentDefaultsSchema
+2. Update AgentsDataSchema to remove defaultAgentSettings field
+3. Update Agent type definition to remove LLM parameters and add new personality behaviors
+4. Update AgentSchema validation to match new structure
+
+**Phase 4: State Management Updates**
+
+1. Update `agents.ts` store to remove defaultAgentSettings from interface
+2. Remove setDefaultAgentSettings method and related functionality
+3. Update store methods to work with simplified schema
+
+**Phase 5: Testing and Quality**
+
+1. Add unit tests for new personality behaviors
+2. Add tests for simplified agent creation flow
+3. Run quality checks (lint, format, type-check)
+
+### Implementation Notes
+
+Since this is a greenfield project with no existing users, no data migration logic is required. All schema and type changes can be implemented directly without backward compatibility considerations.
+
+### File Structure Impact
+
+**Modified Files:**
+
+- `apps/desktop/src/components/Settings/agents/AgentsSection.tsx`
+- `apps/desktop/src/components/Settings/sidebar/SettingsSidebar.tsx`
+- `apps/desktop/src/components/Agent/AgentForm.tsx`
+- `apps/desktop/src/components/Agent/PersonalityForm.tsx`
+- `packages/shared/src/store/agents.ts`
+- `packages/shared/src/schemas/persistence/agentsSchema.ts`
+- `packages/shared/src/types/agent.ts`
+
+**Removed Files:**
+
+- `apps/desktop/src/components/Settings/agents/DefaultsTab.tsx`
+
+## Dependencies
+
+- No new external dependencies required
+- Utilizes existing React Hook Form, Zod validation, Zustand state management
+- Uses existing shadcn/ui components for form elements
+
+## Testing Requirements
+
+**Unit Tests (Jest):**
+
+- Test personality behavior validation for all 7 behaviors
+- Test agent store methods without defaults functionality
+- Test form submission without LLM parameters
+- Test schema validation with updated structure
+
+**Component Tests:**
+
+- Test PersonalityForm rendering with 7 sliders
+- Test AgentForm submission flow
+- Test AgentsSection rendering without tabs
+- Test SettingsSidebar navigation structure
+
+**No Integration/Performance/E2E Tests** (as specified in requirements)
+
+## Security Considerations
+
+**Input Validation:**
+
+- New personality behaviors validated to range -100 to 100
+- Form validation prevents invalid personality values
+
+**Data Protection:**
+
+- Secure storage of personality configuration data
+
+## Performance Requirements
+
+**Load Time:** Settings and agent creation forms maintain current performance levels
+**Memory Usage:** Reduced memory footprint from removing unused defaults state
+**Rendering:** Smooth UI interaction with additional personality sliders
+
+## Success Criteria
+
+1. **Simplified Navigation:** Settings shows only one agents section without sub-tabs
+2. **Streamlined Agent Creation:** Forms exclude LLM parameters completely
+3. **Enhanced Personality:** Seven total personality behaviors available and functional
+4. **Clean Codebase:** No dead code, unused imports, or references to removed defaults
+5. **Quality Standards:** All lint, format, and type-check requirements pass
+6. **Functional Testing:** All unit tests pass with updated functionality
+
+This feature represents a significant simplification of the agent configuration system while simultaneously enhancing the personality customization capabilities, resulting in a more focused and user-friendly interface.
