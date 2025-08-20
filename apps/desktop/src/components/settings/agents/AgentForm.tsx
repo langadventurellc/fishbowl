@@ -10,12 +10,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  CharacterCounter,
-  ModelSelect,
-  PersonalitySelect,
-  RoleSelect,
-} from "../";
+import { CharacterCounter, PersonalitySelect, RoleSelect } from "../";
+import { ModelSelect } from "./ModelSelect";
 import { useServices } from "../../../contexts";
 import { getSliderDescription } from "../../../utils/sliderDescriptions";
 import { Button } from "../../ui/button";

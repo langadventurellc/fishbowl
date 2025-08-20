@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import type { LlmModel } from "@fishbowl-ai/ui-shared";
 import { useServices } from "@/contexts/useServices";
+import { useLlmConfig } from "./useLlmConfig";
 
 /**
  * Hook to get available LLM models from configured providers.
@@ -12,6 +13,11 @@ export function useLlmModels() {
   const [error, setError] = useState<string | Error | null>(null);
 
   const services = useServices();
+  const {
+    configurations,
+    isLoading: configsLoading,
+    error: configsError,
+  } = useLlmConfig();
 
   /**
    * Get available models for a specific provider type.
@@ -86,38 +92,45 @@ export function useLlmModels() {
 
   /**
    * Load models from configured LLM providers.
-   * This will be enhanced once the LLM provider service is integrated into renderer services.
+   * Uses the useLlmConfig hook to get actual LLM configurations.
    */
-  const loadModels = useCallback(async () => {
-    setLoading(true);
-    setError(null);
+  const loadModels = useCallback(() => {
+    setLoading(configsLoading);
+    setError(configsError);
 
-    try {
-      // TODO: Replace with actual LLM config repository once integrated into renderer services
-      // For now, return empty array since we need the LLM config repository to be available
-      // const configs = await services.llmConfigRepository.getAllConfigs();
-      // const availableModels = configs.flatMap(config =>
-      //   _getModelsForProvider(config.provider, config.customName)
-      // );
-
-      // Temporary: Return empty models until LLM config repository is integrated
-      const availableModels: LlmModel[] = [];
-
-      setModels(availableModels);
-    } catch (err) {
-      if (err instanceof Error) {
-        setError(err);
-      } else {
-        setError("Failed to load models");
-      }
+    if (configsError) {
       services.logger.error(
-        "Failed to load LLM models",
-        err instanceof Error ? err : new Error(String(err)),
+        "Failed to load LLM configurations",
+        new Error(configsError),
       );
-    } finally {
-      setLoading(false);
+      return;
     }
-  }, [services]);
+
+    if (!configsLoading) {
+      try {
+        // Map configurations to available models
+        const availableModels = configurations.flatMap((config) =>
+          _getModelsForProvider(
+            config.provider,
+            config.customName || config.provider,
+          ),
+        );
+
+        setModels(availableModels);
+      } catch (err) {
+        const error =
+          err instanceof Error ? err : new Error("Failed to load models");
+        setError(error);
+        services.logger.error("Failed to load LLM models", error);
+      }
+    }
+  }, [
+    configurations,
+    configsLoading,
+    configsError,
+    services,
+    _getModelsForProvider,
+  ]);
 
   /**
    * Refresh models from configured providers.
