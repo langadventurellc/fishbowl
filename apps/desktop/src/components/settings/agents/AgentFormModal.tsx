@@ -160,7 +160,7 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
     mode === "edit" ? agent : mode === "template" ? template : undefined;
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange} modal={false}>
       <DialogContent
         ref={containerRef}
         className="agent-form-modal max-w-3xl max-h-[85vh] overflow-y-auto"
