@@ -1,13 +1,34 @@
 ---
 id: F-remove-agent-defaults-and
 title: Remove Agent Defaults and Enhance Personality Configuration
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/constants/behaviorData.ts: "Added three new behavior
+    configurations to BEHAVIOR_GROUPS: responseLength (Brief to Comprehensive),
+    randomness (Predictable to Creative), and focus (Exploratory to Focused).
+    Maintains existing structure and follows established patterns."
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    "Updated default values to include new behaviors (responseLength: 50,
+    randomness: 50, focus: 50). Integrated new behaviors with existing form
+    structure, validation, and change detection logic."
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalityForm.test.tsx:
+    Created comprehensive unit tests verifying new behavior integration, form
+    structure support, edit mode functionality, and component error handling.
+    All 7 tests pass successfully.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-three-new-personality
+  - T-remove-agents-subsections
+  - T-remove-defaultstab-component
+  - T-remove-llm-parameters-from
+  - T-run-quality-checks-and-verify
+  - T-simplify-agentssection
+  - T-update-agent-types-to-remove
+  - T-update-agents-store-to-remove
+  - T-update-persistence-schemas-to
 created: 2025-08-20T18:18:06.361Z
 updated: 2025-08-20T18:18:06.361Z
 ---

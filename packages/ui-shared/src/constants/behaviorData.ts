@@ -98,6 +98,22 @@ export const BEHAVIOR_GROUPS: BehaviorGroup[] = [
         label: "Example Usage",
         description: "Frequency of providing concrete examples",
       },
+      {
+        key: "responseLength",
+        label: "Response Length",
+        description: "Controls the typical length of agent responses",
+      },
+      {
+        key: "randomness",
+        label: "Randomness",
+        description: "How predictable or creative the agent's responses are",
+      },
+      {
+        key: "focus",
+        label: "Focus",
+        description:
+          "How closely the agent stays on topic versus exploring tangents",
+      },
     ],
   },
 ];

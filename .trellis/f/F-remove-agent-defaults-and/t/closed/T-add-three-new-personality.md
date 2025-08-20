@@ -1,12 +1,30 @@
 ---
 id: T-add-three-new-personality
 title: Add Three New Personality Behaviors to PersonalityForm
-status: open
+status: done
 priority: high
 parent: F-remove-agent-defaults-and
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/constants/behaviorData.ts: "Added three new behavior
+    configurations to BEHAVIOR_GROUPS: responseLength (Brief to Comprehensive),
+    randomness (Predictable to Creative), and focus (Exploratory to Focused).
+    Maintains existing structure and follows established patterns."
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    "Updated default values to include new behaviors (responseLength: 50,
+    randomness: 50, focus: 50). Integrated new behaviors with existing form
+    structure, validation, and change detection logic."
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalityForm.test.tsx:
+    Created comprehensive unit tests verifying new behavior integration, form
+    structure support, edit mode functionality, and component error handling.
+    All 7 tests pass successfully.
+log:
+  - Successfully implemented three new personality behaviors (Response Length,
+    Randomness, Focus) to enhance the PersonalityForm component. Added behavior
+    configurations to shared constants, updated form default values and
+    structure, and created comprehensive unit tests. All quality checks pass and
+    the new behaviors integrate seamlessly with existing functionality,
+    expanding personality customization from 14 to 17 total behaviors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T18:29:04.320Z
