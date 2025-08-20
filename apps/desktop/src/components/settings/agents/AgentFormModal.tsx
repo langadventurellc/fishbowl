@@ -27,7 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
-import { AgentForm } from "./AgentForm";
+import { AgentForm, type AgentFormRef } from "./AgentForm";
 
 export const AgentFormModal: React.FC<AgentFormModalProps> = ({
   isOpen,
@@ -43,6 +43,7 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
 
   // Focus trap setup
   const triggerRef = useRef<HTMLElement | null>(null);
+  const formRef = useRef<AgentFormRef>(null);
   const { containerRef } = useFocusTrap({
     isActive: isOpen,
     restoreFocus: true,
@@ -78,6 +79,9 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
           variant: "destructive",
         });
         if (!confirmed) return;
+
+        // Reset form to initial data if user confirmed they want to discard changes
+        formRef.current?.resetToInitialData();
       }
       onOpenChange(open);
     },
@@ -178,6 +182,7 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
         </DialogHeader>
 
         <AgentForm
+          ref={formRef}
           mode={mode}
           initialData={initialData}
           onSave={handleSave}

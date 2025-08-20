@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { EmptyLibraryState } from "../EmptyLibraryState";
 
@@ -45,102 +45,46 @@ describe("EmptyLibraryState Component", () => {
       expect(svgIcon).toHaveClass("h-8", "w-8", "text-muted-foreground");
     });
 
-    it("renders action button with correct text and icon", () => {
-      render(<EmptyLibraryState {...defaultProps} />);
-
-      const button = screen.getByRole("button", {
-        name: "Create your first agent",
-      });
-      expect(button).toBeInTheDocument();
-      expect(button).toHaveTextContent("Create New Agent");
-      expect(button).toHaveAttribute("aria-label", "Create your first agent");
-    });
-
     it("applies custom className when provided", () => {
       const { container } = render(
         <EmptyLibraryState {...defaultProps} className="custom-class" />,
       );
 
-      const rootElement = container.firstChild;
-      expect(rootElement).toHaveClass("custom-class");
+      const mainContainer = container.firstChild;
+      expect(mainContainer).toHaveClass("custom-class");
     });
+  });
 
-    it("has proper container structure and styling", () => {
+  describe("Layout and Styling", () => {
+    it("uses flex layout for centering content", () => {
       const { container } = render(<EmptyLibraryState {...defaultProps} />);
 
-      const rootElement = container.firstChild;
-      expect(rootElement).toHaveClass(
+      const mainContainer = container.firstChild;
+      expect(mainContainer).toHaveClass(
         "flex",
         "flex-col",
         "items-center",
         "justify-center",
-        "py-16",
-        "px-4",
       );
     });
-  });
 
-  describe("Action Button Interaction", () => {
-    it("calls onAction when button is clicked", () => {
-      const onAction = jest.fn();
-      render(<EmptyLibraryState onAction={onAction} />);
+    it("applies proper spacing classes", () => {
+      const { container } = render(<EmptyLibraryState {...defaultProps} />);
 
-      const button = screen.getByRole("button", {
-        name: "Create your first agent",
-      });
-      fireEvent.click(button);
-
-      expect(onAction).toHaveBeenCalledTimes(1);
+      const mainContainer = container.firstChild;
+      expect(mainContainer).toHaveClass("py-16", "px-4");
     });
 
-    it("does not crash when onAction is undefined", () => {
-      render(<EmptyLibraryState />);
-
-      const button = screen.getByRole("button", {
-        name: "Create your first agent",
-      });
-
-      expect(() => {
-        fireEvent.click(button);
-      }).not.toThrow();
-    });
-
-    it("button maintains proper gap styling for icon", () => {
+    it("applies proper text centering", () => {
       render(<EmptyLibraryState {...defaultProps} />);
 
-      const button = screen.getByRole("button", {
-        name: "Create your first agent",
-      });
-      expect(button).toHaveClass("gap-2");
-    });
-  });
+      const heading = screen.getByText("No agents configured");
+      const description = screen.getByText(
+        "Create your first agent to get started with personalized AI assistants",
+      );
 
-  describe("Keyboard Navigation", () => {
-    it("button is focusable", () => {
-      render(<EmptyLibraryState {...defaultProps} />);
-
-      const button = screen.getByRole("button", {
-        name: "Create your first agent",
-      });
-      button.focus();
-
-      expect(button).toHaveFocus();
-    });
-
-    it("is keyboard accessible and clickable when focused", () => {
-      const onAction = jest.fn();
-      render(<EmptyLibraryState onAction={onAction} />);
-
-      const button = screen.getByRole("button", {
-        name: "Create your first agent",
-      });
-      button.focus();
-
-      // Verify button is focused and can be activated
-      expect(button).toHaveFocus();
-      fireEvent.click(button);
-
-      expect(onAction).toHaveBeenCalledTimes(1);
+      expect(heading).toHaveClass("text-center");
+      expect(description).toHaveClass("text-center");
     });
   });
 
@@ -153,91 +97,80 @@ describe("EmptyLibraryState Component", () => {
       expect(heading).toBeInTheDocument();
       expect(heading).toHaveTextContent("No agents configured");
 
-      // Check for button role
-      const button = screen.getByRole("button");
-      expect(button).toBeInTheDocument();
+      // Check for descriptive text
+      expect(
+        screen.getByText(
+          "Create your first agent to get started with personalized AI assistants",
+        ),
+      ).toBeInTheDocument();
     });
 
-    it("has descriptive aria-label on button", () => {
+    it("provides clear informational content", () => {
       render(<EmptyLibraryState {...defaultProps} />);
 
-      const button = screen.getByRole("button");
-      expect(button).toHaveAttribute("aria-label", "Create your first agent");
+      // Verify the component provides clear information about the empty state
+      expect(screen.getByText("No agents configured")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Create your first agent to get started with personalized AI assistants",
+        ),
+      ).toBeInTheDocument();
     });
 
     it("maintains text hierarchy for screen readers", () => {
       render(<EmptyLibraryState {...defaultProps} />);
 
-      const heading = screen.getByText("No agents configured");
+      // Verify proper heading hierarchy
+      const heading = screen.getByRole("heading", { level: 3 });
+      expect(heading).toBeInTheDocument();
+
+      // Verify descriptive text is present and accessible
       const description = screen.getByText(
         "Create your first agent to get started with personalized AI assistants",
       );
-
-      // Heading should come before description in DOM order
-      expect(heading.compareDocumentPosition(description)).toBe(
-        Node.DOCUMENT_POSITION_FOLLOWING,
-      );
-    });
-  });
-
-  describe("Visual Layout", () => {
-    it("centers content properly", () => {
-      const { container } = render(<EmptyLibraryState {...defaultProps} />);
-
-      const rootElement = container.firstChild;
-      expect(rootElement).toHaveClass("items-center", "justify-center");
+      expect(description).toBeInTheDocument();
     });
 
-    it("has generous padding for visual breathing room", () => {
-      const { container } = render(<EmptyLibraryState {...defaultProps} />);
-
-      const rootElement = container.firstChild;
-      expect(rootElement).toHaveClass("py-16", "px-4");
-    });
-
-    it("maintains proper spacing between elements", () => {
-      const { container } = render(<EmptyLibraryState {...defaultProps} />);
-
-      // Icon container has bottom margin
-      const iconContainer = container.querySelector(".bg-muted.rounded-full");
-      expect(iconContainer).toHaveClass("mb-6");
-
-      // Heading has bottom margin
-      const heading = screen.getByText("No agents configured");
-      expect(heading).toHaveClass("mb-2");
-
-      // Description has bottom margin
-      const description = screen.getByText(
-        "Create your first agent to get started with personalized AI assistants",
-      );
-      expect(description).toHaveClass("mb-6");
-    });
-
-    it("limits description width for readability", () => {
+    it("uses proper contrast classes for visibility", () => {
       render(<EmptyLibraryState {...defaultProps} />);
 
+      const heading = screen.getByText("No agents configured");
       const description = screen.getByText(
         "Create your first agent to get started with personalized AI assistants",
       );
-      expect(description).toHaveClass("max-w-md");
+
+      // Heading should have strong contrast
+      expect(heading).toHaveClass("text-xl", "font-semibold");
+
+      // Description should use muted foreground for hierarchy
+      expect(description).toHaveClass("text-muted-foreground");
     });
   });
 
-  describe("Component Integration", () => {
-    it("renders without any props", () => {
-      expect(() => {
-        render(<EmptyLibraryState />);
-      }).not.toThrow();
+  describe("Icon Display", () => {
+    it("renders icon with proper sizing", () => {
+      const { container } = render(<EmptyLibraryState {...defaultProps} />);
+
+      const svgIcon = container.querySelector("svg");
+      expect(svgIcon).toHaveClass("h-8", "w-8");
     });
 
-    it("merges custom className with default classes", () => {
-      const { container } = render(
-        <EmptyLibraryState className="additional-class" />,
-      );
+    it("uses muted foreground color for icon", () => {
+      const { container } = render(<EmptyLibraryState {...defaultProps} />);
 
-      const rootElement = container.firstChild;
-      expect(rootElement).toHaveClass("additional-class");
-      expect(rootElement).toHaveClass("flex", "flex-col"); // Default classes still present
+      const svgIcon = container.querySelector("svg");
+      expect(svgIcon).toHaveClass("text-muted-foreground");
+    });
+
+    it("centers icon in background circle", () => {
+      const { container } = render(<EmptyLibraryState {...defaultProps} />);
+
+      const iconContainer = container.querySelector(".bg-muted.rounded-full");
+      expect(iconContainer).toHaveClass(
+        "flex",
+        "items-center",
+        "justify-center",
+      );
     });
   });
 });

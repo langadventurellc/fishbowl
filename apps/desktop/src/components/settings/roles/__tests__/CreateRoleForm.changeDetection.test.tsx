@@ -419,7 +419,7 @@ describe("CreateRoleForm - Enhanced Change Detection", () => {
       });
     });
 
-    it("resets to original values on cancel in edit mode", async () => {
+    it("calls onCancel when cancel button is clicked in edit mode", async () => {
       const originalData = {
         name: "Original Name",
         description: "Original Description",
@@ -437,13 +437,7 @@ describe("CreateRoleForm - Enhanced Change Detection", () => {
       const cancelButton = screen.getByRole("button", { name: /cancel/i });
       fireEvent.click(cancelButton);
 
-      await waitFor(() => {
-        expect(mockFormActions.reset).toHaveBeenCalledWith(originalData, {
-          keepDefaultValues: false,
-          keepDirty: false,
-          keepErrors: false,
-        });
-      });
+      expect(editProps.onCancel).toHaveBeenCalled();
     });
 
     it("clears unsaved changes state after successful save", async () => {
@@ -462,15 +456,13 @@ describe("CreateRoleForm - Enhanced Change Detection", () => {
       });
     });
 
-    it("clears unsaved changes state after cancel", async () => {
+    it("calls onCancel when cancel button is clicked", async () => {
       render(<CreateRoleForm {...editProps} />);
 
       const cancelButton = screen.getByRole("button", { name: /cancel/i });
       fireEvent.click(cancelButton);
 
-      await waitFor(() => {
-        expect(mockSetUnsavedChanges).toHaveBeenCalledWith(false);
-      });
+      expect(editProps.onCancel).toHaveBeenCalled();
     });
   });
 

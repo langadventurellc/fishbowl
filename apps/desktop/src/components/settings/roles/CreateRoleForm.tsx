@@ -22,7 +22,14 @@ import {
 } from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
-import React, { useCallback, useEffect, useState, useMemo } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+  useMemo,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../../ui/button";
 import {
@@ -37,224 +44,250 @@ import { RoleNameInput } from "./RoleNameInput";
 import { RoleSystemPromptTextarea } from "./RoleSystemPromptTextarea";
 import { useServices } from "../../../contexts";
 
-export const CreateRoleForm: React.FC<CreateRoleFormProps> = ({
-  mode,
-  initialData,
-  onSave,
-  onCancel,
-  existingRoles = [],
-  isLoading = false,
-}) => {
-  const { logger } = useServices();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { setUnsavedChanges } = useUnsavedChanges();
-  const isEditMode = mode === "edit";
+export interface CreateRoleFormRef {
+  resetToInitialData: () => void;
+}
 
-  const form = useForm<RoleFormData>({
-    resolver: zodResolver(roleSchema),
-    defaultValues: {
-      name: initialData?.name || "",
-      description: initialData?.description || "",
-      systemPrompt: initialData?.systemPrompt || "",
+export const CreateRoleForm = forwardRef<
+  CreateRoleFormRef,
+  CreateRoleFormProps
+>(
+  (
+    {
+      mode,
+      initialData,
+      onSave,
+      onCancel,
+      existingRoles = [],
+      isLoading = false,
     },
-    mode: "onChange",
-    criteriaMode: "all",
-  });
+    ref,
+  ) => {
+    const { logger } = useServices();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const { setUnsavedChanges } = useUnsavedChanges();
+    const isEditMode = mode === "edit";
 
-  // Enhanced change detection with edge case handling
-  const watchedValues = form.watch();
-  const isActuallyDirty = useMemo(() => {
-    if (!initialData) return form.formState.isDirty;
+    const form = useForm<RoleFormData>({
+      resolver: zodResolver(roleSchema),
+      defaultValues: {
+        name: initialData?.name || "",
+        description: initialData?.description || "",
+        systemPrompt: initialData?.systemPrompt || "",
+      },
+      mode: "onChange",
+      criteriaMode: "all",
+    });
 
-    // Check for meaningful changes (not just whitespace)
-    const nameChanged = watchedValues.name?.trim() !== initialData.name?.trim();
-    const descChanged =
-      watchedValues.description?.trim() !== initialData.description?.trim();
-    const promptChanged =
-      watchedValues.systemPrompt?.trim() !== initialData.systemPrompt?.trim();
+    // Enhanced change detection with edge case handling
+    const watchedValues = form.watch();
+    const isActuallyDirty = useMemo(() => {
+      if (!initialData) return form.formState.isDirty;
 
-    return nameChanged || descChanged || promptChanged;
-  }, [watchedValues, initialData, form.formState.isDirty]);
+      // Check for meaningful changes (not just whitespace)
+      const nameChanged =
+        watchedValues.name?.trim() !== initialData.name?.trim();
+      const descChanged =
+        watchedValues.description?.trim() !== initialData.description?.trim();
+      const promptChanged =
+        watchedValues.systemPrompt?.trim() !== initialData.systemPrompt?.trim();
 
-  // Track unsaved changes
-  useEffect(() => {
-    setUnsavedChanges(isActuallyDirty);
-  }, [isActuallyDirty, setUnsavedChanges]);
+      return nameChanged || descChanged || promptChanged;
+    }, [watchedValues, initialData, form.formState.isDirty]);
 
-  const handleSave = useCallback(
-    async (data: RoleFormData) => {
-      setIsSubmitting(true);
-      try {
-        await onSave(data);
-        // Reset form with new values after successful save
-        form.reset(data, {
-          keepDefaultValues: false,
-          keepDirty: false,
-          keepErrors: false,
-        });
-        setUnsavedChanges(false);
-      } catch (error) {
-        logger.error("Failed to save role", error as Error);
-        // Error handling could be enhanced with toast notifications
-      } finally {
-        setIsSubmitting(false);
-      }
-    },
-    [onSave, form, setUnsavedChanges, logger],
-  );
+    // Track unsaved changes
+    useEffect(() => {
+      setUnsavedChanges(isActuallyDirty);
+    }, [isActuallyDirty, setUnsavedChanges]);
 
-  const handleCancel = useCallback(() => {
-    // Reset to original values on cancel
-    if (initialData) {
-      form.reset(initialData, {
-        keepDefaultValues: false,
-        keepDirty: false,
-        keepErrors: false,
-      });
-    }
-    setUnsavedChanges(false);
-    onCancel();
-  }, [form, initialData, setUnsavedChanges, onCancel]);
-
-  const currentRoleId =
-    isEditMode && initialData
-      ? (initialData as RoleViewModel & { id?: string }).id
-      : undefined;
-
-  // Get field-level dirty states for visual indicators
-  const isNameDirty = useMemo(() => {
-    if (!initialData) return form.formState.dirtyFields.name;
-    return watchedValues.name?.trim() !== initialData.name?.trim();
-  }, [watchedValues.name, initialData, form.formState.dirtyFields.name]);
-
-  const isDescriptionDirty = useMemo(() => {
-    if (!initialData) return form.formState.dirtyFields.description;
-    return (
-      watchedValues.description?.trim() !== initialData.description?.trim()
+    // Expose reset function via ref
+    useImperativeHandle(
+      ref,
+      () => ({
+        resetToInitialData: () => {
+          if (initialData) {
+            form.reset(initialData, {
+              keepDefaultValues: false,
+              keepDirty: false,
+              keepErrors: false,
+            });
+          }
+          setUnsavedChanges(false);
+        },
+      }),
+      [form, initialData, setUnsavedChanges],
     );
-  }, [
-    watchedValues.description,
-    initialData,
-    form.formState.dirtyFields.description,
-  ]);
 
-  const isSystemPromptDirty = useMemo(() => {
-    if (!initialData) return form.formState.dirtyFields.systemPrompt;
-    return (
-      watchedValues.systemPrompt?.trim() !== initialData.systemPrompt?.trim()
+    const handleSave = useCallback(
+      async (data: RoleFormData) => {
+        setIsSubmitting(true);
+        try {
+          await onSave(data);
+          // Reset form with new values after successful save
+          form.reset(data, {
+            keepDefaultValues: false,
+            keepDirty: false,
+            keepErrors: false,
+          });
+          setUnsavedChanges(false);
+        } catch (error) {
+          logger.error("Failed to save role", error as Error);
+          // Error handling could be enhanced with toast notifications
+        } finally {
+          setIsSubmitting(false);
+        }
+      },
+      [onSave, form, setUnsavedChanges, logger],
     );
-  }, [
-    watchedValues.systemPrompt,
-    initialData,
-    form.formState.dirtyFields.systemPrompt,
-  ]);
 
-  return (
-    <div className="space-y-6">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
-          {/* Name Field */}
-          <FormField
-            control={form.control}
-            name="name"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormControl>
-                  <RoleNameInput
-                    value={field.value}
-                    onChange={field.onChange}
-                    existingRoles={existingRoles}
-                    currentRoleId={currentRoleId}
-                    disabled={isSubmitting || isLoading}
-                    isDirty={isNameDirty}
-                    aria-describedby={
-                      fieldState.error ? `${field.name}-error` : undefined
-                    }
-                  />
-                </FormControl>
-                <FormMessage id={`${field.name}-error`} />
-              </FormItem>
-            )}
-          />
+    const handleCancel = useCallback(() => {
+      // Don't reset form data here - let the modal handle confirmation and reset
+      // The modal will reset the form if user confirms they want to discard changes
+      onCancel();
+    }, [onCancel]);
 
-          {/* Description Field */}
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormControl>
-                  <RoleDescriptionTextarea
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={500}
-                    disabled={isSubmitting || isLoading}
-                    isDirty={isDescriptionDirty}
-                    aria-describedby={
-                      fieldState.error ? `${field.name}-error` : undefined
-                    }
-                  />
-                </FormControl>
-                <FormMessage id={`${field.name}-error`} />
-              </FormItem>
-            )}
-          />
+    const currentRoleId =
+      isEditMode && initialData
+        ? (initialData as RoleViewModel & { id?: string }).id
+        : undefined;
 
-          {/* System Prompt Field */}
-          <FormField
-            control={form.control}
-            name="systemPrompt"
-            render={({ field, fieldState }) => (
-              <FormItem>
-                <FormControl>
-                  <RoleSystemPromptTextarea
-                    value={field.value}
-                    onChange={field.onChange}
-                    maxLength={5000}
-                    disabled={isSubmitting || isLoading}
-                    isDirty={isSystemPromptDirty}
-                    aria-describedby={
-                      fieldState.error ? `${field.name}-error` : undefined
-                    }
-                  />
-                </FormControl>
-                <FormMessage id={`${field.name}-error`} />
-              </FormItem>
-            )}
-          />
+    // Get field-level dirty states for visual indicators
+    const isNameDirty = useMemo(() => {
+      if (!initialData) return form.formState.dirtyFields.name;
+      return watchedValues.name?.trim() !== initialData.name?.trim();
+    }, [watchedValues.name, initialData, form.formState.dirtyFields.name]);
 
-          {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-6 border-t">
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleCancel}
-              disabled={isSubmitting || isLoading}
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              disabled={
-                !form.formState.isValid ||
-                isSubmitting ||
-                isLoading ||
-                !isActuallyDirty
-              }
-              className="min-w-[var(--dt-button-min-width)]"
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>{isEditMode ? "Update" : "Save"} Role</>
+    const isDescriptionDirty = useMemo(() => {
+      if (!initialData) return form.formState.dirtyFields.description;
+      return (
+        watchedValues.description?.trim() !== initialData.description?.trim()
+      );
+    }, [
+      watchedValues.description,
+      initialData,
+      form.formState.dirtyFields.description,
+    ]);
+
+    const isSystemPromptDirty = useMemo(() => {
+      if (!initialData) return form.formState.dirtyFields.systemPrompt;
+      return (
+        watchedValues.systemPrompt?.trim() !== initialData.systemPrompt?.trim()
+      );
+    }, [
+      watchedValues.systemPrompt,
+      initialData,
+      form.formState.dirtyFields.systemPrompt,
+    ]);
+
+    return (
+      <div className="space-y-6">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
+            {/* Name Field */}
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormControl>
+                    <RoleNameInput
+                      value={field.value}
+                      onChange={field.onChange}
+                      existingRoles={existingRoles}
+                      currentRoleId={currentRoleId}
+                      disabled={isSubmitting || isLoading}
+                      isDirty={isNameDirty}
+                      aria-describedby={
+                        fieldState.error ? `${field.name}-error` : undefined
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage id={`${field.name}-error`} />
+                </FormItem>
               )}
-            </Button>
-          </div>
-        </form>
-      </Form>
-    </div>
-  );
-};
+            />
+
+            {/* Description Field */}
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormControl>
+                    <RoleDescriptionTextarea
+                      value={field.value}
+                      onChange={field.onChange}
+                      maxLength={500}
+                      disabled={isSubmitting || isLoading}
+                      isDirty={isDescriptionDirty}
+                      aria-describedby={
+                        fieldState.error ? `${field.name}-error` : undefined
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage id={`${field.name}-error`} />
+                </FormItem>
+              )}
+            />
+
+            {/* System Prompt Field */}
+            <FormField
+              control={form.control}
+              name="systemPrompt"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormControl>
+                    <RoleSystemPromptTextarea
+                      value={field.value}
+                      onChange={field.onChange}
+                      maxLength={5000}
+                      disabled={isSubmitting || isLoading}
+                      isDirty={isSystemPromptDirty}
+                      aria-describedby={
+                        fieldState.error ? `${field.name}-error` : undefined
+                      }
+                    />
+                  </FormControl>
+                  <FormMessage id={`${field.name}-error`} />
+                </FormItem>
+              )}
+            />
+
+            {/* Form Actions */}
+            <div className="flex items-center justify-end gap-3 pt-6 border-t">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleCancel}
+                disabled={isSubmitting || isLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={
+                  !form.formState.isValid ||
+                  isSubmitting ||
+                  isLoading ||
+                  !isActuallyDirty
+                }
+                className="min-w-[var(--dt-button-min-width)]"
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>{isEditMode ? "Update" : "Save"} Role</>
+                )}
+              </Button>
+            </div>
+          </form>
+        </Form>
+      </div>
+    );
+  },
+);
+
+CreateRoleForm.displayName = "CreateRoleForm";

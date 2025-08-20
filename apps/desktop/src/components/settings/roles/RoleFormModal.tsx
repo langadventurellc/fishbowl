@@ -30,7 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
-import { CreateRoleForm } from "./CreateRoleForm";
+import { CreateRoleForm, type CreateRoleFormRef } from "./CreateRoleForm";
 
 export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   isOpen,
@@ -46,6 +46,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
 
   // Focus trap setup
   const triggerRef = useRef<HTMLElement | null>(null);
+  const formRef = useRef<CreateRoleFormRef>(null);
   const { containerRef } = useFocusTrap({
     isActive: isOpen,
     restoreFocus: true,
@@ -79,6 +80,9 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
           variant: "destructive",
         });
         if (!confirmed) return;
+
+        // Reset form to initial data if user confirmed they want to discard changes
+        formRef.current?.resetToInitialData();
       }
       onOpenChange(open);
     },
@@ -154,6 +158,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
         </DialogHeader>
 
         <CreateRoleForm
+          ref={formRef}
           mode={mode}
           initialData={role}
           onSave={handleSave}
