@@ -5,7 +5,7 @@ status: open
 priority: medium
 parent: F-defaults-management-feature
 prerequisites:
-  - T-implement-defaults-state
+  - T-create-defaults-persistence
 affectedFiles: {}
 log: []
 schema: v1.0
@@ -20,6 +20,8 @@ Update the AgentForm component to use stored defaults from useAgentsStore instea
 
 The AgentForm currently uses hardcoded default values (temperature: 1.0, maxTokens: 1000, topP: 0.95). These should come from the user's configured defaults in the store so that new agents automatically use the user's preferred settings.
 
+**Note**: The persistence layer has been implemented with factory defaults of temperature: 0.7, maxTokens: 2000, topP: 0.9 (industry standards). The form should use the store's getDefaults() method which will return these values or any user-customized defaults.
+
 ## Current Implementation Analysis
 
 AgentForm currently hardcodes defaults in the form's defaultValues:
@@ -30,9 +32,7 @@ defaultValues: {
   model: initialData?.model || "Claude 3.5 Sonnet",
   role: initialData?.role || "",
   personality: initialData?.personality || "",
-  temperature: initialData?.temperature || 1.0,  // <- hardcoded
-  maxTokens: initialData?.maxTokens || 1000,     // <- hardcoded
-  topP: initialData?.topP || 0.95,               // <- hardcoded
+  temperature: initialData?.temperature || 0.7,  // <- hardcoded (should use store defaults)\n  maxTokens: initialData?.maxTokens || 2000,     // <- hardcoded (should use store defaults)\n  topP: initialData?.topP || 0.9,               // <- hardcoded (should use store defaults)
   systemPrompt: initialData?.systemPrompt || "",
 }
 ```
@@ -154,8 +154,9 @@ export const AgentForm: React.FC<AgentFormProps> = ({
 
 ## Dependencies
 
-- Requires T-implement-defaults-state for store defaults functionality
-- Should work independently of persistence layer (uses fallbacks)
+- Requires T-create-defaults-persistence (completed) which provides defaults integration into the agents configuration system
+- The useAgentsStore already has comprehensive defaults management with getDefaults(), setDefaults(), and resetDefaults() methods
+- Store automatically handles persistence through existing agents infrastructure
 
 ## Files to Modify
 

@@ -5,7 +5,7 @@ status: open
 priority: medium
 parent: F-defaults-management-feature
 prerequisites:
-  - T-implement-defaults-state
+  - T-create-defaults-persistence
 affectedFiles: {}
 log: []
 schema: v1.0
@@ -28,6 +28,8 @@ The DefaultsTab currently:
 - Has hardcoded default values (temperature: 1.0, maxTokens: 1000, topP: 0.95)
 - Implements its own reset functionality
 - No persistence across app sessions
+
+**Note**: The persistence layer has been implemented with factory defaults of temperature: 0.7, maxTokens: 2000, topP: 0.9 (industry standards). The component should use the store's defaults, setDefaults(), and resetDefaults() methods.
 
 ## Implementation Requirements
 
@@ -95,7 +97,7 @@ export const DefaultsTab: React.FC = () => {
 
   const handleTemperatureChange = useCallback(
     (values: number[]) => {
-      const newValue = values[0] ?? 1.0;
+      const newValue = values[0] ?? 0.7; // Use factory default fallback
       setDefaults({ ...defaults, temperature: newValue });
     },
     [defaults, setDefaults],
@@ -124,8 +126,9 @@ export const DefaultsTab: React.FC = () => {
 
 ## Dependencies
 
-- Requires T-implement-defaults-state for store functionality
-- May need to wait for persistence layer for full functionality
+- Requires T-create-defaults-persistence (completed) which provides defaults integration into the agents configuration system
+- The useAgentsStore already has comprehensive defaults management with getDefaults(), setDefaults(), and resetDefaults() methods
+- Store automatically handles persistence through existing agents infrastructure with debounced saving
 
 ## Files to Modify
 
