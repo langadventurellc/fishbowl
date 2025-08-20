@@ -90,6 +90,18 @@ export const persistedAgentSchema = z
   .passthrough(); // Allow unknown fields for schema evolution
 
 /**
+ * Zod schema for validating agent default parameters.
+ * These defaults are applied to newly created agents.
+ */
+export const agentDefaultsSchema = z
+  .object({
+    temperature: z.number().min(0).max(2).default(0.7),
+    maxTokens: z.number().min(1).max(4000).int().default(2000),
+    topP: z.number().min(0).max(1).default(0.9),
+  })
+  .strict();
+
+/**
  * Master Zod schema for validating complete agents settings file.
  *
  * Features:
@@ -113,6 +125,13 @@ export const persistedAgentsSettingsSchema = z
         message: "Agents must be an array of agent objects",
       })
       .default([]),
+
+    // Default values for new agents
+    defaults: agentDefaultsSchema.default({
+      temperature: 0.7,
+      maxTokens: 2000,
+      topP: 0.9,
+    }),
 
     // Metadata with automatic generation
     lastUpdated: z

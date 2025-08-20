@@ -5,6 +5,11 @@ describe("mapAgentsPersistenceToUI", () => {
   it("should map empty agents array correctly", () => {
     const persistedData: PersistedAgentsSettingsData = {
       agents: [],
+      defaults: {
+        temperature: 0.7,
+        maxTokens: 2000,
+        topP: 0.9,
+      },
       schemaVersion: "1.0.0",
       lastUpdated: "2023-01-01T00:00:00.000Z",
     };
@@ -30,6 +35,11 @@ describe("mapAgentsPersistenceToUI", () => {
           updatedAt: "2023-01-01T00:00:00.000Z",
         },
       ],
+      defaults: {
+        temperature: 0.7,
+        maxTokens: 2000,
+        topP: 0.9,
+      },
       schemaVersion: "1.0.0",
       lastUpdated: "2023-01-01T00:00:00.000Z",
     };
@@ -67,6 +77,11 @@ describe("mapAgentsPersistenceToUI", () => {
           updatedAt: "2023-01-01T00:00:00.000Z",
         },
       ],
+      defaults: {
+        temperature: 0.7,
+        maxTokens: 2000,
+        topP: 0.9,
+      },
       schemaVersion: "1.0.0",
       lastUpdated: "2023-01-01T00:00:00.000Z",
     };

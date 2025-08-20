@@ -35,9 +35,9 @@ const RETRY_BASE_DELAY_MS = 1000;
 
 // Default agent defaults
 const DEFAULT_AGENT_DEFAULTS: AgentDefaults = {
-  temperature: 1.0,
-  maxTokens: 1000,
-  topP: 0.95,
+  temperature: 0.7,
+  maxTokens: 2000,
+  topP: 0.9,
 };
 
 // Generate unique ID using crypto API or fallback

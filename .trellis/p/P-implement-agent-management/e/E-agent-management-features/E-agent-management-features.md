@@ -43,13 +43,26 @@ affectedFiles:
   packages/ui-shared/src/stores/useAgentsStore.ts: Implemented complete defaults
     state management including factory defaults constant, debounced auto-save,
     and all five defaults methods with proper error handling and persistence
-    integration
+    integration; Updated default values to match requirements (0.7, 2000, 0.9) -
+    comprehensive defaults management was already implemented
   packages/ui-shared/src/stores/__tests__/AgentsState.test.ts:
     Updated test mocks to include the new defaults property in state interface
     validation
   packages/ui-shared/src/stores/__tests__/AgentsActions.test.ts:
     Added test mocks and expectations for all five new defaults management
-    methods
+    methods; Fixed mock return data to include defaults field
+  packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
+    Added agentDefaultsSchema and integrated defaults field into
+    persistedAgentsSettingsSchema with factory default values
+  packages/shared/src/types/agents/index.ts: Added export for agentDefaultsSchema schema
+  packages/shared/src/services/storage/utils/agents/createDefaultAgentsSettings.ts:
+    Updated factory function to include defaults with industry-standard values
+    (0.7, 2000, 0.9)
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Fixed test data to include defaults field for schema compliance
+  packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts: Updated test data to include defaults field for schema validation
+  packages/ui-shared/src/mapping/agents/mapAgentsUIToPersistence.ts:
+    Updated mapping function to include defaults when converting UI data to
+    persistence format
 log: []
 schema: v1.0
 childrenIds:

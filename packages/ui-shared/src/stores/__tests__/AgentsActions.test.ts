@@ -53,6 +53,11 @@ describe("AgentsActions Interface", () => {
         schemaVersion: "1.0.0",
         lastUpdated: "",
         agents: [],
+        defaults: {
+          temperature: 0.7,
+          maxTokens: 2000,
+          topP: 0.9,
+        },
       }),
       importAgents: async (
         _data: PersistedAgentsSettingsData,

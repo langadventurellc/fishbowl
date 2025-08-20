@@ -20,10 +20,15 @@ affectedFiles:
     and type inference following roleSchema test patterns
   packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
     Created comprehensive Zod schema for agent persistence validation with
-    security limits and clear error messages
+    security limits and clear error messages; Added agentDefaultsSchema and
+    integrated defaults field into persistedAgentsSettingsSchema with factory
+    default values
   packages/shared/src/types/agents/PersistedAgentData.ts: Created type definition for individual agent data derived from schema
   packages/shared/src/types/agents/PersistedAgentsSettingsData.ts: Created type definition for complete agents settings file structure
-  packages/shared/src/services/storage/utils/agents/createDefaultAgentsSettings.ts: Created utility function for generating default empty agents settings
+  packages/shared/src/services/storage/utils/agents/createDefaultAgentsSettings.ts:
+    Created utility function for generating default empty agents settings;
+    Updated factory function to include defaults with industry-standard values
+    (0.7, 2000, 0.9)
   packages/shared/src/services/storage/utils/agents/index.ts: Created barrel export file for agents utilities
   packages/shared/src/services/storage/utils/agents/__tests__/createDefaultAgentsSettings.test.ts: Created comprehensive unit tests for default settings utility
   packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
@@ -34,7 +39,8 @@ affectedFiles:
     models
   packages/ui-shared/src/mapping/agents/mapAgentsUIToPersistence.ts:
     Created mapping function to transform UI agent data to persistence format
-    with schema validation
+    with schema validation; Updated mapping function to include defaults when
+    converting UI data to persistence format
   packages/ui-shared/src/mapping/agents/mapSingleAgentPersistenceToUI.ts:
     Created utility function for mapping individual agents from persistence to
     UI format with field normalization
@@ -43,11 +49,14 @@ affectedFiles:
     persistence format
   packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts: Created field normalization utility to ensure data constraints and quality
   packages/ui-shared/src/mapping/agents/index.ts: Created barrel export file for all agent mapping functions
-  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Created comprehensive unit tests for persistence-to-UI mapping function
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts:
+    Created comprehensive unit tests for persistence-to-UI mapping function;
+    Fixed test data to include defaults field for schema compliance
   packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts: Created unit tests for UI-to-persistence mapping function
   packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
     Created round-trip data integrity tests to ensure data preservation through
-    conversion cycles
+    conversion cycles; Updated test data to include defaults field for schema
+    validation
   packages/shared/src/types/settings/index.ts: Added exports for agent types and
     schemas to make them available to other packages
   packages/ui-shared/src/types/settings/index.ts:
@@ -56,7 +65,9 @@ affectedFiles:
     across the application; Added export for RoleSelectProps interface; Added
     exports for new shared types
   packages/ui-shared/src/mapping/index.ts: Added exports for agents and personalities mapping functions
-  packages/shared/src/types/agents/index.ts: Created new barrel file exporting agent persistence types and schemas
+  packages/shared/src/types/agents/index.ts: Created new barrel file exporting
+    agent persistence types and schemas; Added export for agentDefaultsSchema
+    schema
   packages/shared/src/services/storage/utils/index.ts: Added export for createDefaultAgentsSettings utility function
   packages/ui-shared/src/__tests__/agentExports.test.ts: Created integration tests verifying all agent exports are accessible
   packages/shared/src/__tests__/agentExports.test.ts: Created tests for shared package agent exports
@@ -127,14 +138,16 @@ affectedFiles:
   packages/ui-shared/src/stores/__tests__/AgentsActions.test.ts:
     Created unit tests validating AgentsActions interface method signatures;
     Added test mocks and expectations for all five new defaults management
-    methods
+    methods; Fixed mock return data to include defaults field
   packages/ui-shared/src/stores/__tests__/AgentsStore.test.ts: Created unit tests validating AgentsStore type composition and inheritance
   packages/ui-shared/src/stores/useAgentsStore.ts: Created new Zustand store for
     agent management with complete CRUD operations, auto-save, error handling,
     and persistence integration following established patterns; Implemented
     complete defaults state management including factory defaults constant,
     debounced auto-save, and all five defaults methods with proper error
-    handling and persistence integration
+    handling and persistence integration; Updated default values to match
+    requirements (0.7, 2000, 0.9) - comprehensive defaults management was
+    already implemented
   packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts:
     Created comprehensive unit test suite with 35 tests covering store
     initialization, CRUD operations, error handling, validation, and edge cases

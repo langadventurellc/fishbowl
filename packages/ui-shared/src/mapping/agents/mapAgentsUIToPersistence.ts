@@ -48,6 +48,11 @@ export function mapAgentsUIToPersistence(
   const persistedData: PersistedAgentsSettingsData = {
     schemaVersion: CURRENT_AGENTS_SCHEMA_VERSION,
     agents: mappedAgents,
+    defaults: {
+      temperature: 0.7,
+      maxTokens: 2000,
+      topP: 0.9,
+    },
     lastUpdated: new Date().toISOString(),
   };
 
