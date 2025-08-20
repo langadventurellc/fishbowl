@@ -34,13 +34,28 @@ affectedFiles:
   packages/ui-shared/src/mapping/agents/mapAgentsUIToPersistence.ts:
     Updated mapping function to include defaults when converting UI data to
     persistence format
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Integrated
+    useAgentsStore to use stored defaults for new agent creation. Updated
+    getDefaultValues function to conditionally use store defaults vs existing
+    agent data based on mode. Added useEffect to update form when defaults
+    change in create mode. Maintained all existing functionality while adding
+    dynamic defaults support.
+  apps/desktop/src/data/repositories/__tests__/AgentsRepository.test.ts:
+    Added missing defaults property to test mock data to fix TypeScript errors
+    after store integration
+  apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Added missing
+    defaults property to all PersistedAgentsSettingsData test objects to fix
+    TypeScript errors
+  apps/desktop/src/shared/ipc/__tests__/agentsIPC.test.ts:
+    Added missing defaults
+    property to all test data objects that use PersistedAgentsSettingsData type
+    to maintain type compatibility
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-defaults-persistence
   - T-integrate-agentform-with
   - T-integrate-defaultstab-with
-  - T-test-complete-defaults
+  - T-create-defaults-persistence
   - T-implement-defaults-state
 created: 2025-08-19T21:15:05.350Z
 updated: 2025-08-19T21:15:05.350Z

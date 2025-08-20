@@ -77,7 +77,9 @@ affectedFiles:
     operations, validation, error handling, and logging
   apps/desktop/src/data/repositories/__tests__/AgentsRepository.test.ts:
     Created comprehensive unit test suite with 18 test cases covering all
-    repository functionality including edge cases and error scenarios
+    repository functionality including edge cases and error scenarios; Added
+    missing defaults property to test mock data to fix TypeScript errors after
+    store integration
   apps/desktop/src/components/settings/agents/AgentForm.tsx: Replaced with
     temporary blank component to resolve type conflicts during backend
     implementation phase; Replaced stub component with complete React Hook Form
@@ -100,7 +102,11 @@ affectedFiles:
     updated cancel and save handlers to properly manage form dirty state and
     reset behavior; Reorganized form layout into logical sections, updated
     button variants and text, removed unused variable, and ensured proper JSX
-    structure
+    structure; Integrated useAgentsStore to use stored defaults for new agent
+    creation. Updated getDefaultValues function to conditionally use store
+    defaults vs existing agent data based on mode. Added useEffect to update
+    form when defaults change in create mode. Maintained all existing
+    functionality while adding dynamic defaults support.
   apps/desktop/src/data/repositories/agentsRepositoryManager.ts:
     Created new agentsRepositoryManager singleton following exact pattern from
     personalitiesRepositoryManager. Implements get(), initialize(), and reset()
@@ -174,7 +180,8 @@ affectedFiles:
     constants and types (constants, request types, response types)
   apps/desktop/src/shared/ipc/__tests__/agentsIPC.test.ts: Created comprehensive
     unit tests for agent IPC constants and type definitions with 9 passing test
-    cases
+    cases; Added missing defaults property to all test data objects that use
+    PersistedAgentsSettingsData type to maintain type compatibility
   apps/desktop/src/electron/agentsHandlers.ts: Created new file with
     setupAgentsHandlers function and load handler implementation following
     personalitiesHandlers pattern; Added save handler implementation with
@@ -189,7 +196,9 @@ affectedFiles:
     edge cases; Added AgentsResetResponse import, updated mock repository with
     resetAgents method, updated setup test to verify reset handler registration,
     and added comprehensive reset handler test suite covering success, error,
-    and repository initialization failure scenarios
+    and repository initialization failure scenarios; Added missing defaults
+    property to all PersistedAgentsSettingsData test objects to fix TypeScript
+    errors
   apps/desktop/src/electron/main.ts: Added import for setupAgentsHandlers and
     added function call with proper error handling and logging, following the
     exact pattern from personalities handlers setup

@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import {
   agentSchema,
+  useAgentsStore,
   useUnsavedChanges,
   type AgentFormData,
   type AgentFormProps,
@@ -42,21 +43,48 @@ export const AgentForm: React.FC<AgentFormProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showUnsavedDialog, setShowUnsavedDialog] = useState(false);
   const { setUnsavedChanges } = useUnsavedChanges();
+  const { defaults } = useAgentsStore();
+
+  const getDefaultValues = useCallback((): AgentFormData => {
+    if (mode === "edit" && initialData) {
+      // Editing mode: use existing agent data
+      return {
+        name: initialData.name || "",
+        model: initialData.model || "Claude 3.5 Sonnet",
+        role: initialData.role || "",
+        personality: initialData.personality || "",
+        temperature: initialData.temperature ?? 1.0,
+        maxTokens: initialData.maxTokens ?? 1000,
+        topP: initialData.topP ?? 0.95,
+        systemPrompt: initialData.systemPrompt || "",
+      };
+    }
+
+    // Create mode: use store defaults with fallback values
+    return {
+      name: "",
+      model: "Claude 3.5 Sonnet",
+      role: "",
+      personality: "",
+      temperature: defaults.temperature,
+      maxTokens: defaults.maxTokens,
+      topP: defaults.topP,
+      systemPrompt: "",
+    };
+  }, [mode, initialData, defaults]);
 
   const form = useForm<AgentFormData>({
     resolver: zodResolver(agentSchema),
-    defaultValues: {
-      name: initialData?.name || "",
-      model: initialData?.model || "Claude 3.5 Sonnet",
-      role: initialData?.role || "",
-      personality: initialData?.personality || "",
-      temperature: initialData?.temperature || 1.0,
-      maxTokens: initialData?.maxTokens || 1000,
-      topP: initialData?.topP || 0.95,
-      systemPrompt: initialData?.systemPrompt || "",
-    },
+    defaultValues: getDefaultValues(),
     mode: "onChange",
   });
+
+  // Update form when defaults change (for create mode)
+  useEffect(() => {
+    if (mode === "create") {
+      form.reset(getDefaultValues());
+    }
+  }, [defaults, mode, form, getDefaultValues]);
 
   // Track unsaved changes
   useEffect(() => {
@@ -95,22 +123,11 @@ export const AgentForm: React.FC<AgentFormProps> = ({
 
   const handleConfirmCancel = useCallback(() => {
     // Reset form to original values
-    form.reset(
-      initialData || {
-        name: "",
-        model: "Claude 3.5 Sonnet",
-        role: "",
-        personality: "",
-        temperature: 1.0,
-        maxTokens: 1000,
-        topP: 0.95,
-        systemPrompt: "",
-      },
-    );
+    form.reset(getDefaultValues());
     setUnsavedChanges(false);
     setShowUnsavedDialog(false);
     onCancel();
-  }, [form, initialData, setUnsavedChanges, onCancel]);
+  }, [form, getDefaultValues, setUnsavedChanges, onCancel]);
 
   return (
     <div className="space-y-6">

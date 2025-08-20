@@ -91,6 +91,11 @@ describe("agentsHandlers", () => {
             updatedAt: "2025-01-01T00:00:00.000Z",
           },
         ],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: "2025-01-01T12:00:00.000Z",
       };
 
@@ -125,6 +130,11 @@ describe("agentsHandlers", () => {
             updatedAt: null,
           },
         ],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: "2025-01-01T00:00:00.000Z",
       };
 
@@ -198,6 +208,11 @@ describe("agentsHandlers", () => {
             updatedAt: "2025-01-01T00:00:00.000Z",
           },
         ],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: "2025-01-01T12:00:00.000Z",
       };
 
@@ -239,6 +254,11 @@ describe("agentsHandlers", () => {
       const mockAgents: PersistedAgentsSettingsData = {
         schemaVersion: "1.0.0",
         agents: [],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: "2025-01-01T12:00:00.000Z",
       };
 
@@ -263,6 +283,11 @@ describe("agentsHandlers", () => {
       const mockAgents: PersistedAgentsSettingsData = {
         schemaVersion: "1.0.0",
         agents: [],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: "2025-01-01T12:00:00.000Z",
       };
 

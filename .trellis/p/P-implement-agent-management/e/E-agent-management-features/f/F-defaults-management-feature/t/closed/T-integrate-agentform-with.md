@@ -1,13 +1,35 @@
 ---
 id: T-integrate-agentform-with
 title: Integrate AgentForm with stored defaults for new agent creation
-status: open
+status: done
 priority: medium
 parent: F-defaults-management-feature
 prerequisites:
   - T-implement-defaults-state
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Integrated
+    useAgentsStore to use stored defaults for new agent creation. Updated
+    getDefaultValues function to conditionally use store defaults vs existing
+    agent data based on mode. Added useEffect to update form when defaults
+    change in create mode. Maintained all existing functionality while adding
+    dynamic defaults support.
+  apps/desktop/src/data/repositories/__tests__/AgentsRepository.test.ts:
+    Added missing defaults property to test mock data to fix TypeScript errors
+    after store integration
+  apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Added missing
+    defaults property to all PersistedAgentsSettingsData test objects to fix
+    TypeScript errors
+  apps/desktop/src/shared/ipc/__tests__/agentsIPC.test.ts:
+    Added missing defaults
+    property to all test data objects that use PersistedAgentsSettingsData type
+    to maintain type compatibility
+log:
+  - Successfully integrated AgentForm component with stored defaults from
+    useAgentsStore. The implementation now dynamically uses store defaults for
+    temperature, maxTokens, and topP when creating new agents, while preserving
+    existing behavior for editing mode. Added proper fallback handling and form
+    updates when defaults change. Fixed all related test files to include the
+    new defaults property.
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T01:57:26.469Z

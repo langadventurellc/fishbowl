@@ -46,6 +46,11 @@ describe("Agents IPC Types", () => {
       agents: {
         schemaVersion: "1.0.0",
         agents: [],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: new Date().toISOString(),
       },
     };
@@ -64,6 +69,11 @@ describe("Agents IPC Types", () => {
       data: {
         schemaVersion: "1.0.0",
         agents: [],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: new Date().toISOString(),
       },
     };
@@ -77,6 +87,11 @@ describe("Agents IPC Types", () => {
       data: {
         schemaVersion: "1.0.0",
         agents: [],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: new Date().toISOString(),
       },
     };
@@ -122,6 +137,11 @@ describe("Agents IPC Exports", () => {
       agents: {
         schemaVersion: "1.0.0",
         agents: [],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: new Date().toISOString(),
       },
     };
@@ -147,6 +167,11 @@ describe("Type-only Imports", () => {
       data: {
         schemaVersion: "1.0.0",
         agents: [],
+        defaults: {
+          temperature: 1.0,
+          maxTokens: 1000,
+          topP: 0.95,
+        },
         lastUpdated: new Date().toISOString(),
       },
     });
