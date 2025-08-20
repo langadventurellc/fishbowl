@@ -3,7 +3,6 @@ import type {
   StructuredLogger,
 } from "@fishbowl-ai/shared";
 import {
-  AgentDefaults,
   AgentFormData,
   AgentSettingsViewModel,
   AgentsPersistenceAdapter,
@@ -38,10 +37,4 @@ export interface AgentsActions {
   getErrorDetails: () => ErrorState;
   // Cleanup method to prevent memory leaks
   destroy: () => void;
-  // Defaults management methods
-  setDefaults: (defaults: AgentDefaults) => void;
-  getDefaults: () => AgentDefaults;
-  loadDefaults: () => Promise<void>;
-  saveDefaults: (defaults: AgentDefaults) => Promise<void>;
-  resetDefaults: () => Promise<void>;
 }
