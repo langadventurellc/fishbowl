@@ -20,10 +20,37 @@ jest.mock("../../../../contexts", () => ({
 }));
 
 // Mock the useAgentsStore hook
+const mockDeleteAgent = jest.fn();
 const mockUseAgentsStore = jest.fn();
 jest.mock("@fishbowl-ai/ui-shared", () => ({
   useAgentsStore: () => mockUseAgentsStore(),
   type: jest.fn(),
+}));
+
+// Mock the useConfirmationDialog hook
+const mockShowConfirmation = jest.fn();
+const mockConfirmationDialogProps = null;
+jest.mock("../../../../hooks/useConfirmationDialog", () => ({
+  useConfirmationDialog: () => ({
+    showConfirmation: mockShowConfirmation,
+    confirmationDialogProps: mockConfirmationDialogProps,
+  }),
+}));
+
+// Mock the ConfirmationDialog component
+jest.mock("../../../../components/ui/confirmation-dialog", () => ({
+  ConfirmationDialog: ({ title, message, onConfirm, onCancel }: any) => (
+    <div data-testid="confirmation-dialog">
+      <h2>{title}</h2>
+      <p>{message}</p>
+      <button onClick={onConfirm} data-testid="confirm-button">
+        Delete
+      </button>
+      <button onClick={onCancel} data-testid="cancel-button">
+        Cancel
+      </button>
+    </div>
+  ),
 }));
 
 // Mock agent data
@@ -68,6 +95,7 @@ const defaultStoreState = {
   isInitialized: true,
   retryLastOperation: jest.fn(),
   clearErrorState: jest.fn(),
+  deleteAgent: mockDeleteAgent,
 };
 
 describe("LibraryTab Component", () => {
@@ -422,6 +450,164 @@ describe("LibraryTab Component", () => {
       expect(() => {
         render(<LibraryTab {...defaultProps} />);
       }).not.toThrow();
+    });
+  });
+
+  describe("Delete Confirmation Dialog", () => {
+    beforeEach(() => {
+      jest.clearAllMocks();
+      mockUseAgentsStore.mockReturnValue(defaultStoreState);
+    });
+
+    it("shows confirmation dialog when delete button is clicked", async () => {
+      mockShowConfirmation.mockResolvedValue(true);
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      expect(deleteButtons).toHaveLength(2);
+
+      fireEvent.click(deleteButtons[0]!);
+
+      expect(mockShowConfirmation).toHaveBeenCalledWith({
+        title: "Delete Agent",
+        message: `Are you sure you want to delete "Research Assistant"? This action cannot be undone.`,
+        confirmText: "Delete",
+        cancelText: "Cancel",
+        variant: "destructive",
+      });
+    });
+
+    it("displays correct agent name in confirmation message", async () => {
+      mockShowConfirmation.mockResolvedValue(true);
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[1]!); // Click second agent (Code Reviewer)
+
+      expect(mockShowConfirmation).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: `Are you sure you want to delete "Code Reviewer"? This action cannot be undone.`,
+        }),
+      );
+    });
+
+    it("calls deleteAgent when user confirms deletion", async () => {
+      mockShowConfirmation.mockResolvedValue(true);
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[0]!);
+
+      // Wait for the async operation to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockDeleteAgent).toHaveBeenCalledWith("agent-1");
+    });
+
+    it("does not call deleteAgent when user cancels deletion", async () => {
+      mockShowConfirmation.mockResolvedValue(false);
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[0]!);
+
+      // Wait for the async operation to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockDeleteAgent).not.toHaveBeenCalled();
+    });
+
+    it("prevents multiple deletions of the same agent", async () => {
+      mockShowConfirmation.mockImplementation(() => new Promise(() => {})); // Never resolves
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[0]!);
+      fireEvent.click(deleteButtons[0]!); // Click again while first is pending
+
+      expect(mockShowConfirmation).toHaveBeenCalledTimes(1);
+    });
+
+    it("handles errors during deletion gracefully", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+      mockShowConfirmation.mockResolvedValue(true);
+      mockDeleteAgent.mockImplementation(() => {
+        throw new Error("Deletion failed");
+      });
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[0]!);
+
+      // Wait for the async operation to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockDeleteAgent).toHaveBeenCalledWith("agent-1");
+      // Error should be logged but not crash the app
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("resets loading state after successful deletion", async () => {
+      mockShowConfirmation.mockResolvedValue(true);
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[0]!);
+
+      // Wait for the async operation to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockDeleteAgent).toHaveBeenCalledWith("agent-1");
+      // Component should be able to handle another deletion
+      fireEvent.click(deleteButtons[1]!);
+      expect(mockShowConfirmation).toHaveBeenCalledTimes(2);
+    });
+
+    it("resets loading state after cancelled deletion", async () => {
+      mockShowConfirmation.mockResolvedValue(false);
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[0]!);
+
+      // Wait for the async operation to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      // Component should be able to handle another deletion
+      fireEvent.click(deleteButtons[1]!);
+      expect(mockShowConfirmation).toHaveBeenCalledTimes(2);
+    });
+
+    it("resets loading state after error during deletion", async () => {
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+      mockShowConfirmation.mockResolvedValue(true);
+      mockDeleteAgent.mockImplementation(() => {
+        throw new Error("Deletion failed");
+      });
+
+      render(<LibraryTab {...defaultProps} />);
+
+      const deleteButtons = screen.getAllByLabelText(/Delete .* agent/);
+      fireEvent.click(deleteButtons[0]!);
+
+      // Wait for the async operation to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      // Component should be able to handle another deletion
+      mockDeleteAgent.mockReset();
+      fireEvent.click(deleteButtons[1]!);
+      expect(mockShowConfirmation).toHaveBeenCalledTimes(2);
+
+      consoleErrorSpy.mockRestore();
     });
   });
 });

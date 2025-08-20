@@ -26,11 +26,16 @@ affectedFiles:
   apps/desktop/src/components/settings/agents/LibraryTab.tsx: Replaced mock data
     with useAgentsStore integration, added loading state with spinner,
     implemented error state with retry functionality using Card components,
-    updated type imports to use AgentSettingsViewModel
+    updated type imports to use AgentSettingsViewModel; Added delete
+    confirmation functionality with useConfirmationDialog hook integration,
+    handleDeleteAgent function, proper error handling, and loading state
+    management
   apps/desktop/src/components/settings/agents/__tests__/LibraryTab.test.tsx:
     Created comprehensive test suite with 25 tests covering store integration,
     loading states, error states, empty states, component state changes, type
-    compatibility, accessibility, and edge cases
+    compatibility, accessibility, and edge cases; Added comprehensive test suite
+    for delete confirmation dialog functionality with 9 new test cases covering
+    all user flows, error scenarios, and edge cases
 log: []
 schema: v1.0
 childrenIds:

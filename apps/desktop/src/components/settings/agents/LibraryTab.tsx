@@ -23,6 +23,8 @@ import { announceToScreenReader } from "../../../utils/announceToScreenReader";
 import { useGridNavigation } from "../../../utils/gridNavigation";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import { ConfirmationDialog } from "../../ui/confirmation-dialog";
+import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { AgentCard, EmptyLibraryState } from "./";
 import { useServices } from "../../../contexts";
 
@@ -36,7 +38,10 @@ interface AgentGridProps {
 
 const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
   const { logger } = useServices();
+  const { deleteAgent } = useAgentsStore();
+  const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
   const [focusedIndex, setFocusedIndex] = useState(-1);
+  const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -66,6 +71,59 @@ const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
       handleKeyDown(e, focusedIndex);
     },
     [handleKeyDown, focusedIndex],
+  );
+
+  const handleDeleteAgent = useCallback(
+    async (agentId: string) => {
+      const agent = agents.find((a) => a.id === agentId);
+      if (!agent) return;
+
+      // Prevent multiple deletions of the same agent
+      if (isDeleting === agentId) return;
+
+      logger.info("Delete agent requested", { agentId });
+
+      try {
+        setIsDeleting(agentId);
+
+        const confirmed = await showConfirmation({
+          title: "Delete Agent",
+          message: `Are you sure you want to delete "${agent.name}"? This action cannot be undone.`,
+          confirmText: "Delete",
+          cancelText: "Cancel",
+          variant: "destructive",
+        });
+
+        if (confirmed) {
+          deleteAgent(agentId);
+          announceToScreenReader(
+            `Agent ${agent.name} has been deleted`,
+            "assertive",
+          );
+          logger.info("Agent deleted successfully", {
+            agentId,
+            agentName: agent.name,
+          });
+        } else {
+          announceToScreenReader(
+            `Deletion of ${agent.name} was cancelled`,
+            "polite",
+          );
+        }
+      } catch (error) {
+        logger.error(
+          `Error during agent deletion for agent ${agentId}`,
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        announceToScreenReader(
+          `Failed to delete agent ${agent.name}`,
+          "assertive",
+        );
+      } finally {
+        setIsDeleting(null);
+      }
+    },
+    [agents, logger, showConfirmation, deleteAgent, isDeleting],
   );
 
   return (
@@ -103,16 +161,13 @@ const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
                 "polite",
               );
             }}
-            onDelete={(agentId) => {
-              logger.info("Delete agent requested", { agentId });
-              announceToScreenReader(
-                `Deleting agent ${agent.name}`,
-                "assertive",
-              );
-            }}
+            onDelete={handleDeleteAgent}
           />
         </div>
       ))}
+      {confirmationDialogProps && (
+        <ConfirmationDialog {...confirmationDialogProps} />
+      )}
     </div>
   );
 };
