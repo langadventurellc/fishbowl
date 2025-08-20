@@ -17,10 +17,13 @@ affectedFiles:
     Created comprehensive unit tests verifying new behavior integration, form
     structure support, edit mode functionality, and component error handling.
     All 7 tests pass successfully.
+  apps/desktop/src/components/settings/SettingsNavigation.tsx:
+    Modified navigationSections array to remove agents subsections - changed
+    hasSubTabs from true to false and removed subTabs property containing
+    Library and Defaults items
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-three-new-personality
   - T-remove-agents-subsections
   - T-remove-defaultstab-component
   - T-remove-llm-parameters-from
@@ -29,6 +32,7 @@ childrenIds:
   - T-update-agent-types-to-remove
   - T-update-agents-store-to-remove
   - T-update-persistence-schemas-to
+  - T-add-three-new-personality
 created: 2025-08-20T18:18:06.361Z
 updated: 2025-08-20T18:18:06.361Z
 ---

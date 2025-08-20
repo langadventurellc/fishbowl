@@ -1,12 +1,23 @@
 ---
 id: T-remove-agents-subsections
 title: Remove Agents Subsections from SettingsSidebar
-status: open
+status: done
 priority: high
 parent: F-remove-agent-defaults-and
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/SettingsNavigation.tsx:
+    Modified navigationSections array to remove agents subsections - changed
+    hasSubTabs from true to false and removed subTabs property containing
+    Library and Defaults items
+log:
+  - 'Successfully removed subsections from the Agents navigation item in
+    SettingsNavigation component. The agents section now appears as a single
+    navigation item without subsections for "Library" and "Defaults". Updated
+    the navigationSections array to set hasSubTabs: false and removed the
+    subTabs property from the agents section configuration. All quality checks
+    (linting, formatting, type checking) pass and existing tests continue to
+    pass.'
 schema: v1.0
 childrenIds: []
 created: 2025-08-20T18:27:45.166Z
