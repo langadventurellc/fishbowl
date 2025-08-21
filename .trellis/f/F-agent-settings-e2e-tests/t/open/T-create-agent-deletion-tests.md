@@ -205,7 +205,7 @@ import {
   createMockAnalystAgent,
   waitForAgentModal,
   waitForAgentsList,
-} from "./index";
+} from "../../../helpers/settings";
 
 test.describe("Feature: Agent Management - Deletion", () => {
   const testSuite = setupAgentsTestSuite();
@@ -359,7 +359,7 @@ const confirmDeletion = async (window: TestWindow) => {
 - `/tests/desktop/features/settings/llm-setup/delete-configuration.spec.ts`
 - `/tests/desktop/features/settings/roles/roles-deletion.spec.ts`
 - `/tests/desktop/features/settings/personalities/personalities-deletion.spec.ts`
-- `/tests/desktop/features/settings/agents/__tests__/LibraryTab.test.tsx` for delete patterns
+- `/tests/desktop/features/settings/llm-setup/delete-configuration.spec.ts` for delete patterns
 
 ### Selector Strategy
 

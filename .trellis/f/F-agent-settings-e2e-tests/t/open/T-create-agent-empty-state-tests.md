@@ -401,7 +401,7 @@ import {
   createMockAgentData,
   waitForAgentModal,
   waitForAgentsList,
-} from "./index";
+} from "../../../helpers/settings";
 
 test.describe("Feature: Agent Management - Empty State", () => {
   const testSuite = setupAgentsTestSuite();

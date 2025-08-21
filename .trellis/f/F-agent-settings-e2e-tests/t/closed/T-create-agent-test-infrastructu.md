@@ -1,12 +1,28 @@
 ---
 id: T-create-agent-test-infrastructu
 title: Create Agent Test Infrastructure Setup
-status: open
+status: done
 priority: high
 parent: F-agent-settings-e2e-tests
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/features/settings/agents/setupAgentsTestSuite.ts:
+    Core test suite setup following LLM patterns with Electron app management,
+    modal cleanup, and agents.json cleanup
+  tests/desktop/helpers/settings/cleanupAgentsStorage.ts: Utility for robust
+    agents.json file deletion with retry logic and error handling
+  tests/desktop/features/settings/agents/index.ts: Barrel exports for agent test helper functions and infrastructure
+  tests/desktop/features/settings/agents/infrastructure-test.spec.ts: Verification test to ensure infrastructure works correctly
+log:
+  - Successfully created the complete agent test infrastructure following
+    established LLM test patterns. Implemented setupAgentsTestSuite.ts for
+    managing single Electron app instance per test suite with proper
+    beforeAll/beforeEach/afterEach cleanup. Created cleanupAgentsStorage.ts
+    utility for robust agents.json file deletion with retry logic. Added
+    index.ts barrel exports for clean imports. Infrastructure supports modal
+    state management, file cleanup between tests, and provides foundation for
+    all subsequent agent test files. All files follow existing code conventions
+    and pass type checking.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T00:27:50.999Z

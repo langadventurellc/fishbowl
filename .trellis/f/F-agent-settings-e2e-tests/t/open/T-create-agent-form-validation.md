@@ -276,7 +276,7 @@ import {
   createInvalidAgentData,
   waitForAgentModal,
   waitForAgentsList,
-} from "./index";
+} from "../../../helpers/settings";
 
 test.describe("Feature: Agent Management - Form Validation", () => {
   const testSuite = setupAgentsTestSuite();

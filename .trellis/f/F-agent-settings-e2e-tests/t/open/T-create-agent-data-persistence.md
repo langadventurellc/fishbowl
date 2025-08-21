@@ -300,7 +300,7 @@ import {
   createMockTechnicalAgent,
   waitForAgentModal,
   waitForAgentsList,
-} from "./index";
+} from "../../../helpers/settings";
 
 test.describe("Feature: Agent Management - Data Persistence", () => {
   const testSuite = setupAgentsTestSuite();

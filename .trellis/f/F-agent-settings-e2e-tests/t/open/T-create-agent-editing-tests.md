@@ -182,7 +182,7 @@ import {
   createMockAnalystAgent,
   waitForAgentModal,
   waitForAgentsList,
-} from "./index";
+} from "../../../helpers/settings";
 
 test.describe("Feature: Agent Management - Editing", () => {
   const testSuite = setupAgentsTestSuite();

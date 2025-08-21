@@ -44,7 +44,7 @@ Create navigation and UI interaction helper functions for agent settings tests, 
 ### openAgentsSection.ts Implementation
 
 ```typescript
-import type { TestWindow } from "../index";
+import type { TestWindow } from "../../index";
 
 export const openAgentsSection = async (window: TestWindow) => {
   // Open settings modal if not already open
@@ -73,7 +73,7 @@ export const openAgentsSection = async (window: TestWindow) => {
 
 ```typescript
 import { expect } from "@playwright/test";
-import type { TestWindow } from "../index";
+import type { TestWindow } from "../../index";
 
 export const waitForAgentModal = async (
   window: TestWindow,
@@ -99,7 +99,7 @@ export const waitForAgentModal = async (
 
 ```typescript
 import { expect } from "@playwright/test";
-import type { TestWindow } from "../index";
+import type { TestWindow } from "../../index";
 
 export const waitForAgentsList = async (
   window: TestWindow,

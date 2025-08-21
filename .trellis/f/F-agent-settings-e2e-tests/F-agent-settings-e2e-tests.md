@@ -1,13 +1,29 @@
 ---
 id: F-agent-settings-e2e-tests
 title: Agent Settings E2E Tests
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  tests/desktop/features/settings/agents/setupAgentsTestSuite.ts:
+    Core test suite setup following LLM patterns with Electron app management,
+    modal cleanup, and agents.json cleanup
+  tests/desktop/helpers/settings/cleanupAgentsStorage.ts: Utility for robust
+    agents.json file deletion with retry logic and error handling
+  tests/desktop/features/settings/agents/index.ts: Barrel exports for agent test helper functions and infrastructure
+  tests/desktop/features/settings/agents/infrastructure-test.spec.ts: Verification test to ensure infrastructure works correctly
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-agent-creation-tests
+  - T-create-agent-data-persistence
+  - T-create-agent-deletion-tests
+  - T-create-agent-editing-tests
+  - T-create-agent-empty-state-tests
+  - T-create-agent-form-validation
+  - T-create-agent-mock-data
+  - T-create-agent-navigation-and
+  - T-create-agent-test-infrastructu
 created: 2025-08-21T00:25:56.997Z
 updated: 2025-08-21T00:25:56.997Z
 ---

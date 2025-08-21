@@ -146,7 +146,7 @@ import {
   createMockTechnicalAgent,
   waitForAgentModal,
   waitForAgentsList,
-} from "./index";
+} from "../../../helpers/settings";
 
 test.describe("Feature: Agent Management - Creation", () => {
   const testSuite = setupAgentsTestSuite();
