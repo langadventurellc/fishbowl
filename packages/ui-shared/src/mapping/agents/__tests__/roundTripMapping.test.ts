@@ -7,17 +7,24 @@ describe("Agent Mapping Round Trip", () => {
     const originalData: PersistedAgentsSettingsData = {
       agents: [
         {
-          id: "test-id",
-          name: "Test Agent",
+          id: "test-id-1",
+          name: "Test Agent 1",
           model: "Claude 3.5 Sonnet",
-          role: "role-id",
-          personality: "personality-id",
-          temperature: 1.0,
-          maxTokens: 2000,
-          topP: 0.95,
-          systemPrompt: "Test prompt",
+          role: "role-id-1",
+          personality: "personality-id-1",
+          systemPrompt: "Test prompt 1",
           createdAt: "2023-01-01T00:00:00.000Z",
           updatedAt: "2023-01-01T00:00:00.000Z",
+        },
+        {
+          id: "test-id-2",
+          name: "Test Agent 2",
+          model: "Claude 3.5 Haiku",
+          role: "role-id-2",
+          personality: "personality-id-2",
+          systemPrompt: "Test prompt 2",
+          createdAt: "2023-01-02T00:00:00.000Z",
+          updatedAt: "2023-01-02T00:00:00.000Z",
         },
       ],
       schemaVersion: "1.0.0",
@@ -27,66 +34,58 @@ describe("Agent Mapping Round Trip", () => {
     const uiData = mapAgentsPersistenceToUI(originalData);
     const backToPersistence = mapAgentsUIToPersistence(uiData);
 
-    // Check that agent data is preserved
-    expect(backToPersistence.agents).toHaveLength(1);
-    const originalAgent = originalData.agents[0];
-    const roundTripAgent = backToPersistence.agents[0];
+    // Check that both agents are preserved
+    expect(backToPersistence.agents).toHaveLength(2);
 
-    if (originalAgent && roundTripAgent) {
-      expect(roundTripAgent.id).toBe(originalAgent.id);
-      expect(roundTripAgent.name).toBe(originalAgent.name);
-      expect(roundTripAgent.model).toBe(originalAgent.model);
-      expect(roundTripAgent.role).toBe(originalAgent.role);
-      expect(roundTripAgent.personality).toBe(originalAgent.personality);
-      expect(roundTripAgent.temperature).toBe(originalAgent.temperature);
-      expect(roundTripAgent.maxTokens).toBe(originalAgent.maxTokens);
-      expect(roundTripAgent.topP).toBe(originalAgent.topP);
-      expect(roundTripAgent.systemPrompt).toBe(originalAgent.systemPrompt);
-      expect(roundTripAgent.createdAt).toBe(originalAgent.createdAt);
-      // updatedAt will be different due to transformation
+    // Validate first agent
+    const originalAgent1 = originalData.agents[0];
+    const roundTripAgent1 = backToPersistence.agents[0];
+
+    if (originalAgent1 && roundTripAgent1) {
+      expect(roundTripAgent1.id).toBe(originalAgent1.id);
+      expect(roundTripAgent1.name).toBe(originalAgent1.name);
+      expect(roundTripAgent1.model).toBe(originalAgent1.model);
+      expect(roundTripAgent1.role).toBe(originalAgent1.role);
+      expect(roundTripAgent1.personality).toBe(originalAgent1.personality);
+      expect(roundTripAgent1.systemPrompt).toBe(originalAgent1.systemPrompt);
+      expect(roundTripAgent1.createdAt).toBe(originalAgent1.createdAt);
+      // updatedAt will be different as it's set to current timestamp
+      expect(roundTripAgent1.updatedAt).toBeDefined();
     }
+
+    // Validate second agent
+    const originalAgent2 = originalData.agents[1];
+    const roundTripAgent2 = backToPersistence.agents[1];
+
+    if (originalAgent2 && roundTripAgent2) {
+      expect(roundTripAgent2.id).toBe(originalAgent2.id);
+      expect(roundTripAgent2.name).toBe(originalAgent2.name);
+      expect(roundTripAgent2.model).toBe(originalAgent2.model);
+      expect(roundTripAgent2.role).toBe(originalAgent2.role);
+      expect(roundTripAgent2.personality).toBe(originalAgent2.personality);
+      expect(roundTripAgent2.systemPrompt).toBe(originalAgent2.systemPrompt);
+      expect(roundTripAgent2.createdAt).toBe(originalAgent2.createdAt);
+      // updatedAt will be different as it's set to current timestamp
+      expect(roundTripAgent2.updatedAt).toBeDefined();
+    }
+
+    // Check schema structure
+    expect(backToPersistence.schemaVersion).toBe("1.0.0");
+    expect(backToPersistence.lastUpdated).toBeDefined();
   });
 
-  it("should handle multiple agents in round trip conversion", () => {
+  it("should handle empty agents array", () => {
     const originalData: PersistedAgentsSettingsData = {
-      agents: [
-        {
-          id: "agent-1",
-          name: "Agent One",
-          model: "Claude 3.5 Sonnet",
-          role: "role-1",
-          personality: "personality-1",
-          temperature: 0.7,
-          maxTokens: 1500,
-          topP: 0.9,
-          systemPrompt: "You are agent one",
-          createdAt: "2023-01-01T00:00:00.000Z",
-          updatedAt: "2023-01-01T00:00:00.000Z",
-        },
-        {
-          id: "agent-2",
-          name: "Agent Two",
-          model: "Claude 3.5 Haiku",
-          role: "role-2",
-          personality: "personality-2",
-          temperature: 1.2,
-          maxTokens: 3000,
-          topP: 0.8,
-          createdAt: "2023-01-02T00:00:00.000Z",
-          updatedAt: "2023-01-02T00:00:00.000Z",
-        },
-      ],
+      agents: [],
       schemaVersion: "1.0.0",
-      lastUpdated: "2023-01-02T00:00:00.000Z",
+      lastUpdated: "2023-01-01T00:00:00.000Z",
     };
 
     const uiData = mapAgentsPersistenceToUI(originalData);
     const backToPersistence = mapAgentsUIToPersistence(uiData);
 
-    expect(backToPersistence.agents).toHaveLength(2);
-    expect(backToPersistence.agents[0]?.id).toBe("agent-1");
-    expect(backToPersistence.agents[1]?.id).toBe("agent-2");
-    expect(backToPersistence.agents[0]?.name).toBe("Agent One");
-    expect(backToPersistence.agents[1]?.name).toBe("Agent Two");
+    expect(backToPersistence.agents).toHaveLength(0);
+    expect(backToPersistence.schemaVersion).toBe("1.0.0");
+    expect(backToPersistence.lastUpdated).toBeDefined();
   });
 });

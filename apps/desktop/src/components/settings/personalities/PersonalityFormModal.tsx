@@ -30,7 +30,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../../ui/dialog";
-import { PersonalityForm } from "./PersonalityForm";
+import { PersonalityForm, type PersonalityFormRef } from "./PersonalityForm";
 
 export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
   isOpen,
@@ -46,6 +46,7 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
 
   // Focus trap setup
   const triggerRef = useRef<HTMLElement | null>(null);
+  const formRef = useRef<PersonalityFormRef>(null);
   const { containerRef } = useFocusTrap({
     isActive: isOpen,
     restoreFocus: true,
@@ -79,6 +80,9 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
           variant: "destructive",
         });
         if (!confirmed) return;
+
+        // Reset form to initial data if user confirmed they want to discard changes
+        formRef.current?.resetToInitialData();
       }
       onOpenChange(open);
     },
@@ -154,6 +158,7 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
         </DialogHeader>
 
         <PersonalityForm
+          ref={formRef}
           mode={mode}
           initialData={personality}
           onSave={handleSave}

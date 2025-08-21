@@ -63,6 +63,11 @@ describe("AgentsRepository", () => {
         updatedAt: "2025-01-10T09:00:00.000Z",
       },
     ],
+    defaults: {
+      temperature: 1.0,
+      maxTokens: 1000,
+      topP: 0.95,
+    },
     lastUpdated: "2025-01-10T10:00:00.000Z",
   };
 

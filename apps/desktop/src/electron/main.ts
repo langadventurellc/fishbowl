@@ -182,6 +182,18 @@ app.whenReady().then(async () => {
       },
     );
 
+    // Initialize agents repository manager with userData path
+    const { agentsRepositoryManager } = await import(
+      "../data/repositories/agentsRepositoryManager.js"
+    );
+    agentsRepositoryManager.initialize(userDataPath);
+    mainProcessServices?.logger?.info(
+      "Agents repository initialized successfully",
+      {
+        dataPath: userDataPath,
+      },
+    );
+
     // Initialize LLM storage service
     const llmStorageService = new LlmStorageService();
     llmStorageServiceManager.set(llmStorageService);

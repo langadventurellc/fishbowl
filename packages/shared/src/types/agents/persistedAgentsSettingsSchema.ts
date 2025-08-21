@@ -12,6 +12,58 @@ export const AGENTS_SCHEMA_VERSION = "1.0.0";
 export const CURRENT_AGENTS_SCHEMA_VERSION = AGENTS_SCHEMA_VERSION;
 
 /**
+ * Zod schema for validating personality behavior configuration.
+ *
+ * Features:
+ * - All behavior properties are optional for flexibility
+ * - Numeric values representing behavior traits (-100 to 100 range)
+ * - Supports both existing and new personality behaviors
+ * - Clear validation messages for debugging
+ */
+export const PersonalityBehaviorsSchema = z
+  .object({
+    // Existing personality behaviors
+    humor: z
+      .number({ message: "Humor must be a number" })
+      .min(-100, "Humor must be between -100 and 100")
+      .max(100, "Humor must be between -100 and 100")
+      .optional(),
+    formality: z
+      .number({ message: "Formality must be a number" })
+      .min(-100, "Formality must be between -100 and 100")
+      .max(100, "Formality must be between -100 and 100")
+      .optional(),
+    brevity: z
+      .number({ message: "Brevity must be a number" })
+      .min(-100, "Brevity must be between -100 and 100")
+      .max(100, "Brevity must be between -100 and 100")
+      .optional(),
+    assertiveness: z
+      .number({ message: "Assertiveness must be a number" })
+      .min(-100, "Assertiveness must be between -100 and 100")
+      .max(100, "Assertiveness must be between -100 and 100")
+      .optional(),
+
+    // New personality behaviors
+    responseLength: z
+      .number({ message: "Response length must be a number" })
+      .min(-100, "Response length must be between -100 and 100")
+      .max(100, "Response length must be between -100 and 100")
+      .optional(),
+    randomness: z
+      .number({ message: "Randomness must be a number" })
+      .min(-100, "Randomness must be between -100 and 100")
+      .max(100, "Randomness must be between -100 and 100")
+      .optional(),
+    focus: z
+      .number({ message: "Focus must be a number" })
+      .min(-100, "Focus must be between -100 and 100")
+      .max(100, "Focus must be between -100 and 100")
+      .optional(),
+  })
+  .optional();
+
+/**
  * Zod schema for validating persisted agent data.
  *
  * Features:
@@ -49,30 +101,14 @@ export const persistedAgentSchema = z
       .string({ message: "Personality must be a string" })
       .min(1, "Personality is required"),
 
-    // Temperature setting (0-2)
-    temperature: z
-      .number({ message: "Temperature must be a number" })
-      .min(0, "Temperature must be at least 0")
-      .max(2, "Temperature cannot exceed 2"),
-
-    // Maximum tokens setting (1-4000)
-    maxTokens: z
-      .number({ message: "Max tokens must be a number" })
-      .min(1, "Max tokens must be at least 1")
-      .max(4000, "Max tokens cannot exceed 4000")
-      .int("Max tokens must be an integer"),
-
-    // Top P setting (0-1)
-    topP: z
-      .number({ message: "Top P must be a number" })
-      .min(0, "Top P must be at least 0")
-      .max(1, "Top P cannot exceed 1"),
-
     // Optional system prompt
     systemPrompt: z
       .string({ message: "System prompt must be a string" })
       .max(5000, "System prompt cannot exceed 5000 characters")
       .optional(),
+
+    // Optional personality behaviors configuration
+    personalityBehaviors: PersonalityBehaviorsSchema,
 
     // Timestamps - nullable and optional for manual JSON edits
     createdAt: z

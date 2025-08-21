@@ -1,12 +1,10 @@
 /**
- * AgentsSection component provides agent management functionality with tab navigation.
+ * AgentsSection component provides simplified agent management functionality.
  *
  * Features:
- * - Two-tab navigation: Library, Defaults
- * - Integration with TabContainer for consistent tab behavior
+ * - Agent library management interface
  * - Settings modal navigation state integration
  * - Responsive design and accessibility compliance
- * - 200ms animation transitions for smooth UX
  *
  * @module components/settings/AgentsSection
  */
@@ -15,14 +13,12 @@ import {
   type AgentCard as AgentCardType,
   type AgentFormData,
   type AgentsSectionProps,
-  type TabConfiguration,
+  useAgentsStore,
 } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useState } from "react";
 import { cn } from "../../../lib/utils";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
-import { TabContainer } from "../TabContainer";
 import { AgentFormModal } from "./AgentFormModal";
-import { DefaultsTab } from "./DefaultsTab";
 import { LibraryTab } from "./LibraryTab";
 import { useServices } from "../../../contexts";
 
@@ -63,49 +59,83 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
     });
   }, []);
 
+  // Get store actions
+  const { createAgent, updateAgent } = useAgentsStore();
+
   // Form save handler
   const handleAgentSave = useCallback(
     async (data: AgentFormData) => {
-      // UI-only implementation as per project requirements
-      logger.info("Agent save operation (UI-only)", {
-        mode: agentModalState.mode,
-        agentName: data.name,
-        timestamp: new Date().toISOString(),
-      });
+      try {
+        if (agentModalState.mode === "create") {
+          const agentId = createAgent(data);
 
-      // Simulate async operation
-      await new Promise((resolve) => setTimeout(resolve, 500));
+          if (agentId) {
+            // Success - close modal and announce
+            closeModal();
 
-      // Show user feedback
-      const actionWord =
-        agentModalState.mode === "edit" ? "updated" : "created";
+            announceToScreenReader(
+              `Agent ${data.name} created successfully`,
+              "polite",
+            );
 
-      announceToScreenReader(
-        `Agent ${data.name} ${actionWord} successfully`,
-        "polite",
-      );
+            logger.info("Agent created successfully", {
+              agentId,
+              agentName: data.name,
+              timestamp: new Date().toISOString(),
+            });
+          } else {
+            // createAgent returns empty string on error, error is set in store
+            // Get the current error state directly from the store
+            const currentError = useAgentsStore.getState().error;
+            throw new Error(currentError?.message || "Failed to create agent");
+          }
+        } else {
+          // Handle edit mode - updateAgent returns void, check error state after the call
+          updateAgent(agentModalState.agent!.id, data);
+
+          // Get the current error state directly from the store after the update
+          const currentError = useAgentsStore.getState().error;
+          if (currentError?.message) {
+            throw new Error(currentError.message || "Failed to update agent");
+          }
+
+          // Success - close modal and announce
+          closeModal();
+
+          announceToScreenReader(
+            `Agent ${data.name} updated successfully`,
+            "polite",
+          );
+
+          logger.info("Agent updated successfully", {
+            agentId: agentModalState.agent!.id,
+            agentName: data.name,
+            timestamp: new Date().toISOString(),
+          });
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An error occurred";
+
+        announceToScreenReader(`Error: ${errorMessage}`, "assertive");
+
+        logger.error(
+          "Agent save failed",
+          err instanceof Error ? err : new Error(errorMessage),
+        );
+
+        // Don't close modal on error so user can retry
+      }
     },
-    [agentModalState.mode, logger],
+    [
+      agentModalState.mode,
+      agentModalState.agent,
+      createAgent,
+      updateAgent,
+      closeModal,
+      logger,
+    ],
   );
-
-  // Tab configuration following established patterns
-  const tabs: TabConfiguration[] = [
-    {
-      id: "library",
-      label: "Library",
-      content: () => (
-        <LibraryTab
-          openCreateModal={openCreateModal}
-          openEditModal={openEditModal}
-        />
-      ),
-    },
-    {
-      id: "defaults",
-      label: "Defaults",
-      content: () => <DefaultsTab />,
-    },
-  ];
 
   return (
     <div className={cn("agents-section space-y-6", className)}>
@@ -115,11 +145,10 @@ export const AgentsSection: React.FC<AgentsSectionProps> = ({ className }) => {
           Configure AI agents and their behavior settings.
         </p>
       </div>
-      <TabContainer
-        tabs={tabs}
-        useStore={true}
-        animationDuration={200}
-        className="agents-tabs"
+
+      <LibraryTab
+        openCreateModal={openCreateModal}
+        openEditModal={openEditModal}
       />
 
       <AgentFormModal

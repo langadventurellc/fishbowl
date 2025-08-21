@@ -11,6 +11,11 @@ export function createDefaultAgentsSettings(): PersistedAgentsSettingsData {
   return {
     schemaVersion: "1.0.0",
     agents: [],
+    defaults: {
+      temperature: 0.7,
+      maxTokens: 2000,
+      topP: 0.9,
+    },
     lastUpdated: now,
   };
 }

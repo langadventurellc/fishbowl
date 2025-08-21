@@ -6,6 +6,7 @@ import {
   SettingsProvider,
   RolesProvider,
   PersonalitiesProvider,
+  AgentsProvider,
   useServices,
 } from "./contexts";
 import { RolesErrorBoundary } from "./components/errors/RolesErrorBoundary";
@@ -72,19 +73,21 @@ export default function App() {
       <RolesErrorBoundary logger={logger}>
         <RolesProvider>
           <PersonalitiesProvider>
-            <HashRouter>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route
-                  path="/showcase/components"
-                  element={<ComponentShowcase />}
-                />
-                <Route path="/showcase/layout" element={<LayoutShowcase />} />
-              </Routes>
-            </HashRouter>
+            <AgentsProvider>
+              <HashRouter>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route
+                    path="/showcase/components"
+                    element={<ComponentShowcase />}
+                  />
+                  <Route path="/showcase/layout" element={<LayoutShowcase />} />
+                </Routes>
+              </HashRouter>
 
-            {/* Settings Modal - rendered globally */}
-            <SettingsModal open={isOpen} onOpenChange={closeModal} />
+              {/* Settings Modal - rendered globally */}
+              <SettingsModal open={isOpen} onOpenChange={closeModal} />
+            </AgentsProvider>
           </PersonalitiesProvider>
         </RolesProvider>
       </RolesErrorBoundary>

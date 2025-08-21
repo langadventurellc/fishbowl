@@ -241,9 +241,6 @@ describe("useAgentsStore", () => {
       model: "claude-3-haiku",
       role: "test-role-id",
       personality: "test-personality-id",
-      temperature: 0.7,
-      maxTokens: 1000,
-      topP: 0.95,
       systemPrompt: "You are a helpful test agent.",
     };
 
@@ -341,7 +338,6 @@ describe("useAgentsStore", () => {
         const updateData = {
           ...validAgentData,
           name: "Updated Agent",
-          temperature: 0.9,
         };
 
         store.updateAgent(agentId, updateData);
@@ -350,7 +346,7 @@ describe("useAgentsStore", () => {
         const updatedAgent = state.agents.find((a) => a.id === agentId);
         expect(updatedAgent).toBeTruthy();
         expect(updatedAgent!.name).toBe("Updated Agent");
-        expect(updatedAgent!.temperature).toBe(0.9);
+        expect(updatedAgent!.name).toBe("Updated Agent");
         // Check that updatedAt is a valid timestamp (may be same as createdAt if update happens quickly)
         expect(updatedAgent!.updatedAt).toBeTruthy();
         expect(typeof updatedAgent!.updatedAt).toBe("string");
@@ -415,18 +411,18 @@ describe("useAgentsStore", () => {
 
         const agentId = store.createAgent(validAgentData);
 
-        // Update with same name but different temperature
+        // Update with same name but different model
         const updateData = {
           ...validAgentData,
           name: validAgentData.name, // Same name
-          temperature: 0.9,
+          model: "claude-3-opus",
         };
 
         store.updateAgent(agentId, updateData);
 
         const state = useAgentsStore.getState();
         const updatedAgent = state.agents.find((a) => a.id === agentId);
-        expect(updatedAgent?.temperature).toBe(0.9);
+        expect(updatedAgent?.model).toBe("claude-3-opus");
         expect(state.error?.message).toBeNull();
       });
     });

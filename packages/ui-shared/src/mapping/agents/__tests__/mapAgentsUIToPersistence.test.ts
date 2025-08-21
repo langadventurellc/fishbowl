@@ -19,9 +19,6 @@ describe("mapAgentsUIToPersistence", () => {
         model: "Claude 3.5 Sonnet",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
         systemPrompt: "Test prompt",
         createdAt: "2023-01-01T00:00:00.000Z",
         updatedAt: "2023-01-01T00:00:00.000Z",
@@ -43,9 +40,6 @@ describe("mapAgentsUIToPersistence", () => {
         model: "Claude 3.5 Sonnet",
         role: "role-id",
         personality: "personality-id",
-        temperature: 1.0,
-        maxTokens: 2000,
-        topP: 0.95,
       },
     ];
 

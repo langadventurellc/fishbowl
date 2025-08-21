@@ -1,6 +1,5 @@
 export { AgentCard } from "./AgentCard";
 export { AgentsSection } from "./AgentsSection";
-export { DefaultsTab } from "./DefaultsTab";
 export { EmptyLibraryState } from "./EmptyLibraryState";
 export { EmptyTemplatesState } from "./EmptyTemplatesState";
 export { LibraryTab } from "./LibraryTab";

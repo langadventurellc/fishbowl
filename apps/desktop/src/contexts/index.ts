@@ -16,6 +16,12 @@ export {
   PersonalitiesPersistenceAdapterContext,
 } from "./PersonalitiesProvider";
 
+export {
+  AgentsProvider,
+  useAgentsAdapter,
+  AgentsPersistenceAdapterContext,
+} from "./AgentsProvider";
+
 export { ServicesProvider } from "./ServicesProvider";
 export { ServicesContext } from "./ServicesContext";
 export { useServices } from "./useServices";

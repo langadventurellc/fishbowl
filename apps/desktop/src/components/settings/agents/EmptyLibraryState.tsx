@@ -15,16 +15,11 @@ import type { EmptyStateProps } from "@fishbowl-ai/ui-shared";
 import { UserPlus } from "lucide-react";
 import React from "react";
 import { cn } from "../../../lib/utils";
-import { Button } from "../../ui/button";
 
 export const EmptyLibraryState: React.FC<EmptyStateProps> = ({
-  onAction,
+  onAction: _onAction,
   className,
 }) => {
-  const handleCreateAgent = () => {
-    onAction?.();
-  };
-
   return (
     <div
       className={cn(
@@ -41,14 +36,6 @@ export const EmptyLibraryState: React.FC<EmptyStateProps> = ({
       <p className="text-sm text-muted-foreground text-center mb-6 max-w-md leading-relaxed">
         Create your first agent to get started with personalized AI assistants
       </p>
-      <Button
-        onClick={handleCreateAgent}
-        className="gap-2"
-        aria-label="Create your first agent"
-      >
-        <UserPlus className="h-4 w-4" />
-        Create New Agent
-      </Button>
     </div>
   );
 };

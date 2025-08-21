@@ -38,9 +38,6 @@ export function normalizeAgentFields(agent: {
   model: string;
   role: string;
   personality: string;
-  temperature: number;
-  maxTokens: number;
-  topP: number;
   systemPrompt?: string | null;
 }): {
   id: string;
@@ -48,9 +45,6 @@ export function normalizeAgentFields(agent: {
   model: string;
   role: string;
   personality: string;
-  temperature: number;
-  maxTokens: number;
-  topP: number;
   systemPrompt?: string;
 } {
   return {
@@ -59,9 +53,6 @@ export function normalizeAgentFields(agent: {
     model: agent.model?.trim() || "",
     role: agent.role?.trim() || "",
     personality: agent.personality?.trim() || "",
-    temperature: agent.temperature,
-    maxTokens: agent.maxTokens,
-    topP: agent.topP,
     systemPrompt: agent.systemPrompt?.trim()
       ? clampString(agent.systemPrompt.trim(), 0, 5000)
       : undefined,

@@ -19,14 +19,9 @@ export const PersonalitySelect: React.FC<PersonalitySelectProps> = ({
   disabled = false,
   placeholder = "Select a personality",
 }) => {
-  const { personalities, isLoading, error } = usePersonalitiesStore(
-    (state) => ({
-      personalities: state.personalities,
-      isLoading: state.isLoading,
-      error: state.error,
-    }),
-  );
-
+  const personalities = usePersonalitiesStore((state) => state.personalities);
+  const isLoading = usePersonalitiesStore((state) => state.isLoading);
+  const error = usePersonalitiesStore((state) => state.error);
   const retryLastOperation = usePersonalitiesStore(
     (state) => state.retryLastOperation,
   );

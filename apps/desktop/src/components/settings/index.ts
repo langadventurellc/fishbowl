@@ -10,7 +10,6 @@
 export { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 export * from "./agents";
 export { CharacterCounter } from "./CharacterCounter";
-export { ConfigurationSlider } from "./ConfigurationSlider";
 export * from "./llm-setup";
 export { ModelSelect } from "./ModelSelect";
 export * from "./personalities";

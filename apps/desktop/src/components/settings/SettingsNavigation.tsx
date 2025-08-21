@@ -30,12 +30,7 @@ const navigationSections = [
   {
     id: "agents" as const,
     label: "Agents",
-    hasSubTabs: true,
-    subTabs: [
-      { id: "library" as const, label: "Library" },
-      { id: "templates" as const, label: "Templates" },
-      { id: "defaults" as const, label: "Defaults" },
-    ],
+    hasSubTabs: false,
   },
   {
     id: "personalities" as const,
