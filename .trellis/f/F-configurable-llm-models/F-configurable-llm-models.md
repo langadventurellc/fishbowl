@@ -1,7 +1,7 @@
 ---
 id: F-configurable-llm-models
 title: Configurable LLM Models
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -81,32 +81,44 @@ affectedFiles:
   apps/desktop/src/shared/ipc/llmModelsConstants.ts:
     Created IPC channel constants
     file with LLM_MODELS_CHANNELS object containing LOAD channel and
-    LlmModelsChannelType
+    LlmModelsChannelType; Added SAVE and RESET channel constants for complete
+    CRUD operations
   apps/desktop/src/shared/ipc/llmModelsTypes.ts: Created IPC types file with
     LlmModelsLoadResponse interface extending
-    IPCResponse<PersistedLlmModelsSettingsData>
-  apps/desktop/src/shared/ipc/index.ts: Updated barrel export file to include LLM models constants and response types
+    IPCResponse<PersistedLlmModelsSettingsData>; Removed old file that violated
+    one-export-per-file rule
+  apps/desktop/src/shared/ipc/index.ts:
+    Updated barrel export file to include LLM
+    models constants and response types; Updated exports to include new LLM
+    models request and response types
   apps/desktop/src/shared/ipc/__tests__/llmModelsIPC.test.ts:
     Added comprehensive
-    unit tests for constants, types, error handling, and integration validation
+    unit tests for constants, types, error handling, and integration validation;
+    Updated tests to expect new SAVE and RESET constants
   apps/desktop/src/electron/handlers/llmModelsHandlers.ts:
     Created new IPC handler
     file with setupLlmModelsHandlers function implementing LOAD channel handler
-    with proper error serialization and repository integration
+    with proper error serialization and repository integration; Enhanced
+    handlers with complete SAVE and RESET operations, structured logging, and
+    proper error handling
   apps/desktop/src/electron/handlers/__tests__/llmModelsHandlers.test.ts:
     Added comprehensive unit tests covering successful loading, repository
     initialization errors, load failures, and non-Error exceptions with proper
-    mocking and error format validation
+    mocking and error format validation; Updated test mocks to work with
+    structured logging instead of console.error
   apps/desktop/src/electron/preload.ts: Added llmModels API with load() method
     following established patterns, including proper error handling and logging
   apps/desktop/src/types/electron.d.ts: Updated ElectronAPI interface to include
     llmModels property with JSDoc documentation for TypeScript support
+  apps/desktop/src/shared/ipc/llmModels/loadResponse.ts: Created load response type definition following project pattern
+  apps/desktop/src/shared/ipc/llmModels/saveRequest.ts: Created save request type definition for LLM models persistence
+  apps/desktop/src/shared/ipc/llmModels/saveResponse.ts: Created save response type definition for operation feedback
+  apps/desktop/src/shared/ipc/llmModels/resetResponse.ts: Created reset response type definition for default models return
 log:
+  - "Auto-completed: All child tasks are complete"
   - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-integrate-llm-models-handlers
-  - T-update-usellmmodels-hook-to-1
   - T-add-llm-models-api-to-context
   - T-create-default-llm-models
   - T-create-ipc-constants-and
@@ -115,8 +127,10 @@ childrenIds:
   - T-create-llmmodelsrepository
   - T-create-llmmodelsrepositorymana
   - T-create-main-process-ipc
+  - T-integrate-llm-models-handlers
   - T-integrate-llmmodelsrepositorym
   - T-update-llmmodel-interface-to
+  - T-update-usellmmodels-hook-to-1
   - T-update-usellmmodels-hook-to
 created: 2025-08-21T19:31:35.047Z
 updated: 2025-08-21T19:31:35.047Z

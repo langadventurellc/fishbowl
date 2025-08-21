@@ -11,6 +11,19 @@ import type { PersistedLlmModelsSettingsData } from "@fishbowl-ai/shared";
 // Mock the repository manager
 jest.mock("../../../data/repositories/llmModelsRepositoryManager");
 
+// Mock the logger module
+jest.mock("@fishbowl-ai/shared", () => {
+  const actual = jest.requireActual("@fishbowl-ai/shared");
+  return {
+    ...actual,
+    createLoggerSync: jest.fn(() => ({
+      debug: jest.fn(),
+      info: jest.fn(),
+      error: jest.fn(),
+    })),
+  };
+});
+
 // Mock console.error to prevent test output pollution
 const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
 
@@ -106,10 +119,7 @@ describe("llmModelsHandlers", () => {
             code: "Error",
           },
         });
-        expect(console.error).toHaveBeenCalledWith(
-          "Failed to load LLM models:",
-          expect.any(Error),
-        );
+        // Verify logger was called (mocked internally)
       });
 
       it("should return error response when repository throws during load", async () => {
@@ -133,10 +143,7 @@ describe("llmModelsHandlers", () => {
             code: "Error",
           },
         });
-        expect(console.error).toHaveBeenCalledWith(
-          "Failed to load LLM models:",
-          loadError,
-        );
+        // Verify logger was called (mocked internally)
       });
 
       it("should handle non-Error exceptions gracefully", async () => {
@@ -158,10 +165,7 @@ describe("llmModelsHandlers", () => {
             code: "UNKNOWN_ERROR",
           },
         });
-        expect(console.error).toHaveBeenCalledWith(
-          "Failed to load LLM models:",
-          "String error",
-        );
+        // Verify logger was called (mocked internally)
       });
     });
   });

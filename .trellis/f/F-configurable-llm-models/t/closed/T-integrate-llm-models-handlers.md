@@ -1,13 +1,33 @@
 ---
 id: T-integrate-llm-models-handlers
 title: Integrate LLM models handlers into main process initialization
-status: open
+status: done
 priority: medium
 parent: F-configurable-llm-models
 prerequisites:
   - T-create-main-process-ipc
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/shared/ipc/llmModelsConstants.ts: Added SAVE and RESET channel constants for complete CRUD operations
+  apps/desktop/src/shared/ipc/llmModels/loadResponse.ts: Created load response type definition following project pattern
+  apps/desktop/src/shared/ipc/llmModels/saveRequest.ts: Created save request type definition for LLM models persistence
+  apps/desktop/src/shared/ipc/llmModels/saveResponse.ts: Created save response type definition for operation feedback
+  apps/desktop/src/shared/ipc/llmModels/resetResponse.ts: Created reset response type definition for default models return
+  apps/desktop/src/shared/ipc/index.ts: Updated exports to include new LLM models request and response types
+  apps/desktop/src/electron/handlers/llmModelsHandlers.ts:
+    Enhanced handlers with
+    complete SAVE and RESET operations, structured logging, and proper error
+    handling
+  apps/desktop/src/shared/ipc/llmModelsTypes.ts: Removed old file that violated one-export-per-file rule
+  apps/desktop/src/shared/ipc/__tests__/llmModelsIPC.test.ts: Updated tests to expect new SAVE and RESET constants
+  apps/desktop/src/electron/handlers/__tests__/llmModelsHandlers.test.ts: Updated test mocks to work with structured logging instead of console.error
+log:
+  - Completed integration of LLM models IPC handlers into main process
+    initialization. Enhanced the existing partial implementation by adding full
+    CRUD operations (load, save, reset), structured logging, proper error
+    handling, and following established project patterns. The handlers are now
+    properly registered in main.ts and include comprehensive type definitions
+    split into separate files following the project's one-export-per-file rule.
+    All tests have been updated and are passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T22:39:58.225Z

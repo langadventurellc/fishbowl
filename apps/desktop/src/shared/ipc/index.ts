@@ -91,8 +91,13 @@ export type { LlmConfigListResponse } from "./llmConfig/listResponse";
 export type { LlmConfigInitializeResponse } from "./llmConfig/initializeResponse";
 export type { LlmConfigRefreshCacheResponse } from "./llmConfig/refreshCacheResponse";
 
+// LLM Models request types
+export type { LlmModelsSaveRequest } from "./llmModels/saveRequest";
+
 // LLM Models response types
-export type { LlmModelsLoadResponse } from "./llmModelsTypes";
+export type { LlmModelsLoadResponse } from "./llmModels/loadResponse";
+export type { LlmModelsSaveResponse } from "./llmModels/saveResponse";
+export type { LlmModelsResetResponse } from "./llmModels/resetResponse";
 
 // Data types
 export type { PersistedSettingsData } from "./data";

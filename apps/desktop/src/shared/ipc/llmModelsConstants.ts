@@ -6,6 +6,8 @@
  */
 export const LLM_MODELS_CHANNELS = {
   LOAD: "llm-models:load",
+  SAVE: "llm-models:save",
+  RESET: "llm-models:reset",
 } as const;
 
 /**

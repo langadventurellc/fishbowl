@@ -11,11 +11,15 @@ import {
 describe("LLM Models IPC Constants", () => {
   it("should have correct channel constant values", () => {
     expect(LLM_MODELS_CHANNELS.LOAD).toBe("llm-models:load");
+    expect(LLM_MODELS_CHANNELS.SAVE).toBe("llm-models:save");
+    expect(LLM_MODELS_CHANNELS.RESET).toBe("llm-models:reset");
   });
 
   it("should export all required channel constants", () => {
     expect(LLM_MODELS_CHANNELS).toHaveProperty("LOAD");
-    expect(Object.keys(LLM_MODELS_CHANNELS)).toHaveLength(1);
+    expect(LLM_MODELS_CHANNELS).toHaveProperty("SAVE");
+    expect(LLM_MODELS_CHANNELS).toHaveProperty("RESET");
+    expect(Object.keys(LLM_MODELS_CHANNELS)).toHaveLength(3);
   });
 });
 
