@@ -4,7 +4,7 @@ import {
   AgentsPersistenceError,
 } from "@fishbowl-ai/ui-shared";
 
-export class DesktopAgentsAdapter implements AgentsPersistenceAdapter {
+class DesktopAgentsAdapter implements AgentsPersistenceAdapter {
   async save(agents: PersistedAgentsSettingsData): Promise<void> {
     try {
       await window.electronAPI.agents.save(agents);

@@ -20,7 +20,6 @@ export * from "./BigFiveTraitsViewModel";
 export * from "./CharacterCounterProps";
 export * from "./LlmModel";
 export * from "./combined";
-export * from "./ConfigurationSliderProps";
 export * from "./CreatePersonalityFormProps";
 export * from "./CreateRoleFormProps";
 export * from "./CustomInstructionsTextareaProps";

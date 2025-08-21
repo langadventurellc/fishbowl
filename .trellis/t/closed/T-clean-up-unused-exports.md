@@ -1,11 +1,24 @@
 ---
 id: T-clean-up-unused-exports
 title: Clean up unused exports identified by Knip analysis
-status: open
+status: done
 priority: low
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/adapters/desktopAgentsAdapter.ts:
+    Removed 'export' keyword from
+    DesktopAgentsAdapter class while keeping instance export
+  apps/desktop/src/components/settings/index.ts: Removed ConfigurationSlider export from barrel file
+  apps/desktop/src/components/settings/ConfigurationSlider.tsx: Deleted unused ConfigurationSlider component file
+  packages/ui-shared/src/types/settings/index.ts: Removed ConfigurationSliderProps export from barrel file
+  packages/ui-shared/src/types/settings/ConfigurationSliderProps.ts: Deleted unused ConfigurationSliderProps type definition file
+log:
+  - Successfully cleaned up unused exports identified by Knip analysis. Removed
+    the DesktopAgentsAdapter class export while preserving the instance export
+    that's actually used. Completely removed the unused ConfigurationSlider
+    component and its associated type definition. All quality checks (linting,
+    formatting, type checking) pass after the changes. This cleanup reduces code
+    clutter and eliminates false positives in future Knip analyses.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T18:08:23.869Z
