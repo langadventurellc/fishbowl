@@ -21,7 +21,8 @@ affectedFiles:
     inferred from Zod schema.
   packages/shared/src/types/settings/index.ts:
     Updated exports to include new LLM
-    models schemas and type definitions following established patterns.
+    models schemas and type definitions following established patterns.; Added
+    exports for both new functions to make them available from shared package
   packages/shared/src/types/settings/__tests__/llmModelsSchema.test.ts:
     Added comprehensive unit tests (56 test cases) covering all validation
     scenarios, edge cases, security limits, and error handling.
@@ -35,15 +36,30 @@ affectedFiles:
     Created comprehensive test suite with 28 tests covering JSON structure
     validation, schema compliance, model data verification, and error resistance
     testing
+  packages/shared/src/types/settings/getDefaultLlmModels.ts: Created function to
+    get bundled default LLM models without wrapper metadata, following exact
+    pattern from getDefaultPersonalities.ts with proper validation and error
+    handling
+  packages/shared/src/types/settings/createDefaultLlmModelsSettings.ts:
+    Created function to create default LLM models settings structure with
+    includeDefaults parameter, following exact pattern from
+    createDefaultPersonalitiesSettings.ts
+  packages/shared/src/types/settings/__tests__/getDefaultLlmModels.test.ts:
+    Comprehensive unit tests covering functionality, validation, error handling,
+    and data consistency for getDefaultLlmModels function
+  packages/shared/src/types/settings/__tests__/createDefaultLlmModelsSettings.test.ts:
+    Comprehensive unit tests covering functionality, validation, error handling,
+    and includeDefaults parameter behavior for createDefaultLlmModelsSettings
+    function
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-default-llm-models
   - T-create-llm-models-default
   - T-create-llmmodelsrepository
   - T-create-llmmodelsrepositorymana
   - T-integrate-llmmodelsrepositorym
   - T-update-usellmmodels-hook-to
+  - T-create-default-llm-models
   - T-create-llm-models-schema-and
   - T-update-llmmodel-interface-to
 created: 2025-08-21T19:31:35.047Z

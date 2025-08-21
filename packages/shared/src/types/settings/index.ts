@@ -32,7 +32,9 @@ export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettin
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
 export { createDefaultRolesSettings } from "./createDefaultRolesSettings";
 export { createDefaultPersonalitiesSettings } from "./createDefaultPersonalitiesSettings";
+export { createDefaultLlmModelsSettings } from "./createDefaultLlmModelsSettings";
 export { getDefaultPersonalities } from "./getDefaultPersonalities";
+export { getDefaultLlmModels } from "./getDefaultLlmModels";
 export { validateDefaultPersonalities } from "./validateDefaultPersonalities";
 export type { ConversationMode } from "./ConversationMode";
 export { CONVERSATION_MODE_OPTIONS } from "./ConversationMode";
