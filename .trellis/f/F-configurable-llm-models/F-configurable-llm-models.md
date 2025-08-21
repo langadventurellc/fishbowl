@@ -25,17 +25,20 @@ affectedFiles:
   packages/shared/src/types/settings/__tests__/llmModelsSchema.test.ts:
     Added comprehensive unit tests (56 test cases) covering all validation
     scenarios, edge cases, security limits, and error handling.
+  packages/ui-shared/src/types/settings/LlmModel.ts: Removed vision and functionCalling boolean properties from interface
+  apps/desktop/src/hooks/useLlmModels.ts: Removed vision and functionCalling
+    properties from all OpenAI, Anthropic, and implied model definitions
 log: []
 schema: v1.0
 childrenIds:
   - T-create-default-llm-models
   - T-create-llm-models-default
-  - T-create-llm-models-schema-and
   - T-create-llmmodelsrepository
   - T-create-llmmodelsrepositorymana
   - T-integrate-llmmodelsrepositorym
   - T-update-llmmodel-interface-to
   - T-update-usellmmodels-hook-to
+  - T-create-llm-models-schema-and
 created: 2025-08-21T19:31:35.047Z
 updated: 2025-08-21T19:31:35.047Z
 ---

@@ -1,12 +1,21 @@
 ---
 id: T-update-llmmodel-interface-to
 title: Update LlmModel interface to remove vision and functionCalling properties
-status: open
+status: done
 priority: high
 parent: F-configurable-llm-models
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/settings/LlmModel.ts: Removed vision and functionCalling boolean properties from interface
+  apps/desktop/src/hooks/useLlmModels.ts: Removed vision and functionCalling
+    properties from all OpenAI, Anthropic, and implied model definitions
+log:
+  - Successfully removed `vision` and `functionCalling` properties from LlmModel
+    interface. Updated interface definition in ui-shared package and removed
+    these properties from all hard-coded model objects in useLlmModels hook. All
+    TypeScript compilation, linting, formatting, and tests pass. No breaking
+    changes to existing functionality as these properties were unused in the
+    codebase.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T19:36:17.733Z

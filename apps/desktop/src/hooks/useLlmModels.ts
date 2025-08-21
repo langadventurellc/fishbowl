@@ -34,24 +34,18 @@ export function useLlmModels() {
               name: "GPT-4 Turbo",
               provider: providerName,
               contextLength: 128000,
-              vision: true,
-              functionCalling: true,
             },
             {
               id: "gpt-4",
               name: "GPT-4",
               provider: providerName,
               contextLength: 8192,
-              vision: false,
-              functionCalling: true,
             },
             {
               id: "gpt-3.5-turbo",
               name: "GPT-3.5 Turbo",
               provider: providerName,
               contextLength: 16385,
-              vision: false,
-              functionCalling: true,
             },
           ];
 
@@ -62,24 +56,18 @@ export function useLlmModels() {
               name: "Claude 3 Opus",
               provider: providerName,
               contextLength: 200000,
-              vision: true,
-              functionCalling: false,
             },
             {
               id: "claude-3-sonnet",
               name: "Claude 3 Sonnet",
               provider: providerName,
               contextLength: 200000,
-              vision: true,
-              functionCalling: false,
             },
             {
               id: "claude-3-haiku",
               name: "Claude 3 Haiku",
               provider: providerName,
               contextLength: 200000,
-              vision: true,
-              functionCalling: false,
             },
           ];
 
