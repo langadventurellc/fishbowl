@@ -93,12 +93,15 @@ affectedFiles:
     Added comprehensive unit tests covering successful loading, repository
     initialization errors, load failures, and non-Error exceptions with proper
     mocking and error format validation
+  apps/desktop/src/electron/preload.ts: Added llmModels API with load() method
+    following established patterns, including proper error handling and logging
+  apps/desktop/src/types/electron.d.ts: Updated ElectronAPI interface to include
+    llmModels property with JSDoc documentation for TypeScript support
 log:
   - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-add-llm-models-api-to-context
-  - T-create-main-process-ipc
   - T-integrate-llm-models-handlers
   - T-update-usellmmodels-hook-to-1
   - T-create-default-llm-models
@@ -107,6 +110,7 @@ childrenIds:
   - T-create-llm-models-schema-and
   - T-create-llmmodelsrepository
   - T-create-llmmodelsrepositorymana
+  - T-create-main-process-ipc
   - T-integrate-llmmodelsrepositorym
   - T-update-llmmodel-interface-to
   - T-update-usellmmodels-hook-to

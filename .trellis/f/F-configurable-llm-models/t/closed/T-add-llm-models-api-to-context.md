@@ -1,13 +1,24 @@
 ---
 id: T-add-llm-models-api-to-context
 title: Add LLM models API to context bridge in preload script
-status: open
+status: done
 priority: high
 parent: F-configurable-llm-models
 prerequisites:
   - T-create-main-process-ipc
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts: Added llmModels API with load() method
+    following established patterns, including proper error handling and logging
+  apps/desktop/src/types/electron.d.ts: Updated ElectronAPI interface to include
+    llmModels property with JSDoc documentation for TypeScript support
+log:
+  - Successfully implemented LLM models API in the context bridge following
+    established patterns from roles, personalities, and agents APIs. Added
+    llmModels.load() method to electronAPI object with proper error handling,
+    logging, and TypeScript types. The implementation uses ipcRenderer.invoke()
+    to communicate with the main process handler and includes comprehensive
+    error handling for both IPC communication failures and response errors. All
+    quality checks (lint, format, type-check) pass successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T22:39:09.251Z
