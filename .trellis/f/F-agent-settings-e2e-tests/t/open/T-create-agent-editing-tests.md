@@ -20,7 +20,7 @@ updated: 2025-08-21T00:30:29.382Z
 
 ## Context
 
-Create comprehensive end-to-end tests for agent editing functionality, covering the complete workflow from opening an existing agent for editing to successfully updating and persisting changes. This test file focuses specifically on the edit flow and update scenarios.
+Create basic end-to-end tests for agent editing functionality, covering the essential workflow of editing an existing agent and saving changes. This test file focuses on basic edit functionality.
 
 ## Implementation Requirements
 
@@ -39,7 +39,8 @@ test("opens edit modal from agent card", async () => {
   const window = testSuite.getWindow();
 
   // Create initial agent for editing
-  await createTestAgent(window, createMockAgentData());
+  const mockAgent = createMockAgentData();
+  await createTestAgent(window, mockAgent);
 
   // Navigate to agents section
   await openAgentsSection(window);
@@ -49,123 +50,73 @@ test("opens edit modal from agent card", async () => {
   const editButton = agentCard.locator('[data-testid="edit-agent-button"]');
   await editButton.click();
 
-  // Verify edit modal opens with existing data
+  // Verify edit modal opens
+  await waitForAgentModal(window, true);
+});
+
+test("updates agent name successfully", async () => {
+  const window = testSuite.getWindow();
+
+  // Create initial agent
+  const originalAgent = createMockAgentData();
+  await createTestAgent(window, originalAgent);
+
+  // Open edit modal
+  await openAgentsSection(window);
+  const editButton = window
+    .locator('[data-testid="edit-agent-button"]')
+    .first();
+  await editButton.click();
   await waitForAgentModal(window, true);
 
-  // Verify form is populated with existing agent data
-  await verifyFormPopulation(window, mockAgent);
-});
+  // Update agent name
+  const newName = "Updated Agent Name";
+  await updateAgentData(window, { name: newName });
 
-test("updates agent data successfully", async () => {
-  // Create initial agent
-  // Open edit modal
-  // Modify agent properties
   // Save changes
-  // Verify updates persist
+  const saveButton = window.locator('[data-testid="save-agent-button"]');
+  await saveButton.click();
+  await waitForAgentModal(window, false);
+
+  // Verify updates in UI
+  const agentCard = window
+    .locator('[data-testid="agent-card"]')
+    .filter({ hasText: newName });
+  await expect(agentCard).toBeVisible();
 });
 ```
 
-### 2. Form Pre-population and State
-
-```typescript
-test("pre-populates edit form with existing agent data", async () => {
-  // Test that all form fields show current agent values
-  // Test dropdown selections match existing agent
-});
-
-test("handles form state changes during editing", async () => {
-  // Test save button enable/disable during edits
-  // Test validation state updates
-  // Test form dirty state tracking
-});
-```
-
-### 3. Different Types of Edits
-
-```typescript
-test("updates agent name successfully", async () => {
-  // Test name field modification
-  // Test name uniqueness validation during edit
-});
-
-test("updates agent role successfully", async () => {
-  // Test role selection change
-  // Test role-dependent field updates
-});
-
-test("updates agent personality successfully", async () => {
-  // Test personality selection change
-  // Test personality-dependent behavior
-});
-
-test("updates agent model successfully", async () => {
-  // Test model selection change
-  // Test model-dependent configuration
-});
-
-test("updates agent description successfully", async () => {
-  // Test description field modification
-  // Test long description handling
-});
-```
-
-### 4. Edit Validation and Error Handling
-
-```typescript
-test("validates required fields during edit", async () => {
-  // Test clearing required fields shows validation errors
-  // Test form submission blocked when invalid
-});
-
-test("handles duplicate name validation during edit", async () => {
-  // Create multiple agents
-  // Try to edit one to have duplicate name
-  // Verify validation prevents save
-});
-
-test("shows validation errors for invalid data", async () => {
-  // Test various invalid data scenarios
-  // Verify error messages display correctly
-});
-```
-
-### 5. Edit Cancellation and Discard Changes
+### 2. Edit Cancellation
 
 ```typescript
 test("cancels edit without saving changes", async () => {
-  // Open edit modal
+  const window = testSuite.getWindow();
+
+  // Create initial agent
+  const originalAgent = createMockAgentData();
+  await createTestAgent(window, originalAgent);
+
+  // Open edit modal and make changes
+  await openAgentsSection(window);
+  const editButton = window
+    .locator('[data-testid="edit-agent-button"]')
+    .first();
+  await editButton.click();
+  await waitForAgentModal(window, true);
+
   // Make changes
-  // Click cancel button
-  // Verify changes are not saved
-  // Verify original data unchanged
-});
+  await updateAgentData(window, { name: "Changed Name" });
 
-test("discards changes when closing modal with X button", async () => {
-  // Open edit modal
-  // Make changes
-  // Close modal with X button
-  // Verify changes are discarded
-});
+  // Cancel edit
+  const cancelButton = window.locator('[data-testid="cancel-button"]');
+  await cancelButton.click();
+  await waitForAgentModal(window, false);
 
-test("handles unsaved changes warning", async () => {
-  // Make changes
-  // Attempt to close modal
-  // Verify warning dialog if implemented
-});
-```
-
-### 6. Data Persistence and Verification
-
-```typescript
-test("persists edited agent data to file system", async () => {
-  // Edit agent
-  // Verify agents.json contains updated data
-  // Verify timestamps updated appropriately
-});
-
-test("loads edited agents correctly after modal reopen", async () => {
-  // Edit agent, close modal, reopen
-  // Verify edited data persists in UI
+  // Verify original name is still displayed
+  const agentCard = window
+    .locator('[data-testid="agent-card"]')
+    .filter({ hasText: originalAgent.name });
+  await expect(agentCard).toBeVisible();
 });
 ```
 
@@ -205,24 +156,33 @@ test.describe("Feature: Agent Management - Editing", () => {
 });
 ```
 
-### Helper Functions to Implement Within File
+### Helper Functions (Already Available)
+
+The following helper functions are already available in `tests/desktop/helpers/` and should be imported instead of being created within the test file:
+
+- `createTestAgent` - Creates a test agent before testing editing
+- `fillAgentForm` - Fills the agent creation/edit form with provided data
+- `verifyAgentPersistence` - Verifies that agent data is properly persisted to the file system
+
+Import these from the helpers module:
 
 ```typescript
-const createTestAgent = async (
-  window: TestWindow,
-  agentData: AgentFormData,
-) => {
-  // Helper to create an agent before testing editing
-  await openAgentsSection(window);
-  const createButton = window.locator('[data-testid="create-agent-button"]');
-  await createButton.click();
-  await waitForAgentModal(window, true);
-  await fillAgentForm(window, agentData);
-  const saveButton = window.locator('[data-testid="save-agent-button"]');
-  await saveButton.click();
-  await waitForAgentModal(window, false);
-};
+import {
+  setupAgentsTestSuite,
+  openAgentsSection,
+  createMockAgentData,
+  createMockAnalystAgent,
+  waitForAgentModal,
+  waitForAgentsList,
+  createTestAgent,
+  fillAgentForm,
+  verifyAgentPersistence,
+} from "../../../helpers";
+```
 
+### Additional Helper Functions to Implement Within File
+
+```typescript
 const verifyFormPopulation = async (
   window: TestWindow,
   expectedData: AgentFormData,
@@ -258,6 +218,7 @@ const verifyAgentUpdated = async (
   window: TestWindow,
   originalData: AgentFormData,
   updates: Partial<AgentFormData>,
+  testSuite: ReturnType<typeof setupAgentsTestSuite>,
 ) => {
   // Verify agent card shows updated information
   const expectedData = { ...originalData, ...updates };
@@ -266,39 +227,26 @@ const verifyAgentUpdated = async (
     .filter({ hasText: expectedData.name });
   await expect(agentCard).toBeVisible();
 
-  // Verify file system persistence
-  await verifyAgentPersistence(window, expectedData);
+  // Verify file system persistence using existing helper
+  await verifyAgentPersistence(window, expectedData, testSuite);
 };
 ```
 
 ## Acceptance Criteria
 
-### Functional Requirements
+### Basic Functional Requirements
 
-- ✅ Opens edit modal from agent card with pre-populated data
-- ✅ Successfully updates agent name, role, personality, model, and description
-- ✅ Validates form fields during editing (required fields, uniqueness)
+- ✅ Opens edit modal from agent card
+- ✅ Successfully updates agent name
 - ✅ Handles edit cancellation without saving changes
-- ✅ Discards changes when modal is closed without saving
-- ✅ Shows appropriate validation errors for invalid edits
 - ✅ Updates agent data in grid after successful edit
 
 ### Technical Requirements
 
-- ✅ Follow established test patterns from LLM setup tests
-- ✅ Use proper async/await patterns for all interactions
-- ✅ Include appropriate timeouts and error handling
-- ✅ Use accessibility-compliant selectors (data-testid)
-- ✅ Verify file system persistence with proper path handling
-- ✅ Handle form state management correctly
-
-### Integration Requirements
-
+- ✅ Follow established test patterns from other editing tests
+- ✅ Use proper async/await patterns for interactions
 - ✅ Works with setupAgentsTestSuite infrastructure
-- ✅ Uses navigation and modal helpers appropriately
-- ✅ Integrates with mock data generators
-- ✅ Supports clean test isolation between runs
-- ✅ Provides clear test descriptions and error messages
+- ✅ Uses existing helper functions appropriately
 
 ## Implementation Guidance
 
@@ -310,33 +258,7 @@ const verifyAgentUpdated = async (
 
 - `/tests/desktop/features/settings/llm-setup/edit-configuration.spec.ts`
 - `/tests/desktop/features/settings/roles/roles-editing.spec.ts`
-- `/tests/desktop/features/settings/personalities/personalities-editing.spec.ts`
-
-### Selector Strategy
-
-- `[data-testid="agent-card"]` - Agent card in grid
-- `[data-testid="edit-agent-button"]` - Edit button on agent card
-- `[data-testid="agent-form-modal"]` - Edit form modal
-- `[data-testid="agent-name-input"]` - Agent name input field
-- `[data-testid="role-select"]` - Role selection dropdown
-- `[data-testid="personality-select"]` - Personality selection dropdown
-- `[data-testid="model-select"]` - Model selection dropdown
-- `[data-testid="save-agent-button"]` - Update/save button
-- `[data-testid="cancel-button"]` - Cancel button
-
-## Security Considerations
-
-- Use only test data, no real agent configurations
-- File system operations limited to test userData directory
-- Validate that original data is preserved when canceling edits
-- Ensure test data doesn't leak between test runs
-
-## Performance Requirements
-
-- Each test should complete within 30 seconds
-- Total test file should complete within 3-5 minutes
-- Focus on functionality verification, not performance benchmarking
 
 ## Notes
 
-This test file ensures that agent editing functionality works reliably and maintains data integrity. The tests should cover both successful edit scenarios and various failure/cancellation scenarios to ensure robust functionality.
+This test file ensures basic agent editing functionality works correctly. The tests verify that users can edit agent properties and save or cancel changes as expected.

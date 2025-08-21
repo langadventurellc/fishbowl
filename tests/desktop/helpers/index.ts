@@ -74,3 +74,8 @@ export {
   waitForAgent,
 } from "./settings/waitForAgentsList";
 export { createLlmConfigForAgentTests } from "./settings/createLlmConfigForAgentTests";
+export { readAgentsFile } from "./settings/readAgentsFile";
+export { verifyAgentCardData } from "./settings/verifyAgentCardData";
+export { createTestAgent } from "./settings/createTestAgent";
+export { fillAgentForm } from "./settings/fillAgentForm";
+export { verifyAgentPersistence } from "./settings/verifyAgentPersistence";

@@ -1,4 +1,3 @@
-import type { AgentFormData } from "@fishbowl-ai/ui-shared";
 import { expect, test } from "@playwright/test";
 import { promises as fs } from "fs";
 import {
@@ -6,13 +5,14 @@ import {
   createMockAgentData,
   createMockAnalystAgent,
   createMockTechnicalAgent,
+  fillAgentForm,
   openAgentsSection,
   setupAgentsTestSuite,
+  verifyAgentPersistence,
   waitForAgent,
   waitForAgentModal,
   waitForAgentsEmptyState,
   waitForAgentsList,
-  type TestWindow,
 } from "../../../helpers";
 
 test.describe("Feature: Agent Management - Creation", () => {
@@ -331,95 +331,3 @@ test.describe("Feature: Agent Management - Creation", () => {
     });
   });
 });
-
-// Helper Functions
-
-const fillAgentForm = async (
-  window: TestWindow,
-  agentData: AgentFormData,
-): Promise<AgentFormData> => {
-  // Fill name field
-  const nameInput = window.locator("#agent-name");
-  await nameInput.fill(agentData.name);
-
-  // Select model dropdown
-  const modelSelect = window.locator('[role="combobox"]').first();
-  await modelSelect.click();
-  // Select the first available model (since we created an Anthropic config)
-  const firstModelOption = window.locator('[role="option"]').first();
-  const selectedModel =
-    (await firstModelOption.getAttribute("data-value")) || "claude-3-opus";
-  await firstModelOption.click();
-
-  // Select role dropdown
-  const roleSelect = window.locator('[role="combobox"]').nth(1);
-  await roleSelect.click();
-  // Select the first available role
-  const firstRoleOption = window.locator('[role="option"]').first();
-  await firstRoleOption.click();
-  // The first role in defaultRoles.json is "project-manager"
-  const selectedRole = "project-manager";
-
-  // Select personality dropdown
-  const personalitySelect = window.locator('[role="combobox"]').nth(2);
-  await personalitySelect.click();
-  // Select the first available personality
-  const firstPersonalityOption = window.locator('[role="option"]').first();
-  await firstPersonalityOption.click();
-  // The first personality in defaultPersonalities.json is "creative-thinker"
-  const selectedPersonality = "creative-thinker";
-
-  // Fill system prompt if provided
-  if (agentData.systemPrompt) {
-    const systemPromptTextarea = window.locator(
-      'textarea[name="systemPrompt"]',
-    );
-    await systemPromptTextarea.fill(agentData.systemPrompt);
-  }
-
-  // Small delay for form state to update
-  await window.waitForTimeout(100);
-
-  // Return the actual selected values
-  return {
-    ...agentData,
-    model: selectedModel,
-    role: selectedRole,
-    personality: selectedPersonality,
-  };
-};
-
-const verifyAgentPersistence = async (
-  window: TestWindow,
-  agentData: AgentFormData,
-  testSuite: ReturnType<typeof setupAgentsTestSuite>,
-) => {
-  // Get agents.json file path and verify content
-  const agentsConfigPath = testSuite.getAgentsConfigPath();
-
-  // Wait a bit for file system write to complete
-  await window.waitForTimeout(500);
-
-  const agentsContent = await fs.readFile(agentsConfigPath, "utf-8");
-  const agentsDataParsed = JSON.parse(agentsContent);
-
-  // Verify agent exists in saved data
-  const savedAgent = agentsDataParsed.agents.find(
-    (agent: { name: string }) => agent.name === agentData.name,
-  );
-
-  expect(savedAgent).toBeDefined();
-  expect(savedAgent.name).toBe(agentData.name);
-  expect(savedAgent.model).toBe(agentData.model);
-  expect(savedAgent.role).toBe(agentData.role);
-  expect(savedAgent.personality).toBe(agentData.personality);
-
-  if (agentData.systemPrompt) {
-    expect(savedAgent.systemPrompt).toBe(agentData.systemPrompt);
-  }
-
-  // Verify agent has required metadata
-  expect(savedAgent.id).toBeDefined();
-  expect(savedAgent.createdAt).toBeDefined();
-  expect(savedAgent.updatedAt).toBeDefined();
-};
