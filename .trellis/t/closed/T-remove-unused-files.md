@@ -1,11 +1,37 @@
 ---
 id: T-remove-unused-files
 title: Remove unused files identified by Knip analysis
-status: open
+status: done
 priority: medium
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentNameInput.tsx: deleted - unused desktop component
+  apps/desktop/src/components/settings/FormActions.tsx: deleted - unused desktop component
+  apps/desktop/src/components/settings/FormHeader.tsx: deleted - unused desktop component
+  apps/desktop/src/components/settings/personalities/SavedPersonalitiesTab.tsx: deleted - unused desktop component
+  apps/desktop/src/components/settings/TabContainer.tsx: deleted - unused desktop component
+  apps/desktop/src/utils/sliderDescriptions.ts: deleted - unused utility file
+  apps/desktop/src/utils/sliderKeyboardHandler.ts: deleted - unused utility file
+  apps/desktop/src/main/services/index.ts: deleted - empty barrel file
+  apps/desktop/src/main/utils/index.ts: deleted - empty barrel file
+  apps/desktop/src/renderer/utils/index.ts: deleted - empty barrel file
+  packages/shared/src/services/storage/RolesFileRecoveryService.ts: deleted - unused shared service
+  packages/shared/src/services/storage/utils/roles/recoverPartialRolesData.ts: deleted - unused shared utility
+  packages/shared/src/types/agents/index.ts: deleted - unused shared type barrel file
+  tests/desktop/helpers/settings/createDuplicateNameAgentData.ts: deleted - unused test helper
+  tests/desktop/helpers/settings/createInvalidAgentData.ts: deleted - unused test helper
+  tests/desktop/helpers/settings/createLongTextAgentData.ts: deleted - unused test helper
+  tests/desktop/helpers/settings/createMinimalAgentData.ts: deleted - unused test helper
+  tests/desktop/helpers/settings/createSpecialCharAgentData.ts: deleted - unused test helper
+  tests/desktop/helpers/settings/MockAgentData.ts: deleted - unused test helper
+log:
+  - Successfully removed all 19 unused files identified by Knip analysis.
+    Completed systematic deletion in groups (Desktop Components, Utility Files,
+    Shared Package Files, Test Helper Files) with type-checking after each group
+    to ensure no regressions. All quality checks (lint, format, type-check) pass
+    cleanly. No empty directories required cleanup as all parent directories
+    still contain other files. Codebase is now cleaner with no broken imports or
+    references.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T18:07:44.005Z
