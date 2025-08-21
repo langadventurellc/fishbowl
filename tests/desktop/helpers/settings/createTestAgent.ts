@@ -7,7 +7,7 @@ import { fillAgentForm } from "./fillAgentForm";
 export const createTestAgent = async (
   window: TestWindow,
   agentData: AgentFormData,
-) => {
+): Promise<AgentFormData> => {
   await openAgentsSection(window);
   const createButton = window
     .locator("button")
@@ -15,7 +15,7 @@ export const createTestAgent = async (
   await createButton.click();
   await waitForAgentModal(window, true);
 
-  await fillAgentForm(window, agentData);
+  const actualAgent = await fillAgentForm(window, agentData);
 
   const saveButton = window
     .locator("button")
@@ -24,4 +24,6 @@ export const createTestAgent = async (
   await waitForAgentModal(window, false);
   // Small delay for file operations to complete
   await window.waitForTimeout(100);
+
+  return actualAgent;
 };

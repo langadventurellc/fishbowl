@@ -1,7 +1,7 @@
 ---
 id: F-agent-settings-e2e-tests
 title: Agent Settings E2E Tests
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -57,15 +57,20 @@ affectedFiles:
     test scenarios covering confirmation dialogs, successful deletion,
     cancellation, multiple agents, empty states, and persistence testing.
     Includes 3 helper functions for verification and confirmation operations.
-log: []
+  tests/desktop/features/settings/agents/agent-editing.spec.ts:
+    Created comprehensive E2E test suite for agent editing functionality with
+    scenarios for modal opening, data updates, validation, and cancellation
+    handling; Fixed selector issues - corrected edit button selector from
+    data-testid to aria-label pattern, updated save/cancel button selectors to
+    use actual text content instead of non-existent test-ids
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-create-agent-deletion-tests
-  - T-create-agent-editing-tests
-  - T-create-agent-empty-state-tests
-  - T-create-agent-form-validation
   - T-create-agent-creation-tests
   - T-create-agent-data-persistence
+  - T-create-agent-deletion-tests
+  - T-create-agent-editing-tests
   - T-create-agent-mock-data
   - T-create-agent-navigation-and
   - T-create-agent-test-infrastructu
