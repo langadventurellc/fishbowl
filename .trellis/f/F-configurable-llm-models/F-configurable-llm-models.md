@@ -73,10 +73,26 @@ affectedFiles:
     initialization after PersonalitiesRepositoryManager using dynamic import
     pattern, initialize() call with userDataPath, and info-level logging with
     dataPath context
+  apps/desktop/src/shared/ipc/llmModelsConstants.ts:
+    Created IPC channel constants
+    file with LLM_MODELS_CHANNELS object containing LOAD channel and
+    LlmModelsChannelType
+  apps/desktop/src/shared/ipc/llmModelsTypes.ts: Created IPC types file with
+    LlmModelsLoadResponse interface extending
+    IPCResponse<PersistedLlmModelsSettingsData>
+  apps/desktop/src/shared/ipc/index.ts: Updated barrel export file to include LLM models constants and response types
+  apps/desktop/src/shared/ipc/__tests__/llmModelsIPC.test.ts:
+    Added comprehensive
+    unit tests for constants, types, error handling, and integration validation
 log:
   - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
+  - T-add-llm-models-api-to-context
+  - T-create-ipc-constants-and
+  - T-create-main-process-ipc
+  - T-integrate-llm-models-handlers
+  - T-update-usellmmodels-hook-to-1
   - T-create-default-llm-models
   - T-create-llm-models-default
   - T-create-llm-models-schema-and
