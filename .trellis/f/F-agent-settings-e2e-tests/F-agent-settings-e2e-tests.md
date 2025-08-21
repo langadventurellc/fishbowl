@@ -25,6 +25,17 @@ affectedFiles:
     for agent list state management including waitForAgentsList for
     populated/empty states, waitForAgentsEmptyState for empty state
     verification, and waitForAgent for specific agent lookup by name.
+  tests/desktop/package.json: Added @fishbowl-ai/ui-shared dependency for AgentFormData types
+  tests/desktop/helpers/settings/MockAgentData.ts: Created mock agent data interface following established patterns
+  tests/desktop/helpers/settings/createMockAgentData.ts: Main mock agent data generator with randomized IDs and realistic defaults
+  tests/desktop/helpers/settings/createInvalidAgentData.ts: Invalid agent data generator for testing validation scenarios
+  tests/desktop/helpers/settings/createDuplicateNameAgentData.ts: Generator for testing duplicate name validation
+  tests/desktop/helpers/settings/createLongTextAgentData.ts: Generator for testing character length limits
+  tests/desktop/helpers/settings/createSpecialCharAgentData.ts: Generator for testing special character validation
+  tests/desktop/helpers/settings/createMockAnalystAgent.ts: Specialized analyst agent generator
+  tests/desktop/helpers/settings/createMockWriterAgent.ts: Specialized writer agent generator
+  tests/desktop/helpers/settings/createMockTechnicalAgent.ts: Specialized technical agent generator
+  tests/desktop/helpers/settings/createMinimalAgentData.ts: Minimal agent data with only required fields
 log: []
 schema: v1.0
 childrenIds:

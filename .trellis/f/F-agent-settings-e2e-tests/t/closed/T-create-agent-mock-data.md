@@ -1,13 +1,31 @@
 ---
 id: T-create-agent-mock-data
 title: Create Agent Mock Data Generators
-status: open
+status: done
 priority: medium
 parent: F-agent-settings-e2e-tests
 prerequisites:
   - T-create-agent-test-infrastructu
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/package.json: Added @fishbowl-ai/ui-shared dependency for AgentFormData types
+  tests/desktop/helpers/settings/MockAgentData.ts: Created mock agent data interface following established patterns
+  tests/desktop/helpers/settings/createMockAgentData.ts: Main mock agent data generator with randomized IDs and realistic defaults
+  tests/desktop/helpers/settings/createInvalidAgentData.ts: Invalid agent data generator for testing validation scenarios
+  tests/desktop/helpers/settings/createDuplicateNameAgentData.ts: Generator for testing duplicate name validation
+  tests/desktop/helpers/settings/createLongTextAgentData.ts: Generator for testing character length limits
+  tests/desktop/helpers/settings/createSpecialCharAgentData.ts: Generator for testing special character validation
+  tests/desktop/helpers/settings/createMockAnalystAgent.ts: Specialized analyst agent generator
+  tests/desktop/helpers/settings/createMockWriterAgent.ts: Specialized writer agent generator
+  tests/desktop/helpers/settings/createMockTechnicalAgent.ts: Specialized technical agent generator
+  tests/desktop/helpers/settings/createMinimalAgentData.ts: Minimal agent data with only required fields
+log:
+  - Implemented comprehensive agent mock data generators for E2E tests following
+    established patterns from existing role and personality mock helpers.
+    Created 9 utility files that provide realistic test data for agent creation,
+    validation testing, and various edge cases including duplicate names,
+    invalid data, special characters, and length limits. All files follow the
+    one-export-per-file rule and maintain consistency with existing codebase
+    patterns.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T00:29:02.507Z
