@@ -1,7 +1,7 @@
 ---
 id: F-configurable-llm-models
 title: Configurable LLM Models
-status: done
+status: in-progress
 priority: medium
 prerequisites: []
 affectedFiles:
