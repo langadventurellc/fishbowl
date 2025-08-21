@@ -182,6 +182,18 @@ app.whenReady().then(async () => {
       },
     );
 
+    // Initialize LLM models repository manager with userData path
+    const { llmModelsRepositoryManager } = await import(
+      "../data/repositories/llmModelsRepositoryManager.js"
+    );
+    llmModelsRepositoryManager.initialize(userDataPath);
+    mainProcessServices?.logger?.info(
+      "LLM models repository initialized successfully",
+      {
+        dataPath: userDataPath,
+      },
+    );
+
     // Initialize agents repository manager with userData path
     const { agentsRepositoryManager } = await import(
       "../data/repositories/agentsRepositoryManager.js"
