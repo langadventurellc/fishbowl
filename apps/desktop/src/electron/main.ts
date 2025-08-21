@@ -6,6 +6,7 @@ import { llmConfigServiceManager } from "./getLlmConfigService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
+import { setupLlmModelsHandlers } from "./handlers/llmModelsHandlers.js";
 import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
 import { setupAgentsHandlers } from "./agentsHandlers.js";
 import { setupRolesHandlers } from "./rolesHandlers.js";
@@ -233,6 +234,20 @@ app.whenReady().then(async () => {
         error as Error,
       );
       // Continue startup - app can function without LLM config handlers
+    }
+
+    // Register LLM models IPC handlers
+    try {
+      setupLlmModelsHandlers(ipcMain);
+      mainProcessServices?.logger?.info(
+        "LLM models IPC handlers registered successfully",
+      );
+    } catch (error) {
+      mainProcessServices?.logger?.error(
+        "Failed to register LLM models IPC handlers",
+        error as Error,
+      );
+      // Continue startup - app can function without LLM models handlers
     }
 
     // Initialize the service AFTER handlers are registered

@@ -72,7 +72,8 @@ affectedFiles:
   apps/desktop/src/electron/main.ts: Added LlmModelsRepositoryManager
     initialization after PersonalitiesRepositoryManager using dynamic import
     pattern, initialize() call with userDataPath, and info-level logging with
-    dataPath context
+    dataPath context; Added import and registration of llmModelsHandlers in main
+    process initialization sequence
   apps/desktop/src/shared/ipc/llmModelsConstants.ts:
     Created IPC channel constants
     file with LLM_MODELS_CHANNELS object containing LOAD channel and
@@ -84,16 +85,24 @@ affectedFiles:
   apps/desktop/src/shared/ipc/__tests__/llmModelsIPC.test.ts:
     Added comprehensive
     unit tests for constants, types, error handling, and integration validation
+  apps/desktop/src/electron/handlers/llmModelsHandlers.ts:
+    Created new IPC handler
+    file with setupLlmModelsHandlers function implementing LOAD channel handler
+    with proper error serialization and repository integration
+  apps/desktop/src/electron/handlers/__tests__/llmModelsHandlers.test.ts:
+    Added comprehensive unit tests covering successful loading, repository
+    initialization errors, load failures, and non-Error exceptions with proper
+    mocking and error format validation
 log:
   - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-add-llm-models-api-to-context
-  - T-create-ipc-constants-and
   - T-create-main-process-ipc
   - T-integrate-llm-models-handlers
   - T-update-usellmmodels-hook-to-1
   - T-create-default-llm-models
+  - T-create-ipc-constants-and
   - T-create-llm-models-default
   - T-create-llm-models-schema-and
   - T-create-llmmodelsrepository
