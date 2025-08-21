@@ -12,18 +12,18 @@ export const waitForAgentModal = async (
 
   if (shouldBeVisible) {
     // Wait for the agent form modal to be visible
-    await expect(window.locator(modalSelector)).toBeVisible({ timeout: 5000 });
+    await expect(window.locator(modalSelector)).toBeVisible({ timeout: 1000 });
 
     // Wait for modal content to be fully loaded - check for key form elements
     await expect(
       window
         .locator('input[name="name"], input[placeholder*="name" i]')
         .first(),
-    ).toBeVisible({ timeout: 3000 });
+    ).toBeVisible({ timeout: 1000 });
   } else {
     // Wait for modal to disappear
     await expect(window.locator(modalSelector)).not.toBeVisible({
-      timeout: 5000,
+      timeout: 1000,
     });
   }
 };
@@ -47,7 +47,7 @@ export const waitForAgentModalToClose = async (window: TestWindow) => {
 export const waitForAgentDeleteDialog = async (window: TestWindow) => {
   // Wait for delete confirmation dialog using the same pattern as roles deletion
   const confirmDialog = window.locator('[role="alertdialog"]');
-  await expect(confirmDialog).toBeVisible({ timeout: 3000 });
+  await expect(confirmDialog).toBeVisible({ timeout: 1000 });
 
   // Verify Cancel and Delete buttons are present
   await expect(

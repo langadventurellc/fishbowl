@@ -1,11 +1,22 @@
 ---
 id: T-fix-dependency-issues
 title: Fix dependency issues identified by Knip analysis
-status: open
+status: done
 priority: medium
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/package.json: Removed unused @testing-library/jest-dom from
+    devDependencies as it's not used in shared package tests
+  packages/ui-theme/package.json:
+    Removed unused tailwindcss from devDependencies
+    as theme package doesn't directly use tailwind build tools
+  packages/ui-shared/package.json: Added @testing-library/jest-dom@^6.8.0 to
+    devDependencies to properly declare dependency used in
+    src/__tests__/setup.ts
+log:
+  - "Fixed dependency issues identified by Knip analysis: removed 2 unused
+    devDependencies and added 1 missing dependency to proper location. All
+    quality checks and tests pass successfully."
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T18:08:02.939Z

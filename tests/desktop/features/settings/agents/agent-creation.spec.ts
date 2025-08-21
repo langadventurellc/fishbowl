@@ -59,13 +59,13 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       // Verify agent appears in grid (look for partial match since name has random ID)
       const agentCards = window.locator('[role="article"]');
-      await expect(agentCards.first()).toBeVisible({ timeout: 5000 });
+      await expect(agentCards.first()).toBeVisible({ timeout: 2000 });
 
       // Verify an agent card contains our agent name (at least partial match)
       const agentCard = agentCards.filter({
         hasText: actualAgent.name.substring(0, 10),
       });
-      await expect(agentCard).toBeVisible({ timeout: 3000 });
+      await expect(agentCard).toBeVisible({ timeout: 2000 });
 
       // Verify agent data is persisted
       await verifyAgentPersistence(window, actualAgent, testSuite);

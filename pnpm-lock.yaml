@@ -298,9 +298,6 @@ importers:
       "@fishbowl-ai/eslint-config":
         specifier: workspace:*
         version: link:../eslint-config
-      "@testing-library/jest-dom":
-        specifier: ^6.6.4
-        version: 6.6.4
       "@types/jest":
         specifier: ^30.0.0
         version: 30.0.0
@@ -338,6 +335,9 @@ importers:
       "@fishbowl-ai/eslint-config":
         specifier: workspace:*
         version: link:../eslint-config
+      "@testing-library/jest-dom":
+        specifier: ^6.8.0
+        version: 6.8.0
       "@testing-library/react":
         specifier: ^15.0.6
         version: 15.0.7(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -3618,6 +3618,13 @@ packages:
     resolution:
       {
         integrity: sha512-xDXgLjVunjHqczScfkCJ9iyjdNOVHvvCdqHSSxwM9L0l/wHkTRum67SDc020uAlCoqktJplgO2AAQeLP1wgqDQ==,
+      }
+    engines: { node: ">=14", npm: ">=6", yarn: ">=1" }
+
+  "@testing-library/jest-dom@6.8.0":
+    resolution:
+      {
+        integrity: sha512-WgXcWzVM6idy5JaftTVC8Vs83NKRmGJz4Hqs4oyOuO2J4r/y79vvKZsb+CaGyCSEbUPI6OsewfPd0G1A0/TUZQ==,
       }
     engines: { node: ">=14", npm: ">=6", yarn: ">=1" }
 
@@ -14747,6 +14754,15 @@ snapshots:
       css.escape: 1.5.1
       dom-accessibility-api: 0.6.3
       lodash: 4.17.21
+      picocolors: 1.1.1
+      redent: 3.0.0
+
+  "@testing-library/jest-dom@6.8.0":
+    dependencies:
+      "@adobe/css-tools": 4.4.3
+      aria-query: 5.3.0
+      css.escape: 1.5.1
+      dom-accessibility-api: 0.6.3
       picocolors: 1.1.1
       redent: 3.0.0
 

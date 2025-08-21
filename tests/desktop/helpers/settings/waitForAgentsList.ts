@@ -13,7 +13,7 @@ export const waitForAgentsList = async (
   try {
     const loadingSpinner = window.locator(".animate-spin");
     if (await loadingSpinner.isVisible({ timeout: 500 })) {
-      await expect(loadingSpinner).not.toBeVisible({ timeout: 10000 });
+      await expect(loadingSpinner).not.toBeVisible({ timeout: 3000 });
     }
   } catch {
     // No loading spinner present, continue
@@ -57,11 +57,11 @@ export const waitForAgentsList = async (
       const emptyState = window.locator(
         'text=/no agents/i, text=/create.*first.*agent/i, [data-testid*="empty"]',
       );
-      await expect(emptyState.first()).toBeVisible({ timeout: 5000 });
+      await expect(emptyState.first()).toBeVisible({ timeout: 1000 });
     } catch {
       // If no specific empty state found, ensure no agent cards are present
       const agentCards = window.locator('[data-testid*="agent-"]');
-      await expect(agentCards).toHaveCount(0, { timeout: 2000 });
+      await expect(agentCards).toHaveCount(0, { timeout: 1000 });
     }
   }
 
@@ -78,7 +78,7 @@ export const waitForAgentsEmptyState = async (window: TestWindow) => {
   try {
     const loadingSpinner = window.locator(".animate-spin");
     if (await loadingSpinner.isVisible({ timeout: 500 })) {
-      await expect(loadingSpinner).not.toBeVisible({ timeout: 10000 });
+      await expect(loadingSpinner).not.toBeVisible({ timeout: 1000 });
     }
   } catch {
     // No loading spinner, continue
@@ -95,7 +95,7 @@ export const waitForAgentsEmptyState = async (window: TestWindow) => {
   let emptyStateFound = false;
   for (const selector of emptyStateSelectors) {
     try {
-      await expect(window.locator(selector)).toBeVisible({ timeout: 2000 });
+      await expect(window.locator(selector)).toBeVisible({ timeout: 1000 });
       emptyStateFound = true;
       break;
     } catch {
@@ -128,5 +128,5 @@ export const waitForAgent = async (window: TestWindow, agentName: string) => {
     hasText: agentName,
   });
 
-  await expect(agentCard).toBeVisible({ timeout: 5000 });
+  await expect(agentCard).toBeVisible({ timeout: 1000 });
 };
