@@ -57,16 +57,23 @@ affectedFiles:
   apps/desktop/src/data/repositories/__tests__/LlmModelsRepository.test.ts:
     Created comprehensive unit tests with 35 test cases covering all repository
     functionality, error conditions, and edge cases
+  apps/desktop/src/data/repositories/llmModelsRepositoryManager.ts:
+    Created LlmModelsRepositoryManager singleton class with initialize(), get(),
+    and reset() methods following PersonalitiesRepositoryManager pattern exactly
+  apps/desktop/src/data/repositories/__tests__/llmModelsRepositoryManager.test.ts:
+    Created comprehensive unit tests with 17 test cases covering initialization,
+    access control, error handling, singleton behavior, edge cases, and
+    integration with LlmModelsRepository
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-llmmodelsrepository
   - T-create-llmmodelsrepositorymana
   - T-integrate-llmmodelsrepositorym
   - T-update-usellmmodels-hook-to
   - T-create-default-llm-models
   - T-create-llm-models-default
   - T-create-llm-models-schema-and
+  - T-create-llmmodelsrepository
   - T-update-llmmodel-interface-to
 created: 2025-08-21T19:31:35.047Z
 updated: 2025-08-21T19:31:35.047Z
