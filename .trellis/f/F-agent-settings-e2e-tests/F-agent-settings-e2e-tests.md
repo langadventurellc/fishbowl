@@ -12,6 +12,19 @@ affectedFiles:
     agents.json file deletion with retry logic and error handling
   tests/desktop/features/settings/agents/index.ts: Barrel exports for agent test helper functions and infrastructure
   tests/desktop/features/settings/agents/infrastructure-test.spec.ts: Verification test to ensure infrastructure works correctly
+  tests/desktop/helpers/settings/openAgentsSection.ts:
+    Created new helper function
+    for navigating to agents section within settings modal. Handles modal
+    opening/closing, navigation to agents tab, and waits for section to load
+    completely.
+  tests/desktop/helpers/settings/waitForAgentModal.ts: Created helper functions
+    for agent form modal interactions including waitForAgentModal for
+    create/edit modals, waitForAgentModalToClose for modal dismissal, and
+    waitForAgentDeleteDialog for delete confirmations.
+  tests/desktop/helpers/settings/waitForAgentsList.ts: Created helper functions
+    for agent list state management including waitForAgentsList for
+    populated/empty states, waitForAgentsEmptyState for empty state
+    verification, and waitForAgent for specific agent lookup by name.
 log: []
 schema: v1.0
 childrenIds:

@@ -1,13 +1,34 @@
 ---
 id: T-create-agent-navigation-and
 title: Create Agent Navigation and UI Helpers
-status: open
+status: done
 priority: high
 parent: F-agent-settings-e2e-tests
 prerequisites:
   - T-create-agent-test-infrastructu
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/helpers/settings/openAgentsSection.ts:
+    Created new helper function
+    for navigating to agents section within settings modal. Handles modal
+    opening/closing, navigation to agents tab, and waits for section to load
+    completely.
+  tests/desktop/helpers/settings/waitForAgentModal.ts: Created helper functions
+    for agent form modal interactions including waitForAgentModal for
+    create/edit modals, waitForAgentModalToClose for modal dismissal, and
+    waitForAgentDeleteDialog for delete confirmations.
+  tests/desktop/helpers/settings/waitForAgentsList.ts: Created helper functions
+    for agent list state management including waitForAgentsList for
+    populated/empty states, waitForAgentsEmptyState for empty state
+    verification, and waitForAgent for specific agent lookup by name.
+log:
+  - "Successfully implemented agent navigation and UI helper functions for E2E
+    tests. Created three helper files following established patterns from
+    existing settings test helpers: openAgentsSection.ts for navigating to
+    agents section, waitForAgentModal.ts for agent form modal interactions, and
+    waitForAgentsList.ts for agent grid/list state management. All helpers
+    include robust error handling, proper timeouts, loading state management,
+    and follow exact patterns from existing helper files. Quality checks pass
+    with no linting or formatting issues."
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T00:28:24.690Z

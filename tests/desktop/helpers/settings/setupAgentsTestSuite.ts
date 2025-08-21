@@ -20,7 +20,7 @@ export const setupAgentsTestSuite = () => {
     // Launch Electron app with test environment
     const electronPath = path.join(
       __dirname,
-      "../../../apps/desktop/dist-electron/electron/main.js",
+      "../../../../apps/desktop/dist-electron/electron/main.js",
     );
     electronApp = await createElectronApp(electronPath);
 
