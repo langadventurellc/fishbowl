@@ -20,104 +20,105 @@ export function useLlmModels() {
   } = useLlmConfig();
 
   /**
-   * Get available models for a specific provider type.
-   * This maps provider configurations to their available models.
-   * Currently unused but will be used when LLM config repository is integrated.
+   * Load models from the LLM models repository and transform to LlmModel format.
+   * This replaces the hard-coded _getModelsForProvider function.
    */
-  const _getModelsForProvider = useCallback(
-    (providerType: string, providerName: string): LlmModel[] => {
-      switch (providerType.toLowerCase()) {
-        case "openai":
-          return [
-            {
-              id: "gpt-4-turbo",
-              name: "GPT-4 Turbo",
-              provider: providerName,
-              contextLength: 128000,
-            },
-            {
-              id: "gpt-4",
-              name: "GPT-4",
-              provider: providerName,
-              contextLength: 8192,
-            },
-            {
-              id: "gpt-3.5-turbo",
-              name: "GPT-3.5 Turbo",
-              provider: providerName,
-              contextLength: 16385,
-            },
-          ];
+  const loadModelsFromRepository = useCallback(async (): Promise<
+    LlmModel[]
+  > => {
+    try {
+      const { llmModelsRepositoryManager } = await import(
+        "../data/repositories/llmModelsRepositoryManager"
+      );
+      const repository = llmModelsRepositoryManager.get();
 
-        case "anthropic":
-          return [
-            {
-              id: "claude-3-opus",
-              name: "Claude 3 Opus",
-              provider: providerName,
-              contextLength: 200000,
-            },
-            {
-              id: "claude-3-sonnet",
-              name: "Claude 3 Sonnet",
-              provider: providerName,
-              contextLength: 200000,
-            },
-            {
-              id: "claude-3-haiku",
-              name: "Claude 3 Haiku",
-              provider: providerName,
-              contextLength: 200000,
-            },
-          ];
-
-        default:
-          return [];
+      // Handle case where repository is not initialized
+      if (!repository) {
+        services.logger.warn(
+          "LLM models repository not initialized, using empty models list",
+        );
+        return [];
       }
-    },
-    [],
-  );
+
+      const modelsData = await repository.loadLlmModels();
+
+      // Transform repository data to LlmModel format
+      const transformedModels: LlmModel[] = [];
+      for (const provider of modelsData.providers) {
+        for (const model of provider.models) {
+          transformedModels.push({
+            id: model.id,
+            name: model.name,
+            provider: provider.name,
+            contextLength: model.contextLength,
+          });
+        }
+      }
+
+      return transformedModels;
+    } catch (error) {
+      services.logger.error(
+        "Failed to load LLM models from repository",
+        error as Error,
+      );
+      return []; // Fallback to empty array
+    }
+  }, [services.logger]);
 
   /**
    * Load models from configured LLM providers.
-   * Uses the useLlmConfig hook to get actual LLM configurations.
+   * Uses the repository to load models and filters based on actual LLM configurations.
    */
-  const loadModels = useCallback(() => {
-    setLoading(configsLoading);
-    setError(configsError);
+  const loadModels = useCallback(async () => {
+    setLoading(true);
+    setError(null);
 
     if (configsError) {
-      services.logger.error(
-        "Failed to load LLM configurations",
-        new Error(configsError),
-      );
+      const error = new Error(configsError);
+      setError(error);
+      services.logger.error("Failed to load LLM configurations", error);
+      setLoading(false);
       return;
     }
 
-    if (!configsLoading) {
-      try {
-        // Map configurations to available models
-        const availableModels = configurations.flatMap((config) =>
-          _getModelsForProvider(
-            config.provider,
-            config.customName || config.provider,
-          ),
-        );
+    if (configsLoading) {
+      // Still loading configurations, wait
+      return;
+    }
 
-        setModels(availableModels);
-      } catch (err) {
-        const error =
-          err instanceof Error ? err : new Error("Failed to load models");
-        setError(error);
-        services.logger.error("Failed to load LLM models", error);
-      }
+    try {
+      // Load all configured models from repository
+      const allModels = await loadModelsFromRepository();
+
+      // Filter models based on actual LLM provider configurations
+      const availableModels = configurations.flatMap((config) => {
+        return allModels
+          .filter(
+            (model) =>
+              model.provider.toLowerCase() === config.provider.toLowerCase(),
+          )
+          .map((model) => ({
+            ...model,
+            provider: config.customName || config.provider, // Use custom name if available
+          }));
+      });
+
+      setModels(availableModels);
+    } catch (err) {
+      const error =
+        err instanceof Error ? err : new Error("Failed to load models");
+      setError(error);
+      services.logger.error("Failed to load LLM models", error);
+      setModels([]); // Fallback to empty array
+    } finally {
+      setLoading(false);
     }
   }, [
     configurations,
     configsLoading,
     configsError,
-    services,
-    _getModelsForProvider,
+    services.logger,
+    loadModelsFromRepository,
   ]);
 
   /**

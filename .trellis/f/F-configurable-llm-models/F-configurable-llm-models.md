@@ -1,7 +1,7 @@
 ---
 id: F-configurable-llm-models
 title: Configurable LLM Models
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -28,7 +28,12 @@ affectedFiles:
     scenarios, edge cases, security limits, and error handling.
   packages/ui-shared/src/types/settings/LlmModel.ts: Removed vision and functionCalling boolean properties from interface
   apps/desktop/src/hooks/useLlmModels.ts: Removed vision and functionCalling
-    properties from all OpenAI, Anthropic, and implied model definitions
+    properties from all OpenAI, Anthropic, and implied model definitions;
+    Replaced hard-coded model definitions and _getModelsForProvider function
+    with repository-based loading. Added loadModelsFromRepository function for
+    async data loading and transformation. Updated loadModels to filter
+    repository models by configured providers while maintaining hook API
+    compatibility.
   packages/shared/src/data/defaultLlmModels.json: Created default LLM models
     configuration file with OpenAI and Anthropic providers, including all
     current models with correct context lengths and schema version 1.0.0
@@ -68,17 +73,18 @@ affectedFiles:
     initialization after PersonalitiesRepositoryManager using dynamic import
     pattern, initialize() call with userDataPath, and info-level logging with
     dataPath context
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-integrate-llmmodelsrepositorym
-  - T-update-usellmmodels-hook-to
   - T-create-default-llm-models
   - T-create-llm-models-default
   - T-create-llm-models-schema-and
   - T-create-llmmodelsrepository
   - T-create-llmmodelsrepositorymana
+  - T-integrate-llmmodelsrepositorym
   - T-update-llmmodel-interface-to
+  - T-update-usellmmodels-hook-to
 created: 2025-08-21T19:31:35.047Z
 updated: 2025-08-21T19:31:35.047Z
 ---

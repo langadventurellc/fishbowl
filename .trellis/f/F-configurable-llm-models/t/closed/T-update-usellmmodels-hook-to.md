@@ -1,14 +1,27 @@
 ---
 id: T-update-usellmmodels-hook-to
 title: Update useLlmModels hook to load models from repository
-status: open
+status: done
 priority: high
 parent: F-configurable-llm-models
 prerequisites:
   - T-integrate-llmmodelsrepositorym
   - T-update-llmmodel-interface-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/useLlmModels.ts: Replaced hard-coded model definitions
+    and _getModelsForProvider function with repository-based loading. Added
+    loadModelsFromRepository function for async data loading and transformation.
+    Updated loadModels to filter repository models by configured providers while
+    maintaining hook API compatibility.
+log:
+  - Successfully updated useLlmModels hook to load models from repository
+    instead of hard-coded switch statement. Replaced _getModelsForProvider
+    function with loadModelsFromRepository that transforms repository data to
+    LlmModel format. Updated loadModels function to use async repository loading
+    while maintaining hook API compatibility. Added proper error handling for
+    repository access failures with graceful fallbacks. All existing UI
+    components continue to work unchanged. All tests pass and quality checks are
+    clean.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T19:39:44.816Z
