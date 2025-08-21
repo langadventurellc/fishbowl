@@ -28,6 +28,13 @@ affectedFiles:
   packages/ui-shared/src/types/settings/LlmModel.ts: Removed vision and functionCalling boolean properties from interface
   apps/desktop/src/hooks/useLlmModels.ts: Removed vision and functionCalling
     properties from all OpenAI, Anthropic, and implied model definitions
+  packages/shared/src/data/defaultLlmModels.json: Created default LLM models
+    configuration file with OpenAI and Anthropic providers, including all
+    current models with correct context lengths and schema version 1.0.0
+  packages/shared/src/data/__tests__/defaultLlmModels.test.ts:
+    Created comprehensive test suite with 28 tests covering JSON structure
+    validation, schema compliance, model data verification, and error resistance
+    testing
 log: []
 schema: v1.0
 childrenIds:
@@ -36,9 +43,9 @@ childrenIds:
   - T-create-llmmodelsrepository
   - T-create-llmmodelsrepositorymana
   - T-integrate-llmmodelsrepositorym
-  - T-update-llmmodel-interface-to
   - T-update-usellmmodels-hook-to
   - T-create-llm-models-schema-and
+  - T-update-llmmodel-interface-to
 created: 2025-08-21T19:31:35.047Z
 updated: 2025-08-21T19:31:35.047Z
 ---
