@@ -15,6 +15,13 @@ export {
   CURRENT_PERSONALITIES_SCHEMA_VERSION,
 } from "./personalitiesSettingsSchema";
 export {
+  persistedLlmModelSchema,
+  persistedLlmProviderSchema,
+  persistedLlmModelsSettingsSchema,
+  LLM_MODELS_SCHEMA_VERSION,
+  CURRENT_LLM_MODELS_SCHEMA_VERSION,
+} from "./llmModelsSchema";
+export {
   persistedAgentSchema,
   persistedAgentsSettingsSchema,
   AGENTS_SCHEMA_VERSION,
@@ -42,6 +49,9 @@ export type { PersistedRoleData } from "./PersistedRoleData";
 export type { PersistedRolesSettingsData } from "./PersistedRolesSettingsData";
 export type { PersistedPersonalityData } from "./PersistedPersonalityData";
 export type { PersistedPersonalitiesSettingsData } from "./PersistedPersonalitiesSettingsData";
+export type { PersistedLlmModelData } from "./PersistedLlmModelData";
+export type { PersistedLlmProviderData } from "./PersistedLlmProviderData";
+export type { PersistedLlmModelsSettingsData } from "./PersistedLlmModelsSettingsData";
 export type { PersistedAgentData } from "../agents/PersistedAgentData";
 export type { PersistedAgentsSettingsData } from "../agents/PersistedAgentsSettingsData";
 export type { ShowTimestamps } from "./ShowTimestamps";

@@ -1,13 +1,41 @@
 ---
 id: F-configurable-llm-models
 title: Configurable LLM Models
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/types/settings/llmModelsSchema.ts:
+    Created main schema file
+    with Zod validation schemas for LLM models, providers, and settings.
+    Includes version constants, security validation limits, and comprehensive
+    JSDoc documentation.
+  packages/shared/src/types/settings/PersistedLlmModelsSettingsData.ts:
+    Created TypeScript type definition for complete LLM models settings file
+    structure inferred from Zod schema.
+  packages/shared/src/types/settings/PersistedLlmProviderData.ts:
+    Created TypeScript type definition for single LLM provider configuration
+    inferred from Zod schema.
+  packages/shared/src/types/settings/PersistedLlmModelData.ts:
+    Created TypeScript type definition for single LLM model configuration
+    inferred from Zod schema.
+  packages/shared/src/types/settings/index.ts:
+    Updated exports to include new LLM
+    models schemas and type definitions following established patterns.
+  packages/shared/src/types/settings/__tests__/llmModelsSchema.test.ts:
+    Added comprehensive unit tests (56 test cases) covering all validation
+    scenarios, edge cases, security limits, and error handling.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-default-llm-models
+  - T-create-llm-models-default
+  - T-create-llm-models-schema-and
+  - T-create-llmmodelsrepository
+  - T-create-llmmodelsrepositorymana
+  - T-integrate-llmmodelsrepositorym
+  - T-update-llmmodel-interface-to
+  - T-update-usellmmodels-hook-to
 created: 2025-08-21T19:31:35.047Z
 updated: 2025-08-21T19:31:35.047Z
 ---
