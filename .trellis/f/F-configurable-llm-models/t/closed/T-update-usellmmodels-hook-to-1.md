@@ -1,13 +1,26 @@
 ---
 id: T-update-usellmmodels-hook-to-1
 title: Update useLlmModels hook to use IPC instead of direct repository access
-status: open
+status: done
 priority: high
 parent: F-configurable-llm-models
 prerequisites:
   - T-add-llm-models-api-to-context
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/useLlmModels.ts: Updated loadModelsFromRepository
+    function to use IPC calls (window.electronAPI.llmModels.load()) instead of
+    direct repository imports, added Electron environment detection following
+    useLlmConfig pattern, updated error handling for IPC communication, removed
+    Node.js-specific imports that caused crypto module errors
+log:
+  - Successfully updated useLlmModels hook to use IPC instead of direct
+    repository access, fixing crypto module error in renderer process. Replaced
+    dynamic repository imports with window.electronAPI.llmModels.load() calls
+    following established patterns from useLlmConfig hook. Added proper Electron
+    environment detection with graceful fallbacks for non-Electron environments.
+    Preserved existing data transformation logic while eliminating Node.js
+    dependencies that caused the original crypto error. All quality checks pass
+    and functionality remains unchanged for consuming components.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T22:39:37.623Z

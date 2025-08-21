@@ -20,27 +20,26 @@ export function useLlmModels() {
   } = useLlmConfig();
 
   /**
-   * Load models from the LLM models repository and transform to LlmModel format.
-   * This replaces the hard-coded _getModelsForProvider function.
+   * Load models from the LLM models repository via IPC and transform to LlmModel format.
+   * Uses IPC calls to avoid crypto module errors in renderer process.
    */
   const loadModelsFromRepository = useCallback(async (): Promise<
     LlmModel[]
   > => {
     try {
-      const { llmModelsRepositoryManager } = await import(
-        "../data/repositories/llmModelsRepositoryManager"
-      );
-      const repository = llmModelsRepositoryManager.get();
-
-      // Handle case where repository is not initialized
-      if (!repository) {
+      // Check if running in Electron environment
+      if (
+        typeof window === "undefined" ||
+        !window.electronAPI?.llmModels?.load ||
+        typeof window.electronAPI.llmModels.load !== "function"
+      ) {
         services.logger.warn(
-          "LLM models repository not initialized, using empty models list",
+          "Not running in Electron environment, using empty models list",
         );
         return [];
       }
 
-      const modelsData = await repository.loadLlmModels();
+      const modelsData = await window.electronAPI.llmModels.load();
 
       // Transform repository data to LlmModel format
       const transformedModels: LlmModel[] = [];
@@ -58,7 +57,7 @@ export function useLlmModels() {
       return transformedModels;
     } catch (error) {
       services.logger.error(
-        "Failed to load LLM models from repository",
+        "Failed to load LLM models via IPC",
         error as Error,
       );
       return []; // Fallback to empty array

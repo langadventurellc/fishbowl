@@ -33,7 +33,11 @@ affectedFiles:
     with repository-based loading. Added loadModelsFromRepository function for
     async data loading and transformation. Updated loadModels to filter
     repository models by configured providers while maintaining hook API
-    compatibility.
+    compatibility.; Updated loadModelsFromRepository function to use IPC calls
+    (window.electronAPI.llmModels.load()) instead of direct repository imports,
+    added Electron environment detection following useLlmConfig pattern, updated
+    error handling for IPC communication, removed Node.js-specific imports that
+    caused crypto module errors
   packages/shared/src/data/defaultLlmModels.json: Created default LLM models
     configuration file with OpenAI and Anthropic providers, including all
     current models with correct context lengths and schema version 1.0.0
@@ -101,9 +105,9 @@ log:
   - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-add-llm-models-api-to-context
   - T-integrate-llm-models-handlers
   - T-update-usellmmodels-hook-to-1
+  - T-add-llm-models-api-to-context
   - T-create-default-llm-models
   - T-create-ipc-constants-and
   - T-create-llm-models-default
