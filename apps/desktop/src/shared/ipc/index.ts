@@ -24,6 +24,10 @@ export type { AgentsChannelType } from "./agentsConstants";
 export { LLM_CONFIG_CHANNELS } from "./llmConfigConstants";
 export type { LlmConfigChannel } from "./llmConfigConstants";
 
+// LLM Models constants
+export { LLM_MODELS_CHANNELS } from "./llmModelsConstants";
+export type { LlmModelsChannelType } from "./llmModelsConstants";
+
 // Base types
 export type { IPCResponse } from "./base";
 export type { SerializableError } from "./types";
@@ -86,6 +90,14 @@ export type { LlmConfigDeleteResponse } from "./llmConfig/deleteResponse";
 export type { LlmConfigListResponse } from "./llmConfig/listResponse";
 export type { LlmConfigInitializeResponse } from "./llmConfig/initializeResponse";
 export type { LlmConfigRefreshCacheResponse } from "./llmConfig/refreshCacheResponse";
+
+// LLM Models request types
+export type { LlmModelsSaveRequest } from "./llmModels/saveRequest";
+
+// LLM Models response types
+export type { LlmModelsLoadResponse } from "./llmModels/loadResponse";
+export type { LlmModelsSaveResponse } from "./llmModels/saveResponse";
+export type { LlmModelsResetResponse } from "./llmModels/resetResponse";
 
 // Data types
 export type { PersistedSettingsData } from "./data";

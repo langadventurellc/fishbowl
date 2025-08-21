@@ -1,0 +1,307 @@
+---
+id: F-configurable-llm-models
+title: Configurable LLM Models
+status: done
+priority: medium
+prerequisites: []
+affectedFiles:
+  packages/shared/src/types/settings/llmModelsSchema.ts:
+    Created main schema file
+    with Zod validation schemas for LLM models, providers, and settings.
+    Includes version constants, security validation limits, and comprehensive
+    JSDoc documentation.
+  packages/shared/src/types/settings/PersistedLlmModelsSettingsData.ts:
+    Created TypeScript type definition for complete LLM models settings file
+    structure inferred from Zod schema.
+  packages/shared/src/types/settings/PersistedLlmProviderData.ts:
+    Created TypeScript type definition for single LLM provider configuration
+    inferred from Zod schema.
+  packages/shared/src/types/settings/PersistedLlmModelData.ts:
+    Created TypeScript type definition for single LLM model configuration
+    inferred from Zod schema.
+  packages/shared/src/types/settings/index.ts:
+    Updated exports to include new LLM
+    models schemas and type definitions following established patterns.; Added
+    exports for both new functions to make them available from shared package
+  packages/shared/src/types/settings/__tests__/llmModelsSchema.test.ts:
+    Added comprehensive unit tests (56 test cases) covering all validation
+    scenarios, edge cases, security limits, and error handling.
+  packages/ui-shared/src/types/settings/LlmModel.ts: Removed vision and functionCalling boolean properties from interface
+  apps/desktop/src/hooks/useLlmModels.ts: Removed vision and functionCalling
+    properties from all OpenAI, Anthropic, and implied model definitions;
+    Replaced hard-coded model definitions and _getModelsForProvider function
+    with repository-based loading. Added loadModelsFromRepository function for
+    async data loading and transformation. Updated loadModels to filter
+    repository models by configured providers while maintaining hook API
+    compatibility.; Updated loadModelsFromRepository function to use IPC calls
+    (window.electronAPI.llmModels.load()) instead of direct repository imports,
+    added Electron environment detection following useLlmConfig pattern, updated
+    error handling for IPC communication, removed Node.js-specific imports that
+    caused crypto module errors
+  packages/shared/src/data/defaultLlmModels.json: Created default LLM models
+    configuration file with OpenAI and Anthropic providers, including all
+    current models with correct context lengths and schema version 1.0.0
+  packages/shared/src/data/__tests__/defaultLlmModels.test.ts:
+    Created comprehensive test suite with 28 tests covering JSON structure
+    validation, schema compliance, model data verification, and error resistance
+    testing
+  packages/shared/src/types/settings/getDefaultLlmModels.ts: Created function to
+    get bundled default LLM models without wrapper metadata, following exact
+    pattern from getDefaultPersonalities.ts with proper validation and error
+    handling
+  packages/shared/src/types/settings/createDefaultLlmModelsSettings.ts:
+    Created function to create default LLM models settings structure with
+    includeDefaults parameter, following exact pattern from
+    createDefaultPersonalitiesSettings.ts
+  packages/shared/src/types/settings/__tests__/getDefaultLlmModels.test.ts:
+    Comprehensive unit tests covering functionality, validation, error handling,
+    and data consistency for getDefaultLlmModels function
+  packages/shared/src/types/settings/__tests__/createDefaultLlmModelsSettings.test.ts:
+    Comprehensive unit tests covering functionality, validation, error handling,
+    and includeDefaults parameter behavior for createDefaultLlmModelsSettings
+    function
+  apps/desktop/src/data/repositories/LlmModelsRepository.ts: Created new
+    LlmModelsRepository class with loadLlmModels(), saveLlmModels(),
+    resetLlmModels() methods and comprehensive error handling
+  apps/desktop/src/data/repositories/__tests__/LlmModelsRepository.test.ts:
+    Created comprehensive unit tests with 35 test cases covering all repository
+    functionality, error conditions, and edge cases
+  apps/desktop/src/data/repositories/llmModelsRepositoryManager.ts:
+    Created LlmModelsRepositoryManager singleton class with initialize(), get(),
+    and reset() methods following PersonalitiesRepositoryManager pattern exactly
+  apps/desktop/src/data/repositories/__tests__/llmModelsRepositoryManager.test.ts:
+    Created comprehensive unit tests with 17 test cases covering initialization,
+    access control, error handling, singleton behavior, edge cases, and
+    integration with LlmModelsRepository
+  apps/desktop/src/electron/main.ts: Added LlmModelsRepositoryManager
+    initialization after PersonalitiesRepositoryManager using dynamic import
+    pattern, initialize() call with userDataPath, and info-level logging with
+    dataPath context; Added import and registration of llmModelsHandlers in main
+    process initialization sequence
+  apps/desktop/src/shared/ipc/llmModelsConstants.ts:
+    Created IPC channel constants
+    file with LLM_MODELS_CHANNELS object containing LOAD channel and
+    LlmModelsChannelType; Added SAVE and RESET channel constants for complete
+    CRUD operations
+  apps/desktop/src/shared/ipc/llmModelsTypes.ts: Created IPC types file with
+    LlmModelsLoadResponse interface extending
+    IPCResponse<PersistedLlmModelsSettingsData>; Removed old file that violated
+    one-export-per-file rule
+  apps/desktop/src/shared/ipc/index.ts:
+    Updated barrel export file to include LLM
+    models constants and response types; Updated exports to include new LLM
+    models request and response types
+  apps/desktop/src/shared/ipc/__tests__/llmModelsIPC.test.ts:
+    Added comprehensive
+    unit tests for constants, types, error handling, and integration validation;
+    Updated tests to expect new SAVE and RESET constants
+  apps/desktop/src/electron/handlers/llmModelsHandlers.ts:
+    Created new IPC handler
+    file with setupLlmModelsHandlers function implementing LOAD channel handler
+    with proper error serialization and repository integration; Enhanced
+    handlers with complete SAVE and RESET operations, structured logging, and
+    proper error handling
+  apps/desktop/src/electron/handlers/__tests__/llmModelsHandlers.test.ts:
+    Added comprehensive unit tests covering successful loading, repository
+    initialization errors, load failures, and non-Error exceptions with proper
+    mocking and error format validation; Updated test mocks to work with
+    structured logging instead of console.error
+  apps/desktop/src/electron/preload.ts: Added llmModels API with load() method
+    following established patterns, including proper error handling and logging
+  apps/desktop/src/types/electron.d.ts: Updated ElectronAPI interface to include
+    llmModels property with JSDoc documentation for TypeScript support
+  apps/desktop/src/shared/ipc/llmModels/loadResponse.ts: Created load response type definition following project pattern
+  apps/desktop/src/shared/ipc/llmModels/saveRequest.ts: Created save request type definition for LLM models persistence
+  apps/desktop/src/shared/ipc/llmModels/saveResponse.ts: Created save response type definition for operation feedback
+  apps/desktop/src/shared/ipc/llmModels/resetResponse.ts: Created reset response type definition for default models return
+log:
+  - "Auto-completed: All child tasks are complete"
+  - "Auto-completed: All child tasks are complete"
+schema: v1.0
+childrenIds:
+  - T-add-llm-models-api-to-context
+  - T-create-default-llm-models
+  - T-create-ipc-constants-and
+  - T-create-llm-models-default
+  - T-create-llm-models-schema-and
+  - T-create-llmmodelsrepository
+  - T-create-llmmodelsrepositorymana
+  - T-create-main-process-ipc
+  - T-integrate-llm-models-handlers
+  - T-integrate-llmmodelsrepositorym
+  - T-update-llmmodel-interface-to
+  - T-update-usellmmodels-hook-to-1
+  - T-update-usellmmodels-hook-to
+created: 2025-08-21T19:31:35.047Z
+updated: 2025-08-21T19:31:35.047Z
+---
+
+## Purpose and Functionality
+
+Replace hard-coded LLM model configurations in `useLlmModels` hook with a JSON-based configuration system that loads model definitions from a user data directory file. This enables modification of available models without updating application binaries.
+
+## Key Components to Implement
+
+### 1. Default LLM Models Configuration File
+
+- **File Structure**: JSON with providers array, each containing models array
+- **Provider Properties**: id, name, models[]
+- **Model Properties**: id, name, contextLength (remove vision and functionCalling)
+- **Schema Validation**: Zod schema for configuration validation
+- **Default Content**: Pre-populated with OpenAI and Anthropic models
+
+### 2. LLM Models Repository
+
+- **Repository Pattern**: Following PersonalitiesRepository/RolesRepository patterns
+- **File Management**: Atomic reads/writes to `llmModels.json` in user data directory
+- **Default Initialization**: Copy defaults to user data folder on first app launch
+- **Error Handling**: Graceful fallback to defaults on corruption/missing file
+
+### 3. Updated LLM Model Interface
+
+- **Remove Properties**: vision and functionCalling boolean fields
+- **Retain Properties**: id, name, provider, contextLength
+- **Type Safety**: Ensure all components using LlmModel interface compile
+
+### 4. Hook Integration
+
+- **Data Source**: Load models from JSON file instead of hard-coded switch statement
+- **Caching**: Efficient loading and caching of configuration data
+- **Error Resilience**: Handle file read errors gracefully
+
+## Detailed Acceptance Criteria
+
+**Functional Behavior:**
+
+- ✅ Application loads LLM models from `llmModels.json` in user data directory
+- ✅ On first launch, default configuration file is created automatically
+- ✅ Configuration includes OpenAI (GPT-4 Turbo, GPT-4, GPT-3.5 Turbo) and Anthropic (Claude 3 Opus, Sonnet, Haiku) models
+- ✅ Models displayed in UI match those defined in JSON configuration
+- ✅ Advanced users can manually edit JSON file to add/modify/remove models
+- ✅ Invalid JSON or missing file gracefully falls back to bundled defaults
+- ✅ No UI changes required for model selection components
+
+**Data Validation and Error Handling:**
+
+- ✅ JSON schema validation ensures configuration file integrity
+- ✅ Malformed configuration files trigger automatic reset to defaults
+- ✅ File read/write errors logged appropriately without crashing application
+- ✅ Missing provider or model properties handled with reasonable defaults
+
+**Integration Requirements:**
+
+- ✅ Existing `useLlmModels` hook API remains unchanged
+- ✅ All components using LlmModel interface continue to work
+- ✅ No changes required to ModelSelect or other UI components
+- ✅ Configuration loads during application initialization
+
+**Performance Requirements:**
+
+- ✅ Configuration file reads complete within 100ms on typical systems
+- ✅ Models list updates immediately when configuration file changes
+- ✅ Memory usage for configuration data remains minimal (< 1MB)
+
+**Security Validation:**
+
+- ✅ No sensitive data stored in configuration file
+- ✅ File permissions set appropriately for user data directory
+- ✅ Input validation prevents injection or corruption attacks
+
+## Implementation Guidance
+
+### Technical Approach and Patterns
+
+**Follow Existing Patterns:**
+
+- Mirror PersonalitiesRepository implementation for file operations
+- Use FileStorageService for atomic read/write operations
+- Implement same error handling and logging patterns
+- Follow shared package organization (types in shared, repository in desktop)
+
+**File Structure:**
+
+```
+packages/shared/src/data/defaultLlmModels.json
+packages/shared/src/types/settings/llmModelsSchema.ts
+packages/shared/src/types/settings/getDefaultLlmModels.ts
+packages/shared/src/types/settings/createDefaultLlmModelsSettings.ts
+apps/desktop/src/data/repositories/LlmModelsRepository.ts
+```
+
+**JSON Configuration Format:**
+
+```json
+{
+  "schemaVersion": "1.0.0",
+  "providers": [
+    {
+      "id": "openai",
+      "name": "OpenAI",
+      "models": [
+        {
+          "id": "gpt-4-turbo",
+          "name": "GPT-4 Turbo",
+          "contextLength": 128000
+        }
+      ]
+    }
+  ],
+  "lastUpdated": "2025-01-21T..."
+}
+```
+
+**Interface Updates:**
+
+- Remove `vision: boolean` from LlmModel interface
+- Remove `functionCalling: boolean` from LlmModel interface
+- Update all references to use simplified interface
+
+### Testing Requirements
+
+**Unit Tests:**
+
+- Configuration file loading and validation
+- Default model creation and persistence
+- Error handling for malformed JSON
+- Repository CRUD operations
+
+**Integration Tests:**
+
+- End-to-end model loading from file to UI
+- Configuration file initialization on first launch
+- Graceful fallback when configuration corrupted
+
+### Security Considerations
+
+**Input Validation:**
+
+- Zod schema validation for all JSON configuration data
+- Sanitization of model names and descriptions
+- File path validation to prevent directory traversal
+
+**Data Protection:**
+
+- Configuration stored in user data directory with appropriate permissions
+- No API keys or sensitive data in model configuration
+- Atomic file operations prevent corruption during writes
+
+## Dependencies
+
+None - this is a standalone feature that integrates with existing configuration patterns.
+
+## Files Modified
+
+**New Files:**
+
+- `packages/shared/src/data/defaultLlmModels.json` - Default model configurations
+- `packages/shared/src/types/settings/LlmModelsSettingsData.ts` - TypeScript interfaces
+- `packages/shared/src/types/settings/llmModelsSchema.ts` - Zod validation schema
+- `packages/shared/src/types/settings/getDefaultLlmModels.ts` - Default models getter
+- `packages/shared/src/types/settings/createDefaultLlmModelsSettings.ts` - Settings creator
+- `apps/desktop/src/data/repositories/LlmModelsRepository.ts` - Repository implementation
+
+**Modified Files:**
+
+- `packages/ui-shared/src/types/settings/LlmModel.ts` - Remove vision/functionCalling properties
+- `apps/desktop/src/hooks/useLlmModels.ts` - Replace hard-coded models with repository data
+- Repository manager files for dependency injection integration

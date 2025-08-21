@@ -14,10 +14,4 @@ export interface LlmModel {
 
   /** Context window size in tokens */
   contextLength: number;
-
-  /** Whether the model supports vision/image input */
-  vision: boolean;
-
-  /** Whether the model supports function calling */
-  functionCalling: boolean;
 }

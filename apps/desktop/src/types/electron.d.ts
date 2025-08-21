@@ -153,6 +153,19 @@ export interface ElectronAPI {
     >;
   };
   /**
+   * LLM models persistence operations for managing model configurations.
+   * Provides async methods for loading LLM model definitions.
+   */
+  llmModels: {
+    /**
+     * Load LLM models from persistent storage.
+     * @returns Promise resolving to LLM models data
+     */
+    load(): Promise<
+      import("@fishbowl-ai/shared").PersistedLlmModelsSettingsData
+    >;
+  };
+  /**
    * Agents persistence operations for managing agent configurations.
    * Provides async methods for loading, saving, and resetting agents data.
    */

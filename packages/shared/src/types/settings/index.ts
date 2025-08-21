@@ -15,6 +15,13 @@ export {
   CURRENT_PERSONALITIES_SCHEMA_VERSION,
 } from "./personalitiesSettingsSchema";
 export {
+  persistedLlmModelSchema,
+  persistedLlmProviderSchema,
+  persistedLlmModelsSettingsSchema,
+  LLM_MODELS_SCHEMA_VERSION,
+  CURRENT_LLM_MODELS_SCHEMA_VERSION,
+} from "./llmModelsSchema";
+export {
   persistedAgentSchema,
   persistedAgentsSettingsSchema,
   AGENTS_SCHEMA_VERSION,
@@ -25,7 +32,9 @@ export { createDefaultAppearanceSettings } from "./createDefaultAppearanceSettin
 export { createDefaultGeneralSettings } from "./createDefaultGeneralSettings";
 export { createDefaultRolesSettings } from "./createDefaultRolesSettings";
 export { createDefaultPersonalitiesSettings } from "./createDefaultPersonalitiesSettings";
+export { createDefaultLlmModelsSettings } from "./createDefaultLlmModelsSettings";
 export { getDefaultPersonalities } from "./getDefaultPersonalities";
+export { getDefaultLlmModels } from "./getDefaultLlmModels";
 export { validateDefaultPersonalities } from "./validateDefaultPersonalities";
 export type { ConversationMode } from "./ConversationMode";
 export { CONVERSATION_MODE_OPTIONS } from "./ConversationMode";
@@ -42,6 +51,9 @@ export type { PersistedRoleData } from "./PersistedRoleData";
 export type { PersistedRolesSettingsData } from "./PersistedRolesSettingsData";
 export type { PersistedPersonalityData } from "./PersistedPersonalityData";
 export type { PersistedPersonalitiesSettingsData } from "./PersistedPersonalitiesSettingsData";
+export type { PersistedLlmModelData } from "./PersistedLlmModelData";
+export type { PersistedLlmProviderData } from "./PersistedLlmProviderData";
+export type { PersistedLlmModelsSettingsData } from "./PersistedLlmModelsSettingsData";
 export type { PersistedAgentData } from "../agents/PersistedAgentData";
 export type { PersistedAgentsSettingsData } from "../agents/PersistedAgentsSettingsData";
 export type { ShowTimestamps } from "./ShowTimestamps";

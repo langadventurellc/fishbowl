@@ -5,6 +5,7 @@ import type { ElectronAPI } from "../types/electron";
 const logger = createLoggerSync({ config: { name: "preload", level: "info" } });
 import { SETTINGS_CHANNELS } from "../shared/ipc/constants";
 import { LLM_CONFIG_CHANNELS } from "../shared/ipc/llmConfigConstants";
+import { LLM_MODELS_CHANNELS } from "../shared/ipc/llmModelsConstants";
 import { ROLES_CHANNELS } from "../shared/ipc/rolesConstants";
 import { PERSONALITIES_CHANNELS } from "../shared/ipc/personalitiesConstants";
 import { AGENTS_CHANNELS } from "../shared/ipc/agentsConstants";
@@ -32,6 +33,7 @@ import type {
   PersonalitiesSaveRequest,
   PersonalitiesSaveResponse,
   PersonalitiesResetResponse,
+  LlmModelsLoadResponse,
   AgentsLoadResponse,
   AgentsSaveRequest,
   AgentsSaveResponse,
@@ -41,6 +43,7 @@ import type {
   PersistedSettingsData,
   PersistedRolesSettingsData,
   PersistedPersonalitiesSettingsData,
+  PersistedLlmModelsSettingsData,
   PersistedAgentsSettingsData,
   LlmConfig,
   LlmConfigInput,
@@ -447,6 +450,29 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error resetting personalities:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  llmModels: {
+    load: async (): Promise<PersistedLlmModelsSettingsData> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          LLM_MODELS_CHANNELS.LOAD,
+        )) as LlmModelsLoadResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to load LLM models",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error loading LLM models:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error
