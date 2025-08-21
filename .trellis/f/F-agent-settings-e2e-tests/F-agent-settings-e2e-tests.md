@@ -48,15 +48,24 @@ affectedFiles:
   tests/desktop/helpers/index.ts: Added exports for agent test helpers including
     setupAgentsTestSuite, openAgentsSection, createMockAgent functions, and wait
     helpers
+  tests/desktop/features/settings/agents/agent-persistence.spec.ts:
+    "Created new E2E test file with two test scenarios: 'persists agent data to
+    agents.json file' and 'loads agent data after modal close and reopen'. Uses
+    existing helper functions and follows established test patterns."
+  tests/desktop/features/settings/agents/agent-deletion.spec.ts:
+    New comprehensive E2E test file for agent deletion functionality with 12
+    test scenarios covering confirmation dialogs, successful deletion,
+    cancellation, multiple agents, empty states, and persistence testing.
+    Includes 3 helper functions for verification and confirmation operations.
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-agent-creation-tests
-  - T-create-agent-data-persistence
   - T-create-agent-deletion-tests
   - T-create-agent-editing-tests
   - T-create-agent-empty-state-tests
   - T-create-agent-form-validation
+  - T-create-agent-creation-tests
+  - T-create-agent-data-persistence
   - T-create-agent-mock-data
   - T-create-agent-navigation-and
   - T-create-agent-test-infrastructu

@@ -45,24 +45,16 @@ export const waitForAgentModalToClose = async (window: TestWindow) => {
  * Wait for the agent delete confirmation dialog to be visible.
  */
 export const waitForAgentDeleteDialog = async (window: TestWindow) => {
-  // Wait for the dialog overlay
-  await expect(window.locator('[data-slot="dialog-overlay"]')).toBeVisible({
-    timeout: 3000,
-  });
-
-  // Wait for delete confirmation content
-  await expect(
-    window.locator('[role="alertdialog"], [role="dialog"]').filter({
-      has: window.locator("text=/delete.*agent/i"),
-    }),
-  ).toBeVisible({ timeout: 2000 });
+  // Wait for delete confirmation dialog using the same pattern as roles deletion
+  const confirmDialog = window.locator('[role="alertdialog"]');
+  await expect(confirmDialog).toBeVisible({ timeout: 3000 });
 
   // Verify Cancel and Delete buttons are present
   await expect(
-    window.locator("button").filter({ hasText: "Cancel" }),
+    confirmDialog.locator("button").filter({ hasText: "Cancel" }),
   ).toBeVisible();
 
   await expect(
-    window.locator("button").filter({ hasText: "Delete" }),
+    confirmDialog.locator("button").filter({ hasText: "Delete" }),
   ).toBeVisible();
 };
