@@ -19,11 +19,49 @@ jest.mock("../../../../contexts", () => ({
   })),
 }));
 
+// Mock the useLlmModels hook
+jest.mock("../../../../hooks/useLlmModels", () => ({
+  useLlmModels: jest.fn(() => ({
+    models: [
+      {
+        id: "gpt-4-turbo",
+        name: "GPT-4 Turbo",
+        provider: "OpenAI",
+        contextLength: 128000,
+        vision: true,
+        functionCalling: true,
+      },
+      {
+        id: "claude-3-sonnet",
+        name: "Claude 3 Sonnet",
+        provider: "Anthropic",
+        contextLength: 200000,
+        vision: true,
+        functionCalling: false,
+      },
+    ],
+    loading: false,
+    error: null,
+    refresh: jest.fn(),
+  })),
+}));
+
 // Mock the useAgentsStore hook
 const mockDeleteAgent = jest.fn();
 const mockUseAgentsStore = jest.fn();
 jest.mock("@fishbowl-ai/ui-shared", () => ({
   useAgentsStore: () => mockUseAgentsStore(),
+  getRoleById: jest.fn((id: string) => {
+    const roles: Record<string, { id: string; name: string }> = {
+      analyst: { id: "analyst", name: "Analyst" },
+      "technical-advisor": {
+        id: "technical-advisor",
+        name: "Technical Advisor",
+      },
+      "project-manager": { id: "project-manager", name: "Project Manager" },
+    };
+    return roles[id];
+  }),
   type: jest.fn(),
 }));
 
@@ -53,13 +91,13 @@ jest.mock("../../../../components/ui/confirmation-dialog", () => ({
   ),
 }));
 
-// Mock agent data
+// Mock agent data with IDs instead of display names
 const mockAgents: AgentSettingsViewModel[] = [
   {
     id: "agent-1",
     name: "Research Assistant",
-    model: "Claude 3.5 Sonnet",
-    role: "Research and Analysis",
+    model: "claude-3-sonnet", // ID instead of display name
+    role: "analyst", // ID instead of display name
     personality: "Analytical and thorough",
     systemPrompt: "You are a research assistant",
     createdAt: "2023-01-01T00:00:00Z",
@@ -68,8 +106,8 @@ const mockAgents: AgentSettingsViewModel[] = [
   {
     id: "agent-2",
     name: "Code Reviewer",
-    model: "GPT-4",
-    role: "Code Analysis",
+    model: "gpt-4-turbo", // ID instead of display name
+    role: "technical-advisor", // ID instead of display name
     personality: "Detail-oriented and constructive",
     systemPrompt: "You are a code reviewer",
     createdAt: "2023-01-02T00:00:00Z",
@@ -104,8 +142,8 @@ describe("LibraryTab Component", () => {
 
       expect(screen.getByText("Research Assistant")).toBeInTheDocument();
       expect(screen.getByText("Code Reviewer")).toBeInTheDocument();
-      expect(screen.getByText("Claude 3.5 Sonnet")).toBeInTheDocument();
-      expect(screen.getByText("GPT-4")).toBeInTheDocument();
+      expect(screen.getByText("Claude 3 Sonnet")).toBeInTheDocument();
+      expect(screen.getByText("GPT-4 Turbo")).toBeInTheDocument();
     });
 
     it("displays correct number of agents in grid", () => {

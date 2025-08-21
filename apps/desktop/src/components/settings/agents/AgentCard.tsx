@@ -12,10 +12,12 @@
  */
 
 import type { AgentCardProps } from "@fishbowl-ai/ui-shared";
+import { getRoleById } from "@fishbowl-ai/ui-shared";
 import { Edit, Trash2 } from "lucide-react";
 import React from "react";
 import { cn } from "../../../lib/utils";
 import { FOCUS_STYLES } from "../../../styles/focus";
+import { useLlmModels } from "../../../hooks/useLlmModels";
 import { Button } from "../../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 
@@ -25,6 +27,8 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   onDelete,
   className,
 }) => {
+  const { models } = useLlmModels();
+
   const handleEdit = () => {
     onEdit?.(agent.id);
   };
@@ -32,6 +36,11 @@ export const AgentCard: React.FC<AgentCardProps> = ({
   const handleDelete = () => {
     onDelete?.(agent.id);
   };
+
+  // Get display names
+  const roleDisplayName = getRoleById(agent.role)?.name || agent.role;
+  const modelDisplayName =
+    models.find((m) => m.id === agent.model)?.name || agent.model;
 
   return (
     <Card
@@ -51,7 +60,7 @@ export const AgentCard: React.FC<AgentCardProps> = ({
             <CardTitle id={`agent-name-${agent.id}`} className="text-lg">
               {agent.name}
             </CardTitle>
-            <p className="text-sm text-muted-foreground">{agent.model}</p>
+            <p className="text-sm text-muted-foreground">{modelDisplayName}</p>
           </div>
           <div
             className="flex gap-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity"
@@ -83,11 +92,11 @@ export const AgentCard: React.FC<AgentCardProps> = ({
       </CardHeader>
       <CardContent>
         <div id={`agent-details-${agent.id}`} className="sr-only">
-          Agent {agent.name} using {agent.model} model for {agent.role}. Actions
-          available: Edit and Delete.
+          Agent {agent.name} using {modelDisplayName} model for{" "}
+          {roleDisplayName}. Actions available: Edit and Delete.
         </div>
         <p className="text-sm text-muted-foreground" aria-hidden="true">
-          {agent.role}
+          {roleDisplayName}
         </p>
       </CardContent>
     </Card>

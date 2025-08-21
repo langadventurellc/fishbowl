@@ -3,11 +3,25 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { AgentCard } from "../AgentCard";
 
+// Mock the useServices hook
+jest.mock("../../../../contexts/useServices");
+const mockUseServices = jest.fn();
+jest.doMock("../../../../contexts/useServices", () => ({
+  useServices: mockUseServices,
+}));
+
+// Mock the useLlmModels hook
+const mockUseLlmModels = jest.fn();
+jest.mock("../../../../hooks/useLlmModels", () => ({
+  useLlmModels: () => mockUseLlmModels(),
+}));
+
+// Mock data using IDs that will be converted to display names
 const mockAgent: AgentCardType = {
   id: "test-agent-1",
   name: "Research Assistant",
-  model: "Claude 3.5 Sonnet",
-  role: "Research and Analysis",
+  model: "gpt-4-turbo", // ID instead of display name
+  role: "project-manager", // ID instead of display name
 };
 
 const defaultProps = {
@@ -16,9 +30,46 @@ const defaultProps = {
   onDelete: jest.fn(),
 };
 
+// Mock LLM models data
+const mockModels = [
+  {
+    id: "gpt-4-turbo",
+    name: "GPT-4 Turbo",
+    provider: "OpenAI",
+    contextLength: 128000,
+    vision: true,
+    functionCalling: true,
+  },
+  {
+    id: "claude-3-sonnet",
+    name: "Claude 3 Sonnet",
+    provider: "Anthropic",
+    contextLength: 200000,
+    vision: true,
+    functionCalling: false,
+  },
+];
+
 describe("AgentCard Component", () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Setup mock return values
+    mockUseServices.mockReturnValue({
+      logger: {
+        error: jest.fn(),
+        info: jest.fn(),
+        warn: jest.fn(),
+        debug: jest.fn(),
+      },
+    });
+
+    mockUseLlmModels.mockReturnValue({
+      models: mockModels,
+      loading: false,
+      error: null,
+      refresh: jest.fn(),
+    });
   });
 
   describe("Rendering", () => {
@@ -33,7 +84,7 @@ describe("AgentCard Component", () => {
     it("displays agent model information", () => {
       render(<AgentCard {...defaultProps} />);
 
-      const modelElement = screen.getByText("Claude 3.5 Sonnet");
+      const modelElement = screen.getByText("GPT-4 Turbo");
       expect(modelElement).toBeInTheDocument();
       expect(modelElement).toHaveClass("text-sm", "text-muted-foreground");
     });
@@ -41,7 +92,7 @@ describe("AgentCard Component", () => {
     it("displays agent role information", () => {
       render(<AgentCard {...defaultProps} />);
 
-      const roleElement = screen.getByText("Research and Analysis");
+      const roleElement = screen.getByText("Project Manager");
       expect(roleElement).toBeInTheDocument();
       expect(roleElement).toHaveClass("text-sm", "text-muted-foreground");
     });
@@ -197,16 +248,14 @@ describe("AgentCard Component", () => {
     it("handles different models and roles", () => {
       const differentAgent = {
         ...mockAgent,
-        model: "GPT-4",
-        role: "Code Review and Quality Assurance",
+        model: "claude-3-sonnet",
+        role: "technical-advisor",
       };
 
       render(<AgentCard agent={differentAgent} />);
 
-      expect(screen.getByText("GPT-4")).toBeInTheDocument();
-      expect(
-        screen.getByText("Code Review and Quality Assurance"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Claude 3 Sonnet")).toBeInTheDocument();
+      expect(screen.getByText("Technical Advisor")).toBeInTheDocument();
     });
 
     it("handles empty or minimal data gracefully", () => {

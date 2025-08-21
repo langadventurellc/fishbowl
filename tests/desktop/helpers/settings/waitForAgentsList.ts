@@ -25,41 +25,30 @@ export const waitForAgentsList = async (
   });
 
   if (shouldHaveAgents) {
-    // Check if we have a populated grid/list
-    const agentGrid = window.locator('[role="grid"]');
-    const agentCards = window.locator('[data-testid*="agent-"]');
+    // Look for agent cards using role="article" (based on AgentCard component)
+    const agentCards = window.locator('[role="article"]');
 
     try {
-      // Try to find the agent grid first (most common case)
-      await expect(agentGrid).toBeVisible({ timeout: 2000 });
-
-      // Verify at least one agent card is present
-      await expect(agentCards.first()).toBeVisible({ timeout: 3000 });
+      // Wait for at least one agent card to be visible
+      await expect(agentCards.first()).toBeVisible({ timeout: 5000 });
 
       // Debug: Log the number of agents found
       const agentCount = await agentCards.count();
       if (agentCount === 0) {
-        console.log(
-          "Warning: Agent grid is visible but contains no agent cards",
-        );
+        console.log("Warning: No agent cards found");
       }
     } catch {
-      // If no grid found, check for agent cards directly
-      try {
-        await expect(agentCards.first()).toBeVisible({ timeout: 2000 });
-      } catch {
-        // Neither grid nor agent cards found - debug output
-        console.log("Neither agent grid nor agent cards found. Page content:");
-        const agentsSection = await window
-          .locator(".agents-section")
-          .textContent();
-        console.log(agentsSection);
+      // Agent cards not found - debug output
+      console.log("Agent cards not found. Page content:");
+      const agentsSection = await window
+        .locator(".agents-section")
+        .textContent();
+      console.log(agentsSection);
 
-        // Re-throw with better error message
-        throw new Error(
-          "Failed to find agent grid or agent cards. The agents section may not have loaded properly.",
-        );
-      }
+      // Re-throw with better error message
+      throw new Error(
+        "Failed to find agent cards. The agents section may not have loaded properly.",
+      );
     }
   } else {
     // Wait for empty state
@@ -134,9 +123,9 @@ export const waitForAgent = async (window: TestWindow, agentName: string) => {
   // First ensure the list is loaded
   await waitForAgentsList(window, true);
 
-  // Find the specific agent by name
-  const agentCard = window.locator('[data-testid*="agent-"]').filter({
-    has: window.locator("text=" + agentName),
+  // Find the specific agent by name using role="article" (AgentCard)
+  const agentCard = window.locator('[role="article"]').filter({
+    hasText: agentName,
   });
 
   await expect(agentCard).toBeVisible({ timeout: 5000 });

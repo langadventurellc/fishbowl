@@ -1,15 +1,36 @@
 ---
 id: T-create-agent-creation-tests
 title: Create Agent Creation Tests
-status: open
+status: done
 priority: medium
 parent: F-agent-settings-e2e-tests
 prerequisites:
   - T-create-agent-test-infrastructu
   - T-create-agent-navigation-and
   - T-create-agent-mock-data
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/features/settings/agents/agent-creation.spec.ts:
+    Created comprehensive end-to-end test suite for agent creation with 8 test
+    scenarios achieving 100% pass rate
+  tests/desktop/helpers/settings/createLlmConfigForAgentTests.ts:
+    Created helper function to set up LLM configuration required for agent
+    creation tests
+  tests/desktop/helpers/index.ts: Added exports for agent test helpers including
+    setupAgentsTestSuite, openAgentsSection, createMockAgent functions, and wait
+    helpers
+  tests/desktop/helpers/settings/waitForAgentModal.ts:
+    Updated modal selectors to
+    use CSS class instead of data-testid for proper modal detection
+  tests/desktop/helpers/settings/waitForAgentsList.ts: Updated agent card
+    detection to use role='article' selector and improved error handling for
+    agent list verification
+log:
+  - Successfully implemented comprehensive agent creation end-to-end tests with
+    100% pass rate (8/8 tests passing). Created robust test infrastructure
+    including LLM configuration setup, form interaction helpers, persistence
+    verification, and proper selector handling. All tests now pass reliably
+    covering basic creation, agent type variations, form state management, data
+    persistence, and edge cases.
 schema: v1.0
 childrenIds: []
 created: 2025-08-21T00:29:45.058Z

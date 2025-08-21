@@ -20,11 +20,14 @@ affectedFiles:
   tests/desktop/helpers/settings/waitForAgentModal.ts: Created helper functions
     for agent form modal interactions including waitForAgentModal for
     create/edit modals, waitForAgentModalToClose for modal dismissal, and
-    waitForAgentDeleteDialog for delete confirmations.
+    waitForAgentDeleteDialog for delete confirmations.; Updated modal selectors
+    to use CSS class instead of data-testid for proper modal detection
   tests/desktop/helpers/settings/waitForAgentsList.ts: Created helper functions
     for agent list state management including waitForAgentsList for
     populated/empty states, waitForAgentsEmptyState for empty state
-    verification, and waitForAgent for specific agent lookup by name.
+    verification, and waitForAgent for specific agent lookup by name.; Updated
+    agent card detection to use role='article' selector and improved error
+    handling for agent list verification
   tests/desktop/package.json: Added @fishbowl-ai/ui-shared dependency for AgentFormData types
   tests/desktop/helpers/settings/MockAgentData.ts: Created mock agent data interface following established patterns
   tests/desktop/helpers/settings/createMockAgentData.ts: Main mock agent data generator with randomized IDs and realistic defaults
@@ -36,6 +39,15 @@ affectedFiles:
   tests/desktop/helpers/settings/createMockWriterAgent.ts: Specialized writer agent generator
   tests/desktop/helpers/settings/createMockTechnicalAgent.ts: Specialized technical agent generator
   tests/desktop/helpers/settings/createMinimalAgentData.ts: Minimal agent data with only required fields
+  tests/desktop/features/settings/agents/agent-creation.spec.ts:
+    Created comprehensive end-to-end test suite for agent creation with 8 test
+    scenarios achieving 100% pass rate
+  tests/desktop/helpers/settings/createLlmConfigForAgentTests.ts:
+    Created helper function to set up LLM configuration required for agent
+    creation tests
+  tests/desktop/helpers/index.ts: Added exports for agent test helpers including
+    setupAgentsTestSuite, openAgentsSection, createMockAgent functions, and wait
+    helpers
 log: []
 schema: v1.0
 childrenIds:

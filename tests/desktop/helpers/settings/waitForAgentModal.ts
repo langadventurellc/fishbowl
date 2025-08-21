@@ -8,7 +8,7 @@ export const waitForAgentModal = async (
   window: TestWindow,
   shouldBeVisible: boolean = true,
 ) => {
-  const modalSelector = '[data-testid="agent-form-modal"]';
+  const modalSelector = ".agent-form-modal";
 
   if (shouldBeVisible) {
     // Wait for the agent form modal to be visible
@@ -33,9 +33,9 @@ export const waitForAgentModal = async (
  */
 export const waitForAgentModalToClose = async (window: TestWindow) => {
   // Wait for agent form modal to disappear
-  await expect(
-    window.locator('[data-testid="agent-form-modal"]'),
-  ).not.toBeVisible({ timeout: 3000 });
+  await expect(window.locator(".agent-form-modal")).not.toBeVisible({
+    timeout: 3000,
+  });
 
   // Additional wait for animations
   await window.waitForTimeout(200);
