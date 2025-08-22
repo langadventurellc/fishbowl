@@ -21,7 +21,7 @@ affectedFiles:
     New barrel export file for
     all database error types; Added type exports for all new
     DatabaseResult-related interfaces using proper 'export type' syntax for
-    isolatedModules compliance
+    isolatedModules compliance; Added exports for new configuration option types
   packages/shared/src/services/database/index.ts: New database package index
     exporting all types; Updated to export the DatabaseBridge interface
     alongside existing type exports
@@ -55,6 +55,26 @@ affectedFiles:
   packages/shared/src/services/database/__tests__/DatabaseBridge.test.ts:
     Created comprehensive test suite with 17 test cases covering interface
     compliance, type safety, method signatures, and usage patterns
+  packages/shared/src/services/database/types/QueryOptions.ts:
+    Created QueryOptions interface with timeout, pagination, metadata, debug,
+    and prepare options
+  packages/shared/src/services/database/types/TransactionOptions.ts:
+    Created TransactionOptions interface with isolation levels, retry
+    configuration, and read-only support
+  packages/shared/src/services/database/types/ConnectionOptions.ts:
+    Created ConnectionOptions interface with connection pooling, pragmas, WAL
+    mode, and file path configuration
+  packages/shared/src/services/database/types/TransactionIsolationLevel.ts: Created TransactionIsolationLevel type with SQL standard isolation levels
+  packages/shared/src/services/database/types/__tests__/QueryOptions.test.ts: Comprehensive unit tests for QueryOptions type validation and behavior
+  packages/shared/src/services/database/types/__tests__/TransactionOptions.test.ts:
+    Comprehensive unit tests for TransactionOptions including isolation levels
+    and retry logic
+  packages/shared/src/services/database/types/__tests__/ConnectionOptions.test.ts:
+    Comprehensive unit tests for ConnectionOptions including pragma
+    configuration and option merging
+  packages/shared/src/services/database/types/__tests__/TransactionIsolationLevel.test.ts:
+    Comprehensive unit tests for TransactionIsolationLevel type safety and
+    runtime validation
 log: []
 schema: v1.0
 childrenIds:

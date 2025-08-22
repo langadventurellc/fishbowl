@@ -16,3 +16,9 @@ export type { DatabaseResult } from "./DatabaseResult";
 export type { QueryMetadata } from "./QueryMetadata";
 export type { QueryResult } from "./QueryResult";
 export type { ExecutionResult } from "./ExecutionResult";
+
+// Configuration option types
+export type { QueryOptions } from "./QueryOptions";
+export type { TransactionOptions } from "./TransactionOptions";
+export type { ConnectionOptions } from "./ConnectionOptions";
+export type { TransactionIsolationLevel } from "./TransactionIsolationLevel";
