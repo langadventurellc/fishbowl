@@ -6,8 +6,7 @@
       "args": [
         "@langadventurellc/task-trellis-mcp@latest",
         "--projectRootFolder",
-        "/Users/zach/code/fishbowl",
-        "--auto-complete-parent"
+        "/Users/zach/code/fishbowl"
       ],
       "env": {}
     },
