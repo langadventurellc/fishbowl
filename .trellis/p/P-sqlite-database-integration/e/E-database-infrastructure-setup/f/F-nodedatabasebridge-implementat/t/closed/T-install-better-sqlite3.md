@@ -1,12 +1,20 @@
 ---
 id: T-install-better-sqlite3
 title: Install better-sqlite3 dependency and types
-status: open
+status: done
 priority: high
 parent: F-nodedatabasebridge-implementat
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/package.json: Added better-sqlite3 ^12.2.0 to dependencies and
+    @types/better-sqlite3 ^7.6.13 to devDependencies
+log:
+  - Successfully installed better-sqlite3 ^12.2.0 and @types/better-sqlite3
+    ^7.6.13 as dependencies for the desktop application. Used latest available
+    versions (12.2.0 and 7.6.13 respectively) instead of the originally
+    specified ^11.x. Dependencies install successfully, TypeScript compilation
+    works with better-sqlite3 imports, and all quality checks pass. Build script
+    approval was handled by user. Ready for NodeDatabaseBridge implementation.
 schema: v1.0
 childrenIds: []
 created: 2025-08-22T23:11:52.359Z

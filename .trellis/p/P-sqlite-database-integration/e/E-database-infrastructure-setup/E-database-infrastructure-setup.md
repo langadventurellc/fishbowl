@@ -81,6 +81,8 @@ affectedFiles:
     Created comprehensive test suite validating all export functionality, import
     patterns, TypeScript compilation, tree shaking compatibility, and circular
     dependency prevention
+  apps/desktop/package.json: Added better-sqlite3 ^12.2.0 to dependencies and
+    @types/better-sqlite3 ^7.6.13 to devDependencies
 log: []
 schema: v1.0
 childrenIds:

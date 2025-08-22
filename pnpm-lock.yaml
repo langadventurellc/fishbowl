@@ -91,6 +91,9 @@ importers:
       "@radix-ui/react-tooltip":
         specifier: ^1.2.7
         version: 1.2.7(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      better-sqlite3:
+        specifier: ^12.2.0
+        version: 12.2.0
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -134,6 +137,9 @@ importers:
       "@testing-library/react":
         specifier: ^15.0.7
         version: 15.0.7(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      "@types/better-sqlite3":
+        specifier: ^7.6.13
+        version: 7.6.13
       "@types/jest":
         specifier: ^30.0.0
         version: 30.0.0
@@ -3700,6 +3706,12 @@ packages:
         integrity: sha512-dkO5fhS7+/oos4ciWxyEyjWe48zmG6wbCheo/G2ZnHx4fs3EU6YC6UM8rk56gAjNJ9P3MTH2jo5jb92/K6wbng==,
       }
 
+  "@types/better-sqlite3@7.6.13":
+    resolution:
+      {
+        integrity: sha512-NMv9ASNARoKksWtsq/SHakpYAYnhBrQgGD8zkLYk/jaK8jUGn08CfEdTRgYhMypUQAfzSP8W6gNLe0q19/t4VA==,
+      }
+
   "@types/cacheable-request@6.0.3":
     resolution:
       {
@@ -4700,6 +4712,13 @@ packages:
       }
     engines: { node: ">=12.0.0" }
 
+  better-sqlite3@12.2.0:
+    resolution:
+      {
+        integrity: sha512-eGbYq2CT+tos1fBwLQ/tkBt9J5M3JEHjku4hbvQUePCckkvVf14xWj+1m7dGoK81M/fOjFT7yM9UMeKT/+vFLQ==,
+      }
+    engines: { node: 20.x || 22.x || 23.x || 24.x }
+
   big-integer@1.6.52:
     resolution:
       {
@@ -4713,6 +4732,12 @@ packages:
         integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==,
       }
     engines: { node: ">=8" }
+
+  bindings@1.5.0:
+    resolution:
+      {
+        integrity: sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==,
+      }
 
   bl@4.1.0:
     resolution:
@@ -5017,6 +5042,12 @@ packages:
         integrity: sha512-7VT13fmjotKpGipCW9JEQAusEPE+Ei8nl6/g4FBAmIm0GOOLMua9NDDo/DWp0ZAxCr3cPq5ZpBqmPAQgDda2Pw==,
       }
     engines: { node: ">= 8.10.0" }
+
+  chownr@1.1.4:
+    resolution:
+      {
+        integrity: sha512-jJ0bqzaylmJtVnNgzTeSOs8DPavpbYgEr/b0YL8/2GO3xJEhInFmhKMUnEJQjZumK7KXGFhUy89PrsJWlakBVg==,
+      }
 
   chownr@2.0.0:
     resolution:
@@ -6238,6 +6269,13 @@ packages:
       }
     engines: { node: ">= 0.8.0" }
 
+  expand-template@2.0.3:
+    resolution:
+      {
+        integrity: sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==,
+      }
+    engines: { node: ">=6" }
+
   expect@30.0.4:
     resolution:
       {
@@ -6497,6 +6535,12 @@ packages:
       }
     engines: { node: ">=16.0.0" }
 
+  file-uri-to-path@1.0.0:
+    resolution:
+      {
+        integrity: sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw==,
+      }
+
   filelist@1.0.4:
     resolution:
       {
@@ -6630,6 +6674,12 @@ packages:
         integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==,
       }
     engines: { node: ">= 0.6" }
+
+  fs-constants@1.0.0:
+    resolution:
+      {
+        integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==,
+      }
 
   fs-extra@10.1.0:
     resolution:
@@ -6803,6 +6853,12 @@ packages:
         integrity: sha512-VilgtJj/ALgGY77fiLam5iD336eSWi96Q15JSAG1zi8NRBysm3LXKdGnHb4m5cuyxvOLQQKWpBZAT6ni4FI2iQ==,
       }
     engines: { node: ">=6" }
+
+  github-from-package@0.0.0:
+    resolution:
+      {
+        integrity: sha512-SyHy3T1v2NUXn29OsWdxmK6RwHD+vkj3v8en8AOBZ1wBQ/hCAQ5bAQTD02kW4W9tUp/3Qh6J8r9EvntiyCmOOw==,
+      }
 
   glob-parent@5.1.2:
     resolution:
@@ -8925,6 +8981,12 @@ packages:
       }
     engines: { node: ">= 18" }
 
+  mkdirp-classic@0.5.3:
+    resolution:
+      {
+        integrity: sha512-gKLcREMhtuZRwRAfqP3RFW+TK4JqApVBtOIftVgjuABpAtpxhPGaDcfvbhNvD0B8iD1oUr/txX35NjcaY6Ns/A==,
+      }
+
   mkdirp@0.5.6:
     resolution:
       {
@@ -9011,6 +9073,12 @@ packages:
       }
     engines: { node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1 }
     hasBin: true
+
+  napi-build-utils@2.0.0:
+    resolution:
+      {
+        integrity: sha512-GEbrYkbfF7MoNaoh2iGG84Mnf/WZfB0GdGEsM8wz7Expx/LlWf5U8t9nvJKXSp3qr5IsEbK04cBGhol/KwOsWA==,
+      }
 
   napi-postinstall@0.3.2:
     resolution:
@@ -9589,6 +9657,14 @@ packages:
         integrity: sha512-b9Eb8h2eVqNE8edvKdwqkrY6O7kAwmI8kcnBv1NScolYJbo59XUF0noFq+lxbC1yN20bmC0WBEbDC5H/7ASb0A==,
       }
     engines: { node: ">=14.0.0" }
+    hasBin: true
+
+  prebuild-install@7.1.3:
+    resolution:
+      {
+        integrity: sha512-8Mf2cbV7x1cXPUILADGI3wuhfqWvtiLA1iclTDbFRZkgRQS0NqsPZphna9V+HyTEadheuPmjaJMsbzKQFOzLug==,
+      }
+    engines: { node: ">=10" }
     hasBin: true
 
   prelude-ls@1.2.1:
@@ -10574,6 +10650,18 @@ packages:
       }
     engines: { node: ">=14" }
 
+  simple-concat@1.0.1:
+    resolution:
+      {
+        integrity: sha512-cSFtAPtRhljv69IK0hTVZQ+OfE9nePi/rtJmw5UjHeVyVroEqJXP1sFztKUy1qU+xvz3u/sfYJLa947b7nAN2Q==,
+      }
+
+  simple-get@4.0.1:
+    resolution:
+      {
+        integrity: sha512-brv7p5WgH0jmQJr1ZDDfKDOSeWWg+OVypG99A/5vYGPqJ6pxiaHLy8nxtFjBA7oMa01ebA9gfh1uMCFqOuXxvA==,
+      }
+
   simple-plist@1.3.1:
     resolution:
       {
@@ -11046,6 +11134,19 @@ packages:
       }
     engines: { node: ">=6" }
 
+  tar-fs@2.1.3:
+    resolution:
+      {
+        integrity: sha512-090nwYJDmlhwFwEW3QQl+vaNnxsO2yVsd45eTKRBzSzu+hlb1w2K9inVq5b0ngXuLVqQ4ApvsUHHnu/zQNkWAg==,
+      }
+
+  tar-stream@2.2.0:
+    resolution:
+      {
+        integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==,
+      }
+    engines: { node: ">=6" }
+
   tar@6.2.1:
     resolution:
       {
@@ -11298,6 +11399,12 @@ packages:
       }
     engines: { node: ">=18.0.0" }
     hasBin: true
+
+  tunnel-agent@0.6.0:
+    resolution:
+      {
+        integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==,
+      }
 
   turbo-darwin-64@2.5.5:
     resolution:
@@ -14818,6 +14925,10 @@ snapshots:
     dependencies:
       "@babel/types": 7.28.1
 
+  "@types/better-sqlite3@7.6.13":
+    dependencies:
+      "@types/node": 24.0.15
+
   "@types/cacheable-request@6.0.3":
     dependencies:
       "@types/http-cache-semantics": 4.0.4
@@ -15551,9 +15662,18 @@ snapshots:
     dependencies:
       open: 8.4.2
 
+  better-sqlite3@12.2.0:
+    dependencies:
+      bindings: 1.5.0
+      prebuild-install: 7.1.3
+
   big-integer@1.6.52: {}
 
   binary-extensions@2.3.0: {}
+
+  bindings@1.5.0:
+    dependencies:
+      file-uri-to-path: 1.0.0
 
   bl@4.1.0:
     dependencies:
@@ -15801,6 +15921,8 @@ snapshots:
       readdirp: 3.6.0
     optionalDependencies:
       fsevents: 2.3.3
+
+  chownr@1.1.4: {}
 
   chownr@2.0.0: {}
 
@@ -16667,6 +16789,8 @@ snapshots:
 
   exit-x@0.2.2: {}
 
+  expand-template@2.0.3: {}
+
   expect@30.0.4:
     dependencies:
       "@jest/expect-utils": 30.0.4
@@ -16870,6 +16994,8 @@ snapshots:
     dependencies:
       flat-cache: 4.0.1
 
+  file-uri-to-path@1.0.0: {}
+
   filelist@1.0.4:
     dependencies:
       minimatch: 5.1.6
@@ -16943,6 +17069,8 @@ snapshots:
   freeport-async@2.0.0: {}
 
   fresh@0.5.2: {}
+
+  fs-constants@1.0.0: {}
 
   fs-extra@10.1.0:
     dependencies:
@@ -17048,6 +17176,8 @@ snapshots:
     optional: true
 
   getenv@2.0.0: {}
+
+  github-from-package@0.0.0: {}
 
   glob-parent@5.1.2:
     dependencies:
@@ -18673,6 +18803,8 @@ snapshots:
     dependencies:
       minipass: 7.1.2
 
+  mkdirp-classic@0.5.3: {}
+
   mkdirp@0.5.6:
     dependencies:
       minimist: 1.2.8
@@ -18714,6 +18846,8 @@ snapshots:
   nano-spawn@1.0.2: {}
 
   nanoid@3.3.11: {}
+
+  napi-build-utils@2.0.0: {}
 
   napi-postinstall@0.3.2: {}
 
@@ -19060,6 +19194,21 @@ snapshots:
     dependencies:
       commander: 9.5.0
     optional: true
+
+  prebuild-install@7.1.3:
+    dependencies:
+      detect-libc: 2.0.4
+      expand-template: 2.0.3
+      github-from-package: 0.0.0
+      minimist: 1.2.8
+      mkdirp-classic: 0.5.3
+      napi-build-utils: 2.0.0
+      node-abi: 3.75.0
+      pump: 3.0.3
+      rc: 1.2.8
+      simple-get: 4.0.1
+      tar-fs: 2.1.3
+      tunnel-agent: 0.6.0
 
   prelude-ls@1.2.1: {}
 
@@ -19732,6 +19881,14 @@ snapshots:
 
   signal-exit@4.1.0: {}
 
+  simple-concat@1.0.1: {}
+
+  simple-get@4.0.1:
+    dependencies:
+      decompress-response: 6.0.0
+      once: 1.4.0
+      simple-concat: 1.0.1
+
   simple-plist@1.3.1:
     dependencies:
       bplist-creator: 0.1.0
@@ -20007,6 +20164,21 @@ snapshots:
 
   tapable@2.2.2: {}
 
+  tar-fs@2.1.3:
+    dependencies:
+      chownr: 1.1.4
+      mkdirp-classic: 0.5.3
+      pump: 3.0.3
+      tar-stream: 2.2.0
+
+  tar-stream@2.2.0:
+    dependencies:
+      bl: 4.1.0
+      end-of-stream: 1.4.5
+      fs-constants: 1.0.0
+      inherits: 2.0.4
+      readable-stream: 3.6.2
+
   tar@6.2.1:
     dependencies:
       chownr: 2.0.0
@@ -20157,6 +20329,10 @@ snapshots:
     optionalDependencies:
       fsevents: 2.3.3
     optional: true
+
+  tunnel-agent@0.6.0:
+    dependencies:
+      safe-buffer: 5.2.1
 
   turbo-darwin-64@2.5.5:
     optional: true
