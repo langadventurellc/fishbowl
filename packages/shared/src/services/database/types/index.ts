@@ -10,3 +10,9 @@ export { QueryError } from "./QueryError";
 export { TransactionError } from "./TransactionError";
 export { PermissionError } from "./PermissionError";
 export { ConstraintViolationError } from "./ConstraintViolationError";
+
+// Database result types
+export type { DatabaseResult } from "./DatabaseResult";
+export type { QueryMetadata } from "./QueryMetadata";
+export type { QueryResult } from "./QueryResult";
+export type { ExecutionResult } from "./ExecutionResult";

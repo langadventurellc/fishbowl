@@ -16,7 +16,11 @@ affectedFiles:
   packages/shared/src/services/database/types/TransactionError.ts: New error class for transaction-specific failures
   packages/shared/src/services/database/types/PermissionError.ts: New error class for database access permission issues
   packages/shared/src/services/database/types/ConstraintViolationError.ts: New error class for constraint violations with constraint type mapping
-  packages/shared/src/services/database/types/index.ts: New barrel export file for all database error types
+  packages/shared/src/services/database/types/index.ts:
+    New barrel export file for
+    all database error types; Added type exports for all new
+    DatabaseResult-related interfaces using proper 'export type' syntax for
+    isolatedModules compliance
   packages/shared/src/services/database/index.ts: New database package index exporting all types
   packages/shared/src/services/index.ts: Updated to export database types alongside storage types
   packages/shared/src/services/database/types/__tests__/DatabaseError.test.ts: Comprehensive tests for base DatabaseError class functionality
@@ -27,6 +31,21 @@ affectedFiles:
   packages/shared/src/services/database/types/__tests__/ConstraintViolationError.test.ts:
     Unit tests for ConstraintViolationError with constraint type mapping
     verification
+  packages/shared/src/services/database/types/DatabaseResult.ts:
+    Created base DatabaseResult interface with lastInsertRowid, changes, and
+    affectedRows properties compatible with both SQLite drivers
+  packages/shared/src/services/database/types/QueryMetadata.ts:
+    Created QueryMetadata interface for query execution information including
+    columns, executionTime, and rowsExamined
+  packages/shared/src/services/database/types/QueryResult.ts: Created generic
+    QueryResult interface for SELECT operations with typed row arrays and
+    optional metadata
+  packages/shared/src/services/database/types/ExecutionResult.ts:
+    Created ExecutionResult interface extending DatabaseResult with
+    success/error state for INSERT/UPDATE/DELETE operations
+  packages/shared/src/services/database/types/__tests__/DatabaseResult.test.ts:
+    Created comprehensive test suite with 20 test cases covering type safety,
+    generic inference, error scenarios, and platform compatibility
 log: []
 schema: v1.0
 childrenIds:
