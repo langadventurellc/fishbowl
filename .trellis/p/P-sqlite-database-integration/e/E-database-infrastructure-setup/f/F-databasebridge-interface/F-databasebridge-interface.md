@@ -1,14 +1,41 @@
 ---
 id: F-databasebridge-interface
 title: DatabaseBridge Interface Definition
-status: open
+status: in-progress
 priority: medium
 parent: E-database-infrastructure-setup
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/services/database/types/DatabaseErrorCode.ts:
+    New enum with 18 standardized database error codes covering all failure
+    scenarios
+  packages/shared/src/services/database/types/DatabaseError.ts:
+    New abstract base class for all database errors with IPC serialization
+    support
+  packages/shared/src/services/database/types/ConnectionError.ts: New error class for database connection failures with context
+  packages/shared/src/services/database/types/QueryError.ts: New error class for SQL query failures with SQL and parameter context
+  packages/shared/src/services/database/types/TransactionError.ts: New error class for transaction-specific failures
+  packages/shared/src/services/database/types/PermissionError.ts: New error class for database access permission issues
+  packages/shared/src/services/database/types/ConstraintViolationError.ts: New error class for constraint violations with constraint type mapping
+  packages/shared/src/services/database/types/index.ts: New barrel export file for all database error types
+  packages/shared/src/services/database/index.ts: New database package index exporting all types
+  packages/shared/src/services/index.ts: Updated to export database types alongside storage types
+  packages/shared/src/services/database/types/__tests__/DatabaseError.test.ts: Comprehensive tests for base DatabaseError class functionality
+  packages/shared/src/services/database/types/__tests__/ConnectionError.test.ts: Unit tests for ConnectionError with context and serialization testing
+  packages/shared/src/services/database/types/__tests__/QueryError.test.ts: Unit tests for QueryError covering SQL and parameter handling
+  packages/shared/src/services/database/types/__tests__/TransactionError.test.ts: Unit tests for TransactionError with operation context
+  packages/shared/src/services/database/types/__tests__/PermissionError.test.ts: Unit tests for PermissionError with resource context
+  packages/shared/src/services/database/types/__tests__/ConstraintViolationError.test.ts:
+    Unit tests for ConstraintViolationError with constraint type mapping
+    verification
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-core-databasebridge
+  - T-create-database-package
+  - T-create-databaseerror-type
+  - T-create-databaseresult-type
+  - T-create-queryoptions
 created: 2025-08-22T00:51:39.088Z
 updated: 2025-08-22T00:51:39.088Z
 ---
