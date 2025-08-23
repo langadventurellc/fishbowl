@@ -1,12 +1,41 @@
 ---
 id: T-create-migration-types-and
 title: Create migration types and error classes
-status: open
+status: done
 priority: high
 parent: F-migration-service-core
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/services/migrations/MigrationErrorCode.ts:
+    Created comprehensive enum with migration-specific error codes following
+    DatabaseErrorCode pattern
+  packages/shared/src/services/migrations/MigrationError.ts: Created
+    MigrationError class extending Error with filename, context, and
+    serialization support
+  packages/shared/src/services/migrations/MigrationFile.ts:
+    Created interface for
+    discovered migration files with filename, order, and path properties
+  packages/shared/src/services/migrations/AppliedMigration.ts: Created interface matching database schema for tracking applied migrations
+  packages/shared/src/services/migrations/MigrationResult.ts: Created discriminated union type for migration execution results
+  packages/shared/src/services/migrations/MigrationStatus.ts: Created enum for
+    migration execution states (pending, running, applied, failed, skipped)
+  packages/shared/src/services/migrations/MigrationOperation.ts:
+    Created enum for migration operation types (apply, rollback, discover,
+    validate, initialize)
+  packages/shared/src/services/migrations/index.ts: Created barrel export file following database types pattern
+  packages/shared/src/services/migrations/__tests__/MigrationError.test.ts: Created comprehensive unit tests for MigrationError class with 100% coverage
+  packages/shared/src/services/migrations/__tests__/types.test.ts:
+    Created comprehensive unit tests for all migration types and enums with
+    integration scenarios
+log:
+  - Successfully implemented foundational migration types and error classes
+    following established project patterns. Created MigrationErrorCode enum with
+    comprehensive error codes, MigrationError class extending Error with
+    serialization support, and migration types (MigrationFile, AppliedMigration,
+    MigrationResult, MigrationStatus, MigrationOperation). All files follow the
+    "one export per file" rule, include comprehensive JSDoc documentation, and
+    have full unit test coverage. All quality checks pass including linting,
+    formatting, and type checking. Ready for MigrationService implementation.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T16:31:41.645Z
