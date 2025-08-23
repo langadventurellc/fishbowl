@@ -187,6 +187,19 @@ affectedFiles:
   packages/shared/src/types/conversations/schemas/__tests__/updateConversationInputSchema.test.ts:
     Full test suite for update schema covering partial updates, empty object
     rejection, and validation constraints
+  packages/shared/src/types/conversations/errors/ConversationNotFoundError.ts:
+    Created ConversationNotFoundError class extending Error with conversationId
+    property and toJSON serialization method
+  packages/shared/src/types/conversations/errors/ConversationValidationError.ts:
+    Created ConversationValidationError class extending Error with validation
+    error details array and toJSON serialization method
+  packages/shared/src/types/conversations/errors/index.ts: Created barrel export file for both error classes
+  packages/shared/src/types/conversations/errors/__tests__/ConversationNotFoundError.test.ts:
+    Comprehensive test suite covering constructor, inheritance, serialization,
+    and error properties for ConversationNotFoundError
+  packages/shared/src/types/conversations/errors/__tests__/ConversationValidationError.test.ts:
+    Complete test coverage for ConversationValidationError including
+    single/multiple errors, inheritance, serialization, and edge cases
 log: []
 schema: v1.0
 childrenIds:

@@ -1,13 +1,32 @@
 ---
 id: T-create-custom-error-classes
 title: Create custom error classes
-status: open
+status: done
 priority: medium
 parent: F-conversation-types-and
 prerequisites:
   - T-create-core-conversation
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/conversations/errors/ConversationNotFoundError.ts:
+    Created ConversationNotFoundError class extending Error with conversationId
+    property and toJSON serialization method
+  packages/shared/src/types/conversations/errors/ConversationValidationError.ts:
+    Created ConversationValidationError class extending Error with validation
+    error details array and toJSON serialization method
+  packages/shared/src/types/conversations/errors/index.ts: Created barrel export file for both error classes
+  packages/shared/src/types/conversations/errors/__tests__/ConversationNotFoundError.test.ts:
+    Comprehensive test suite covering constructor, inheritance, serialization,
+    and error properties for ConversationNotFoundError
+  packages/shared/src/types/conversations/errors/__tests__/ConversationValidationError.test.ts:
+    Complete test coverage for ConversationValidationError including
+    single/multiple errors, inheritance, serialization, and edge cases
+log:
+  - Implemented custom error classes for conversation-related failures. Created
+    ConversationNotFoundError and ConversationValidationError classes following
+    existing error patterns in the codebase. Both errors extend base Error class
+    with proper prototype chain maintenance, include serialization methods for
+    IPC transport, and have comprehensive test coverage. All quality checks
+    pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T06:29:43.227Z
