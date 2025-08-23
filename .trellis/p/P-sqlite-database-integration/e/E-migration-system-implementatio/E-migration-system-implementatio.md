@@ -23,11 +23,25 @@ affectedFiles:
   packages/shared/src/services/migrations/MigrationOperation.ts:
     Created enum for migration operation types (apply, rollback, discover,
     validate, initialize)
-  packages/shared/src/services/migrations/index.ts: Created barrel export file following database types pattern
+  packages/shared/src/services/migrations/index.ts: Created barrel export file
+    following database types pattern; Updated barrel export to include
+    MigrationDiscovery class for external consumption
   packages/shared/src/services/migrations/__tests__/MigrationError.test.ts: Created comprehensive unit tests for MigrationError class with 100% coverage
   packages/shared/src/services/migrations/__tests__/types.test.ts:
     Created comprehensive unit tests for all migration types and enums with
     integration scenarios
+  packages/shared/src/services/migrations/MigrationDiscovery.ts:
+    Created core MigrationDiscovery class with discoverMigrations() and
+    loadMigrationContent() methods, following established patterns for file
+    system operations and error handling
+  packages/shared/src/services/storage/FileSystemBridge.ts:
+    Extended interface to
+    include optional readdir() method for directory listing functionality
+  apps/desktop/src/main/services/NodeFileSystemBridge.ts: Implemented readdir()
+    method using fs.readdir with proper validation and error handling
+  packages/shared/src/services/migrations/__tests__/MigrationDiscovery.test.ts:
+    Created comprehensive unit test suite with mocked dependencies covering
+    directory validation, file discovery, content loading, and error scenarios
 log: []
 schema: v1.0
 childrenIds:

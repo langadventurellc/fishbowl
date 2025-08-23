@@ -12,3 +12,6 @@ export type { MigrationResult } from "./MigrationResult";
 // Migration enums
 export { MigrationStatus } from "./MigrationStatus";
 export { MigrationOperation } from "./MigrationOperation";
+
+// Migration services
+export { MigrationDiscovery } from "./MigrationDiscovery";
