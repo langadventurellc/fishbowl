@@ -6,7 +6,13 @@ import type {
   CreateConversationInput,
   UpdateConversationInput,
 } from "../../types/conversations";
-import { ConversationValidationError } from "../../types/conversations";
+import {
+  ConversationValidationError,
+  ConversationNotFoundError,
+  conversationSchema,
+  createConversationInputSchema,
+} from "../../types/conversations";
+import { ZodError } from "zod";
 import { createLoggerSync } from "../../logging/createLoggerSync";
 import { DatabaseError } from "../../services/database";
 
@@ -37,12 +43,93 @@ export class ConversationsRepository
     this.logger.info("ConversationsRepository initialized");
   }
 
-  async create(_input: CreateConversationInput): Promise<Conversation> {
-    throw new Error("Method not implemented");
+  async create(input: CreateConversationInput): Promise<Conversation> {
+    try {
+      // Validate input
+      const validatedInput = createConversationInputSchema.parse(input);
+
+      // Generate conversation data
+      const id = this.cryptoUtils.generateId();
+      const title = validatedInput.title || "New Conversation";
+      const timestamp = this.getCurrentTimestamp();
+
+      // Create conversation object
+      const conversation: Conversation = {
+        id,
+        title,
+        created_at: timestamp,
+        updated_at: timestamp,
+      };
+
+      // Validate complete conversation
+      const validatedConversation = conversationSchema.parse(conversation);
+
+      // Insert into database
+      const sql = `
+        INSERT INTO conversations (id, title, created_at, updated_at)
+        VALUES (?, ?, ?, ?)
+      `;
+
+      await this.databaseBridge.execute(sql, [
+        validatedConversation.id,
+        validatedConversation.title,
+        validatedConversation.created_at,
+        validatedConversation.updated_at,
+      ]);
+
+      this.logger.info("Created conversation", {
+        id: validatedConversation.id,
+      });
+
+      return validatedConversation;
+    } catch (error) {
+      if (error instanceof ZodError) {
+        throw new ConversationValidationError(
+          error.issues.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+          })),
+        );
+      }
+
+      this.handleDatabaseError(error, "create");
+    }
   }
 
-  async get(_id: string): Promise<Conversation> {
-    throw new Error("Method not implemented");
+  async get(id: string): Promise<Conversation> {
+    try {
+      // Validate ID format
+      const idValidation = conversationSchema.shape.id.safeParse(id);
+      if (!idValidation.success) {
+        throw new ConversationNotFoundError(id);
+      }
+
+      // Query database
+      const sql = `
+        SELECT id, title, created_at, updated_at
+        FROM conversations
+        WHERE id = ?
+      `;
+
+      const rows = await this.databaseBridge.query<Conversation>(sql, [id]);
+
+      if (rows.length === 0) {
+        throw new ConversationNotFoundError(id);
+      }
+
+      // Validate and return
+      const conversation = conversationSchema.parse(rows[0]);
+
+      this.logger.debug("Retrieved conversation", { id: conversation.id });
+
+      return conversation;
+    } catch (error) {
+      if (error instanceof ConversationNotFoundError) {
+        throw error;
+      }
+
+      this.handleDatabaseError(error, "get");
+    }
   }
 
   async list(): Promise<Conversation[]> {
@@ -60,8 +147,32 @@ export class ConversationsRepository
     throw new Error("Method not implemented");
   }
 
-  async exists(_id: string): Promise<boolean> {
-    throw new Error("Method not implemented");
+  async exists(id: string): Promise<boolean> {
+    try {
+      // Validate ID format
+      const idValidation = conversationSchema.shape.id.safeParse(id);
+      if (!idValidation.success) {
+        return false;
+      }
+
+      const sql = `
+        SELECT 1
+        FROM conversations
+        WHERE id = ?
+        LIMIT 1
+      `;
+
+      const rows = await this.databaseBridge.query<{ 1: number }>(sql, [id]);
+
+      return rows.length > 0;
+    } catch (error) {
+      this.logger.error(
+        "Error checking conversation existence",
+        error as Error,
+        { id },
+      );
+      return false;
+    }
   }
 
   /**
