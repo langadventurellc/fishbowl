@@ -3,6 +3,7 @@ import {
   SettingsRepository,
   createLoggerSync,
   type StructuredLogger,
+  type DatabaseBridge,
 } from "@fishbowl-ai/shared";
 import { app } from "electron";
 import * as path from "path";
@@ -68,6 +69,34 @@ export class MainProcessServices {
    */
   createSettingsRepository(settingsFilePath: string): SettingsRepository {
     return new SettingsRepository(this.fileStorage, settingsFilePath);
+  }
+
+  /**
+   * Create a database-dependent service with the configured database bridge.
+   * Follows the factory method pattern to provide clean dependency injection
+   * for services that need database access.
+   *
+   * @template T The type of service to create
+   * @param serviceFactory Function that creates the service with database dependency
+   * @returns Configured service instance with database access
+   *
+   * @example
+   * ```typescript
+   * // Create a user repository
+   * const userRepository = mainProcessServices.createDatabaseService(
+   *   (db) => new UserRepository(db)
+   * );
+   *
+   * // Create a conversation service with additional dependencies
+   * const conversationService = mainProcessServices.createDatabaseService(
+   *   (db) => new ConversationService(db, logger)
+   * );
+   * ```
+   */
+  createDatabaseService<T>(
+    serviceFactory: (databaseBridge: DatabaseBridge) => T,
+  ): T {
+    return serviceFactory(this.databaseBridge);
   }
 
   /**

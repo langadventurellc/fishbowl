@@ -80,6 +80,121 @@ describe("MainProcessServices", () => {
     });
   });
 
+  describe("createDatabaseService", () => {
+    // Mock service classes for testing
+    class MockUserRepository {
+      constructor(public db: any) {}
+
+      getUsers() {
+        return this.db.query("SELECT * FROM users");
+      }
+    }
+
+    class MockConversationService {
+      constructor(
+        public db: any,
+        public logger?: any,
+      ) {}
+
+      getConversations() {
+        return this.db.query("SELECT * FROM conversations");
+      }
+    }
+
+    it("should create a database service with the configured database bridge", () => {
+      const userRepository = services.createDatabaseService(
+        (db) => new MockUserRepository(db),
+      );
+
+      expect(userRepository).toBeDefined();
+      expect(userRepository.db).toBe(services.databaseBridge);
+      expect(userRepository).toHaveProperty("getUsers");
+    });
+
+    it("should pass the database bridge to the service factory", () => {
+      const mockFactory = jest.fn((db) => new MockUserRepository(db));
+
+      const service = services.createDatabaseService(mockFactory);
+
+      expect(mockFactory).toHaveBeenCalledWith(services.databaseBridge);
+      expect(mockFactory).toHaveBeenCalledTimes(1);
+      expect(service.db).toBe(services.databaseBridge);
+    });
+
+    it("should create different service instances for different factory calls", () => {
+      const service1 = services.createDatabaseService(
+        (db) => new MockUserRepository(db),
+      );
+      const service2 = services.createDatabaseService(
+        (db) => new MockUserRepository(db),
+      );
+
+      expect(service1).not.toBe(service2);
+      expect(service1.db).toBe(service2.db); // Same database bridge
+    });
+
+    it("should support different service types with generics", () => {
+      const userRepo = services.createDatabaseService<MockUserRepository>(
+        (db) => new MockUserRepository(db),
+      );
+
+      const conversationService =
+        services.createDatabaseService<MockConversationService>(
+          (db) => new MockConversationService(db, services.logger),
+        );
+
+      expect(userRepo).toBeInstanceOf(MockUserRepository);
+      expect(conversationService).toBeInstanceOf(MockConversationService);
+      expect(userRepo.db).toBe(services.databaseBridge);
+      expect(conversationService.db).toBe(services.databaseBridge);
+    });
+
+    it("should handle factory functions that throw errors", () => {
+      const errorFactory = () => {
+        throw new Error("Service creation failed");
+      };
+
+      expect(() => {
+        services.createDatabaseService(errorFactory);
+      }).toThrow("Service creation failed");
+    });
+
+    it("should maintain type safety for created services", () => {
+      const userRepository = services.createDatabaseService(
+        (db) => new MockUserRepository(db),
+      );
+
+      // TypeScript should infer the correct type
+      expect(typeof userRepository.getUsers).toBe("function");
+      expect(userRepository.db).toBe(services.databaseBridge);
+    });
+
+    it("should support complex service factory patterns", () => {
+      // Test with additional dependencies passed to service
+      const complexService = services.createDatabaseService((db) => {
+        const repository = new MockUserRepository(db);
+        const service = new MockConversationService(db, services.logger);
+
+        // Return composite service
+        return {
+          userRepo: repository,
+          conversationService: service,
+          combinedQuery: () => "combined result",
+        };
+      });
+
+      expect(complexService.userRepo).toBeInstanceOf(MockUserRepository);
+      expect(complexService.conversationService).toBeInstanceOf(
+        MockConversationService,
+      );
+      expect(typeof complexService.combinedQuery).toBe("function");
+      expect(complexService.userRepo.db).toBe(services.databaseBridge);
+      expect(complexService.conversationService.db).toBe(
+        services.databaseBridge,
+      );
+    });
+  });
+
   describe("dependency injection", () => {
     it("should inject Node implementations into file storage service", () => {
       // The file storage service should be using our Node file system bridge
