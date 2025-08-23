@@ -58,9 +58,80 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @param _params Optional parameters for prepared statement binding
    * @returns Promise resolving to array of typed result rows
    */
-  async query<T = unknown>(_sql: string, _params?: unknown[]): Promise<T[]> {
-    // TODO: Implement query method in separate task
-    throw new Error("Method not implemented");
+  async query<T = unknown>(sql: string, params?: unknown[]): Promise<T[]> {
+    // Validate connection state
+    if (!this.isConnected()) {
+      throw new ConnectionError("Database connection is not active");
+    }
+
+    try {
+      // Create prepared statement
+      const statement = this.db.prepare(sql);
+
+      // Execute SELECT query with statement.all()
+      const result = statement.all(params || []) as T[];
+
+      // Return typed results
+      return result;
+    } catch (error: unknown) {
+      // Convert SQLite errors to DatabaseError types
+      const sqliteError = error as Error & { code?: string };
+
+      if (sqliteError?.code?.startsWith("SQLITE_CONSTRAINT")) {
+        if (sqliteError.code === "SQLITE_CONSTRAINT_UNIQUE") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Unique constraint violation",
+            "unique",
+            undefined, // table name not easily extractable
+            undefined, // column name not easily extractable
+            sqliteError,
+          );
+        }
+        if (sqliteError.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Foreign key constraint violation",
+            "foreign_key",
+            undefined,
+            undefined,
+            sqliteError,
+          );
+        }
+        if (sqliteError.code === "SQLITE_CONSTRAINT_NOTNULL") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Not null constraint violation",
+            "not_null",
+            undefined,
+            undefined,
+            sqliteError,
+          );
+        }
+        if (sqliteError.code === "SQLITE_CONSTRAINT_CHECK") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Check constraint violation",
+            "check",
+            undefined,
+            undefined,
+            sqliteError,
+          );
+        }
+        // Generic constraint violation
+        throw new ConstraintViolationError(
+          sqliteError.message || "Constraint violation",
+          "unique", // Default fallback
+          undefined,
+          undefined,
+          sqliteError,
+        );
+      }
+
+      // Generic query error for other SQLite errors
+      throw new QueryError(
+        sqliteError.message || "SQL execution failed",
+        sql,
+        params,
+        sqliteError,
+      );
+    }
   }
 
   /**

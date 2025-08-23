@@ -197,6 +197,349 @@ describe("NodeDatabaseBridge", () => {
     });
   });
 
+  describe("query", () => {
+    let mockStatement: any;
+
+    beforeEach(() => {
+      mockStatement = {
+        all: jest.fn(),
+      };
+      mockDatabase.prepare = jest.fn().mockReturnValue(mockStatement);
+    });
+
+    it("should execute SELECT queries and return typed results", async () => {
+      const mockRows = [
+        { id: 1, name: "John", email: "john@example.com" },
+        { id: 2, name: "Jane", email: "jane@example.com" },
+      ];
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const result = await bridge.query<{
+        id: number;
+        name: string;
+        email: string;
+      }>("SELECT * FROM users WHERE active = ?", [true]);
+
+      expect(mockDatabase.prepare).toHaveBeenCalledWith(
+        "SELECT * FROM users WHERE active = ?",
+      );
+      expect(mockStatement.all).toHaveBeenCalledWith([true]);
+      expect(result).toEqual(mockRows);
+    });
+
+    it("should handle SELECT queries with various data types", async () => {
+      interface UserRow {
+        id: number;
+        name: string;
+        age: number;
+        active: boolean;
+        salary: number;
+        created_at: string;
+      }
+
+      const mockRows: UserRow[] = [
+        {
+          id: 1,
+          name: "John",
+          age: 30,
+          active: true,
+          salary: 50000.5,
+          created_at: "2023-01-01T00:00:00Z",
+        },
+      ];
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const result = await bridge.query<UserRow>(
+        "SELECT id, name, age, active, salary, created_at FROM users WHERE id = ?",
+        [1],
+      );
+
+      expect(result).toEqual(mockRows);
+      expect(result.length).toBe(1);
+      expect(result[0]!.id).toBe(1);
+      expect(result[0]!.name).toBe("John");
+      expect(result[0]!.age).toBe(30);
+      expect(result[0]!.active).toBe(true);
+      expect(result[0]!.salary).toBe(50000.5);
+    });
+
+    it("should handle queries with no parameters", async () => {
+      const mockRows = [{ count: 5 }];
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const result = await bridge.query("SELECT COUNT(*) as count FROM users");
+
+      expect(mockStatement.all).toHaveBeenCalledWith([]);
+      expect(result).toEqual(mockRows);
+    });
+
+    it("should handle empty result sets", async () => {
+      mockStatement.all.mockReturnValue([]);
+
+      const result = await bridge.query<{ id: number; name: string }>(
+        "SELECT * FROM users WHERE id = ?",
+        [999],
+      );
+
+      expect(result).toEqual([]);
+      expect(Array.isArray(result)).toBe(true);
+      expect(result.length).toBe(0);
+    });
+
+    it("should handle queries with complex parameters", async () => {
+      const mockRows = [
+        { id: 1, name: "John", tags: "tag1,tag2" },
+        { id: 2, name: "Jane", tags: "tag2,tag3" },
+      ];
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const params = ["John", 25, true, null, undefined];
+      const result = await bridge.query(
+        "SELECT * FROM users WHERE name = ? AND age > ? AND active = ? AND metadata IS ? AND notes IS ?",
+        params,
+      );
+
+      expect(mockStatement.all).toHaveBeenCalledWith(params);
+      expect(result).toEqual(mockRows);
+    });
+
+    it("should handle large result sets", async () => {
+      const mockRows = Array.from({ length: 1000 }, (_, i) => ({
+        id: i + 1,
+        name: `User${i + 1}`,
+      }));
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const result = await bridge.query<{ id: number; name: string }>(
+        "SELECT * FROM users",
+      );
+
+      expect(result.length).toBe(1000);
+      expect(result[0]).toEqual({ id: 1, name: "User1" });
+      expect(result[999]).toEqual({ id: 1000, name: "User1000" });
+    });
+
+    it("should maintain type safety with generic parameters", async () => {
+      interface User {
+        id: number;
+        name: string;
+        email: string;
+      }
+
+      const mockRows: User[] = [
+        { id: 1, name: "John", email: "john@example.com" },
+      ];
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const result = await bridge.query<User>(
+        "SELECT id, name, email FROM users WHERE id = ?",
+        [1],
+      );
+
+      // TypeScript should infer result as User[]
+      expect(result).toEqual(mockRows);
+      expect(result.length).toBe(1);
+      expect(result[0]!.id).toBe(1);
+      expect(result[0]!.name).toBe("John");
+      expect(result[0]!.email).toBe("john@example.com");
+    });
+
+    it("should throw ConnectionError when database is not connected", async () => {
+      mockDatabase.open = false;
+
+      await expect(bridge.query("SELECT * FROM users", [])).rejects.toThrow(
+        ConnectionError,
+      );
+    });
+
+    it("should throw QueryError for invalid SQL syntax", async () => {
+      const sqliteError = new Error('near "INVALID": syntax error');
+      (sqliteError as any).code = "SQLITE_ERROR";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(bridge.query("INVALID SQL SYNTAX", [])).rejects.toThrow(
+        QueryError,
+      );
+
+      try {
+        await bridge.query("INVALID SQL SYNTAX", []);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(QueryError);
+        expect(error.message).toContain("syntax error");
+      }
+    });
+
+    it("should throw QueryError for non-existent tables", async () => {
+      const sqliteError = new Error("no such table: nonexistent_table");
+      (sqliteError as any).code = "SQLITE_ERROR";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.query("SELECT * FROM nonexistent_table", []),
+      ).rejects.toThrow(QueryError);
+    });
+
+    it("should throw ConstraintViolationError for unique constraint violations in complex queries", async () => {
+      const sqliteError = new Error("UNIQUE constraint failed: temp_table.id");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_UNIQUE";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.query("SELECT * FROM (INSERT INTO temp_table (id) VALUES (?))", [
+          1,
+        ]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw ConstraintViolationError for foreign key constraints in complex queries", async () => {
+      const sqliteError = new Error("FOREIGN KEY constraint failed");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_FOREIGNKEY";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.query("SELECT * FROM posts WHERE user_id = ?", [999]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw ConstraintViolationError for not null constraints", async () => {
+      const sqliteError = new Error("NOT NULL constraint failed");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_NOTNULL";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.query("SELECT * FROM users WHERE name = ?", [null]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw ConstraintViolationError for check constraints", async () => {
+      const sqliteError = new Error("CHECK constraint failed");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_CHECK";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.query("SELECT * FROM users WHERE age = ?", [-5]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw generic ConstraintViolationError for other constraint errors", async () => {
+      const sqliteError = new Error("Some constraint failed");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_GENERIC";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(bridge.query("SELECT * FROM users", [])).rejects.toThrow(
+        ConstraintViolationError,
+      );
+    });
+
+    it("should handle prepared statement creation failures", async () => {
+      mockDatabase.prepare.mockImplementation(() => {
+        throw new Error("SQL preparation error");
+      });
+
+      await expect(bridge.query("INVALID SQL", [])).rejects.toThrow(QueryError);
+    });
+
+    it("should include SQL and parameters in QueryError context", async () => {
+      const sqliteError = new Error("SQL execution failed");
+      (sqliteError as any).code = "SQLITE_ERROR";
+      mockStatement.all.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      try {
+        await bridge.query("SELECT * FROM users WHERE id = ? AND name = ?", [
+          123,
+          "John",
+        ]);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(QueryError);
+        // QueryError should include SQL and parameters in context
+        expect(error.context?.sql).toBe(
+          "SELECT * FROM users WHERE id = ? AND name = ?",
+        );
+        expect(error.context?.parameters).toEqual([123, "John"]);
+      }
+    });
+
+    it("should handle queries with JOIN operations", async () => {
+      const mockRows = [
+        {
+          userId: 1,
+          userName: "John",
+          postId: 1,
+          postTitle: "First Post",
+        },
+        {
+          userId: 1,
+          userName: "John",
+          postId: 2,
+          postTitle: "Second Post",
+        },
+      ];
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const result = await bridge.query(
+        `SELECT 
+          u.id as userId, 
+          u.name as userName, 
+          p.id as postId, 
+          p.title as postTitle 
+        FROM users u 
+        JOIN posts p ON u.id = p.user_id 
+        WHERE u.id = ?`,
+        [1],
+      );
+
+      expect(result).toEqual(mockRows);
+      expect(result.length).toBe(2);
+    });
+
+    it("should handle aggregate queries", async () => {
+      interface AggregateResult {
+        total_users: number;
+        active_users: number;
+        avg_age: number;
+      }
+
+      const mockRows: AggregateResult[] = [
+        {
+          total_users: 150,
+          active_users: 120,
+          avg_age: 32.5,
+        },
+      ];
+      mockStatement.all.mockReturnValue(mockRows);
+
+      const result = await bridge.query<AggregateResult>(
+        `SELECT 
+          COUNT(*) as total_users,
+          COUNT(CASE WHEN active = 1 THEN 1 END) as active_users,
+          AVG(age) as avg_age
+        FROM users`,
+      );
+
+      expect(result).toEqual(mockRows);
+      expect(result.length).toBe(1);
+      expect(result[0]!.total_users).toBe(150);
+      expect(result[0]!.active_users).toBe(120);
+      expect(result[0]!.avg_age).toBe(32.5);
+    });
+  });
+
   describe("execute", () => {
     let mockStatement: any;
 

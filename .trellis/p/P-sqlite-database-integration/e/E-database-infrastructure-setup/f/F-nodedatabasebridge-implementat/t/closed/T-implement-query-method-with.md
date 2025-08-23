@@ -1,13 +1,29 @@
 ---
 id: T-implement-query-method-with
 title: Implement query method with type-safe SELECT operations
-status: open
+status: done
 priority: high
 parent: F-nodedatabasebridge-implementat
 prerequisites:
   - T-create-nodedatabasebridge
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/main/services/NodeDatabaseBridge.ts: Implemented query<T>
+    method following interface contract with prepared statements, parameter
+    binding, error conversion to DatabaseError types, and connection state
+    validation
+  apps/desktop/src/main/services/__tests__/NodeDatabaseBridge.test.ts:
+    Added comprehensive test suite for query method with 18 test cases covering
+    typed results, various data types, empty results, complex parameters, large
+    result sets, type safety, connection errors, SQL errors, constraint
+    violations, JOIN operations, and aggregate queries
+log:
+  - Implemented query<T> method with type-safe SELECT operations using
+    better-sqlite3. The method uses prepared statements for security, handles
+    parameter binding safely, and converts SQLite errors to appropriate
+    DatabaseError types. Added comprehensive test coverage with 18 test cases
+    covering successful queries, error scenarios, type safety, edge cases, and
+    complex query patterns like JOINs and aggregates. All quality checks pass
+    with clean TypeScript types, linting, and formatting.
 schema: v1.0
 childrenIds: []
 created: 2025-08-22T23:12:32.994Z

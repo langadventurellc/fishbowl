@@ -87,14 +87,21 @@ affectedFiles:
     constructor, pragma configuration, connection management, and stub methods
     for future implementation; Implemented complete execute method with prepared
     statements, DatabaseResult mapping, BigInt handling, and comprehensive error
-    mapping from SQLite errors to DatabaseError types
+    mapping from SQLite errors to DatabaseError types; Implemented query<T>
+    method following interface contract with prepared statements, parameter
+    binding, error conversion to DatabaseError types, and connection state
+    validation
   apps/desktop/src/main/services/__tests__/NodeDatabaseBridge.test.ts:
     Created comprehensive unit test suite with 18 test cases covering
     implemented functionality including constructor behavior, pragma
     configuration, interface compliance, error scenarios, and connection state
     tracking; Added comprehensive unit test suite for execute method with 15+
     test cases covering INSERT/UPDATE/DELETE operations, error scenarios,
-    constraint violations, and parameter handling
+    constraint violations, and parameter handling; Added comprehensive test
+    suite for query method with 18 test cases covering typed results, various
+    data types, empty results, complex parameters, large result sets, type
+    safety, connection errors, SQL errors, constraint violations, JOIN
+    operations, and aggregate queries
 log: []
 schema: v1.0
 childrenIds:
