@@ -17,13 +17,30 @@ affectedFiles:
     all conversation types using proper export type syntax
   packages/shared/src/types/index.ts: Added conversations module export to main types barrel
   packages/shared/src/types/conversations/__tests__/types.test.ts: Created comprehensive unit tests verifying type structure and compatibility
+  packages/shared/src/types/conversations/schemas/conversationSchema.ts:
+    Created Zod schema for complete conversation validation with UUID, datetime,
+    and title constraints
+  packages/shared/src/types/conversations/schemas/createConversationInputSchema.ts: Created schema for conversation creation input with optional title validation
+  packages/shared/src/types/conversations/schemas/updateConversationInputSchema.ts:
+    Created schema for conversation updates with partial validation and
+    at-least-one-field requirement
+  packages/shared/src/types/conversations/schemas/index.ts: Created barrel export file for all schemas and their inferred types
+  packages/shared/src/types/conversations/schemas/__tests__/conversationSchema.test.ts:
+    Comprehensive test suite for conversation schema validation covering valid
+    inputs, invalid fields, missing fields, and edge cases
+  packages/shared/src/types/conversations/schemas/__tests__/createConversationInputSchema.test.ts:
+    Complete test coverage for create input schema including optional title
+    behavior and validation rules
+  packages/shared/src/types/conversations/schemas/__tests__/updateConversationInputSchema.test.ts:
+    Full test suite for update schema covering partial updates, empty object
+    rejection, and validation constraints
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-core-conversation
   - T-create-custom-error-classes
   - T-implement-zod-validation
   - T-update-package-exports-and
+  - T-create-core-conversation
 created: 2025-08-23T06:20:47.000Z
 updated: 2025-08-23T06:20:47.000Z
 ---
