@@ -98,7 +98,13 @@ affectedFiles:
     with BEGIN/COMMIT/ROLLBACK pattern, transaction state tracking
     (isTransactionActive flag), error conversion to TransactionError with proper
     logging, nested transaction handling, and extractFailedOperation helper
-    method
+    method; Added imports for path utilities (dirname) and fs operations (stat,
+    mkdir, existsSync). Implemented backup() method with better-sqlite3 backup
+    API, directory creation, path validation, and comprehensive error handling.
+    Implemented vacuum() method with VACUUM command execution, transaction state
+    validation, and proper error conversion. Implemented getSize() method with
+    fs.stat() for file size retrieval, in-memory database detection, and
+    detailed logging with size formatting.
   apps/desktop/src/main/services/__tests__/NodeDatabaseBridge.test.ts:
     Created comprehensive unit test suite with 18 test cases covering
     implemented functionality including constructor behavior, pragma
@@ -115,7 +121,17 @@ affectedFiles:
     extensive test coverage for all new features.; Added comprehensive
     transaction test suite with 13 test cases covering successful transactions,
     rollback scenarios, nested operations, error handling, type preservation,
-    connection validation, and transaction lifecycle logging
+    connection validation, and transaction lifecycle logging; Added fs and
+    fs/promises module mocking at top level. Added backup() method property to
+    mockDatabase object. Added comprehensive test suite for backup() method with
+    5 test cases covering successful backup, connection validation, path
+    validation, API failure handling, and directory creation. Added
+    comprehensive test suite for vacuum() method with 4 test cases covering
+    successful execution, connection validation, transaction state validation,
+    and command failure handling. Added comprehensive test suite for getSize()
+    method with 5 test cases covering successful size retrieval, connection
+    validation, in-memory database handling, file stat failures, and various
+    file sizes with proper MB conversion testing.
 log: []
 schema: v1.0
 childrenIds:

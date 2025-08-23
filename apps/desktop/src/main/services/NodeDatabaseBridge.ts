@@ -1,4 +1,7 @@
 import Database from "better-sqlite3";
+import { dirname } from "path";
+import { stat, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import {
   DatabaseBridge,
   DatabaseResult,
@@ -445,9 +448,43 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @param _path Destination path for the backup file
    * @returns Promise resolving when backup is complete
    */
-  async backup(_path: string): Promise<void> {
-    // TODO: Implement backup method in separate task
-    throw new Error("Method not implemented");
+  async backup(path: string): Promise<void> {
+    // Validate connection state
+    if (!this.isConnected()) {
+      throw new ConnectionError("Database connection is not active");
+    }
+
+    try {
+      this.logger.info("Starting database backup", { destination: path });
+
+      // Ensure backup directory exists
+      const backupDir = dirname(path);
+      if (!existsSync(backupDir)) {
+        await mkdir(backupDir, { recursive: true });
+      }
+
+      // Validate backup path is not empty
+      if (!path.trim()) {
+        throw new QueryError("Backup path cannot be empty", "BACKUP", [path]);
+      }
+
+      // Perform backup using better-sqlite3's backup API
+      this.db.backup(path);
+
+      this.logger.info("Database backup completed successfully", {
+        destination: path,
+      });
+    } catch (error) {
+      this.logger.error("Database backup failed", error as Error, { path });
+
+      if (error instanceof QueryError || error instanceof ConnectionError) {
+        throw error;
+      }
+
+      throw new ConnectionError(
+        `Failed to backup database: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 
   /**
@@ -456,8 +493,43 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @returns Promise resolving when optimization is complete
    */
   async vacuum(): Promise<void> {
-    // TODO: Implement vacuum method in separate task
-    throw new Error("Method not implemented");
+    // Validate connection state
+    if (!this.isConnected()) {
+      throw new ConnectionError("Database connection is not active");
+    }
+
+    try {
+      this.logger.info("Starting database vacuum operation");
+
+      // Check if in transaction - VACUUM cannot run in a transaction
+      if (this.isTransactionActive) {
+        throw new TransactionError(
+          "VACUUM cannot be performed within a transaction",
+          "VACUUM",
+        );
+      }
+
+      // Execute VACUUM command
+      this.db.exec("VACUUM");
+
+      this.logger.info("Database vacuum completed successfully");
+    } catch (error) {
+      this.logger.error("Database vacuum failed", error as Error);
+
+      if (
+        error instanceof TransactionError ||
+        error instanceof ConnectionError
+      ) {
+        throw error;
+      }
+
+      throw new QueryError(
+        `Failed to vacuum database: ${error instanceof Error ? error.message : String(error)}`,
+        "VACUUM",
+        [],
+        error instanceof Error ? error : undefined,
+      );
+    }
   }
 
   /**
@@ -466,7 +538,42 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @returns Promise resolving to database file size in bytes
    */
   async getSize(): Promise<number> {
-    // TODO: Implement getSize method in separate task
-    throw new Error("Method not implemented");
+    // Validate connection state
+    if (!this.isConnected()) {
+      throw new ConnectionError("Database connection is not active");
+    }
+
+    // Handle in-memory databases
+    if (this.db.name === ":memory:") {
+      throw new QueryError(
+        "Cannot get file size for in-memory database",
+        "SELECT file_size",
+        [],
+      );
+    }
+
+    try {
+      this.logger.debug("Getting database file size", { path: this.db.name });
+
+      // Get file statistics using fs.stat
+      const stats = await stat(this.db.name);
+      const sizeInBytes = stats.size;
+
+      this.logger.debug("Database file size retrieved", {
+        path: this.db.name,
+        sizeInBytes,
+        sizeInMB: (sizeInBytes / (1024 * 1024)).toFixed(2),
+      });
+
+      return sizeInBytes;
+    } catch (error) {
+      this.logger.error("Failed to get database size", error as Error, {
+        path: this.db.name,
+      });
+
+      throw new ConnectionError(
+        `Failed to get database size: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   }
 }

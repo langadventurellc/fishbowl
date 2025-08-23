@@ -4,6 +4,8 @@ const mockDatabase = {
   close: jest.fn(),
   prepare: jest.fn(),
   exec: jest.fn(),
+  backup: jest.fn(),
+  name: "/test/database.db",
   open: true,
 };
 
@@ -22,6 +24,16 @@ const mockLogger = {
 jest.mock("@fishbowl-ai/shared", () => ({
   ...jest.requireActual("@fishbowl-ai/shared"),
   createLoggerSync: jest.fn(() => mockLogger),
+}));
+
+// Mock fs modules
+jest.mock("fs", () => ({
+  existsSync: jest.fn().mockReturnValue(true),
+}));
+
+jest.mock("fs/promises", () => ({
+  stat: jest.fn().mockResolvedValue({ size: 1048576 }),
+  mkdir: jest.fn().mockResolvedValue(undefined),
 }));
 
 // Import after mocking
@@ -47,9 +59,11 @@ describe("NodeDatabaseBridge", () => {
 
     // Reset mock database properties
     mockDatabase.open = true;
+    mockDatabase.name = "/test/database.db";
     mockDatabase.pragma.mockReset();
     mockDatabase.close.mockReset();
     mockDatabase.prepare.mockReset();
+    mockDatabase.backup.mockReset();
 
     // Reset logger mocks
     mockLogger.info.mockReset();
@@ -284,6 +298,227 @@ describe("NodeDatabaseBridge", () => {
       expect(typeof bridge.backup).toBe("function");
       expect(typeof bridge.vacuum).toBe("function");
       expect(typeof bridge.getSize).toBe("function");
+    });
+  });
+
+  describe("backup method", () => {
+    it("should successfully backup database to provided path", async () => {
+      const backupPath = "/backup/database-backup.db";
+      mockDatabase.backup = jest.fn();
+
+      await bridge.backup!(backupPath);
+
+      expect(mockDatabase.backup).toHaveBeenCalledWith(backupPath);
+      expect(mockLogger.info).toHaveBeenCalledWith("Starting database backup", {
+        destination: backupPath,
+      });
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Database backup completed successfully",
+        { destination: backupPath },
+      );
+    });
+
+    it("should throw ConnectionError if database not connected", async () => {
+      // Mock disconnected state
+      mockDatabase.open = false;
+
+      await expect(bridge.backup!("/backup/test.db")).rejects.toThrow(
+        ConnectionError,
+      );
+      await expect(bridge.backup!("/backup/test.db")).rejects.toThrow(
+        "Database connection is not active",
+      );
+    });
+
+    it("should throw QueryError for empty backup path", async () => {
+      await expect(bridge.backup!("")).rejects.toThrow(QueryError);
+      await expect(bridge.backup!("   ")).rejects.toThrow(QueryError);
+      await expect(bridge.backup!("")).rejects.toThrow(
+        "Backup path cannot be empty",
+      );
+    });
+
+    it("should handle backup API failures", async () => {
+      const backupError = new Error("Backup failed");
+      mockDatabase.backup = jest.fn().mockImplementation(() => {
+        throw backupError;
+      });
+
+      await expect(bridge.backup!("/backup/test.db")).rejects.toThrow(
+        ConnectionError,
+      );
+      await expect(bridge.backup!("/backup/test.db")).rejects.toThrow(
+        "Failed to backup database: Backup failed",
+      );
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Database backup failed",
+        backupError,
+        { path: "/backup/test.db" },
+      );
+    });
+
+    it("should create backup directory if it doesn't exist", async () => {
+      const fs = require("fs");
+      const fsPromises = require("fs/promises");
+
+      (fs.existsSync as jest.Mock).mockReturnValue(false);
+      (fsPromises.mkdir as jest.Mock).mockResolvedValue(undefined);
+      mockDatabase.backup = jest.fn();
+
+      await bridge.backup!("/new/directory/backup.db");
+
+      expect(fsPromises.mkdir).toHaveBeenCalledWith("/new/directory", {
+        recursive: true,
+      });
+      expect(mockDatabase.backup).toHaveBeenCalledWith(
+        "/new/directory/backup.db",
+      );
+    });
+  });
+
+  describe("vacuum method", () => {
+    it("should successfully execute VACUUM command", async () => {
+      await bridge.vacuum!();
+
+      expect(mockDatabase.exec).toHaveBeenCalledWith("VACUUM");
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Starting database vacuum operation",
+      );
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Database vacuum completed successfully",
+      );
+    });
+
+    it("should throw ConnectionError if database not connected", async () => {
+      // Mock disconnected state
+      mockDatabase.open = false;
+
+      await expect(bridge.vacuum!()).rejects.toThrow(ConnectionError);
+      await expect(bridge.vacuum!()).rejects.toThrow(
+        "Database connection is not active",
+      );
+    });
+
+    it("should throw TransactionError if executed within transaction", async () => {
+      // Start a transaction to set the isTransactionActive flag
+      await bridge.transaction(async (db) => {
+        // Try to vacuum within transaction - should throw error
+        await expect(db.vacuum!()).rejects.toThrow(TransactionError);
+        await expect(db.vacuum!()).rejects.toThrow(
+          "VACUUM cannot be performed within a transaction",
+        );
+      });
+    });
+
+    it("should handle VACUUM command failures", async () => {
+      const vacuumError = new Error("VACUUM failed");
+      mockDatabase.exec.mockImplementation((sql: string) => {
+        if (sql === "VACUUM") {
+          throw vacuumError;
+        }
+      });
+
+      await expect(bridge.vacuum!()).rejects.toThrow(QueryError);
+      await expect(bridge.vacuum!()).rejects.toThrow(
+        "Failed to vacuum database: VACUUM failed",
+      );
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Database vacuum failed",
+        vacuumError,
+      );
+    });
+  });
+
+  describe("getSize method", () => {
+    it("should successfully return database file size", async () => {
+      const fsPromises = require("fs/promises");
+      const mockStats = { size: 1048576 }; // 1MB
+      (fsPromises.stat as jest.Mock).mockResolvedValue(mockStats);
+
+      const size = await bridge.getSize!();
+
+      expect(size).toBe(1048576);
+      expect(fsPromises.stat).toHaveBeenCalledWith("/test/database.db");
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "Getting database file size",
+        { path: "/test/database.db" },
+      );
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "Database file size retrieved",
+        {
+          path: "/test/database.db",
+          sizeInBytes: 1048576,
+          sizeInMB: "1.00",
+        },
+      );
+    });
+
+    it("should throw ConnectionError if database not connected", async () => {
+      // Mock disconnected state
+      mockDatabase.open = false;
+
+      await expect(bridge.getSize!()).rejects.toThrow(ConnectionError);
+      await expect(bridge.getSize!()).rejects.toThrow(
+        "Database connection is not active",
+      );
+    });
+
+    it("should throw QueryError for in-memory database", async () => {
+      mockDatabase.name = ":memory:";
+
+      await expect(bridge.getSize!()).rejects.toThrow(QueryError);
+      await expect(bridge.getSize!()).rejects.toThrow(
+        "Cannot get file size for in-memory database",
+      );
+    });
+
+    it("should handle file stat failures", async () => {
+      const fsPromises = require("fs/promises");
+      const statError = new Error("File not found");
+      (fsPromises.stat as jest.Mock).mockRejectedValue(statError);
+
+      await expect(bridge.getSize!()).rejects.toThrow(ConnectionError);
+      await expect(bridge.getSize!()).rejects.toThrow(
+        "Failed to get database size: File not found",
+      );
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Failed to get database size",
+        statError,
+        { path: "/test/database.db" },
+      );
+    });
+
+    it("should return correct size for various file sizes", async () => {
+      const fsPromises = require("fs/promises");
+      const testCases = [
+        { size: 0, expectedMB: "0.00" },
+        { size: 1024, expectedMB: "0.00" },
+        { size: 1048576, expectedMB: "1.00" }, // 1MB
+        { size: 10485760, expectedMB: "10.00" }, // 10MB
+        { size: 1073741824, expectedMB: "1024.00" }, // 1GB
+      ];
+
+      for (const testCase of testCases) {
+        (fsPromises.stat as jest.Mock).mockResolvedValue({
+          size: testCase.size,
+        });
+
+        const size = await bridge.getSize!();
+
+        expect(size).toBe(testCase.size);
+        expect(mockLogger.debug).toHaveBeenCalledWith(
+          "Database file size retrieved",
+          expect.objectContaining({
+            sizeInMB: testCase.expectedMB,
+          }),
+        );
+
+        jest.clearAllMocks();
+        mockLogger.debug.mockReset();
+      }
     });
   });
 
