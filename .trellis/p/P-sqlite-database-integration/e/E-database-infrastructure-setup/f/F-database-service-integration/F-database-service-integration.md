@@ -1,15 +1,29 @@
 ---
 id: F-database-service-integration
 title: Database Service Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-database-infrastructure-setup
 prerequisites:
   - F-nodedatabasebridge-implementat
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts:
+    Added NodeDatabaseBridge
+    property, imports for electron app and path modules, constructor
+    initialization, and getDatabasePath() helper method
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for database service integration with proper
+    mocking, verification of service initialization, method availability, and
+    consistent behavior
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-comprehensive-integration
+  - T-add-database-health-check-and
+  - T-add-nodedatabasebridge-to
+  - T-create-database-service
+  - T-implement-database-cleanup-in
+  - T-integrate-database-initializat
 created: 2025-08-22T00:52:37.443Z
 updated: 2025-08-22T00:52:37.443Z
 ---

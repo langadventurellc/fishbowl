@@ -4,7 +4,10 @@ import {
   createLoggerSync,
   type StructuredLogger,
 } from "@fishbowl-ai/shared";
+import { app } from "electron";
+import * as path from "path";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
+import { NodeDatabaseBridge } from "./NodeDatabaseBridge";
 import { NodeCryptoUtils } from "../utils/NodeCryptoUtils";
 import { NodePathUtils } from "../utils/NodePathUtils";
 import { NodeDeviceInfo } from "../utils/NodeDeviceInfo";
@@ -29,6 +32,7 @@ import { NodeDeviceInfo } from "../utils/NodeDeviceInfo";
 export class MainProcessServices {
   // Node.js implementations
   readonly fileSystemBridge: NodeFileSystemBridge;
+  readonly databaseBridge: NodeDatabaseBridge;
   readonly cryptoUtils: NodeCryptoUtils;
   readonly deviceInfo: NodeDeviceInfo;
 
@@ -39,6 +43,7 @@ export class MainProcessServices {
   constructor() {
     // Initialize Node.js implementations
     this.fileSystemBridge = new NodeFileSystemBridge();
+    this.databaseBridge = new NodeDatabaseBridge(this.getDatabasePath());
     this.cryptoUtils = new NodeCryptoUtils();
     this.deviceInfo = new NodeDeviceInfo();
     const pathUtils = new NodePathUtils();
@@ -101,5 +106,15 @@ export class MainProcessServices {
         error: (msg: string, meta?: unknown) => console.error(msg, meta),
       } as StructuredLogger;
     }
+  }
+
+  /**
+   * Get the path to the database file in the user data directory.
+   *
+   * @returns Database file path
+   */
+  private getDatabasePath(): string {
+    const userDataPath = app.getPath("userData");
+    return path.join(userDataPath, "fishbowl.db");
   }
 }

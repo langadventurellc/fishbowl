@@ -132,6 +132,14 @@ affectedFiles:
     method with 5 test cases covering successful size retrieval, connection
     validation, in-memory database handling, file stat failures, and various
     file sizes with proper MB conversion testing.
+  apps/desktop/src/main/services/MainProcessServices.ts:
+    Added NodeDatabaseBridge
+    property, imports for electron app and path modules, constructor
+    initialization, and getDatabasePath() helper method
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for database service integration with proper
+    mocking, verification of service initialization, method availability, and
+    consistent behavior
 log: []
 schema: v1.0
 childrenIds:

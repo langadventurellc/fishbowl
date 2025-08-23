@@ -1,12 +1,29 @@
 ---
 id: T-add-nodedatabasebridge-to
 title: Add NodeDatabaseBridge to MainProcessServices with dependency injection
-status: open
+status: done
 priority: high
 parent: F-database-service-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts:
+    Added NodeDatabaseBridge
+    property, imports for electron app and path modules, constructor
+    initialization, and getDatabasePath() helper method
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for database service integration with proper
+    mocking, verification of service initialization, method availability, and
+    consistent behavior
+log:
+  - Successfully integrated NodeDatabaseBridge into MainProcessServices
+    following the established dependency injection pattern. Added the database
+    service as a readonly property, implemented the getDatabasePath() helper
+    method using Electron's userData directory, and initialized the service in
+    the constructor with proper database path configuration. All unit tests pass
+    with comprehensive coverage for service initialization, method availability,
+    and consistent instantiation. The implementation follows the existing
+    service patterns and includes proper error handling through the
+    NodeDatabaseBridge constructor.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T01:02:08.627Z

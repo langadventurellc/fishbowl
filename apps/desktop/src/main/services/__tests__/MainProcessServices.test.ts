@@ -3,16 +3,45 @@ import { NodeFileSystemBridge } from "../NodeFileSystemBridge";
 import { NodeCryptoUtils } from "../../utils/NodeCryptoUtils";
 import { NodeDeviceInfo } from "../../utils/NodeDeviceInfo";
 
+// Mock electron app module
+jest.mock("electron", () => ({
+  app: {
+    getPath: jest.fn(() => "/mock/userdata"),
+  },
+}));
+
+// Mock NodeDatabaseBridge constructor
+jest.mock("../NodeDatabaseBridge", () => ({
+  NodeDatabaseBridge: jest.fn().mockImplementation((databasePath: string) => {
+    return {
+      databasePath,
+      execute: jest.fn(),
+      query: jest.fn(),
+      transaction: jest.fn(),
+      close: jest.fn(),
+    };
+  }),
+}));
+
+const { NodeDatabaseBridge: MockedNodeDatabaseBridge } = jest.mocked(
+  require("../NodeDatabaseBridge"),
+);
+
 describe("MainProcessServices", () => {
   let services: MainProcessServices;
 
   beforeEach(() => {
+    MockedNodeDatabaseBridge.mockClear();
     services = new MainProcessServices();
   });
 
   describe("initialization", () => {
     it("should create all Node.js implementations", () => {
       expect(services.fileSystemBridge).toBeInstanceOf(NodeFileSystemBridge);
+      expect(services.databaseBridge).toBeDefined();
+      expect(MockedNodeDatabaseBridge).toHaveBeenCalledWith(
+        "/mock/userdata/fishbowl.db",
+      );
       expect(services.cryptoUtils).toBeInstanceOf(NodeCryptoUtils);
       expect(services.deviceInfo).toBeInstanceOf(NodeDeviceInfo);
     });
@@ -101,6 +130,31 @@ describe("MainProcessServices", () => {
         expect(defaults).toBeDefined();
         expect(defaults).toHaveProperty("schemaVersion");
       }).not.toThrow();
+    });
+  });
+
+  describe("database service", () => {
+    it("should create database service with correct path", () => {
+      expect(services.databaseBridge).toBeDefined();
+      expect(MockedNodeDatabaseBridge).toHaveBeenCalledWith(
+        "/mock/userdata/fishbowl.db",
+      );
+    });
+
+    it("should provide database bridge with expected methods", () => {
+      expect(services.databaseBridge).toHaveProperty("execute");
+      expect(services.databaseBridge).toHaveProperty("query");
+      expect(services.databaseBridge).toHaveProperty("transaction");
+      expect(services.databaseBridge).toHaveProperty("close");
+    });
+
+    it("should initialize database service consistently", () => {
+      const services1 = new MainProcessServices();
+      const services2 = new MainProcessServices();
+
+      expect(services1.databaseBridge).toBeDefined();
+      expect(services2.databaseBridge).toBeDefined();
+      expect(MockedNodeDatabaseBridge).toHaveBeenCalledTimes(3); // 1 from beforeEach + 2 from this test
     });
   });
 });
