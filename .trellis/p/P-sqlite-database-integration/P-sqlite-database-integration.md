@@ -266,7 +266,8 @@ affectedFiles:
     validate, initialize)
   packages/shared/src/services/migrations/index.ts: Created barrel export file
     following database types pattern; Updated barrel export to include
-    MigrationDiscovery class for external consumption
+    MigrationDiscovery class for external consumption; Updated barrel export to
+    include MigrationTracking service for external consumption
   packages/shared/src/services/migrations/__tests__/MigrationError.test.ts: Created comprehensive unit tests for MigrationError class with 100% coverage
   packages/shared/src/services/migrations/__tests__/types.test.ts:
     Created comprehensive unit tests for all migration types and enums with
@@ -283,6 +284,13 @@ affectedFiles:
   packages/shared/src/services/migrations/__tests__/MigrationDiscovery.test.ts:
     Created comprehensive unit test suite with mocked dependencies covering
     directory validation, file discovery, content loading, and error scenarios
+  packages/shared/src/services/migrations/MigrationTracking.ts:
+    Created core MigrationTracking service class with ensureMigrationsTable(),
+    getAppliedMigrations(), isPending(), and recordMigration() methods using
+    DatabaseBridge dependency injection pattern
+  packages/shared/src/services/migrations/__tests__/MigrationTracking.test.ts:
+    Created comprehensive unit test suite covering all methods, error scenarios,
+    and integration workflows with 100% test coverage
 log: []
 schema: v1.0
 childrenIds:

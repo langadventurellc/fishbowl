@@ -15,3 +15,4 @@ export { MigrationOperation } from "./MigrationOperation";
 
 // Migration services
 export { MigrationDiscovery } from "./MigrationDiscovery";
+export { MigrationTracking } from "./MigrationTracking";
