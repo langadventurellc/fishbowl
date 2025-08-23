@@ -70,6 +70,7 @@ Extend `apps/desktop/src/electron/preload.ts`:
 
 3. **Implement Conversations API**
    Add to the electronAPI object:
+
    ```typescript
    conversations: {
      create: async (input?: CreateConversationInput): Promise<Conversation> => {

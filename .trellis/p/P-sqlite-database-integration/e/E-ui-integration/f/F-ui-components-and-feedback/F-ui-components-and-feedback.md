@@ -1,14 +1,24 @@
 ---
 id: F-ui-components-and-feedback
 title: UI Components and Feedback
-status: open
+status: in-progress
 priority: medium
 parent: E-ui-integration
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/conversations/NewConversationButton.tsx:
+    Created NewConversationButton component with TypeScript interface, loading
+    states, accessibility features, and comprehensive documentation
+  apps/desktop/src/components/conversations/__tests__/NewConversationButton.test.tsx:
+    Created comprehensive unit test suite covering all component functionality
+    including rendering, loading states, click handling, accessibility, and
+    performance optimizations
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-conversationfeedback
+  - T-create-newconversationbutton
+  - T-integrate-newconversationbutto
 created: 2025-08-23T20:21:56.298Z
 updated: 2025-08-23T20:21:56.298Z
 ---
