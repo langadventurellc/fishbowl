@@ -15,7 +15,9 @@ affectedFiles:
   packages/shared/src/types/conversations/ConversationResult.ts: Created discriminated union result type for conversation operations
   packages/shared/src/types/conversations/index.ts:
     Created barrel export file for
-    all conversation types using proper export type syntax
+    all conversation types using proper export type syntax; Updated barrel
+    export to include schemas and error classes using proper export type syntax
+    and organized comments
   packages/shared/src/types/index.ts: Added conversations module export to main types barrel
   packages/shared/src/types/conversations/__tests__/types.test.ts: Created comprehensive unit tests verifying type structure and compatibility
   packages/shared/src/types/conversations/schemas/conversationSchema.ts:
@@ -48,6 +50,10 @@ affectedFiles:
   packages/shared/src/types/conversations/errors/__tests__/ConversationValidationError.test.ts:
     Complete test coverage for ConversationValidationError including
     single/multiple errors, inheritance, serialization, and edge cases
+  packages/shared/src/types/conversations/__tests__/exports.test.ts:
+    Created comprehensive test suite verifying all exports are available,
+    schemas work correctly, error classes are constructable, no circular
+    dependencies exist, and runtime vs type-only exports are properly separated
 log: []
 schema: v1.0
 childrenIds:
