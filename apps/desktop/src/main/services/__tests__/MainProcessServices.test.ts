@@ -19,6 +19,7 @@ jest.mock("../NodeDatabaseBridge", () => ({
       query: jest.fn(),
       transaction: jest.fn(),
       close: jest.fn(),
+      isConnected: jest.fn(),
     };
   }),
 }));
@@ -155,6 +156,75 @@ describe("MainProcessServices", () => {
       expect(services1.databaseBridge).toBeDefined();
       expect(services2.databaseBridge).toBeDefined();
       expect(MockedNodeDatabaseBridge).toHaveBeenCalledTimes(3); // 1 from beforeEach + 2 from this test
+    });
+  });
+
+  describe("performDatabaseHealthCheck", () => {
+    let mockDatabaseBridge: any;
+
+    beforeEach(() => {
+      mockDatabaseBridge = services.databaseBridge;
+    });
+
+    it("should return healthy when database is connected and query succeeds", async () => {
+      mockDatabaseBridge.isConnected.mockReturnValue(true);
+      mockDatabaseBridge.query.mockResolvedValue([{ test: 1 }]);
+
+      const result = await services.performDatabaseHealthCheck();
+
+      expect(result.isHealthy).toBe(true);
+      expect(result.issues).toEqual([]);
+      expect(mockDatabaseBridge.isConnected).toHaveBeenCalled();
+      expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
+        "SELECT 1 as test",
+        [],
+      );
+    });
+
+    it("should return unhealthy when database is not connected", async () => {
+      mockDatabaseBridge.isConnected.mockReturnValue(false);
+
+      const result = await services.performDatabaseHealthCheck();
+
+      expect(result.isHealthy).toBe(false);
+      expect(result.issues).toContain("Database connection not established");
+      expect(mockDatabaseBridge.query).not.toHaveBeenCalled();
+    });
+
+    it("should return unhealthy when query fails", async () => {
+      mockDatabaseBridge.isConnected.mockReturnValue(true);
+      mockDatabaseBridge.query.mockRejectedValue(new Error("Query failed"));
+
+      const result = await services.performDatabaseHealthCheck();
+
+      expect(result.isHealthy).toBe(false);
+      expect(result.issues).toContain(
+        "Database health check failed: Query failed",
+      );
+    });
+
+    it("should return unhealthy when query returns no results", async () => {
+      mockDatabaseBridge.isConnected.mockReturnValue(true);
+      mockDatabaseBridge.query.mockResolvedValue([]);
+
+      const result = await services.performDatabaseHealthCheck();
+
+      expect(result.isHealthy).toBe(false);
+      expect(result.issues).toContain(
+        "Database health check failed: Database connectivity test failed",
+      );
+    });
+
+    it("should handle non-Error exceptions", async () => {
+      mockDatabaseBridge.isConnected.mockReturnValue(true);
+      mockDatabaseBridge.query.mockRejectedValue("String error");
+
+      const result = await services.performDatabaseHealthCheck();
+
+      expect(result.isHealthy).toBe(false);
+      expect(result.issues).toContain(
+        "Database health check failed: Unknown database error",
+      );
     });
   });
 });

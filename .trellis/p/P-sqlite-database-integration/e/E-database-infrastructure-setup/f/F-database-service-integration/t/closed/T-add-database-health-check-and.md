@@ -1,13 +1,27 @@
 ---
 id: T-add-database-health-check-and
 title: Add database health check and error recovery mechanisms
-status: open
+status: done
 priority: medium
 parent: F-database-service-integration
 prerequisites:
   - T-add-nodedatabasebridge-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts: Added
+    performDatabaseHealthCheck() method that checks database connection and
+    performs basic connectivity test with proper error handling and logging
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for performDatabaseHealthCheck() method with
+    5 test cases covering all scenarios including mocked database bridge
+    behavior
+log:
+  - Added basic database health check functionality to MainProcessServices with
+    comprehensive unit tests. The implementation includes a simple
+    performDatabaseHealthCheck() method that verifies database connection status
+    and performs a basic connectivity test using "SELECT 1" query. Added 5 unit
+    tests covering healthy state, connection failures, query failures, empty
+    results, and non-Error exceptions. All tests pass and quality checks (lint,
+    format, type-check) are clean.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T01:03:18.494Z

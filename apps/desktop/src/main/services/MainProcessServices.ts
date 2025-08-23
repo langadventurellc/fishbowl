@@ -109,6 +109,54 @@ export class MainProcessServices {
   }
 
   /**
+   * Performs a basic database health check.
+   *
+   * @returns Object indicating if database is healthy and any issues found
+   */
+  async performDatabaseHealthCheck(): Promise<{
+    isHealthy: boolean;
+    issues: string[];
+  }> {
+    const issues: string[] = [];
+
+    try {
+      // Check 1: Database connection
+      if (!this.databaseBridge.isConnected()) {
+        issues.push("Database connection not established");
+        return { isHealthy: false, issues };
+      }
+
+      // Check 2: Basic connectivity test
+      const connectivityResult = await this.databaseBridge.query(
+        "SELECT 1 as test",
+        [],
+      );
+
+      if (!connectivityResult || connectivityResult.length === 0) {
+        throw new Error("Database connectivity test failed");
+      }
+
+      this.logger.debug("Database connectivity test passed");
+
+      if (issues.length === 0) {
+        this.logger.info("Database health check completed successfully");
+        return { isHealthy: true, issues: [] };
+      }
+
+      return { isHealthy: false, issues };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown database error";
+      issues.push(`Database health check failed: ${errorMessage}`);
+      this.logger.error(
+        "Database health check failed",
+        error instanceof Error ? error : undefined,
+      );
+      return { isHealthy: false, issues };
+    }
+  }
+
+  /**
    * Get the path to the database file in the user data directory.
    *
    * @returns Database file path

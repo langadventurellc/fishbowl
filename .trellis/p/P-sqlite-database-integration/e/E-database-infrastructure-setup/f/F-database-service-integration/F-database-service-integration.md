@@ -10,11 +10,15 @@ affectedFiles:
   apps/desktop/src/main/services/MainProcessServices.ts:
     Added NodeDatabaseBridge
     property, imports for electron app and path modules, constructor
-    initialization, and getDatabasePath() helper method
+    initialization, and getDatabasePath() helper method; Added
+    performDatabaseHealthCheck() method that checks database connection and
+    performs basic connectivity test with proper error handling and logging
   apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
     Added comprehensive unit tests for database service integration with proper
     mocking, verification of service initialization, method availability, and
-    consistent behavior
+    consistent behavior; Added comprehensive unit tests for
+    performDatabaseHealthCheck() method with 5 test cases covering all scenarios
+    including mocked database bridge behavior
   apps/desktop/src/electron/main.ts: Added initializeDatabase function with
     connection verification and error handling, integrated database
     initialization into app.whenReady() before window creation, added graceful
@@ -23,12 +27,11 @@ affectedFiles:
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-comprehensive-integration
   - T-add-database-health-check-and
   - T-create-database-service
   - T-implement-database-cleanup-in
-  - T-integrate-database-initializat
   - T-add-nodedatabasebridge-to
+  - T-integrate-database-initializat
 created: 2025-08-22T00:52:37.443Z
 updated: 2025-08-22T00:52:37.443Z
 ---
