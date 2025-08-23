@@ -10,6 +10,19 @@ jest.mock("better-sqlite3", () => {
   return jest.fn().mockImplementation(() => mockDatabase);
 });
 
+// Mock the logger
+const mockLogger = {
+  info: jest.fn(),
+  debug: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+};
+
+jest.mock("@fishbowl-ai/shared", () => ({
+  ...jest.requireActual("@fishbowl-ai/shared"),
+  createLoggerSync: jest.fn(() => mockLogger),
+}));
+
 // Import after mocking
 import Database from "better-sqlite3";
 import { NodeDatabaseBridge } from "../NodeDatabaseBridge";
@@ -35,6 +48,12 @@ describe("NodeDatabaseBridge", () => {
     mockDatabase.pragma.mockReset();
     mockDatabase.close.mockReset();
     mockDatabase.prepare.mockReset();
+
+    // Reset logger mocks
+    mockLogger.info.mockReset();
+    mockLogger.debug.mockReset();
+    mockLogger.warn.mockReset();
+    mockLogger.error.mockReset();
 
     // Reset the mock implementation to return the normal mockDatabase
     MockedDatabase.mockImplementation(() => mockDatabase as any);
@@ -65,6 +84,54 @@ describe("NodeDatabaseBridge", () => {
       expect(MockedDatabase).toHaveBeenCalledWith(customPath);
       expect(customBridge.isConnected?.()).toBe(true);
     });
+
+    it("should log connection initialization", () => {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Initializing database connection",
+        { databasePath: "/test/database.db" },
+      );
+    });
+
+    it("should log successful connection establishment", () => {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Database connection established successfully",
+        {
+          databasePath: "/test/database.db",
+          inMemory: false,
+          isOpen: true,
+        },
+      );
+    });
+
+    it("should log connection establishment for in-memory database", () => {
+      const _memoryBridge = new NodeDatabaseBridge(":memory:");
+
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Database connection established successfully",
+        expect.objectContaining({
+          databasePath: ":memory:",
+          inMemory: true,
+          isOpen: true,
+        }),
+      );
+    });
+
+    it("should log and re-throw database constructor errors", () => {
+      const dbError = new Error("Database creation failed");
+      MockedDatabase.mockImplementation(() => {
+        throw dbError;
+      });
+
+      expect(() => {
+        new NodeDatabaseBridge("/invalid/path.db");
+      }).toThrow("Database creation failed");
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Failed to initialize database connection",
+        dbError,
+        { databasePath: "/invalid/path.db" },
+      );
+    });
   });
 
   describe("configurePragmas", () => {
@@ -89,11 +156,34 @@ describe("NodeDatabaseBridge", () => {
       expect(bridge.isConnected?.()).toBe(false);
     });
 
-    it("should not call close multiple times", async () => {
+    it("should log connection closure process", async () => {
       await bridge.close();
+
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Closing database connection",
+      );
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Database connection closed successfully",
+      );
+    });
+
+    it("should not call close multiple times (idempotent)", async () => {
+      await bridge.close();
+
+      // Clear mocks to track second call
+      mockDatabase.close.mockClear();
+      mockLogger.debug.mockClear();
+      mockLogger.info.mockClear();
+
       await bridge.close(); // Second call should not close again
 
-      expect(mockDatabase.close).toHaveBeenCalledTimes(1);
+      expect(mockDatabase.close).not.toHaveBeenCalled();
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "Database connection already closed, skipping close operation",
+      );
+      expect(mockLogger.info).not.toHaveBeenCalledWith(
+        "Closing database connection",
+      );
     });
 
     it("should handle close when not connected", async () => {
@@ -101,10 +191,64 @@ describe("NodeDatabaseBridge", () => {
 
       // Clear the close mock to track subsequent calls
       mockDatabase.close.mockClear();
+      mockLogger.debug.mockClear();
 
       await bridge.close(); // Second close should do nothing
 
       expect(mockDatabase.close).not.toHaveBeenCalled();
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "Database connection already closed, skipping close operation",
+      );
+    });
+
+    it("should handle close errors gracefully", async () => {
+      const closeError = new Error("Close operation failed");
+      mockDatabase.close.mockImplementation(() => {
+        throw closeError;
+      });
+
+      await expect(bridge.close()).rejects.toThrow(
+        "Failed to close database connection",
+      );
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Error occurred while closing database connection",
+        closeError,
+        {
+          connectionWasOpen: true,
+          errorMessage: "Close operation failed",
+        },
+      );
+
+      // Connection state should still be updated to false
+      expect(bridge.isConnected?.()).toBe(false);
+    });
+
+    it("should update connection state even when close fails", async () => {
+      const closeError = new Error("Close operation failed");
+      mockDatabase.close.mockImplementation(() => {
+        throw closeError;
+      });
+
+      try {
+        await bridge.close();
+      } catch {
+        // Expected to throw
+      }
+
+      // Connection state should be false even after close error
+      expect(bridge.isConnected?.()).toBe(false);
+
+      // Subsequent close should be idempotent
+      mockDatabase.close.mockClear();
+      mockLogger.debug.mockClear();
+
+      await bridge.close();
+
+      expect(mockDatabase.close).not.toHaveBeenCalled();
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "Database connection already closed, skipping close operation",
+      );
     });
   });
 

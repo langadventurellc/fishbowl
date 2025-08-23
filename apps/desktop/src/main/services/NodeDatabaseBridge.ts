@@ -5,6 +5,7 @@ import {
   ConstraintViolationError,
   QueryError,
   ConnectionError,
+  createLoggerSync,
 } from "@fishbowl-ai/shared";
 
 /**
@@ -20,6 +21,9 @@ import {
 export class NodeDatabaseBridge implements DatabaseBridge {
   private db: Database.Database;
   private connected: boolean = false;
+  private readonly logger = createLoggerSync({
+    config: { name: "NodeDatabaseBridge", level: "info" },
+  });
 
   /**
    * Initialize database connection with the specified database path.
@@ -28,9 +32,28 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @param databasePath Absolute path to the SQLite database file
    */
   constructor(databasePath: string) {
-    this.db = new Database(databasePath);
-    this.configurePragmas();
-    this.connected = true;
+    this.logger.info("Initializing database connection", { databasePath });
+
+    try {
+      this.db = new Database(databasePath);
+      this.configurePragmas();
+      this.connected = true;
+
+      this.logger.info("Database connection established successfully", {
+        databasePath,
+        inMemory: databasePath === ":memory:",
+        isOpen: this.db.open,
+      });
+    } catch (error: unknown) {
+      this.logger.error(
+        "Failed to initialize database connection",
+        error as Error,
+        {
+          databasePath,
+        },
+      );
+      throw error;
+    }
   }
 
   /**
@@ -240,13 +263,50 @@ export class NodeDatabaseBridge implements DatabaseBridge {
 
   /**
    * Close the database connection and release resources.
+   * This method is idempotent - multiple calls are safe.
    *
    * @returns Promise resolving when the connection is fully closed
    */
   async close(): Promise<void> {
-    if (this.connected) {
+    // Check if already closed (idempotent behavior)
+    if (!this.connected) {
+      this.logger.debug(
+        "Database connection already closed, skipping close operation",
+      );
+      return;
+    }
+
+    this.logger.info("Closing database connection");
+
+    try {
+      // Close better-sqlite3 database connection
       this.db.close();
+
+      // Update connection state
       this.connected = false;
+
+      this.logger.info("Database connection closed successfully");
+    } catch (error: unknown) {
+      // Handle close errors appropriately
+      const closeError = error as Error;
+
+      // Update connection state even if close() encounters errors
+      // to prevent the connection from being left in an invalid state
+      this.connected = false;
+
+      this.logger.error(
+        "Error occurred while closing database connection",
+        closeError,
+        {
+          connectionWasOpen: true,
+          errorMessage: closeError.message,
+        },
+      );
+
+      // Re-throw the error to let callers know close failed
+      throw new ConnectionError(
+        `Failed to close database connection: ${closeError.message}`,
+      );
     }
   }
 
