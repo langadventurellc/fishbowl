@@ -1,15 +1,25 @@
 ---
 id: F-service-integration
 title: Service Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-conversations-repository-layer
 prerequisites:
   - F-repository-implementation
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts: Added
+    ConversationsRepository import, property declaration, initialization in
+    constructor with proper error handling, createConversationService factory
+    method, and getConversationsRepository getter method
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added ConversationsRepository mocking, initialization test,
+    createConversationService tests for normal operation and error handling,
+    getConversationsRepository tests for normal operation and error handling
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-integrate-repository-into
+  - T-update-shared-package-exports
 created: 2025-08-23T06:22:26.442Z
 updated: 2025-08-23T06:22:26.442Z
 ---

@@ -24,8 +24,30 @@ jest.mock("../NodeDatabaseBridge", () => ({
   }),
 }));
 
+// Mock ConversationsRepository constructor
+jest.mock("@fishbowl-ai/shared", () => {
+  const actual = jest.requireActual("@fishbowl-ai/shared");
+  return {
+    ...actual,
+    ConversationsRepository: jest.fn().mockImplementation(() => {
+      return {
+        create: jest.fn(),
+        get: jest.fn(),
+        list: jest.fn(),
+        update: jest.fn(),
+        delete: jest.fn(),
+        exists: jest.fn(),
+      };
+    }),
+  };
+});
+
 const { NodeDatabaseBridge: MockedNodeDatabaseBridge } = jest.mocked(
   require("../NodeDatabaseBridge"),
+);
+
+const { ConversationsRepository: MockedConversationsRepository } = jest.mocked(
+  require("@fishbowl-ai/shared"),
 );
 
 describe("MainProcessServices", () => {
@@ -33,6 +55,7 @@ describe("MainProcessServices", () => {
 
   beforeEach(() => {
     MockedNodeDatabaseBridge.mockClear();
+    MockedConversationsRepository.mockClear();
     services = new MainProcessServices();
   });
 
@@ -59,6 +82,14 @@ describe("MainProcessServices", () => {
       expect(services.logger).toHaveProperty("error");
       expect(services.logger).toHaveProperty("debug");
       expect(services.logger).toHaveProperty("warn");
+    });
+
+    it("should initialize ConversationsRepository", () => {
+      expect(services.conversationsRepository).toBeDefined();
+      expect(MockedConversationsRepository).toHaveBeenCalledWith(
+        services.databaseBridge,
+        expect.any(NodeCryptoUtils),
+      );
     });
   });
 
@@ -271,6 +302,69 @@ describe("MainProcessServices", () => {
       expect(services1.databaseBridge).toBeDefined();
       expect(services2.databaseBridge).toBeDefined();
       expect(MockedNodeDatabaseBridge).toHaveBeenCalledTimes(3); // 1 from beforeEach + 2 from this test
+    });
+  });
+
+  describe("createConversationService", () => {
+    // Mock service class for testing
+    class MockConversationSearchService {
+      constructor(public repo: any) {}
+
+      searchConversations() {
+        return this.repo.list();
+      }
+    }
+
+    it("should create service with repository dependency", () => {
+      const service = services.createConversationService(
+        MockConversationSearchService,
+      );
+
+      expect(service).toBeDefined();
+      expect(service).toBeInstanceOf(MockConversationSearchService);
+      expect(service.repo).toBe(services.conversationsRepository);
+    });
+
+    it("should support generic service types", () => {
+      const service =
+        services.createConversationService<MockConversationSearchService>(
+          MockConversationSearchService,
+        );
+
+      expect(service).toBeInstanceOf(MockConversationSearchService);
+      expect(service.repo).toBe(services.conversationsRepository);
+      expect(typeof service.searchConversations).toBe("function");
+    });
+
+    it("should throw if repository not initialized", () => {
+      // Create a service instance without repository initialized
+      const servicesWithoutRepo = Object.create(MainProcessServices.prototype);
+      servicesWithoutRepo.conversationsRepository = null;
+
+      expect(() => {
+        servicesWithoutRepo.createConversationService(
+          MockConversationSearchService,
+        );
+      }).toThrow("ConversationsRepository not initialized");
+    });
+  });
+
+  describe("getConversationsRepository", () => {
+    it("should return the conversations repository", () => {
+      const repository = services.getConversationsRepository();
+
+      expect(repository).toBe(services.conversationsRepository);
+      expect(repository).toBeDefined();
+    });
+
+    it("should throw if repository not initialized", () => {
+      // Create a service instance without repository initialized
+      const servicesWithoutRepo = Object.create(MainProcessServices.prototype);
+      servicesWithoutRepo.conversationsRepository = null;
+
+      expect(() => {
+        servicesWithoutRepo.getConversationsRepository();
+      }).toThrow("ConversationsRepository not initialized");
     });
   });
 

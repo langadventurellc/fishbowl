@@ -1,9 +1,11 @@
 import {
   FileStorageService,
   SettingsRepository,
+  ConversationsRepository,
   createLoggerSync,
   type StructuredLogger,
   type DatabaseBridge,
+  type ConversationsRepositoryInterface,
 } from "@fishbowl-ai/shared";
 import { app } from "electron";
 import * as path from "path";
@@ -41,6 +43,11 @@ export class MainProcessServices {
   readonly fileStorage: FileStorageService;
   readonly logger: StructuredLogger;
 
+  /**
+   * Repository for managing conversation persistence.
+   */
+  readonly conversationsRepository: ConversationsRepositoryInterface;
+
   constructor() {
     // Initialize Node.js implementations
     this.fileSystemBridge = new NodeFileSystemBridge();
@@ -59,6 +66,23 @@ export class MainProcessServices {
     // Create logger with Node.js implementations
     // Using createLogger for consistent configuration
     this.logger = this.createConfiguredLogger();
+
+    // Initialize conversations repository
+    try {
+      const cryptoUtils = new NodeCryptoUtils();
+      this.conversationsRepository = new ConversationsRepository(
+        this.databaseBridge,
+        cryptoUtils,
+      );
+
+      this.logger.info("ConversationsRepository initialized successfully");
+    } catch (error) {
+      this.logger.error(
+        "Failed to initialize ConversationsRepository",
+        error instanceof Error ? error : undefined,
+      );
+      throw new Error("ConversationsRepository initialization failed");
+    }
   }
 
   /**
@@ -97,6 +121,46 @@ export class MainProcessServices {
     serviceFactory: (databaseBridge: DatabaseBridge) => T,
   ): T {
     return serviceFactory(this.databaseBridge);
+  }
+
+  /**
+   * Create a conversation-related service with repository dependency.
+   *
+   * @template T The service type to create
+   * @param ServiceClass Constructor for the service class
+   * @returns Instance of the service with repository injected
+   *
+   * @example
+   * ```typescript
+   * class ConversationSearchService {
+   *   constructor(private repo: ConversationsRepositoryInterface) {}
+   * }
+   *
+   * const searchService = services.createConversationService(ConversationSearchService);
+   * ```
+   */
+  createConversationService<T>(
+    ServiceClass: new (repo: ConversationsRepositoryInterface) => T,
+  ): T {
+    if (!this.conversationsRepository) {
+      throw new Error("ConversationsRepository not initialized");
+    }
+
+    return new ServiceClass(this.conversationsRepository);
+  }
+
+  /**
+   * Get the conversations repository instance.
+   *
+   * @returns The conversations repository
+   * @throws Error if repository not initialized
+   */
+  getConversationsRepository(): ConversationsRepositoryInterface {
+    if (!this.conversationsRepository) {
+      throw new Error("ConversationsRepository not initialized");
+    }
+
+    return this.conversationsRepository;
   }
 
   /**
