@@ -1,5 +1,11 @@
 import Database from "better-sqlite3";
-import { DatabaseBridge, DatabaseResult } from "@fishbowl-ai/shared";
+import {
+  DatabaseBridge,
+  DatabaseResult,
+  ConstraintViolationError,
+  QueryError,
+  ConnectionError,
+} from "@fishbowl-ai/shared";
 
 /**
  * Node.js implementation of DatabaseBridge using better-sqlite3.
@@ -64,9 +70,87 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @param _params Optional parameters for prepared statement binding
    * @returns Promise resolving to operation result with metadata
    */
-  async execute(_sql: string, _params?: unknown[]): Promise<DatabaseResult> {
-    // TODO: Implement execute method in separate task
-    throw new Error("Method not implemented");
+  async execute(sql: string, params?: unknown[]): Promise<DatabaseResult> {
+    // Validate connection state
+    if (!this.isConnected()) {
+      throw new ConnectionError("Database connection is not active");
+    }
+
+    try {
+      // Create prepared statement
+      const statement = this.db.prepare(sql);
+
+      // Execute DML operation with statement.run()
+      const result = statement.run(params || []);
+
+      // Return DatabaseResult object with metadata
+      return {
+        lastInsertRowid:
+          typeof result.lastInsertRowid === "bigint"
+            ? Number(result.lastInsertRowid)
+            : result.lastInsertRowid,
+        changes: result.changes,
+        affectedRows: result.changes, // Same as changes for SQLite compatibility
+      };
+    } catch (error: unknown) {
+      // Convert SQLite errors to DatabaseError types
+      const sqliteError = error as Error & { code?: string };
+
+      if (sqliteError?.code?.startsWith("SQLITE_CONSTRAINT")) {
+        if (sqliteError.code === "SQLITE_CONSTRAINT_UNIQUE") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Unique constraint violation",
+            "unique",
+            undefined, // table name not easily extractable
+            undefined, // column name not easily extractable
+            sqliteError,
+          );
+        }
+        if (sqliteError.code === "SQLITE_CONSTRAINT_FOREIGNKEY") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Foreign key constraint violation",
+            "foreign_key",
+            undefined,
+            undefined,
+            sqliteError,
+          );
+        }
+        if (sqliteError.code === "SQLITE_CONSTRAINT_NOTNULL") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Not null constraint violation",
+            "not_null",
+            undefined,
+            undefined,
+            sqliteError,
+          );
+        }
+        if (sqliteError.code === "SQLITE_CONSTRAINT_CHECK") {
+          throw new ConstraintViolationError(
+            sqliteError.message || "Check constraint violation",
+            "check",
+            undefined,
+            undefined,
+            sqliteError,
+          );
+        }
+        // Generic constraint violation
+        throw new ConstraintViolationError(
+          sqliteError.message || "Constraint violation",
+          "unique", // Default fallback
+          undefined,
+          undefined,
+          sqliteError,
+        );
+      }
+
+      // Generic query error for other SQLite errors
+      throw new QueryError(
+        sqliteError.message || "SQL execution failed",
+        sql,
+        params,
+        sqliteError,
+      );
+    }
   }
 
   /**

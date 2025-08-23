@@ -2,6 +2,7 @@
 const mockDatabase = {
   pragma: jest.fn(),
   close: jest.fn(),
+  prepare: jest.fn(),
   open: true,
 };
 
@@ -12,7 +13,12 @@ jest.mock("better-sqlite3", () => {
 // Import after mocking
 import Database from "better-sqlite3";
 import { NodeDatabaseBridge } from "../NodeDatabaseBridge";
-import { DatabaseBridge } from "@fishbowl-ai/shared";
+import {
+  DatabaseBridge,
+  ConnectionError,
+  ConstraintViolationError,
+  QueryError,
+} from "@fishbowl-ai/shared";
 
 // Get the mocked constructor
 const MockedDatabase = Database as jest.MockedClass<typeof Database>;
@@ -28,6 +34,7 @@ describe("NodeDatabaseBridge", () => {
     mockDatabase.open = true;
     mockDatabase.pragma.mockReset();
     mockDatabase.close.mockReset();
+    mockDatabase.prepare.mockReset();
 
     // Reset the mock implementation to return the normal mockDatabase
     MockedDatabase.mockImplementation(() => mockDatabase as any);
@@ -187,6 +194,234 @@ describe("NodeDatabaseBridge", () => {
       mockDatabase.open = false;
 
       expect(bridge.isConnected?.()).toBe(false);
+    });
+  });
+
+  describe("execute", () => {
+    let mockStatement: any;
+
+    beforeEach(() => {
+      mockStatement = {
+        run: jest.fn(),
+      };
+      mockDatabase.prepare = jest.fn().mockReturnValue(mockStatement);
+    });
+
+    it("should execute INSERT operations and return DatabaseResult", async () => {
+      const mockResult = {
+        lastInsertRowid: 123,
+        changes: 1,
+      };
+      mockStatement.run.mockReturnValue(mockResult);
+
+      const result = await bridge.execute(
+        "INSERT INTO users (name) VALUES (?)",
+        ["John"],
+      );
+
+      expect(mockDatabase.prepare).toHaveBeenCalledWith(
+        "INSERT INTO users (name) VALUES (?)",
+      );
+      expect(mockStatement.run).toHaveBeenCalledWith(["John"]);
+      expect(result).toEqual({
+        lastInsertRowid: 123,
+        changes: 1,
+        affectedRows: 1,
+      });
+    });
+
+    it("should execute UPDATE operations and return DatabaseResult", async () => {
+      const mockResult = {
+        lastInsertRowid: undefined,
+        changes: 2,
+      };
+      mockStatement.run.mockReturnValue(mockResult);
+
+      const result = await bridge.execute(
+        "UPDATE users SET name = ? WHERE id > ?",
+        ["Updated", 10],
+      );
+
+      expect(result).toEqual({
+        lastInsertRowid: undefined,
+        changes: 2,
+        affectedRows: 2,
+      });
+    });
+
+    it("should execute DELETE operations and return DatabaseResult", async () => {
+      const mockResult = {
+        lastInsertRowid: undefined,
+        changes: 3,
+      };
+      mockStatement.run.mockReturnValue(mockResult);
+
+      const result = await bridge.execute(
+        "DELETE FROM users WHERE active = ?",
+        [false],
+      );
+
+      expect(result).toEqual({
+        lastInsertRowid: undefined,
+        changes: 3,
+        affectedRows: 3,
+      });
+    });
+
+    it("should handle BigInt lastInsertRowid by converting to number", async () => {
+      const mockResult = {
+        lastInsertRowid: BigInt(9007199254740991),
+        changes: 1,
+      };
+      mockStatement.run.mockReturnValue(mockResult);
+
+      const result = await bridge.execute(
+        "INSERT INTO users (name) VALUES (?)",
+        ["John"],
+      );
+
+      expect(result.lastInsertRowid).toBe(9007199254740991);
+      expect(typeof result.lastInsertRowid).toBe("number");
+    });
+
+    it("should execute operations without parameters", async () => {
+      const mockResult = {
+        lastInsertRowid: undefined,
+        changes: 5,
+      };
+      mockStatement.run.mockReturnValue(mockResult);
+
+      const result = await bridge.execute("DELETE FROM temp_table");
+
+      expect(mockStatement.run).toHaveBeenCalledWith([]);
+      expect(result.changes).toBe(5);
+    });
+
+    it("should throw ConnectionError when database is not connected", async () => {
+      mockDatabase.open = false;
+
+      await expect(
+        bridge.execute("INSERT INTO users (name) VALUES (?)", ["John"]),
+      ).rejects.toThrow(ConnectionError);
+    });
+
+    it("should throw ConstraintViolationError for unique constraint violations", async () => {
+      const sqliteError = new Error("UNIQUE constraint failed: users.email");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_UNIQUE";
+      mockStatement.run.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.execute("INSERT INTO users (email) VALUES (?)", [
+          "test@example.com",
+        ]),
+      ).rejects.toThrow(ConstraintViolationError);
+
+      try {
+        await bridge.execute("INSERT INTO users (email) VALUES (?)", [
+          "test@example.com",
+        ]);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(ConstraintViolationError);
+        expect(error.message).toContain("UNIQUE constraint failed");
+      }
+    });
+
+    it("should throw ConstraintViolationError for foreign key constraint violations", async () => {
+      const sqliteError = new Error("FOREIGN KEY constraint failed");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_FOREIGNKEY";
+      mockStatement.run.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.execute("INSERT INTO posts (user_id) VALUES (?)", [999]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw ConstraintViolationError for not null constraint violations", async () => {
+      const sqliteError = new Error("NOT NULL constraint failed: users.name");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_NOTNULL";
+      mockStatement.run.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.execute("INSERT INTO users (name) VALUES (?)", [null]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw ConstraintViolationError for check constraint violations", async () => {
+      const sqliteError = new Error("CHECK constraint failed: users");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_CHECK";
+      mockStatement.run.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.execute("INSERT INTO users (age) VALUES (?)", [-5]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw generic ConstraintViolationError for other constraint errors", async () => {
+      const sqliteError = new Error("Some constraint failed");
+      (sqliteError as any).code = "SQLITE_CONSTRAINT_GENERIC";
+      mockStatement.run.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.execute("INSERT INTO users (name) VALUES (?)", ["John"]),
+      ).rejects.toThrow(ConstraintViolationError);
+    });
+
+    it("should throw QueryError for non-constraint SQL errors", async () => {
+      const sqliteError = new Error("no such table: nonexistent");
+      (sqliteError as any).code = "SQLITE_ERROR";
+      mockStatement.run.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      await expect(
+        bridge.execute("INSERT INTO nonexistent (name) VALUES (?)", ["John"]),
+      ).rejects.toThrow(QueryError);
+
+      try {
+        await bridge.execute("INSERT INTO nonexistent (name) VALUES (?)", [
+          "John",
+        ]);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(QueryError);
+        expect(error.message).toContain("no such table");
+      }
+    });
+
+    it("should handle prepared statement creation failures", async () => {
+      mockDatabase.prepare.mockImplementation(() => {
+        throw new Error("SQL syntax error");
+      });
+
+      await expect(bridge.execute("INVALID SQL", [])).rejects.toThrow(
+        QueryError,
+      );
+    });
+
+    it("should include SQL and parameters in QueryError context", async () => {
+      const sqliteError = new Error("SQL error");
+      (sqliteError as any).code = "SQLITE_ERROR";
+      mockStatement.run.mockImplementation(() => {
+        throw sqliteError;
+      });
+
+      try {
+        await bridge.execute("SELECT * FROM users WHERE id = ?", [123]);
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(QueryError);
+        // QueryError should include SQL and parameters in context
+        expect(error.context?.sql).toBe("SELECT * FROM users WHERE id = ?");
+        expect(error.context?.parameters).toEqual([123]);
+      }
     });
   });
 });
