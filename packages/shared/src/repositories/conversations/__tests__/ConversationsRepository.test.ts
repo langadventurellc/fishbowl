@@ -5,6 +5,7 @@ import {
   ConversationValidationError,
   ConversationNotFoundError,
   type Conversation,
+  type UpdateConversationInput,
 } from "../../../types/conversations";
 import { ConnectionError } from "../../../services/database";
 
@@ -263,21 +264,245 @@ describe("ConversationsRepository", () => {
     });
   });
 
-  describe("placeholder methods", () => {
-    it("should throw 'Method not implemented' for list", async () => {
-      await expect(repository.list()).rejects.toThrow("Method not implemented");
-    });
+  describe("list", () => {
+    it("should return all conversations", async () => {
+      const mockConversations = [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          title: "Conversation 1",
+          created_at: "2023-01-01T00:00:00.000Z",
+          updated_at: "2023-01-01T00:00:00.000Z",
+        },
+        {
+          id: "123e4567-e89b-12d3-a456-426614174001",
+          title: "Conversation 2",
+          created_at: "2023-01-02T00:00:00.000Z",
+          updated_at: "2023-01-02T00:00:00.000Z",
+        },
+      ];
 
-    it("should throw 'Method not implemented' for update", async () => {
-      await expect(repository.update("test-id", {})).rejects.toThrow(
-        "Method not implemented",
+      mockDatabaseBridge.query.mockResolvedValue(mockConversations);
+
+      const result = await repository.list();
+
+      expect(result).toEqual(mockConversations);
+      expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
+        expect.stringContaining("SELECT id, title, created_at, updated_at"),
+      );
+      expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
+        expect.stringContaining("ORDER BY created_at DESC"),
       );
     });
 
-    it("should throw 'Method not implemented' for delete", async () => {
-      await expect(repository.delete("test-id")).rejects.toThrow(
-        "Method not implemented",
+    it("should return empty array when no conversations exist", async () => {
+      mockDatabaseBridge.query.mockResolvedValue([]);
+
+      const result = await repository.list();
+
+      expect(result).toEqual([]);
+      expect(mockDatabaseBridge.query).toHaveBeenCalled();
+    });
+
+    it("should validate each conversation", async () => {
+      const mockConversations = [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          title: "Valid Conversation",
+          created_at: "2023-01-01T00:00:00.000Z",
+          updated_at: "2023-01-01T00:00:00.000Z",
+        },
+      ];
+
+      mockDatabaseBridge.query.mockResolvedValue(mockConversations);
+
+      const result = await repository.list();
+
+      expect(result).toEqual(mockConversations);
+    });
+
+    it("should handle database errors", async () => {
+      const dbError = new ConnectionError("Database connection failed");
+      mockDatabaseBridge.query.mockRejectedValue(dbError);
+
+      await expect(repository.list()).rejects.toThrow();
+    });
+  });
+
+  describe("update", () => {
+    const mockUUID = "123e4567-e89b-12d3-a456-426614174000";
+    const mockTimestamp = "2023-01-01T00:00:00.000Z";
+
+    beforeEach(() => {
+      jest.spyOn(Date.prototype, "toISOString").mockReturnValue(mockTimestamp);
+      mockDatabaseBridge.query.mockResolvedValue([{ 1: 1 }]); // exists check
+    });
+
+    afterEach(() => {
+      jest.restoreAllMocks();
+    });
+
+    it("should update title", async () => {
+      const input: UpdateConversationInput = { title: "Updated Title" };
+      const updatedConversation = {
+        id: mockUUID,
+        title: "Updated Title",
+        created_at: "2023-01-01T00:00:00.000Z",
+        updated_at: mockTimestamp,
+      };
+
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+
+      // Mock the get call that happens after update
+      mockDatabaseBridge.query
+        .mockResolvedValueOnce([{ 1: 1 }]) // exists check
+        .mockResolvedValueOnce([updatedConversation]); // get call
+
+      const result = await repository.update(mockUUID, input);
+
+      expect(result).toEqual(updatedConversation);
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("UPDATE conversations"),
+        ["Updated Title", mockTimestamp, mockUUID],
       );
+    });
+
+    it("should update updated_at timestamp", async () => {
+      const input: UpdateConversationInput = { title: "Test" };
+      const updatedConversation = {
+        id: mockUUID,
+        title: "Test",
+        created_at: "2023-01-01T00:00:00.000Z",
+        updated_at: mockTimestamp,
+      };
+
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+
+      mockDatabaseBridge.query
+        .mockResolvedValueOnce([{ 1: 1 }]) // exists check
+        .mockResolvedValueOnce([updatedConversation]); // get call
+
+      await repository.update(mockUUID, input);
+
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("updated_at = ?"),
+        expect.arrayContaining([mockTimestamp]),
+      );
+    });
+
+    it("should handle partial updates", async () => {
+      const input: UpdateConversationInput = { title: "Partial Update" };
+      const updatedConversation = {
+        id: mockUUID,
+        title: "Partial Update",
+        created_at: "2023-01-01T00:00:00.000Z",
+        updated_at: mockTimestamp,
+      };
+
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+
+      mockDatabaseBridge.query
+        .mockResolvedValueOnce([{ 1: 1 }]) // exists check
+        .mockResolvedValueOnce([updatedConversation]); // get call
+
+      const result = await repository.update(mockUUID, input);
+
+      expect(result).toEqual(updatedConversation);
+    });
+
+    it("should throw ConversationNotFoundError if conversation does not exist", async () => {
+      mockDatabaseBridge.query.mockResolvedValue([]); // exists returns false
+
+      const input: UpdateConversationInput = { title: "Test" };
+
+      await expect(repository.update(mockUUID, input)).rejects.toThrow(
+        ConversationNotFoundError,
+      );
+    });
+
+    it("should validate input", async () => {
+      const invalidInput = { title: "" }; // Assuming empty title is invalid
+
+      await expect(repository.update(mockUUID, invalidInput)).rejects.toThrow();
+    });
+
+    it("should handle database errors", async () => {
+      mockDatabaseBridge.query.mockResolvedValue([{ 1: 1 }]); // exists check passes
+      const dbError = new ConnectionError("Database connection failed");
+      mockDatabaseBridge.execute.mockRejectedValue(dbError);
+
+      const input: UpdateConversationInput = { title: "Test" };
+
+      await expect(repository.update(mockUUID, input)).rejects.toThrow();
+    });
+  });
+
+  describe("delete", () => {
+    const mockUUID = "123e4567-e89b-12d3-a456-426614174000";
+
+    beforeEach(() => {
+      mockDatabaseBridge.query.mockResolvedValue([{ 1: 1 }]); // exists check
+    });
+
+    it("should delete existing conversation", async () => {
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+
+      await repository.delete(mockUUID);
+
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("DELETE FROM conversations"),
+        [mockUUID],
+      );
+    });
+
+    it("should throw ConversationNotFoundError if conversation does not exist", async () => {
+      mockDatabaseBridge.query.mockResolvedValue([]); // exists returns false
+
+      await expect(repository.delete(mockUUID)).rejects.toThrow(
+        ConversationNotFoundError,
+      );
+    });
+
+    it("should validate ID format", async () => {
+      const invalidId = "invalid-uuid";
+
+      await expect(repository.delete(invalidId)).rejects.toThrow(
+        ConversationNotFoundError,
+      );
+    });
+
+    it("should throw error if delete operation affects no rows", async () => {
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 0,
+        affectedRows: 0,
+        lastInsertRowid: 0,
+      });
+
+      await expect(repository.delete(mockUUID)).rejects.toThrow(
+        ConversationNotFoundError,
+      );
+    });
+
+    it("should handle database errors", async () => {
+      const dbError = new ConnectionError("Database connection failed");
+      mockDatabaseBridge.execute.mockRejectedValue(dbError);
+
+      await expect(repository.delete(mockUUID)).rejects.toThrow();
     });
   });
 });

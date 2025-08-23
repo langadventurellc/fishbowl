@@ -11,6 +11,7 @@ import {
   ConversationNotFoundError,
   conversationSchema,
   createConversationInputSchema,
+  updateConversationInputSchema,
 } from "../../types/conversations";
 import { ZodError } from "zod";
 import { createLoggerSync } from "../../logging/createLoggerSync";
@@ -133,18 +134,121 @@ export class ConversationsRepository
   }
 
   async list(): Promise<Conversation[]> {
-    throw new Error("Method not implemented");
+    try {
+      const sql = `
+        SELECT id, title, created_at, updated_at
+        FROM conversations
+        ORDER BY created_at DESC
+      `;
+
+      const rows = await this.databaseBridge.query<Conversation>(sql);
+
+      // Validate each conversation
+      const conversations = rows.map((row) => conversationSchema.parse(row));
+
+      this.logger.debug(`Listed ${conversations.length} conversations`);
+
+      return conversations;
+    } catch (error) {
+      this.handleDatabaseError(error, "list");
+    }
   }
 
   async update(
-    _id: string,
-    _input: UpdateConversationInput,
+    id: string,
+    input: UpdateConversationInput,
   ): Promise<Conversation> {
-    throw new Error("Method not implemented");
+    try {
+      // Validate input
+      const validatedInput = updateConversationInputSchema.parse(input);
+
+      // Check if conversation exists
+      const exists = await this.exists(id);
+      if (!exists) {
+        throw new ConversationNotFoundError(id);
+      }
+
+      // Build update query dynamically
+      const updates: string[] = [];
+      const params: unknown[] = [];
+
+      if (validatedInput.title !== undefined) {
+        updates.push("title = ?");
+        params.push(validatedInput.title);
+      }
+
+      // Always update timestamp
+      updates.push("updated_at = ?");
+      params.push(this.getCurrentTimestamp());
+
+      // Add ID for WHERE clause
+      params.push(id);
+
+      const sql = `
+        UPDATE conversations
+        SET ${updates.join(", ")}
+        WHERE id = ?
+      `;
+
+      await this.databaseBridge.execute(sql, params);
+
+      // Return updated conversation
+      const updated = await this.get(id);
+
+      this.logger.info("Updated conversation", { id });
+
+      return updated;
+    } catch (error) {
+      if (error instanceof ConversationNotFoundError) {
+        throw error;
+      }
+
+      if (error instanceof ZodError) {
+        throw new ConversationValidationError(
+          error.issues.map((issue) => ({
+            field: issue.path.join("."),
+            message: issue.message,
+          })),
+        );
+      }
+
+      this.handleDatabaseError(error, "update");
+    }
   }
 
-  async delete(_id: string): Promise<void> {
-    throw new Error("Method not implemented");
+  async delete(id: string): Promise<void> {
+    try {
+      // Validate ID format
+      const idValidation = conversationSchema.shape.id.safeParse(id);
+      if (!idValidation.success) {
+        throw new ConversationNotFoundError(id);
+      }
+
+      // Check if exists before deleting
+      const exists = await this.exists(id);
+      if (!exists) {
+        throw new ConversationNotFoundError(id);
+      }
+
+      const sql = `
+        DELETE FROM conversations
+        WHERE id = ?
+      `;
+
+      const result = await this.databaseBridge.execute(sql, [id]);
+
+      if (result.changes === 0) {
+        throw new ConversationNotFoundError(id);
+      }
+
+      this.logger.info("Deleted conversation", { id });
+    } catch (error) {
+      if (error instanceof ConversationNotFoundError) {
+        throw error;
+      }
+
+      this.handleDatabaseError(error, "delete");
+    }
   }
 
   async exists(id: string): Promise<boolean> {

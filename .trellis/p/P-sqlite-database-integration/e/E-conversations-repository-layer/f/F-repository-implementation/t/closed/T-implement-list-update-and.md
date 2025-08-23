@@ -1,13 +1,28 @@
 ---
 id: T-implement-list-update-and
 title: Implement list, update, and delete methods
-status: open
+status: done
 priority: high
 parent: F-repository-implementation
 prerequisites:
   - T-implement-create-and-get
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/repositories/conversations/ConversationsRepository.ts:
+    Added import for updateConversationInputSchema and implemented list(),
+    update(), and delete() methods with proper SQL queries, input validation,
+    existence checks, error handling, and logging
+  packages/shared/src/repositories/conversations/__tests__/ConversationsRepository.test.ts:
+    Added comprehensive test suites for list, update, and delete methods
+    including happy paths, error scenarios, validation testing, and database
+    error handling with proper mocking
+log:
+  - Implemented list, update, and delete methods for ConversationsRepository
+    with comprehensive validation, error handling, and security measures. All
+    methods use parameterized queries, validate inputs with Zod schemas, check
+    existence before operations, and include proper error handling. Added
+    complete test coverage with 15+ test cases covering happy paths, validation
+    failures, database errors, and edge cases. All quality checks pass including
+    linting, formatting, type checking, and unit tests (1588 tests passed).
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T06:32:18.556Z
