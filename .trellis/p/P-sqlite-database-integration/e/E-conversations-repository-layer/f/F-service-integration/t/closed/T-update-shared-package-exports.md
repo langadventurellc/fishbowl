@@ -1,13 +1,31 @@
 ---
 id: T-update-shared-package-exports
 title: Update shared package exports
-status: open
+status: done
 priority: medium
 parent: F-service-integration
 prerequisites:
   - T-integrate-repository-into
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/repositories/conversations/index.ts: Added re-exports of
+    conversation types (Conversation, CreateConversationInput,
+    UpdateConversationInput, ConversationResult) and error classes
+    (ConversationNotFoundError, ConversationValidationError) for convenience
+    access
+  packages/shared/src/services/index.ts: Added convenience exports of
+    ConversationsRepositoryInterface and ConversationsRepository from
+    repositories for easier access
+  packages/shared/src/repositories/conversations/__tests__/exports.test.ts:
+    Created comprehensive test suite verifying all exports are available,
+    properly typed, and accessible from main package export with proper mocking
+    of dependencies
+log:
+  - Updated shared package exports to properly expose ConversationsRepository
+    and related types to desktop application. Added re-exports of conversation
+    types to conversations/index.ts barrel file, included repositories in
+    services/index.ts for convenience, and created comprehensive export test to
+    verify all imports work correctly. All quality checks pass and exports are
+    accessible from the main shared package.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T06:33:28.566Z
