@@ -1,13 +1,24 @@
 ---
 id: T-integrate-database-initializat
 title: Integrate database initialization into app startup lifecycle
-status: open
+status: done
 priority: high
 parent: F-database-service-integration
 prerequisites:
   - T-add-nodedatabasebridge-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/main.ts: Added initializeDatabase function with
+    connection verification and error handling, integrated database
+    initialization into app.whenReady() before window creation, added graceful
+    database cleanup in before-quit event handler, imported dialog module for
+    error display
+log:
+  - Successfully integrated database initialization into the Electron app
+    startup lifecycle. The database connection is now verified during app
+    startup before the main window opens, with comprehensive error handling that
+    shows user-friendly dialogs and gracefully exits on failure. Added proper
+    database cleanup during app shutdown to prevent resource leaks. All quality
+    checks pass and the implementation follows existing codebase patterns.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T01:02:30.967Z

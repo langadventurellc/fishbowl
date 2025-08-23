@@ -1,4 +1,11 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  globalShortcut,
+  ipcMain,
+  shell,
+} from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { MainProcessServices } from "../main/services/MainProcessServices.js";
@@ -114,6 +121,47 @@ function openSettingsModal(): void {
   }
 }
 
+/**
+ * Initialize the database connection during app startup.
+ * Ensures database is connected and ready before the UI opens.
+ *
+ * @param services - The main process services container
+ * @throws {Error} Exits the application if database initialization fails
+ */
+async function initializeDatabase(
+  services: MainProcessServices,
+): Promise<void> {
+  services.logger.info("Verifying database connection...");
+
+  try {
+    // Database is connected in constructor, verify it's working
+    const isConnected = services.databaseBridge.isConnected?.();
+    if (!isConnected) {
+      throw new Error("Database connection verification failed");
+    }
+
+    // Test the connection with a simple query
+    await services.databaseBridge.query("SELECT 1");
+
+    services.logger.info("Database verified successfully");
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const dbError = error instanceof Error ? error : new Error(errorMessage);
+
+    services.logger.error("Failed to verify database:", dbError);
+
+    // Show user-friendly error dialog
+    dialog.showErrorBox(
+      "Database Initialization Failed",
+      `Unable to initialize the application database.\n\n${errorMessage}\n\nThe application will now exit.`,
+    );
+
+    // Exit application
+    app.quit();
+    throw error; // Re-throw to prevent further execution
+  }
+}
+
 // eslint-disable-next-line statement-count/function-statement-count-warn, statement-count/function-statement-count-error
 app.whenReady().then(async () => {
   // Initialize main process services container
@@ -127,6 +175,11 @@ app.whenReady().then(async () => {
   } catch (error) {
     // Cannot use structured logger here since service container initialization failed
     console.error("Failed to initialize main process services:", error);
+  }
+
+  // Initialize database before creating the main window
+  if (mainProcessServices) {
+    await initializeDatabase(mainProcessServices);
   }
 
   createMainWindow();
@@ -357,10 +410,33 @@ app.on("window-all-closed", () => {
   }
 });
 
-app.on("before-quit", () => {
+app.on("before-quit", async (event) => {
   // Clean up global shortcuts
   globalShortcut.unregisterAll();
   mainWindow = null;
+
+  // Close database connection if services are available
+  if (mainProcessServices?.databaseBridge) {
+    event.preventDefault(); // Prevent immediate quit to allow cleanup
+
+    try {
+      mainProcessServices.logger.info("Closing database connection...");
+      await mainProcessServices.databaseBridge.close();
+      mainProcessServices.logger.info(
+        "Database connection closed successfully",
+      );
+    } catch (error) {
+      const dbError = error instanceof Error ? error : new Error(String(error));
+      mainProcessServices.logger.error(
+        "Error closing database connection:",
+        dbError,
+      );
+    } finally {
+      // Clear services reference and allow quit
+      mainProcessServices = null;
+      app.quit();
+    }
+  }
 });
 
 // Export for use by menu and keyboard shortcut handlers

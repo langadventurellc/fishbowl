@@ -15,15 +15,20 @@ affectedFiles:
     Added comprehensive unit tests for database service integration with proper
     mocking, verification of service initialization, method availability, and
     consistent behavior
+  apps/desktop/src/electron/main.ts: Added initializeDatabase function with
+    connection verification and error handling, integrated database
+    initialization into app.whenReady() before window creation, added graceful
+    database cleanup in before-quit event handler, imported dialog module for
+    error display
 log: []
 schema: v1.0
 childrenIds:
   - T-add-comprehensive-integration
   - T-add-database-health-check-and
-  - T-add-nodedatabasebridge-to
   - T-create-database-service
   - T-implement-database-cleanup-in
   - T-integrate-database-initializat
+  - T-add-nodedatabasebridge-to
 created: 2025-08-22T00:52:37.443Z
 updated: 2025-08-22T00:52:37.443Z
 ---
