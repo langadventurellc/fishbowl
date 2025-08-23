@@ -180,6 +180,36 @@ app.whenReady().then(async () => {
   // Initialize database before creating the main window
   if (mainProcessServices) {
     await initializeDatabase(mainProcessServices);
+
+    // Run database migrations after database initialization
+    try {
+      await mainProcessServices.runDatabaseMigrations();
+      mainProcessServices.logger.info(
+        "Database migrations integration completed successfully",
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      mainProcessServices.logger.error(
+        "Database migrations failed during startup:",
+        error as Error,
+      );
+
+      // Show user-friendly error dialog
+      dialog.showErrorBox(
+        "Database Migration Failed",
+        `Unable to update the application database.
+
+${errorMessage}
+
+The application will now exit.`,
+      );
+
+      // Exit application
+      app.quit();
+      return; // Prevent further execution
+    }
   }
 
   createMainWindow();

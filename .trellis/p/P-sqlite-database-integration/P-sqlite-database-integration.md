@@ -171,7 +171,10 @@ affectedFiles:
     error display; Enhanced database cleanup in before-quit event handler with
     Promise.race() timeout mechanism, added comprehensive timeout vs general
     error logging, implemented 2-second shutdown limit as required by
-    performance specifications
+    performance specifications; Added migration execution to app.whenReady()
+    flow after database initialization, with proper error handling,
+    user-friendly error dialog, and graceful app exit on failures. Maintains
+    existing startup sequence and performance characteristics.
   packages/shared/src/types/conversations/Conversation.ts: Created core
     Conversation interface with id, title, created_at, updated_at fields and
     JSDoc documentation
@@ -329,6 +332,10 @@ affectedFiles:
     README documentation completeness, accuracy, formatting, and alignment with
     actual implementation. Tests cover all required sections, examples, best
     practices, and content accuracy.
+  apps/desktop/src/electron/__tests__/main.test.ts: Created comprehensive unit
+    test suite covering migration integration scenarios including successful
+    startup flow, migration failures, error dialog display, app exit behavior,
+    and startup sequence validation. All 6 tests pass successfully.
 log: []
 schema: v1.0
 childrenIds:
