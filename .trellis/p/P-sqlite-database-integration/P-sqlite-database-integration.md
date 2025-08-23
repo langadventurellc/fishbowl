@@ -147,7 +147,10 @@ affectedFiles:
     connection verification and error handling, integrated database
     initialization into app.whenReady() before window creation, added graceful
     database cleanup in before-quit event handler, imported dialog module for
-    error display
+    error display; Enhanced database cleanup in before-quit event handler with
+    Promise.race() timeout mechanism, added comprehensive timeout vs general
+    error logging, implemented 2-second shutdown limit as required by
+    performance specifications
 log: []
 schema: v1.0
 childrenIds:

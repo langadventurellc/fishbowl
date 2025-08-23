@@ -23,13 +23,16 @@ affectedFiles:
     connection verification and error handling, integrated database
     initialization into app.whenReady() before window creation, added graceful
     database cleanup in before-quit event handler, imported dialog module for
-    error display
+    error display; Enhanced database cleanup in before-quit event handler with
+    Promise.race() timeout mechanism, added comprehensive timeout vs general
+    error logging, implemented 2-second shutdown limit as required by
+    performance specifications
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-database-health-check-and
   - T-create-database-service
   - T-implement-database-cleanup-in
+  - T-add-database-health-check-and
   - T-add-nodedatabasebridge-to
   - T-integrate-database-initializat
 created: 2025-08-22T00:52:37.443Z

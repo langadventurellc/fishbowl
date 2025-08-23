@@ -421,16 +421,40 @@ app.on("before-quit", async (event) => {
 
     try {
       mainProcessServices.logger.info("Closing database connection...");
-      await mainProcessServices.databaseBridge.close();
+
+      // Create timeout promise for 2-second limit
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error("Database close operation timed out after 2 seconds"),
+          );
+        }, 2000);
+      });
+
+      // Race between database close and timeout
+      await Promise.race([
+        mainProcessServices.databaseBridge.close(),
+        timeoutPromise,
+      ]);
+
       mainProcessServices.logger.info(
         "Database connection closed successfully",
       );
     } catch (error) {
       const dbError = error instanceof Error ? error : new Error(String(error));
-      mainProcessServices.logger.error(
-        "Error closing database connection:",
-        dbError,
-      );
+
+      if (dbError.message.includes("timed out")) {
+        mainProcessServices.logger.warn(
+          "Database close timed out - forcing application shutdown",
+          { error: dbError.message, stack: dbError.stack },
+        );
+      } else {
+        mainProcessServices.logger.error(
+          "Error closing database connection:",
+          dbError,
+        );
+      }
+      // Don't prevent shutdown on database close errors or timeout
     } finally {
       // Clear services reference and allow quit
       mainProcessServices = null;

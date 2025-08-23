@@ -1,13 +1,24 @@
 ---
 id: T-implement-database-cleanup-in
 title: Implement database cleanup in app shutdown lifecycle
-status: open
+status: done
 priority: medium
 parent: F-database-service-integration
 prerequisites:
   - T-integrate-database-initializat
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/main.ts: Enhanced database cleanup in before-quit
+    event handler with Promise.race() timeout mechanism, added comprehensive
+    timeout vs general error logging, implemented 2-second shutdown limit as
+    required by performance specifications
+log:
+  - Successfully implemented database cleanup with timeout handling in app
+    shutdown lifecycle. Added Promise.race() with 2-second timeout to ensure
+    graceful shutdown completes within performance requirements. Enhanced error
+    logging with appropriate distinction between timeout and other database
+    errors. The implementation prevents hanging during shutdown while
+    maintaining proper resource cleanup. All quality checks pass and the
+    solution follows existing codebase patterns.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T01:02:53.234Z
