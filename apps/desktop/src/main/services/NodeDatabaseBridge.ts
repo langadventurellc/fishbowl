@@ -5,6 +5,7 @@ import {
   ConstraintViolationError,
   QueryError,
   ConnectionError,
+  TransactionError,
   createLoggerSync,
 } from "@fishbowl-ai/shared";
 
@@ -21,6 +22,7 @@ import {
 export class NodeDatabaseBridge implements DatabaseBridge {
   private db: Database.Database;
   private connected: boolean = false;
+  private isTransactionActive: boolean = false;
   private readonly logger = createLoggerSync({
     config: { name: "NodeDatabaseBridge", level: "info" },
   });
@@ -249,16 +251,103 @@ export class NodeDatabaseBridge implements DatabaseBridge {
 
   /**
    * Execute multiple operations within a single transaction.
+   * Uses manual BEGIN/COMMIT/ROLLBACK for async callback support.
+   * Automatically rolls back on any error and supports nested transaction detection.
    *
    * @template T The return type of the transaction callback
-   * @param _callback Function containing database operations to execute atomically
+   * @param callback Function containing database operations to execute atomically
    * @returns Promise resolving to the callback's return value
    */
   async transaction<T>(
-    _callback: (db: DatabaseBridge) => Promise<T>,
+    callback: (db: DatabaseBridge) => Promise<T>,
   ): Promise<T> {
-    // TODO: Implement transaction method in separate task
-    throw new Error("Method not implemented");
+    this.logger.debug("Starting transaction");
+
+    // Validate connection state
+    if (!this.isConnected()) {
+      throw new ConnectionError("Database connection is not active");
+    }
+
+    // Handle nested transactions - SQLite doesn't support them, so execute within existing transaction
+    if (this.isTransactionActive) {
+      this.logger.debug(
+        "Nested transaction detected, executing within parent transaction",
+      );
+      return await callback(this);
+    }
+
+    const startTime = Date.now();
+
+    try {
+      // Begin transaction manually for async support
+      this.db.exec("BEGIN");
+      this.isTransactionActive = true;
+
+      this.logger.debug("Transaction begun successfully");
+
+      try {
+        // Execute callback with this bridge instance
+        const result = await callback(this);
+
+        // Commit on success
+        this.db.exec("COMMIT");
+        this.isTransactionActive = false;
+
+        const duration = Date.now() - startTime;
+        this.logger.info("Transaction committed successfully", { duration });
+
+        return result;
+      } catch (error: unknown) {
+        // Rollback on failure
+        try {
+          this.db.exec("ROLLBACK");
+          this.logger.debug("Transaction rolled back successfully");
+        } catch (rollbackError: unknown) {
+          this.logger.error(
+            "Failed to rollback transaction",
+            rollbackError as Error,
+            {
+              originalError: error,
+            },
+          );
+        }
+
+        const duration = Date.now() - startTime;
+        this.logger.error(
+          "Transaction rolled back due to error",
+          error as Error,
+          {
+            duration,
+          },
+        );
+
+        // Convert to TransactionError with context
+        const originalError = error as Error;
+        const failedOperation = this.extractFailedOperation(error);
+
+        throw new TransactionError(
+          `Transaction failed and was rolled back: ${originalError.message}`,
+          failedOperation,
+          originalError,
+        );
+      } finally {
+        this.isTransactionActive = false;
+      }
+    } catch (error: unknown) {
+      // Handle BEGIN failures or TransactionError re-throws
+      if (error instanceof TransactionError) {
+        throw error;
+      }
+
+      const beginError = error as Error;
+      this.logger.error("Failed to begin transaction", beginError);
+
+      throw new TransactionError(
+        `Failed to start transaction: ${beginError.message}`,
+        "BEGIN",
+        beginError,
+      );
+    }
   }
 
   /**
@@ -317,6 +406,36 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    */
   isConnected(): boolean {
     return this.connected && this.db.open;
+  }
+
+  /**
+   * Extract the failed SQL operation from an error for transaction context.
+   * Helps provide better error messages by identifying which SQL caused the failure.
+   *
+   * @private
+   * @param error The error to extract operation information from
+   * @returns The SQL operation string if available, undefined otherwise
+   */
+  private extractFailedOperation(error: unknown): string | undefined {
+    if (error instanceof QueryError) {
+      // QueryError stores SQL in context.sql
+      return (error.context?.sql as string) || undefined;
+    }
+
+    // Check if error has a query property (common in database errors)
+    const errorWithQuery = error as Error & { query?: string };
+    if (errorWithQuery?.query) {
+      return errorWithQuery.query;
+    }
+
+    // Check error message for common SQL keywords to infer operation type
+    const errorMessage = (error as Error)?.message?.toLowerCase() || "";
+    if (errorMessage.includes("insert")) return "INSERT";
+    if (errorMessage.includes("update")) return "UPDATE";
+    if (errorMessage.includes("delete")) return "DELETE";
+    if (errorMessage.includes("select")) return "SELECT";
+
+    return undefined;
   }
 
   /**

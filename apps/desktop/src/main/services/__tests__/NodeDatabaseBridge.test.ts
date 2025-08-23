@@ -3,6 +3,7 @@ const mockDatabase = {
   pragma: jest.fn(),
   close: jest.fn(),
   prepare: jest.fn(),
+  exec: jest.fn(),
   open: true,
 };
 
@@ -31,6 +32,7 @@ import {
   ConnectionError,
   ConstraintViolationError,
   QueryError,
+  TransactionError,
 } from "@fishbowl-ai/shared";
 
 // Get the mocked constructor
@@ -909,6 +911,268 @@ describe("NodeDatabaseBridge", () => {
         expect(error.context?.sql).toBe("SELECT * FROM users WHERE id = ?");
         expect(error.context?.parameters).toEqual([123]);
       }
+    });
+  });
+
+  describe("transaction", () => {
+    let mockStatement: any;
+
+    beforeEach(() => {
+      // Reset exec mock
+      mockDatabase.exec.mockReset();
+
+      // Setup mock statement for transaction tests
+      mockStatement = {
+        all: jest.fn(),
+        run: jest.fn().mockReturnValue({ changes: 1, lastInsertRowid: 1 }),
+      };
+      mockDatabase.prepare.mockReset().mockReturnValue(mockStatement);
+    });
+
+    it("should commit transaction on successful callback", async () => {
+      const mockResult = { changes: 1, lastInsertRowid: 1 };
+      mockStatement.run.mockReturnValue(mockResult);
+
+      const result = await bridge.transaction(async (tx) => {
+        await tx.execute("INSERT INTO users (name) VALUES (?)", ["John"]);
+        return "success";
+      });
+
+      expect(result).toBe("success");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("BEGIN");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("COMMIT");
+      expect(mockDatabase.exec).not.toHaveBeenCalledWith("ROLLBACK");
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Transaction committed successfully",
+        expect.objectContaining({ duration: expect.any(Number) }),
+      );
+    });
+
+    it("should rollback transaction on callback error", async () => {
+      await expect(
+        bridge.transaction(async () => {
+          throw new Error("Simulated failure");
+        }),
+      ).rejects.toThrow(TransactionError);
+
+      expect(mockDatabase.exec).toHaveBeenCalledWith("BEGIN");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("ROLLBACK");
+      expect(mockDatabase.exec).not.toHaveBeenCalledWith("COMMIT");
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Transaction rolled back due to error",
+        expect.any(Error),
+        expect.objectContaining({ duration: expect.any(Number) }),
+      );
+    });
+
+    it("should handle nested operations within transaction", async () => {
+      const mockQueryResult = [{ id: 1, name: "John" }];
+      const mockExecuteResult = { changes: 1, lastInsertRowid: 2 };
+
+      mockStatement.all.mockReturnValue(mockQueryResult);
+      mockStatement.run.mockReturnValue(mockExecuteResult);
+
+      const result = await bridge.transaction(async (tx) => {
+        await tx.execute("INSERT INTO users (name) VALUES (?)", ["John"]);
+        const users = await tx.query("SELECT * FROM users WHERE name = ?", [
+          "John",
+        ]);
+        await tx.execute("UPDATE users SET active = ? WHERE id = ?", [true, 1]);
+        return users;
+      });
+
+      expect(result).toEqual(mockQueryResult);
+      expect(mockDatabase.prepare).toHaveBeenCalledTimes(3); // 2 execute, 1 query
+      expect(mockDatabase.exec).toHaveBeenCalledWith("BEGIN");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("COMMIT");
+    });
+
+    it("should handle nested transaction calls correctly", async () => {
+      const result = await bridge.transaction(async (tx) => {
+        await tx.execute("INSERT INTO users (name) VALUES (?)", ["outer"]);
+
+        // Nested transaction should execute within same transaction
+        const nestedResult = await tx.transaction(async (inner) => {
+          await inner.execute("INSERT INTO users (name) VALUES (?)", ["inner"]);
+          return "inner-result";
+        });
+
+        expect(nestedResult).toBe("inner-result");
+        return "outer-result";
+      });
+
+      expect(result).toBe("outer-result");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("BEGIN");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("COMMIT");
+      expect(mockDatabase.exec).toHaveBeenCalledTimes(2); // Only one BEGIN and one COMMIT
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "Nested transaction detected, executing within parent transaction",
+      );
+    });
+
+    it("should preserve generic type of callback return value", async () => {
+      interface CustomResult {
+        id: number;
+        name: string;
+      }
+
+      const expectedResult: CustomResult = { id: 1, name: "test" };
+      const result = await bridge.transaction<CustomResult>(async () => {
+        return expectedResult;
+      });
+
+      expect(result).toEqual(expectedResult);
+      expect(result.id).toBe(1); // TypeScript should infer the type
+      expect(result.name).toBe("test");
+    });
+
+    it("should convert callback errors to TransactionError", async () => {
+      const originalError = new Error("Database constraint violation");
+
+      await expect(
+        bridge.transaction(async () => {
+          throw originalError;
+        }),
+      ).rejects.toThrow(TransactionError);
+
+      try {
+        await bridge.transaction(async () => {
+          throw originalError;
+        });
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TransactionError);
+        expect(error.message).toContain(
+          "Transaction failed and was rolled back",
+        );
+        expect(error.message).toContain("Database constraint violation");
+        expect(error.cause).toBe(originalError);
+      }
+    });
+
+    it("should extract failed operation from QueryError", async () => {
+      const queryError = new QueryError(
+        "SQL syntax error",
+        "SELECT * FROM invalid_table",
+        ["param"],
+      );
+
+      await expect(
+        bridge.transaction(async () => {
+          throw queryError;
+        }),
+      ).rejects.toThrow(TransactionError);
+
+      try {
+        await bridge.transaction(async () => {
+          throw queryError;
+        });
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TransactionError);
+        expect(error.context?.operation).toBe("SELECT * FROM invalid_table");
+      }
+    });
+
+    it("should throw ConnectionError when not connected", async () => {
+      // Simulate disconnected state
+      mockDatabase.open = false;
+
+      await expect(bridge.transaction(async () => "test")).rejects.toThrow(
+        ConnectionError,
+      );
+
+      expect(mockDatabase.exec).not.toHaveBeenCalled();
+    });
+
+    it("should handle BEGIN transaction failures", async () => {
+      mockDatabase.exec.mockImplementation((sql: string) => {
+        if (sql === "BEGIN") {
+          throw new Error("Cannot begin transaction");
+        }
+      });
+
+      await expect(bridge.transaction(async () => "test")).rejects.toThrow(
+        TransactionError,
+      );
+
+      try {
+        await bridge.transaction(async () => "test");
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TransactionError);
+        expect(error.message).toContain("Failed to start transaction");
+        expect(error.context?.operation).toBe("BEGIN");
+      }
+    });
+
+    it("should handle ROLLBACK failures gracefully", async () => {
+      const originalError = new Error("Callback failure");
+      mockDatabase.exec.mockImplementation((sql: string) => {
+        if (sql === "ROLLBACK") {
+          throw new Error("Rollback failed");
+        }
+      });
+
+      await expect(
+        bridge.transaction(async () => {
+          throw originalError;
+        }),
+      ).rejects.toThrow(TransactionError);
+
+      try {
+        await bridge.transaction(async () => {
+          throw originalError;
+        });
+      } catch (error: any) {
+        expect(error).toBeInstanceOf(TransactionError);
+        expect(error.cause).toBe(originalError); // Original error preserved
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          "Failed to rollback transaction",
+          expect.any(Error),
+          expect.objectContaining({ originalError }),
+        );
+      }
+    });
+
+    it("should log transaction lifecycle events", async () => {
+      await bridge.transaction(async () => "test");
+
+      expect(mockLogger.debug).toHaveBeenCalledWith("Starting transaction");
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+        "Transaction begun successfully",
+      );
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Transaction committed successfully",
+        expect.objectContaining({ duration: expect.any(Number) }),
+      );
+    });
+
+    it("should reset transaction state after completion", async () => {
+      await bridge.transaction(async () => "test");
+
+      // Transaction state should be reset - next transaction should work normally
+      await bridge.transaction(async () => "test2");
+
+      expect(mockDatabase.exec).toHaveBeenCalledWith("BEGIN");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("COMMIT");
+      expect(mockDatabase.exec).toHaveBeenCalledTimes(4); // 2 BEGINs, 2 COMMITs
+    });
+
+    it("should reset transaction state even after errors", async () => {
+      // First transaction fails
+      try {
+        await bridge.transaction(async () => {
+          throw new Error("First transaction fails");
+        });
+      } catch (error) {
+        expect(error).toBeInstanceOf(TransactionError);
+      }
+
+      // Second transaction should work normally
+      const result = await bridge.transaction(async () => "success");
+      expect(result).toBe("success");
+
+      expect(mockDatabase.exec).toHaveBeenCalledWith("BEGIN");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("ROLLBACK");
+      expect(mockDatabase.exec).toHaveBeenCalledWith("COMMIT");
     });
   });
 });
