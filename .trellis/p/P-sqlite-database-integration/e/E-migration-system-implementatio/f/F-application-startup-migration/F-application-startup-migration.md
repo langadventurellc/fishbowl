@@ -1,16 +1,29 @@
 ---
 id: F-application-startup-migration
 title: Application Startup Migration Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-migration-system-implementatio
 prerequisites:
   - F-migration-service-core
   - F-initial-database-schema
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/services/index.ts: Added export for migrations module to make MigrationService available
+  packages/shared/src/services/migrations/MigrationService.ts:
+    Fixed import statements to use TypeScript module resolution without .js
+    extensions for Jest compatibility
+  apps/desktop/src/main/services/MainProcessServices.ts: Added MigrationService
+    import, property, initialization in constructor, runDatabaseMigrations()
+    method, and getMigrationsPath() helper method with proper error handling and
+    logging
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for MigrationService integration including
+    mocks, initialization tests, and all migration execution scenarios
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-migrationservice-to
+  - T-integrate-migration-execution
 created: 2025-08-23T16:29:41.428Z
 updated: 2025-08-23T16:29:41.428Z
 ---

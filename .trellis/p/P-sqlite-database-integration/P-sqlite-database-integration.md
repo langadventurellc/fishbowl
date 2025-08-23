@@ -29,7 +29,8 @@ affectedFiles:
   packages/shared/src/services/index.ts: Updated to export database types
     alongside storage types; Added convenience exports of
     ConversationsRepositoryInterface and ConversationsRepository from
-    repositories for easier access
+    repositories for easier access; Added export for migrations module to make
+    MigrationService available
   packages/shared/src/services/database/types/__tests__/DatabaseError.test.ts: Comprehensive tests for base DatabaseError class functionality
   packages/shared/src/services/database/types/__tests__/ConnectionError.test.ts: Unit tests for ConnectionError with context and serialization testing
   packages/shared/src/services/database/types/__tests__/QueryError.test.ts: Unit tests for QueryError covering SQL and parameter handling
@@ -146,7 +147,9 @@ affectedFiles:
     database service creation.; Added ConversationsRepository import, property
     declaration, initialization in constructor with proper error handling,
     createConversationService factory method, and getConversationsRepository
-    getter method
+    getter method; Added MigrationService import, property, initialization in
+    constructor, runDatabaseMigrations() method, and getMigrationsPath() helper
+    method with proper error handling and logging
   apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
     Added comprehensive unit tests for database service integration with proper
     mocking, verification of service initialization, method availability, and
@@ -159,7 +162,8 @@ affectedFiles:
     creation patterns.; Added ConversationsRepository mocking, initialization
     test, createConversationService tests for normal operation and error
     handling, getConversationsRepository tests for normal operation and error
-    handling
+    handling; Added comprehensive unit tests for MigrationService integration
+    including mocks, initialization tests, and all migration execution scenarios
   apps/desktop/src/electron/main.ts: Added initializeDatabase function with
     connection verification and error handling, integrated database
     initialization into app.whenReady() before window creation, added graceful
@@ -295,7 +299,9 @@ affectedFiles:
     and integration workflows with 100% test coverage
   packages/shared/src/services/migrations/MigrationService.ts:
     Created main MigrationService orchestration class with runMigrations method,
-    transaction management, and comprehensive error handling
+    transaction management, and comprehensive error handling; Fixed import
+    statements to use TypeScript module resolution without .js extensions for
+    Jest compatibility
   packages/shared/src/services/migrations/MigrationExecutionResult.ts:
     Created result interface for migration execution process with success
     status, counts, and error details

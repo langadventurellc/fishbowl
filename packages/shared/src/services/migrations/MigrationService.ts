@@ -1,14 +1,14 @@
-import type { DatabaseBridge } from "../database/DatabaseBridge.js";
-import type { FileSystemBridge } from "../storage/FileSystemBridge.js";
-import type { PathUtilsInterface } from "../../utils/PathUtilsInterface.js";
-import { MigrationDiscovery } from "./MigrationDiscovery.js";
-import { MigrationTracking } from "./MigrationTracking.js";
-import type { MigrationFile } from "./MigrationFile.js";
-import type { MigrationExecutionResult } from "./MigrationExecutionResult.js";
-import type { MigrationExecutionError } from "./MigrationExecutionError.js";
-import { MigrationError } from "./MigrationError.js";
-import { MigrationErrorCode } from "./MigrationErrorCode.js";
-import { logger } from "../../logger/index.js";
+import type { DatabaseBridge } from "../database/DatabaseBridge";
+import type { FileSystemBridge } from "../storage/FileSystemBridge";
+import type { PathUtilsInterface } from "../../utils/PathUtilsInterface";
+import { MigrationDiscovery } from "./MigrationDiscovery";
+import { MigrationTracking } from "./MigrationTracking";
+import type { MigrationFile } from "./MigrationFile";
+import type { MigrationExecutionResult } from "./MigrationExecutionResult";
+import type { MigrationExecutionError } from "./MigrationExecutionError";
+import { MigrationError } from "./MigrationError";
+import { MigrationErrorCode } from "./MigrationErrorCode";
+import { logger } from "../../logger";
 
 export class MigrationService {
   private readonly discovery: MigrationDiscovery;

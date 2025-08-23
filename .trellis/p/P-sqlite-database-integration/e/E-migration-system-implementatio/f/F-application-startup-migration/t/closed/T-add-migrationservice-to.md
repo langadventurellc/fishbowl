@@ -1,12 +1,31 @@
 ---
 id: T-add-migrationservice-to
 title: Add MigrationService to MainProcessServices
-status: open
+status: done
 priority: high
 parent: F-application-startup-migration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/services/index.ts: Added export for migrations module to make MigrationService available
+  packages/shared/src/services/migrations/MigrationService.ts:
+    Fixed import statements to use TypeScript module resolution without .js
+    extensions for Jest compatibility
+  apps/desktop/src/main/services/MainProcessServices.ts: Added MigrationService
+    import, property, initialization in constructor, runDatabaseMigrations()
+    method, and getMigrationsPath() helper method with proper error handling and
+    logging
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for MigrationService integration including
+    mocks, initialization tests, and all migration execution scenarios
+log:
+  - Successfully integrated MigrationService into MainProcessServices class
+    following the established dependency injection pattern. The implementation
+    includes proper initialization with all required dependencies
+    (DatabaseBridge, FileSystemBridge, PathUtilsInterface, and migrations path),
+    a public runDatabaseMigrations() method with comprehensive error handling,
+    and robust path resolution logic that works in both development and
+    production environments. All unit tests pass and quality checks are
+    successful.
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T16:34:25.567Z

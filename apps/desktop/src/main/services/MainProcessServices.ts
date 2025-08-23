@@ -2,6 +2,7 @@ import {
   FileStorageService,
   SettingsRepository,
   ConversationsRepository,
+  MigrationService,
   createLoggerSync,
   type StructuredLogger,
   type DatabaseBridge,
@@ -42,6 +43,7 @@ export class MainProcessServices {
   // Configured shared services
   readonly fileStorage: FileStorageService;
   readonly logger: StructuredLogger;
+  readonly migrationService: MigrationService;
 
   /**
    * Repository for managing conversation persistence.
@@ -66,6 +68,14 @@ export class MainProcessServices {
     // Create logger with Node.js implementations
     // Using createLogger for consistent configuration
     this.logger = this.createConfiguredLogger();
+
+    // Initialize migration service
+    this.migrationService = new MigrationService(
+      this.databaseBridge,
+      this.fileSystemBridge,
+      pathUtils,
+      this.getMigrationsPath(),
+    );
 
     // Initialize conversations repository
     try {
@@ -202,6 +212,43 @@ export class MainProcessServices {
   }
 
   /**
+   * Run database migrations to ensure schema is up to date.
+   * This should be called during application startup after database initialization.
+   *
+   * @returns Promise that resolves when migrations complete successfully
+   * @throws Error if migrations fail
+   */
+  async runDatabaseMigrations(): Promise<void> {
+    try {
+      this.logger.info("Starting database migrations");
+      const result = await this.migrationService.runMigrations();
+
+      if (result.success) {
+        this.logger.info("Database migrations completed successfully", {
+          migrationsRun: result.migrationsRun,
+          currentVersion: result.currentVersion,
+        });
+      } else {
+        const errorDetails = result.errors
+          ?.map((e) => `${e.filename}: ${e.error}`)
+          .join(", ");
+        this.logger.error(
+          `Database migrations failed - ran ${result.migrationsRun} migrations, errors: ${errorDetails}`,
+        );
+        throw new Error(`Database migrations failed: ${errorDetails}`);
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        "Migration execution failed",
+        error instanceof Error ? error : undefined,
+      );
+      throw new Error(`Migration execution failed: ${errorMessage}`);
+    }
+  }
+
+  /**
    * Performs a basic database health check.
    *
    * @returns Object indicating if database is healthy and any issues found
@@ -257,5 +304,32 @@ export class MainProcessServices {
   private getDatabasePath(): string {
     const userDataPath = app.getPath("userData");
     return path.join(userDataPath, "fishbowl.db");
+  }
+
+  /**
+   * Get the path to the migrations directory.
+   * Resolves correctly for both development and production environments.
+   *
+   * @returns Migrations directory path
+   */
+  private getMigrationsPath(): string {
+    if (app.isPackaged) {
+      // Production: use app resources path
+      const appPath = app.getAppPath();
+      const migrationsPath = path.join(appPath, "migrations");
+      this.logger.debug("Using packaged migrations path", {
+        path: migrationsPath,
+      });
+      return migrationsPath;
+    } else {
+      // Development: use project root migrations
+      const appPath = app.getAppPath();
+      const projectRoot = path.resolve(appPath, "..", "..");
+      const migrationsPath = path.join(projectRoot, "migrations");
+      this.logger.debug("Using development migrations path", {
+        path: migrationsPath,
+      });
+      return migrationsPath;
+    }
   }
 }

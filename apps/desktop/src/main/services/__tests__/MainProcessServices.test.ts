@@ -7,6 +7,8 @@ import { NodeDeviceInfo } from "../../utils/NodeDeviceInfo";
 jest.mock("electron", () => ({
   app: {
     getPath: jest.fn(() => "/mock/userdata"),
+    getAppPath: jest.fn(() => "/mock/app"),
+    isPackaged: false,
   },
 }));
 
@@ -24,7 +26,7 @@ jest.mock("../NodeDatabaseBridge", () => ({
   }),
 }));
 
-// Mock ConversationsRepository constructor
+// Mock ConversationsRepository and MigrationService constructors
 jest.mock("@fishbowl-ai/shared", () => {
   const actual = jest.requireActual("@fishbowl-ai/shared");
   return {
@@ -39,6 +41,11 @@ jest.mock("@fishbowl-ai/shared", () => {
         exists: jest.fn(),
       };
     }),
+    MigrationService: jest.fn().mockImplementation(() => {
+      return {
+        runMigrations: jest.fn(),
+      };
+    }),
   };
 });
 
@@ -46,9 +53,10 @@ const { NodeDatabaseBridge: MockedNodeDatabaseBridge } = jest.mocked(
   require("../NodeDatabaseBridge"),
 );
 
-const { ConversationsRepository: MockedConversationsRepository } = jest.mocked(
-  require("@fishbowl-ai/shared"),
-);
+const {
+  ConversationsRepository: MockedConversationsRepository,
+  MigrationService: MockedMigrationService,
+} = jest.mocked(require("@fishbowl-ai/shared"));
 
 describe("MainProcessServices", () => {
   let services: MainProcessServices;
@@ -56,6 +64,7 @@ describe("MainProcessServices", () => {
   beforeEach(() => {
     MockedNodeDatabaseBridge.mockClear();
     MockedConversationsRepository.mockClear();
+    MockedMigrationService.mockClear();
     services = new MainProcessServices();
   });
 
@@ -89,6 +98,16 @@ describe("MainProcessServices", () => {
       expect(MockedConversationsRepository).toHaveBeenCalledWith(
         services.databaseBridge,
         expect.any(NodeCryptoUtils),
+      );
+    });
+
+    it("should initialize MigrationService", () => {
+      expect(services.migrationService).toBeDefined();
+      expect(MockedMigrationService).toHaveBeenCalledWith(
+        services.databaseBridge,
+        services.fileSystemBridge,
+        expect.any(Object), // pathUtils
+        expect.any(String), // migrations path
       );
     });
   });
@@ -434,6 +453,67 @@ describe("MainProcessServices", () => {
       expect(result.issues).toContain(
         "Database health check failed: Unknown database error",
       );
+    });
+  });
+
+  describe("runDatabaseMigrations", () => {
+    let mockMigrationService: any;
+
+    beforeEach(() => {
+      mockMigrationService = services.migrationService;
+    });
+
+    it("should run migrations successfully", async () => {
+      const mockResult = {
+        success: true,
+        migrationsRun: 2,
+        currentVersion: 2,
+      };
+      mockMigrationService.runMigrations.mockResolvedValue(mockResult);
+
+      await services.runDatabaseMigrations();
+
+      expect(mockMigrationService.runMigrations).toHaveBeenCalled();
+    });
+
+    it("should handle migration failures with error details", async () => {
+      const mockResult = {
+        success: false,
+        migrationsRun: 1,
+        currentVersion: 1,
+        errors: [
+          {
+            order: 2,
+            filename: "002_add_users_table.sql",
+            error: "Table already exists",
+          },
+        ],
+      };
+      mockMigrationService.runMigrations.mockResolvedValue(mockResult);
+
+      await expect(services.runDatabaseMigrations()).rejects.toThrow(
+        "Database migrations failed: 002_add_users_table.sql: Table already exists",
+      );
+      expect(mockMigrationService.runMigrations).toHaveBeenCalled();
+    });
+
+    it("should handle migration service exceptions", async () => {
+      const mockError = new Error("Migration service failed");
+      mockMigrationService.runMigrations.mockRejectedValue(mockError);
+
+      await expect(services.runDatabaseMigrations()).rejects.toThrow(
+        "Migration execution failed: Migration service failed",
+      );
+      expect(mockMigrationService.runMigrations).toHaveBeenCalled();
+    });
+
+    it("should handle non-Error exceptions", async () => {
+      mockMigrationService.runMigrations.mockRejectedValue("String error");
+
+      await expect(services.runDatabaseMigrations()).rejects.toThrow(
+        "Migration execution failed: String error",
+      );
+      expect(mockMigrationService.runMigrations).toHaveBeenCalled();
     });
   });
 });

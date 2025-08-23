@@ -54,7 +54,9 @@ affectedFiles:
     and integration workflows with 100% test coverage
   packages/shared/src/services/migrations/MigrationService.ts:
     Created main MigrationService orchestration class with runMigrations method,
-    transaction management, and comprehensive error handling
+    transaction management, and comprehensive error handling; Fixed import
+    statements to use TypeScript module resolution without .js extensions for
+    Jest compatibility
   packages/shared/src/services/migrations/MigrationExecutionResult.ts:
     Created result interface for migration execution process with success
     status, counts, and error details
@@ -82,6 +84,14 @@ affectedFiles:
     README documentation completeness, accuracy, formatting, and alignment with
     actual implementation. Tests cover all required sections, examples, best
     practices, and content accuracy.
+  packages/shared/src/services/index.ts: Added export for migrations module to make MigrationService available
+  apps/desktop/src/main/services/MainProcessServices.ts: Added MigrationService
+    import, property, initialization in constructor, runDatabaseMigrations()
+    method, and getMigrationsPath() helper method with proper error handling and
+    logging
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for MigrationService integration including
+    mocks, initialization tests, and all migration execution scenarios
 log: []
 schema: v1.0
 childrenIds:
