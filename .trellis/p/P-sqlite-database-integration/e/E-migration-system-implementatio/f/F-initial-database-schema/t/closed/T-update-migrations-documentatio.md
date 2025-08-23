@@ -1,13 +1,32 @@
 ---
 id: T-update-migrations-documentatio
 title: Update migrations documentation and establish conventions
-status: open
+status: done
 priority: medium
 parent: F-initial-database-schema
 prerequisites:
   - T-create-conversations-table
-affectedFiles: {}
-log: []
+affectedFiles:
+  migrations/README.md: Completely rewrote with comprehensive documentation
+    covering migration system architecture, naming conventions, SQL best
+    practices, execution workflows, platform support, troubleshooting, security
+    considerations, and testing guidance. Used conversations migration as
+    concrete example throughout.
+  migrations/__tests__/README.test.ts:
+    Created comprehensive test suite validating
+    README documentation completeness, accuracy, formatting, and alignment with
+    actual implementation. Tests cover all required sections, examples, best
+    practices, and content accuracy.
+log:
+  - "Updated migrations documentation with comprehensive guide covering the
+    implemented migration system. Documented all three core services
+    (MigrationService, MigrationDiscovery, MigrationTracking), established clear
+    naming conventions, provided concrete examples using the conversations
+    migration, and created extensive testing coverage. The documentation now
+    includes sections on: system overview, file naming patterns, SQL best
+    practices, execution workflows, platform integration, troubleshooting,
+    security considerations, and performance guidelines. All quality checks pass
+    and comprehensive unit tests validate the documentation completeness."
 schema: v1.0
 childrenIds: []
 created: 2025-08-23T16:33:52.724Z

@@ -313,6 +313,16 @@ affectedFiles:
     unit test suite validating migration file existence, SQL syntax, table
     structure, index definition, trigger functionality, documentation quality,
     and performance requirements
+  migrations/README.md: Completely rewrote with comprehensive documentation
+    covering migration system architecture, naming conventions, SQL best
+    practices, execution workflows, platform support, troubleshooting, security
+    considerations, and testing guidance. Used conversations migration as
+    concrete example throughout.
+  migrations/__tests__/README.test.ts:
+    Created comprehensive test suite validating
+    README documentation completeness, accuracy, formatting, and alignment with
+    actual implementation. Tests cover all required sections, examples, best
+    practices, and content accuracy.
 log: []
 schema: v1.0
 childrenIds:
