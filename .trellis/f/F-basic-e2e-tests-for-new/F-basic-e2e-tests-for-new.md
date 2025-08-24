@@ -16,12 +16,17 @@ affectedFiles:
     function for querying conversations table with proper TypeScript typing
   tests/desktop/helpers/database/index.ts: Created barrel export file for clean imports of all database helpers
   tests/desktop/helpers/index.ts: Added export for database helpers to main helpers barrel file
+  tests/desktop/features/conversations/new-conversation-button.spec.ts:
+    Created comprehensive E2E test file with multiple test scenarios for New
+    Conversation button functionality, including UI verification, database
+    validation, loading state testing, and proper test isolation with database
+    reset between tests
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-database-test-helper
   - T-create-e2e-test-for-new
   - T-setup-test-infrastructure-and
+  - T-create-database-test-helper
 created: 2025-08-24T03:35:24.465Z
 updated: 2025-08-24T03:35:24.465Z
 ---
