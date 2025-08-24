@@ -1,7 +1,7 @@
 ---
 id: F-core-new-conversation-button
 title: Core New Conversation Button Integration
-status: in-progress
+status: done
 priority: medium
 parent: E-ui-integration
 prerequisites: []
@@ -15,13 +15,24 @@ affectedFiles:
     onClick handler with async handleNewConversation function that calls
     createConversation, logs success/error, and includes proper error handling.
     Connected isCreating state to NewConversationButton's loading and disabled
-    props for proper UI feedback during async operations."
-log: []
+    props for proper UI feedback during async operations.; Integrated
+    useConversations hook for dynamic conversation list. Added
+    formatRelativeTime utility function to convert ISO timestamps to
+    human-readable relative time format. Created mapConversationsToViewModel
+    function to transform database Conversation objects to ConversationViewModel
+    format expected by UI components. Updated handleNewConversation to call
+    refetch() after successful conversation creation for immediate list updates.
+    Modified render logic to use conversationsToDisplay from hook when
+    available, with fallback to prop conversations. Added empty state handling
+    when no conversations exist. Updated condition for rendering self-contained
+    content to check for real conversations or fallback props."
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-connect-usecreateconversation
-  - T-integrate-useconversations
   - T-integrate-newconversationbutto
+  - T-integrate-useconversations
 created: 2025-08-24T02:02:10.709Z
 updated: 2025-08-24T02:02:10.709Z
 ---

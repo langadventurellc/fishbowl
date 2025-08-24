@@ -5,6 +5,7 @@ import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 import { NewConversationButton } from "../conversations/NewConversationButton";
 import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
+import { useConversations } from "../../hooks/conversations/useConversations";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
@@ -37,7 +38,14 @@ export function SidebarContainerDisplay({
   style = {},
   conversations,
 }: SidebarContainerDisplayProps) {
-  // Initialize useCreateConversation hook
+  // Initialize hooks for conversation management
+  const {
+    conversations: realConversations,
+    isLoading: _listLoading,
+    error: _listError,
+    refetch,
+  } = useConversations();
+
   const {
     createConversation,
     isCreating,
@@ -45,12 +53,47 @@ export function SidebarContainerDisplay({
     reset: _reset,
   } = useCreateConversation();
 
+  // Format timestamp as relative time
+  const formatRelativeTime = (dateString: string): string => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffSecs = Math.floor(diffMs / 1000);
+    const diffMins = Math.floor(diffSecs / 60);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+
+    if (diffSecs < 60) return "just now";
+    if (diffMins < 60)
+      return `${diffMins} minute${diffMins !== 1 ? "s" : ""} ago`;
+    if (diffHours < 24)
+      return `${diffHours} hour${diffHours !== 1 ? "s" : ""} ago`;
+    if (diffDays < 30) return `${diffDays} day${diffDays !== 1 ? "s" : ""} ago`;
+
+    return date.toLocaleDateString();
+  };
+
+  // Map database conversations to UI format
+  const mapConversationsToViewModel = (convs: typeof realConversations) => {
+    return convs.map((conv) => ({
+      name: conv.title,
+      lastActivity: formatRelativeTime(conv.updated_at),
+      isActive: false, // TODO: Add active conversation tracking
+    }));
+  };
+
+  // Use real conversations when available, fall back to props
+  const conversationsToDisplay = realConversations
+    ? mapConversationsToViewModel(realConversations)
+    : conversations || [];
+
   // Handle new conversation creation
   const handleNewConversation = async () => {
     try {
       const result = await createConversation();
       console.log("Created conversation:", result);
-      // Will trigger list refresh in next task
+      // Refresh the list to show new conversation
+      await refetch();
     } catch (err) {
       console.error("Failed to create conversation:", err);
       // Error handling will be improved in Feature 2
@@ -89,14 +132,20 @@ export function SidebarContainerDisplay({
 
       {/* Conversation items with interactive behavior */}
       <div className="flex flex-1 flex-col gap-1 min-h-[120px]">
-        {conversations!.map((conv, index) => (
-          <ConversationItemDisplay
-            key={index}
-            conversation={conv}
-            appearanceState={conv.isActive ? "active" : "inactive"}
-            showUnreadIndicator={false}
-          />
-        ))}
+        {conversationsToDisplay.length === 0 ? (
+          <div className="text-sm text-muted-foreground p-2">
+            No conversations yet
+          </div>
+        ) : (
+          conversationsToDisplay.map((conv, index) => (
+            <ConversationItemDisplay
+              key={index}
+              conversation={conv}
+              appearanceState={conv.isActive ? "active" : "inactive"}
+              showUnreadIndicator={false}
+            />
+          ))
+        )}
       </div>
 
       <div className="mt-auto">
@@ -117,7 +166,9 @@ export function SidebarContainerDisplay({
       )}
       style={dynamicStyles}
     >
-      {!collapsed && conversations && renderSelfContainedContent()}
+      {!collapsed &&
+        (realConversations || conversations) &&
+        renderSelfContainedContent()}
     </div>
   );
 }
