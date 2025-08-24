@@ -32,6 +32,7 @@ export function ConversationItemDisplay({
   showUnreadIndicator = false,
   className = "",
   style = {},
+  onRename,
   onDelete,
 }: ConversationItemDisplayProps) {
   const [isHovered, setIsHovered] = useState(false);
@@ -92,9 +93,7 @@ export function ConversationItemDisplay({
         <ConversationContextMenu
           conversation={conversation}
           position="below"
-          onRename={() => {
-            /* Placeholder for rename action */
-          }}
+          onRename={onRename || (() => {})}
           onDelete={onDelete || (() => {})}
         />
       </div>

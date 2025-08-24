@@ -105,6 +105,13 @@ export interface ConversationItemDisplayProps {
   style?: React.CSSProperties;
 
   /**
+   * Optional callback for rename conversation action.
+   * Called when the user selects "Rename" from the context menu.
+   * Should handle renaming the conversation, typically with a dialog.
+   */
+  onRename?: () => void;
+
+  /**
    * Optional callback for delete conversation action.
    * Called when the user selects "Delete" from the context menu.
    * Should handle removing the conversation, typically with confirmation.

@@ -3,6 +3,7 @@ import {
   ConversationViewModel,
 } from "@fishbowl-ai/ui-shared";
 import React, { useState, useCallback } from "react";
+import { type Conversation } from "@fishbowl-ai/shared";
 import { useConversations } from "../../hooks/conversations/useConversations";
 import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
 import { cn } from "../../lib/utils";
@@ -10,6 +11,7 @@ import { NewConversationButton } from "../conversations/NewConversationButton";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 import { DeleteConversationModal } from "./DeleteConversationModal";
+import { RenameConversationModal } from "../modals/RenameConversationModal";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 
 /**
@@ -30,6 +32,11 @@ export function SidebarContainerDisplay({
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [conversationToDelete, setConversationToDelete] =
     useState<ConversationViewModel | null>(null);
+
+  // Modal state for rename
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [conversationToRename, setConversationToRename] =
+    useState<Conversation | null>(null);
 
   // Initialize hooks for conversation management
   const {
@@ -85,6 +92,21 @@ export function SidebarContainerDisplay({
       setDeleteModalOpen(true);
     },
     [],
+  );
+
+  // Handle rename conversation with modal
+  const handleRenameClick = useCallback(
+    (conversation: ConversationViewModel) => {
+      // Convert ConversationViewModel to Conversation for the modal
+      const fullConversation = conversations.find(
+        (c) => c.id === conversation.id,
+      );
+      if (fullConversation) {
+        setConversationToRename(fullConversation);
+        setRenameModalOpen(true);
+      }
+    },
+    [conversations],
   );
 
   const handleDeleteConversation = useCallback(
@@ -157,6 +179,7 @@ export function SidebarContainerDisplay({
               conversation={conv}
               appearanceState={conv.isActive ? "active" : "inactive"}
               showUnreadIndicator={false}
+              onRename={() => handleRenameClick(conv)}
               onDelete={() => handleDeleteClick(conv)}
             />
           ))
@@ -180,6 +203,20 @@ export function SidebarContainerDisplay({
           onOpenChange={setDeleteModalOpen}
         />
       )}
+
+      {/* Rename Conversation Modal */}
+      <RenameConversationModal
+        conversation={conversationToRename}
+        open={renameModalOpen}
+        onOpenChange={(open) => {
+          setRenameModalOpen(open);
+          if (!open) {
+            setConversationToRename(null);
+            // Refresh conversations list to show updated title
+            void refetch();
+          }
+        }}
+      />
     </>
   );
 
