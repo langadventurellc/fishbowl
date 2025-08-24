@@ -1,13 +1,29 @@
 ---
 id: T-expose-delete-method-in
 title: Expose delete method in preload script
-status: open
+status: done
 priority: high
 parent: F-delete-conversation-with
 prerequisites:
   - T-implement-delete-ipc-handler
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts: Added ConversationsDeleteRequest and
+    ConversationsDeleteResponse imports and implemented the delete method in the
+    conversations API following existing patterns with proper error handling and
+    TypeScript types
+  apps/desktop/src/electron/__tests__/preload.conversations.test.ts:
+    Added comprehensive unit tests for the delete method including
+    success/failure scenarios, error handling, IPC communication errors,
+    contextBridge integration, and error logging verification
+log:
+  - Successfully exposed the delete method in the preload script to enable the
+    frontend to call the IPC handler for deleting conversations. The
+    implementation follows the existing patterns established by create, list,
+    and get methods with proper error handling, TypeScript typing, and
+    comprehensive test coverage. All quality checks pass including linting,
+    formatting, and type checking. The delete method correctly invokes
+    CONVERSATION_CHANNELS.DELETE with the conversation ID parameter and returns
+    a Promise&lt;boolean&gt; as specified in the ConversationsAPI interface.
 schema: v1.0
 childrenIds: []
 created: 2025-08-24T19:51:13.484Z

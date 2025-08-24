@@ -44,6 +44,8 @@ import type {
   ConversationsListResponse,
   ConversationsGetRequest,
   ConversationsGetResponse,
+  ConversationsDeleteRequest,
+  ConversationsDeleteResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -610,6 +612,29 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error getting conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    delete: async (id: string): Promise<boolean> => {
+      try {
+        const request: ConversationsDeleteRequest = { id };
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_CHANNELS.DELETE,
+          request,
+        )) as ConversationsDeleteResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to delete conversation",
+          );
+        }
+        return response.data || false;
+      } catch (error) {
+        logger.error(
+          "Error deleting conversation:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error
