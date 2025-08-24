@@ -88,4 +88,11 @@ export interface FileSystemBridge {
    * @returns Promise resolving when directory creation completes
    */
   ensureDirectoryExists?(path: string): Promise<void>;
+
+  /**
+   * List directory contents.
+   * @param path - Directory path to read
+   * @returns Promise resolving to array of file/directory names
+   */
+  readdir?(path: string): Promise<string[]>;
 }

@@ -132,8 +132,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libnss3-dev libatk-bridge2.0-dev libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxrandr2 libgbm1 libxss1 libasound2t64 xvfb
 
+      - name: Install build dependencies for better-sqlite3
+        run: |
+          sudo apt-get install -y python3 python3-dev build-essential
+          sudo ln -sf /usr/bin/python3 /usr/bin/python
+
       - name: Install Playwright browsers
         run: pnpm --filter=@fishbowl-ai/desktop-e2e-tests exec playwright install --with-deps
+
+      - name: Rebuild better-sqlite3 for Electron
+        run: pnpm --filter=@fishbowl-ai/desktop exec npx electron-rebuild -f -w better-sqlite3
 
       - name: Reinstall Electron to ensure clean binary
         run: |

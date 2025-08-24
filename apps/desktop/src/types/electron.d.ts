@@ -1,3 +1,5 @@
+import type { ConversationsAPI } from "./ConversationsAPI";
+
 export interface ElectronAPI {
   platform: string;
   versions: {
@@ -189,6 +191,11 @@ export interface ElectronAPI {
      */
     reset(): Promise<import("@fishbowl-ai/shared").PersistedAgentsSettingsData>;
   };
+  /**
+   * Conversations operations for managing conversation data.
+   * Provides CRUD operations for conversations through IPC handlers.
+   */
+  conversations: ConversationsAPI;
 }
 
 declare global {

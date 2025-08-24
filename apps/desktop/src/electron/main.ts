@@ -1,4 +1,11 @@
-import { app, BrowserWindow, globalShortcut, ipcMain, shell } from "electron";
+import {
+  app,
+  BrowserWindow,
+  dialog,
+  globalShortcut,
+  ipcMain,
+  shell,
+} from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { MainProcessServices } from "../main/services/MainProcessServices.js";
@@ -9,6 +16,7 @@ import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
 import { setupLlmModelsHandlers } from "./handlers/llmModelsHandlers.js";
 import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
 import { setupAgentsHandlers } from "./agentsHandlers.js";
+import { setupConversationsHandlers } from "./conversationsHandlers.js";
 import { setupRolesHandlers } from "./rolesHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
 import { LlmStorageService } from "./services/LlmStorageService.js";
@@ -114,6 +122,47 @@ function openSettingsModal(): void {
   }
 }
 
+/**
+ * Initialize the database connection during app startup.
+ * Ensures database is connected and ready before the UI opens.
+ *
+ * @param services - The main process services container
+ * @throws {Error} Exits the application if database initialization fails
+ */
+async function initializeDatabase(
+  services: MainProcessServices,
+): Promise<void> {
+  services.logger.info("Verifying database connection...");
+
+  try {
+    // Database is connected in constructor, verify it's working
+    const isConnected = services.databaseBridge.isConnected?.();
+    if (!isConnected) {
+      throw new Error("Database connection verification failed");
+    }
+
+    // Test the connection with a simple query
+    await services.databaseBridge.query("SELECT 1");
+
+    services.logger.info("Database verified successfully");
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    const dbError = error instanceof Error ? error : new Error(errorMessage);
+
+    services.logger.error("Failed to verify database:", dbError);
+
+    // Show user-friendly error dialog
+    dialog.showErrorBox(
+      "Database Initialization Failed",
+      `Unable to initialize the application database.\n\n${errorMessage}\n\nThe application will now exit.`,
+    );
+
+    // Exit application
+    app.quit();
+    throw error; // Re-throw to prevent further execution
+  }
+}
+
 // eslint-disable-next-line statement-count/function-statement-count-warn, statement-count/function-statement-count-error
 app.whenReady().then(async () => {
   // Initialize main process services container
@@ -127,6 +176,41 @@ app.whenReady().then(async () => {
   } catch (error) {
     // Cannot use structured logger here since service container initialization failed
     console.error("Failed to initialize main process services:", error);
+  }
+
+  // Initialize database before creating the main window
+  if (mainProcessServices) {
+    await initializeDatabase(mainProcessServices);
+
+    // Run database migrations after database initialization
+    try {
+      await mainProcessServices.runDatabaseMigrations();
+      mainProcessServices.logger.info(
+        "Database migrations integration completed successfully",
+      );
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+
+      mainProcessServices.logger.error(
+        "Database migrations failed during startup:",
+        error as Error,
+      );
+
+      // Show user-friendly error dialog
+      dialog.showErrorBox(
+        "Database Migration Failed",
+        `Unable to update the application database.
+
+${errorMessage}
+
+The application will now exit.`,
+      );
+
+      // Exit application
+      app.quit();
+      return; // Prevent further execution
+    }
   }
 
   createMainWindow();
@@ -331,6 +415,22 @@ app.whenReady().then(async () => {
     // Continue startup - app can function without agents handlers
   }
 
+  // Setup Conversations IPC handlers
+  if (mainProcessServices) {
+    try {
+      setupConversationsHandlers(mainProcessServices);
+      mainProcessServices.logger.debug(
+        "Conversations IPC handlers registered successfully",
+      );
+    } catch (error) {
+      mainProcessServices.logger.error(
+        "Failed to register conversations IPC handlers",
+        error as Error,
+      );
+      // Continue startup - app can function without conversations handlers
+    }
+  }
+
   // LLM config handlers are now registered earlier in the startup process
 
   // Setup application menu after window creation
@@ -357,10 +457,57 @@ app.on("window-all-closed", () => {
   }
 });
 
-app.on("before-quit", () => {
+app.on("before-quit", async (event) => {
   // Clean up global shortcuts
   globalShortcut.unregisterAll();
   mainWindow = null;
+
+  // Close database connection if services are available
+  if (mainProcessServices?.databaseBridge) {
+    event.preventDefault(); // Prevent immediate quit to allow cleanup
+
+    try {
+      mainProcessServices.logger.info("Closing database connection...");
+
+      // Create timeout promise for 2-second limit
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => {
+          reject(
+            new Error("Database close operation timed out after 2 seconds"),
+          );
+        }, 2000);
+      });
+
+      // Race between database close and timeout
+      await Promise.race([
+        mainProcessServices.databaseBridge.close(),
+        timeoutPromise,
+      ]);
+
+      mainProcessServices.logger.info(
+        "Database connection closed successfully",
+      );
+    } catch (error) {
+      const dbError = error instanceof Error ? error : new Error(String(error));
+
+      if (dbError.message.includes("timed out")) {
+        mainProcessServices.logger.warn(
+          "Database close timed out - forcing application shutdown",
+          { error: dbError.message, stack: dbError.stack },
+        );
+      } else {
+        mainProcessServices.logger.error(
+          "Error closing database connection:",
+          dbError,
+        );
+      }
+      // Don't prevent shutdown on database close errors or timeout
+    } finally {
+      // Clear services reference and allow quit
+      mainProcessServices = null;
+      app.quit();
+    }
+  }
 });
 
 // Export for use by menu and keyboard shortcut handlers

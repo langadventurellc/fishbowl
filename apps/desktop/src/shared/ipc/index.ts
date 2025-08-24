@@ -28,6 +28,10 @@ export type { LlmConfigChannel } from "./llmConfigConstants";
 export { LLM_MODELS_CHANNELS } from "./llmModelsConstants";
 export type { LlmModelsChannelType } from "./llmModelsConstants";
 
+// Conversations constants
+export { CONVERSATION_CHANNELS } from "./conversationsConstants";
+export type { ConversationsChannelType } from "./conversationsConstants";
+
 // Base types
 export type { IPCResponse } from "./base";
 export type { SerializableError } from "./types";
@@ -61,6 +65,13 @@ export type { LlmConfigListRequest } from "./llmConfig/listRequest";
 export type { LlmConfigInitializeRequest } from "./llmConfig/initializeRequest";
 export type { LlmConfigRefreshCacheRequest } from "./llmConfig/refreshCacheRequest";
 
+// Conversations request types
+export type { ConversationsCreateRequest } from "./conversations/createRequest";
+export type { ConversationsListRequest } from "./conversations/listRequest";
+export type { ConversationsGetRequest } from "./conversations/getRequest";
+export type { ConversationsUpdateRequest } from "./conversations/updateRequest";
+export type { ConversationsDeleteRequest } from "./conversations/deleteRequest";
+
 // Response types
 export type { SettingsLoadResponse } from "./loadResponse";
 export type { SettingsSaveResponse } from "./saveResponse";
@@ -90,6 +101,13 @@ export type { LlmConfigDeleteResponse } from "./llmConfig/deleteResponse";
 export type { LlmConfigListResponse } from "./llmConfig/listResponse";
 export type { LlmConfigInitializeResponse } from "./llmConfig/initializeResponse";
 export type { LlmConfigRefreshCacheResponse } from "./llmConfig/refreshCacheResponse";
+
+// Conversations response types
+export type { ConversationsCreateResponse } from "./conversations/createResponse";
+export type { ConversationsListResponse } from "./conversations/listResponse";
+export type { ConversationsGetResponse } from "./conversations/getResponse";
+export type { ConversationsUpdateResponse } from "./conversations/updateResponse";
+export type { ConversationsDeleteResponse } from "./conversations/deleteResponse";
 
 // LLM Models request types
 export type { LlmModelsSaveRequest } from "./llmModels/saveRequest";

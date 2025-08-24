@@ -209,4 +209,30 @@ export class NodeFileSystemBridge implements FileSystemBridge {
       }
     }
   }
+
+  /**
+   * List directory contents using fs.readdir.
+   * Returns array of file and directory names.
+   */
+  async readdir(dirPath: string): Promise<string[]> {
+    // Validate original path first, then sanitize
+    if (!validatePath(this.pathUtils, dirPath)) {
+      throw new PathValidationError(
+        dirPath,
+        "readdir",
+        "Invalid directory path",
+      );
+    }
+    const sanitized = sanitizePath(this.pathUtils, dirPath);
+
+    try {
+      return await fs.readdir(sanitized);
+    } catch (error) {
+      throw ErrorFactory.fromNodeError(
+        error as SystemError,
+        "readdir",
+        sanitized,
+      );
+    }
+  }
 }
