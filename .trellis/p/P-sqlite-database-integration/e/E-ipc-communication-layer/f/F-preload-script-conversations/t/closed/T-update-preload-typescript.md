@@ -1,13 +1,30 @@
 ---
 id: T-update-preload-typescript
 title: Update preload TypeScript definitions
-status: open
+status: done
 priority: medium
 parent: F-preload-script-conversations
 prerequisites:
   - T-add-conversations-api-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/types/ConversationsAPI.ts: Created new ConversationsAPI
+    interface with typed methods for create, list, get operations and
+    future-ready optional update/delete methods. Includes comprehensive JSDoc
+    documentation and proper type imports from shared package.
+  apps/desktop/src/types/electron.d.ts:
+    Updated to import and use ConversationsAPI
+    interface instead of inline definition, maintaining type safety while
+    following single-export linting rules. Fixed multiple exports error by
+    separating concerns.
+log:
+  - Successfully updated TypeScript definitions for the preload script
+    conversations API. Created a dedicated ConversationsAPI interface with all
+    required methods (create, list, get) and future-ready optional methods
+    (update, delete). The interface includes proper JSDoc documentation and uses
+    imported types from the shared package for type safety. Updated the
+    ElectronAPI interface to use the new ConversationsAPI type, ensuring
+    IntelliSense support and type safety across the main-renderer process
+    boundary. All acceptance criteria met and quality checks passing.
 schema: v1.0
 childrenIds: []
 created: 2025-08-24T00:05:11.839Z

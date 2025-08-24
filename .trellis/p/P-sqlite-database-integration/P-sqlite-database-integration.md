@@ -371,11 +371,18 @@ affectedFiles:
     and provides comprehensive error logging.
   apps/desktop/src/types/electron.d.ts: Extended ElectronAPI interface with
     conversations property containing typed method definitions for create, list,
-    and get operations with proper TypeScript return types.
+    and get operations with proper TypeScript return types.; Updated to import
+    and use ConversationsAPI interface instead of inline definition, maintaining
+    type safety while following single-export linting rules. Fixed multiple
+    exports error by separating concerns.
   apps/desktop/src/electron/__tests__/preload.conversations.test.ts:
     Created comprehensive unit tests for conversations preload API covering all
     methods, error scenarios, contextBridge integration, and logging behavior.
     25 tests with 100% coverage.
+  apps/desktop/src/types/ConversationsAPI.ts: Created new ConversationsAPI
+    interface with typed methods for create, list, get operations and
+    future-ready optional update/delete methods. Includes comprehensive JSDoc
+    documentation and proper type imports from shared package.
 log: []
 schema: v1.0
 childrenIds:
