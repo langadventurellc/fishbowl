@@ -43,3 +43,24 @@ Object.defineProperty(window, "innerWidth", {
   value: 1024,
   writable: true,
 });
+
+// Suppress React 19 act warnings in tests
+// These warnings are known issues with React 19 + Testing Library for async hook state updates
+// See: https://github.com/testing-library/react-testing-library/issues/1051
+const originalError = console.error;
+global.beforeEach(() => {
+  console.error = (...args) => {
+    if (
+      typeof args[0] === "string" &&
+      args[0].includes("An update to") &&
+      args[0].includes("inside a test was not wrapped in act")
+    ) {
+      return;
+    }
+    originalError.call(console, ...args);
+  };
+});
+
+global.afterEach(() => {
+  console.error = originalError;
+});

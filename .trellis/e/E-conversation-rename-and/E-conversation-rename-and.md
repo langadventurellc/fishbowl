@@ -71,6 +71,13 @@ affectedFiles:
     Comprehensive unit tests for useUpdateConversation hook covering success
     scenarios, error handling, loading states, environment validation, and
     memory cleanup (27 test cases)
+  apps/desktop/src/hooks/conversations/useDeleteConversation.ts:
+    React hook for deleting conversations with loading states, error handling,
+    and IPC communication following useCreateConversation pattern
+  apps/desktop/src/hooks/conversations/__tests__/useDeleteConversation.test.tsx:
+    Comprehensive unit tests covering success/failure scenarios, loading states,
+    error handling, environment checks, and function stability
+  apps/desktop/src/hooks/conversations/index.ts: Barrel export file properly exports useDeleteConversation hook
 log: []
 schema: v1.0
 childrenIds:

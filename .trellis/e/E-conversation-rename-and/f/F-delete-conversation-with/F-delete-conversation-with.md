@@ -36,12 +36,19 @@ affectedFiles:
   apps/desktop/src/components/sidebar/ConversationItemDisplay.tsx:
     Updated component to pass onDelete prop to ConversationContextMenu for modal
     integration
+  apps/desktop/src/hooks/conversations/useDeleteConversation.ts:
+    React hook for deleting conversations with loading states, error handling,
+    and IPC communication following useCreateConversation pattern
+  apps/desktop/src/hooks/conversations/__tests__/useDeleteConversation.test.tsx:
+    Comprehensive unit tests covering success/failure scenarios, loading states,
+    error handling, environment checks, and function stability
+  apps/desktop/src/hooks/conversations/index.ts: Barrel export file properly exports useDeleteConversation hook
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-deleteconversationmodal
   - T-create-usedeleteconversation
   - T-wire-up-delete-modal-and
+  - T-create-deleteconversationmodal
   - T-expose-delete-method-in
   - T-implement-delete-ipc-handler
 created: 2025-08-24T19:46:00.633Z
