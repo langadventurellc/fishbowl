@@ -1,13 +1,27 @@
 ---
 id: F-basic-e2e-tests-for-new
 title: Basic E2E Tests for New Conversation Button
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  tests/desktop/package.json: Added better-sqlite3 and @types/better-sqlite3
+    dependencies for database testing functionality
+  tests/desktop/helpers/database/resetDatabase.ts:
+    Created resetDatabase function
+    that deletes the database file to reset state between tests
+  tests/desktop/helpers/database/queryDatabase.ts: Created generic queryDatabase
+    function for executing SELECT queries with proper connection management
+  tests/desktop/helpers/database/queryConversations.ts: Created convenience
+    function for querying conversations table with proper TypeScript typing
+  tests/desktop/helpers/database/index.ts: Created barrel export file for clean imports of all database helpers
+  tests/desktop/helpers/index.ts: Added export for database helpers to main helpers barrel file
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-database-test-helper
+  - T-create-e2e-test-for-new
+  - T-setup-test-infrastructure-and
 created: 2025-08-24T03:35:24.465Z
 updated: 2025-08-24T03:35:24.465Z
 ---
