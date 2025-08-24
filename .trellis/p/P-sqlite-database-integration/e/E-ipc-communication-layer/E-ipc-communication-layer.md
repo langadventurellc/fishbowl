@@ -29,6 +29,18 @@ affectedFiles:
     agentsHandlers pattern
   apps/desktop/src/electron/main.ts: Added import for setupConversationsHandlers
     and registered handlers in app initialization with proper error handling
+  apps/desktop/src/electron/preload.ts:
+    Added conversations object to electronAPI
+    with create(), list(), and get() methods. Imported conversation channel
+    constants and types. Each method properly handles success/error responses
+    and provides comprehensive error logging.
+  apps/desktop/src/types/electron.d.ts: Extended ElectronAPI interface with
+    conversations property containing typed method definitions for create, list,
+    and get operations with proper TypeScript return types.
+  apps/desktop/src/electron/__tests__/preload.conversations.test.ts:
+    Created comprehensive unit tests for conversations preload API covering all
+    methods, error scenarios, contextBridge integration, and logging behavior.
+    25 tests with 100% coverage.
 log: []
 schema: v1.0
 childrenIds:

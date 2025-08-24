@@ -1,7 +1,7 @@
 ---
 id: F-main-process-ipc-handlers
 title: Main Process IPC Handlers
-status: in-progress
+status: done
 priority: medium
 parent: E-ipc-communication-layer
 prerequisites:
@@ -12,7 +12,8 @@ affectedFiles:
     agentsHandlers pattern
   apps/desktop/src/electron/main.ts: Added import for setupConversationsHandlers
     and registered handlers in app initialization with proper error handling
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-implement-conversations-ipc

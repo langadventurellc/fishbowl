@@ -9,6 +9,7 @@ import { LLM_MODELS_CHANNELS } from "../shared/ipc/llmModelsConstants";
 import { ROLES_CHANNELS } from "../shared/ipc/rolesConstants";
 import { PERSONALITIES_CHANNELS } from "../shared/ipc/personalitiesConstants";
 import { AGENTS_CHANNELS } from "../shared/ipc/agentsConstants";
+import { CONVERSATION_CHANNELS } from "../shared/ipc/conversationsConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -38,6 +39,11 @@ import type {
   AgentsSaveRequest,
   AgentsSaveResponse,
   AgentsResetResponse,
+  ConversationsCreateRequest,
+  ConversationsCreateResponse,
+  ConversationsListResponse,
+  ConversationsGetRequest,
+  ConversationsGetResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -48,6 +54,7 @@ import type {
   LlmConfig,
   LlmConfigInput,
   LlmConfigMetadata,
+  Conversation,
 } from "@fishbowl-ai/shared";
 import type { SettingsCategory } from "@fishbowl-ai/ui-shared";
 
@@ -533,6 +540,76 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error resetting agents:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  conversations: {
+    create: async (title?: string): Promise<Conversation> => {
+      try {
+        const request: ConversationsCreateRequest = { title };
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_CHANNELS.CREATE,
+          request,
+        )) as ConversationsCreateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to create conversation",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error creating conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    list: async (): Promise<Conversation[]> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_CHANNELS.LIST,
+          {},
+        )) as ConversationsListResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to list conversations",
+          );
+        }
+        return response.data || [];
+      } catch (error) {
+        logger.error(
+          "Error listing conversations:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    get: async (id: string): Promise<Conversation | null> => {
+      try {
+        const request: ConversationsGetRequest = { id };
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_CHANNELS.GET,
+          request,
+        )) as ConversationsGetResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to get conversation",
+          );
+        }
+        return response.data || null;
+      } catch (error) {
+        logger.error(
+          "Error getting conversation:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error
