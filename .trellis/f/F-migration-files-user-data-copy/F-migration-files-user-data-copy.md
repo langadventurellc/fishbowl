@@ -4,10 +4,23 @@ title: Migration Files User Data Copy
 status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts: Added
+    getSourceMigrationsPath() method for environment-aware source path
+    detection, updated getMigrationsPath() to always use userData directory, and
+    implemented validateMigrationPaths() for security validation
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Added comprehensive unit tests for new migration path methods covering
+    packaged apps, development environments, path validation, and error handling
+    scenarios
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-comprehensive-unit-tests
+  - T-implement-migration-file-1
+  - T-implement-source-migration
+  - T-integrate-migration-copying
+  - T-validate-e2e-test-migration
 created: 2025-08-24T05:33:23.346Z
 updated: 2025-08-24T05:33:23.346Z
 ---

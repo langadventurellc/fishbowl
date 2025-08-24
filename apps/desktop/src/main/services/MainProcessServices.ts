@@ -307,29 +307,118 @@ export class MainProcessServices {
   }
 
   /**
-   * Get the path to the migrations directory.
-   * Resolves correctly for both development and production environments.
+   * Get the path to the migrations directory in userData.
+   * Always returns userData/migrations for consistent behavior across all environments.
    *
-   * @returns Migrations directory path
+   * @returns Migrations directory path in userData
    */
   private getMigrationsPath(): string {
+    // Always return userData path for consistent behavior
+    const migrationsPath = path.join(app.getPath("userData"), "migrations");
+    this.logger.debug("Using userData migrations path", {
+      path: migrationsPath,
+    });
+    return migrationsPath;
+  }
+
+  /**
+   * Determines the source path for migration files based on execution environment.
+   *
+   * In packaged apps, migrations are bundled in app resources.
+   * In development/E2E, migrations are in the project root.
+   *
+   * @returns Path to source migration files
+   */
+  private getSourceMigrationsPath(): string {
     if (app.isPackaged) {
-      // Production: use app resources path
-      const appPath = app.getAppPath();
-      const migrationsPath = path.join(appPath, "migrations");
-      this.logger.debug("Using packaged migrations path", {
-        path: migrationsPath,
+      // Packaged app: migrations bundled in app resources
+      const sourcePath = path.join(app.getAppPath(), "migrations");
+      this.logger.debug("Using packaged migrations source path", {
+        path: sourcePath,
       });
-      return migrationsPath;
+      return sourcePath;
     } else {
-      // Development: use project root migrations
+      // Development/E2E: find project root migrations
       const appPath = app.getAppPath();
       const projectRoot = path.resolve(appPath, "..", "..");
-      const migrationsPath = path.join(projectRoot, "migrations");
-      this.logger.debug("Using development migrations path", {
-        path: migrationsPath,
+      const sourcePath = path.join(projectRoot, "migrations");
+      this.logger.debug("Using development migrations source path", {
+        path: sourcePath,
+        appPath,
+        projectRoot,
       });
-      return migrationsPath;
+      return sourcePath;
+    }
+  }
+
+  /**
+   * Validates migration source and destination paths for security and correctness.
+   *
+   * Ensures source path exists and contains .sql files, and destination path
+   * is within the userData directory to prevent directory traversal attacks.
+   *
+   * @param sourcePath Path to source migration files
+   * @param destinationPath Path to destination migration files
+   * @throws Error if validation fails
+   */
+  private async validateMigrationPaths(
+    sourcePath: string,
+    destinationPath: string,
+  ): Promise<void> {
+    try {
+      // Validate source path exists using getDirectoryStats
+      const sourceStats =
+        await this.fileSystemBridge.getDirectoryStats?.(sourcePath);
+      if (!sourceStats?.exists || !sourceStats?.isDirectory) {
+        this.logger.warn(
+          "Source migrations path does not exist or is not a directory",
+          {
+            sourcePath,
+            exists: sourceStats?.exists ?? false,
+            isDirectory: sourceStats?.isDirectory ?? false,
+          },
+        );
+        throw new Error(`Source migrations directory not found: ${sourcePath}`);
+      }
+
+      // Validate destination path is within userData directory
+      const userDataPath = app.getPath("userData");
+      const resolvedDestination = path.resolve(destinationPath);
+      const resolvedUserData = path.resolve(userDataPath);
+
+      if (!resolvedDestination.startsWith(resolvedUserData)) {
+        this.logger.error("Destination path outside userData directory");
+        throw new Error(
+          "Invalid destination path: must be within userData directory",
+        );
+      }
+
+      // Check if source contains .sql files using readdir
+      const sourceFiles =
+        (await this.fileSystemBridge.readdir?.(sourcePath)) ?? [];
+      const sqlFiles = sourceFiles.filter((file: string) =>
+        file.endsWith(".sql"),
+      );
+
+      if (sqlFiles.length === 0) {
+        this.logger.warn("No .sql files found in source migrations path", {
+          sourcePath,
+          filesFound: sourceFiles.length,
+        });
+        throw new Error("No migration files (.sql) found in source directory");
+      }
+
+      this.logger.debug("Migration paths validated successfully", {
+        sourcePath,
+        destinationPath: resolvedDestination,
+        sqlFilesFound: sqlFiles.length,
+      });
+    } catch (error) {
+      this.logger.error(
+        "Migration path validation failed",
+        error instanceof Error ? error : undefined,
+      );
+      throw error;
     }
   }
 }

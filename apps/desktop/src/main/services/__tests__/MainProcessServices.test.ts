@@ -516,4 +516,241 @@ describe("MainProcessServices", () => {
       expect(mockMigrationService.runMigrations).toHaveBeenCalled();
     });
   });
+
+  describe("migration path methods", () => {
+    describe("getSourceMigrationsPath", () => {
+      it("should return app resources path for packaged app", () => {
+        // Mock app.isPackaged as true
+        const { app } = require("electron");
+        app.isPackaged = true;
+        app.getAppPath = jest.fn(() => "/packaged/app");
+
+        // Need to recreate services to pick up the mocked isPackaged value
+        const packagedServices = new MainProcessServices();
+
+        // Access the private method via bracket notation for testing
+        const sourcePath = (packagedServices as any).getSourceMigrationsPath();
+
+        expect(sourcePath).toBe("/packaged/app/migrations");
+        expect(app.getAppPath).toHaveBeenCalled();
+      });
+
+      it("should return project root path for development app", () => {
+        const { app } = require("electron");
+        app.isPackaged = false;
+        app.getAppPath = jest.fn(() => "/dev/apps/desktop");
+
+        const devServices = new MainProcessServices();
+        const sourcePath = (devServices as any).getSourceMigrationsPath();
+
+        expect(sourcePath).toBe("/dev/migrations");
+        expect(app.getAppPath).toHaveBeenCalled();
+      });
+
+      it("should log appropriate debug information", () => {
+        const { app } = require("electron");
+        app.isPackaged = true;
+        app.getAppPath = jest.fn(() => "/test/app");
+
+        const testServices = new MainProcessServices();
+        const mockLogger = {
+          debug: jest.fn(),
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+        (testServices as any).logger = mockLogger;
+
+        (testServices as any).getSourceMigrationsPath();
+
+        expect(mockLogger.debug).toHaveBeenCalledWith(
+          "Using packaged migrations source path",
+          { path: "/test/app/migrations" },
+        );
+      });
+    });
+
+    describe("getMigrationsPath", () => {
+      it("should always return userData/migrations path", () => {
+        const { app } = require("electron");
+        app.getPath = jest.fn((type: string) => {
+          if (type === "userData") return "/user/data";
+          return "/mock/path";
+        });
+
+        const testServices = new MainProcessServices();
+        const migrationsPath = (testServices as any).getMigrationsPath();
+
+        expect(migrationsPath).toBe("/user/data/migrations");
+        expect(app.getPath).toHaveBeenCalledWith("userData");
+      });
+
+      it("should log debug information", () => {
+        const { app } = require("electron");
+        app.getPath = jest.fn((type: string) => {
+          if (type === "userData") return "/mock/userdata";
+          return "/mock/path";
+        });
+
+        const testServices = new MainProcessServices();
+        const mockLogger = {
+          debug: jest.fn(),
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+        (testServices as any).logger = mockLogger;
+
+        (testServices as any).getMigrationsPath();
+
+        expect(mockLogger.debug).toHaveBeenCalledWith(
+          "Using userData migrations path",
+          { path: "/mock/userdata/migrations" },
+        );
+      });
+    });
+
+    describe("validateMigrationPaths", () => {
+      let testServices: MainProcessServices;
+      let mockFileSystemBridge: any;
+      let mockLogger: any;
+
+      beforeEach(() => {
+        testServices = new MainProcessServices();
+        mockLogger = {
+          debug: jest.fn(),
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+        mockFileSystemBridge = {
+          getDirectoryStats: jest.fn(),
+          readdir: jest.fn(),
+        };
+        (testServices as any).logger = mockLogger;
+        (testServices as any).fileSystemBridge = mockFileSystemBridge;
+      });
+
+      it("should validate existing source directory with SQL files", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue([
+          "001_initial.sql",
+          "002_add_users.sql",
+          "readme.txt",
+        ]);
+
+        await expect(
+          (testServices as any).validateMigrationPaths(
+            "/source/migrations",
+            "/mock/userdata/migrations",
+          ),
+        ).resolves.toBeUndefined();
+
+        expect(mockFileSystemBridge.getDirectoryStats).toHaveBeenCalledWith(
+          "/source/migrations",
+        );
+        expect(mockFileSystemBridge.readdir).toHaveBeenCalledWith(
+          "/source/migrations",
+        );
+        expect(mockLogger.debug).toHaveBeenCalledWith(
+          "Migration paths validated successfully",
+          expect.objectContaining({
+            sourcePath: "/source/migrations",
+            sqlFilesFound: 2,
+          }),
+        );
+      });
+
+      it("should throw error if source directory does not exist", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: false,
+          isDirectory: false,
+        });
+
+        await expect(
+          (testServices as any).validateMigrationPaths(
+            "/nonexistent/migrations",
+            "/mock/userdata/migrations",
+          ),
+        ).rejects.toThrow("Source migrations directory not found");
+
+        expect(mockLogger.warn).toHaveBeenCalledWith(
+          "Source migrations path does not exist or is not a directory",
+          expect.objectContaining({
+            sourcePath: "/nonexistent/migrations",
+            exists: false,
+            isDirectory: false,
+          }),
+        );
+      });
+
+      it("should throw error if destination path is outside userData", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+
+        await expect(
+          (testServices as any).validateMigrationPaths(
+            "/source/migrations",
+            "/dangerous/path/migrations",
+          ),
+        ).rejects.toThrow(
+          "Invalid destination path: must be within userData directory",
+        );
+
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          "Destination path outside userData directory",
+        );
+      });
+
+      it("should throw error if no SQL files found in source", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue([
+          "readme.txt",
+          "config.json",
+        ]);
+
+        await expect(
+          (testServices as any).validateMigrationPaths(
+            "/source/migrations",
+            "/mock/userdata/migrations",
+          ),
+        ).rejects.toThrow(
+          "No migration files (.sql) found in source directory",
+        );
+
+        expect(mockLogger.warn).toHaveBeenCalledWith(
+          "No .sql files found in source migrations path",
+          expect.objectContaining({
+            sourcePath: "/source/migrations",
+            filesFound: 2,
+          }),
+        );
+      });
+
+      it("should handle file system errors gracefully", async () => {
+        const fsError = new Error("File system access denied");
+        mockFileSystemBridge.getDirectoryStats.mockRejectedValue(fsError);
+
+        await expect(
+          (testServices as any).validateMigrationPaths(
+            "/source/migrations",
+            "/mock/userdata/migrations",
+          ),
+        ).rejects.toThrow("File system access denied");
+
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          "Migration path validation failed",
+          fsError,
+        );
+      });
+    });
+  });
 });
