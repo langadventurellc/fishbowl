@@ -94,9 +94,6 @@ export function ConversationItemDisplay({
           onRename={() => {
             /* Placeholder for rename action */
           }}
-          onDuplicate={() => {
-            /* Placeholder for duplicate action */
-          }}
           onDelete={() => {
             /* Placeholder for delete action */
           }}
