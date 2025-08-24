@@ -1,15 +1,19 @@
 ---
 id: E-ui-integration
 title: UI Integration
-status: open
+status: in-progress
 priority: medium
 parent: P-sqlite-database-integration
 prerequisites:
   - E-ipc-communication-layer
-affectedFiles: []
+affectedFiles:
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Replaced placeholder Button with NewConversationButton component, added
+    temporary onClick handler that logs to console, removed unused imports
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-core-new-conversation-button
 created: 2025-08-22T00:47:53.801Z
 updated: 2025-08-22T00:47:53.801Z
 ---

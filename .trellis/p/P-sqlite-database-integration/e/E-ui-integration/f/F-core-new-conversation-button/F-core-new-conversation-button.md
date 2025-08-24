@@ -1,14 +1,20 @@
 ---
 id: F-core-new-conversation-button
 title: Core New Conversation Button Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-ui-integration
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Replaced placeholder Button with NewConversationButton component, added
+    temporary onClick handler that logs to console, removed unused imports
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-connect-usecreateconversation
+  - T-integrate-newconversationbutto
+  - T-integrate-useconversations
 created: 2025-08-24T02:02:10.709Z
 updated: 2025-08-24T02:02:10.709Z
 ---

@@ -1,10 +1,9 @@
 import { SidebarContainerDisplayProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
-import { useServices } from "../../contexts";
 import { cn } from "../../lib/utils";
-import { Button } from "../input/Button";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
+import { NewConversationButton } from "../conversations/NewConversationButton";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
@@ -37,7 +36,10 @@ export function SidebarContainerDisplay({
   style = {},
   conversations,
 }: SidebarContainerDisplayProps) {
-  const { logger } = useServices();
+  // Temporary onClick handler for NewConversationButton
+  const handleNewConversation = async () => {
+    console.log("New conversation clicked");
+  };
   // Width configurations matching design requirements
   const getWidthForVariant = (variant: typeof widthVariant) => {
     switch (variant) {
@@ -82,14 +84,11 @@ export function SidebarContainerDisplay({
       </div>
 
       <div className="mt-auto">
-        <Button
-          variant="primary"
-          size="small"
-          onClick={() => logger.info("Demo: New conversation")}
-          aria-label="Create new conversation"
-        >
-          New Conversation
-        </Button>
+        <NewConversationButton
+          onClick={handleNewConversation}
+          loading={false}
+          disabled={false}
+        />
       </div>
     </>
   );
