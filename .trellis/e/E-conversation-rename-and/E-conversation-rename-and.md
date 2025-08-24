@@ -24,11 +24,21 @@ affectedFiles:
   apps/desktop/src/electron/preload.ts: Added ConversationsDeleteRequest and
     ConversationsDeleteResponse imports and implemented the delete method in the
     conversations API following existing patterns with proper error handling and
-    TypeScript types
+    TypeScript types; Added update method to electronAPI.conversations object
+    following existing create/list/get/delete patterns. Imported
+    ConversationsUpdateRequest, ConversationsUpdateResponse, and
+    UpdateConversationInput types. Method properly invokes
+    CONVERSATION_CHANNELS.UPDATE with correct parameters, handles success/error
+    responses, and includes comprehensive error logging.
   apps/desktop/src/electron/__tests__/preload.conversations.test.ts:
     Added comprehensive unit tests for the delete method including
     success/failure scenarios, error handling, IPC communication errors,
-    contextBridge integration, and error logging verification
+    contextBridge integration, and error logging verification; Added
+    comprehensive unit tests for conversations.update method including
+    successful update scenario, error response handling, IPC communication error
+    handling, contextBridge integration verification, and error logging tests.
+    Updated contextBridge integration tests to verify update method is properly
+    exposed. All 38 tests passing including new update method coverage.
 log: []
 schema: v1.0
 childrenIds:

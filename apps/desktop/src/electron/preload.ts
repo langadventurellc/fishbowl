@@ -44,6 +44,8 @@ import type {
   ConversationsListResponse,
   ConversationsGetRequest,
   ConversationsGetResponse,
+  ConversationsUpdateRequest,
+  ConversationsUpdateResponse,
   ConversationsDeleteRequest,
   ConversationsDeleteResponse,
 } from "../shared/ipc/index";
@@ -57,6 +59,7 @@ import type {
   LlmConfigInput,
   LlmConfigMetadata,
   Conversation,
+  UpdateConversationInput,
 } from "@fishbowl-ai/shared";
 import type { SettingsCategory } from "@fishbowl-ai/ui-shared";
 
@@ -612,6 +615,32 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error getting conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    update: async (
+      id: string,
+      input: UpdateConversationInput,
+    ): Promise<Conversation> => {
+      try {
+        const request: ConversationsUpdateRequest = { id, updates: input };
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_CHANNELS.UPDATE,
+          request,
+        )) as ConversationsUpdateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to update conversation",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error updating conversation:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

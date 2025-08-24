@@ -19,14 +19,26 @@ affectedFiles:
     handling, and updated handler registration test to verify UPDATE handler is
     properly registered. All tests follow existing patterns and verify proper
     repository method calls, response formats, and error serialization.
+  apps/desktop/src/electron/preload.ts: Added update method to
+    electronAPI.conversations object following existing create/list/get/delete
+    patterns. Imported ConversationsUpdateRequest, ConversationsUpdateResponse,
+    and UpdateConversationInput types. Method properly invokes
+    CONVERSATION_CHANNELS.UPDATE with correct parameters, handles success/error
+    responses, and includes comprehensive error logging.
+  apps/desktop/src/electron/__tests__/preload.conversations.test.ts:
+    Added comprehensive unit tests for conversations.update method including
+    successful update scenario, error response handling, IPC communication error
+    handling, contextBridge integration verification, and error logging tests.
+    Updated contextBridge integration tests to verify update method is properly
+    exposed. All 38 tests passing including new update method coverage.
 log: []
 schema: v1.0
 childrenIds:
   - T-create-renameconversationmodal
   - T-create-useupdateconversation
   - T-expose-update-method-in
-  - T-implement-update-ipc-handler
   - T-wire-up-rename-modal-in
+  - T-implement-update-ipc-handler
 created: 2025-08-24T19:44:59.011Z
 updated: 2025-08-24T19:44:59.011Z
 ---

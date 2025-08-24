@@ -1,13 +1,31 @@
 ---
 id: T-expose-update-method-in
 title: Expose update method in preload script
-status: open
+status: done
 priority: high
 parent: F-rename-conversation-with
 prerequisites:
   - T-implement-update-ipc-handler
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts: Added update method to
+    electronAPI.conversations object following existing create/list/get/delete
+    patterns. Imported ConversationsUpdateRequest, ConversationsUpdateResponse,
+    and UpdateConversationInput types. Method properly invokes
+    CONVERSATION_CHANNELS.UPDATE with correct parameters, handles success/error
+    responses, and includes comprehensive error logging.
+  apps/desktop/src/electron/__tests__/preload.conversations.test.ts:
+    Added comprehensive unit tests for conversations.update method including
+    successful update scenario, error response handling, IPC communication error
+    handling, contextBridge integration verification, and error logging tests.
+    Updated contextBridge integration tests to verify update method is properly
+    exposed. All 38 tests passing including new update method coverage.
+log:
+  - Exposed update method in preload script to enable the renderer process to
+    call the UPDATE IPC handler for conversation updates. Added complete
+    TypeScript typing with ConversationsAPI interface match. Implemented proper
+    error handling following existing patterns (create/list/get/delete) and
+    comprehensive unit test coverage with 38 passing tests including success
+    cases, error scenarios, and logging verification.
 schema: v1.0
 childrenIds: []
 created: 2025-08-24T19:49:43.030Z
