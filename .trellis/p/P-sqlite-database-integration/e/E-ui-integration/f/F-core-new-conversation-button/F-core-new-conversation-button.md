@@ -7,14 +7,21 @@ parent: E-ui-integration
 prerequisites: []
 affectedFiles:
   apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
-    Replaced placeholder Button with NewConversationButton component, added
-    temporary onClick handler that logs to console, removed unused imports
+    "Replaced placeholder Button with NewConversationButton component, added
+    temporary onClick handler that logs to console, removed unused imports;
+    Added useCreateConversation hook integration: imported hook, initialized
+    with proper destructuring of createConversation, isCreating state, and
+    unused error/reset values (prefixed with underscore). Replaced placeholder
+    onClick handler with async handleNewConversation function that calls
+    createConversation, logs success/error, and includes proper error handling.
+    Connected isCreating state to NewConversationButton's loading and disabled
+    props for proper UI feedback during async operations."
 log: []
 schema: v1.0
 childrenIds:
   - T-connect-usecreateconversation
-  - T-integrate-newconversationbutto
   - T-integrate-useconversations
+  - T-integrate-newconversationbutto
 created: 2025-08-24T02:02:10.709Z
 updated: 2025-08-24T02:02:10.709Z
 ---

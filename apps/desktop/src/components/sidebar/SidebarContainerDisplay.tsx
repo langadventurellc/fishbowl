@@ -4,6 +4,7 @@ import { cn } from "../../lib/utils";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 import { NewConversationButton } from "../conversations/NewConversationButton";
+import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
@@ -36,9 +37,24 @@ export function SidebarContainerDisplay({
   style = {},
   conversations,
 }: SidebarContainerDisplayProps) {
-  // Temporary onClick handler for NewConversationButton
+  // Initialize useCreateConversation hook
+  const {
+    createConversation,
+    isCreating,
+    error: _error,
+    reset: _reset,
+  } = useCreateConversation();
+
+  // Handle new conversation creation
   const handleNewConversation = async () => {
-    console.log("New conversation clicked");
+    try {
+      const result = await createConversation();
+      console.log("Created conversation:", result);
+      // Will trigger list refresh in next task
+    } catch (err) {
+      console.error("Failed to create conversation:", err);
+      // Error handling will be improved in Feature 2
+    }
   };
   // Width configurations matching design requirements
   const getWidthForVariant = (variant: typeof widthVariant) => {
@@ -86,8 +102,8 @@ export function SidebarContainerDisplay({
       <div className="mt-auto">
         <NewConversationButton
           onClick={handleNewConversation}
-          loading={false}
-          disabled={false}
+          loading={isCreating}
+          disabled={isCreating}
         />
       </div>
     </>
