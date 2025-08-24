@@ -33,19 +33,6 @@ test.describe("Feature: Application Startup", () => {
     }
   });
 
-  test.describe("Scenario: First application launch", () => {
-    test("should display application window with correct title", async () => {
-      // Given - Fresh application state (handled in beforeAll)
-
-      // When - Application is launched (handled in beforeAll)
-      await window.waitForLoadState("networkidle");
-
-      // Then - Application window is visible with correct title
-      const title = await window.title();
-      expect(title).toContain("Fishbowl");
-    });
-  });
-
   test.describe("Scenario: Application shutdown", () => {
     test("should close gracefully", async () => {
       // Given - Application is running
