@@ -6,7 +6,7 @@ import {
   type TestElectronApplication,
   type TestWindow,
 } from "../../helpers";
-import { queryConversations } from "../../helpers/database";
+import { queryConversations, resetDatabase } from "../../helpers/database";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -47,11 +47,7 @@ test.describe("Feature: New Conversation Button", () => {
   test.afterEach(async () => {
     // Reset database to ensure clean state for next test
     if (electronApp) {
-      // await resetDatabase(electronApp);
-    }
-
-    // Close the Electron app instance after each test
-    if (electronApp) {
+      await resetDatabase(electronApp);
       await electronApp.close();
     }
   });
