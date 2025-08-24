@@ -753,4 +753,327 @@ describe("MainProcessServices", () => {
       });
     });
   });
+
+  describe("migration copying functionality", () => {
+    describe("ensureMigrationsInUserData", () => {
+      let testServices: MainProcessServices;
+      let mockFileSystemBridge: any;
+      let mockLogger: any;
+
+      beforeEach(() => {
+        testServices = new MainProcessServices();
+        mockLogger = {
+          debug: jest.fn(),
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+        mockFileSystemBridge = {
+          getDirectoryStats: jest.fn(),
+          readdir: jest.fn(),
+          readFile: jest.fn(),
+          writeFile: jest.fn(),
+          ensureDirectoryExists: jest.fn(),
+        };
+        (testServices as any).logger = mockLogger;
+        (testServices as any).fileSystemBridge = mockFileSystemBridge;
+      });
+
+      it("should skip copying if migration files already exist in userData", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue([
+          "001_initial.sql",
+          "002_add_users.sql",
+          "readme.txt",
+        ]);
+
+        await (testServices as any).ensureMigrationsInUserData();
+
+        expect(mockFileSystemBridge.getDirectoryStats).toHaveBeenCalledWith(
+          expect.stringContaining("migrations"),
+        );
+        expect(mockFileSystemBridge.readdir).toHaveBeenCalledWith(
+          expect.stringContaining("migrations"),
+        );
+        expect(mockLogger.debug).toHaveBeenCalledWith(
+          "Migration files already exist in userData",
+          expect.objectContaining({
+            fileCount: 2,
+          }),
+        );
+      });
+
+      it("should trigger copying if no SQL files exist in userData", async () => {
+        mockFileSystemBridge.getDirectoryStats
+          .mockResolvedValueOnce({
+            exists: true,
+            isDirectory: true,
+          }) // userData directory exists but empty
+          .mockResolvedValueOnce({
+            exists: true,
+            isDirectory: true,
+          }); // Source directory exists
+        mockFileSystemBridge.readdir
+          .mockResolvedValueOnce([]) // Empty userData directory
+          .mockResolvedValueOnce(["001_initial.sql"]); // Source directory has files
+        mockFileSystemBridge.readFile.mockResolvedValue("CREATE TABLE users;");
+
+        await (testServices as any).ensureMigrationsInUserData();
+
+        expect(mockFileSystemBridge.ensureDirectoryExists).toHaveBeenCalled();
+        expect(mockFileSystemBridge.writeFile).toHaveBeenCalledWith(
+          expect.stringContaining("001_initial.sql"),
+          "CREATE TABLE users;",
+        );
+      });
+
+      it("should trigger copying if userData directory doesn't exist", async () => {
+        mockFileSystemBridge.getDirectoryStats
+          .mockResolvedValueOnce({
+            exists: false,
+            isDirectory: false,
+          }) // userData migrations doesn't exist
+          .mockResolvedValueOnce({
+            exists: true,
+            isDirectory: true,
+          }); // Source exists
+        mockFileSystemBridge.readdir.mockResolvedValue(["001_initial.sql"]);
+        mockFileSystemBridge.readFile.mockResolvedValue("CREATE TABLE users;");
+
+        await (testServices as any).ensureMigrationsInUserData();
+
+        expect(mockFileSystemBridge.ensureDirectoryExists).toHaveBeenCalled();
+        expect(mockFileSystemBridge.writeFile).toHaveBeenCalled();
+      });
+    });
+
+    describe("copyMigrationsToUserData", () => {
+      let testServices: MainProcessServices;
+      let mockFileSystemBridge: any;
+      let mockLogger: any;
+
+      beforeEach(() => {
+        testServices = new MainProcessServices();
+        mockLogger = {
+          debug: jest.fn(),
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+        mockFileSystemBridge = {
+          getDirectoryStats: jest.fn(),
+          readdir: jest.fn(),
+          readFile: jest.fn(),
+          writeFile: jest.fn(),
+          ensureDirectoryExists: jest.fn(),
+        };
+        (testServices as any).logger = mockLogger;
+        (testServices as any).fileSystemBridge = mockFileSystemBridge;
+      });
+
+      it("should successfully copy migration files from source to destination", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue([
+          "001_initial.sql",
+          "002_add_users.sql",
+          "003_add_indexes.sql",
+          "readme.txt", // Should be filtered out
+        ]);
+        mockFileSystemBridge.readFile
+          .mockResolvedValueOnce("CREATE TABLE conversations;")
+          .mockResolvedValueOnce("CREATE TABLE users;")
+          .mockResolvedValueOnce("CREATE INDEX idx_users_email;");
+
+        await (testServices as any).copyMigrationsToUserData();
+
+        expect(mockFileSystemBridge.ensureDirectoryExists).toHaveBeenCalledWith(
+          expect.stringContaining("migrations"),
+        );
+        expect(mockFileSystemBridge.writeFile).toHaveBeenCalledTimes(3);
+        expect(mockFileSystemBridge.writeFile).toHaveBeenCalledWith(
+          expect.stringContaining("001_initial.sql"),
+          "CREATE TABLE conversations;",
+        );
+        expect(mockFileSystemBridge.writeFile).toHaveBeenCalledWith(
+          expect.stringContaining("002_add_users.sql"),
+          "CREATE TABLE users;",
+        );
+        expect(mockLogger.info).toHaveBeenCalledWith(
+          "Migration files copied successfully",
+          expect.objectContaining({
+            fileCount: 3,
+            durationMs: expect.any(Number),
+          }),
+        );
+      });
+
+      it("should handle missing source directory gracefully", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: false,
+          isDirectory: false,
+        });
+
+        await (testServices as any).copyMigrationsToUserData();
+
+        expect(mockLogger.warn).toHaveBeenCalledWith(
+          "Source migrations directory not found",
+          expect.objectContaining({
+            sourcePath: expect.any(String),
+          }),
+        );
+        expect(mockFileSystemBridge.writeFile).not.toHaveBeenCalled();
+      });
+
+      it("should handle empty source directory gracefully", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue([]);
+
+        await (testServices as any).copyMigrationsToUserData();
+
+        expect(mockLogger.warn).toHaveBeenCalledWith(
+          "No migration files found in source directory",
+          expect.objectContaining({
+            sourcePath: expect.any(String),
+          }),
+        );
+        expect(mockFileSystemBridge.writeFile).not.toHaveBeenCalled();
+      });
+
+      it("should filter files by migration pattern", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue([
+          "001_initial.sql", // Should be copied
+          "002_add_users.sql", // Should be copied
+          "1_invalid.sql", // Should be filtered out (doesn't match pattern)
+          "invalid_migration.sql", // Should be filtered out
+          "readme.txt", // Should be filtered out
+          "config.json", // Should be filtered out
+        ]);
+        mockFileSystemBridge.readFile
+          .mockResolvedValueOnce("CREATE TABLE conversations;")
+          .mockResolvedValueOnce("CREATE TABLE users;");
+
+        await (testServices as any).copyMigrationsToUserData();
+
+        expect(mockFileSystemBridge.writeFile).toHaveBeenCalledTimes(2);
+        expect(mockLogger.info).toHaveBeenCalledWith(
+          "Migration files copied successfully",
+          expect.objectContaining({
+            fileCount: 2,
+          }),
+        );
+      });
+
+      it("should handle file system errors during copying", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue(["001_initial.sql"]);
+        const fsError = new Error("Permission denied");
+        mockFileSystemBridge.readFile.mockRejectedValue(fsError);
+
+        await expect(
+          (testServices as any).copyMigrationsToUserData(),
+        ).rejects.toThrow("Migration file copying failed: Permission denied");
+
+        expect(mockLogger.error).toHaveBeenCalledWith(
+          "Failed to copy migration files",
+          fsError,
+        );
+      });
+
+      it("should track timing performance", async () => {
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue(["001_initial.sql"]);
+        mockFileSystemBridge.readFile.mockResolvedValue("CREATE TABLE users;");
+
+        await (testServices as any).copyMigrationsToUserData();
+
+        expect(mockLogger.info).toHaveBeenCalledWith(
+          "Migration files copied successfully",
+          expect.objectContaining({
+            durationMs: expect.any(Number),
+          }),
+        );
+      });
+    });
+
+    describe("runDatabaseMigrations with file copying", () => {
+      let mockMigrationService: any;
+      let mockFileSystemBridge: any;
+      let mockLogger: any;
+
+      beforeEach(() => {
+        services = new MainProcessServices();
+        mockMigrationService = services.migrationService;
+        mockLogger = {
+          debug: jest.fn(),
+          info: jest.fn(),
+          warn: jest.fn(),
+          error: jest.fn(),
+        };
+        mockFileSystemBridge = {
+          getDirectoryStats: jest.fn(),
+          readdir: jest.fn(),
+          readFile: jest.fn(),
+          writeFile: jest.fn(),
+          ensureDirectoryExists: jest.fn(),
+        };
+        (services as any).logger = mockLogger;
+        (services as any).fileSystemBridge = mockFileSystemBridge;
+      });
+
+      it("should ensure migrations are copied before running migrations", async () => {
+        const mockResult = {
+          success: true,
+          migrationsRun: 2,
+          currentVersion: 2,
+        };
+        mockMigrationService.runMigrations.mockResolvedValue(mockResult);
+
+        // Mock skip scenario (files already exist)
+        mockFileSystemBridge.getDirectoryStats.mockResolvedValue({
+          exists: true,
+          isDirectory: true,
+        });
+        mockFileSystemBridge.readdir.mockResolvedValue(["001_initial.sql"]);
+
+        await services.runDatabaseMigrations();
+
+        expect(mockFileSystemBridge.getDirectoryStats).toHaveBeenCalled();
+        expect(mockMigrationService.runMigrations).toHaveBeenCalled();
+        expect(mockLogger.debug).toHaveBeenCalledWith(
+          "Migration files already exist in userData",
+          expect.any(Object),
+        );
+      });
+
+      it("should handle copying errors during migration run", async () => {
+        const copyError = new Error("File system error");
+        mockFileSystemBridge.getDirectoryStats.mockRejectedValue(copyError);
+
+        await expect(services.runDatabaseMigrations()).rejects.toThrow(
+          "Migration execution failed: File system error",
+        );
+
+        expect(mockMigrationService.runMigrations).not.toHaveBeenCalled();
+      });
+    });
+  });
 });

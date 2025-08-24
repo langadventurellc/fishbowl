@@ -8,19 +8,26 @@ affectedFiles:
   apps/desktop/src/main/services/MainProcessServices.ts: Added
     getSourceMigrationsPath() method for environment-aware source path
     detection, updated getMigrationsPath() to always use userData directory, and
-    implemented validateMigrationPaths() for security validation
+    implemented validateMigrationPaths() for security validation; Added
+    ensureMigrationsInUserData() and copyMigrationsToUserData() methods with
+    lazy initialization, atomic file copying, migration pattern filtering, and
+    comprehensive error handling. Updated runDatabaseMigrations() to ensure
+    migrations are copied before execution.
   apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
     Added comprehensive unit tests for new migration path methods covering
     packaged apps, development environments, path validation, and error handling
-    scenarios
+    scenarios; Added comprehensive unit test suite for migration copying
+    functionality covering 12 test scenarios including skip logic, successful
+    copying, error handling, pattern filtering, performance tracking, and
+    integration with runDatabaseMigrations.
 log: []
 schema: v1.0
 childrenIds:
   - T-add-comprehensive-unit-tests
   - T-implement-migration-file-1
-  - T-implement-source-migration
   - T-integrate-migration-copying
   - T-validate-e2e-test-migration
+  - T-implement-source-migration
 created: 2025-08-24T05:33:23.346Z
 updated: 2025-08-24T05:33:23.346Z
 ---

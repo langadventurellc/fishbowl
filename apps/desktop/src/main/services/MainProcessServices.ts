@@ -221,6 +221,10 @@ export class MainProcessServices {
   async runDatabaseMigrations(): Promise<void> {
     try {
       this.logger.info("Starting database migrations");
+
+      // Ensure migration files are copied to userData before running
+      await this.ensureMigrationsInUserData();
+
       const result = await this.migrationService.runMigrations();
 
       if (result.success) {
@@ -419,6 +423,120 @@ export class MainProcessServices {
         error instanceof Error ? error : undefined,
       );
       throw error;
+    }
+  }
+
+  /**
+   * Ensures migration files are copied to userData directory before first use.
+   * Implements lazy initialization pattern - only copies once per session.
+   * Skips copying in development mode where source and target are the same.
+   *
+   * @returns Promise that resolves when migrations are ensured in userData
+   * @throws Error if copying fails
+   */
+  /**
+   * Ensures migration files are copied to userData directory before first use.
+   * Implements lazy initialization pattern - only copies once per session.
+   * Skips copying in development mode where source and target are the same.
+   *
+   * @returns Promise that resolves when migrations are ensured in userData
+   * @throws Error if copying fails
+   */
+  private async ensureMigrationsInUserData(): Promise<void> {
+    const destinationPath = this.getMigrationsPath();
+
+    // Skip if already copied (lazy initialization)
+    const dirStats =
+      await this.fileSystemBridge.getDirectoryStats(destinationPath);
+    if (dirStats.exists && dirStats.isDirectory) {
+      const files = await this.fileSystemBridge.readdir(destinationPath);
+      const sqlFiles = files.filter((f) => f.endsWith(".sql"));
+      if (sqlFiles.length > 0) {
+        this.logger.debug("Migration files already exist in userData", {
+          path: destinationPath,
+          fileCount: sqlFiles.length,
+        });
+        return;
+      }
+    }
+
+    // Discover and copy migrations
+    await this.copyMigrationsToUserData();
+  }
+
+  /**
+   * Copies migration files from source location to userData directory.
+   * Implements atomic copying with proper error handling and logging.
+   * Only copies files that match the migration pattern (001_*.sql).
+   *
+   * @returns Promise that resolves when copying completes
+   * @throws Error if copying fails
+   */
+  /**
+   * Copies migration files from source location to userData directory.
+   * Implements atomic copying with proper error handling and logging.
+   * Only copies files that match the migration pattern (001_*.sql).
+   *
+   * @returns Promise that resolves when copying completes
+   * @throws Error if copying fails
+   */
+  private async copyMigrationsToUserData(): Promise<void> {
+    const sourcePath = this.getSourceMigrationsPath();
+    const destinationPath = this.getMigrationsPath();
+
+    try {
+      // Validate source directory exists
+      const sourceStats =
+        await this.fileSystemBridge.getDirectoryStats(sourcePath);
+      if (!sourceStats.exists || !sourceStats.isDirectory) {
+        this.logger.warn("Source migrations directory not found", {
+          sourcePath,
+        });
+        return; // Don't crash app, just log warning
+      }
+
+      // Discover .sql files
+      const files = await this.fileSystemBridge.readdir(sourcePath);
+      const migrationFiles = files.filter((f) => f.match(/^\d{3}_.*\.sql$/));
+
+      if (migrationFiles.length === 0) {
+        this.logger.warn("No migration files found in source directory", {
+          sourcePath,
+        });
+        return;
+      }
+
+      // Create destination directory
+      await this.fileSystemBridge.ensureDirectoryExists(destinationPath);
+
+      // Copy files atomically
+      const startTime = Date.now();
+      for (const filename of migrationFiles) {
+        const sourceFile = path.join(sourcePath, filename);
+        const destFile = path.join(destinationPath, filename);
+
+        // Read from source and write to destination
+        const content = await this.fileSystemBridge.readFile(
+          sourceFile,
+          "utf-8",
+        );
+        await this.fileSystemBridge.writeFile(destFile, content);
+      }
+
+      const duration = Date.now() - startTime;
+      this.logger.info("Migration files copied successfully", {
+        sourcePath,
+        destinationPath,
+        fileCount: migrationFiles.length,
+        durationMs: duration,
+      });
+    } catch (error) {
+      this.logger.error("Failed to copy migration files", error as Error);
+      throw new Error(
+        `Migration file copying failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   }
 }
