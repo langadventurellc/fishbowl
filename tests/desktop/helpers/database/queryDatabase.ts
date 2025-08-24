@@ -1,4 +1,4 @@
-import Database from "better-sqlite3";
+import sqlite3 from "sqlite3";
 import path from "path";
 
 import type { TestElectronApplication } from "../TestElectronApplication";
@@ -17,15 +17,28 @@ export async function queryDatabase<T = unknown>(
 
   const dbPath = path.join(userDataPath, "fishbowl.db");
 
-  let db: Database.Database | null = null;
-  try {
-    db = new Database(dbPath, { readonly: true });
-    const stmt = db.prepare(sql);
-    const results = stmt.all(...params) as T[];
-    return results;
-  } finally {
-    if (db) {
-      db.close();
-    }
-  }
+  return new Promise((resolve, reject) => {
+    const db = new sqlite3.Database(
+      dbPath,
+      sqlite3.OPEN_READONLY,
+      (err: Error | null) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        db.all(sql, params, (err: Error | null, rows: T[]) => {
+          db.close((closeErr: Error | null) => {
+            if (err) {
+              reject(err);
+            } else if (closeErr) {
+              reject(closeErr);
+            } else {
+              resolve(rows || []);
+            }
+          });
+        });
+      },
+    );
+  });
 }

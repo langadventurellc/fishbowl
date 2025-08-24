@@ -1,6 +1,6 @@
 import { logger } from "../../logger";
-import type { FileSystemBridge } from "../storage/FileSystemBridge";
 import type { PathUtilsInterface } from "../../utils/PathUtilsInterface";
+import type { FileSystemBridge } from "../storage/FileSystemBridge";
 import type { MigrationFile } from "./MigrationFile";
 
 /**
@@ -38,6 +38,7 @@ export class MigrationDiscovery {
    *
    * @returns Promise resolving to sorted array of migration file metadata
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   async discoverMigrations(): Promise<MigrationFile[]> {
     try {
       // Check if migrations directory exists using optional method

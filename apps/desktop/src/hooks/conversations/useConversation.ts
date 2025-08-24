@@ -8,8 +8,8 @@
  * @module hooks/conversations/useConversation
  */
 
-import { useCallback, useEffect, useState } from "react";
 import { type Conversation } from "@fishbowl-ai/shared";
+import { useCallback, useEffect, useState } from "react";
 import { useServices } from "../../contexts";
 
 /**
@@ -60,6 +60,7 @@ export function useConversation(id: string | null): UseConversationResult {
 
   // Load conversation by ID with validation and error handling
   const loadConversation = useCallback(
+    // eslint-disable-next-line statement-count/function-statement-count-warn
     async (conversationId: string) => {
       try {
         setIsLoading(true);

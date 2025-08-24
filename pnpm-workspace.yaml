@@ -13,4 +13,5 @@ onlyBuiltDependencies:
   - dtrace-provider
   - electron
   - esbuild
+  - sqlite3
   - unrs-resolver
