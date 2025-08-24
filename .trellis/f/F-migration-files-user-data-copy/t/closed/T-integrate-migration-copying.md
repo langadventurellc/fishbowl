@@ -1,13 +1,30 @@
 ---
 id: T-integrate-migration-copying
 title: Integrate migration copying with runDatabaseMigrations
-status: open
+status: done
 priority: high
 parent: F-migration-files-user-data-copy
 prerequisites:
   - T-implement-migration-file-1
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts: Integration already
+    completed - runDatabaseMigrations() method calls
+    ensureMigrationsInUserData() before migration execution with proper error
+    handling and logging
+  apps/desktop/src/main/services/__tests__/MainProcessServices.test.ts:
+    Comprehensive test coverage already exists for migration copying integration
+    including error scenarios and success flows
+log:
+  - "Integration of migration copying with runDatabaseMigrations completed
+    successfully. The runDatabaseMigrations() method now calls
+    ensureMigrationsInUserData() before running migrations, ensuring migrations
+    are copied to userData before execution. Implementation includes proper
+    error handling to distinguish copy vs execution failures, comprehensive
+    logging for both phases, and maintains complete backward compatibility. All
+    acceptance criteria met: copy phase runs before execution, copy failures
+    prevent migration execution, existing logic preserved, proper error handling
+    and logging implemented, method signature unchanged. Quality checks (lint,
+    format, type-check) all pass."
 schema: v1.0
 childrenIds: []
 created: 2025-08-24T06:09:04.477Z

@@ -12,6 +12,12 @@ jest.mock("electron", () => ({
   },
 }));
 
+// Mock process.resourcesPath
+Object.defineProperty(process, "resourcesPath", {
+  value: "/mock/resources",
+  writable: true,
+});
+
 // Mock NodeDatabaseBridge constructor
 jest.mock("../NodeDatabaseBridge", () => ({
   NodeDatabaseBridge: jest.fn().mockImplementation((databasePath: string) => {
@@ -523,7 +529,6 @@ describe("MainProcessServices", () => {
         // Mock app.isPackaged as true
         const { app } = require("electron");
         app.isPackaged = true;
-        app.getAppPath = jest.fn(() => "/packaged/app");
 
         // Need to recreate services to pick up the mocked isPackaged value
         const packagedServices = new MainProcessServices();
@@ -531,26 +536,27 @@ describe("MainProcessServices", () => {
         // Access the private method via bracket notation for testing
         const sourcePath = (packagedServices as any).getSourceMigrationsPath();
 
-        expect(sourcePath).toBe("/packaged/app/migrations");
-        expect(app.getAppPath).toHaveBeenCalled();
+        expect(sourcePath).toBe("/mock/resources/migrations");
+        expect(app.isPackaged).toBe(true);
       });
 
       it("should return project root path for development app", () => {
         const { app } = require("electron");
         app.isPackaged = false;
-        app.getAppPath = jest.fn(() => "/dev/apps/desktop");
+        app.getAppPath = jest.fn(
+          () => "/dev/fishbowl/apps/desktop/dist-electron/electron",
+        );
 
         const devServices = new MainProcessServices();
         const sourcePath = (devServices as any).getSourceMigrationsPath();
 
-        expect(sourcePath).toBe("/dev/migrations");
+        expect(sourcePath).toBe("/dev/fishbowl/migrations");
         expect(app.getAppPath).toHaveBeenCalled();
       });
 
       it("should log appropriate debug information", () => {
         const { app } = require("electron");
         app.isPackaged = true;
-        app.getAppPath = jest.fn(() => "/test/app");
 
         const testServices = new MainProcessServices();
         const mockLogger = {
@@ -565,7 +571,7 @@ describe("MainProcessServices", () => {
 
         expect(mockLogger.debug).toHaveBeenCalledWith(
           "Using packaged migrations source path",
-          { path: "/test/app/migrations" },
+          { path: "/mock/resources/migrations" },
         );
       });
     });
@@ -774,6 +780,9 @@ describe("MainProcessServices", () => {
           readFile: jest.fn(),
           writeFile: jest.fn(),
           ensureDirectoryExists: jest.fn(),
+          copyFile: jest.fn(),
+          exists: jest.fn(),
+          ensureDir: jest.fn(),
         };
         (testServices as any).logger = mockLogger;
         (testServices as any).fileSystemBridge = mockFileSystemBridge;
@@ -869,6 +878,9 @@ describe("MainProcessServices", () => {
           readFile: jest.fn(),
           writeFile: jest.fn(),
           ensureDirectoryExists: jest.fn(),
+          copyFile: jest.fn(),
+          exists: jest.fn(),
+          ensureDir: jest.fn(),
         };
         (testServices as any).logger = mockLogger;
         (testServices as any).fileSystemBridge = mockFileSystemBridge;
@@ -1034,6 +1046,9 @@ describe("MainProcessServices", () => {
           readFile: jest.fn(),
           writeFile: jest.fn(),
           ensureDirectoryExists: jest.fn(),
+          copyFile: jest.fn(),
+          exists: jest.fn(),
+          ensureDir: jest.fn(),
         };
         (services as any).logger = mockLogger;
         (services as any).fileSystemBridge = mockFileSystemBridge;

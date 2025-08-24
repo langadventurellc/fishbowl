@@ -92,6 +92,12 @@
       "buildResources": "assets",
       "output": "dist"
     },
+    "extraResources": [
+      {
+        "from": "../../migrations",
+        "to": "migrations"
+      }
+    ],
     "files": [
       "dist/**/*",
       "dist-electron/**/*",

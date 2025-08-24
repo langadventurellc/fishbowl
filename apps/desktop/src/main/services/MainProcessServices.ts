@@ -335,8 +335,8 @@ export class MainProcessServices {
    */
   private getSourceMigrationsPath(): string {
     if (app.isPackaged) {
-      // Packaged app: migrations bundled in app resources
-      const sourcePath = path.join(app.getAppPath(), "migrations");
+      // Packaged app: migrations included via extraResources
+      const sourcePath = path.join(process.resourcesPath, "migrations");
       this.logger.debug("Using packaged migrations source path", {
         path: sourcePath,
       });
@@ -344,7 +344,7 @@ export class MainProcessServices {
     } else {
       // Development/E2E: find project root migrations
       const appPath = app.getAppPath();
-      const projectRoot = path.resolve(appPath, "..", "..");
+      const projectRoot = path.resolve(appPath, "..", "..", "..", "..");
       const sourcePath = path.join(projectRoot, "migrations");
       this.logger.debug("Using development migrations source path", {
         path: sourcePath,
