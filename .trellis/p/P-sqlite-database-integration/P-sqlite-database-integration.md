@@ -383,6 +383,14 @@ affectedFiles:
     interface with typed methods for create, list, get operations and
     future-ready optional update/delete methods. Includes comprehensive JSDoc
     documentation and proper type imports from shared package.
+  apps/desktop/src/hooks/conversations/useConversations.ts:
+    Created new React hook
+    for managing conversations list with auto-loading, error handling, manual
+    refresh, and conversation sorting by created_at descending
+  apps/desktop/src/hooks/conversations/__tests__/useConversations.test.tsx:
+    Created comprehensive unit test suite with 16 tests covering initialization,
+    loading states, error handling, sorting, refetch functionality, and memory
+    cleanup
 log: []
 schema: v1.0
 childrenIds:

@@ -1,15 +1,27 @@
 ---
 id: F-react-hooks-for-conversations
 title: React Hooks for Conversations
-status: open
+status: in-progress
 priority: medium
 parent: E-ipc-communication-layer
 prerequisites:
   - F-preload-script-conversations
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/hooks/conversations/useConversations.ts:
+    Created new React hook
+    for managing conversations list with auto-loading, error handling, manual
+    refresh, and conversation sorting by created_at descending
+  apps/desktop/src/hooks/conversations/__tests__/useConversations.test.tsx:
+    Created comprehensive unit test suite with 16 tests covering initialization,
+    loading states, error handling, sorting, refetch functionality, and memory
+    cleanup
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-conversations-hooks
+  - T-implement-useconversation-hook
+  - T-implement-useconversations
+  - T-implement-usecreateconversatio
 created: 2025-08-23T21:26:25.965Z
 updated: 2025-08-23T21:26:25.965Z
 ---
