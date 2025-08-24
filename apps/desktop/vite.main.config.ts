@@ -12,6 +12,7 @@ export default defineConfig({
     rollupOptions: {
       external: [
         "electron",
+        "better-sqlite3",
         // Keep these Node.js modules external since they're built-in
         "fs",
         "fs/promises",

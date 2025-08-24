@@ -65,6 +65,26 @@ export interface DatabaseBridge {
   execute(sql: string, params?: unknown[]): Promise<DatabaseResult>;
 
   /**
+   * Execute multiple SQL statements in sequence (e.g., migration scripts).
+   * Uses platform-specific multi-statement execution for complex SQL scripts
+   * containing multiple CREATE, INSERT, UPDATE statements separated by semicolons.
+   *
+   * @param sql SQL script containing multiple statements separated by semicolons
+   * @returns Promise resolving to basic operation result
+   *
+   * @example
+   * ```typescript
+   * const migrationSql = `
+   *   CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT);
+   *   CREATE INDEX idx_users_name ON users(name);
+   *   INSERT INTO users (name) VALUES ('Admin');
+   * `;
+   * await db.executeMultiple(migrationSql);
+   * ```
+   */
+  executeMultiple?(sql: string): Promise<DatabaseResult>;
+
+  /**
    * Execute multiple operations within a single transaction.
    * Automatically handles transaction begin/commit/rollback logic.
    * If the callback throws an error, the transaction is rolled back.

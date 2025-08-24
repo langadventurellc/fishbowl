@@ -1,16 +1,16 @@
-import Database from "better-sqlite3";
-import { dirname } from "path";
-import { stat, mkdir } from "fs/promises";
-import { existsSync } from "fs";
 import {
+  ConnectionError,
+  ConstraintViolationError,
   DatabaseBridge,
   DatabaseResult,
-  ConstraintViolationError,
   QueryError,
-  ConnectionError,
   TransactionError,
   createLoggerSync,
 } from "@fishbowl-ai/shared";
+import Database from "better-sqlite3";
+import { existsSync } from "fs";
+import { mkdir, stat } from "fs/promises";
+import { dirname } from "path";
 
 /**
  * Node.js implementation of DatabaseBridge using better-sqlite3.
@@ -253,6 +253,44 @@ export class NodeDatabaseBridge implements DatabaseBridge {
   }
 
   /**
+   * Execute multiple SQL statements (e.g., migration scripts)
+   * Uses database.exec() which supports multiple semicolon-separated statements
+   *
+   * @param sql - SQL script containing multiple statements
+   * @returns Promise<DatabaseResult> with basic success information
+   * @throws DatabaseError on execution failure
+   */
+  async executeMultiple(sql: string): Promise<DatabaseResult> {
+    // Validate connection state
+    if (!this.isConnected()) {
+      throw new ConnectionError("Database connection is not active");
+    }
+
+    try {
+      // Use exec() for multiple statements - no prepared statement needed
+      this.db.exec(sql);
+
+      // Return basic success result (exec doesn't provide detailed metadata)
+      return {
+        lastInsertRowid: 0, // Not meaningful for multiple statements
+        changes: 0, // Not available with exec()
+        affectedRows: 0, // Not available with exec()
+      };
+    } catch (error: unknown) {
+      // Convert SQLite errors to DatabaseError types
+      const sqliteError = error as Error & { code?: string };
+
+      // Generic query error for SQLite errors
+      throw new QueryError(
+        sqliteError.message || "Multi-statement SQL execution failed",
+        sql,
+        undefined, // No params for exec()
+        sqliteError,
+      );
+    }
+  }
+
+  /**
    * Execute multiple operations within a single transaction.
    * Uses manual BEGIN/COMMIT/ROLLBACK for async callback support.
    * Automatically rolls back on any error and supports nested transaction detection.
@@ -261,6 +299,7 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @param callback Function containing database operations to execute atomically
    * @returns Promise resolving to the callback's return value
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   async transaction<T>(
     callback: (db: DatabaseBridge) => Promise<T>,
   ): Promise<T> {

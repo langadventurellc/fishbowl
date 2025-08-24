@@ -1,14 +1,14 @@
+import { logger } from "../../logger";
+import type { PathUtilsInterface } from "../../utils/PathUtilsInterface";
 import type { DatabaseBridge } from "../database/DatabaseBridge";
 import type { FileSystemBridge } from "../storage/FileSystemBridge";
-import type { PathUtilsInterface } from "../../utils/PathUtilsInterface";
 import { MigrationDiscovery } from "./MigrationDiscovery";
-import { MigrationTracking } from "./MigrationTracking";
-import type { MigrationFile } from "./MigrationFile";
-import type { MigrationExecutionResult } from "./MigrationExecutionResult";
-import type { MigrationExecutionError } from "./MigrationExecutionError";
 import { MigrationError } from "./MigrationError";
 import { MigrationErrorCode } from "./MigrationErrorCode";
-import { logger } from "../../logger";
+import type { MigrationExecutionError } from "./MigrationExecutionError";
+import type { MigrationExecutionResult } from "./MigrationExecutionResult";
+import type { MigrationFile } from "./MigrationFile";
+import { MigrationTracking } from "./MigrationTracking";
 
 export class MigrationService {
   private readonly discovery: MigrationDiscovery;
@@ -28,6 +28,7 @@ export class MigrationService {
     this.tracking = new MigrationTracking(databaseBridge);
   }
 
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   async runMigrations(): Promise<MigrationExecutionResult> {
     const errors: MigrationExecutionError[] = [];
     let migrationsRun = 0;
@@ -137,8 +138,13 @@ export class MigrationService {
 
       // Execute within transaction
       await this.databaseBridge.transaction(async (db) => {
-        // Execute migration SQL
-        await db.execute(content);
+        // Execute migration SQL using executeMultiple for multi-statement support
+        if (db.executeMultiple) {
+          await db.executeMultiple(content);
+        } else {
+          // Fallback to single execute for platforms that don't support executeMultiple
+          await db.execute(content);
+        }
 
         // Record migration (no checksum for now - keeping it simple)
         await this.tracking.recordMigration(migration.filename);
