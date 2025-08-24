@@ -1,24 +1,15 @@
 ---
 id: E-ui-integration
 title: UI Integration
-status: in-progress
+status: open
 priority: medium
 parent: P-sqlite-database-integration
 prerequisites:
   - E-ipc-communication-layer
-affectedFiles:
-  apps/desktop/src/components/conversations/NewConversationButton.tsx:
-    Created NewConversationButton component with TypeScript interface, loading
-    states, accessibility features, and comprehensive documentation
-  apps/desktop/src/components/conversations/__tests__/NewConversationButton.test.tsx:
-    Created comprehensive unit test suite covering all component functionality
-    including rendering, loading states, click handling, accessibility, and
-    performance optimizations
+affectedFiles: []
 log: []
 schema: v1.0
-childrenIds:
-  - F-state-management-and-hooks
-  - F-ui-components-and-feedback
+childrenIds: []
 created: 2025-08-22T00:47:53.801Z
 updated: 2025-08-22T00:47:53.801Z
 ---
