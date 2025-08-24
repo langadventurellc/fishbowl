@@ -1,12 +1,35 @@
 ---
 id: T-create-conversations-ipc
 title: Create conversations IPC constants file
-status: open
+status: done
 priority: high
 parent: F-ipc-channel-constants-and
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/shared/ipc/conversationsConstants.ts: Main constants file with CONVERSATION_CHANNELS and ConversationsChannelType
+  apps/desktop/src/shared/ipc/conversations/createRequest.ts: Request type for conversation creation with optional title
+  apps/desktop/src/shared/ipc/conversations/listRequest.ts: Request type for listing conversations (empty object)
+  apps/desktop/src/shared/ipc/conversations/getRequest.ts: Request type for retrieving specific conversation by ID
+  apps/desktop/src/shared/ipc/conversations/updateRequest.ts: Request type for updating conversation with UpdateConversationInput
+  apps/desktop/src/shared/ipc/conversations/deleteRequest.ts: Request type for deleting conversation by ID
+  apps/desktop/src/shared/ipc/conversations/createResponse.ts: Response type for conversation creation extending IPCResponse<Conversation>
+  apps/desktop/src/shared/ipc/conversations/listResponse.ts: Response type for conversation listing extending IPCResponse<Conversation[]>
+  apps/desktop/src/shared/ipc/conversations/getResponse.ts: Response type for
+    conversation retrieval extending IPCResponse<Conversation | null>
+  apps/desktop/src/shared/ipc/conversations/updateResponse.ts: Response type for conversation updates extending IPCResponse<Conversation>
+  apps/desktop/src/shared/ipc/conversations/deleteResponse.ts: Response type for conversation deletion extending IPCResponse<boolean>
+  apps/desktop/src/shared/ipc/__tests__/conversationsIPC.test.ts:
+    Comprehensive unit tests covering constants, types, exports, and error
+    handling
+  apps/desktop/src/shared/ipc/index.ts: Added exports for all conversation constants and types to barrel file
+log:
+  - Successfully created the complete conversations IPC constants and types
+    infrastructure following established patterns. Implemented all 5 channels
+    (CREATE, LIST, GET, UPDATE, DELETE) with proper request/response types using
+    discriminated unions. All files follow the one-export-per-file rule and
+    maintain consistency with existing IPC patterns. Comprehensive test coverage
+    ensures type safety and validates channel constants. All quality checks pass
+    with no errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-24T00:02:57.709Z

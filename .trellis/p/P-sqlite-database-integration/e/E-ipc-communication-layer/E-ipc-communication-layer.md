@@ -1,16 +1,36 @@
 ---
 id: E-ipc-communication-layer
 title: IPC Communication Layer
-status: open
+status: in-progress
 priority: medium
 parent: P-sqlite-database-integration
 prerequisites:
   - E-conversations-repository-layer
   - E-migration-system-implementatio
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/shared/ipc/conversationsConstants.ts: Main constants file with CONVERSATION_CHANNELS and ConversationsChannelType
+  apps/desktop/src/shared/ipc/conversations/createRequest.ts: Request type for conversation creation with optional title
+  apps/desktop/src/shared/ipc/conversations/listRequest.ts: Request type for listing conversations (empty object)
+  apps/desktop/src/shared/ipc/conversations/getRequest.ts: Request type for retrieving specific conversation by ID
+  apps/desktop/src/shared/ipc/conversations/updateRequest.ts: Request type for updating conversation with UpdateConversationInput
+  apps/desktop/src/shared/ipc/conversations/deleteRequest.ts: Request type for deleting conversation by ID
+  apps/desktop/src/shared/ipc/conversations/createResponse.ts: Response type for conversation creation extending IPCResponse<Conversation>
+  apps/desktop/src/shared/ipc/conversations/listResponse.ts: Response type for conversation listing extending IPCResponse<Conversation[]>
+  apps/desktop/src/shared/ipc/conversations/getResponse.ts: Response type for
+    conversation retrieval extending IPCResponse<Conversation | null>
+  apps/desktop/src/shared/ipc/conversations/updateResponse.ts: Response type for conversation updates extending IPCResponse<Conversation>
+  apps/desktop/src/shared/ipc/conversations/deleteResponse.ts: Response type for conversation deletion extending IPCResponse<boolean>
+  apps/desktop/src/shared/ipc/__tests__/conversationsIPC.test.ts:
+    Comprehensive unit tests covering constants, types, exports, and error
+    handling
+  apps/desktop/src/shared/ipc/index.ts: Added exports for all conversation constants and types to barrel file
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-ipc-channel-constants-and
+  - F-main-process-ipc-handlers
+  - F-preload-script-conversations
+  - F-react-hooks-for-conversations
 created: 2025-08-22T00:47:26.155Z
 updated: 2025-08-22T00:47:26.155Z
 ---
