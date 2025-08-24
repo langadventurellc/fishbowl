@@ -24,6 +24,11 @@ affectedFiles:
     Comprehensive unit tests covering constants, types, exports, and error
     handling
   apps/desktop/src/shared/ipc/index.ts: Added exports for all conversation constants and types to barrel file
+  apps/desktop/src/electron/conversationsHandlers.ts: New file - Created
+    conversations IPC handlers with CREATE, LIST, and GET operations following
+    agentsHandlers pattern
+  apps/desktop/src/electron/main.ts: Added import for setupConversationsHandlers
+    and registered handlers in app initialization with proper error handling
 log: []
 schema: v1.0
 childrenIds:

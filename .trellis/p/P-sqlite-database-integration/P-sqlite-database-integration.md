@@ -174,7 +174,9 @@ affectedFiles:
     performance specifications; Added migration execution to app.whenReady()
     flow after database initialization, with proper error handling,
     user-friendly error dialog, and graceful app exit on failures. Maintains
-    existing startup sequence and performance characteristics.
+    existing startup sequence and performance characteristics.; Added import for
+    setupConversationsHandlers and registered handlers in app initialization
+    with proper error handling
   packages/shared/src/types/conversations/Conversation.ts: Created core
     Conversation interface with id, title, created_at, updated_at fields and
     JSDoc documentation
@@ -359,6 +361,9 @@ affectedFiles:
     Comprehensive unit tests covering constants, types, exports, and error
     handling
   apps/desktop/src/shared/ipc/index.ts: Added exports for all conversation constants and types to barrel file
+  apps/desktop/src/electron/conversationsHandlers.ts: New file - Created
+    conversations IPC handlers with CREATE, LIST, and GET operations following
+    agentsHandlers pattern
 log: []
 schema: v1.0
 childrenIds:

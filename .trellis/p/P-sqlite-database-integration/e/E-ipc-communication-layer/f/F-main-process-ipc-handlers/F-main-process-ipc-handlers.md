@@ -1,15 +1,22 @@
 ---
 id: F-main-process-ipc-handlers
 title: Main Process IPC Handlers
-status: open
+status: in-progress
 priority: medium
 parent: E-ipc-communication-layer
 prerequisites:
   - F-ipc-channel-constants-and
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/electron/conversationsHandlers.ts: New file - Created
+    conversations IPC handlers with CREATE, LIST, and GET operations following
+    agentsHandlers pattern
+  apps/desktop/src/electron/main.ts: Added import for setupConversationsHandlers
+    and registered handlers in app initialization with proper error handling
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-implement-conversations-ipc
+  - T-register-conversations
 created: 2025-08-23T21:24:49.114Z
 updated: 2025-08-23T21:24:49.114Z
 ---

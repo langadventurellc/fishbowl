@@ -1,13 +1,17 @@
 ---
 id: T-add-conversations-types-to
 title: Add conversations types to IPC barrel export
-status: open
+status: done
 priority: medium
 parent: F-ipc-channel-constants-and
 prerequisites:
   - T-create-conversations-ipc
 affectedFiles: {}
-log: []
+log:
+  - Task was already complete. All conversations IPC types and constants are
+    properly exported through the barrel file at
+    apps/desktop/src/shared/ipc/index.ts. Verified that all exports follow
+    existing patterns, comprehensive tests pass, and quality checks succeed.
 schema: v1.0
 childrenIds: []
 created: 2025-08-24T00:03:20.884Z
