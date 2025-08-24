@@ -1,22 +1,20 @@
 import { useSettingsModal } from "@fishbowl-ai/ui-shared";
-import { HashRouter, Route, Routes } from "react-router-dom";
 import React from "react";
+import { HashRouter, Route, Routes } from "react-router-dom";
+import { useDesktopSettingsPersistence } from "./adapters/useDesktopSettingsPersistence";
+import { RolesErrorBoundary } from "./components/errors/RolesErrorBoundary";
 import { SettingsModal } from "./components/settings/SettingsModal";
 import {
-  SettingsProvider,
-  RolesProvider,
-  PersonalitiesProvider,
   AgentsProvider,
+  PersonalitiesProvider,
+  RolesProvider,
+  SettingsProvider,
   useServices,
 } from "./contexts";
-import { RolesErrorBoundary } from "./components/errors/RolesErrorBoundary";
 import { useElectronIPC } from "./hooks/useElectronIPC";
-import { setupTestHelpers } from "./utils/testHelpers";
-import { applyTheme } from "./utils/applyTheme";
-import { useDesktopSettingsPersistence } from "./adapters/useDesktopSettingsPersistence";
 import Home from "./pages/Home";
-import ComponentShowcase from "./pages/showcase/ComponentShowcase";
-import LayoutShowcase from "./pages/showcase/LayoutShowcase";
+import { applyTheme } from "./utils/applyTheme";
+import { setupTestHelpers } from "./utils/testHelpers";
 
 export default function App() {
   // Get configured services from context
@@ -77,11 +75,6 @@ export default function App() {
               <HashRouter>
                 <Routes>
                   <Route path="/" element={<Home />} />
-                  <Route
-                    path="/showcase/components"
-                    element={<ComponentShowcase />}
-                  />
-                  <Route path="/showcase/layout" element={<LayoutShowcase />} />
                 </Routes>
               </HashRouter>
 

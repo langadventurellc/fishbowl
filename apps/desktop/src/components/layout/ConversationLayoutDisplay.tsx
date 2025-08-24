@@ -14,7 +14,6 @@ import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
 export const ConversationLayoutDisplay: React.FC<
   ConversationLayoutDisplayProps
 > = ({
-  conversations,
   agents,
   messages,
   defaultSidebarCollapsed = false,
@@ -43,9 +42,7 @@ export const ConversationLayoutDisplay: React.FC<
       {/* Sidebar */}
       <SidebarContainerDisplay
         collapsed={isSidebarCollapsed}
-        widthVariant="default"
         showBorder={true}
-        conversations={conversations}
       />
 
       {/* Main Content */}

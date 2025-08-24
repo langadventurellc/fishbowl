@@ -7,16 +7,9 @@
 import type React from "react";
 import { AgentViewModel } from "../AgentViewModel";
 import { LayoutVariant } from "../components";
-import { ConversationViewModel } from "../ConversationViewModel";
 import { MessageViewModel } from "../MessageViewModel";
 
 export interface ConversationLayoutDisplayProps {
-  /**
-   * List of conversations to display in the sidebar.
-   * Used to render the conversation list with selection state.
-   */
-  conversations: ConversationViewModel[];
-
   /**
    * List of agents participating in the conversation.
    * Used for agent pills, message rendering, and state display.

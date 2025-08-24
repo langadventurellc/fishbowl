@@ -9,7 +9,6 @@
 
 import "@testing-library/jest-dom";
 import { render, screen, waitFor } from "@testing-library/react";
-import React from "react";
 import App from "./App";
 
 // Mock all dependencies
@@ -41,18 +40,6 @@ jest.mock("./adapters/useDesktopSettingsPersistence", () => ({
 jest.mock("./pages/Home", () => {
   return function MockHome() {
     return <div data-testid="home-page">Home Page</div>;
-  };
-});
-
-jest.mock("./pages/showcase/ComponentShowcase", () => {
-  return function MockComponentShowcase() {
-    return <div data-testid="component-showcase">Component Showcase</div>;
-  };
-});
-
-jest.mock("./pages/showcase/LayoutShowcase", () => {
-  return function MockLayoutShowcase() {
-    return <div data-testid="layout-showcase">Layout Showcase</div>;
   };
 });
 
@@ -105,10 +92,10 @@ jest.mock("@fishbowl-ai/shared", () => ({
 }));
 
 import { useSettingsModal } from "@fishbowl-ai/ui-shared";
-import { useElectronIPC } from "./hooks/useElectronIPC";
-import { setupTestHelpers } from "./utils/testHelpers";
-import { applyTheme } from "./utils/applyTheme";
 import { useDesktopSettingsPersistence } from "./adapters/useDesktopSettingsPersistence";
+import { useElectronIPC } from "./hooks/useElectronIPC";
+import { applyTheme } from "./utils/applyTheme";
+import { setupTestHelpers } from "./utils/testHelpers";
 
 const mockUseSettingsModal = useSettingsModal as jest.MockedFunction<
   typeof useSettingsModal

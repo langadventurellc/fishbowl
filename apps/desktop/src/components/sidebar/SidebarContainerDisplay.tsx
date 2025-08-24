@@ -1,46 +1,25 @@
 import { SidebarContainerDisplayProps } from "@fishbowl-ai/ui-shared";
 import React from "react";
+import { useConversations } from "../../hooks/conversations/useConversations";
+import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
 import { cn } from "../../lib/utils";
+import { NewConversationButton } from "../conversations/NewConversationButton";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
-import { NewConversationButton } from "../conversations/NewConversationButton";
-import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
-import { useConversations } from "../../hooks/conversations/useConversations";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
  * that handles collapsed/expanded visual states with conversation list rendering.
- *
- * When conversations prop is provided, automatically renders complete sidebar with:
- * - SidebarHeaderDisplay with "Conversations" title
- * - Scrollable conversation list using ConversationItemDisplay components
- * - "New Conversation" button at the bottom
- *
- * When conversations prop is omitted, renders empty sidebar container.
- *
- * Key Features:
- * - Collapsible width states with smooth 0.3s ease transitions
- * - Theme variable integration for consistent styling
- * - Flexible width variants (narrow/default/wide)
- * - Border visibility control
- * - Proper overflow handling for collapsed state
- * - Self-contained conversation list rendering
- *
- * Visual States:
- * - Collapsed: width 0px, padding 0, overflow hidden
- * - Expanded: configurable width based on variant, 16px padding
  */
 export function SidebarContainerDisplay({
   collapsed = false,
-  widthVariant = "default",
   showBorder = true,
   className = "",
   style = {},
-  conversations,
 }: SidebarContainerDisplayProps) {
   // Initialize hooks for conversation management
   const {
-    conversations: realConversations,
+    conversations: conversations,
     isLoading: _listLoading,
     error: _listError,
     refetch,
@@ -74,18 +53,15 @@ export function SidebarContainerDisplay({
   };
 
   // Map database conversations to UI format
-  const mapConversationsToViewModel = (convs: typeof realConversations) => {
+  const mapConversationsToViewModel = (convs: typeof conversations) => {
     return convs.map((conv) => ({
       name: conv.title,
       lastActivity: formatRelativeTime(conv.updated_at),
-      isActive: false, // TODO: Add active conversation tracking
+      isActive: false,
     }));
   };
 
-  // Use real conversations when available, fall back to props
-  const conversationsToDisplay = realConversations
-    ? mapConversationsToViewModel(realConversations)
-    : conversations || [];
+  const conversationsToDisplay = mapConversationsToViewModel(conversations);
 
   // Handle new conversation creation
   const handleNewConversation = async () => {
@@ -99,22 +75,10 @@ export function SidebarContainerDisplay({
       // Error handling will be improved in Feature 2
     }
   };
-  // Width configurations matching design requirements
-  const getWidthForVariant = (variant: typeof widthVariant) => {
-    switch (variant) {
-      case "narrow":
-        return "180px";
-      case "wide":
-        return "240px";
-      case "default":
-      default:
-        return "200px"; // Default sidebar width
-    }
-  };
 
   // Dynamic styles that need to remain as CSS properties
   const dynamicStyles: React.CSSProperties = {
-    width: collapsed ? "0px" : getWidthForVariant(widthVariant),
+    width: collapsed ? "0px" : "200px",
     backgroundColor: "var(--sidebar)",
     borderRight: showBorder ? `1px solid var(--border)` : "none",
     padding: collapsed ? "0" : "16px",
@@ -166,9 +130,7 @@ export function SidebarContainerDisplay({
       )}
       style={dynamicStyles}
     >
-      {!collapsed &&
-        (realConversations || conversations) &&
-        renderSelfContainedContent()}
+      {!collapsed && conversations && renderSelfContainedContent()}
     </div>
   );
 }

@@ -22,16 +22,7 @@ interface Agent {
   isThinking: boolean;
 }
 
-interface Conversation {
-  name: string;
-  lastActivity: string;
-  isActive: boolean;
-}
-
 export default function LayoutShowcase() {
-  // Sample conversations data
-  const conversations: Conversation[] = [];
-
   // Sample agents data
   const agents: Agent[] = [];
 
@@ -41,7 +32,6 @@ export default function LayoutShowcase() {
   return (
     <ConversationScreenDisplay>
       <ConversationLayoutDisplay
-        conversations={conversations}
         agents={agents}
         messages={messages}
         defaultSidebarCollapsed={false}
