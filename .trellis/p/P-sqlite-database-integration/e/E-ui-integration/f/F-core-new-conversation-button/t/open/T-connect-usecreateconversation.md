@@ -1,6 +1,7 @@
 ---
 id: T-connect-usecreateconversation
-title: Connect useCreateConversation hook to button
+title: Connect useCreateConversation hook to NewConversationButton in
+  SidebarContainerDisplay
 status: open
 priority: high
 parent: F-core-new-conversation-button
@@ -14,18 +15,18 @@ created: 2025-08-24T02:06:20.096Z
 updated: 2025-08-24T02:06:20.096Z
 ---
 
-# Connect useCreateConversation hook to button
+# Connect useCreateConversation hook to NewConversationButton in SidebarContainerDisplay
 
 ## Context
 
-The useCreateConversation hook already exists at `apps/desktop/src/hooks/conversations/useCreateConversation.ts` and provides the logic for creating new conversations via the IPC layer. This task connects the hook to the NewConversationButton that was placed in Home.tsx in the previous task.
+The useCreateConversation hook already exists at `apps/desktop/src/hooks/conversations/useCreateConversation.ts` and provides the logic for creating new conversations via the IPC layer. This task connects the hook to the NewConversationButton that was placed in SidebarContainerDisplay in the previous task.
 
 ## Implementation Requirements
 
 ### 1. Import and Initialize Hook
 
-- Import useCreateConversation from `hooks/conversations`
-- Call the hook at the top of the Home component
+- Import useCreateConversation from `../../hooks/conversations/useCreateConversation`
+- Call the hook at the top of the SidebarContainerDisplay component function
 - Destructure the returned values: `{ createConversation, loading, error, reset }`
 
 ### 2. Connect to Button onClick
@@ -36,7 +37,7 @@ The useCreateConversation hook already exists at `apps/desktop/src/hooks/convers
 
 ### 3. Pass Hook State to Button
 
-- Pass `loading` state from hook to button's `loading` prop
+- Pass `loading` state from hook to NewConversationButton's `loading` prop
 - Pass `disabled={loading}` to prevent clicks during creation
 - Ensure button shows loading spinner when creating
 
@@ -48,22 +49,24 @@ The useCreateConversation hook already exists at `apps/desktop/src/hooks/convers
 
 ## Detailed Acceptance Criteria
 
-- [ ] useCreateConversation hook is imported and initialized
-- [ ] Button onClick calls createConversation function
+- [ ] useCreateConversation hook is imported and initialized in SidebarContainerDisplay
+- [ ] NewConversationButton onClick calls createConversation function
 - [ ] Loading state displays during conversation creation
 - [ ] Button is disabled while loading
 - [ ] Successful creation logs the new conversation data
 - [ ] Error from creation is captured (even if just logged)
 - [ ] No TypeScript errors with hook integration
 - [ ] Async operation doesn't block UI
+- [ ] Sidebar component renders without issues
 
 ## Technical Approach
 
 ```typescript
-// In Home.tsx
-import { useCreateConversation } from '../hooks/conversations';
+// In SidebarContainerDisplay.tsx
+import { useCreateConversation } from '../../hooks/conversations/useCreateConversation';
+import { NewConversationButton } from '../conversations/NewConversationButton';
 
-export default function LayoutShowcase() {
+export function SidebarContainerDisplay({ /* existing props */ }) {
   const { createConversation, loading, error } = useCreateConversation();
 
   const handleNewConversation = async () => {
@@ -77,22 +80,27 @@ export default function LayoutShowcase() {
     }
   };
 
+  // ... existing component logic
+
   return (
-    <ConversationScreenDisplay>
-      <NewConversationButton
-        onClick={handleNewConversation}
-        loading={loading}
-        disabled={loading}
-      />
-      {/* Rest of layout */}
-    </ConversationScreenDisplay>
+    <div className={/* existing classes */} style={dynamicStyles}>
+      {/* ... existing sidebar content */}
+
+      <div className="mt-auto">
+        <NewConversationButton
+          onClick={handleNewConversation}
+          loading={loading}
+          disabled={loading}
+        />
+      </div>
+    </div>
   );
 }
 ```
 
 ## Files to Modify
 
-- `apps/desktop/src/pages/Home.tsx` - Add hook import and wiring
+- `apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx` - Add hook import and wiring
 
 ## Testing Requirements
 
@@ -103,6 +111,7 @@ export default function LayoutShowcase() {
 - Test loading state is passed to button
 - Test error handling doesn't crash component
 - Verify async operation completes properly
+- Test sidebar still renders correctly with hook integration
 
 ### Manual Testing
 
@@ -111,10 +120,11 @@ export default function LayoutShowcase() {
 - Verify loading spinner appears during creation
 - Confirm button is disabled while loading
 - Check database for new conversation record
+- Verify sidebar layout remains intact
 
 ## Dependencies
 
-- Previous task (button placement) is complete
+- Previous task (NewConversationButton placement) is complete
 - useCreateConversation hook is functional
 - IPC handlers are registered and working
 - Database is initialized and accepting connections

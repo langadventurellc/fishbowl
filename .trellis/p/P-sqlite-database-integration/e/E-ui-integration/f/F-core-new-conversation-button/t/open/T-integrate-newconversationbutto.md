@@ -1,6 +1,7 @@
 ---
 id: T-integrate-newconversationbutto
-title: Integrate NewConversationButton into Home.tsx layout
+title: Replace placeholder button in SidebarContainerDisplay with
+  NewConversationButton
 status: open
 priority: high
 parent: F-core-new-conversation-button
@@ -13,80 +14,81 @@ created: 2025-08-24T02:05:44.031Z
 updated: 2025-08-24T02:05:44.031Z
 ---
 
-# Integrate NewConversationButton into Home.tsx layout
+# Replace placeholder button in SidebarContainerDisplay with NewConversationButton
 
 ## Context
 
-The NewConversationButton component already exists at `apps/desktop/src/components/conversations/NewConversationButton.tsx` and needs to be integrated into the main Home page. The Home page currently uses a `ConversationLayoutDisplay` component that shows conversations and agents.
+The SidebarContainerDisplay component already has a placeholder "New Conversation" button at lines 84-93 in `apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx`. This button currently just logs "Demo: New conversation" when clicked. We need to replace this placeholder with the proper NewConversationButton component that has loading states and proper accessibility features.
 
 ## Implementation Requirements
 
-### 1. Import and Add Button Component
+### 1. Import NewConversationButton Component
 
-- Import NewConversationButton from `components/conversations/NewConversationButton`
-- Add the button to the Home.tsx layout in a logical position (likely near the top of the sidebar or above the conversation list)
-- Ensure the button is visually prominent but doesn't disrupt the existing layout
+- Import NewConversationButton from `../conversations/NewConversationButton`
+- Remove the existing placeholder Button import if it's not used elsewhere
+- Maintain existing component structure and props
 
-### 2. Position Button in Layout
+### 2. Replace Placeholder Button
 
-- Review the current ConversationLayoutDisplay structure in `apps/desktop/src/components/layout/ConversationLayoutDisplay.tsx`
-- Determine if the button should be:
-  - Passed as a prop to ConversationLayoutDisplay
-  - Added directly in Home.tsx above/below the layout
-  - Integrated into the sidebar component
-- Maintain consistent spacing and alignment with existing UI elements
+- Replace the existing Button component (lines 85-92) with NewConversationButton
+- Remove the placeholder onClick handler: `onClick={() => logger.info("Demo: New conversation")}`
+- Create temporary onClick handler that matches NewConversationButton's async signature
+- Maintain the same positioning within the `mt-auto` container
 
 ### 3. Wire Up Basic Props
 
-- Create a placeholder onClick handler (will be connected to hook in next task)
+- Create placeholder onClick handler: `const handleNewConversation = async () => { console.log('New conversation clicked'); }`
 - Pass default props: `loading={false}`, `disabled={false}`
-- Add appropriate className for styling if needed
-- Ensure button inherits theme styles from shadcn/ui
+- Ensure button inherits existing spacing and layout positioning
+- Maintain accessibility features from NewConversationButton
 
 ## Detailed Acceptance Criteria
 
-- [ ] NewConversationButton is imported in Home.tsx
-- [ ] Button is visible in the UI when Home page loads
-- [ ] Button position is logical and doesn't break layout
-- [ ] Button maintains consistent styling with rest of app
+- [ ] NewConversationButton is imported in SidebarContainerDisplay.tsx
+- [ ] Placeholder Button component is completely replaced
+- [ ] Button appears in same position at bottom of sidebar
+- [ ] Button maintains consistent styling with sidebar theme
 - [ ] Button is keyboard accessible (can be reached via Tab)
 - [ ] Component compiles without TypeScript errors
 - [ ] No console errors when component renders
+- [ ] Clicking button logs "New conversation clicked" to console
 
 ## Technical Approach
 
-1. Open `apps/desktop/src/pages/Home.tsx`
+1. Open `apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx`
 2. Import NewConversationButton at the top
-3. Add button to JSX, likely wrapping ConversationLayoutDisplay or as a sibling
-4. Create temporary onClick handler: `const handleNewConversation = () => { console.log('New conversation clicked'); }`
-5. Verify button appears and is clickable
+3. Replace lines 85-92 (the existing Button) with NewConversationButton
+4. Create temporary onClick handler: `const handleNewConversation = async () => { console.log('New conversation clicked'); }`
+5. Verify button appears and is clickable in same position
 
 ## Files to Modify
 
-- `apps/desktop/src/pages/Home.tsx` - Add button import and JSX
+- `apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx` - Replace placeholder button
 
 ## Testing Requirements
 
 ### Unit Tests (include in this task)
 
-- Add test to verify button renders in Home component
+- Add test to verify NewConversationButton renders in SidebarContainerDisplay
 - Test that onClick handler is called when clicked
 - Mock the NewConversationButton component for isolation
 - Verify accessibility attributes are present
+- Test button positioning within sidebar layout
 
 ### Manual Testing
 
-- Button appears in correct position
+- Button appears in correct position at bottom of sidebar
 - Button is reachable via keyboard navigation
 - Click logs to console (temporary handler)
-- Layout remains responsive at different screen sizes
+- Sidebar layout remains responsive at different screen sizes
+- Button styling matches sidebar theme
 
 ## Dependencies
 
 - NewConversationButton component exists and exports correctly
-- Home.tsx is rendering properly
-- ConversationLayoutDisplay accepts children or has slot for button
+- SidebarContainerDisplay is rendering properly
+- Existing sidebar layout and styling should be preserved
 
 ## Time Estimate
 
-1-2 hours including testing and layout adjustments
+1-2 hours including testing and ensuring layout consistency
