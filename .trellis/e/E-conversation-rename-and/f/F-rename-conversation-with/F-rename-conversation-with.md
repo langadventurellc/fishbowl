@@ -1,14 +1,32 @@
 ---
 id: F-rename-conversation-with
 title: Rename Conversation with Modal Dialog
-status: open
+status: in-progress
 priority: medium
 parent: E-conversation-rename-and
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/electron/conversationsHandlers.ts: Added UPDATE IPC handler
+    following the existing CREATE/LIST/GET/DELETE pattern. Imports
+    ConversationsUpdateRequest and ConversationsUpdateResponse types, registers
+    handler for CONVERSATION_CHANNELS.UPDATE channel, calls
+    conversationsRepository.update() with request.id and request.updates,
+    returns success response with updated conversation data, and handles errors
+    with logger.error and serializeError.
+  apps/desktop/src/electron/__tests__/conversationsHandlers.test.ts:
+    Added comprehensive unit tests for UPDATE handler including successful
+    update scenario, ConversationNotFoundError handling, database error
+    handling, and updated handler registration test to verify UPDATE handler is
+    properly registered. All tests follow existing patterns and verify proper
+    repository method calls, response formats, and error serialization.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-renameconversationmodal
+  - T-create-useupdateconversation
+  - T-expose-update-method-in
+  - T-implement-update-ipc-handler
+  - T-wire-up-rename-modal-in
 created: 2025-08-24T19:44:59.011Z
 updated: 2025-08-24T19:44:59.011Z
 ---

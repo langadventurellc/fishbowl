@@ -5,10 +5,12 @@ import {
   type ConversationsListRequest,
   type ConversationsGetRequest,
   type ConversationsDeleteRequest,
+  type ConversationsUpdateRequest,
   type ConversationsCreateResponse,
   type ConversationsListResponse,
   type ConversationsGetResponse,
   type ConversationsDeleteResponse,
+  type ConversationsUpdateResponse,
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
 import type { MainProcessServices } from "../main/services/MainProcessServices";
@@ -97,6 +99,28 @@ export function setupConversationsHandlers(
         return { success: true, data: true };
       } catch (error) {
         logger.error("Failed to delete conversation", error as Error);
+        return { success: false, error: serializeError(error) };
+      }
+    },
+  );
+
+  ipcMain.handle(
+    CONVERSATION_CHANNELS.UPDATE,
+    async (
+      _event,
+      request: ConversationsUpdateRequest,
+    ): Promise<ConversationsUpdateResponse> => {
+      logger.debug("Updating conversation", { id: request.id });
+
+      try {
+        const conversation = await mainServices.conversationsRepository.update(
+          request.id,
+          request.updates,
+        );
+        logger.info("Conversation updated successfully", { id: request.id });
+        return { success: true, data: conversation };
+      } catch (error) {
+        logger.error("Failed to update conversation", error as Error);
         return { success: false, error: serializeError(error) };
       }
     },

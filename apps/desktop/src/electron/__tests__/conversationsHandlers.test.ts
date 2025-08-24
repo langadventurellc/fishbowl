@@ -6,10 +6,12 @@ import {
   type ConversationsListRequest,
   type ConversationsGetRequest,
   type ConversationsDeleteRequest,
+  type ConversationsUpdateRequest,
   type ConversationsCreateResponse,
   type ConversationsListResponse,
   type ConversationsGetResponse,
   type ConversationsDeleteResponse,
+  type ConversationsUpdateResponse,
 } from "../../shared/ipc/index";
 import { serializeError } from "../utils/errorSerialization";
 import type { ConversationsRepositoryInterface } from "@fishbowl-ai/shared";
@@ -218,6 +220,77 @@ describe("conversationsHandlers", () => {
     });
   });
 
+  describe("UPDATE handler", () => {
+    it("should handle successful conversation update", async () => {
+      const request: ConversationsUpdateRequest = {
+        id: "test-id",
+        updates: { title: "Updated Title" },
+      };
+      const updatedConversation = {
+        ...mockConversation,
+        title: "Updated Title",
+        updated_at: "2024-01-01T01:00:00.000Z",
+      };
+      mockConversationsRepository.update.mockResolvedValue(updatedConversation);
+
+      const handler = getHandler(CONVERSATION_CHANNELS.UPDATE);
+      const result: ConversationsUpdateResponse = await handler(null, request);
+
+      expect(mockConversationsRepository.update).toHaveBeenCalledWith(
+        request.id,
+        request.updates,
+      );
+      expect(result).toEqual({
+        success: true,
+        data: updatedConversation,
+      });
+    });
+
+    it("should handle conversation not found error during update", async () => {
+      const request: ConversationsUpdateRequest = {
+        id: "nonexistent-id",
+        updates: { title: "Updated Title" },
+      };
+      const error = new ConversationNotFoundError("nonexistent-id");
+      mockConversationsRepository.update.mockRejectedValue(error);
+
+      const handler = getHandler(CONVERSATION_CHANNELS.UPDATE);
+      const result: ConversationsUpdateResponse = await handler(null, request);
+
+      expect(mockConversationsRepository.update).toHaveBeenCalledWith(
+        request.id,
+        request.updates,
+      );
+      expect(serializeError).toHaveBeenCalledWith(error);
+      expect(result).toEqual({
+        success: false,
+        error: { message: error.message, code: "TEST_ERROR" },
+      });
+    });
+
+    it("should handle database errors during update", async () => {
+      const request: ConversationsUpdateRequest = {
+        id: "test-id",
+        updates: { title: "Updated Title" },
+      };
+      const error = new Error("Database connection failed");
+      mockConversationsRepository.update.mockRejectedValue(error);
+
+      const handler = getHandler(CONVERSATION_CHANNELS.UPDATE);
+      const result: ConversationsUpdateResponse = await handler(null, request);
+
+      expect(mockConversationsRepository.update).toHaveBeenCalledWith(
+        request.id,
+        request.updates,
+      );
+      expect(serializeError).toHaveBeenCalledWith(error);
+      expect(result).toEqual({
+        success: false,
+        error: { message: "Database connection failed", code: "TEST_ERROR" },
+      });
+    });
+  });
+
   describe("handler registration", () => {
     it("should register all IPC handlers", () => {
       const mockServices = {
@@ -240,6 +313,10 @@ describe("conversationsHandlers", () => {
       );
       expect(ipcMain.handle).toHaveBeenCalledWith(
         CONVERSATION_CHANNELS.DELETE,
+        expect.any(Function),
+      );
+      expect(ipcMain.handle).toHaveBeenCalledWith(
+        CONVERSATION_CHANNELS.UPDATE,
         expect.any(Function),
       );
     });

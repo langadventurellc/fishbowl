@@ -7,10 +7,20 @@ prerequisites: []
 affectedFiles:
   apps/desktop/src/electron/conversationsHandlers.ts: Added DELETE IPC handler
     with proper error handling, logging, and response formatting following
-    CREATE/LIST/GET patterns
+    CREATE/LIST/GET patterns; Added UPDATE IPC handler following the existing
+    CREATE/LIST/GET/DELETE pattern. Imports ConversationsUpdateRequest and
+    ConversationsUpdateResponse types, registers handler for
+    CONVERSATION_CHANNELS.UPDATE channel, calls conversationsRepository.update()
+    with request.id and request.updates, returns success response with updated
+    conversation data, and handles errors with logger.error and serializeError.
   apps/desktop/src/electron/__tests__/conversationsHandlers.test.ts:
     Created comprehensive test suite for all conversation handlers including the
-    new DELETE handler with success, error, and edge case scenarios
+    new DELETE handler with success, error, and edge case scenarios; Added
+    comprehensive unit tests for UPDATE handler including successful update
+    scenario, ConversationNotFoundError handling, database error handling, and
+    updated handler registration test to verify UPDATE handler is properly
+    registered. All tests follow existing patterns and verify proper repository
+    method calls, response formats, and error serialization.
   apps/desktop/src/electron/preload.ts: Added ConversationsDeleteRequest and
     ConversationsDeleteResponse imports and implemented the delete method in the
     conversations API following existing patterns with proper error handling and
