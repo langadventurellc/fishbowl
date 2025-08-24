@@ -32,6 +32,7 @@ export function ConversationItemDisplay({
   showUnreadIndicator = false,
   className = "",
   style = {},
+  onDelete,
 }: ConversationItemDisplayProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -94,9 +95,7 @@ export function ConversationItemDisplay({
           onRename={() => {
             /* Placeholder for rename action */
           }}
-          onDelete={() => {
-            /* Placeholder for delete action */
-          }}
+          onDelete={onDelete || (() => {})}
         />
       </div>
 

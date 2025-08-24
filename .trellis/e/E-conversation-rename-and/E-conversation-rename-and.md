@@ -39,6 +39,22 @@ affectedFiles:
     handling, contextBridge integration verification, and error logging tests.
     Updated contextBridge integration tests to verify update method is properly
     exposed. All 38 tests passing including new update method coverage.
+  apps/desktop/src/components/sidebar/DeleteConversationModal.tsx:
+    Created new modal component for conversation deletion confirmation following
+    DeletePersonalityDialog pattern with proper styling, error handling, and
+    logging
+  packages/ui-shared/src/types/ConversationViewModel.ts: Added id field to
+    ConversationViewModel interface to support deletion and other operations
+    requiring unique identification
+  packages/ui-shared/src/types/chat/ConversationItemDisplayProps.ts:
+    Added optional onDelete callback prop to support delete functionality in
+    conversation items
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Integrated DeleteConversationModal with proper state management, delete
+    handlers, and IPC communication for conversation deletion
+  apps/desktop/src/components/sidebar/ConversationItemDisplay.tsx:
+    Updated component to pass onDelete prop to ConversationContextMenu for modal
+    integration
 log: []
 schema: v1.0
 childrenIds:

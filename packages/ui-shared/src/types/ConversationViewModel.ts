@@ -38,6 +38,12 @@
  */
 export interface ConversationViewModel {
   /**
+   * Unique identifier for the conversation.
+   * Used for operations like deletion, selection, and updates.
+   */
+  id: string;
+
+  /**
    * Display name of the conversation.
    * Used in the sidebar conversation list for identification and selection.
    * Should be descriptive of the conversation topic or purpose.

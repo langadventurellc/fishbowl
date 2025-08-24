@@ -1,22 +1,36 @@
-import { SidebarContainerDisplayProps } from "@fishbowl-ai/ui-shared";
-import React from "react";
+import {
+  SidebarContainerDisplayProps,
+  ConversationViewModel,
+} from "@fishbowl-ai/ui-shared";
+import React, { useState, useCallback } from "react";
 import { useConversations } from "../../hooks/conversations/useConversations";
 import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
 import { cn } from "../../lib/utils";
 import { NewConversationButton } from "../conversations/NewConversationButton";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
+import { DeleteConversationModal } from "./DeleteConversationModal";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
  * that handles collapsed/expanded visual states with conversation list rendering.
  */
+const logger = createLoggerSync({
+  context: { metadata: { component: "SidebarContainerDisplay" } },
+});
+
 export function SidebarContainerDisplay({
   collapsed = false,
   showBorder = true,
   className = "",
   style = {},
 }: SidebarContainerDisplayProps) {
+  // Modal state for delete confirmation
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [conversationToDelete, setConversationToDelete] =
+    useState<ConversationViewModel | null>(null);
+
   // Initialize hooks for conversation management
   const {
     conversations: conversations,
@@ -55,6 +69,7 @@ export function SidebarContainerDisplay({
   // Map database conversations to UI format
   const mapConversationsToViewModel = (convs: typeof conversations) => {
     return convs.map((conv) => ({
+      id: conv.id,
       name: conv.title,
       lastActivity: formatRelativeTime(conv.updated_at),
       isActive: false,
@@ -62,6 +77,41 @@ export function SidebarContainerDisplay({
   };
 
   const conversationsToDisplay = mapConversationsToViewModel(conversations);
+
+  // Handle delete conversation with modal
+  const handleDeleteClick = useCallback(
+    (conversation: ConversationViewModel) => {
+      setConversationToDelete(conversation);
+      setDeleteModalOpen(true);
+    },
+    [],
+  );
+
+  const handleDeleteConversation = useCallback(
+    async (conversationId: string) => {
+      try {
+        logger.debug("Deleting conversation", { conversationId });
+
+        // Check if running in Electron environment
+        if (!window.electronAPI?.conversations?.delete) {
+          throw new Error(
+            "Conversation deletion not available in current environment",
+          );
+        }
+
+        await window.electronAPI.conversations.delete(conversationId);
+
+        // Refresh conversations list
+        await refetch();
+
+        logger.debug("Conversation deleted successfully", { conversationId });
+      } catch (error) {
+        logger.error("Failed to delete conversation", error as Error);
+        throw error;
+      }
+    },
+    [refetch],
+  );
 
   // Handle new conversation creation
   const handleNewConversation = async () => {
@@ -107,6 +157,7 @@ export function SidebarContainerDisplay({
               conversation={conv}
               appearanceState={conv.isActive ? "active" : "inactive"}
               showUnreadIndicator={false}
+              onDelete={() => handleDeleteClick(conv)}
             />
           ))
         )}
@@ -119,6 +170,16 @@ export function SidebarContainerDisplay({
           disabled={isCreating}
         />
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {conversationToDelete && (
+        <DeleteConversationModal
+          conversation={conversationToDelete}
+          onDelete={handleDeleteConversation}
+          open={deleteModalOpen}
+          onOpenChange={setDeleteModalOpen}
+        />
+      )}
     </>
   );
 

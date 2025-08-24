@@ -103,4 +103,11 @@ export interface ConversationItemDisplayProps {
    * @default {}
    */
   style?: React.CSSProperties;
+
+  /**
+   * Optional callback for delete conversation action.
+   * Called when the user selects "Delete" from the context menu.
+   * Should handle removing the conversation, typically with confirmation.
+   */
+  onDelete?: () => void;
 }
