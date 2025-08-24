@@ -1,13 +1,21 @@
 ---
 id: E-conversation-rename-and
 title: Conversation Rename and Delete Functionality
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/electron/conversationsHandlers.ts: Added DELETE IPC handler
+    with proper error handling, logging, and response formatting following
+    CREATE/LIST/GET patterns
+  apps/desktop/src/electron/__tests__/conversationsHandlers.test.ts:
+    Created comprehensive test suite for all conversation handlers including the
+    new DELETE handler with success, error, and edge case scenarios
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-delete-conversation-with
+  - F-rename-conversation-with
 created: 2025-08-24T19:32:46.052Z
 updated: 2025-08-24T19:32:46.052Z
 ---

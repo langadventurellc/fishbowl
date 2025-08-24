@@ -1,14 +1,25 @@
 ---
 id: F-delete-conversation-with
 title: Delete Conversation with Confirmation
-status: open
+status: in-progress
 priority: medium
 parent: E-conversation-rename-and
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/electron/conversationsHandlers.ts: Added DELETE IPC handler
+    with proper error handling, logging, and response formatting following
+    CREATE/LIST/GET patterns
+  apps/desktop/src/electron/__tests__/conversationsHandlers.test.ts:
+    Created comprehensive test suite for all conversation handlers including the
+    new DELETE handler with success, error, and edge case scenarios
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-deleteconversationmodal
+  - T-create-usedeleteconversation
+  - T-expose-delete-method-in
+  - T-implement-delete-ipc-handler
+  - T-wire-up-delete-modal-and
 created: 2025-08-24T19:46:00.633Z
 updated: 2025-08-24T19:46:00.633Z
 ---
