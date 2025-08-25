@@ -5,6 +5,7 @@
  */
 
 export * from "./agents";
+export * from "./AgentViewModel";
 export * from "./chat";
 export * from "./components";
 export * from "./conversationAgents";

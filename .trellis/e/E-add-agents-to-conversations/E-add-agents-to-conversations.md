@@ -99,7 +99,9 @@ affectedFiles:
     AgentSettingsViewModel and comprehensive JSDoc documentation following
     existing ViewModel patterns
   packages/ui-shared/src/types/conversationAgents/index.ts: Created barrel export file for conversationAgents types module
-  packages/ui-shared/src/types/index.ts: Added conversationAgents export to main types index for package consumption
+  packages/ui-shared/src/types/index.ts: Added conversationAgents export to main
+    types index for package consumption; Added AgentViewModel export to main
+    types barrel to fix import issues after ui-shared package rebuild
   packages/ui-shared/src/types/conversationAgents/__tests__/ConversationAgentViewModel.test.ts:
     Created comprehensive unit tests with 12 passing tests covering interface
     structure, type integration, imports/exports, property validation, and UI
@@ -148,6 +150,11 @@ affectedFiles:
     Created new barrel export file for
     modal components, exporting AddAgentToConversationModal and
     RenameConversationModal following established patterns
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Updated component to integrate useConversationAgents hook,
+    AddAgentToConversationModal, modal state management, loading/error states,
+    and conversation-aware Add Agent button behavior while maintaining backward
+    compatibility
 log: []
 schema: v1.0
 childrenIds:

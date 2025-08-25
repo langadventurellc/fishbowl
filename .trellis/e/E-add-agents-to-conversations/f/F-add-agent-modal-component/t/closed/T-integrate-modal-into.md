@@ -1,14 +1,28 @@
 ---
 id: T-integrate-modal-into
 title: Integrate modal into AgentLabelsContainerDisplay with conversation agents
-status: open
+status: done
 priority: high
 parent: F-add-agent-modal-component
 prerequisites:
   - T-implement-addagenttoconversati
   - T-update-agentlabelscontainerdis
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Updated component to integrate useConversationAgents hook,
+    AddAgentToConversationModal, modal state management, loading/error states,
+    and conversation-aware Add Agent button behavior while maintaining backward
+    compatibility
+  packages/ui-shared/src/types/index.ts:
+    Added AgentViewModel export to main types
+    barrel to fix import issues after ui-shared package rebuild
+log:
+  - Successfully integrated modal into AgentLabelsContainerDisplay with
+    conversation agents. Updated component to use useConversationAgents hook for
+    real-time data, added AddAgentToConversationModal integration, implemented
+    proper loading/error states, and maintained backward compatibility. Add
+    Agent button now correctly enables/disables based on conversation selection
+    state.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T17:44:34.507Z

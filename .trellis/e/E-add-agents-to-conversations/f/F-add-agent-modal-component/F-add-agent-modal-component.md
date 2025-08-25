@@ -35,14 +35,22 @@ affectedFiles:
     Created new barrel export file for
     modal components, exporting AddAgentToConversationModal and
     RenameConversationModal following established patterns
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Updated component to integrate useConversationAgents hook,
+    AddAgentToConversationModal, modal state management, loading/error states,
+    and conversation-aware Add Agent button behavior while maintaining backward
+    compatibility
+  packages/ui-shared/src/types/index.ts:
+    Added AgentViewModel export to main types
+    barrel to fix import issues after ui-shared package rebuild
 log: []
 schema: v1.0
 childrenIds:
-  - T-implement-addagenttoconversati
   - T-integrate-modal-into
   - T-update-prop-drilling-chain-to
   - T-create-addagenttoconversationm-1
   - T-create-addagenttoconversationm
+  - T-implement-addagenttoconversati
   - T-update-agentlabelscontainerdis
 created: 2025-08-25T05:59:26.159Z
 updated: 2025-08-25T05:59:26.159Z
