@@ -4,8 +4,7 @@ title: Update shared package exports and integrate new types
 status: open
 priority: low
 parent: F-database-schema-for
-prerequisites:
-  - T-add-comprehensive-unit-tests
+prerequisites: []
 affectedFiles: {}
 log: []
 schema: v1.0
@@ -24,7 +23,6 @@ Complete the integration of the new ConversationAgent types and repository into 
 
 - Parent Feature: F-database-schema-for
 - Parent Epic: E-add-agents-to-conversations
-- Prerequisite: T-add-comprehensive-unit-tests (all implementation complete)
 
 ## Technical Requirements
 
@@ -68,7 +66,6 @@ export * from "./llmConfig";
 Verify that the new types can be imported cleanly from the main shared package:
 
 ```typescript
-// Test imports in a verification file
 import {
   ConversationAgent,
   CreateConversationAgentInput,
@@ -89,7 +86,6 @@ Ensure no naming conflicts exist between new exports and existing ones:
 
 - Check for duplicate export names
 - Verify barrel file organization doesn't create circular imports
-- Test that tree-shaking works correctly with new exports
 
 ### TypeScript Build Integration
 
@@ -126,32 +122,6 @@ Prepare for future consumption by desktop application:
 - Verify types work with existing desktop type structure
 - Ensure no conflicts with renderer/main process type usage
 - Test that repository can be instantiated in main process services
-
-### Mobile Application Integration
-
-Ensure types are compatible with future mobile integration:
-
-- Verify React Native compatibility of type definitions
-- Check that no Node.js-specific types leak into shared interfaces
-- Test compatibility with Expo build pipeline
-
-## Performance Considerations
-
-### Bundle Size Impact
-
-Monitor the impact of new exports on package size:
-
-- Check that tree-shaking works correctly
-- Verify only used types are included in consuming bundles
-- Document any significant size increases
-
-### Build Time Impact
-
-Assess impact on compilation times:
-
-- Measure shared package build time changes
-- Monitor impact on consuming application build times
-- Document any significant performance regressions
 
 ## Acceptance Criteria
 
@@ -197,50 +167,8 @@ Assess impact on compilation times:
 - [ ] No dead code or unused exports
 - [ ] Code style consistent with existing exports
 
-## Testing Strategy
-
-### Export Integration Tests
-
-```typescript
-// packages/shared/src/__tests__/exports.test.ts
-describe("Shared Package Exports", () => {
-  it("should export all ConversationAgent types", () => {
-    const exports = require("../index");
-
-    expect(exports.ConversationAgent).toBeDefined();
-    expect(exports.CreateConversationAgentInput).toBeDefined();
-    expect(exports.ConversationAgentsRepository).toBeDefined();
-    // ... verify all expected exports
-  });
-
-  it("should not have circular imports", () => {
-    // Test that importing all exports doesn't cause circular dependency errors
-    expect(() => require("../index")).not.toThrow();
-  });
-});
-```
-
-### Build Integration Tests
-
-```bash
-# Verify package builds correctly
-pnpm build:libs
-
-# Test consuming applications can still build
-pnpm build:desktop --dry-run
-```
-
-## Files to Modify
-
-- `packages/shared/src/index.ts`
-- `packages/shared/src/types/index.ts`
-- `packages/shared/src/repositories/index.ts`
-- `packages/shared/src/__tests__/exports.test.ts`
-- `packages/shared/README.md` (if applicable)
-
 ## Dependencies
 
-- **Prerequisite**: T-add-comprehensive-unit-tests (all implementation complete)
 - **Build System**: TypeScript compilation, package build process
 - **Quality**: Existing export test patterns, linting rules
 
@@ -249,9 +177,6 @@ pnpm build:desktop --dry-run
 1. Update all barrel files to include new exports
 2. Run `pnpm build:libs` to verify compilation
 3. Run shared package tests to ensure no regressions
-4. Test imports in consuming applications
-5. Verify tree-shaking and bundle size impact
-6. Update documentation and examples
 
 ## Reference Materials
 
@@ -265,7 +190,6 @@ pnpm build:desktop --dry-run
 - Zero TypeScript compilation errors
 - No increase in bundle size for unused exports
 - Clean import paths for all new types
-- Documentation complete and accurate
 - No breaking changes to existing exports
 
 This completes the foundational database schema infrastructure, making ConversationAgent types and repository available for use by higher-level services and UI components in subsequent feature implementations.
