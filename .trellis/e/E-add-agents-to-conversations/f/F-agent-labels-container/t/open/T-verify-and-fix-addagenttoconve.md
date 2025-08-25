@@ -1,7 +1,7 @@
 ---
 id: T-verify-and-fix-addagenttoconve
 title: Verify and fix AddAgentToConversationModal integration
-status: open
+status: done
 priority: medium
 parent: F-agent-labels-container
 prerequisites:

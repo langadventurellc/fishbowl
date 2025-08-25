@@ -1,13 +1,42 @@
 ---
 id: T-debug-and-fix-useconversationa
 title: Debug and fix useConversationAgents hook IPC integration
-status: open
+status: done
 priority: high
 parent: F-agent-labels-container
 prerequisites:
   - T-fix-conversation-selection-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Removed demo onAddAgent handler override and unused useServices import to
+    allow proper add agent functionality
+log:
+  - >-
+    Fixed the add agent button functionality by removing the demo override in
+    MainContentPanelDisplay that was preventing the actual IPC integration from
+    working. The issue was that MainContentPanelDisplay.tsx was passing a demo
+    onAddAgent handler that only logged a message instead of letting
+    AgentLabelsContainerDisplay use its proper modal-based add agent flow.
+
+
+    Research revealed:
+
+    - IPC methods are properly exposed in preload.ts (conversationAgent.add,
+    remove, getByConversation)
+
+    - Backend handlers in conversationAgentHandlers.ts are working correctly
+    with proper logging
+
+    - useConversationAgents hook implementation is correct with proper error
+    handling and refetch logic
+
+    - AddAgentToConversationModal integration is properly implemented
+
+
+    The root cause was the demo override preventing the real functionality from
+    executing. After removing the demo handler, the Add Agent button now
+    properly opens the modal and uses the full IPC flow to add agents to
+    conversations.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T19:47:02.272Z

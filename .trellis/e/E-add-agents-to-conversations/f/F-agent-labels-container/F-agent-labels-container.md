@@ -19,13 +19,16 @@ affectedFiles:
     canAddAgent status, conversationAgents data, loading states, and errors,
     plus temporary visual debugging box showing current selectedConversationId
     value in UI
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Removed demo onAddAgent handler override and unused useServices import to
+    allow proper add agent functionality
 log: []
 schema: v1.0
 childrenIds:
   - T-debug-and-fix-useconversationa
   - T-fix-agent-display-and-refresh
-  - T-fix-conversation-selection-to
   - T-verify-and-fix-addagenttoconve
+  - T-fix-conversation-selection-to
 created: 2025-08-25T06:00:00.098Z
 updated: 2025-08-25T06:00:00.098Z
 ---

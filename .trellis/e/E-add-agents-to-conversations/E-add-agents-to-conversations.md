@@ -185,7 +185,9 @@ affectedFiles:
   apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
     Modified component to accept and pass selectedConversationId prop to
     AgentLabelsContainerDisplay, completing the prop drilling chain for
-    conversation-specific agent management
+    conversation-specific agent management; Removed demo onAddAgent handler
+    override and unused useServices import to allow proper add agent
+    functionality
   apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
     Implemented conversation selection logic with toggle behavior, visual
     feedback for active conversations, and click handling to update
