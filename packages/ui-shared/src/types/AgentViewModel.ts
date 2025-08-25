@@ -1,42 +1,5 @@
 /**
  * AgentViewModel interface for conversation UI system.
- *
- * Represents an AI agent participant in the conversation with
- * properties for identification, visual presentation, and state.
- *
- * @module types/ui/core/AgentViewModel
- */
-
-/**
- * Represents an AI agent participant in the conversation UI system.
- *
- * This interface defines the structure for agent entities displayed in the
- * agent pills bar, including their visual theming, role information, and
- * current thinking state for real-time feedback.
- *
- * @example
- * ```typescript
- * const technicalAdvisor: AgentViewModel = {
- *   name: "Technical Advisor",
- *   role: "Technical Advisor",
- *   color: "#3b82f6",
- *   isThinking: false
- * };
- *
- * const projectManager: AgentViewModel = {
- *   name: "Project Manager",
- *   role: "Project Manager",
- *   color: "#22c55e",
- *   isThinking: true  // Shows pulsing dot animation
- * };
- *
- * const creativeDirector: AgentViewModel = {
- *   name: "Creative Director",
- *   role: "Creative Director",
- *   color: "#a855f7",
- *   isThinking: false
- * };
- * ```
  */
 export interface AgentViewModel {
   /**

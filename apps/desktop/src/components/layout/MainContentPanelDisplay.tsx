@@ -14,19 +14,13 @@ import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
  */
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
-> = ({
-  agents,
-  messages,
-  defaultInputText = "",
-  defaultManualMode = true,
-  className,
-  style,
-}) => {
+> = ({ className, style }) => {
   const { logger } = useServices();
 
-  // Internal state management for input
-  const [inputText] = useState(defaultInputText);
-  const [isManualMode] = useState(defaultManualMode);
+  const [inputText] = useState("");
+  const [isManualMode] = useState(true);
+  const [agents] = useState([]);
+  const [messages] = useState([]);
 
   return (
     <div

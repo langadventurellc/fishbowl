@@ -13,13 +13,7 @@ import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
  */
 export const ConversationLayoutDisplay: React.FC<
   ConversationLayoutDisplayProps
-> = ({
-  agents,
-  messages,
-  defaultSidebarCollapsed = false,
-  className,
-  style,
-}) => {
+> = ({ defaultSidebarCollapsed = false, className, style }) => {
   // Internal state management for sidebar collapse
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(
     defaultSidebarCollapsed,
@@ -39,14 +33,12 @@ export const ConversationLayoutDisplay: React.FC<
         />
       </div>
 
-      {/* Sidebar */}
       <SidebarContainerDisplay
         collapsed={isSidebarCollapsed}
         showBorder={true}
       />
 
-      {/* Main Content */}
-      <MainContentPanelDisplay agents={agents} messages={messages} />
+      <MainContentPanelDisplay />
     </div>
   );
 };
