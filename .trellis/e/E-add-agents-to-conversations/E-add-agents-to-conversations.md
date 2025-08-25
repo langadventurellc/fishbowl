@@ -94,6 +94,16 @@ affectedFiles:
   apps/desktop/src/types/electron.d.ts: Added conversationAgent property to
     ElectronAPI interface with complete TypeScript type definitions for all four
     methods, including proper JSDoc documentation for each method signature.
+  packages/ui-shared/src/types/conversationAgents/ConversationAgentViewModel.ts:
+    Created new ConversationAgentViewModel interface with proper imports from
+    AgentSettingsViewModel and comprehensive JSDoc documentation following
+    existing ViewModel patterns
+  packages/ui-shared/src/types/conversationAgents/index.ts: Created barrel export file for conversationAgents types module
+  packages/ui-shared/src/types/index.ts: Added conversationAgents export to main types index for package consumption
+  packages/ui-shared/src/types/conversationAgents/__tests__/ConversationAgentViewModel.test.ts:
+    Created comprehensive unit tests with 12 passing tests covering interface
+    structure, type integration, imports/exports, property validation, and UI
+    consistency patterns
 log: []
 schema: v1.0
 childrenIds:

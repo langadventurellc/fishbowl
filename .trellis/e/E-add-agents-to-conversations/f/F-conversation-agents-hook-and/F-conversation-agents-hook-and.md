@@ -1,15 +1,29 @@
 ---
 id: F-conversation-agents-hook-and
 title: Conversation Agents Hook and State Management
-status: open
+status: in-progress
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites:
   - F-ipc-integration-for
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/conversationAgents/ConversationAgentViewModel.ts:
+    Created new ConversationAgentViewModel interface with proper imports from
+    AgentSettingsViewModel and comprehensive JSDoc documentation following
+    existing ViewModel patterns
+  packages/ui-shared/src/types/conversationAgents/index.ts: Created barrel export file for conversationAgents types module
+  packages/ui-shared/src/types/index.ts: Added conversationAgents export to main types index for package consumption
+  packages/ui-shared/src/types/conversationAgents/__tests__/ConversationAgentViewModel.test.ts:
+    Created comprehensive unit tests with 12 passing tests covering interface
+    structure, type integration, imports/exports, property validation, and UI
+    consistency patterns
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-data-transformation-logic
+  - T-create-conversationagentviewmo
+  - T-create-hook-return-type
+  - T-create-useconversationagents
 created: 2025-08-25T05:58:58.022Z
 updated: 2025-08-25T05:58:58.022Z
 ---
