@@ -1,13 +1,25 @@
 ---
 id: T-fix-agent-display-and-refresh
 title: Fix agent display and refresh after conversation agent addition
-status: open
+status: done
 priority: medium
 parent: F-agent-labels-container
 prerequisites:
   - T-verify-and-fix-addagenttoconve
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Added refetch call in onAgentAdded callback to ensure UI updates after agent
+    addition
+  apps/desktop/src/hooks/conversationAgents/useConversationAgents.ts:
+    Cleaned up debug logging from addAgent function while preserving error
+    handling
+log:
+  - Fixed agent display refresh issue after adding agents to conversations. The
+    problem was that the AgentLabelsContainerDisplay and
+    AddAgentToConversationModal were using separate instances of
+    useConversationAgents hook. Added explicit refetch call in onAgentAdded
+    callback to ensure UI updates immediately after successful agent addition.
+    Removed all debug logging after verifying fix works.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T19:47:53.148Z

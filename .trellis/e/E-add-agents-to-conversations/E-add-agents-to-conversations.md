@@ -1,7 +1,7 @@
 ---
 id: E-add-agents-to-conversations
 title: Add Agents to Conversations
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -157,7 +157,8 @@ affectedFiles:
     compatibility; Added extensive debug logging to track selectedConversationId
     state, canAddAgent status, conversationAgents data, loading states, and
     errors, plus temporary visual debugging box showing current
-    selectedConversationId value in UI
+    selectedConversationId value in UI; Added refetch call in onAgentAdded
+    callback to ensure UI updates after agent addition
   apps/desktop/src/pages/Home.tsx: Added conversation selection state
     (selectedConversationId, setSelectedConversationId) and passed props to
     ConversationLayoutDisplay for managing conversation selection throughout the
@@ -195,7 +196,11 @@ affectedFiles:
     handleConversationSelect callback with comprehensive debug logging showing
     conversation details, current selection, and new selection state for
     conversation toggle behavior
-log: []
+  apps/desktop/src/hooks/conversationAgents/useConversationAgents.ts:
+    Cleaned up debug logging from addAgent function while preserving error
+    handling
+log:
+  - "Auto-completed: All child features are complete"
 schema: v1.0
 childrenIds:
   - F-add-agent-modal-component

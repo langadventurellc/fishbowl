@@ -37,9 +37,8 @@ export const AgentLabelsContainerDisplay: React.FC<
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   // Hook integration
-  const { conversationAgents, isLoading, error } = useConversationAgents(
-    selectedConversationId || null,
-  );
+  const { conversationAgents, isLoading, error, refetch } =
+    useConversationAgents(selectedConversationId || null);
 
   // Transform conversation agents to display format
   const displayAgents = selectedConversationId
@@ -143,8 +142,7 @@ export const AgentLabelsContainerDisplay: React.FC<
           onOpenChange={setAddModalOpen}
           conversationId={selectedConversationId}
           onAgentAdded={() => {
-            // Modal will trigger useConversationAgents refetch automatically
-            // No additional action needed
+            refetch(); // Explicitly refetch to ensure UI updates
           }}
         />
       )}

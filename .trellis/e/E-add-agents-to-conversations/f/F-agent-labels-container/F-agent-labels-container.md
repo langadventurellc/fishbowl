@@ -1,7 +1,7 @@
 ---
 id: F-agent-labels-container
 title: Agent Labels Container Integration
-status: in-progress
+status: done
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites:
@@ -18,17 +18,22 @@ affectedFiles:
     Added extensive debug logging to track selectedConversationId state,
     canAddAgent status, conversationAgents data, loading states, and errors,
     plus temporary visual debugging box showing current selectedConversationId
-    value in UI
+    value in UI; Added refetch call in onAgentAdded callback to ensure UI
+    updates after agent addition
   apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
     Removed demo onAddAgent handler override and unused useServices import to
     allow proper add agent functionality
-log: []
+  apps/desktop/src/hooks/conversationAgents/useConversationAgents.ts:
+    Cleaned up debug logging from addAgent function while preserving error
+    handling
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-debug-and-fix-useconversationa
   - T-fix-agent-display-and-refresh
-  - T-verify-and-fix-addagenttoconve
   - T-fix-conversation-selection-to
+  - T-verify-and-fix-addagenttoconve
 created: 2025-08-25T06:00:00.098Z
 updated: 2025-08-25T06:00:00.098Z
 ---
