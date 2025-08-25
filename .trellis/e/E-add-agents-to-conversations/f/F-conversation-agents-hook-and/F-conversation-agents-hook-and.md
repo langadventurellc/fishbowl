@@ -19,17 +19,23 @@ affectedFiles:
     consistency patterns
   apps/desktop/src/hooks/useConversationAgents.ts: Created new hook following
     useConversations pattern with state management, data transformation, IPC
-    integration, and comprehensive error handling
+    integration, and comprehensive error handling; Updated transformToViewModel
+    function to create fallback AgentSettingsViewModel objects when agent
+    configurations are missing from store, and updated fetchConversationAgents
+    to remove filtering since fallbacks are always created
   apps/desktop/src/hooks/__tests__/useConversationAgents.test.tsx:
     Created comprehensive unit tests with 27 test cases covering all
-    functionality, error scenarios, memory cleanup, and data transformation
+    functionality, error scenarios, memory cleanup, and data transformation;
+    Updated test case to verify fallback agent creation behavior instead of
+    filtering, including assertions for fallback agent properties and updated
+    logger warning message
 log: []
 schema: v1.0
 childrenIds:
   - T-add-data-transformation-logic
   - T-create-hook-return-type
-  - T-create-useconversationagents
   - T-create-conversationagentviewmo
+  - T-create-useconversationagents
 created: 2025-08-25T05:58:58.022Z
 updated: 2025-08-25T05:58:58.022Z
 ---

@@ -196,7 +196,7 @@ describe("useConversationAgents", () => {
       );
     });
 
-    it("should filter out agents not found in store and log warnings", async () => {
+    it("should create fallback agents for missing configurations and log warnings", async () => {
       mockGetByConversation.mockResolvedValue([
         mockConversationAgent1,
         mockConversationAgent3, // agent-3 not in store
@@ -208,11 +208,23 @@ describe("useConversationAgents", () => {
         expect(result.current.isLoading).toBe(false);
       });
 
-      expect(result.current.conversationAgents).toHaveLength(1);
+      expect(result.current.conversationAgents).toHaveLength(2);
       expect(result.current.conversationAgents[0]?.agentId).toBe("agent-1");
-      expect(mockLogger.warn).toHaveBeenCalledWith("Agent not found in store", {
-        agentId: "agent-3",
-      });
+      expect(result.current.conversationAgents[1]?.agentId).toBe("agent-3");
+
+      // Verify fallback agent properties
+      const fallbackAgent = result.current.conversationAgents[1]?.agent;
+      expect(fallbackAgent?.name).toBe("Unknown Agent (agent-3)");
+      expect(fallbackAgent?.model).toBe("Unknown Model");
+      expect(fallbackAgent?.role).toBe("Unknown Role");
+      expect(fallbackAgent?.personality).toBe("Unknown Personality");
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        "Agent not found in store, using fallback data",
+        {
+          agentId: "agent-3",
+        },
+      );
     });
   });
 

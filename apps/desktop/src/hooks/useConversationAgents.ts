@@ -12,6 +12,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { type ConversationAgent } from "@fishbowl-ai/shared";
 import {
+  type AgentSettingsViewModel,
   type ConversationAgentViewModel,
   useAgentsStore,
 } from "@fishbowl-ai/ui-shared";
@@ -59,16 +60,25 @@ export function useConversationAgents(
    * Transform ConversationAgent to ConversationAgentViewModel by populating agent data.
    */
   const transformToViewModel = useCallback(
-    (
-      conversationAgent: ConversationAgent,
-    ): ConversationAgentViewModel | null => {
-      const agent = getAgentById(conversationAgent.agent_id);
+    (conversationAgent: ConversationAgent): ConversationAgentViewModel => {
+      const agentSettings = getAgentById(conversationAgent.agent_id);
 
-      if (!agent) {
-        logger.warn("Agent not found in store", {
+      // Create fallback agent if not found in store
+      const agent: AgentSettingsViewModel = agentSettings || {
+        id: conversationAgent.agent_id,
+        name: `Unknown Agent (${conversationAgent.agent_id.slice(0, 8)})`,
+        model: "Unknown Model",
+        role: "Unknown Role",
+        personality: "Unknown Personality",
+        systemPrompt: "",
+        createdAt: conversationAgent.added_at,
+        updatedAt: conversationAgent.added_at,
+      };
+
+      if (!agentSettings) {
+        logger.warn("Agent not found in store, using fallback data", {
           agentId: conversationAgent.agent_id,
         });
-        return null; // Skip agents that don't exist in settings
       }
 
       return {
@@ -116,10 +126,9 @@ export function useConversationAgents(
           conversationId,
         );
 
-      // Transform to ViewModels using agent store data
+      // Transform to ViewModels using agent store data with fallback handling
       const viewModels = conversationAgentData
         .map(transformToViewModel)
-        .filter((vm): vm is ConversationAgentViewModel => vm !== null)
         .sort((a, b) => {
           // Sort by display order first, then by added date
           if (a.displayOrder !== b.displayOrder) {
