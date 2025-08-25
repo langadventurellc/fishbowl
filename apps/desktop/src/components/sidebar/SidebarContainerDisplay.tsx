@@ -92,12 +92,6 @@ export function SidebarContainerDisplay({
     (conversation: ConversationViewModel) => {
       const newSelectedId =
         conversation.id === selectedConversationId ? null : conversation.id;
-      console.log("SidebarContainer: handleConversationSelect called with:", {
-        conversationId: conversation.id,
-        conversationName: conversation.name,
-        currentlySelected: selectedConversationId,
-        newSelectedId,
-      });
       onConversationSelect?.(newSelectedId);
     },
     [selectedConversationId, onConversationSelect],

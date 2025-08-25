@@ -32,6 +32,7 @@ export function ConversationItemDisplay({
   showUnreadIndicator = false,
   className = "",
   style = {},
+  onClick,
   onRename,
   onDelete,
 }: ConversationItemDisplayProps) {
@@ -70,6 +71,7 @@ export function ConversationItemDisplay({
         className,
       )}
       style={style}
+      onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

@@ -57,16 +57,6 @@ export const AgentLabelsContainerDisplay: React.FC<
 
   // Add Agent button should be disabled when no conversation selected
   const canAddAgent = !!selectedConversationId;
-
-  // Debug logging for conversation selection state as per task requirements
-  console.log(
-    "AgentLabelsContainer: selectedConversationId =",
-    selectedConversationId,
-  );
-  console.log("AgentLabelsContainer: canAddAgent =", canAddAgent);
-  console.log("AgentLabelsContainer: conversationAgents =", conversationAgents);
-  console.log("AgentLabelsContainer: isLoading =", isLoading);
-  console.log("AgentLabelsContainer: error =", error);
   // Dynamic styles that can't be converted to Tailwind utilities
   const dynamicStyles: React.CSSProperties = {
     height: barHeight,
@@ -88,10 +78,6 @@ export const AgentLabelsContainerDisplay: React.FC<
         )}
         style={dynamicStyles}
       >
-        {/* Temporary visual debugging for selectedConversationId */}
-        <div className="bg-yellow-100 border border-yellow-400 text-yellow-800 px-2 py-1 rounded text-xs mr-2 font-mono">
-          DEBUG: selectedId={selectedConversationId || "null"}
-        </div>
         {/* Loading state */}
         {isLoading && selectedConversationId && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">

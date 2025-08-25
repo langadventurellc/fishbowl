@@ -245,7 +245,7 @@ export class MainProcessServices {
       this.logger.info("Starting database migrations");
 
       // Ensure migration files are copied to userData before running
-      await this.ensureMigrationsInUserData();
+      await this.copyMigrationsToUserData();
 
       const result = await this.migrationService.runMigrations();
 
@@ -452,52 +452,6 @@ export class MainProcessServices {
     }
   }
 
-  /**
-   * Ensures migration files are copied to userData directory before first use.
-   * Implements lazy initialization pattern - only copies once per session.
-   * Skips copying in development mode where source and target are the same.
-   *
-   * @returns Promise that resolves when migrations are ensured in userData
-   * @throws Error if copying fails
-   */
-  /**
-   * Ensures migration files are copied to userData directory before first use.
-   * Implements lazy initialization pattern - only copies once per session.
-   * Skips copying in development mode where source and target are the same.
-   *
-   * @returns Promise that resolves when migrations are ensured in userData
-   * @throws Error if copying fails
-   */
-  private async ensureMigrationsInUserData(): Promise<void> {
-    const destinationPath = this.getMigrationsPath();
-
-    // Skip if already copied (lazy initialization)
-    const dirStats =
-      await this.fileSystemBridge.getDirectoryStats(destinationPath);
-    if (dirStats.exists && dirStats.isDirectory) {
-      const files = await this.fileSystemBridge.readdir(destinationPath);
-      const sqlFiles = files.filter((f) => f.endsWith(".sql"));
-      if (sqlFiles.length > 0) {
-        this.logger.debug("Migration files already exist in userData", {
-          path: destinationPath,
-          fileCount: sqlFiles.length,
-        });
-        return;
-      }
-    }
-
-    // Discover and copy migrations
-    await this.copyMigrationsToUserData();
-  }
-
-  /**
-   * Copies migration files from source location to userData directory.
-   * Implements atomic copying with proper error handling and logging.
-   * Only copies files that match the migration pattern (001_*.sql).
-   *
-   * @returns Promise that resolves when copying completes
-   * @throws Error if copying fails
-   */
   /**
    * Copies migration files from source location to userData directory.
    * Implements atomic copying with proper error handling and logging.
