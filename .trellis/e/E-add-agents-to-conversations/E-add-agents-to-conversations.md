@@ -51,12 +51,6 @@ affectedFiles:
   packages/shared/src/repositories/conversationAgents/__tests__/exports.test.ts: Export validation tests ensuring proper barrel exports
   packages/shared/src/repositories/conversationAgents/index.ts: Barrel export file for ConversationAgentsRepository
   packages/shared/src/repositories/index.ts: Added conversationAgents export to main repositories index
-  packages/ui-shared/src/types/conversationAgents/ConversationAgentViewModel.ts:
-    Core ConversationAgentViewModel interface with all required fields,
-    comprehensive JSDoc documentation, and proper TypeScript types following
-    existing patterns
-  packages/ui-shared/src/types/conversationAgents/index.ts: Barrel export file for conversationAgents types module
-  packages/ui-shared/src/types/index.ts: Added conversationAgents export to main types index in alphabetical order
 log: []
 schema: v1.0
 childrenIds:
@@ -100,18 +94,19 @@ Enable users to add existing agents to conversations through a modal interface a
 - **No React Context needed initially**: Follow existing prop drilling pattern used for agent selection
 - Future consideration: Add conversation context if prop drilling becomes unwieldy
 
-### 4. Service Layer Implementation
+### 4. Repository Implementation
 
-- Create `ConversationAgentStore` class in shared package for CRUD operations
-- Create `ConversationAgentService` following existing service patterns
-- Service handles business logic, validation, and data population
-- Wire into `MainProcessServices` alongside existing services
+- Create `ConversationAgentsRepository` class in shared package for CRUD operations following `ConversationsRepository` pattern
+- Repository handles database operations, validation, and error handling
+- Wire directly into `MainProcessServices` alongside existing repositories
+- No service layer needed - follow existing conversation architecture
 
 ### 5. IPC Layer Integration
 
 - Create `conversationAgentHandlers.ts` following existing IPC patterns
 - Implement channels: `conversationAgent:getByConversation`, `conversationAgent:add`, `conversationAgent:remove`
 - Add preload bridge methods in `preload/index.ts`
+- IPC handlers call repository methods directly (no service layer)
 - All database operations go through main process (Electron security model)
 
 ### 6. State Management & Synchronization
@@ -173,6 +168,7 @@ Enable users to add existing agents to conversations through a modal interface a
 - Implement proper TypeScript interfaces for all components
 - Maintain separation between UI and business logic
 - Use existing hooks pattern (`useUpdateConversation`, `useDeleteConversation`)
+- Hooks call IPC methods directly (no service abstraction)
 
 ✅ **Type System**
 
@@ -181,12 +177,12 @@ Enable users to add existing agents to conversations through a modal interface a
 - Extend `AgentLabelsContainerDisplayProps` with `selectedConversationId`
 - Use existing `AgentSettingsViewModel` (has ID) for agent data
 
-✅ **Service Architecture**
+✅ **Repository Architecture**
 
-- `ConversationAgentStore` handles database operations
-- `ConversationAgentService` handles business logic and data population
-- Service registered in `MainProcessServices` initialization
-- Follow existing store/service separation pattern
+- `ConversationAgentsRepository` handles database operations, validation, and error handling
+- Repository registered in `MainProcessServices` initialization
+- Follow existing repository pattern (no service layer)
+- Direct repository usage in IPC handlers
 
 ✅ **IPC Communication**
 
@@ -267,23 +263,25 @@ ON conversation_agents(agent_id);
 ### Type Definitions
 
 ```typescript
-// packages/shared/src/types/conversationAgent.ts
+// packages/shared/src/types/conversationAgents/ConversationAgent.ts
+// Following exact pattern from conversations/Conversation.ts
 export interface ConversationAgent {
   id: string;
   conversationId: string;
   agentId: string; // References agent configuration ID from settings, not a DB record
-  addedAt: Date;
+  addedAt: string; // ISO string timestamp following conversation pattern
   isActive: boolean;
   displayOrder: number;
 }
 
-// packages/ui-shared/src/types/ConversationAgentViewModel.ts
+// packages/ui-shared/src/types/conversationAgents/ConversationAgentViewModel.ts
+// Following existing ViewModel patterns
 export interface ConversationAgentViewModel {
   id: string;
   conversationId: string;
   agentId: string;
   agent: AgentSettingsViewModel; // Populated agent data
-  addedAt: Date;
+  addedAt: string; // ISO string timestamp
   isActive: boolean;
   displayOrder: number;
 }
@@ -293,6 +291,7 @@ export interface ConversationAgentViewModel {
 
 ```typescript
 // apps/desktop/src/hooks/useConversationAgents.ts
+// Following exact pattern from useConversations hook
 export function useConversationAgents(conversationId: string | null) {
   // State management
   const [conversationAgents, setConversationAgents] = useState<
@@ -301,25 +300,33 @@ export function useConversationAgents(conversationId: string | null) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  // Fetch agents for conversation
+  // Fetch agents for conversation - direct IPC call
   const fetchConversationAgents = useCallback(async () => {
     if (!conversationId) return;
-    // IPC call to get agents
-    const agents =
+    // Direct IPC call to repository via handlers
+    const response =
       await window.electronAPI.conversationAgent.getByConversation(
         conversationId,
       );
-    setConversationAgents(agents);
+    if (response.success) {
+      setConversationAgents(response.data);
+    } else {
+      setError(new Error(response.error.message));
+    }
   }, [conversationId]);
 
-  // Add agent with refetch
+  // Add agent with refetch - direct IPC call
   const addAgent = useCallback(
     async (agentId: string) => {
-      await window.electronAPI.conversationAgent.add({
+      const response = await window.electronAPI.conversationAgent.add({
         conversationId,
         agentId,
       });
-      await fetchConversationAgents(); // Refetch pattern
+      if (response.success) {
+        await fetchConversationAgents(); // Refetch pattern
+      } else {
+        setError(new Error(response.error.message));
+      }
     },
     [conversationId, fetchConversationAgents],
   );
@@ -347,14 +354,16 @@ Home.tsx (manages selectedConversationId state)
               └── Uses useAgentsStore() for dropdown options
 ```
 
-### Data Flow Sequence
+### Data Flow Sequence (Following Conversation Pattern)
 
 1. User selects conversation in sidebar → `selectedConversationId` updates
 2. Prop flows down to `AgentLabelsContainerDisplay`
-3. `useConversationAgents` hook fetches agents via IPC
+3. `useConversationAgents` hook fetches agents via IPC → Repository → Database
 4. User clicks "Add Agent" → Modal opens with agents from `useAgentsStore`
-5. User selects agent → IPC call to add → Database update
+5. User selects agent → IPC call → Repository → Database update
 6. Hook refetches → UI updates immediately with new agent pill
+
+**Architecture**: Hook → IPC Handler → Repository → Database (no service layer)
 
 ## Risk Mitigation
 
@@ -386,18 +395,20 @@ Home.tsx (manages selectedConversationId state)
 
 - Existing `useAgentsStore` for configured agents list
 - Existing modal patterns from `RenameConversationModal`
-- Existing IPC handler patterns from conversation handlers
-- Existing service layer patterns from `ConversationService`
+- Existing IPC handler patterns from `conversationsHandlers.ts`
+- Existing repository patterns from `ConversationsRepository`
 - Existing hook patterns from `useConversations`
+- **Note**: No service layer dependencies - follow direct repository pattern
 
 ## Estimated Scale
 
 - **Features**: 4 implementable features
 - **Database Changes**: 1 migration script with new table
 - **New Components**: 1 modal component, 1 custom hook
-- **Service Layer**: 1 new store, 1 new service, 1 IPC handler file
+- **Repository Layer**: 1 new repository, 1 IPC handler file
 - **Component Updates**: 3 component modifications for prop drilling
 - **Type Definitions**: 2 new type files (shared and ui-shared)
+- **Simplified Architecture**: No service layer needed
 
 ## Success Metrics
 
