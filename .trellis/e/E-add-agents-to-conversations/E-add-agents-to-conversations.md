@@ -104,6 +104,12 @@ affectedFiles:
     Created comprehensive unit tests with 12 passing tests covering interface
     structure, type integration, imports/exports, property validation, and UI
     consistency patterns
+  apps/desktop/src/hooks/useConversationAgents.ts: Created new hook following
+    useConversations pattern with state management, data transformation, IPC
+    integration, and comprehensive error handling
+  apps/desktop/src/hooks/__tests__/useConversationAgents.test.tsx:
+    Created comprehensive unit tests with 27 test cases covering all
+    functionality, error scenarios, memory cleanup, and data transformation
 log: []
 schema: v1.0
 childrenIds:

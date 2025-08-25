@@ -1,13 +1,31 @@
 ---
 id: T-create-useconversationagents
 title: Create useConversationAgents hook with state management
-status: open
+status: done
 priority: high
 parent: F-conversation-agents-hook-and
 prerequisites:
   - T-create-conversationagentviewmo
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/useConversationAgents.ts: Created new hook following
+    useConversations pattern with state management, data transformation, IPC
+    integration, and comprehensive error handling
+  apps/desktop/src/hooks/__tests__/useConversationAgents.test.tsx:
+    Created comprehensive unit tests with 27 test cases covering all
+    functionality, error scenarios, memory cleanup, and data transformation
+log:
+  - "Successfully implemented the useConversationAgents hook following the
+    established useConversations pattern. The hook provides comprehensive
+    conversation agent management with loading states, error handling, and
+    real-time synchronization using the refetch pattern. Key features include:
+    automatic loading of conversation agents with data transformation from
+    ConversationAgent to ConversationAgentViewModel using the agents store,
+    add/remove agent functionality with immediate UI updates via refetch, proper
+    sorting by display order and added date, comprehensive error handling with
+    user-friendly messages, graceful handling of non-Electron environments, and
+    full TypeScript type safety throughout. All 27 unit tests pass with complete
+    coverage of functionality, error scenarios, memory cleanup, and data
+    transformation patterns."
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T07:07:42.314Z
