@@ -1,20 +1,20 @@
 import {
-  FileStorageService,
-  SettingsRepository,
   ConversationsRepository,
+  FileStorageService,
   MigrationService,
+  SettingsRepository,
   createLoggerSync,
-  type StructuredLogger,
-  type DatabaseBridge,
   type ConversationsRepositoryInterface,
+  type DatabaseBridge,
+  type StructuredLogger,
 } from "@fishbowl-ai/shared";
 import { app } from "electron";
 import * as path from "path";
-import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
-import { NodeDatabaseBridge } from "./NodeDatabaseBridge";
 import { NodeCryptoUtils } from "../utils/NodeCryptoUtils";
-import { NodePathUtils } from "../utils/NodePathUtils";
 import { NodeDeviceInfo } from "../utils/NodeDeviceInfo";
+import { NodePathUtils } from "../utils/NodePathUtils";
+import { NodeDatabaseBridge } from "./NodeDatabaseBridge";
+import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
 
 /**
  * Service container for Electron main process dependencies.
@@ -344,7 +344,11 @@ export class MainProcessServices {
     } else {
       // Development/E2E: find project root migrations
       const appPath = app.getAppPath();
-      const projectRoot = path.resolve(appPath, "..", "..", "..", "..");
+      const isTest = process.env.NODE_ENV === "test";
+      // E2E tests need to go up 4 levels, development only needs 2
+      const projectRoot = isTest
+        ? path.resolve(appPath, "..", "..", "..", "..")
+        : path.resolve(appPath, "..", "..");
       const sourcePath = path.join(projectRoot, "migrations");
       this.logger.debug("Using development migrations source path", {
         path: sourcePath,
