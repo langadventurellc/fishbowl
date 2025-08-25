@@ -130,6 +130,12 @@ affectedFiles:
     Created comprehensive unit test suite with 11 tests covering interface
     structure, type validation, modal pattern consistency, import/export
     functionality, and documentation requirements
+  apps/desktop/src/components/modals/AddAgentToConversationModal.tsx:
+    Created new modal component with agent selection dropdown, form validation,
+    loading states, and error handling following RenameConversationModal pattern
+  apps/desktop/src/components/modals/__tests__/AddAgentToConversationModal.test.tsx:
+    Created comprehensive unit test suite with 26 tests covering all
+    functionality, edge cases, and accessibility requirements
 log: []
 schema: v1.0
 childrenIds:

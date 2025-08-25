@@ -1,13 +1,26 @@
 ---
 id: T-create-addagenttoconversationm-1
 title: Create AddAgentToConversationModal component with selection dropdown
-status: open
+status: done
 priority: high
 parent: F-add-agent-modal-component
 prerequisites:
   - T-create-addagenttoconversationm
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/modals/AddAgentToConversationModal.tsx:
+    Created new modal component with agent selection dropdown, form validation,
+    loading states, and error handling following RenameConversationModal pattern
+  apps/desktop/src/components/modals/__tests__/AddAgentToConversationModal.test.tsx:
+    Created comprehensive unit test suite with 26 tests covering all
+    functionality, edge cases, and accessibility requirements
+log:
+  - Implemented AddAgentToConversationModal component with selection dropdown
+    following established modal patterns. Component features agent selection
+    dropdown populated from useAgentsStore, filters out agents already in
+    conversation, includes form validation, loading states, error handling, and
+    proper accessibility. All tests passing with 26 comprehensive test cases
+    covering rendering, filtering, form interaction, loading states, error
+    handling, and accessibility.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T17:42:39.165Z
