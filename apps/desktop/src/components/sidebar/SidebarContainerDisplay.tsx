@@ -154,6 +154,8 @@ export function SidebarContainerDisplay({
       console.log("Created conversation:", result);
       // Refresh the list to show new conversation
       await refetch();
+      // Automatically select the newly created conversation
+      onConversationSelect?.(result.id);
     } catch (err) {
       console.error("Failed to create conversation:", err);
       // Error handling will be improved in Feature 2
