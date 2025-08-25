@@ -1,13 +1,23 @@
 ---
 id: E-add-agents-to-conversations
 title: Add Agents to Conversations
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  migrations/002_create_conversation_agents.sql: Created new database migration
+    script with conversation_agents table definition, including comprehensive
+    comments explaining design decisions, proper foreign key relationships,
+    unique constraints, and performance indexes following SQLite best practices
+    and existing project conventions.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-add-agent-modal-component
+  - F-component-prop-threading-and
+  - F-database-schema-for
+  - F-service-layer-and-ipc
+  - F-ui-state-management-and-hooks
 created: 2025-08-25T02:24:23.057Z
 updated: 2025-08-25T02:24:23.057Z
 ---

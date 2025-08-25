@@ -1,12 +1,27 @@
 ---
 id: T-create-database-migration
 title: Create database migration script for conversation_agents table
-status: open
+status: done
 priority: high
 parent: F-database-schema-for
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  migrations/002_create_conversation_agents.sql: Created new database migration
+    script with conversation_agents table definition, including comprehensive
+    comments explaining design decisions, proper foreign key relationships,
+    unique constraints, and performance indexes following SQLite best practices
+    and existing project conventions.
+log:
+  - Successfully created database migration script
+    002_create_conversation_agents.sql for agent-to-conversation associations.
+    The migration follows established patterns from 001_create_conversations.sql
+    with comprehensive documentation, proper indexing, and idempotent SQL using
+    IF NOT EXISTS patterns. Key features include foreign key constraint on
+    conversation_id with CASCADE DELETE, unique constraint preventing duplicate
+    agent assignments, and three strategic indexes for optimal query
+    performance. The agent_id field correctly references configuration data
+    rather than database foreign keys, as specified. All quality checks pass and
+    migration is ready for production use.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T03:05:38.134Z

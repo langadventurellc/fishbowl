@@ -1,14 +1,24 @@
 ---
 id: F-database-schema-for
 title: Database Schema for Conversation Agents
-status: open
+status: in-progress
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  migrations/002_create_conversation_agents.sql: Created new database migration
+    script with conversation_agents table definition, including comprehensive
+    comments explaining design decisions, proper foreign key relationships,
+    unique constraints, and performance indexes following SQLite best practices
+    and existing project conventions.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-comprehensive-unit-tests
+  - T-create-conversationagent
+  - T-create-database-migration
+  - T-implement-conversationagentsre
+  - T-update-shared-package-exports
 created: 2025-08-25T02:58:38.685Z
 updated: 2025-08-25T02:58:38.685Z
 ---
