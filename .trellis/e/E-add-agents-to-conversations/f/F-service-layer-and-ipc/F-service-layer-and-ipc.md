@@ -1,15 +1,26 @@
 ---
 id: F-service-layer-and-ipc
 title: Service Layer and IPC Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites:
   - F-database-schema-for
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/conversationAgents/ConversationAgentViewModel.ts:
+    Core ConversationAgentViewModel interface with all required fields,
+    comprehensive JSDoc documentation, and proper TypeScript types following
+    existing patterns
+  packages/ui-shared/src/types/conversationAgents/index.ts: Barrel export file for conversationAgents types module
+  packages/ui-shared/src/types/index.ts: Added conversationAgents export to main types index in alphabetical order
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-conversation-agent
+  - T-create-conversationagentservic
+  - T-create-conversationagentviewmo
+  - T-create-ipc-handlers-for
+  - T-wire-conversationagentservice
 created: 2025-08-25T02:59:05.534Z
 updated: 2025-08-25T02:59:05.534Z
 ---

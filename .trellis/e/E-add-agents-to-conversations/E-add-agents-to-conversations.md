@@ -51,6 +51,12 @@ affectedFiles:
   packages/shared/src/repositories/conversationAgents/__tests__/exports.test.ts: Export validation tests ensuring proper barrel exports
   packages/shared/src/repositories/conversationAgents/index.ts: Barrel export file for ConversationAgentsRepository
   packages/shared/src/repositories/index.ts: Added conversationAgents export to main repositories index
+  packages/ui-shared/src/types/conversationAgents/ConversationAgentViewModel.ts:
+    Core ConversationAgentViewModel interface with all required fields,
+    comprehensive JSDoc documentation, and proper TypeScript types following
+    existing patterns
+  packages/ui-shared/src/types/conversationAgents/index.ts: Barrel export file for conversationAgents types module
+  packages/ui-shared/src/types/index.ts: Added conversationAgents export to main types index in alphabetical order
 log: []
 schema: v1.0
 childrenIds:
