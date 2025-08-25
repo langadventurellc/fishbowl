@@ -38,13 +38,22 @@ affectedFiles:
   apps/desktop/src/electron/main.ts: Added import for
     setupConversationAgentHandlers and registered conversation agent IPC
     handlers in main process initialization with error handling
+  apps/desktop/src/electron/preload.ts: Added conversationAgent API section to
+    electronAPI object with getByConversation, add, remove, and list methods.
+    Added imports for CONVERSATION_AGENT_CHANNELS, conversation agent response
+    types, and shared types (ConversationAgent, AddAgentToConversationInput,
+    RemoveAgentFromConversationInput). Each method follows established IPC
+    patterns with proper error handling and logging.
+  apps/desktop/src/types/electron.d.ts: Added conversationAgent property to
+    ElectronAPI interface with complete TypeScript type definitions for all four
+    methods, including proper JSDoc documentation for each method signature.
 log: []
 schema: v1.0
 childrenIds:
   - T-add-conversation-agent-api-to
-  - T-implement-conversation-agent
   - T-register-conversation-agent
   - T-create-ipc-requestresponse
+  - T-implement-conversation-agent
   - T-integrate-conversationagentsre
 created: 2025-08-25T05:58:32.122Z
 updated: 2025-08-25T05:58:32.122Z

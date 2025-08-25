@@ -196,6 +196,41 @@ export interface ElectronAPI {
    * Provides CRUD operations for conversations through IPC handlers.
    */
   conversations: ConversationsAPI;
+  /**
+   * Conversation agents operations for managing agent-conversation associations.
+   * Provides operations for adding, removing, and querying agents within conversations.
+   */
+  conversationAgent: {
+    /**
+     * Get all agents associated with a specific conversation.
+     * @param conversationId - ID of the conversation
+     * @returns Promise resolving to array of conversation agents
+     */
+    getByConversation(
+      conversationId: string,
+    ): Promise<import("@fishbowl-ai/shared").ConversationAgent[]>;
+    /**
+     * Add an agent to a conversation.
+     * @param input - Input data for adding agent to conversation
+     * @returns Promise resolving to the created conversation agent
+     */
+    add(
+      input: import("@fishbowl-ai/shared").AddAgentToConversationInput,
+    ): Promise<import("@fishbowl-ai/shared").ConversationAgent>;
+    /**
+     * Remove an agent from a conversation.
+     * @param input - Input data for removing agent from conversation
+     * @returns Promise resolving to boolean indicating success
+     */
+    remove(
+      input: import("@fishbowl-ai/shared").RemoveAgentFromConversationInput,
+    ): Promise<boolean>;
+    /**
+     * List all conversation agents (for debugging).
+     * @returns Promise resolving to array of all conversation agents
+     */
+    list(): Promise<import("@fishbowl-ai/shared").ConversationAgent[]>;
+  };
 }
 
 declare global {

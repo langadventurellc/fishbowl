@@ -1,13 +1,32 @@
 ---
 id: T-add-conversation-agent-api-to
 title: Add conversation agent API to preload bridge
-status: open
+status: done
 priority: medium
 parent: F-ipc-integration-for
 prerequisites:
   - T-implement-conversation-agent
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts: Added conversationAgent API section to
+    electronAPI object with getByConversation, add, remove, and list methods.
+    Added imports for CONVERSATION_AGENT_CHANNELS, conversation agent response
+    types, and shared types (ConversationAgent, AddAgentToConversationInput,
+    RemoveAgentFromConversationInput). Each method follows established IPC
+    patterns with proper error handling and logging.
+  apps/desktop/src/types/electron.d.ts: Added conversationAgent property to
+    ElectronAPI interface with complete TypeScript type definitions for all four
+    methods, including proper JSDoc documentation for each method signature.
+log:
+  - Successfully implemented conversation agent API in the preload bridge,
+    enabling the renderer process to communicate with the main process for
+    conversation agent operations. Added all four required methods
+    (getByConversation, add, remove, list) to the electronAPI object, following
+    the exact pattern established by existing IPC APIs like conversations. Each
+    method includes proper error handling, logging, and type safety. Updated the
+    ElectronAPI TypeScript interface to include the new conversationAgent
+    property with complete method signatures. All imports added for constants,
+    response types, and shared types. Quality checks (lint, format, type-check)
+    all pass successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T06:06:25.500Z
