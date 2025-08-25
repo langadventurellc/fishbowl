@@ -1,7 +1,7 @@
 ---
 id: F-database-schema-for
 title: Database Schema for Conversation Agents
-status: in-progress
+status: done
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites: []
@@ -52,13 +52,14 @@ affectedFiles:
   packages/shared/src/repositories/conversationAgents/__tests__/exports.test.ts: Export validation tests ensuring proper barrel exports
   packages/shared/src/repositories/conversationAgents/index.ts: Barrel export file for ConversationAgentsRepository
   packages/shared/src/repositories/index.ts: Added conversationAgents export to main repositories index
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-implement-conversationagentsre
-  - T-update-shared-package-exports
   - T-create-conversationagent
   - T-create-database-migration
+  - T-implement-conversationagentsre
+  - T-update-shared-package-exports
 created: 2025-08-25T02:58:38.685Z
 updated: 2025-08-25T02:58:38.685Z
 ---
