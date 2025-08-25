@@ -13,18 +13,18 @@ affectedFiles:
   apps/desktop/src/shared/ipc/conversationAgentsConstants.ts: Created channel
     constants for conversation agent operations with consistent naming
     convention
-  apps/desktop/src/shared/ipc/requests/conversationAgentGetByConversationRequest.ts: Request interface for getting agents by conversation ID
-  apps/desktop/src/shared/ipc/requests/conversationAgentAddRequest.ts:
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentGetByConversationRequest.ts: Request interface for getting agents by conversation ID
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentAddRequest.ts:
     Request interface for adding agent to conversation, extends
     AddAgentToConversationInput
-  apps/desktop/src/shared/ipc/requests/conversationAgentRemoveRequest.ts:
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentRemoveRequest.ts:
     Request interface for removing agent from conversation, extends
     RemoveAgentFromConversationInput
-  apps/desktop/src/shared/ipc/requests/conversationAgentListRequest.ts: Request interface for listing all conversation agents (debugging)
-  apps/desktop/src/shared/ipc/responses/conversationAgentGetByConversationResponse.ts: Response interface returning array of ConversationAgent
-  apps/desktop/src/shared/ipc/responses/conversationAgentAddResponse.ts: Response interface returning created ConversationAgent
-  apps/desktop/src/shared/ipc/responses/conversationAgentRemoveResponse.ts: Response interface returning boolean success indicator
-  apps/desktop/src/shared/ipc/responses/conversationAgentListResponse.ts: Response interface returning array of all ConversationAgent (debugging)
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentListRequest.ts: Request interface for listing all conversation agents (debugging)
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentGetByConversationResponse.ts: Response interface returning array of ConversationAgent
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentAddResponse.ts: Response interface returning created ConversationAgent
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentRemoveResponse.ts: Response interface returning boolean success indicator
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentListResponse.ts: Response interface returning array of all ConversationAgent (debugging)
   apps/desktop/src/shared/ipc/index.ts: Added exports for conversation agent
     constants, channel types, request types, and response types
   apps/desktop/src/shared/ipc/__tests__/conversationAgentsIPC.test.ts:
