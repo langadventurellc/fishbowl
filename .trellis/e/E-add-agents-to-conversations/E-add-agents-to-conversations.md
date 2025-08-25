@@ -51,14 +51,18 @@ affectedFiles:
   packages/shared/src/repositories/conversationAgents/__tests__/exports.test.ts: Export validation tests ensuring proper barrel exports
   packages/shared/src/repositories/conversationAgents/index.ts: Barrel export file for ConversationAgentsRepository
   packages/shared/src/repositories/index.ts: Added conversationAgents export to main repositories index
+  apps/desktop/src/main/services/MainProcessServices.ts: Added
+    ConversationAgentsRepository import, property declaration, and constructor
+    initialization following the exact pattern of conversationsRepository
+    integration
 log: []
 schema: v1.0
 childrenIds:
   - F-add-agent-modal-component
-  - F-component-prop-threading-and
+  - F-agent-labels-container
+  - F-conversation-agents-hook-and
   - F-database-schema-for
-  - F-service-layer-and-ipc
-  - F-ui-state-management-and-hooks
+  - F-ipc-integration-for
 created: 2025-08-25T02:24:23.057Z
 updated: 2025-08-25T02:24:23.057Z
 ---

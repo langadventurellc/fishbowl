@@ -1,4 +1,5 @@
 import {
+  ConversationAgentsRepository,
   ConversationsRepository,
   FileStorageService,
   MigrationService,
@@ -50,6 +51,11 @@ export class MainProcessServices {
    */
   readonly conversationsRepository: ConversationsRepositoryInterface;
 
+  /**
+   * Repository for managing conversation agent persistence.
+   */
+  readonly conversationAgentsRepository: ConversationAgentsRepository;
+
   constructor() {
     // Initialize Node.js implementations
     this.fileSystemBridge = new NodeFileSystemBridge();
@@ -92,6 +98,22 @@ export class MainProcessServices {
         error instanceof Error ? error : undefined,
       );
       throw new Error("ConversationsRepository initialization failed");
+    }
+
+    // Initialize conversation agents repository
+    try {
+      this.conversationAgentsRepository = new ConversationAgentsRepository(
+        this.databaseBridge,
+        this.cryptoUtils,
+      );
+
+      this.logger.info("ConversationAgentsRepository initialized successfully");
+    } catch (error) {
+      this.logger.error(
+        "Failed to initialize ConversationAgentsRepository",
+        error instanceof Error ? error : undefined,
+      );
+      throw new Error("ConversationAgentsRepository initialization failed");
     }
   }
 

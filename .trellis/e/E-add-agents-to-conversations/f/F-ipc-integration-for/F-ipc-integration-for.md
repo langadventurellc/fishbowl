@@ -1,14 +1,23 @@
 ---
 id: F-ipc-integration-for
 title: IPC Integration for Conversation Agents
-status: open
+status: in-progress
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts: Added
+    ConversationAgentsRepository import, property declaration, and constructor
+    initialization following the exact pattern of conversationsRepository
+    integration
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-conversation-agent-api-to
+  - T-create-ipc-requestresponse
+  - T-implement-conversation-agent
+  - T-integrate-conversationagentsre
+  - T-register-conversation-agent
 created: 2025-08-25T05:58:32.122Z
 updated: 2025-08-25T05:58:32.122Z
 ---
