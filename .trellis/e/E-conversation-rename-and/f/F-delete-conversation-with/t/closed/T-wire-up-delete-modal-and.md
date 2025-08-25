@@ -1,7 +1,7 @@
 ---
 id: T-wire-up-delete-modal-and
 title: Wire up delete modal and handle active conversation deletion
-status: open
+status: done
 priority: low
 parent: F-delete-conversation-with
 prerequisites:

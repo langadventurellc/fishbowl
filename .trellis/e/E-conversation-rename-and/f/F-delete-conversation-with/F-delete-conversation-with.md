@@ -1,7 +1,7 @@
 ---
 id: F-delete-conversation-with
 title: Delete Conversation with Confirmation
-status: in-progress
+status: done
 priority: medium
 parent: E-conversation-rename-and
 prerequisites: []
@@ -43,14 +43,15 @@ affectedFiles:
     Comprehensive unit tests covering success/failure scenarios, loading states,
     error handling, environment checks, and function stability
   apps/desktop/src/hooks/conversations/index.ts: Barrel export file properly exports useDeleteConversation hook
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-create-usedeleteconversation
-  - T-wire-up-delete-modal-and
   - T-create-deleteconversationmodal
+  - T-create-usedeleteconversation
   - T-expose-delete-method-in
   - T-implement-delete-ipc-handler
+  - T-wire-up-delete-modal-and
 created: 2025-08-24T19:46:00.633Z
 updated: 2025-08-24T19:46:00.633Z
 ---

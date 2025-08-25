@@ -1,7 +1,7 @@
 ---
 id: T-wire-up-rename-modal-in
 title: Wire up rename modal in ConversationContextMenu
-status: open
+status: done
 priority: low
 parent: F-rename-conversation-with
 prerequisites:
