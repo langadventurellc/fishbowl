@@ -136,6 +136,14 @@ affectedFiles:
   apps/desktop/src/components/modals/__tests__/AddAgentToConversationModal.test.tsx:
     Created comprehensive unit test suite with 26 tests covering all
     functionality, edge cases, and accessibility requirements
+  packages/ui-shared/src/types/chat/AgentLabelsContainerDisplayProps.ts:
+    "Added selectedConversationId?: string | null property with comprehensive
+    JSDoc documentation explaining integration with useConversationAgents hook
+    and Add Agent button state management"
+  packages/ui-shared/src/types/chat/__tests__/AgentLabelsContainerDisplayProps.test.ts:
+    Created comprehensive unit test suite with 12 test cases covering interface
+    structure, type validation, conversation integration patterns, and backward
+    compatibility
 log: []
 schema: v1.0
 childrenIds:
