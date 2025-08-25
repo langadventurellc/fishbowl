@@ -32,6 +32,10 @@ export type { LlmModelsChannelType } from "./llmModelsConstants";
 export { CONVERSATION_CHANNELS } from "./conversationsConstants";
 export type { ConversationsChannelType } from "./conversationsConstants";
 
+// Conversation Agents constants
+export { CONVERSATION_AGENT_CHANNELS } from "./conversationAgentsConstants";
+export type { ConversationAgentChannelType } from "./conversationAgentsConstants";
+
 // Base types
 export type { IPCResponse } from "./base";
 export type { SerializableError } from "./types";
@@ -72,6 +76,12 @@ export type { ConversationsGetRequest } from "./conversations/getRequest";
 export type { ConversationsUpdateRequest } from "./conversations/updateRequest";
 export type { ConversationsDeleteRequest } from "./conversations/deleteRequest";
 
+// Conversation Agents request types
+export type { ConversationAgentGetByConversationRequest } from "./requests/conversationAgentGetByConversationRequest";
+export type { ConversationAgentAddRequest } from "./requests/conversationAgentAddRequest";
+export type { ConversationAgentRemoveRequest } from "./requests/conversationAgentRemoveRequest";
+export type { ConversationAgentListRequest } from "./requests/conversationAgentListRequest";
+
 // Response types
 export type { SettingsLoadResponse } from "./loadResponse";
 export type { SettingsSaveResponse } from "./saveResponse";
@@ -108,6 +118,12 @@ export type { ConversationsListResponse } from "./conversations/listResponse";
 export type { ConversationsGetResponse } from "./conversations/getResponse";
 export type { ConversationsUpdateResponse } from "./conversations/updateResponse";
 export type { ConversationsDeleteResponse } from "./conversations/deleteResponse";
+
+// Conversation Agents response types
+export type { ConversationAgentGetByConversationResponse } from "./responses/conversationAgentGetByConversationResponse";
+export type { ConversationAgentAddResponse } from "./responses/conversationAgentAddResponse";
+export type { ConversationAgentRemoveResponse } from "./responses/conversationAgentRemoveResponse";
+export type { ConversationAgentListResponse } from "./responses/conversationAgentListResponse";
 
 // LLM Models request types
 export type { LlmModelsSaveRequest } from "./llmModels/saveRequest";
