@@ -1,3 +1,4 @@
+export * from "./AddAgentToConversationModalProps";
 export * from "./AgentLabelsContainerDisplayProps";
 export * from "./AgentPillProps";
 export * from "./ChatContainerDisplayProps";

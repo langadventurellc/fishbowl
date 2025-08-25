@@ -120,6 +120,16 @@ affectedFiles:
     Created new export file for UseConversationAgentsResult interface following
     codebase pattern
   apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed import path for contexts module after file reorganization
+  packages/ui-shared/src/types/chat/AddAgentToConversationModalProps.ts:
+    Created new TypeScript interface with required modal properties (open,
+    onOpenChange, conversationId) and optional onAgentAdded callback, following
+    established modal patterns with comprehensive JSDoc documentation
+  packages/ui-shared/src/types/chat/index.ts: Added barrel export for
+    AddAgentToConversationModalProps interface in alphabetical order
+  packages/ui-shared/src/types/chat/__tests__/AddAgentToConversationModalProps.test.ts:
+    Created comprehensive unit test suite with 11 tests covering interface
+    structure, type validation, modal pattern consistency, import/export
+    functionality, and documentation requirements
 log: []
 schema: v1.0
 childrenIds:
