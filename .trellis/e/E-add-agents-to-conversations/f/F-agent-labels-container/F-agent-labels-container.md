@@ -1,15 +1,31 @@
 ---
 id: F-agent-labels-container
 title: Agent Labels Container Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites:
   - F-add-agent-modal-component
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/pages/Home.tsx: Added handleConversationSelect function with
+    debug logging to track conversation selection state changes flowing from
+    sidebar to Home component state management
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Enhanced handleConversationSelect callback with comprehensive debug logging
+    showing conversation details, current selection, and new selection state for
+    conversation toggle behavior
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Added extensive debug logging to track selectedConversationId state,
+    canAddAgent status, conversationAgents data, loading states, and errors,
+    plus temporary visual debugging box showing current selectedConversationId
+    value in UI
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-debug-and-fix-useconversationa
+  - T-fix-agent-display-and-refresh
+  - T-fix-conversation-selection-to
+  - T-verify-and-fix-addagenttoconve
 created: 2025-08-25T06:00:00.098Z
 updated: 2025-08-25T06:00:00.098Z
 ---

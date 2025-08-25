@@ -154,11 +154,16 @@ affectedFiles:
     Updated component to integrate useConversationAgents hook,
     AddAgentToConversationModal, modal state management, loading/error states,
     and conversation-aware Add Agent button behavior while maintaining backward
-    compatibility
+    compatibility; Added extensive debug logging to track selectedConversationId
+    state, canAddAgent status, conversationAgents data, loading states, and
+    errors, plus temporary visual debugging box showing current
+    selectedConversationId value in UI
   apps/desktop/src/pages/Home.tsx: Added conversation selection state
     (selectedConversationId, setSelectedConversationId) and passed props to
     ConversationLayoutDisplay for managing conversation selection throughout the
-    component chain
+    component chain; Added handleConversationSelect function with debug logging
+    to track conversation selection state changes flowing from sidebar to Home
+    component state management
   packages/ui-shared/src/types/chat/ConversationLayoutDisplayProps.ts:
     Added selectedConversationId and onConversationSelect props to enable
     conversation selection state management and prop passing through layout
@@ -184,7 +189,10 @@ affectedFiles:
   apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
     Implemented conversation selection logic with toggle behavior, visual
     feedback for active conversations, and click handling to update
-    selectedConversationId state through onConversationSelect callback
+    selectedConversationId state through onConversationSelect callback; Enhanced
+    handleConversationSelect callback with comprehensive debug logging showing
+    conversation details, current selection, and new selection state for
+    conversation toggle behavior
 log: []
 schema: v1.0
 childrenIds:
