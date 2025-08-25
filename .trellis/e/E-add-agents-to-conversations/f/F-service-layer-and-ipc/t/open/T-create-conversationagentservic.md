@@ -1,143 +1,172 @@
 ---
 id: T-create-conversationagentservic
-title: Create ConversationAgentService with business logic and unit tests
+title: Create ConversationAgentService business logic implementation
 status: open
 priority: high
 parent: F-service-layer-and-ipc
-prerequisites:
-  - T-create-conversationagentviewmo
+prerequisites: []
 affectedFiles: {}
 log: []
 schema: v1.0
 childrenIds: []
-created: 2025-08-25T04:36:10.622Z
-updated: 2025-08-25T04:36:10.622Z
+created: 2025-08-25T05:17:04.782Z
+updated: 2025-08-25T05:17:04.782Z
 ---
 
-# Create ConversationAgentService with business logic and unit tests
+# Create ConversationAgentService business logic implementation
 
 ## Context
 
-Create the service layer component that handles business logic for conversation-agent operations. This service will coordinate between the ConversationAgentsRepository (database) and AgentStore (settings) to provide populated agent data.
+Implement the ConversationAgentService class that provides business logic for conversation-agent operations with data population. This service bridges the repository layer and the IPC layer, handling agent configuration population and validation.
+
+## Reference Implementation Patterns
+
+- **Service Pattern**: Follow `FileStorageService` constructor dependency injection pattern
+- **Repository Integration**: Use existing `ConversationAgentsRepository` (already implemented in epic)
+- **Agent Population**: Use settings store pattern for populating agent configurations
+- **Error Handling**: Follow existing service error patterns with structured logging
 
 ## Technical Approach
 
-Follow the existing service pattern used by other services in the codebase. The service should use dependency injection and follow the same error handling patterns as ConversationsRepository.
+Create service class in `packages/shared/src/services/conversationAgents/ConversationAgentService.ts` following existing service patterns with dependency injection for testability.
 
 ## Implementation Requirements
 
 ### Service Class Structure
 
-- Create `packages/shared/src/services/conversationAgents/ConversationAgentService.ts`
-- Follow constructor injection pattern with ConversationAgentsRepository and logger dependencies
-- Include comprehensive JSDoc documentation for all public methods
-- Use structured logging with appropriate context metadata
+```typescript
+// packages/shared/src/services/conversationAgents/ConversationAgentService.ts
+export class ConversationAgentService {
+  private readonly logger: StructuredLogger;
+
+  constructor(
+    private readonly conversationAgentsRepository: ConversationAgentsRepository,
+    private readonly agentSettingsProvider: AgentSettingsProvider, // Interface to be defined
+  ) {
+    this.logger = createLoggerSync({
+      context: { metadata: { component: "ConversationAgentService" } },
+    });
+  }
+
+  // Implementation methods...
+}
+```
 
 ### Core Business Methods
 
-Implement these methods with full validation and error handling:
+**1. getAgentsForConversation Method**
 
-1. **`getAgentsForConversation(conversationId: string): Promise<ConversationAgentViewModel[]>`**
-   - Fetch conversation agents from repository using `findByConversationId`
-   - Populate each agent with configuration data from settings
-   - Handle missing agent configurations gracefully (log warning, exclude from results)
-   - Return ConversationAgentViewModel with complete agent details
-   - Include comprehensive error handling and logging
+- **Input**: `conversationId: string`
+- **Output**: `Promise<ConversationAgentViewModel[]>`
+- **Logic**:
+  - Call `conversationAgentsRepository.findByConversationId()`
+  - For each ConversationAgent, populate agent config from settings
+  - Transform to ConversationAgentViewModel array
+  - Handle missing agent configurations gracefully (log warning, exclude from results)
+  - Return ordered by `display_order` ASC, `added_at` ASC
 
-2. **`addAgentToConversation(conversationId: string, agentId: string): Promise<ConversationAgentViewModel>`**
-   - Validate that agent configuration exists in settings
-   - Use repository.create() to add association
-   - Handle DuplicateAgentError and rethrow appropriately
-   - Return populated ConversationAgentViewModel
-   - Log successful addition with relevant IDs
+**2. addAgentToConversation Method**
 
-3. **`removeAgentFromConversation(conversationId: string, agentId: string): Promise<void>`**
-   - Find existing association using repository methods
-   - Delete association using repository.delete()
-   - Handle ConversationAgentNotFoundError appropriately
-   - Log successful removal with relevant IDs
+- **Input**: `{ conversationId: string, agentId: string, displayOrder?: number }`
+- **Output**: `Promise<ConversationAgentViewModel>`
+- **Logic**:
+  - Validate agent exists in settings using `agentSettingsProvider`
+  - Call `conversationAgentsRepository.create()` with input data
+  - Populate created ConversationAgent with agent config
+  - Return populated ConversationAgentViewModel
+  - Include comprehensive error handling for validation and duplicate scenarios
 
-4. **`validateAgentExists(agentId: string): Promise<boolean>`**
-   - Check if agent configuration exists in settings
-   - Return boolean without throwing errors
-   - Used internally by addAgentToConversation
+**3. removeAgentFromConversation Method**
+
+- **Input**: `{ conversationId: string, agentId: string }`
+- **Output**: `Promise<void>`
+- **Logic**:
+  - Find existing association using `conversationAgentsRepository.existsAssociation()`
+  - Get the association record to obtain the database ID
+  - Call `conversationAgentsRepository.delete()` with the association ID
+  - Handle not found scenarios gracefully
+
+**4. validateAgentExists Method (private)**
+
+- **Input**: `agentId: string`
+- **Output**: `Promise<boolean>`
+- **Logic**: Check if agent configuration exists in settings
+
+### Agent Settings Provider Interface
+
+Create interface for dependency injection:
+
+```typescript
+// packages/shared/src/services/conversationAgents/interfaces/AgentSettingsProvider.ts
+export interface AgentSettingsProvider {
+  getAgent(agentId: string): Promise<AgentSettingsViewModel | null>;
+  getAllAgents(): Promise<AgentSettingsViewModel[]>;
+}
+```
 
 ### Data Population Logic
 
-- Transform ConversationAgent entities to ConversationAgentViewModel
-- Fetch agent settings data and merge with database data
-- Handle cases where agent settings have been deleted but database references remain
-- Use logger.warn for missing configurations, don't fail the entire operation
+**Agent Configuration Population**:
 
-### Error Handling
+- Transform `ConversationAgent` to `ConversationAgentViewModel`
+- Populate `agent` field with full `AgentSettingsViewModel` from settings
+- Handle missing configurations by logging warning and excluding from results
+- Maintain consistent data transformation patterns
 
-- Catch and handle repository-specific errors (DuplicateAgentError, ConversationAgentNotFoundError)
-- Provide meaningful error messages for business logic failures
+### Error Handling Requirements
+
 - Use structured logging for all operations
-- Follow existing error handling patterns from other services
+- Preserve original error types from repository (ConversationAgentNotFoundError, etc.)
+- Add service-level context to errors
+- Log business logic decisions (missing agents, validation failures)
+- Follow existing error serialization patterns for IPC transport
 
-### Unit Tests
+### Testing Requirements
 
-Create comprehensive test suite at `packages/shared/src/services/conversationAgents/__tests__/ConversationAgentService.test.ts`:
+**Unit Tests in same task** (following project patterns):
 
-- **Dependency injection tests**: Verify proper initialization with mocked dependencies
-- **getAgentsForConversation tests**:
-  - Successfully returns populated agents
-  - Handles empty results gracefully
-  - Excludes agents with missing configurations
-  - Logs warnings for missing agent data
-- **addAgentToConversation tests**:
-  - Successfully adds valid agent
-  - Throws error for non-existent agent configuration
-  - Handles DuplicateAgentError correctly
-  - Validates input parameters
-- **removeAgentFromConversation tests**:
-  - Successfully removes existing association
-  - Handles non-existent associations
-  - Validates input parameters
-- **validateAgentExists tests**:
-  - Returns true for existing agents
-  - Returns false for non-existent agents
-  - Handles edge cases (empty string, null)
-- **Error handling tests**: Verify proper error transformation and logging
+- Test all public methods with valid inputs
+- Test error handling scenarios (missing agents, repository errors)
+- Test data population logic with mock settings
+- Test validation logic for agent existence
+- Mock ConversationAgentsRepository and AgentSettingsProvider dependencies
+- Verify logging calls for business operations
 
-### File Structure
+**Test file**: `packages/shared/src/services/conversationAgents/__tests__/ConversationAgentService.test.ts`
 
-```
-packages/shared/src/services/conversationAgents/
-├── ConversationAgentService.ts
-├── __tests__/
-│   └── ConversationAgentService.test.ts
-└── index.ts (barrel export)
-```
+### Barrel Export Integration
+
+**Update exports**:
+
+- `packages/shared/src/services/conversationAgents/index.ts` - export service and interface
+- `packages/shared/src/services/index.ts` - export conversationAgents module
 
 ## Dependencies
 
-- ConversationAgentsRepository from `packages/shared/src/repositories/conversationAgents`
-- AgentSettingsViewModel type from existing agent types
-- ConversationAgentViewModel type (will be created in parallel task)
-- Existing error classes from conversation agent types
-- Structured logging utilities
+- ConversationAgentsRepository (already implemented)
+- ConversationAgent and related types (already implemented)
+- ConversationAgentViewModel (already implemented)
+- AgentSettingsViewModel (existing ui-shared type)
+- Structured logging utilities (existing)
 
 ## Acceptance Criteria
 
-- [ ] Service class follows existing constructor injection patterns
-- [ ] All four core methods implemented with proper validation
-- [ ] Agent configuration data properly populated from settings
-- [ ] Missing agent configurations handled gracefully (warn + exclude)
-- [ ] Comprehensive error handling with meaningful messages
-- [ ] All business logic covered by unit tests (>90% coverage)
-- [ ] JSDoc documentation for all public methods
-- [ ] Follows existing logging patterns with structured context
-- [ ] Barrel export file created for service module
-
-## Testing Strategy
-
-Include unit tests in the same task as implementation. Mock all dependencies (repository, logger) and test all success paths, error conditions, and edge cases. Ensure tests validate both business logic and proper dependency usage.
+- [ ] ConversationAgentService class implemented with dependency injection
+- [ ] AgentSettingsProvider interface defined for testability
+- [ ] getAgentsForConversation method populates agent configurations
+- [ ] addAgentToConversation method validates and creates associations
+- [ ] removeAgentFromConversation method handles deletion by conversation/agent IDs
+- [ ] Missing agent configurations handled gracefully with logging
+- [ ] Comprehensive error handling preserving repository error types
+- [ ] Structured logging for all business operations
+- [ ] Unit tests covering all methods and error scenarios
+- [ ] Proper barrel exports and integration
+- [ ] Service follows existing dependency injection patterns
 
 ## Implementation Notes
 
-- Use the same dependency injection pattern as existing services
-- Agent settings population should be resilient to missing configurations
-- Follow the error handling patterns established in ConversationAgentsRepository
-- The service acts as the business logic layer between IPC handlers and data access
+- This service provides the business logic layer between IPC and repository
+- Agent configuration population is crucial for UI display
+- The AgentSettingsProvider interface enables clean separation from settings implementation
+- Error handling must preserve specific error types for proper IPC serialization
+- Service will be instantiated in MainProcessServices with proper dependencies

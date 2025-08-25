@@ -16,11 +16,7 @@ affectedFiles:
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-conversation-agent
-  - T-create-conversationagentservic
   - T-create-conversationagentviewmo
-  - T-create-ipc-handlers-for
-  - T-wire-conversationagentservice
 created: 2025-08-25T02:59:05.534Z
 updated: 2025-08-25T02:59:05.534Z
 ---
