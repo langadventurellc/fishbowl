@@ -105,6 +105,13 @@ export interface ConversationItemDisplayProps {
   style?: React.CSSProperties;
 
   /**
+   * Optional callback for conversation click/selection action.
+   * Called when the user clicks on the conversation item to select it.
+   * Should handle conversation selection state changes.
+   */
+  onClick?: () => void;
+
+  /**
    * Optional callback for rename conversation action.
    * Called when the user selects "Rename" from the context menu.
    * Should handle renaming the conversation, typically with a dialog.

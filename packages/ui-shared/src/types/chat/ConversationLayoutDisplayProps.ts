@@ -15,6 +15,18 @@ export interface ConversationLayoutDisplayProps {
   defaultSidebarCollapsed?: boolean;
 
   /**
+   * Currently selected conversation ID.
+   * Used to track which conversation is active for agent management.
+   */
+  selectedConversationId?: string | null;
+
+  /**
+   * Handler for conversation selection changes.
+   * Called when user selects a different conversation in the sidebar.
+   */
+  onConversationSelect?: (conversationId: string | null) => void;
+
+  /**
    * Handler for sidebar collapse/expand toggle.
    * Called when sidebar visibility changes.
    */

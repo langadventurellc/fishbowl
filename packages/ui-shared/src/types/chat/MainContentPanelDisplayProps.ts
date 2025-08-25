@@ -8,6 +8,12 @@ import type React from "react";
 
 export interface MainContentPanelDisplayProps {
   /**
+   * Currently selected conversation ID.
+   * Used to track which conversation is active for agent management.
+   */
+  selectedConversationId?: string | null;
+
+  /**
    * Additional CSS class names for the panel container.
    */
   className?: string;

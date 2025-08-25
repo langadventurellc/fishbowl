@@ -1,7 +1,7 @@
 ---
 id: F-add-agent-modal-component
 title: Add Agent Modal Component
-status: in-progress
+status: done
 priority: medium
 parent: E-add-agents-to-conversations
 prerequisites:
@@ -43,15 +43,46 @@ affectedFiles:
   packages/ui-shared/src/types/index.ts:
     Added AgentViewModel export to main types
     barrel to fix import issues after ui-shared package rebuild
-log: []
+  apps/desktop/src/pages/Home.tsx: Added conversation selection state
+    (selectedConversationId, setSelectedConversationId) and passed props to
+    ConversationLayoutDisplay for managing conversation selection throughout the
+    component chain
+  packages/ui-shared/src/types/chat/ConversationLayoutDisplayProps.ts:
+    Added selectedConversationId and onConversationSelect props to enable
+    conversation selection state management and prop passing through layout
+    components
+  packages/ui-shared/src/types/sidebar/SidebarContainerDisplayProps.ts:
+    Added selectedConversationId and onConversationSelect props to support
+    conversation selection functionality in sidebar with proper TypeScript
+    typing
+  packages/ui-shared/src/types/chat/MainContentPanelDisplayProps.ts:
+    Added selectedConversationId prop to enable passing conversation selection
+    state to main content panel and child components
+  packages/ui-shared/src/types/chat/ConversationItemDisplayProps.ts:
+    Added onClick prop to support conversation selection interaction when users
+    click on conversation items in sidebar
+  apps/desktop/src/components/layout/ConversationLayoutDisplay.tsx:
+    Updated component to accept selectedConversationId and onConversationSelect
+    props, passing them to SidebarContainerDisplay and MainContentPanelDisplay
+    to maintain prop drilling chain
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Modified component to accept and pass selectedConversationId prop to
+    AgentLabelsContainerDisplay, completing the prop drilling chain for
+    conversation-specific agent management
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    Implemented conversation selection logic with toggle behavior, visual
+    feedback for active conversations, and click handling to update
+    selectedConversationId state through onConversationSelect callback
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-integrate-modal-into
-  - T-update-prop-drilling-chain-to
   - T-create-addagenttoconversationm-1
   - T-create-addagenttoconversationm
   - T-implement-addagenttoconversati
+  - T-integrate-modal-into
   - T-update-agentlabelscontainerdis
+  - T-update-prop-drilling-chain-to
 created: 2025-08-25T05:59:26.159Z
 updated: 2025-08-25T05:59:26.159Z
 ---

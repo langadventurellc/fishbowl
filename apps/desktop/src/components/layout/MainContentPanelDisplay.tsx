@@ -14,7 +14,7 @@ import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
  */
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
-> = ({ className, style }) => {
+> = ({ selectedConversationId, className, style }) => {
   const { logger } = useServices();
 
   const [inputText] = useState("");
@@ -31,6 +31,7 @@ export const MainContentPanelDisplay: React.FC<
       <AgentLabelsContainerDisplay
         agents={agents}
         onAddAgent={() => logger.info("Demo: Adding new agent")}
+        selectedConversationId={selectedConversationId}
       />
 
       {/* Chat Container */}

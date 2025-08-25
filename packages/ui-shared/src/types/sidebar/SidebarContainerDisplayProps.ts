@@ -17,6 +17,18 @@ export interface SidebarContainerDisplayProps {
   showBorder?: boolean;
 
   /**
+   * Currently selected conversation ID.
+   * Used to track which conversation is active for agent management.
+   */
+  selectedConversationId?: string | null;
+
+  /**
+   * Handler for conversation selection changes.
+   * Called when user selects a different conversation in the sidebar.
+   */
+  onConversationSelect?: (conversationId: string | null) => void;
+
+  /**
    * Additional CSS class names to apply to the container
    * @default ""
    */

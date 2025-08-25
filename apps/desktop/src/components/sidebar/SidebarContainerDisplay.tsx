@@ -25,6 +25,8 @@ const logger = createLoggerSync({
 export function SidebarContainerDisplay({
   collapsed = false,
   showBorder = true,
+  selectedConversationId,
+  onConversationSelect,
   className = "",
   style = {},
 }: SidebarContainerDisplayProps) {
@@ -79,11 +81,21 @@ export function SidebarContainerDisplay({
       id: conv.id,
       name: conv.title,
       lastActivity: formatRelativeTime(conv.updated_at),
-      isActive: false,
+      isActive: conv.id === selectedConversationId,
     }));
   };
 
   const conversationsToDisplay = mapConversationsToViewModel(conversations);
+
+  // Handle conversation selection
+  const handleConversationSelect = useCallback(
+    (conversation: ConversationViewModel) => {
+      const newSelectedId =
+        conversation.id === selectedConversationId ? null : conversation.id;
+      onConversationSelect?.(newSelectedId);
+    },
+    [selectedConversationId, onConversationSelect],
+  );
 
   // Handle delete conversation with modal
   const handleDeleteClick = useCallback(
@@ -179,6 +191,7 @@ export function SidebarContainerDisplay({
               conversation={conv}
               appearanceState={conv.isActive ? "active" : "inactive"}
               showUnreadIndicator={false}
+              onClick={() => handleConversationSelect(conv)}
               onRename={() => handleRenameClick(conv)}
               onDelete={() => handleDeleteClick(conv)}
             />
