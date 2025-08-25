@@ -6,12 +6,12 @@
  * @module hooks/__tests__/useConversationAgents.test
  */
 
-import { renderHook, waitFor, act } from "@testing-library/react";
 import type { ConversationAgent } from "@fishbowl-ai/shared";
 import type {
-  ConversationAgentViewModel,
   AgentSettingsViewModel,
+  ConversationAgentViewModel,
 } from "@fishbowl-ai/ui-shared";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { useConversationAgents } from "../useConversationAgents";
 
 // Create stable mock logger to prevent infinite re-renders
@@ -26,7 +26,7 @@ const mockLogger = {
 const mockGetAgentById = jest.fn();
 
 // Mock useServices hook
-jest.mock("../../contexts", () => ({
+jest.mock("../../../contexts", () => ({
   useServices: jest.fn(() => ({
     logger: mockLogger,
   })),

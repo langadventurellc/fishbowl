@@ -1,13 +1,22 @@
 ---
 id: T-create-hook-return-type
 title: Create hook return type interface and comprehensive unit tests
-status: open
+status: done
 priority: medium
 parent: F-conversation-agents-hook-and
 prerequisites:
   - T-add-data-transformation-logic
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/conversationAgents/UseConversationAgentsResult.ts:
+    Created new export file for UseConversationAgentsResult interface following
+    codebase pattern
+  apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed import path for contexts module after file reorganization
+log:
+  - Successfully exported UseConversationAgentsResult interface and ensured
+    comprehensive test coverage. The interface was extracted to a separate file
+    following codebase conventions (one export per file rule), and all 27 unit
+    tests continue to pass with full functionality coverage including error
+    scenarios, data transformation, and edge cases.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T07:08:43.011Z

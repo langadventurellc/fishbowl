@@ -116,6 +116,10 @@ affectedFiles:
     Updated test case to verify fallback agent creation behavior instead of
     filtering, including assertions for fallback agent properties and updated
     logger warning message
+  apps/desktop/src/hooks/conversationAgents/UseConversationAgentsResult.ts:
+    Created new export file for UseConversationAgentsResult interface following
+    codebase pattern
+  apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed import path for contexts module after file reorganization
 log: []
 schema: v1.0
 childrenIds:
