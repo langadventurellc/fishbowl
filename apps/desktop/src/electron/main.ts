@@ -17,6 +17,7 @@ import { setupLlmModelsHandlers } from "./handlers/llmModelsHandlers.js";
 import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
 import { setupAgentsHandlers } from "./agentsHandlers.js";
 import { setupConversationsHandlers } from "./conversationsHandlers.js";
+import { setupConversationAgentHandlers } from "./conversationAgentHandlers.js";
 import { setupRolesHandlers } from "./rolesHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
 import { LlmStorageService } from "./services/LlmStorageService.js";
@@ -428,6 +429,22 @@ The application will now exit.`,
         error as Error,
       );
       // Continue startup - app can function without conversations handlers
+    }
+  }
+
+  // Setup Conversation Agents IPC handlers
+  if (mainProcessServices) {
+    try {
+      setupConversationAgentHandlers(mainProcessServices);
+      mainProcessServices.logger.debug(
+        "Conversation agents IPC handlers registered successfully",
+      );
+    } catch (error) {
+      mainProcessServices.logger.error(
+        "Failed to register conversation agents IPC handlers",
+        error as Error,
+      );
+      // Continue startup - app can function without conversation agents handlers
     }
   }
 

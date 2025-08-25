@@ -75,6 +75,14 @@ affectedFiles:
   apps/desktop/src/shared/ipc/__tests__/conversationAgentsIPC.test.ts:
     Comprehensive unit tests with 11 passing tests covering constants, types,
     exports, and error handling
+  apps/desktop/src/electron/conversationAgentHandlers.ts:
+    Created new IPC handlers
+    file with 4 conversation agent channels following conversationsHandlers.ts
+    pattern. Includes GET_BY_CONVERSATION, ADD, REMOVE, and LIST handlers with
+    proper error handling, logging, and TypeScript typing.
+  apps/desktop/src/electron/main.ts: Added import for
+    setupConversationAgentHandlers and registered conversation agent IPC
+    handlers in main process initialization with error handling
 log: []
 schema: v1.0
 childrenIds:
