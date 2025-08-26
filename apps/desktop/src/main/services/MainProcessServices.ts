@@ -2,7 +2,6 @@ import {
   ConversationAgentsRepository,
   ConversationsRepository,
   FileStorageService,
-  MigrationService,
   SettingsRepository,
   createLoggerSync,
   type ConversationsRepositoryInterface,
@@ -14,6 +13,7 @@ import * as path from "path";
 import { NodeCryptoUtils } from "../utils/NodeCryptoUtils";
 import { NodeDeviceInfo } from "../utils/NodeDeviceInfo";
 import { NodePathUtils } from "../utils/NodePathUtils";
+import { MainDatabaseService } from "./MainDatabaseService";
 import { NodeDatabaseBridge } from "./NodeDatabaseBridge";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
 
@@ -44,7 +44,7 @@ export class MainProcessServices {
   // Configured shared services
   readonly fileStorage: FileStorageService;
   readonly logger: StructuredLogger;
-  readonly migrationService: MigrationService;
+  readonly databaseService: MainDatabaseService;
 
   /**
    * Repository for managing conversation persistence.
@@ -74,14 +74,6 @@ export class MainProcessServices {
     // Create logger with Node.js implementations
     // Using createLogger for consistent configuration
     this.logger = this.createConfiguredLogger();
-
-    // Initialize migration service
-    this.migrationService = new MigrationService(
-      this.databaseBridge,
-      this.fileSystemBridge,
-      pathUtils,
-      this.getMigrationsPath(),
-    );
 
     // Initialize conversations repository
     try {
@@ -115,6 +107,13 @@ export class MainProcessServices {
       );
       throw new Error("ConversationAgentsRepository initialization failed");
     }
+
+    this.databaseService = new MainDatabaseService(
+      this.databaseBridge,
+      this.fileSystemBridge,
+      this.logger,
+      pathUtils,
+    );
   }
 
   /**
@@ -149,7 +148,7 @@ export class MainProcessServices {
    * );
    * ```
    */
-  createDatabaseService<T>(
+  createDatabaseBridge<T>(
     serviceFactory: (databaseBridge: DatabaseBridge) => T,
   ): T {
     return serviceFactory(this.databaseBridge);
@@ -234,95 +233,6 @@ export class MainProcessServices {
   }
 
   /**
-   * Run database migrations to ensure schema is up to date.
-   * This should be called during application startup after database initialization.
-   *
-   * @returns Promise that resolves when migrations complete successfully
-   * @throws Error if migrations fail
-   */
-  async runDatabaseMigrations(): Promise<void> {
-    try {
-      this.logger.info("Starting database migrations");
-
-      // Ensure migration files are copied to userData before running
-      await this.copyMigrationsToUserData();
-
-      const result = await this.migrationService.runMigrations();
-
-      if (result.success) {
-        this.logger.info("Database migrations completed successfully", {
-          migrationsRun: result.migrationsRun,
-          currentVersion: result.currentVersion,
-        });
-      } else {
-        const errorDetails = result.errors
-          ?.map((e) => `${e.filename}: ${e.error}`)
-          .join(", ");
-        this.logger.error(
-          `Database migrations failed - ran ${result.migrationsRun} migrations, errors: ${errorDetails}`,
-        );
-        throw new Error(`Database migrations failed: ${errorDetails}`);
-      }
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-      this.logger.error(
-        "Migration execution failed",
-        error instanceof Error ? error : undefined,
-      );
-      throw new Error(`Migration execution failed: ${errorMessage}`);
-    }
-  }
-
-  /**
-   * Performs a basic database health check.
-   *
-   * @returns Object indicating if database is healthy and any issues found
-   */
-  async performDatabaseHealthCheck(): Promise<{
-    isHealthy: boolean;
-    issues: string[];
-  }> {
-    const issues: string[] = [];
-
-    try {
-      // Check 1: Database connection
-      if (!this.databaseBridge.isConnected()) {
-        issues.push("Database connection not established");
-        return { isHealthy: false, issues };
-      }
-
-      // Check 2: Basic connectivity test
-      const connectivityResult = await this.databaseBridge.query(
-        "SELECT 1 as test",
-        [],
-      );
-
-      if (!connectivityResult || connectivityResult.length === 0) {
-        throw new Error("Database connectivity test failed");
-      }
-
-      this.logger.debug("Database connectivity test passed");
-
-      if (issues.length === 0) {
-        this.logger.info("Database health check completed successfully");
-        return { isHealthy: true, issues: [] };
-      }
-
-      return { isHealthy: false, issues };
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown database error";
-      issues.push(`Database health check failed: ${errorMessage}`);
-      this.logger.error(
-        "Database health check failed",
-        error instanceof Error ? error : undefined,
-      );
-      return { isHealthy: false, issues };
-    }
-  }
-
-  /**
    * Get the path to the database file in the user data directory.
    *
    * @returns Database file path
@@ -333,190 +243,13 @@ export class MainProcessServices {
   }
 
   /**
-   * Get the path to the migrations directory in userData.
-   * Always returns userData/migrations for consistent behavior across all environments.
+   * Run database migrations to ensure schema is up to date.
+   * This should be called during application startup after database initialization.
    *
-   * @returns Migrations directory path in userData
+   * @returns Promise that resolves when migrations complete successfully
+   * @throws Error if migrations fail
    */
-  private getMigrationsPath(): string {
-    // Always return userData path for consistent behavior
-    const migrationsPath = path.join(app.getPath("userData"), "migrations");
-    this.logger.debug("Using userData migrations path", {
-      path: migrationsPath,
-    });
-    return migrationsPath;
-  }
-
-  /**
-   * Determines the source path for migration files based on execution environment.
-   *
-   * In packaged apps, migrations are bundled in app resources.
-   * In development/E2E, migrations are in the project root.
-   *
-   * @returns Path to source migration files
-   */
-  private getSourceMigrationsPath(): string {
-    if (app.isPackaged) {
-      // Packaged app: migrations included via extraResources
-      const sourcePath = path.join(process.resourcesPath, "migrations");
-      this.logger.debug("Using packaged migrations source path", {
-        path: sourcePath,
-      });
-      return sourcePath;
-    } else {
-      // Development/E2E: find project root migrations
-      const appPath = app.getAppPath();
-      const isTest = process.env.NODE_ENV === "test";
-      // E2E tests need to go up 4 levels, development only needs 2
-      const projectRoot = isTest
-        ? path.resolve(appPath, "..", "..", "..", "..")
-        : path.resolve(appPath, "..", "..");
-      const sourcePath = path.join(projectRoot, "migrations");
-      this.logger.debug("Using development migrations source path", {
-        path: sourcePath,
-        appPath,
-        projectRoot,
-      });
-      return sourcePath;
-    }
-  }
-
-  /**
-   * Validates migration source and destination paths for security and correctness.
-   *
-   * Ensures source path exists and contains .sql files, and destination path
-   * is within the userData directory to prevent directory traversal attacks.
-   *
-   * @param sourcePath Path to source migration files
-   * @param destinationPath Path to destination migration files
-   * @throws Error if validation fails
-   */
-  private async validateMigrationPaths(
-    sourcePath: string,
-    destinationPath: string,
-  ): Promise<void> {
-    try {
-      // Validate source path exists using getDirectoryStats
-      const sourceStats =
-        await this.fileSystemBridge.getDirectoryStats?.(sourcePath);
-      if (!sourceStats?.exists || !sourceStats?.isDirectory) {
-        this.logger.warn(
-          "Source migrations path does not exist or is not a directory",
-          {
-            sourcePath,
-            exists: sourceStats?.exists ?? false,
-            isDirectory: sourceStats?.isDirectory ?? false,
-          },
-        );
-        throw new Error(`Source migrations directory not found: ${sourcePath}`);
-      }
-
-      // Validate destination path is within userData directory
-      const userDataPath = app.getPath("userData");
-      const resolvedDestination = path.resolve(destinationPath);
-      const resolvedUserData = path.resolve(userDataPath);
-
-      if (!resolvedDestination.startsWith(resolvedUserData)) {
-        this.logger.error("Destination path outside userData directory");
-        throw new Error(
-          "Invalid destination path: must be within userData directory",
-        );
-      }
-
-      // Check if source contains .sql files using readdir
-      const sourceFiles =
-        (await this.fileSystemBridge.readdir?.(sourcePath)) ?? [];
-      const sqlFiles = sourceFiles.filter((file: string) =>
-        file.endsWith(".sql"),
-      );
-
-      if (sqlFiles.length === 0) {
-        this.logger.warn("No .sql files found in source migrations path", {
-          sourcePath,
-          filesFound: sourceFiles.length,
-        });
-        throw new Error("No migration files (.sql) found in source directory");
-      }
-
-      this.logger.debug("Migration paths validated successfully", {
-        sourcePath,
-        destinationPath: resolvedDestination,
-        sqlFilesFound: sqlFiles.length,
-      });
-    } catch (error) {
-      this.logger.error(
-        "Migration path validation failed",
-        error instanceof Error ? error : undefined,
-      );
-      throw error;
-    }
-  }
-
-  /**
-   * Copies migration files from source location to userData directory.
-   * Implements atomic copying with proper error handling and logging.
-   * Only copies files that match the migration pattern (001_*.sql).
-   *
-   * @returns Promise that resolves when copying completes
-   * @throws Error if copying fails
-   */
-  private async copyMigrationsToUserData(): Promise<void> {
-    const sourcePath = this.getSourceMigrationsPath();
-    const destinationPath = this.getMigrationsPath();
-
-    try {
-      // Validate source directory exists
-      const sourceStats =
-        await this.fileSystemBridge.getDirectoryStats(sourcePath);
-      if (!sourceStats.exists || !sourceStats.isDirectory) {
-        this.logger.warn("Source migrations directory not found", {
-          sourcePath,
-        });
-        return; // Don't crash app, just log warning
-      }
-
-      // Discover .sql files
-      const files = await this.fileSystemBridge.readdir(sourcePath);
-      const migrationFiles = files.filter((f) => f.match(/^\d{3}_.*\.sql$/));
-
-      if (migrationFiles.length === 0) {
-        this.logger.warn("No migration files found in source directory", {
-          sourcePath,
-        });
-        return;
-      }
-
-      // Create destination directory
-      await this.fileSystemBridge.ensureDirectoryExists(destinationPath);
-
-      // Copy files atomically
-      const startTime = Date.now();
-      for (const filename of migrationFiles) {
-        const sourceFile = path.join(sourcePath, filename);
-        const destFile = path.join(destinationPath, filename);
-
-        // Read from source and write to destination
-        const content = await this.fileSystemBridge.readFile(
-          sourceFile,
-          "utf-8",
-        );
-        await this.fileSystemBridge.writeFile(destFile, content);
-      }
-
-      const duration = Date.now() - startTime;
-      this.logger.info("Migration files copied successfully", {
-        sourcePath,
-        destinationPath,
-        fileCount: migrationFiles.length,
-        durationMs: duration,
-      });
-    } catch (error) {
-      this.logger.error("Failed to copy migration files", error as Error);
-      throw new Error(
-        `Migration file copying failed: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
+  async runDatabaseMigrations(): Promise<void> {
+    await this.databaseService.runDatabaseMigrations();
   }
 }
