@@ -1,12 +1,29 @@
 ---
 id: T-create-database-helper
 title: Create Database Helper Functions for Conversation Agent Testing
-status: open
+status: done
 priority: high
 parent: F-end-to-end-tests-for
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  tests/desktop/helpers/database/queryConversationAgents.ts: Database helper
+    function to query conversation_agents table with optional conversation ID
+    filtering
+  tests/desktop/helpers/database/waitForConversationAgentInDb.ts:
+    Database helper function to wait for conversation agent records with
+    configurable timeout and polling
+  tests/desktop/helpers/database/ConversationAgentDbRow.ts: TypeScript interface
+    defining the structure of conversation_agents database rows
+  tests/desktop/helpers/database/index.ts: Updated exports to include new
+    conversation agent helper functions and interface
+log:
+  - Successfully implemented database helper functions for conversation agent
+    testing following established patterns. Created queryConversationAgents
+    function to query conversation_agents table with optional conversation
+    filtering, and waitForConversationAgentInDb function for polling-based
+    database record waiting. Both functions use proper TypeScript interfaces,
+    error handling, and follow the project's "one export per file" rule. All
+    quality checks pass including linting, formatting, and type checking.
 schema: v1.0
 childrenIds: []
 created: 2025-08-25T23:41:26.223Z

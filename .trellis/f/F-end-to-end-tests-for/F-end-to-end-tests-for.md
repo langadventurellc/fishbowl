@@ -1,13 +1,30 @@
 ---
 id: F-end-to-end-tests-for
 title: End-to-End Tests for Conversation Agent Creation
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  tests/desktop/helpers/database/queryConversationAgents.ts: Database helper
+    function to query conversation_agents table with optional conversation ID
+    filtering
+  tests/desktop/helpers/database/waitForConversationAgentInDb.ts:
+    Database helper function to wait for conversation agent records with
+    configurable timeout and polling
+  tests/desktop/helpers/database/ConversationAgentDbRow.ts: TypeScript interface
+    defining the structure of conversation_agents database rows
+  tests/desktop/helpers/database/index.ts: Updated exports to include new
+    conversation agent helper functions and interface
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-database-helper
+  - T-create-test-setup-helper
+  - T-create-ui-interaction-helper
+  - T-implement-database-integrity
+  - T-implement-happy-path
+  - T-implement-multi-conversation
+  - T-implement-ui-state-management
 created: 2025-08-25T23:35:55.904Z
 updated: 2025-08-25T23:35:55.904Z
 ---
