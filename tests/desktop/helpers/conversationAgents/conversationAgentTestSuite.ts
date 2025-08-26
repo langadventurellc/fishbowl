@@ -20,8 +20,8 @@ export const setupConversationAgentTestSuite = () => {
   let userDataPath: string;
   let agentsConfigPath: string;
 
-  test.beforeAll(async () => {
-    // Launch Electron app with test environment
+  test.beforeEach(async () => {
+    // Create fresh Electron app instance for each test - avoids database connection issues
     const electronPath = path.join(
       __dirname,
       "../../../../apps/desktop/dist-electron/electron/main.js",
@@ -34,9 +34,7 @@ export const setupConversationAgentTestSuite = () => {
 
     // Wait for database migrations to complete
     await new Promise((resolve) => setTimeout(resolve, 1000));
-  });
 
-  test.beforeEach(async () => {
     // Reset agent configuration state between tests
     try {
       userDataPath = await electronApp.evaluate(async ({ app }) => {
@@ -107,48 +105,15 @@ export const setupConversationAgentTestSuite = () => {
   });
 
   test.afterEach(async () => {
-    // Ensure all modals are closed
-    try {
-      await window.evaluate(() => {
-        if (window.testHelpers?.isSettingsModalOpen()) {
-          window.testHelpers!.closeSettingsModal();
-        }
-      });
-
-      // Wait for modals to actually close
-      await expect(
-        window.locator('[data-testid="settings-modal"]'),
-      ).not.toBeVisible({ timeout: 2000 });
-
-      await expect(
-        window.locator('[data-slot="dialog-overlay"]'),
-      ).not.toBeVisible({ timeout: 2000 });
-
-      // Ensure conversation agent modal is closed
-      const addAgentModal = window.locator('[role="dialog"]').filter({
-        hasText: "Add Agent to Conversation",
-      });
-      await expect(addAgentModal).not.toBeVisible({ timeout: 1000 });
-
-      await window.waitForTimeout(200);
-    } catch {
-      // Window might be closed, ignore
-    }
-
     // Clean up storage after each test
     if (agentsConfigPath) {
       await cleanupAgentsStorage(agentsConfigPath);
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
-    // Reset database including conversation_agents cleanup
+    // Reset database and close Electron app for each test - ensures clean state
     if (electronApp) {
       await resetDatabase(electronApp);
-    }
-  });
-
-  test.afterAll(async () => {
-    if (electronApp) {
       await electronApp.close();
     }
   });

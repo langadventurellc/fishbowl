@@ -4,13 +4,17 @@ import path from "path";
 import type { TestElectronApplication } from "../TestElectronApplication";
 
 /**
- * Executes a SELECT query on the test database and returns results
+ * Executes a modification query (INSERT, UPDATE, DELETE) on the test database
+ * @param electronApp - The test electron application instance
+ * @param sql - SQL statement to execute
+ * @param params - Parameters for the SQL statement
+ * @returns Promise that resolves when the query completes
  */
-export async function queryDatabase<T = unknown>(
+export async function executeDatabase(
   electronApp: TestElectronApplication,
   sql: string,
   params: unknown[] = [],
-): Promise<T[]> {
+): Promise<void> {
   const userDataPath = await electronApp.evaluate(async ({ app }) => {
     return app.getPath("userData");
   });
@@ -20,7 +24,7 @@ export async function queryDatabase<T = unknown>(
   return new Promise((resolve, reject) => {
     const db = new sqlite3.Database(
       dbPath,
-      sqlite3.OPEN_READONLY,
+      sqlite3.OPEN_READWRITE,
       (err: Error | null) => {
         if (err) {
           reject(err);
@@ -30,14 +34,14 @@ export async function queryDatabase<T = unknown>(
         // Enable foreign key constraints to match production behavior
         db.exec("PRAGMA foreign_keys = ON");
 
-        db.all(sql, params, (err: Error | null, rows: T[]) => {
+        db.run(sql, params, function (err: Error | null) {
           db.close((closeErr: Error | null) => {
             if (err) {
               reject(err);
             } else if (closeErr) {
               reject(closeErr);
             } else {
-              resolve(rows || []);
+              resolve();
             }
           });
         });
