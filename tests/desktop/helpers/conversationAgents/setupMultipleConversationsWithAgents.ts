@@ -1,10 +1,4 @@
 import { expect } from "@playwright/test";
-import {
-  clickAddAgentButton,
-  clickAddButtonInModal,
-  selectAgentInModal,
-  waitForAddAgentModal,
-} from "../conversationAgentUiHelpers";
 import { queryConversations } from "../database";
 import { createLlmConfigForAgentTests } from "../settings/createLlmConfigForAgentTests";
 import { createMockAgentData } from "../settings/createMockAgentData";
@@ -13,6 +7,12 @@ import type { MockLlmConfig } from "../settings/MockLlmConfig";
 import { openAgentsSection } from "../settings/openAgentsSection";
 import type { TestElectronApplication } from "../TestElectronApplication";
 import type { TestWindow } from "../TestWindow";
+import {
+  clickAddAgentButton,
+  clickAddButtonInModal,
+  selectAgentInModal,
+  waitForAddAgentModal,
+} from "./conversationAgentUiHelpers";
 import type { MockAgentData } from "./setupConversationAgentTest";
 
 /**

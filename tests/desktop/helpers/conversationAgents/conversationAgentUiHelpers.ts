@@ -1,5 +1,5 @@
 import { expect } from "@playwright/test";
-import type { TestWindow } from "./TestWindow";
+import type { TestWindow } from "../TestWindow";
 
 /**
  * Click the Add Agent button in AgentLabelsContainerDisplay.

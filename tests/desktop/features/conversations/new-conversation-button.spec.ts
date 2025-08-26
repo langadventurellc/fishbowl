@@ -7,6 +7,7 @@ import {
   type TestWindow,
 } from "../../helpers";
 import { queryConversations, resetDatabase } from "../../helpers/database";
+import { createConversation } from "../../helpers/conversations";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -61,23 +62,8 @@ test.describe("Feature: New Conversation Button", () => {
       const initialConversations = await queryConversations(electronApp);
       expect(initialConversations).toHaveLength(0);
 
-      // Verify the New Conversation button is present and enabled
-      const newConversationButton = window.locator(
-        '[data-testid="new-conversation-button"]',
-      );
-      await expect(newConversationButton).toBeVisible();
-      await expect(newConversationButton).not.toBeDisabled();
-      await expect(newConversationButton).toHaveText("New Conversation");
-
       // When - New Conversation button is clicked
-      await newConversationButton.click();
-
-      // Wait for creation to complete (button returns to normal state)
-      // Note: The loading state might be too fast to catch consistently
-      await expect(newConversationButton).toHaveText("New Conversation", {
-        timeout: 10000,
-      });
-      await expect(newConversationButton).not.toBeDisabled();
+      await createConversation(window);
 
       // Then - Conversation appears in the UI list
       // Look for conversation items using flexible selectors
@@ -110,20 +96,9 @@ test.describe("Feature: New Conversation Button", () => {
       // Given - App is loaded with clean database
       await window.waitForLoadState("networkidle");
 
-      const newConversationButton = window.locator(
-        '[data-testid="new-conversation-button"]',
-      );
-
       // When - Button is clicked twice
-      await newConversationButton.click();
-      await expect(newConversationButton).toHaveText("New Conversation", {
-        timeout: 10000,
-      }); // Wait for first to complete
-
-      await newConversationButton.click();
-      await expect(newConversationButton).toHaveText("New Conversation", {
-        timeout: 10000,
-      }); // Wait for second to complete
+      await createConversation(window);
+      await createConversation(window);
 
       // Then - Two conversations exist in database
       const conversations = await queryConversations(electronApp);
@@ -186,14 +161,7 @@ test.describe("Feature: New Conversation Button", () => {
   test.describe("Scenario: Database Isolation", () => {
     test("each test starts with clean database", async () => {
       // Given - First test creates a conversation
-      const newConversationButton = window.locator(
-        '[data-testid="new-conversation-button"]',
-      );
-
-      await newConversationButton.click();
-      await expect(newConversationButton).toHaveText("New Conversation", {
-        timeout: 10000,
-      });
+      await createConversation(window);
 
       // Verify conversation was created
       const conversationsAfterFirst = await queryConversations(electronApp);

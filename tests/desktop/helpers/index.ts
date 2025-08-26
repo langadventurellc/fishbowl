@@ -1,5 +1,4 @@
 export * from "./conversationAgents";
-export * from "./conversationAgentUiHelpers";
 export { createElectronApp } from "./createElectronApp";
 export * from "./database";
 export * from "./settings";
