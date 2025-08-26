@@ -58,52 +58,75 @@ export function useConversation(id: string | null): UseConversationResult {
   const [error, setError] = useState<Error | null>(null);
   const [notFound, setNotFound] = useState(false);
 
+  // Check if running in proper Electron environment
+  const validateElectronEnvironment = useCallback((): boolean => {
+    if (
+      typeof window === "undefined" ||
+      !window.electronAPI?.conversations?.get ||
+      typeof window.electronAPI.conversations.get !== "function"
+    ) {
+      logger.warn(
+        "Not running in Electron environment, skipping conversation load",
+      );
+      return false;
+    }
+    return true;
+  }, [logger]);
+
+  // Validate conversation ID format
+  const validateConversationId = useCallback(
+    (conversationId: string): void => {
+      if (!isValidUUID(conversationId)) {
+        const validationError = new Error(
+          `Invalid conversation ID format: ${conversationId}`,
+        );
+        logger.error("Invalid UUID format provided", validationError);
+        throw validationError;
+      }
+    },
+    [logger],
+  );
+
+  // Fetch conversation data from Electron API
+  const fetchConversationData = useCallback(
+    async (conversationId: string): Promise<void> => {
+      const conversationData =
+        await window.electronAPI.conversations.get(conversationId);
+
+      if (conversationData === null) {
+        // Conversation not found - this is a valid case, not an error
+        setNotFound(true);
+        setConversation(null);
+        logger.debug(`Conversation not found: ${conversationId}`);
+      } else {
+        // Successfully loaded conversation
+        setConversation(conversationData);
+        setNotFound(false);
+        logger.debug(`Loaded conversation: ${conversationId}`);
+      }
+    },
+    [logger],
+  );
+
   // Load conversation by ID with validation and error handling
   const loadConversation = useCallback(
-    // eslint-disable-next-line statement-count/function-statement-count-warn
     async (conversationId: string) => {
       try {
         setIsLoading(true);
         setError(null);
         setNotFound(false);
 
-        // Check if running in Electron environment
-        if (
-          typeof window === "undefined" ||
-          !window.electronAPI?.conversations?.get ||
-          typeof window.electronAPI.conversations.get !== "function"
-        ) {
-          logger.warn(
-            "Not running in Electron environment, skipping conversation load",
-          );
+        // Environment validation
+        if (!validateElectronEnvironment()) {
           setConversation(null);
           return;
         }
 
-        // Basic UUID format validation
-        if (!isValidUUID(conversationId)) {
-          const validationError = new Error(
-            `Invalid conversation ID format: ${conversationId}`,
-          );
-          logger.error("Invalid UUID format provided", validationError);
-          setError(validationError);
-          return;
-        }
+        // ID format validation
+        validateConversationId(conversationId);
 
-        const conversationData =
-          await window.electronAPI.conversations.get(conversationId);
-
-        if (conversationData === null) {
-          // Conversation not found - this is a valid case, not an error
-          setNotFound(true);
-          setConversation(null);
-          logger.debug(`Conversation not found: ${conversationId}`);
-        } else {
-          // Successfully loaded conversation
-          setConversation(conversationData);
-          setNotFound(false);
-          logger.debug(`Loaded conversation: ${conversationId}`);
-        }
+        // Fetch conversation data
+        await fetchConversationData(conversationId);
       } catch (err) {
         logger.error("Failed to load conversation:", err as Error);
         setError(err as Error);
@@ -113,7 +136,12 @@ export function useConversation(id: string | null): UseConversationResult {
         setIsLoading(false);
       }
     },
-    [logger],
+    [
+      logger,
+      validateElectronEnvironment,
+      validateConversationId,
+      fetchConversationData,
+    ],
   );
 
   // Effect to fetch conversation when ID changes

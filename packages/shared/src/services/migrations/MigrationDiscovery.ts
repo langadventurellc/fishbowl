@@ -38,61 +38,24 @@ export class MigrationDiscovery {
    *
    * @returns Promise resolving to sorted array of migration file metadata
    */
-  // eslint-disable-next-line statement-count/function-statement-count-warn
+  /**
+   * Discovers all valid migration files in the configured directory.
+   *
+   * Scans for .sql files matching pattern: XXX_description.sql where XXX is a 3-digit number.
+   * Returns sorted array by numeric order for proper execution sequence.
+   *
+   * @returns Promise resolving to sorted array of migration file metadata
+   */
   async discoverMigrations(): Promise<MigrationFile[]> {
     try {
-      // Check if migrations directory exists using optional method
-      if (this.fileSystemBridge.getDirectoryStats) {
-        const stats = await this.fileSystemBridge.getDirectoryStats(
-          this.migrationsPath,
-        );
-        if (!stats.exists) {
-          logger.warn(
-            `Migrations directory does not exist: ${this.migrationsPath}`,
-          );
-          return [];
-        }
-        if (!stats.isDirectory) {
-          logger.warn(
-            `Migration path is not a directory: ${this.migrationsPath}`,
-          );
-          return [];
-        }
-      }
+      // Validate migrations directory exists and is accessible
+      await this.validateMigrationsDirectory();
 
-      // Read directory contents if readdir method is available
-      if (!this.fileSystemBridge.readdir) {
-        logger.error("FileSystemBridge does not support directory listing");
-        throw new Error(
-          "Directory listing not supported by current FileSystemBridge implementation",
-        );
-      }
+      // Get directory contents
+      const filenames = await this.readDirectoryContents();
 
-      const files = await this.fileSystemBridge.readdir(this.migrationsPath);
-      const migrationFiles: MigrationFile[] = [];
-
-      for (const filename of files) {
-        const validation = this.validateMigrationFilename(filename);
-
-        if (!validation.valid) {
-          if (filename.endsWith(".sql")) {
-            logger.warn(`Skipping invalid migration filename: ${filename}`);
-          }
-          continue;
-        }
-
-        const fullPath = this.pathUtils.join(this.migrationsPath, filename);
-
-        migrationFiles.push({
-          filename,
-          order: validation.order!,
-          path: fullPath,
-        });
-
-        logger.debug(`Discovered migration: ${filename}`, {
-          order: validation.order,
-        });
-      }
+      // Process filenames into migration file objects
+      const migrationFiles = this.processMigrationFiles(filenames);
 
       // Sort by order ascending
       migrationFiles.sort((a, b) => a.order - b.order);
@@ -100,6 +63,12 @@ export class MigrationDiscovery {
       logger.info(`Discovered ${migrationFiles.length} migration(s)`);
       return migrationFiles;
     } catch (error) {
+      // Handle case where directory doesn't exist gracefully
+      if (error instanceof Error && error.message.includes("does not exist")) {
+        logger.warn(error.message);
+        return [];
+      }
+
       logger.error("Failed to discover migrations", error);
       throw new Error(
         `Failed to discover migrations: ${error instanceof Error ? error.message : String(error)}`,
@@ -171,5 +140,88 @@ export class MigrationDiscovery {
     }
 
     return { valid: true, order };
+  }
+
+  /**
+   * Validates that the migrations directory exists and is accessible.
+   *
+   * @throws Error if directory validation fails
+   */
+  private async validateMigrationsDirectory(): Promise<void> {
+    if (!this.fileSystemBridge.getDirectoryStats) {
+      return; // Skip validation if method not available
+    }
+
+    const stats = await this.fileSystemBridge.getDirectoryStats(
+      this.migrationsPath,
+    );
+
+    if (!stats.exists) {
+      logger.warn(
+        `Migrations directory does not exist: ${this.migrationsPath}`,
+      );
+      throw new Error(
+        `Migrations directory does not exist: ${this.migrationsPath}`,
+      );
+    }
+
+    if (!stats.isDirectory) {
+      logger.warn(`Migration path is not a directory: ${this.migrationsPath}`);
+      throw new Error(
+        `Migration path is not a directory: ${this.migrationsPath}`,
+      );
+    }
+  }
+
+  /**
+   * Reads the contents of the migrations directory.
+   *
+   * @returns Promise resolving to array of filenames
+   * @throws Error if directory listing is not supported
+   */
+  private async readDirectoryContents(): Promise<string[]> {
+    if (!this.fileSystemBridge.readdir) {
+      logger.error("FileSystemBridge does not support directory listing");
+      throw new Error(
+        "Directory listing not supported by current FileSystemBridge implementation",
+      );
+    }
+
+    return await this.fileSystemBridge.readdir(this.migrationsPath);
+  }
+
+  /**
+   * Processes raw filenames into validated migration file objects.
+   *
+   * @param filenames Array of filenames from directory listing
+   * @returns Array of valid migration file metadata
+   */
+  private processMigrationFiles(filenames: string[]): MigrationFile[] {
+    const migrationFiles: MigrationFile[] = [];
+
+    for (const filename of filenames) {
+      const validation = this.validateMigrationFilename(filename);
+
+      if (!validation.valid) {
+        if (filename.endsWith(".sql")) {
+          logger.warn(`Skipping invalid migration filename: ${filename}`);
+        }
+        continue;
+      }
+
+      const fullPath = this.pathUtils.join(this.migrationsPath, filename);
+
+      migrationFiles.push({
+        filename,
+        order: validation.order!,
+        path: fullPath,
+      });
+
+      logger.debug(`Discovered migration: ${filename}`, {
+        order: validation.order,
+      });
+    }
+
+    return migrationFiles;
   }
 }

@@ -28,7 +28,6 @@ export class MigrationService {
     this.tracking = new MigrationTracking(databaseBridge);
   }
 
-  // eslint-disable-next-line statement-count/function-statement-count-warn
   async runMigrations(): Promise<MigrationExecutionResult> {
     const errors: MigrationExecutionError[] = [];
     let migrationsRun = 0;
@@ -40,63 +39,28 @@ export class MigrationService {
       // Initialize tracking table
       await this.tracking.ensureMigrationsTable();
 
-      // Discover all migrations
-      const migrations = await this.discovery.discoverMigrations();
+      // Discover and validate migrations
+      const migrations = await this.discoverMigrations();
       if (migrations.length === 0) {
-        logger.info("No migrations to run");
         return { success: true, migrationsRun: 0, currentVersion: 0 };
       }
 
-      // Get applied migrations to determine current version
-      const appliedMigrations = await this.tracking.getAppliedMigrations();
-      if (appliedMigrations.length > 0) {
-        // Find the highest order migration that was applied
-        const appliedOrders = appliedMigrations.map((am) =>
-          this.extractOrderFromFilename(am.filename),
-        );
-        currentVersion = Math.max(...appliedOrders);
-      }
+      // Determine current version
+      currentVersion = await this.getCurrentVersion();
 
-      // Filter pending migrations
-      const pendingMigrations = [];
-      for (const migration of migrations) {
-        const isPending = await this.tracking.isPending(migration.filename);
-        if (isPending) {
-          pendingMigrations.push(migration);
-        }
-      }
-
+      // Get pending migrations
+      const pendingMigrations = await this.getPendingMigrations(migrations);
       if (pendingMigrations.length === 0) {
         logger.info("No pending migrations");
-        return {
-          success: true,
-          migrationsRun: 0,
-          currentVersion: currentVersion,
-        };
+        return { success: true, migrationsRun: 0, currentVersion };
       }
 
-      // Execute pending migrations in order
-      for (const migration of pendingMigrations) {
-        try {
-          await this.executeMigration(migration);
-          migrationsRun++;
-          currentVersion = migration.order;
-        } catch (error) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-          logger.error("Migration failed", {
-            order: migration.order,
-            filename: migration.filename,
-            error: errorMessage,
-          });
-          errors.push({
-            order: migration.order,
-            filename: migration.filename,
-            error: errorMessage,
-          });
-          break; // Stop on first error
-        }
-      }
+      // Execute pending migrations
+      const executionResult =
+        await this.executePendingMigrations(pendingMigrations);
+      migrationsRun = executionResult.migrationsRun;
+      currentVersion = executionResult.currentVersion;
+      errors.push(...executionResult.errors);
 
       const success = errors.length === 0;
       logger.info("Migration process completed", {
@@ -124,6 +88,75 @@ export class MigrationService {
         error instanceof Error ? error : undefined,
       );
     }
+  }
+
+  private async discoverMigrations(): Promise<MigrationFile[]> {
+    const migrations = await this.discovery.discoverMigrations();
+    if (migrations.length === 0) {
+      logger.info("No migrations to run");
+    }
+    return migrations;
+  }
+
+  private async getCurrentVersion(): Promise<number> {
+    const appliedMigrations = await this.tracking.getAppliedMigrations();
+    if (appliedMigrations.length === 0) {
+      return 0;
+    }
+
+    const appliedOrders = appliedMigrations.map((am) =>
+      this.extractOrderFromFilename(am.filename),
+    );
+    return Math.max(...appliedOrders);
+  }
+
+  private async getPendingMigrations(
+    migrations: MigrationFile[],
+  ): Promise<MigrationFile[]> {
+    const pendingMigrations = [];
+    for (const migration of migrations) {
+      const isPending = await this.tracking.isPending(migration.filename);
+      if (isPending) {
+        pendingMigrations.push(migration);
+      }
+    }
+    return pendingMigrations;
+  }
+
+  private async executePendingMigrations(
+    pendingMigrations: MigrationFile[],
+  ): Promise<{
+    migrationsRun: number;
+    currentVersion: number;
+    errors: MigrationExecutionError[];
+  }> {
+    const errors: MigrationExecutionError[] = [];
+    let migrationsRun = 0;
+    let currentVersion = 0;
+
+    for (const migration of pendingMigrations) {
+      try {
+        await this.executeMigration(migration);
+        migrationsRun++;
+        currentVersion = migration.order;
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : String(error);
+        logger.error("Migration failed", {
+          order: migration.order,
+          filename: migration.filename,
+          error: errorMessage,
+        });
+        errors.push({
+          order: migration.order,
+          filename: migration.filename,
+          error: errorMessage,
+        });
+        break; // Stop on first error
+      }
+    }
+
+    return { migrationsRun, currentVersion, errors };
   }
 
   private async executeMigration(migration: MigrationFile): Promise<void> {
