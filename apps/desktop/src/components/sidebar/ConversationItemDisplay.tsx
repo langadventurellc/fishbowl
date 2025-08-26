@@ -64,6 +64,7 @@ export function ConversationItemDisplay({
 
   return (
     <div
+      data-testid={`conversation-item-${conversation.id}`}
       className={cn(
         "relative px-3 py-2 pr-8 rounded-md cursor-pointer mb-1 text-description transition-all duration-150 ease-out flex flex-col z-[1]",
         "hover:bg-sidebar-primary/8 hover:translate-x-0.5 hover:shadow-sm",

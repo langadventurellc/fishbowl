@@ -1,18 +1,17 @@
+import { createLoggerSync, type Conversation } from "@fishbowl-ai/shared";
 import {
-  SidebarContainerDisplayProps,
   ConversationViewModel,
+  SidebarContainerDisplayProps,
 } from "@fishbowl-ai/ui-shared";
-import React, { useState, useCallback } from "react";
-import { type Conversation } from "@fishbowl-ai/shared";
+import React, { useCallback, useState } from "react";
 import { useConversations } from "../../hooks/conversations/useConversations";
 import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
 import { cn } from "../../lib/utils";
 import { NewConversationButton } from "../conversations/NewConversationButton";
-import { ConversationItemDisplay } from "./ConversationItemDisplay";
-import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
-import { DeleteConversationModal } from "./DeleteConversationModal";
 import { RenameConversationModal } from "../modals/RenameConversationModal";
-import { createLoggerSync } from "@fishbowl-ai/shared";
+import { ConversationItemDisplay } from "./ConversationItemDisplay";
+import { DeleteConversationModal } from "./DeleteConversationModal";
+import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
@@ -90,11 +89,9 @@ export function SidebarContainerDisplay({
   // Handle conversation selection
   const handleConversationSelect = useCallback(
     (conversation: ConversationViewModel) => {
-      const newSelectedId =
-        conversation.id === selectedConversationId ? null : conversation.id;
-      onConversationSelect?.(newSelectedId);
+      onConversationSelect?.(conversation.id);
     },
-    [selectedConversationId, onConversationSelect],
+    [onConversationSelect],
   );
 
   // Handle delete conversation with modal

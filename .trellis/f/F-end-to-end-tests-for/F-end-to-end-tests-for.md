@@ -65,15 +65,20 @@ affectedFiles:
     constraints, cascade deletion, index performance, and schema compliance.
     Includes createConversationAndGetId helper function for proper conversation
     ID management during testing.
+  tests/desktop/features/conversation-agents/conversation-agent-multi-conversation.spec.ts:
+    Created comprehensive test suite with 3 scenarios covering agent reuse
+    across conversations, no available agents state, and conversation switching
+    with agent display updates. Includes database integrity verification, UI
+    state validation, and modal filtering behavior testing.
 log: []
 schema: v1.0
 childrenIds:
-  - T-implement-database-integrity
   - T-implement-multi-conversation
   - T-implement-ui-state-management
   - T-create-database-helper
   - T-create-test-setup-helper
   - T-create-ui-interaction-helper
+  - T-implement-database-integrity
   - T-implement-happy-path
 created: 2025-08-25T23:35:55.904Z
 updated: 2025-08-25T23:35:55.904Z
