@@ -23,17 +23,36 @@ affectedFiles:
     clickCancelButtonInModal, waitForModalError. All functions include proper
     error handling, timeout management, and follow existing test patterns."
   tests/desktop/helpers/index.ts: Added export statement for
-    conversationAgentUiHelpers to make all functions available to test files
+    conversationAgentUiHelpers to make all functions available to test files;
+    Updated barrel file exports to include all new conversation agent test
+    helper functions and types for easy import in test files.
+  tests/desktop/helpers/setupConversationAgentTest.ts:
+    Complete setup helper that
+    combines LLM configuration, agent creation, and conversation creation into
+    one function. Returns structured data with llmConfig, agent, and
+    conversationId for test verification.
+  tests/desktop/helpers/setupMultipleConversationsWithAgents.ts:
+    Advanced helper for creating complex test scenarios with multiple
+    conversations and agent assignments. Handles agent reuse across
+    conversations and returns comprehensive data structure for verification.
+  tests/desktop/helpers/conversationAgentTestSuite.ts: Specialized test suite
+    setup with proper lifecycle management for conversation agent tests.
+    Includes database cleanup, modal state management, and conversation_agents
+    table cleanup.
+  tests/desktop/helpers/conversationAgentTestData.ts: Standardized test data
+    constants and factories including predefined scenarios (single agent,
+    multiple agents, agent reuse), agent type configurations, and standard
+    naming constants.
 log: []
 schema: v1.0
 childrenIds:
   - T-create-test-setup-helper
-  - T-create-ui-interaction-helper
   - T-implement-database-integrity
   - T-implement-happy-path
   - T-implement-multi-conversation
   - T-implement-ui-state-management
   - T-create-database-helper
+  - T-create-ui-interaction-helper
 created: 2025-08-25T23:35:55.904Z
 updated: 2025-08-25T23:35:55.904Z
 ---
