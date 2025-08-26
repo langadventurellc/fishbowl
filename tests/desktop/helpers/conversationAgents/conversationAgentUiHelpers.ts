@@ -87,15 +87,16 @@ export const selectAgentInModal = async (
 /**
  * Verify agent pill exists in AgentLabelsContainerDisplay.
  * Looks for agent pill components by agent name.
+ * Agent pills show format: "AgentName | AgentRole"
  */
 export const verifyAgentPillExists = async (
   window: TestWindow,
   agentName: string,
 ): Promise<void> => {
-  // Look for agent pills containing the agent name
-  // Agent pills are rendered within the AgentLabelsContainerDisplay
-  const agentPill = window.locator('[class*="agent-pill"], div').filter({
-    hasText: agentName,
+  // Look for div elements with rounded-full class (AgentPill styling) containing the agent name
+  // AgentPill component renders as: <div className="...rounded-full..."><span>AgentName | AgentRole</span></div>
+  const agentPill = window.locator("div").filter({
+    hasText: new RegExp(`${agentName}\\s*\\|`, "i"), // Match "AgentName |" format
   });
 
   await expect(agentPill.first()).toBeVisible({ timeout: 5000 });
@@ -142,9 +143,9 @@ export const waitForAgentInConversationDisplay = async (
     // No loading spinner present, continue
   }
 
-  // Look for the agent pill in the agent labels container
-  const agentInDisplay = window.locator('[class*="agent-pill"], div').filter({
-    hasText: agentName,
+  // Look for the agent pill in the agent labels container using the correct format
+  const agentInDisplay = window.locator("div").filter({
+    hasText: new RegExp(`${agentName}\\s*\\|`, "i"), // Match "AgentName | AgentRole" format
   });
 
   await expect(agentInDisplay.first()).toBeVisible({ timeout });
@@ -173,10 +174,10 @@ export const waitForNoAvailableAgentsState = async (
 export const clickAddButtonInModal = async (
   window: TestWindow,
 ): Promise<void> => {
-  // Find the Add button (not Cancel)
+  // Find the Add Agent button (not Cancel) - exact text match "Add Agent"
   const addButton = window
     .locator('[role="dialog"] button')
-    .filter({ hasText: /^Add$|Add Agent/ });
+    .filter({ hasText: "Add Agent" });
 
   await expect(addButton).toBeVisible({ timeout: 1000 });
   await expect(addButton).toBeEnabled({ timeout: 1000 });

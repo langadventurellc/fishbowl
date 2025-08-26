@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
+import { resetDatabase } from "helpers/database";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createElectronApp } from "../createElectronApp";
-import { resetDatabase } from "../database";
 import { cleanupAgentsStorage } from "../settings/cleanupAgentsStorage";
 import type { TestElectronApplication } from "../TestElectronApplication";
 import type { TestWindow } from "../TestWindow";
@@ -37,9 +37,6 @@ export const setupConversationAgentTestSuite = () => {
   });
 
   test.beforeEach(async () => {
-    // Reset database to clean state including conversation_agents table
-    await resetDatabase(electronApp);
-
     // Reset agent configuration state between tests
     try {
       userDataPath = await electronApp.evaluate(async ({ app }) => {

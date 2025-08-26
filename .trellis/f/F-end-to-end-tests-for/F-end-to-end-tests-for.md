@@ -25,7 +25,8 @@ affectedFiles:
   tests/desktop/helpers/index.ts: Added export statement for
     conversationAgentUiHelpers to make all functions available to test files;
     Updated barrel file exports to include all new conversation agent test
-    helper functions and types for easy import in test files.
+    helper functions and types for easy import in test files.; Added
+    conversations export to barrel file for proper test helper imports
   tests/desktop/helpers/setupConversationAgentTest.ts:
     Complete setup helper that
     combines LLM configuration, agent creation, and conversation creation into
@@ -43,15 +44,24 @@ affectedFiles:
     constants and factories including predefined scenarios (single agent,
     multiple agents, agent reuse), agent type configurations, and standard
     naming constants.
+  tests/desktop/features/conversation-agents/conversation-agent-creation.spec.ts:
+    Created comprehensive happy path test for conversation agent creation with
+    proper UI selectors and database verification
+  tests/desktop/helpers/conversationAgents/conversationAgentUiHelpers.ts:
+    Fixed AgentPill selectors to match actual component format (AgentName |
+    AgentRole) and corrected Add Agent button selector in modal
+  tests/desktop/helpers/conversationAgents/setupConversationAgentTest.ts:
+    Updated to use createTestAgent helper and implemented proper agent ID
+    retrieval from agents.json file with retry logic and error handling
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-test-setup-helper
   - T-implement-database-integrity
   - T-implement-happy-path
   - T-implement-multi-conversation
   - T-implement-ui-state-management
   - T-create-database-helper
+  - T-create-test-setup-helper
   - T-create-ui-interaction-helper
 created: 2025-08-25T23:35:55.904Z
 updated: 2025-08-25T23:35:55.904Z

@@ -1,11 +1,12 @@
 import type { AgentFormData } from "@fishbowl-ai/ui-shared";
 import { expect } from "@playwright/test";
+import { promises as fs } from "fs";
+import path from "path";
 import { queryConversations } from "../database";
 import { createLlmConfigForAgentTests } from "../settings/createLlmConfigForAgentTests";
 import { createMockAgentData } from "../settings/createMockAgentData";
-import { fillAgentForm } from "../settings/fillAgentForm";
+import { createTestAgent } from "../settings/createTestAgent";
 import type { MockLlmConfig } from "../settings/MockLlmConfig";
-import { openAgentsSection } from "../settings/openAgentsSection";
 import type { TestElectronApplication } from "../TestElectronApplication";
 import type { TestWindow } from "../TestWindow";
 
@@ -30,37 +31,51 @@ export const setupConversationAgentTest = async (
   const llmConfig = await createLlmConfigForAgentTests(window);
 
   // Step 2: Create test agent
-  await openAgentsSection(window);
-
-  // Click "Create Agent" button
-  const createAgentButton = window
-    .locator("button")
-    .filter({ hasText: "Create Agent" });
-  await expect(createAgentButton).toBeVisible({ timeout: 5000 });
-  await createAgentButton.click();
-
-  // Wait for agent modal
-  const agentModal = window.locator('[role="dialog"]');
-  await expect(agentModal).toBeVisible({ timeout: 5000 });
-
-  // Fill agent form
   const mockAgentData = createMockAgentData();
-  const filledAgentData = await fillAgentForm(window, mockAgentData);
+  const filledAgentData = await createTestAgent(window, mockAgentData);
 
-  // Save agent
-  const saveButton = window
-    .locator("button")
-    .filter({ hasText: "Create Agent" });
-  await expect(saveButton).toBeEnabled({ timeout: 2000 });
-  await saveButton.click();
+  // Get the real agent ID from the agents.json file
+  const userDataPath = await electronApp.evaluate(async ({ app }) => {
+    return app.getPath("userData");
+  });
+  const agentsConfigPath = path.join(userDataPath, "agents.json");
 
-  // Wait for modal to close and agent to be created
-  await expect(agentModal).not.toBeVisible({ timeout: 5000 });
+  // Wait for file to be written and retry a few times
+  let agentsData: { agents: Array<{ name: string; id: string }> };
+  let attempts = 0;
+  const maxAttempts = 10;
 
-  // Generate a consistent agent ID (simulating what the real system would do)
+  while (attempts < maxAttempts) {
+    try {
+      await window.waitForTimeout(200);
+      const agentsContent = await fs.readFile(agentsConfigPath, "utf-8");
+      agentsData = JSON.parse(agentsContent) as {
+        agents: Array<{ name: string; id: string }>;
+      };
+      break;
+    } catch (error) {
+      attempts++;
+      if (attempts >= maxAttempts) {
+        throw new Error(
+          `Could not read agents file after ${maxAttempts} attempts. Last error: ${error}`,
+        );
+      }
+    }
+  }
+
+  const savedAgent = agentsData!.agents.find(
+    (agent: { name: string }) => agent.name === filledAgentData.name,
+  );
+
+  if (!savedAgent || !savedAgent.id) {
+    throw new Error(
+      `Could not find saved agent with name ${filledAgentData.name}. Available agents: ${agentsData!.agents.map((a) => a.name).join(", ")}`,
+    );
+  }
+
   const agent: MockAgentData = {
     ...filledAgentData,
-    id: `agent-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`,
+    id: savedAgent.id,
   };
 
   // Step 3: Exit settings and create new conversation

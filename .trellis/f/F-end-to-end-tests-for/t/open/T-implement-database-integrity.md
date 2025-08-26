@@ -26,6 +26,7 @@ Create end-to-end tests that focus specifically on database operations, constrai
 
 - Database testing patterns from conversation tests
 - SQLite constraint testing approaches
+- Create conversation test helpers `tests/desktop/helpers/conversations/createConversation.ts`
 - Foreign key relationship verification
 - Database cleanup and isolation patterns
 

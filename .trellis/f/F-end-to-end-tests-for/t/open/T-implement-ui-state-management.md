@@ -26,6 +26,7 @@ Create end-to-end tests that verify UI state management rules for conversation a
 
 - Button state testing from agent creation tests (`agent-creation.spec.ts`)
 - Modal state management from settings tests
+- Create conversation test helpers `tests/desktop/helpers/conversations/createConversation.ts`
 - UI state verification patterns from existing test suites
 - Error state testing from LLM configuration tests
 

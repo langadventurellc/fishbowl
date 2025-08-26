@@ -26,6 +26,7 @@ Create end-to-end tests that verify complex scenarios involving multiple convers
 
 - Multi-conversation patterns from conversation creation tests
 - Complex test data setup from agent settings tests
+- Create conversation test helpers `tests/desktop/helpers/conversations/createConversation.ts`
 - Sidebar conversation selection patterns
 - Database verification for complex relationships
 
