@@ -32,6 +32,9 @@ export function ConversationItemDisplay({
   showUnreadIndicator = false,
   className = "",
   style = {},
+  onClick,
+  onRename,
+  onDelete,
 }: ConversationItemDisplayProps) {
   const [isHovered, setIsHovered] = useState(false);
 
@@ -61,6 +64,7 @@ export function ConversationItemDisplay({
 
   return (
     <div
+      data-testid={`conversation-item-${conversation.id}`}
       className={cn(
         "relative px-3 py-2 pr-8 rounded-md cursor-pointer mb-1 text-description transition-all duration-150 ease-out flex flex-col z-[1]",
         "hover:bg-sidebar-primary/8 hover:translate-x-0.5 hover:shadow-sm",
@@ -68,6 +72,7 @@ export function ConversationItemDisplay({
         className,
       )}
       style={style}
+      onClick={onClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -91,15 +96,8 @@ export function ConversationItemDisplay({
         <ConversationContextMenu
           conversation={conversation}
           position="below"
-          onRename={() => {
-            /* Placeholder for rename action */
-          }}
-          onDuplicate={() => {
-            /* Placeholder for duplicate action */
-          }}
-          onDelete={() => {
-            /* Placeholder for delete action */
-          }}
+          onRename={onRename || (() => {})}
+          onDelete={onDelete || (() => {})}
         />
       </div>
 

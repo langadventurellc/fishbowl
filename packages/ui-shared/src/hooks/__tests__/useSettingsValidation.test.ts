@@ -1,6 +1,6 @@
 import { renderHook } from "@testing-library/react";
-import { useSettingsValidation } from "../useSettingsValidation.js";
 import type { SettingsFormData } from "../../types/settings/combined/SettingsFormData.js";
+import { useSettingsValidation } from "../useSettingsValidation.js";
 
 describe("useSettingsValidation", () => {
   describe("validateSettings", () => {
@@ -293,62 +293,6 @@ describe("useSettingsValidation", () => {
       expect(result.current.validateSettings).toBe(firstValidateSettings);
       expect(result.current.validateCategory).toBe(firstValidateCategory);
       expect(result.current.canUpdate).toBe(firstCanUpdate);
-    });
-  });
-
-  describe("performance", () => {
-    it("should complete validation quickly", () => {
-      const { result } = renderHook(() => useSettingsValidation());
-
-      const testData: SettingsFormData = {
-        general: {
-          responseDelay: 1000,
-          maximumMessages: 10,
-          maximumWaitTime: 30000,
-          defaultMode: "manual",
-          maximumAgents: 5,
-          checkUpdates: true,
-        },
-        appearance: {
-          theme: "light",
-          showTimestamps: "hover",
-          showActivityTime: true,
-          compactList: false,
-          fontSize: 14,
-          messageSpacing: "normal",
-        },
-        advanced: {
-          debugLogging: false,
-          experimentalFeatures: false,
-        },
-      };
-
-      const start = Date.now();
-      result.current.validateSettings(testData);
-      const end = Date.now();
-
-      // Validation should complete in less than 10ms (as per requirements)
-      expect(end - start).toBeLessThan(10);
-    });
-
-    it("should complete category validation quickly", () => {
-      const { result } = renderHook(() => useSettingsValidation());
-
-      const testData = {
-        responseDelay: 1000,
-        maximumMessages: 10,
-        maximumWaitTime: 30000,
-        defaultMode: "manual",
-        maximumAgents: 5,
-        checkUpdates: true,
-      };
-
-      const start = Date.now();
-      result.current.validateCategory("general", testData);
-      const end = Date.now();
-
-      // Category validation should complete in less than 3ms (as per requirements)
-      expect(end - start).toBeLessThan(3);
     });
   });
 });

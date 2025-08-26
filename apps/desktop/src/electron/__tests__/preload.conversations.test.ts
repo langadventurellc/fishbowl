@@ -13,8 +13,15 @@ import type {
   ConversationsListResponse,
   ConversationsGetRequest,
   ConversationsGetResponse,
+  ConversationsUpdateRequest,
+  ConversationsUpdateResponse,
+  ConversationsDeleteRequest,
+  ConversationsDeleteResponse,
 } from "../../shared/ipc/index";
-import type { Conversation } from "@fishbowl-ai/shared";
+import type {
+  Conversation,
+  UpdateConversationInput,
+} from "@fishbowl-ai/shared";
 
 // Create mocks first
 const mockContextBridge = {
@@ -314,6 +321,156 @@ describe("Preload Conversations API", () => {
     });
   });
 
+  describe("conversations.update", () => {
+    const testId = "test-conversation-id";
+    const updateInput: UpdateConversationInput = { title: "Updated Title" };
+    const updatedConversation: Conversation = {
+      ...mockConversation,
+      title: "Updated Title",
+      updated_at: "2025-01-01T02:00:00.000Z",
+    };
+
+    it("should invoke correct IPC channel and return updated data on success", async () => {
+      const response: ConversationsUpdateResponse = {
+        success: true,
+        data: updatedConversation,
+      };
+
+      mockIpcRenderer.invoke.mockResolvedValue(response);
+
+      const result = await exposedAPI.conversations.update(testId, updateInput);
+
+      const expectedRequest: ConversationsUpdateRequest = {
+        id: testId,
+        updates: updateInput,
+      };
+      expect(mockIpcRenderer.invoke).toHaveBeenCalledWith(
+        "conversations:update",
+        expectedRequest,
+      );
+      expect(result).toEqual(updatedConversation);
+    });
+
+    it("should throw error when response indicates failure", async () => {
+      const response: ConversationsUpdateResponse = {
+        success: false,
+        error: { message: "Update failed", code: "UPDATE_ERROR" },
+      };
+
+      mockIpcRenderer.invoke.mockResolvedValue(response);
+
+      await expect(
+        exposedAPI.conversations.update(testId, updateInput),
+      ).rejects.toThrow("Update failed");
+    });
+
+    it("should throw error with default message when no error message provided", async () => {
+      const response: ConversationsUpdateResponse = {
+        success: false,
+        error: { message: "", code: "UPDATE_ERROR" },
+      };
+
+      mockIpcRenderer.invoke.mockResolvedValue(response);
+
+      await expect(
+        exposedAPI.conversations.update(testId, updateInput),
+      ).rejects.toThrow("Failed to update conversation");
+    });
+
+    it("should handle IPC communication errors", async () => {
+      mockIpcRenderer.invoke.mockRejectedValue(new Error("IPC error"));
+
+      await expect(
+        exposedAPI.conversations.update(testId, updateInput),
+      ).rejects.toThrow("IPC error");
+    });
+
+    it("should handle non-Error rejections", async () => {
+      mockIpcRenderer.invoke.mockRejectedValue("string error");
+
+      await expect(
+        exposedAPI.conversations.update(testId, updateInput),
+      ).rejects.toThrow("Failed to communicate with main process");
+    });
+  });
+
+  describe("conversations.delete", () => {
+    const testId = "test-conversation-id";
+
+    it("should invoke correct IPC channel and return true on success", async () => {
+      const response: ConversationsDeleteResponse = {
+        success: true,
+        data: true,
+      };
+
+      mockIpcRenderer.invoke.mockResolvedValue(response);
+
+      const result = await exposedAPI.conversations.delete(testId);
+
+      const expectedRequest: ConversationsDeleteRequest = { id: testId };
+      expect(mockIpcRenderer.invoke).toHaveBeenCalledWith(
+        "conversations:delete",
+        expectedRequest,
+      );
+      expect(result).toBe(true);
+    });
+
+    it("should return false when data is undefined", async () => {
+      const response: ConversationsDeleteResponse = {
+        success: true,
+        data: undefined,
+      };
+
+      mockIpcRenderer.invoke.mockResolvedValue(response);
+
+      const result = await exposedAPI.conversations.delete(testId);
+
+      expect(result).toBe(false);
+    });
+
+    it("should throw error when response indicates failure", async () => {
+      const response: ConversationsDeleteResponse = {
+        success: false,
+        error: { message: "Delete failed", code: "DELETE_ERROR" },
+      };
+
+      mockIpcRenderer.invoke.mockResolvedValue(response);
+
+      await expect(exposedAPI.conversations.delete(testId)).rejects.toThrow(
+        "Delete failed",
+      );
+    });
+
+    it("should throw error with default message when no error message provided", async () => {
+      const response: ConversationsDeleteResponse = {
+        success: false,
+        error: { message: "", code: "DELETE_ERROR" },
+      };
+
+      mockIpcRenderer.invoke.mockResolvedValue(response);
+
+      await expect(exposedAPI.conversations.delete(testId)).rejects.toThrow(
+        "Failed to delete conversation",
+      );
+    });
+
+    it("should handle IPC communication errors", async () => {
+      mockIpcRenderer.invoke.mockRejectedValue(new Error("IPC error"));
+
+      await expect(exposedAPI.conversations.delete(testId)).rejects.toThrow(
+        "IPC error",
+      );
+    });
+
+    it("should handle non-Error rejections", async () => {
+      mockIpcRenderer.invoke.mockRejectedValue("string error");
+
+      await expect(exposedAPI.conversations.delete(testId)).rejects.toThrow(
+        "Failed to communicate with main process",
+      );
+    });
+  });
+
   describe("contextBridge integration", () => {
     it("should expose conversations API through electronAPI", () => {
       expect(mockContextBridge.exposeInMainWorld).toHaveBeenCalledWith(
@@ -323,6 +480,8 @@ describe("Preload Conversations API", () => {
             create: expect.any(Function),
             list: expect.any(Function),
             get: expect.any(Function),
+            update: expect.any(Function),
+            delete: expect.any(Function),
           }),
         }),
       );
@@ -343,9 +502,13 @@ describe("Preload Conversations API", () => {
       expect(exposedAPI.conversations).toHaveProperty("create");
       expect(exposedAPI.conversations).toHaveProperty("list");
       expect(exposedAPI.conversations).toHaveProperty("get");
+      expect(exposedAPI.conversations).toHaveProperty("update");
+      expect(exposedAPI.conversations).toHaveProperty("delete");
       expect(typeof exposedAPI.conversations.create).toBe("function");
       expect(typeof exposedAPI.conversations.list).toBe("function");
       expect(typeof exposedAPI.conversations.get).toBe("function");
+      expect(typeof exposedAPI.conversations.update).toBe("function");
+      expect(typeof exposedAPI.conversations.delete).toBe("function");
     });
   });
 
@@ -394,6 +557,40 @@ describe("Preload Conversations API", () => {
 
       expect(mockLogger.error).toHaveBeenCalledWith(
         "Error getting conversation:",
+        error,
+      );
+    });
+
+    it("should log errors when update fails", async () => {
+      const error = new Error("Update failed");
+      mockIpcRenderer.invoke.mockRejectedValue(error);
+
+      try {
+        await exposedAPI.conversations.update("test-id", {
+          title: "New Title",
+        });
+      } catch {
+        // Expected to throw
+      }
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Error updating conversation:",
+        error,
+      );
+    });
+
+    it("should log errors when delete fails", async () => {
+      const error = new Error("Delete failed");
+      mockIpcRenderer.invoke.mockRejectedValue(error);
+
+      try {
+        await exposedAPI.conversations.delete("test-id");
+      } catch {
+        // Expected to throw
+      }
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        "Error deleting conversation:",
         error,
       );
     });

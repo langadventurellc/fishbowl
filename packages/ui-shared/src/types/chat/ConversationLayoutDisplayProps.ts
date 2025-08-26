@@ -5,30 +5,8 @@
  */
 
 import type React from "react";
-import { AgentViewModel } from "../AgentViewModel";
-import { LayoutVariant } from "../components";
-import { ConversationViewModel } from "../ConversationViewModel";
-import { MessageViewModel } from "../MessageViewModel";
 
 export interface ConversationLayoutDisplayProps {
-  /**
-   * List of conversations to display in the sidebar.
-   * Used to render the conversation list with selection state.
-   */
-  conversations: ConversationViewModel[];
-
-  /**
-   * List of agents participating in the conversation.
-   * Used for agent pills, message rendering, and state display.
-   */
-  agents: AgentViewModel[];
-
-  /**
-   * List of messages in the current conversation.
-   * Used to render the chat area with proper message formatting.
-   */
-  messages: MessageViewModel[];
-
   /**
    * Initial collapsed state for the sidebar.
    * Controls the default sidebar visibility when component first mounts.
@@ -37,38 +15,16 @@ export interface ConversationLayoutDisplayProps {
   defaultSidebarCollapsed?: boolean;
 
   /**
-   * Layout variant affecting responsive breakpoints.
-   * @default "default"
+   * Currently selected conversation ID.
+   * Used to track which conversation is active for agent management.
    */
-  layoutVariant?: LayoutVariant;
+  selectedConversationId?: string | null;
 
   /**
-   * Minimum width for the sidebar when expanded.
-   * Controls sidebar sizing constraints.
-   * @default "200px"
+   * Handler for conversation selection changes.
+   * Called when user selects a different conversation in the sidebar.
    */
-  sidebarMinWidth?: string | number;
-
-  /**
-   * Maximum width for the sidebar when expanded.
-   * Prevents sidebar from becoming too wide on large screens.
-   * @default "300px"
-   */
-  sidebarMaxWidth?: string | number;
-
-  /**
-   * Breakpoint width below which sidebar becomes overlay.
-   * Controls responsive behavior on smaller screens.
-   * @default "768px"
-   */
-  responsiveBreakpoint?: string | number;
-
-  /**
-   * Whether to show resize handles between panels.
-   * Enables user control over panel sizing.
-   * @default false
-   */
-  resizable?: boolean;
+  onConversationSelect?: (conversationId: string | null) => void;
 
   /**
    * Handler for sidebar collapse/expand toggle.

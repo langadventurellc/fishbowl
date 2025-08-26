@@ -1,50 +1,24 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   ConversationLayoutDisplay,
   ConversationScreenDisplay,
 } from "../components/layout";
 
-interface Message {
-  id: string;
-  agent: string;
-  role: string;
-  content: string;
-  timestamp: string;
-  type: "user" | "agent" | "system";
-  isActive: boolean;
-  agentColor: string;
-}
-
-interface Agent {
-  name: string;
-  role: string;
-  color: string;
-  isThinking: boolean;
-}
-
-interface Conversation {
-  name: string;
-  lastActivity: string;
-  isActive: boolean;
-}
-
 export default function LayoutShowcase() {
-  // Sample conversations data
-  const conversations: Conversation[] = [];
+  const [selectedConversationId, setSelectedConversationId] = useState<
+    string | null
+  >(null);
 
-  // Sample agents data
-  const agents: Agent[] = [];
-
-  // Sample messages data with realistic conversation flow
-  const [messages] = useState<Message[]>([]);
+  const handleConversationSelect = (conversationId: string | null) => {
+    setSelectedConversationId(conversationId);
+  };
 
   return (
     <ConversationScreenDisplay>
       <ConversationLayoutDisplay
-        conversations={conversations}
-        agents={agents}
-        messages={messages}
         defaultSidebarCollapsed={false}
+        selectedConversationId={selectedConversationId}
+        onConversationSelect={handleConversationSelect}
       />
     </ConversationScreenDisplay>
   );

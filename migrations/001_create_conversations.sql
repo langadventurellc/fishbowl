@@ -27,6 +27,6 @@ AFTER UPDATE ON conversations
 FOR EACH ROW
 BEGIN
     UPDATE conversations
-    SET updated_at = CURRENT_TIMESTAMP
+    SET updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')
     WHERE id = NEW.id;
 END;

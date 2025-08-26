@@ -8,15 +8,17 @@ import {
 } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { StructuredLogger } from "@fishbowl-ai/shared";
 import { MainProcessServices } from "../main/services/MainProcessServices.js";
+import { setupAgentsHandlers } from "./agentsHandlers.js";
+import { setupConversationAgentHandlers } from "./conversationAgentHandlers.js";
+import { setupConversationsHandlers } from "./conversationsHandlers.js";
 import { llmConfigServiceManager } from "./getLlmConfigService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
 import { setupLlmModelsHandlers } from "./handlers/llmModelsHandlers.js";
 import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
-import { setupAgentsHandlers } from "./agentsHandlers.js";
-import { setupConversationsHandlers } from "./conversationsHandlers.js";
 import { setupRolesHandlers } from "./rolesHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
 import { LlmStorageService } from "./services/LlmStorageService.js";
@@ -123,6 +125,489 @@ function openSettingsModal(): void {
 }
 
 /**
+ * Initialize main process services container
+ * @returns MainProcessServices instance or null if initialization fails
+ */
+function initializeMainProcessServices(): MainProcessServices | null {
+  try {
+    const services = new MainProcessServices();
+    services.logger.info("Electron main process starting", {
+      platform: process.platform,
+      nodeVersion: process.versions.node,
+      electronVersion: process.versions.electron,
+    });
+    return services;
+  } catch (error) {
+    // Cannot use structured logger here since service container initialization failed
+    console.error("Failed to initialize main process services:", error);
+    return null;
+  }
+}
+
+/**
+ * Run database migrations during startup
+ * @param services - The main process services container
+ * @throws {Error} Exits the application if migrations fail
+ */
+async function runDatabaseMigrations(
+  services: MainProcessServices,
+): Promise<void> {
+  try {
+    await services.runDatabaseMigrations();
+    services.logger.info(
+      "Database migrations integration completed successfully",
+    );
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    services.logger.error(
+      "Database migrations failed during startup:",
+      error as Error,
+    );
+
+    // Show user-friendly error dialog
+    dialog.showErrorBox(
+      "Database Migration Failed",
+      `Unable to update the application database.
+
+${errorMessage}
+
+The application will now exit.`,
+    );
+
+    // Exit application
+    app.quit();
+    throw error; // Prevent further execution
+  }
+}
+
+/**
+ * Initialize all repository managers with the userData path
+ * @param userDataPath - The path to the user data directory
+ * @param logger - Logger instance for logging initialization status
+ */
+/**
+ * Initialize all repository managers with the userData path
+ * @param userDataPath - The path to the user data directory
+ * @param logger - Logger instance for logging initialization status
+ */
+/**
+ * Initialize all repository managers with the userData path
+ * @param userDataPath - The path to the user data directory
+ * @param logger - Logger instance for logging initialization status
+ */
+async function initializeRepositoryManagers(
+  userDataPath: string,
+  logger?: StructuredLogger,
+): Promise<void> {
+  // Initialize roles repository manager with userData path
+  const { rolesRepositoryManager } = await import(
+    "../data/repositories/rolesRepositoryManager.js"
+  );
+  rolesRepositoryManager.initialize(userDataPath);
+  logger?.info("Roles repository initialized successfully", {
+    dataPath: userDataPath,
+  });
+
+  // Initialize personalities repository manager with userData path
+  const { personalitiesRepositoryManager } = await import(
+    "../data/repositories/personalitiesRepositoryManager.js"
+  );
+  personalitiesRepositoryManager.initialize(userDataPath);
+  logger?.info("Personalities repository initialized successfully", {
+    dataPath: userDataPath,
+  });
+
+  // Initialize LLM models repository manager with userData path
+  const { llmModelsRepositoryManager } = await import(
+    "../data/repositories/llmModelsRepositoryManager.js"
+  );
+  llmModelsRepositoryManager.initialize(userDataPath);
+  logger?.info("LLM models repository initialized successfully", {
+    dataPath: userDataPath,
+  });
+
+  // Initialize agents repository manager with userData path
+  const { agentsRepositoryManager } = await import(
+    "../data/repositories/agentsRepositoryManager.js"
+  );
+  agentsRepositoryManager.initialize(userDataPath);
+  logger?.info("Agents repository initialized successfully", {
+    dataPath: userDataPath,
+  });
+}
+
+/**
+ * Initialize LLM services (storage and configuration)
+ * @param logger - Logger instance for logging initialization status
+ * @returns The initialized LLM configuration service
+ */
+/**
+ * Initialize LLM services (storage and configuration)
+ * @param logger - Logger instance for logging initialization status
+ * @returns The initialized LLM configuration service
+ */
+/**
+ * Initialize LLM services (storage and configuration)
+ * @param logger - Logger instance for logging initialization status
+ * @returns The initialized LLM configuration service
+ */
+async function initializeLlmServices(
+  logger?: StructuredLogger,
+): Promise<LlmConfigService | null> {
+  try {
+    // Initialize LLM storage service
+    const llmStorageService = new LlmStorageService();
+    llmStorageServiceManager.set(llmStorageService);
+
+    logger?.info("LLM storage service initialized successfully", {
+      secureStorageAvailable: llmStorageService.isSecureStorageAvailable(),
+    });
+
+    // Initialize LLM configuration service
+    const llmConfigService = new LlmConfigService(llmStorageService);
+    llmConfigServiceManager.set(llmConfigService);
+
+    // Register IPC handlers BEFORE service initialization
+    try {
+      setupLlmConfigHandlers(ipcMain, llmConfigService);
+      logger?.info("LLM configuration IPC handlers registered successfully");
+    } catch (error) {
+      logger?.error(
+        "Failed to register LLM configuration IPC handlers",
+        error as Error,
+      );
+      // Continue startup - app can function without LLM config handlers
+    }
+
+    // Register LLM models IPC handlers
+    try {
+      setupLlmModelsHandlers(ipcMain);
+      logger?.info("LLM models IPC handlers registered successfully");
+    } catch (error) {
+      logger?.error(
+        "Failed to register LLM models IPC handlers",
+        error as Error,
+      );
+      // Continue startup - app can function without LLM models handlers
+    }
+
+    // Initialize the service AFTER handlers are registered
+    try {
+      await llmConfigService.initialize();
+      const configs = await llmConfigService.list();
+      logger?.info("LLM configuration service initialized successfully", {
+        configCount: configs.length,
+      });
+    } catch (error) {
+      logger?.error(
+        "Failed to initialize LLM configuration service",
+        error as Error,
+      );
+      // Continue startup - app can function without pre-cached configs
+    }
+
+    return llmConfigService;
+  } catch (error) {
+    logger?.error("Failed to initialize LLM services", error as Error);
+    return null;
+  }
+}
+
+/**
+ * Setup all IPC handlers for the application
+ * @param services - Main process services container
+ * @param logger - Logger instance for logging setup status
+ */
+/**
+ * Setup all IPC handlers for the application
+ * @param services - Main process services container
+ * @param logger - Logger instance for logging setup status
+ */
+/**
+ * Setup all IPC handlers for the application
+ * @param services - Main process services container
+ * @param logger - Logger instance for logging setup status
+ * @throws {Error} If any essential handler setup fails
+ */
+function setupIpcHandlers(
+  services: MainProcessServices | null,
+  logger?: StructuredLogger,
+): void {
+  setupSettingsIpcHandlers(logger);
+  setupRolesIpcHandlers(logger);
+  setupPersonalitiesIpcHandlers(logger);
+  setupAgentsIpcHandlers(logger);
+
+  if (services) {
+    setupConversationsIpcHandlers(services);
+    setupConversationAgentsIpcHandlers(services);
+  }
+}
+
+/**
+ * Setup post-initialization components (menu, shortcuts, event handlers)
+ */
+async function setupPostInitialization(): Promise<void> {
+  // Setup application menu after window creation
+  const { setupApplicationMenu } = await import("./setupApplicationMenu.js");
+  setupApplicationMenu();
+
+  // Register global shortcuts after app is ready
+  const { registerGlobalShortcuts } = await import(
+    "./registerGlobalShortcuts.js"
+  );
+  registerGlobalShortcuts();
+
+  // Setup activate event handler
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createMainWindow();
+    }
+  });
+}
+
+/**
+ * Setup settings IPC handlers with proper error handling
+ * @param logger - Logger instance for logging setup status
+ * @throws {Error} If handler setup fails
+ */
+function setupSettingsIpcHandlers(logger?: StructuredLogger): void {
+  try {
+    setupSettingsHandlers();
+    logger?.debug("Settings IPC handlers registered successfully");
+  } catch (error) {
+    logger?.error("Failed to register settings IPC handlers", error as Error);
+    throw new Error(
+      "Settings IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Setup roles IPC handlers with proper error handling
+ * @param logger - Logger instance for logging setup status
+ * @throws {Error} If handler setup fails
+ */
+function setupRolesIpcHandlers(logger?: StructuredLogger): void {
+  try {
+    setupRolesHandlers();
+    logger?.debug("Roles IPC handlers registered successfully");
+  } catch (error) {
+    logger?.error("Failed to register roles IPC handlers", error as Error);
+    throw new Error(
+      "Roles IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Setup personalities IPC handlers with proper error handling
+ * @param logger - Logger instance for logging setup status
+ * @throws {Error} If handler setup fails
+ */
+function setupPersonalitiesIpcHandlers(logger?: StructuredLogger): void {
+  try {
+    setupPersonalitiesHandlers();
+    logger?.debug("Personalities IPC handlers registered successfully");
+  } catch (error) {
+    logger?.error(
+      "Failed to register personalities IPC handlers",
+      error as Error,
+    );
+    throw new Error(
+      "Personalities IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Setup agents IPC handlers with proper error handling
+ * @param logger - Logger instance for logging setup status
+ * @throws {Error} If handler setup fails
+ */
+function setupAgentsIpcHandlers(logger?: StructuredLogger): void {
+  try {
+    setupAgentsHandlers();
+    logger?.debug("Agents IPC handlers registered successfully");
+  } catch (error) {
+    logger?.error("Failed to register agents IPC handlers", error as Error);
+    throw new Error(
+      "Agents IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Setup conversations IPC handlers with proper error handling
+ * @param services - Main process services container
+ * @throws {Error} If handler setup fails
+ */
+function setupConversationsIpcHandlers(services: MainProcessServices): void {
+  try {
+    setupConversationsHandlers(services);
+    services.logger.debug("Conversations IPC handlers registered successfully");
+  } catch (error) {
+    services.logger.error(
+      "Failed to register conversations IPC handlers",
+      error as Error,
+    );
+    throw new Error(
+      "Conversations IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Setup conversation agents IPC handlers with proper error handling
+ * @param services - Main process services container
+ * @throws {Error} If handler setup fails
+ */
+function setupConversationAgentsIpcHandlers(
+  services: MainProcessServices,
+): void {
+  try {
+    setupConversationAgentHandlers(services);
+    services.logger.debug(
+      "Conversation agents IPC handlers registered successfully",
+    );
+  } catch (error) {
+    services.logger.error(
+      "Failed to register conversation agents IPC handlers",
+      error as Error,
+    );
+    throw new Error(
+      "Conversation agents IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Create and log main window
+ * @param services - Main process services for logging
+ */
+function createAndLogMainWindow(services: MainProcessServices | null): void {
+  createMainWindow();
+
+  // Log window creation
+  services?.logger?.info("Main window created", {
+    width: 1200,
+    height: 800,
+    title: "Fishbowl",
+  });
+}
+
+/**
+ * Initialize settings repository and all related repository managers
+ * @param services - Main process services container
+ * @throws {Error} If settings repository initialization fails (non-critical)
+ */
+async function initializeSettingsAndRepositories(
+  services: MainProcessServices | null,
+): Promise<void> {
+  try {
+    // Get the userData directory for settings persistence
+    const userDataPath = app.getPath("userData");
+    const settingsFilePath = path.join(userDataPath, "preferences.json");
+
+    // Create repository using the configured services from the container
+    if (services) {
+      const repository = services.createSettingsRepository(settingsFilePath);
+      settingsRepositoryManager.set(repository);
+
+      services.logger.info("Settings repository initialized successfully", {
+        storageType: "FileStorage",
+        settingsPath: settingsFilePath,
+      });
+    }
+
+    // Initialize all repository managers
+    await initializeRepositoryManagers(userDataPath, services?.logger);
+
+    // Initialize LLM services
+    await initializeLlmServices(services?.logger);
+  } catch (error) {
+    services?.logger?.error(
+      "Failed to initialize settings repository",
+      error as Error,
+    ) || console.error("Failed to initialize settings repository:", error);
+    // Continue app startup even if settings fail to initialize
+  }
+}
+
+/**
+ * Setup critical IPC handlers with proper error handling
+ * @param services - Main process services container
+ * @param logger - Logger instance for logging setup status
+ * @throws {Error} If critical IPC handler setup fails - terminates application
+ */
+function setupCriticalIpcHandlers(
+  services: MainProcessServices | null,
+  logger?: StructuredLogger,
+): void {
+  try {
+    setupIpcHandlers(services, logger);
+    logger?.info("All IPC handlers registered successfully");
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+
+    logger?.fatal(
+      "Critical IPC handler setup failed - application cannot function",
+      error as Error,
+    ) || console.error("Critical IPC handler setup failed:", error);
+
+    // Show user-friendly error dialog
+    dialog.showErrorBox(
+      "Application Initialization Failed",
+      `Unable to initialize essential application components.
+
+${errorMessage}
+
+The application will now exit.`,
+    );
+
+    // Exit application
+    app.quit();
+    throw error; // Prevent further execution
+  }
+}
+
+/**
+ * Main application initialization coordinator
+ * Orchestrates the startup sequence in a clean, maintainable way
+ */
+/**
+ * Main application initialization coordinator
+ * Orchestrates the startup sequence in a clean, maintainable way
+ */
+/**
+ * Main application initialization coordinator
+ * Orchestrates the startup sequence in a clean, maintainable way
+ */
+async function initializeApplication(): Promise<void> {
+  // Initialize main process services container
+  mainProcessServices = initializeMainProcessServices();
+
+  // Initialize database and run migrations
+  if (mainProcessServices) {
+    await initializeDatabase(mainProcessServices);
+    await runDatabaseMigrations(mainProcessServices);
+  }
+
+  // Create main window and log creation
+  createAndLogMainWindow(mainProcessServices);
+
+  // Initialize settings repository and all repository managers
+  await initializeSettingsAndRepositories(mainProcessServices);
+
+  // Setup critical IPC handlers - will exit app if this fails
+  setupCriticalIpcHandlers(mainProcessServices, mainProcessServices?.logger);
+
+  // Setup post-initialization components
+  await setupPostInitialization();
+}
+
+/**
  * Initialize the database connection during app startup.
  * Ensures database is connected and ready before the UI opens.
  *
@@ -163,292 +648,7 @@ async function initializeDatabase(
   }
 }
 
-// eslint-disable-next-line statement-count/function-statement-count-warn, statement-count/function-statement-count-error
-app.whenReady().then(async () => {
-  // Initialize main process services container
-  try {
-    mainProcessServices = new MainProcessServices();
-    mainProcessServices.logger.info("Electron main process starting", {
-      platform: process.platform,
-      nodeVersion: process.versions.node,
-      electronVersion: process.versions.electron,
-    });
-  } catch (error) {
-    // Cannot use structured logger here since service container initialization failed
-    console.error("Failed to initialize main process services:", error);
-  }
-
-  // Initialize database before creating the main window
-  if (mainProcessServices) {
-    await initializeDatabase(mainProcessServices);
-
-    // Run database migrations after database initialization
-    try {
-      await mainProcessServices.runDatabaseMigrations();
-      mainProcessServices.logger.info(
-        "Database migrations integration completed successfully",
-      );
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : String(error);
-
-      mainProcessServices.logger.error(
-        "Database migrations failed during startup:",
-        error as Error,
-      );
-
-      // Show user-friendly error dialog
-      dialog.showErrorBox(
-        "Database Migration Failed",
-        `Unable to update the application database.
-
-${errorMessage}
-
-The application will now exit.`,
-      );
-
-      // Exit application
-      app.quit();
-      return; // Prevent further execution
-    }
-  }
-
-  createMainWindow();
-
-  // Log window creation
-  mainProcessServices?.logger?.info("Main window created", {
-    width: 1200,
-    height: 800,
-    title: "Fishbowl",
-  });
-
-  // Initialize settings repository
-  try {
-    // Get the userData directory for settings persistence
-    const userDataPath = app.getPath("userData");
-    const settingsFilePath = path.join(userDataPath, "preferences.json");
-
-    // Create repository using the configured services from the container
-    const repository =
-      mainProcessServices!.createSettingsRepository(settingsFilePath);
-
-    // Set repository using settings manager
-    settingsRepositoryManager.set(repository);
-
-    mainProcessServices?.logger?.info(
-      "Settings repository initialized successfully",
-      {
-        storageType: "FileStorage",
-        settingsPath: settingsFilePath,
-      },
-    );
-
-    // Initialize roles repository manager with userData path
-    const { rolesRepositoryManager } = await import(
-      "../data/repositories/rolesRepositoryManager.js"
-    );
-    rolesRepositoryManager.initialize(userDataPath);
-    mainProcessServices?.logger?.info(
-      "Roles repository initialized successfully",
-      {
-        dataPath: userDataPath,
-      },
-    );
-
-    // Initialize personalities repository manager with userData path
-    const { personalitiesRepositoryManager } = await import(
-      "../data/repositories/personalitiesRepositoryManager.js"
-    );
-    personalitiesRepositoryManager.initialize(userDataPath);
-    mainProcessServices?.logger?.info(
-      "Personalities repository initialized successfully",
-      {
-        dataPath: userDataPath,
-      },
-    );
-
-    // Initialize LLM models repository manager with userData path
-    const { llmModelsRepositoryManager } = await import(
-      "../data/repositories/llmModelsRepositoryManager.js"
-    );
-    llmModelsRepositoryManager.initialize(userDataPath);
-    mainProcessServices?.logger?.info(
-      "LLM models repository initialized successfully",
-      {
-        dataPath: userDataPath,
-      },
-    );
-
-    // Initialize agents repository manager with userData path
-    const { agentsRepositoryManager } = await import(
-      "../data/repositories/agentsRepositoryManager.js"
-    );
-    agentsRepositoryManager.initialize(userDataPath);
-    mainProcessServices?.logger?.info(
-      "Agents repository initialized successfully",
-      {
-        dataPath: userDataPath,
-      },
-    );
-
-    // Initialize LLM storage service
-    const llmStorageService = new LlmStorageService();
-    llmStorageServiceManager.set(llmStorageService);
-
-    mainProcessServices?.logger?.info(
-      "LLM storage service initialized successfully",
-      {
-        secureStorageAvailable: llmStorageService.isSecureStorageAvailable(),
-      },
-    );
-
-    // Initialize LLM configuration service
-    const llmConfigService = new LlmConfigService(llmStorageService);
-    llmConfigServiceManager.set(llmConfigService);
-
-    // Register IPC handlers BEFORE service initialization
-    try {
-      setupLlmConfigHandlers(ipcMain, llmConfigService);
-      mainProcessServices?.logger?.info(
-        "LLM configuration IPC handlers registered successfully",
-      );
-    } catch (error) {
-      mainProcessServices?.logger?.error(
-        "Failed to register LLM configuration IPC handlers",
-        error as Error,
-      );
-      // Continue startup - app can function without LLM config handlers
-    }
-
-    // Register LLM models IPC handlers
-    try {
-      setupLlmModelsHandlers(ipcMain);
-      mainProcessServices?.logger?.info(
-        "LLM models IPC handlers registered successfully",
-      );
-    } catch (error) {
-      mainProcessServices?.logger?.error(
-        "Failed to register LLM models IPC handlers",
-        error as Error,
-      );
-      // Continue startup - app can function without LLM models handlers
-    }
-
-    // Initialize the service AFTER handlers are registered
-    try {
-      await llmConfigService.initialize();
-      const configs = await llmConfigService.list();
-      mainProcessServices?.logger?.info(
-        "LLM configuration service initialized successfully",
-        {
-          configCount: configs.length,
-        },
-      );
-    } catch (error) {
-      mainProcessServices?.logger?.error(
-        "Failed to initialize LLM configuration service",
-        error as Error,
-      );
-      // Continue startup - app can function without pre-cached configs
-    }
-  } catch (error) {
-    mainProcessServices?.logger?.error(
-      "Failed to initialize settings repository",
-      error as Error,
-    ) || console.error("Failed to initialize settings repository:", error);
-    // Continue app startup even if settings fail to initialize
-  }
-
-  // Setup IPC handlers
-  try {
-    setupSettingsHandlers();
-    mainProcessServices?.logger?.debug(
-      "Settings IPC handlers registered successfully",
-    );
-  } catch (error) {
-    mainProcessServices?.logger?.error(
-      "Failed to register settings IPC handlers",
-      error as Error,
-    );
-    // Continue startup - app can function without settings handlers
-  }
-
-  // Setup Roles IPC handlers
-  try {
-    setupRolesHandlers();
-    mainProcessServices?.logger?.debug(
-      "Roles IPC handlers registered successfully",
-    );
-  } catch (error) {
-    mainProcessServices?.logger?.error(
-      "Failed to register roles IPC handlers",
-      error as Error,
-    );
-    // Continue startup - app can function without roles handlers
-  }
-
-  // Setup Personalities IPC handlers
-  try {
-    setupPersonalitiesHandlers();
-    mainProcessServices?.logger?.debug(
-      "Personalities IPC handlers registered successfully",
-    );
-  } catch (error) {
-    mainProcessServices?.logger?.error(
-      "Failed to register personalities IPC handlers",
-      error as Error,
-    );
-    // Continue startup - app can function without personalities handlers
-  }
-
-  // Setup Agents IPC handlers
-  try {
-    setupAgentsHandlers();
-    mainProcessServices?.logger?.debug(
-      "Agents IPC handlers registered successfully",
-    );
-  } catch (error) {
-    mainProcessServices?.logger?.error(
-      "Failed to register agents IPC handlers",
-      error as Error,
-    );
-    // Continue startup - app can function without agents handlers
-  }
-
-  // Setup Conversations IPC handlers
-  if (mainProcessServices) {
-    try {
-      setupConversationsHandlers(mainProcessServices);
-      mainProcessServices.logger.debug(
-        "Conversations IPC handlers registered successfully",
-      );
-    } catch (error) {
-      mainProcessServices.logger.error(
-        "Failed to register conversations IPC handlers",
-        error as Error,
-      );
-      // Continue startup - app can function without conversations handlers
-    }
-  }
-
-  // LLM config handlers are now registered earlier in the startup process
-
-  // Setup application menu after window creation
-  const { setupApplicationMenu } = await import("./setupApplicationMenu.js");
-  setupApplicationMenu();
-
-  // Register global shortcuts after app is ready
-  const { registerGlobalShortcuts } = await import(
-    "./registerGlobalShortcuts.js"
-  );
-  registerGlobalShortcuts();
-
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createMainWindow();
-    }
-  });
-});
+app.whenReady().then(initializeApplication);
 
 app.on("window-all-closed", () => {
   mainWindow = null;

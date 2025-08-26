@@ -14,10 +14,9 @@ import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
 export const ConversationLayoutDisplay: React.FC<
   ConversationLayoutDisplayProps
 > = ({
-  conversations,
-  agents,
-  messages,
   defaultSidebarCollapsed = false,
+  selectedConversationId,
+  onConversationSelect,
   className,
   style,
 }) => {
@@ -40,16 +39,16 @@ export const ConversationLayoutDisplay: React.FC<
         />
       </div>
 
-      {/* Sidebar */}
       <SidebarContainerDisplay
         collapsed={isSidebarCollapsed}
-        widthVariant="default"
         showBorder={true}
-        conversations={conversations}
+        selectedConversationId={selectedConversationId}
+        onConversationSelect={onConversationSelect}
       />
 
-      {/* Main Content */}
-      <MainContentPanelDisplay agents={agents} messages={messages} />
+      <MainContentPanelDisplay
+        selectedConversationId={selectedConversationId}
+      />
     </div>
   );
 };

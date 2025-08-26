@@ -1,47 +1,5 @@
-/**
- * Props interface for ConversationContextMenu component.
- *
- * Defines the properties needed for conversation-specific context menu functionality.
- * Follows the same pattern as MessageContextMenuProps but tailored for conversation
- * actions like rename, duplicate, and delete.
- *
- * @module types/ui/components/ConversationContextMenuProps
- */
-
 import { ConversationViewModel } from "../ConversationViewModel";
 
-/**
- * Props interface for the ConversationContextMenu component.
- *
- * This interface defines the properties needed for conversation-specific context menu
- * functionality. It follows the MessageContextMenu pattern but provides conversation-
- * specific actions like rename, duplicate, and delete operations.
- *
- * The component uses the generic ContextMenu component internally while providing
- * conversation-specific menu items and actions. This creates a clean separation
- * between generic menu functionality and conversation-specific business logic.
- *
- * @example
- * ```typescript
- * // Basic usage with all conversation actions
- * <ConversationContextMenu
- *   conversation={conversation}
- *   onRename={() => handleRename(conversation.id)}
- *   onDuplicate={() => handleDuplicate(conversation)}
- *   onDelete={() => handleDelete(conversation.id)}
- * />
- *
- * // With positioning and custom styling
- * <ConversationContextMenu
- *   conversation={conversation}
- *   position="above"
- *   onRename={handleRename}
- *   onDuplicate={handleDuplicate}
- *   onDelete={handleDelete}
- *   className="custom-menu-style"
- * />
- * ```
- */
 export interface ConversationContextMenuProps {
   /**
    * The conversation data for which the context menu is displayed.
@@ -66,14 +24,6 @@ export interface ConversationContextMenuProps {
    * or inline editing interface.
    */
   onRename: () => void;
-
-  /**
-   * Handler for the duplicate conversation action.
-   * Called when the user selects "Duplicate" from the context menu.
-   * Should handle creating a copy of the conversation with similar settings
-   * and agents but starting with a clean message history.
-   */
-  onDuplicate: () => void;
 
   /**
    * Handler for the delete conversation action.

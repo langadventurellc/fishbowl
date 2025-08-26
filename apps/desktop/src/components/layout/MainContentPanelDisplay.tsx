@@ -1,6 +1,5 @@
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
 import React, { useState } from "react";
-import { useServices } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
@@ -14,19 +13,11 @@ import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
  */
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
-> = ({
-  agents,
-  messages,
-  defaultInputText = "",
-  defaultManualMode = true,
-  className,
-  style,
-}) => {
-  const { logger } = useServices();
-
-  // Internal state management for input
-  const [inputText] = useState(defaultInputText);
-  const [isManualMode] = useState(defaultManualMode);
+> = ({ selectedConversationId, className, style }) => {
+  const [inputText] = useState("");
+  const [isManualMode] = useState(true);
+  const [agents] = useState([]);
+  const [messages] = useState([]);
 
   return (
     <div
@@ -36,7 +27,7 @@ export const MainContentPanelDisplay: React.FC<
       {/* Agent Labels Container */}
       <AgentLabelsContainerDisplay
         agents={agents}
-        onAddAgent={() => logger.info("Demo: Adding new agent")}
+        selectedConversationId={selectedConversationId}
       />
 
       {/* Chat Container */}

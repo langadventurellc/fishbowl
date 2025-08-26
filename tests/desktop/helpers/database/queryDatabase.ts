@@ -27,6 +27,9 @@ export async function queryDatabase<T = unknown>(
           return;
         }
 
+        // Enable foreign key constraints to match production behavior
+        db.exec("PRAGMA foreign_keys = ON");
+
         db.all(sql, params, (err: Error | null, rows: T[]) => {
           db.close((closeErr: Error | null) => {
             if (err) {

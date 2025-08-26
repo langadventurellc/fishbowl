@@ -1,46 +1,47 @@
-import { SidebarContainerDisplayProps } from "@fishbowl-ai/ui-shared";
-import React from "react";
-import { cn } from "../../lib/utils";
-import { ConversationItemDisplay } from "./ConversationItemDisplay";
-import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
-import { NewConversationButton } from "../conversations/NewConversationButton";
-import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
+import { createLoggerSync, type Conversation } from "@fishbowl-ai/shared";
+import {
+  ConversationViewModel,
+  SidebarContainerDisplayProps,
+} from "@fishbowl-ai/ui-shared";
+import React, { useCallback, useState } from "react";
 import { useConversations } from "../../hooks/conversations/useConversations";
+import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
+import { cn } from "../../lib/utils";
+import { NewConversationButton } from "../conversations/NewConversationButton";
+import { RenameConversationModal } from "../modals/RenameConversationModal";
+import { ConversationItemDisplay } from "./ConversationItemDisplay";
+import { DeleteConversationModal } from "./DeleteConversationModal";
+import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
  * that handles collapsed/expanded visual states with conversation list rendering.
- *
- * When conversations prop is provided, automatically renders complete sidebar with:
- * - SidebarHeaderDisplay with "Conversations" title
- * - Scrollable conversation list using ConversationItemDisplay components
- * - "New Conversation" button at the bottom
- *
- * When conversations prop is omitted, renders empty sidebar container.
- *
- * Key Features:
- * - Collapsible width states with smooth 0.3s ease transitions
- * - Theme variable integration for consistent styling
- * - Flexible width variants (narrow/default/wide)
- * - Border visibility control
- * - Proper overflow handling for collapsed state
- * - Self-contained conversation list rendering
- *
- * Visual States:
- * - Collapsed: width 0px, padding 0, overflow hidden
- * - Expanded: configurable width based on variant, 16px padding
  */
+const logger = createLoggerSync({
+  context: { metadata: { component: "SidebarContainerDisplay" } },
+});
+
 export function SidebarContainerDisplay({
   collapsed = false,
-  widthVariant = "default",
   showBorder = true,
+  selectedConversationId,
+  onConversationSelect,
   className = "",
   style = {},
-  conversations,
 }: SidebarContainerDisplayProps) {
+  // Modal state for delete confirmation
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [conversationToDelete, setConversationToDelete] =
+    useState<ConversationViewModel | null>(null);
+
+  // Modal state for rename
+  const [renameModalOpen, setRenameModalOpen] = useState(false);
+  const [conversationToRename, setConversationToRename] =
+    useState<Conversation | null>(null);
+
   // Initialize hooks for conversation management
   const {
-    conversations: realConversations,
+    conversations: conversations,
     isLoading: _listLoading,
     error: _listError,
     refetch,
@@ -74,18 +75,74 @@ export function SidebarContainerDisplay({
   };
 
   // Map database conversations to UI format
-  const mapConversationsToViewModel = (convs: typeof realConversations) => {
+  const mapConversationsToViewModel = (convs: typeof conversations) => {
     return convs.map((conv) => ({
+      id: conv.id,
       name: conv.title,
       lastActivity: formatRelativeTime(conv.updated_at),
-      isActive: false, // TODO: Add active conversation tracking
+      isActive: conv.id === selectedConversationId,
     }));
   };
 
-  // Use real conversations when available, fall back to props
-  const conversationsToDisplay = realConversations
-    ? mapConversationsToViewModel(realConversations)
-    : conversations || [];
+  const conversationsToDisplay = mapConversationsToViewModel(conversations);
+
+  // Handle conversation selection
+  const handleConversationSelect = useCallback(
+    (conversation: ConversationViewModel) => {
+      onConversationSelect?.(conversation.id);
+    },
+    [onConversationSelect],
+  );
+
+  // Handle delete conversation with modal
+  const handleDeleteClick = useCallback(
+    (conversation: ConversationViewModel) => {
+      setConversationToDelete(conversation);
+      setDeleteModalOpen(true);
+    },
+    [],
+  );
+
+  // Handle rename conversation with modal
+  const handleRenameClick = useCallback(
+    (conversation: ConversationViewModel) => {
+      // Convert ConversationViewModel to Conversation for the modal
+      const fullConversation = conversations.find(
+        (c) => c.id === conversation.id,
+      );
+      if (fullConversation) {
+        setConversationToRename(fullConversation);
+        setRenameModalOpen(true);
+      }
+    },
+    [conversations],
+  );
+
+  const handleDeleteConversation = useCallback(
+    async (conversationId: string) => {
+      try {
+        logger.debug("Deleting conversation", { conversationId });
+
+        // Check if running in Electron environment
+        if (!window.electronAPI?.conversations?.delete) {
+          throw new Error(
+            "Conversation deletion not available in current environment",
+          );
+        }
+
+        await window.electronAPI.conversations.delete(conversationId);
+
+        // Refresh conversations list
+        await refetch();
+
+        logger.debug("Conversation deleted successfully", { conversationId });
+      } catch (error) {
+        logger.error("Failed to delete conversation", error as Error);
+        throw error;
+      }
+    },
+    [refetch],
+  );
 
   // Handle new conversation creation
   const handleNewConversation = async () => {
@@ -94,27 +151,17 @@ export function SidebarContainerDisplay({
       console.log("Created conversation:", result);
       // Refresh the list to show new conversation
       await refetch();
+      // Automatically select the newly created conversation
+      onConversationSelect?.(result.id);
     } catch (err) {
       console.error("Failed to create conversation:", err);
       // Error handling will be improved in Feature 2
     }
   };
-  // Width configurations matching design requirements
-  const getWidthForVariant = (variant: typeof widthVariant) => {
-    switch (variant) {
-      case "narrow":
-        return "180px";
-      case "wide":
-        return "240px";
-      case "default":
-      default:
-        return "200px"; // Default sidebar width
-    }
-  };
 
   // Dynamic styles that need to remain as CSS properties
   const dynamicStyles: React.CSSProperties = {
-    width: collapsed ? "0px" : getWidthForVariant(widthVariant),
+    width: collapsed ? "0px" : "200px",
     backgroundColor: "var(--sidebar)",
     borderRight: showBorder ? `1px solid var(--border)` : "none",
     padding: collapsed ? "0" : "16px",
@@ -143,6 +190,9 @@ export function SidebarContainerDisplay({
               conversation={conv}
               appearanceState={conv.isActive ? "active" : "inactive"}
               showUnreadIndicator={false}
+              onClick={() => handleConversationSelect(conv)}
+              onRename={() => handleRenameClick(conv)}
+              onDelete={() => handleDeleteClick(conv)}
             />
           ))
         )}
@@ -155,6 +205,30 @@ export function SidebarContainerDisplay({
           disabled={isCreating}
         />
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {conversationToDelete && (
+        <DeleteConversationModal
+          conversation={conversationToDelete}
+          onDelete={handleDeleteConversation}
+          open={deleteModalOpen}
+          onOpenChange={setDeleteModalOpen}
+        />
+      )}
+
+      {/* Rename Conversation Modal */}
+      <RenameConversationModal
+        conversation={conversationToRename}
+        open={renameModalOpen}
+        onOpenChange={(open) => {
+          setRenameModalOpen(open);
+          if (!open) {
+            setConversationToRename(null);
+            // Refresh conversations list to show updated title
+            void refetch();
+          }
+        }}
+      />
     </>
   );
 
@@ -166,9 +240,7 @@ export function SidebarContainerDisplay({
       )}
       style={dynamicStyles}
     >
-      {!collapsed &&
-        (realConversations || conversations) &&
-        renderSelfContainedContent()}
+      {!collapsed && conversations && renderSelfContainedContent()}
     </div>
   );
 }

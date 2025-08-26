@@ -10,6 +10,7 @@ import { ROLES_CHANNELS } from "../shared/ipc/rolesConstants";
 import { PERSONALITIES_CHANNELS } from "../shared/ipc/personalitiesConstants";
 import { AGENTS_CHANNELS } from "../shared/ipc/agentsConstants";
 import { CONVERSATION_CHANNELS } from "../shared/ipc/conversationsConstants";
+import { CONVERSATION_AGENT_CHANNELS } from "../shared/ipc/conversationAgentsConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -44,6 +45,14 @@ import type {
   ConversationsListResponse,
   ConversationsGetRequest,
   ConversationsGetResponse,
+  ConversationsUpdateRequest,
+  ConversationsUpdateResponse,
+  ConversationsDeleteRequest,
+  ConversationsDeleteResponse,
+  ConversationAgentGetByConversationResponse,
+  ConversationAgentAddResponse,
+  ConversationAgentRemoveResponse,
+  ConversationAgentListResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -55,6 +64,10 @@ import type {
   LlmConfigInput,
   LlmConfigMetadata,
   Conversation,
+  UpdateConversationInput,
+  ConversationAgent,
+  AddAgentToConversationInput,
+  RemoveAgentFromConversationInput,
 } from "@fishbowl-ai/shared";
 import type { SettingsCategory } from "@fishbowl-ai/ui-shared";
 
@@ -610,6 +623,152 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error getting conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    update: async (
+      id: string,
+      input: UpdateConversationInput,
+    ): Promise<Conversation> => {
+      try {
+        const request: ConversationsUpdateRequest = { id, updates: input };
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_CHANNELS.UPDATE,
+          request,
+        )) as ConversationsUpdateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to update conversation",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error updating conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    delete: async (id: string): Promise<boolean> => {
+      try {
+        const request: ConversationsDeleteRequest = { id };
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_CHANNELS.DELETE,
+          request,
+        )) as ConversationsDeleteResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to delete conversation",
+          );
+        }
+        return response.data || false;
+      } catch (error) {
+        logger.error(
+          "Error deleting conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  conversationAgent: {
+    getByConversation: async (
+      conversationId: string,
+    ): Promise<ConversationAgent[]> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_AGENT_CHANNELS.GET_BY_CONVERSATION,
+          { conversationId },
+        )) as ConversationAgentGetByConversationResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to get conversation agents",
+          );
+        }
+        return response.data || [];
+      } catch (error) {
+        logger.error(
+          "Error getting conversation agents:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    add: async (
+      input: AddAgentToConversationInput,
+    ): Promise<ConversationAgent> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_AGENT_CHANNELS.ADD,
+          input,
+        )) as ConversationAgentAddResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to add agent to conversation",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error adding agent to conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    remove: async (
+      input: RemoveAgentFromConversationInput,
+    ): Promise<boolean> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_AGENT_CHANNELS.REMOVE,
+          input,
+        )) as ConversationAgentRemoveResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message ||
+              "Failed to remove agent from conversation",
+          );
+        }
+        return response.data || false;
+      } catch (error) {
+        logger.error(
+          "Error removing agent from conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    list: async (): Promise<ConversationAgent[]> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_AGENT_CHANNELS.LIST,
+          {},
+        )) as ConversationAgentListResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to list conversation agents",
+          );
+        }
+        return response.data || [];
+      } catch (error) {
+        logger.error(
+          "Error listing conversation agents:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

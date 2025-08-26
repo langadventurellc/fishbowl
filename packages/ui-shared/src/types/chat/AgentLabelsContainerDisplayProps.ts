@@ -71,4 +71,12 @@ export interface AgentLabelsContainerDisplayProps {
    * Custom styles for the container.
    */
   style?: React.CSSProperties;
+
+  /**
+   * ID of the currently selected conversation.
+   * Used to load conversation-specific agents and enable/disable the Add Agent button.
+   * When null, the Add Agent button should be disabled.
+   * @default null
+   */
+  selectedConversationId?: string | null;
 }

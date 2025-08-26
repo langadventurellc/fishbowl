@@ -299,7 +299,6 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    * @param callback Function containing database operations to execute atomically
    * @returns Promise resolving to the callback's return value
    */
-  // eslint-disable-next-line statement-count/function-statement-count-warn
   async transaction<T>(
     callback: (db: DatabaseBridge) => Promise<T>,
   ): Promise<T> {
@@ -321,60 +320,8 @@ export class NodeDatabaseBridge implements DatabaseBridge {
     const startTime = Date.now();
 
     try {
-      // Begin transaction manually for async support
-      this.db.exec("BEGIN");
-      this.isTransactionActive = true;
-
-      this.logger.debug("Transaction begun successfully");
-
-      try {
-        // Execute callback with this bridge instance
-        const result = await callback(this);
-
-        // Commit on success
-        this.db.exec("COMMIT");
-        this.isTransactionActive = false;
-
-        const duration = Date.now() - startTime;
-        this.logger.info("Transaction committed successfully", { duration });
-
-        return result;
-      } catch (error: unknown) {
-        // Rollback on failure
-        try {
-          this.db.exec("ROLLBACK");
-          this.logger.debug("Transaction rolled back successfully");
-        } catch (rollbackError: unknown) {
-          this.logger.error(
-            "Failed to rollback transaction",
-            rollbackError as Error,
-            {
-              originalError: error,
-            },
-          );
-        }
-
-        const duration = Date.now() - startTime;
-        this.logger.error(
-          "Transaction rolled back due to error",
-          error as Error,
-          {
-            duration,
-          },
-        );
-
-        // Convert to TransactionError with context
-        const originalError = error as Error;
-        const failedOperation = this.extractFailedOperation(error);
-
-        throw new TransactionError(
-          `Transaction failed and was rolled back: ${originalError.message}`,
-          failedOperation,
-          originalError,
-        );
-      } finally {
-        this.isTransactionActive = false;
-      }
+      this.beginTransaction();
+      return await this.executeTransactionCallback(callback, startTime);
     } catch (error: unknown) {
       // Handle BEGIN failures or TransactionError re-throws
       if (error instanceof TransactionError) {
@@ -448,6 +395,95 @@ export class NodeDatabaseBridge implements DatabaseBridge {
    */
   isConnected(): boolean {
     return this.connected && this.db.open;
+  }
+
+  /**
+   * Begin a database transaction.
+   *
+   * @private
+   */
+  private beginTransaction(): void {
+    this.db.exec("BEGIN");
+    this.isTransactionActive = true;
+    this.logger.debug("Transaction begun successfully");
+  }
+
+  /**
+   * Execute the transaction callback with proper error handling and cleanup.
+   *
+   * @private
+   * @template T The return type of the transaction callback
+   * @param callback Function containing database operations to execute atomically
+   * @param startTime Transaction start time for duration logging
+   * @returns Promise resolving to the callback's return value
+   */
+  private async executeTransactionCallback<T>(
+    callback: (db: DatabaseBridge) => Promise<T>,
+    startTime: number,
+  ): Promise<T> {
+    try {
+      const result = await callback(this);
+      this.commitTransaction(startTime);
+      return result;
+    } catch (error: unknown) {
+      this.handleTransactionError(error, startTime);
+      throw error; // This will never execute due to handleTransactionError throwing
+    } finally {
+      this.isTransactionActive = false;
+    }
+  }
+
+  /**
+   * Commit the current transaction.
+   *
+   * @private
+   * @param startTime Transaction start time for duration logging
+   */
+  private commitTransaction(startTime: number): void {
+    this.db.exec("COMMIT");
+    this.isTransactionActive = false;
+
+    const duration = Date.now() - startTime;
+    this.logger.info("Transaction committed successfully", { duration });
+  }
+
+  /**
+   * Handle transaction errors by rolling back and creating appropriate error objects.
+   *
+   * @private
+   * @param error The error that occurred during transaction execution
+   * @param startTime Transaction start time for duration logging
+   * @throws TransactionError with context about the failure
+   */
+  private handleTransactionError(error: unknown, startTime: number): never {
+    // Attempt rollback
+    try {
+      this.db.exec("ROLLBACK");
+      this.logger.debug("Transaction rolled back successfully");
+    } catch (rollbackError: unknown) {
+      this.logger.error(
+        "Failed to rollback transaction",
+        rollbackError as Error,
+        {
+          originalError: error,
+        },
+      );
+    }
+
+    const duration = Date.now() - startTime;
+    this.logger.error("Transaction rolled back due to error", error as Error, {
+      duration,
+    });
+
+    // Convert to TransactionError with context
+    const originalError = error as Error;
+    const failedOperation = this.extractFailedOperation(error);
+
+    throw new TransactionError(
+      `Transaction failed and was rolled back: ${originalError.message}`,
+      failedOperation,
+      originalError,
+    );
   }
 
   /**
