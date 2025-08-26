@@ -80,3 +80,4 @@ export { createTestAgent } from "./settings/createTestAgent";
 export { fillAgentForm } from "./settings/fillAgentForm";
 export { verifyAgentPersistence } from "./settings/verifyAgentPersistence";
 export * from "./database";
+export * from "./conversationAgentUiHelpers";

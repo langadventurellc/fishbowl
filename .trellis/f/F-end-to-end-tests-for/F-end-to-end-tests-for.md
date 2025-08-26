@@ -15,16 +15,25 @@ affectedFiles:
     defining the structure of conversation_agents database rows
   tests/desktop/helpers/database/index.ts: Updated exports to include new
     conversation agent helper functions and interface
+  tests/desktop/helpers/conversationAgentUiHelpers.ts: "Created comprehensive UI
+    interaction helpers with 11 functions: clickAddAgentButton,
+    waitForAddAgentModal, selectAgentInModal, verifyAgentPillExists,
+    checkAddAgentButtonState, waitForAgentInConversationDisplay,
+    waitForNoAvailableAgentsState, clickAddButtonInModal,
+    clickCancelButtonInModal, waitForModalError. All functions include proper
+    error handling, timeout management, and follow existing test patterns."
+  tests/desktop/helpers/index.ts: Added export statement for
+    conversationAgentUiHelpers to make all functions available to test files
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-database-helper
   - T-create-test-setup-helper
   - T-create-ui-interaction-helper
   - T-implement-database-integrity
   - T-implement-happy-path
   - T-implement-multi-conversation
   - T-implement-ui-state-management
+  - T-create-database-helper
 created: 2025-08-25T23:35:55.904Z
 updated: 2025-08-25T23:35:55.904Z
 ---
