@@ -16,6 +16,10 @@ export type { RolesChannelType } from "./rolesConstants";
 export { PERSONALITIES_CHANNELS } from "./personalitiesConstants";
 export type { PersonalitiesChannelType } from "./personalitiesConstants";
 
+// Personality Definitions constants
+export { PERSONALITY_DEFINITIONS_CHANNELS } from "./personalityDefinitionsConstants";
+export type { PersonalityDefinitionsChannelType } from "./personalityDefinitionsConstants";
+
 // Agents constants
 export { AGENTS_CHANNELS } from "./agentsConstants";
 export type { AgentsChannelType } from "./agentsConstants";
@@ -54,6 +58,9 @@ export type { RolesSaveRequest } from "./roles/saveRequest";
 export type { PersonalitiesLoadRequest } from "./personalities/loadRequest";
 export type { PersonalitiesResetRequest } from "./personalities/resetRequest";
 export type { PersonalitiesSaveRequest } from "./personalities/saveRequest";
+
+// Personality Definitions request types
+export type { GetDefinitionsRequest } from "./personalityDefinitions/getDefinitionsRequest";
 
 // Agents request types
 export type { AgentsLoadRequest } from "./agents/loadRequest";
@@ -97,6 +104,9 @@ export type { RolesSaveResponse } from "./roles/saveResponse";
 export type { PersonalitiesLoadResponse } from "./personalities/loadResponse";
 export type { PersonalitiesResetResponse } from "./personalities/resetResponse";
 export type { PersonalitiesSaveResponse } from "./personalities/saveResponse";
+
+// Personality Definitions response types
+export type { GetDefinitionsResponse } from "./personalityDefinitions/getDefinitionsResponse";
 
 // Agents response types
 export type { AgentsLoadResponse } from "./agents/loadResponse";

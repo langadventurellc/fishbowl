@@ -49,20 +49,41 @@ affectedFiles:
     prod builds.
   apps/desktop/src/electron/main.ts:
     Added call to ensurePersonalityDefinitions()
-    in the app initialization sequence before services startup
+    in the app initialization sequence before services startup; Added import and
+    registration call for setupPersonalityDefinitionsHandlers in
+    setupPersonalitiesIpcHandlers function
   apps/desktop/src/electron/startup/ensurePersonalityDefinitions.ts:
     Created new helper module containing the first-run copy logic with proper
     error handling, path validation, and logging
+  apps/desktop/src/shared/ipc/personalityDefinitions/getDefinitionsRequest.ts:
+    Created request type interface for personality definitions IPC calls (empty
+    interface for GET operation)
+  apps/desktop/src/shared/ipc/personalityDefinitions/getDefinitionsResponse.ts:
+    Created response type interface extending IPCResponse with
+    PersonalityDefinitions data type
+  apps/desktop/src/shared/ipc/personalityDefinitionsConstants.ts:
+    Created IPC channel constants defining 'personality:get-definitions' channel
+    and type definitions
+  apps/desktop/src/electron/handlers/personalityDefinitionsHandlers.ts:
+    Implemented main IPC handler with setupPersonalityDefinitionsHandlers
+    function, proper error handling, logging, and integration with
+    DesktopPersonalityDefinitionsService
+  apps/desktop/src/electron/handlers/__tests__/personalityDefinitionsHandlers.test.ts:
+    Created comprehensive unit tests covering handler registration, success
+    response, error handling, and service availability scenarios
+  apps/desktop/src/shared/ipc/index.ts:
+    Added exports for personality definitions
+    constants and request/response types to main IPC index
 log: []
 schema: v1.0
 childrenIds:
   - T-create-ipc-handler-for
-  - T-implement-first-run-copy
   - T-implement-renderer-process
   - T-add-discrete-value-utilities
   - T-add-personality-definitions
   - T-define-shared-personality
   - T-implement-desktop-main
+  - T-implement-first-run-copy
 created: 2025-08-27T05:13:31.791Z
 updated: 2025-08-27T05:13:31.791Z
 ---

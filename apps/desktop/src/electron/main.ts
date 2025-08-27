@@ -19,6 +19,7 @@ import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
 import { setupLlmModelsHandlers } from "./handlers/llmModelsHandlers.js";
+import { setupPersonalityDefinitionsHandlers } from "./handlers/personalityDefinitionsHandlers.js";
 import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
 import { setupRolesHandlers } from "./rolesHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
@@ -410,6 +411,7 @@ function setupRolesIpcHandlers(logger?: StructuredLogger): void {
 function setupPersonalitiesIpcHandlers(logger?: StructuredLogger): void {
   try {
     setupPersonalitiesHandlers();
+    setupPersonalityDefinitionsHandlers();
     logger?.debug("Personalities IPC handlers registered successfully");
   } catch (error) {
     logger?.error(
