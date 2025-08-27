@@ -105,33 +105,39 @@ export const PersonalityForm = forwardRef<
       [],
     );
 
+    // Build trait ID set from dynamic sections
+    const traitIdSet = useMemo(() => {
+      const set = new Set<string>();
+      (dynamicSections || []).forEach((section) => {
+        section.values.forEach((trait) => set.add(trait.id));
+      });
+      return set;
+    }, [dynamicSections]);
+
+    // Helper to sanitize behaviors to only include definition-backed keys
+    const sanitizeBehaviors = useCallback(
+      (
+        source: Record<string, number> | undefined,
+        defaultValue: number = 40,
+      ): Record<string, number> => {
+        if (!traitIdSet.size) {
+          return { ...(source || {}) };
+        }
+        const sanitized: Record<string, number> = {};
+        traitIdSet.forEach((traitId) => {
+          const val = source?.[traitId];
+          sanitized[traitId] = typeof val === "number" ? val : defaultValue;
+        });
+        return sanitized;
+      },
+      [traitIdSet],
+    );
+
     const form = useForm<PersonalityFormData>({
       resolver: zodResolver(personalitySchema),
       defaultValues: {
         name: initialData?.name || "",
-        behaviors: {
-          // Communication Style (default: 50)
-          formalityLevel: initialData?.behaviors?.formalityLevel || 50,
-          verbosity: initialData?.behaviors?.verbosity || 35,
-          enthusiasm: initialData?.behaviors?.enthusiasm || 50,
-          directness: initialData?.behaviors?.directness || 50,
-          // Interaction Approach (specialized defaults)
-          helpfulness: initialData?.behaviors?.helpfulness || 75,
-          patience: initialData?.behaviors?.patience || 70,
-          curiosity: initialData?.behaviors?.curiosity || 60,
-          empathy: initialData?.behaviors?.empathy || 65,
-          // Reasoning Style (specialized defaults)
-          analyticalThinking: initialData?.behaviors?.analyticalThinking || 70,
-          creativity: initialData?.behaviors?.creativity || 60,
-          cautionLevel: initialData?.behaviors?.cautionLevel || 60,
-          // Response Characteristics (specialized defaults)
-          detailLevel: initialData?.behaviors?.detailLevel || 50,
-          questionAsking: initialData?.behaviors?.questionAsking || 55,
-          exampleUsage: initialData?.behaviors?.exampleUsage || 50,
-          responseLength: initialData?.behaviors?.responseLength || 50,
-          randomness: initialData?.behaviors?.randomness || 50,
-          focus: initialData?.behaviors?.focus || 50,
-        },
+        behaviors: { ...(initialData?.behaviors || {}) },
         customInstructions: initialData?.customInstructions || "",
       },
       mode: "onChange",
@@ -143,61 +149,54 @@ export const PersonalityForm = forwardRef<
     const isActuallyDirty = useMemo(() => {
       if (!initialData) return form.formState.isDirty;
 
-      // Check for meaningful changes (not just whitespace)
       const nameChanged =
-        watchedValues.name?.trim() !== initialData.name?.trim();
-
-      const behaviorsChanged = Object.keys(watchedValues.behaviors).some(
-        (behavior) => {
-          const currentValue =
-            watchedValues.behaviors[
-              behavior as keyof typeof watchedValues.behaviors
-            ];
-          // Get the initial value, falling back to the same default used in form initialization
-          const getInitialBehaviorValue = (behaviorKey: string) => {
-            const initialBehaviors = initialData.behaviors || {};
-            const behaviorDefaults: Record<string, number> = {
-              formalityLevel: 50,
-              verbosity: 35,
-              enthusiasm: 50,
-              directness: 50,
-              helpfulness: 75,
-              patience: 70,
-              curiosity: 60,
-              empathy: 65,
-              analyticalThinking: 70,
-              creativity: 60,
-              cautionLevel: 60,
-              detailLevel: 50,
-              questionAsking: 55,
-              exampleUsage: 50,
-              responseLength: 50,
-              randomness: 50,
-              focus: 50,
-            };
-            return (
-              initialBehaviors[behaviorKey as keyof typeof initialBehaviors] ??
-              behaviorDefaults[behaviorKey] ??
-              50
-            );
-          };
-
-          const initialValue = getInitialBehaviorValue(behavior);
-          return currentValue !== initialValue;
-        },
-      );
-
+        watchedValues.name?.trim() !== (initialData.name || "").trim();
       const instructionsChanged =
         watchedValues.customInstructions?.trim() !==
-        initialData.customInstructions?.trim();
+        (initialData.customInstructions || "").trim();
 
-      return nameChanged || behaviorsChanged || instructionsChanged;
-    }, [watchedValues, initialData, form.formState.isDirty]);
+      const current = watchedValues.behaviors || {};
+      const baseline = sanitizeBehaviors(initialData.behaviors || {}, 40);
+
+      if (!traitIdSet.size) {
+        return form.formState.isDirty || nameChanged || instructionsChanged;
+      }
+
+      let behaviorsChanged = false;
+      traitIdSet.forEach((id) => {
+        const a = current[id];
+        const b = baseline[id];
+        if (a !== b) behaviorsChanged = true;
+      });
+      for (const key of Object.keys(current)) {
+        if (!traitIdSet.has(key)) {
+          behaviorsChanged = true;
+          break;
+        }
+      }
+
+      return nameChanged || instructionsChanged || behaviorsChanged;
+    }, [
+      watchedValues,
+      initialData,
+      form.formState.isDirty,
+      traitIdSet,
+      sanitizeBehaviors,
+    ]);
 
     // Track unsaved changes
     useEffect(() => {
       setUnsavedChanges(isActuallyDirty);
     }, [isActuallyDirty, setUnsavedChanges]);
+
+    // When definitions load and form is pristine, sanitize behaviors to match definitions
+    useEffect(() => {
+      if (!traitIdSet.size) return;
+      if (form.formState.isDirty) return;
+      const current = form.getValues("behaviors") || {};
+      const sanitized = sanitizeBehaviors(current, 40);
+      form.setValue("behaviors", sanitized, { shouldDirty: false });
+    }, [traitIdSet, form, sanitizeBehaviors]);
 
     // Expose reset function via ref
     useImperativeHandle(
@@ -205,7 +204,11 @@ export const PersonalityForm = forwardRef<
       () => ({
         resetToInitialData: () => {
           if (initialData) {
-            form.reset(initialData, {
+            const sanitized = {
+              ...initialData,
+              behaviors: sanitizeBehaviors(initialData.behaviors || {}, 40),
+            };
+            form.reset(sanitized, {
               keepDefaultValues: false,
               keepDirty: false,
               keepErrors: false,
@@ -221,13 +224,17 @@ export const PersonalityForm = forwardRef<
       async (data: PersonalityFormData) => {
         setIsSubmitting(true);
         try {
-          onSave(data);
+          const filtered = sanitizeBehaviors(data.behaviors || {}, 40);
+          onSave({ ...data, behaviors: filtered });
           // Reset form with new values after successful save
-          form.reset(data, {
-            keepDefaultValues: false,
-            keepDirty: false,
-            keepErrors: false,
-          });
+          form.reset(
+            { ...data, behaviors: filtered },
+            {
+              keepDefaultValues: false,
+              keepDirty: false,
+              keepErrors: false,
+            },
+          );
           setUnsavedChanges(false);
         } catch (error) {
           logger.error("Failed to save personality", error as Error);
@@ -236,7 +243,7 @@ export const PersonalityForm = forwardRef<
           setIsSubmitting(false);
         }
       },
-      [onSave, form, setUnsavedChanges, logger],
+      [onSave, form, setUnsavedChanges, logger, sanitizeBehaviors],
     );
 
     const handleCancel = useCallback(() => {

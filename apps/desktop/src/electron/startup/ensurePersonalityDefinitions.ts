@@ -3,16 +3,14 @@ import fs from "node:fs";
 import path from "node:path";
 
 /**
- * Ensure personality definitions file is copied from bundle to userData on first run.
- * In packaged apps, copies from process.resourcesPath to userData directory.
- * Never overwrites existing userData copy (preserves user modifications).
+ * Ensure personality definitions file is copied to userData on first run.
+ *
+ * - Packaged: copy from process.resourcesPath
+ * - Dev/E2E: copy from projectRoot/resources (mirrors migrations path logic)
+ *
+ * Never overwrites an existing userData copy (preserves user modifications).
  */
 export async function ensurePersonalityDefinitions(): Promise<void> {
-  // Only perform copy in packaged apps (production)
-  if (!app.isPackaged) {
-    return;
-  }
-
   const userDataPath = app.getPath("userData");
   const userDataFile = path.join(userDataPath, "personality_definitions.json");
 
@@ -21,10 +19,22 @@ export async function ensurePersonalityDefinitions(): Promise<void> {
     return;
   }
 
-  const bundleSourceFile = path.join(
-    process.resourcesPath,
-    "personality_definitions.json",
-  );
+  // Determine source file based on environment
+  const bundleSourceFile = (() => {
+    if (app.isPackaged) {
+      // Packaged app: file included via electron-builder extraResources
+      return path.join(process.resourcesPath, "personality_definitions.json");
+    }
+
+    // Development or E2E test: locate file from project root resources
+    const appPath = app.getAppPath();
+    const isTest = process.env.NODE_ENV === "test";
+    // E2E tests need to go up 4 levels, development only needs 2
+    const projectRoot = isTest
+      ? path.resolve(appPath, "..", "..", "..", "..")
+      : path.resolve(appPath, "..", "..");
+    return path.join(projectRoot, "resources", "personality_definitions.json");
+  })();
 
   try {
     // Ensure userData directory exists

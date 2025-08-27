@@ -1,5 +1,6 @@
 import { app } from "electron";
 import { readFile } from "fs/promises";
+import fs from "node:fs";
 import path from "path";
 import { z } from "zod";
 import {
@@ -74,31 +75,46 @@ export class DesktopPersonalityDefinitionsService
    * Get the appropriate path for personality definitions JSON based on environment
    */
   private getPersonalityDefinitionsPath(): string {
+    // Always prefer userData (dev/test/prod) after ensure step
+    const userDataPath = app.getPath("userData");
+    const userDataDefinitions = path.join(
+      userDataPath,
+      "personality_definitions.json",
+    );
+
     if (app.isPackaged) {
-      // Production: read from userData directory after first-run copy
-      const userDataPath = app.getPath("userData");
-      const definitionsPath = path.join(
-        userDataPath,
-        "personality_definitions.json",
-      );
+      // Packaged: always from userData
       this.logger.debug("Using production personality definitions path", {
-        path: definitionsPath,
+        path: userDataDefinitions,
       });
-      return definitionsPath;
-    } else {
-      // Development: read directly from project resources directory
-      const appRoot = process.env.APP_ROOT || process.cwd();
-      const definitionsPath = path.join(
-        appRoot,
-        "resources",
-        "personality_definitions.json",
-      );
-      this.logger.debug("Using development personality definitions path", {
-        path: definitionsPath,
-        appRoot,
-      });
-      return definitionsPath;
+      return userDataDefinitions;
     }
+
+    // Development/E2E: prefer userData if present
+    if (fs.existsSync(userDataDefinitions)) {
+      this.logger.debug(
+        "Using userData personality definitions path in development",
+        { path: userDataDefinitions },
+      );
+      return userDataDefinitions;
+    }
+
+    // Fallback to project resources (mirrors migrations path logic)
+    const appPath = app.getAppPath();
+    const isTest = process.env.NODE_ENV === "test";
+    const projectRoot = isTest
+      ? path.resolve(appPath, "..", "..", "..", "..")
+      : path.resolve(appPath, "..", "..");
+    const fallbackPath = path.join(
+      projectRoot,
+      "resources",
+      "personality_definitions.json",
+    );
+    this.logger.debug(
+      "Using development fallback personality definitions path",
+      { path: fallbackPath, appPath, projectRoot },
+    );
+    return fallbackPath;
   }
 
   /**
