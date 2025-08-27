@@ -1,7 +1,7 @@
 ---
 id: T-add-personality-definitions
 title: Add personality definitions JSON to desktop build configuration
-status: open
+status: in-progress
 priority: high
 parent: F-json-resource-system
 prerequisites: []

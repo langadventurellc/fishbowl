@@ -1,13 +1,17 @@
 ---
 id: E-dynamic-personality
 title: Dynamic Personality Configuration System
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
 affectedFiles: {}
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-discrete-value-system
+  - F-dynamic-personality-form
+  - F-dynamic-personality-slider
+  - F-json-resource-system
 created: 2025-08-27T04:22:09.365Z
 updated: 2025-08-27T04:22:09.365Z
 ---

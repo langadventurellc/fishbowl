@@ -1,14 +1,21 @@
 ---
 id: F-json-resource-system
 title: JSON Resource System Foundation
-status: open
+status: in-progress
 priority: medium
 parent: E-dynamic-personality
 prerequisites: []
 affectedFiles: {}
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-discrete-value-utilities
+  - T-add-personality-definitions
+  - T-create-ipc-handler-for
+  - T-define-shared-personality
+  - T-implement-desktop-main
+  - T-implement-first-run-copy
+  - T-implement-renderer-process
 created: 2025-08-27T05:13:31.791Z
 updated: 2025-08-27T05:13:31.791Z
 ---

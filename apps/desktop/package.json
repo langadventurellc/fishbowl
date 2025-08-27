@@ -95,6 +95,10 @@
       {
         "from": "../../migrations",
         "to": "migrations"
+      },
+      {
+        "from": "../../resources/personality_definitions.json",
+        "to": "personality_definitions.json"
       }
     ],
     "files": [
