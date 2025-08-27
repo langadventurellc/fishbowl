@@ -42,16 +42,21 @@ affectedFiles:
   packages/shared/src/types/personality/__tests__/personalityTypes.test.ts:
     Created comprehensive unit tests covering type exports, discrete value
     constraints, error functionality, and serialization
+  apps/desktop/src/electron/services/DesktopPersonalityDefinitionsService.ts:
+    Created main process personality definitions service implementing the shared
+    interface. Handles file I/O, JSON parsing, Zod validation, memory caching,
+    and environment-specific path resolution using app.isPackaged for dev vs
+    prod builds.
 log: []
 schema: v1.0
 childrenIds:
   - T-add-discrete-value-utilities
   - T-create-ipc-handler-for
-  - T-define-shared-personality
   - T-implement-desktop-main
   - T-implement-first-run-copy
   - T-implement-renderer-process
   - T-add-personality-definitions
+  - T-define-shared-personality
 created: 2025-08-27T05:13:31.791Z
 updated: 2025-08-27T05:13:31.791Z
 ---
