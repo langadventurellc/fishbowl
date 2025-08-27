@@ -17,6 +17,39 @@ affectedFiles:
     unit tests covering constants, snapping logic, validation, type safety,
     function purity, and performance characteristics
   packages/shared/src/utils/index.ts: Added barrel export for discrete value utilities
+  packages/shared/src/types/personality/PersonalityValueMeta.ts:
+    Created interface for personality value metadata containing short
+    description, optional prompt text, and optional numeric values
+  packages/shared/src/types/personality/PersonalityTraitDef.ts:
+    Created interface for personality trait definitions with stable ID, display
+    name, and discrete value metadata
+  packages/shared/src/types/personality/PersonalitySectionDef.ts:
+    Created interface for personality sections containing related traits with
+    optional descriptions
+  packages/shared/src/types/personality/PersonalityDefinitions.ts:
+    Created main interface for complete personality definitions loaded from JSON
+    resources
+  packages/shared/src/types/personality/PersonalityValues.ts: Created type alias
+    for personality values using trait IDs as keys and discrete values
+  packages/shared/src/types/personality/PersonalityError.ts:
+    Created abstract base
+    class for all personality-related errors with JSON serialization support
+  packages/shared/src/types/personality/PersonalityParseError.ts: Created specific error class for JSON parsing failures with parsing context
+  packages/shared/src/types/personality/PersonalityFileAccessError.ts:
+    Created specific error class for file access failures without exposing
+    sensitive paths
+  packages/shared/src/types/personality/PersonalityValidationError.ts:
+    Created specific error class for schema validation failures with detailed
+    context
+  packages/shared/src/services/PersonalityDefinitionsService.ts:
+    Created service interface for loading and accessing personality definitions
+    with platform abstraction
+  packages/shared/src/types/personality/index.ts: Created barrel export file for all personality types and error classes
+  packages/shared/src/types/index.ts: Added personality types to main types barrel export
+  packages/shared/src/services/index.ts: Added PersonalityDefinitionsService interface to services exports
+  packages/shared/src/types/personality/__tests__/personalityTypes.test.ts:
+    Created comprehensive unit tests covering type exports, discrete value
+    constraints, error functionality, and serialization
 log: []
 schema: v1.0
 childrenIds:
