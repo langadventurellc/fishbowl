@@ -1,12 +1,22 @@
 ---
 id: T-implement-base-personalityslid
 title: Implement base PersonalitySlider with discrete value behavior and unit tests
-status: open
+status: done
 priority: high
 parent: F-dynamic-personality-slider
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitySlider.tsx:
+    Created new controlled PersonalitySlider component with discrete value
+    enforcement, keyboard navigation, and ARIA accessibility features
+  apps/desktop/src/components/settings/personalities/index.ts: Added PersonalitySlider export to component barrel file
+log:
+  - Implemented PersonalitySlider component with complete discrete value
+    behavior and accessibility features. The component enforces discrete values
+    (0, 20, 40, 60, 80, 100) with proper snapping, keyboard navigation (Arrow
+    keys ±20, Home/End to bounds), and ARIA attributes. Built on existing Radix
+    slider with controlled behavior, value display, and disabled state support.
+    All quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-27T18:51:41.035Z
