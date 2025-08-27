@@ -19,7 +19,7 @@ import { agentSchema } from "../schemas/agentSchema";
 import { AgentsPersistenceAdapter } from "../types/agents/persistence/AgentsPersistenceAdapter";
 import { AgentsPersistenceError } from "../types/agents/persistence/AgentsPersistenceError";
 import { AgentFormData } from "../types/settings/AgentFormData";
-import { AgentSettingsViewModel } from "../types/settings/AgentViewModel";
+import { AgentSettingsViewModel } from "../types/settings/AgentSettingsViewModel";
 import { type AgentsStore } from "./AgentsStore";
 import { ErrorState } from "./ErrorState";
 

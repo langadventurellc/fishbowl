@@ -1,9 +1,9 @@
-import type { AgentSettingsViewModel } from "../../types/settings/AgentViewModel";
 import type { PersistedAgentsSettingsData } from "@fishbowl-ai/shared";
 import {
-  persistedAgentsSettingsSchema,
   CURRENT_AGENTS_SCHEMA_VERSION,
+  persistedAgentsSettingsSchema,
 } from "@fishbowl-ai/shared";
+import type { AgentSettingsViewModel } from "../../types/settings/AgentSettingsViewModel";
 import { mapSingleAgentUIToPersistence } from "./mapSingleAgentUIToPersistence";
 
 /**

@@ -1,5 +1,5 @@
-import type { AgentSettingsViewModel } from "../../types/settings/AgentViewModel";
 import type { PersistedAgentData } from "@fishbowl-ai/shared";
+import type { AgentSettingsViewModel } from "../../types/settings/AgentSettingsViewModel";
 import { normalizeAgentFields } from "./utils/normalizeAgentFields";
 
 /**

@@ -1,5 +1,5 @@
+import { AgentSettingsViewModel } from "../../settings/AgentSettingsViewModel";
 import { ConversationAgentViewModel } from "../ConversationAgentViewModel";
-import { AgentSettingsViewModel } from "../../settings/AgentViewModel";
 
 describe("ConversationAgentViewModel", () => {
   describe("interface structure", () => {
