@@ -48,8 +48,10 @@ describe("PersonalityForm", () => {
   it("renders all behavior groups including new behaviors", () => {
     render(<PersonalityForm {...defaultProps} />);
 
-    // Verify the behavior section is present (collapsed by default)
-    expect(screen.getByText("Advanced Behavior Settings")).toBeInTheDocument();
+    // Verify the dynamic behavior section is present - shows empty state when no sections
+    expect(
+      screen.getByText("No personality sections are available to configure."),
+    ).toBeInTheDocument();
   });
 
   it("renders without errors with new behavior integration", () => {
@@ -59,7 +61,9 @@ describe("PersonalityForm", () => {
 
     // Basic form elements should render
     expect(screen.getByText("Personality Name")).toBeInTheDocument();
-    expect(screen.getByText("Advanced Behavior Settings")).toBeInTheDocument();
+    expect(
+      screen.getByText("No personality sections are available to configure."),
+    ).toBeInTheDocument();
     expect(screen.getByText("Custom Instructions")).toBeInTheDocument();
     expect(screen.getByText("Create Personality")).toBeInTheDocument();
   });
@@ -129,7 +133,9 @@ describe("PersonalityForm", () => {
     // 3. The change detection logic handles the new behaviors
     // 4. Form validation includes the new behaviors
 
-    expect(screen.getByText("Advanced Behavior Settings")).toBeInTheDocument();
+    expect(
+      screen.getByText("No personality sections are available to configure."),
+    ).toBeInTheDocument();
     expect(screen.getByText("Create Personality")).toBeInTheDocument();
   });
 
@@ -274,15 +280,6 @@ describe("PersonalityForm", () => {
       // Should show loading state
       expect(
         screen.getByLabelText("Loading personality sections"),
-      ).toBeInTheDocument();
-    });
-
-    it("falls back to BehaviorSlidersSection when dynamic props are not provided", () => {
-      render(<PersonalityForm {...defaultProps} />);
-
-      // Should show the legacy behavior sliders section
-      expect(
-        screen.getByText("Advanced Behavior Settings"),
       ).toBeInTheDocument();
     });
   });

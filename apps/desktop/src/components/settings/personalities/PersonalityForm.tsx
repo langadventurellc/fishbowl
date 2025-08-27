@@ -46,7 +46,6 @@ import {
   FormItem,
   FormMessage,
 } from "../../ui/form";
-import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
 import { DynamicBehaviorSections } from "./DynamicBehaviorSections";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 import { PersonalityNameInput } from "./PersonalityNameInput";
@@ -283,33 +282,20 @@ export const PersonalityForm = forwardRef<
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    {dynamicSections && dynamicGetShort ? (
-                      <DynamicBehaviorSections
-                        sections={dynamicSections}
-                        getShort={dynamicGetShort}
-                        values={convertToDiscreteValues(field.value)}
-                        onChange={(traitId, value) => {
-                          field.onChange({
-                            ...field.value,
-                            [traitId]: value,
-                          });
-                        }}
-                        disabled={isSubmitting || isLoading || defsError}
-                        isLoading={defsLoading}
-                        isError={defsError}
-                      />
-                    ) : (
-                      <BehaviorSlidersSection
-                        values={field.value}
-                        onChange={(behavior, value) => {
-                          field.onChange({
-                            ...field.value,
-                            [behavior]: value,
-                          });
-                        }}
-                        disabled={isSubmitting || isLoading}
-                      />
-                    )}
+                    <DynamicBehaviorSections
+                      sections={dynamicSections || []}
+                      getShort={dynamicGetShort || (() => undefined)}
+                      values={convertToDiscreteValues(field.value)}
+                      onChange={(traitId, value) => {
+                        field.onChange({
+                          ...field.value,
+                          [traitId]: value,
+                        });
+                      }}
+                      disabled={isSubmitting || isLoading || defsError}
+                      isLoading={defsLoading}
+                      isError={defsError}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

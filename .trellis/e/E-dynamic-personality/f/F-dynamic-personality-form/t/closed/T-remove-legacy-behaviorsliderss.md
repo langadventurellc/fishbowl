@@ -1,13 +1,29 @@
 ---
 id: T-remove-legacy-behaviorsliderss
 title: Remove legacy BehaviorSlidersSection usage and clean up exports/tests
-status: open
+status: done
 priority: low
 parent: F-dynamic-personality-form
 prerequisites:
   - T-load-personality-definitions
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Removed BehaviorSlidersSection import and conditional rendering logic. Now
+    always renders DynamicBehaviorSections with empty array and no-op fallbacks
+    for missing props.
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalityForm.test.tsx:
+    Updated tests to expect 'No personality sections are available to
+    configure.' message instead of 'Advanced Behavior Settings'. Removed one
+    obsolete fallback test.
+  apps/desktop/src/components/settings/personalities/index.ts: Added DynamicBehaviorSections export to component barrel file.
+  apps/desktop/src/components/settings/personalities/BehaviorSlidersSection.tsx: Deleted legacy component file as it's no longer used anywhere.
+log:
+  - Successfully removed legacy BehaviorSlidersSection component and cleaned up
+    all references. Updated PersonalityForm to always use
+    DynamicBehaviorSections component with fallback defaults for empty sections.
+    Removed conditional rendering logic, deleted the legacy file, updated
+    exports, and fixed all failing tests to expect the new dynamic component
+    behavior.
 schema: v1.0
 childrenIds: []
 created: 2025-08-27T19:47:59.801Z
