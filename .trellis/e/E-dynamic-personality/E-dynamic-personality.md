@@ -55,6 +55,12 @@ affectedFiles:
     interface. Handles file I/O, JSON parsing, Zod validation, memory caching,
     and environment-specific path resolution using app.isPackaged for dev vs
     prod builds.
+  apps/desktop/src/electron/main.ts:
+    Added call to ensurePersonalityDefinitions()
+    in the app initialization sequence before services startup
+  apps/desktop/src/electron/startup/ensurePersonalityDefinitions.ts:
+    Created new helper module containing the first-run copy logic with proper
+    error handling, path validation, and logging
 log: []
 schema: v1.0
 childrenIds:

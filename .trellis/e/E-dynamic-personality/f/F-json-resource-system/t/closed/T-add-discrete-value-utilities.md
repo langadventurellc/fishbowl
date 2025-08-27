@@ -1,7 +1,7 @@
 ---
 id: T-add-discrete-value-utilities
 title: Add discrete value utilities and validation (moved under Discrete Value System)
-status: open
+status: done
 priority: medium
 parent: F-discrete-value-system
 prerequisites:

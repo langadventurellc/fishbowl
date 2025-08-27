@@ -1,13 +1,26 @@
 ---
 id: T-implement-first-run-copy
 title: Implement first-run copy mechanism for personality definitions
-status: open
+status: done
 priority: high
 parent: F-json-resource-system
 prerequisites:
   - T-implement-desktop-main
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/main.ts:
+    Added call to ensurePersonalityDefinitions()
+    in the app initialization sequence before services startup
+  apps/desktop/src/electron/startup/ensurePersonalityDefinitions.ts:
+    Created new helper module containing the first-run copy logic with proper
+    error handling, path validation, and logging
+log:
+  - Successfully implemented first-run copy mechanism for personality
+    definitions. The system now detects when
+    userData/personality_definitions.json is missing on packaged app startup and
+    copies it from the bundle resources. This ensures users can customize
+    personality definitions without affecting future app updates. The
+    implementation follows security best practices with path validation,
+    graceful error handling, and never overwrites existing user files.
 schema: v1.0
 childrenIds: []
 created: 2025-08-27T15:41:47.202Z

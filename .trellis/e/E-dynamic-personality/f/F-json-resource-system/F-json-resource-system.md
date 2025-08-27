@@ -47,16 +47,22 @@ affectedFiles:
     interface. Handles file I/O, JSON parsing, Zod validation, memory caching,
     and environment-specific path resolution using app.isPackaged for dev vs
     prod builds.
+  apps/desktop/src/electron/main.ts:
+    Added call to ensurePersonalityDefinitions()
+    in the app initialization sequence before services startup
+  apps/desktop/src/electron/startup/ensurePersonalityDefinitions.ts:
+    Created new helper module containing the first-run copy logic with proper
+    error handling, path validation, and logging
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-discrete-value-utilities
   - T-create-ipc-handler-for
-  - T-implement-desktop-main
   - T-implement-first-run-copy
   - T-implement-renderer-process
+  - T-add-discrete-value-utilities
   - T-add-personality-definitions
   - T-define-shared-personality
+  - T-implement-desktop-main
 created: 2025-08-27T05:13:31.791Z
 updated: 2025-08-27T05:13:31.791Z
 ---
