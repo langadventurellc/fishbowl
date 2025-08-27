@@ -5,6 +5,7 @@ import {
 } from "@fishbowl-ai/shared";
 import { BrowserCryptoUtils } from "../utils/BrowserCryptoUtils";
 import { BrowserDeviceInfo } from "../utils/BrowserDeviceInfo";
+import { PersonalityDefinitionsClient } from "./personalityDefinitionsClient";
 
 /**
  * Service container for Electron renderer process dependencies.
@@ -28,6 +29,9 @@ export class RendererProcessServices {
   readonly cryptoUtils: BrowserCryptoUtils;
   readonly deviceInfo: BrowserDeviceInfo;
 
+  // Renderer-specific services
+  readonly personalityDefinitionsClient: PersonalityDefinitionsClient;
+
   // Configured shared services
   readonly logger: IStructuredLogger;
 
@@ -35,6 +39,9 @@ export class RendererProcessServices {
     // Initialize browser implementations
     this.cryptoUtils = new BrowserCryptoUtils();
     this.deviceInfo = new BrowserDeviceInfo();
+
+    // Initialize renderer-specific services
+    this.personalityDefinitionsClient = new PersonalityDefinitionsClient();
 
     // Create logger with browser implementations
     // Using createLoggerSync for consistent configuration

@@ -11,6 +11,7 @@ import { PERSONALITIES_CHANNELS } from "../shared/ipc/personalitiesConstants";
 import { AGENTS_CHANNELS } from "../shared/ipc/agentsConstants";
 import { CONVERSATION_CHANNELS } from "../shared/ipc/conversationsConstants";
 import { CONVERSATION_AGENT_CHANNELS } from "../shared/ipc/conversationAgentsConstants";
+import { PERSONALITY_DEFINITIONS_CHANNELS } from "../shared/ipc/personalityDefinitionsConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -53,6 +54,8 @@ import type {
   ConversationAgentAddResponse,
   ConversationAgentRemoveResponse,
   ConversationAgentListResponse,
+  GetDefinitionsRequest,
+  GetDefinitionsResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -68,6 +71,7 @@ import type {
   ConversationAgent,
   AddAgentToConversationInput,
   RemoveAgentFromConversationInput,
+  PersonalityDefinitions,
 } from "@fishbowl-ai/shared";
 import type { SettingsCategory } from "@fishbowl-ai/ui-shared";
 
@@ -470,6 +474,31 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error resetting personalities:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  personalityDefinitions: {
+    getDefinitions: async (): Promise<PersonalityDefinitions> => {
+      try {
+        const request: GetDefinitionsRequest = {};
+        const response = (await ipcRenderer.invoke(
+          PERSONALITY_DEFINITIONS_CHANNELS.GET_DEFINITIONS,
+          request,
+        )) as GetDefinitionsResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to load personality definitions",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error loading personality definitions:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

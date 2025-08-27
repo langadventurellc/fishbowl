@@ -197,6 +197,19 @@ export interface ElectronAPI {
    */
   conversations: ConversationsAPI;
   /**
+   * Personality definitions operations for loading personality metadata.
+   * Provides access to personality trait definitions and values from JSON resources.
+   */
+  personalityDefinitions: {
+    /**
+     * Load personality definitions from persistent storage.
+     * @returns Promise resolving to personality definitions data
+     */
+    getDefinitions(): Promise<
+      import("@fishbowl-ai/shared").PersonalityDefinitions
+    >;
+  };
+  /**
    * Conversation agents operations for managing agent-conversation associations.
    * Provides operations for adding, removing, and querying agents within conversations.
    */
