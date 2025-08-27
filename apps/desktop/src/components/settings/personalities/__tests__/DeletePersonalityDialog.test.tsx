@@ -6,13 +6,6 @@ import { DeletePersonalityDialog } from "../DeletePersonalityDialog";
 const mockPersonality: PersonalityViewModel = {
   id: "test-personality-1",
   name: "Creative Thinker",
-  bigFive: {
-    openness: 85,
-    conscientiousness: 70,
-    extraversion: 60,
-    agreeableness: 75,
-    neuroticism: 30,
-  },
   behaviors: {
     creativity: 90,
     analytical: 70,

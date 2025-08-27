@@ -3,7 +3,6 @@
  *
  * Features:
  * - Name input with validation
- * - Big Five personality trait sliders with live values
  * - Collapsible behavior sliders section (14 additional traits)
  * - Custom instructions textarea
  * - Form validation with helpful error messages
@@ -23,15 +22,18 @@ import {
   type PersonalityFormData,
 } from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, {
+import { Loader2 } from "lucide-react";
+import {
+  forwardRef,
   useCallback,
   useEffect,
-  useState,
-  useMemo,
   useImperativeHandle,
-  forwardRef,
+  useMemo,
+  useState,
 } from "react";
 import { useForm } from "react-hook-form";
+import { useServices } from "../../../contexts";
+import { Button } from "../../ui/button";
 import {
   Form,
   FormControl,
@@ -40,12 +42,8 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
-import { BigFiveSliders } from "./BigFiveSliders";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 import { PersonalityNameInput } from "./PersonalityNameInput";
-import { Loader2 } from "lucide-react";
-import { Button } from "../../ui/button";
-import { useServices } from "../../../contexts";
 
 export interface PersonalityFormRef {
   resetToInitialData: () => void;
@@ -75,13 +73,6 @@ export const PersonalityForm = forwardRef<
       resolver: zodResolver(personalitySchema),
       defaultValues: {
         name: initialData?.name || "",
-        bigFive: {
-          openness: initialData?.bigFive?.openness || 50,
-          conscientiousness: initialData?.bigFive?.conscientiousness || 50,
-          extraversion: initialData?.bigFive?.extraversion || 50,
-          agreeableness: initialData?.bigFive?.agreeableness || 50,
-          neuroticism: initialData?.bigFive?.neuroticism || 50,
-        },
         behaviors: {
           // Communication Style (default: 50)
           formalityLevel: initialData?.behaviors?.formalityLevel || 50,
@@ -119,13 +110,6 @@ export const PersonalityForm = forwardRef<
       // Check for meaningful changes (not just whitespace)
       const nameChanged =
         watchedValues.name?.trim() !== initialData.name?.trim();
-
-      const bigFiveChanged = Object.keys(watchedValues.bigFive).some(
-        (trait) =>
-          watchedValues.bigFive[trait as keyof typeof watchedValues.bigFive] !==
-          (initialData.bigFive?.[trait as keyof typeof initialData.bigFive] ??
-            50),
-      );
 
       const behaviorsChanged = Object.keys(watchedValues.behaviors).some(
         (behavior) => {
@@ -171,9 +155,7 @@ export const PersonalityForm = forwardRef<
         watchedValues.customInstructions?.trim() !==
         initialData.customInstructions?.trim();
 
-      return (
-        nameChanged || bigFiveChanged || behaviorsChanged || instructionsChanged
-      );
+      return nameChanged || behaviorsChanged || instructionsChanged;
     }, [watchedValues, initialData, form.formState.isDirty]);
 
     // Track unsaved changes
@@ -253,29 +235,6 @@ export const PersonalityForm = forwardRef<
                     />
                   </FormControl>
                   <FormMessage id={`${field.name}-error`} />
-                </FormItem>
-              )}
-            />
-
-            {/* Big Five Sliders */}
-            <FormField
-              control={form.control}
-              name="bigFive"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <BigFiveSliders
-                      values={field.value}
-                      onChange={(trait, value) => {
-                        field.onChange({
-                          ...field.value,
-                          [trait]: value,
-                        });
-                      }}
-                      disabled={isSubmitting || isLoading}
-                    />
-                  </FormControl>
-                  <FormMessage />
                 </FormItem>
               )}
             />

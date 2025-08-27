@@ -21,7 +21,6 @@ export const CURRENT_PERSONALITIES_SCHEMA_VERSION =
  * - Nullable timestamps for manual JSON editing
  * - No sensitive data exposure in validation errors
  * - Character limits to prevent DoS attacks
- * - Big Five personality trait validation (0-100 range)
  * - Behaviors validation as key-value pairs
  */
 export const persistedPersonalitySchema = z
@@ -36,40 +35,6 @@ export const persistedPersonalitySchema = z
       .string({ message: "Personality name must be a string" })
       .min(1, "Personality name is required")
       .max(50, "Personality name cannot exceed 50 characters"),
-
-    // Big Five personality traits - all required, 0-100 range
-    bigFive: z.object(
-      {
-        openness: z
-          .number({ message: "Openness must be a number" })
-          .min(0, "Openness must be at least 0")
-          .max(100, "Openness cannot exceed 100"),
-
-        conscientiousness: z
-          .number({ message: "Conscientiousness must be a number" })
-          .min(0, "Conscientiousness must be at least 0")
-          .max(100, "Conscientiousness cannot exceed 100"),
-
-        extraversion: z
-          .number({ message: "Extraversion must be a number" })
-          .min(0, "Extraversion must be at least 0")
-          .max(100, "Extraversion cannot exceed 100"),
-
-        agreeableness: z
-          .number({ message: "Agreeableness must be a number" })
-          .min(0, "Agreeableness must be at least 0")
-          .max(100, "Agreeableness cannot exceed 100"),
-
-        neuroticism: z
-          .number({ message: "Neuroticism must be a number" })
-          .min(0, "Neuroticism must be at least 0")
-          .max(100, "Neuroticism cannot exceed 100"),
-      },
-      {
-        message:
-          "Big Five traits must be an object with all required properties",
-      },
-    ),
 
     // Behaviors as record of string to number (0-100 range)
     behaviors: z.record(

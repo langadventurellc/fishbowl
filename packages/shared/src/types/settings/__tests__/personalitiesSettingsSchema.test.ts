@@ -1,7 +1,7 @@
 import { z } from "zod";
 import {
-  persistedPersonalitySchema,
   persistedPersonalitiesSettingsSchema,
+  persistedPersonalitySchema,
 } from "../personalitiesSettingsSchema";
 
 describe("persistedPersonalitySchema", () => {
@@ -10,13 +10,6 @@ describe("persistedPersonalitySchema", () => {
       const validPersonality = {
         id: "personality-123",
         name: "Creative Thinker",
-        bigFive: {
-          openness: 85,
-          conscientiousness: 65,
-          extraversion: 70,
-          agreeableness: 80,
-          neuroticism: 30,
-        },
         behaviors: {
           creativity: 90,
           analytical: 70,
@@ -35,13 +28,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithNullTimestamps = {
         id: "personality-456",
         name: "Analytical Mind",
-        bigFive: {
-          openness: 60,
-          conscientiousness: 90,
-          extraversion: 40,
-          agreeableness: 70,
-          neuroticism: 25,
-        },
         behaviors: {
           logical: 95,
           detail: 90,
@@ -62,13 +48,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithoutTimestamps = {
         id: "personality-789",
         name: "Balanced",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -84,13 +63,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithEmptyFields = {
         id: "personality-empty",
         name: "Minimal",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -106,13 +78,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithExtremeValues = {
         id: "personality-extreme",
         name: "Extreme",
-        bigFive: {
-          openness: 0,
-          conscientiousness: 100,
-          extraversion: 0,
-          agreeableness: 100,
-          neuroticism: 0,
-        },
         behaviors: {
           minBehavior: 0,
           maxBehavior: 100,
@@ -123,8 +88,6 @@ describe("persistedPersonalitySchema", () => {
       const result = persistedPersonalitySchema.parse(
         personalityWithExtremeValues,
       );
-      expect(result.bigFive.openness).toBe(0);
-      expect(result.bigFive.conscientiousness).toBe(100);
       expect(result.behaviors.minBehavior).toBe(0);
       expect(result.behaviors.maxBehavior).toBe(100);
     });
@@ -133,13 +96,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithMinName = {
         id: "p",
         name: "A",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -152,13 +108,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithMaxFields = {
         id: "personality-max",
         name: "A".repeat(50), // 50 characters
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "I".repeat(500), // 500 characters
       };
@@ -172,13 +121,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithUnicode = {
         id: "personality-unicode",
         name: "Creatîve Thînker 🎨",
-        bigFive: {
-          openness: 85,
-          conscientiousness: 65,
-          extraversion: 70,
-          agreeableness: 80,
-          neuroticism: 30,
-        },
         behaviors: {
           artístico: 90,
           créativité: 85,
@@ -196,13 +138,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithComplexBehaviors = {
         id: "personality-complex",
         name: "Complex Thinker",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 60,
-          extraversion: 55,
-          agreeableness: 70,
-          neuroticism: 40,
-        },
         behaviors: {
           "problem-solving": 85,
           creative_thinking: 90,
@@ -227,13 +162,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "",
             name: "Test Personality",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -245,13 +173,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: 123,
             name: "Test Personality",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -263,13 +184,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: null,
             name: "Test Personality",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -280,13 +194,6 @@ describe("persistedPersonalitySchema", () => {
         expect(() => {
           persistedPersonalitySchema.parse({
             name: "Test Personality",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -300,13 +207,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -318,13 +218,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "A".repeat(51), // 51 characters
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -336,13 +229,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: 123,
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -354,13 +240,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: null,
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
@@ -371,260 +250,10 @@ describe("persistedPersonalitySchema", () => {
         expect(() => {
           persistedPersonalitySchema.parse({
             id: "test-id",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           });
         }).toThrow("Personality name must be a string");
-      });
-    });
-
-    describe("bigFive field", () => {
-      const baseBigFive = {
-        openness: 50,
-        conscientiousness: 50,
-        extraversion: 50,
-        agreeableness: 50,
-        neuroticism: 50,
-      };
-
-      it("should reject missing bigFive object", () => {
-        expect(() => {
-          persistedPersonalitySchema.parse({
-            id: "test-id",
-            name: "Test",
-            behaviors: {},
-            customInstructions: "",
-          });
-        }).toThrow(
-          "Big Five traits must be an object with all required properties",
-        );
-      });
-
-      it("should reject null bigFive object", () => {
-        expect(() => {
-          persistedPersonalitySchema.parse({
-            id: "test-id",
-            name: "Test",
-            bigFive: null,
-            behaviors: {},
-            customInstructions: "",
-          });
-        }).toThrow(
-          "Big Five traits must be an object with all required properties",
-        );
-      });
-
-      it("should reject incomplete bigFive object", () => {
-        expect(() => {
-          persistedPersonalitySchema.parse({
-            id: "test-id",
-            name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              // Missing extraversion, agreeableness, neuroticism
-            },
-            behaviors: {},
-            customInstructions: "",
-          });
-        }).toThrow();
-      });
-
-      describe("openness trait", () => {
-        it("should reject openness below 0", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, openness: -1 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Openness must be at least 0");
-        });
-
-        it("should reject openness above 100", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, openness: 101 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Openness cannot exceed 100");
-        });
-
-        it("should reject non-numeric openness", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, openness: "50" },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Openness must be a number");
-        });
-      });
-
-      describe("conscientiousness trait", () => {
-        it("should reject conscientiousness below 0", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, conscientiousness: -1 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Conscientiousness must be at least 0");
-        });
-
-        it("should reject conscientiousness above 100", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, conscientiousness: 101 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Conscientiousness cannot exceed 100");
-        });
-
-        it("should reject non-numeric conscientiousness", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, conscientiousness: "high" },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Conscientiousness must be a number");
-        });
-      });
-
-      describe("extraversion trait", () => {
-        it("should reject extraversion below 0", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, extraversion: -1 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Extraversion must be at least 0");
-        });
-
-        it("should reject extraversion above 100", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, extraversion: 101 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Extraversion cannot exceed 100");
-        });
-
-        it("should reject non-numeric extraversion", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, extraversion: null },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Extraversion must be a number");
-        });
-      });
-
-      describe("agreeableness trait", () => {
-        it("should reject agreeableness below 0", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, agreeableness: -1 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Agreeableness must be at least 0");
-        });
-
-        it("should reject agreeableness above 100", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, agreeableness: 101 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Agreeableness cannot exceed 100");
-        });
-
-        it("should reject non-numeric agreeableness", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, agreeableness: true },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Agreeableness must be a number");
-        });
-      });
-
-      describe("neuroticism trait", () => {
-        it("should reject neuroticism below 0", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, neuroticism: -1 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Neuroticism must be at least 0");
-        });
-
-        it("should reject neuroticism above 100", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, neuroticism: 101 },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Neuroticism cannot exceed 100");
-        });
-
-        it("should reject non-numeric neuroticism", () => {
-          expect(() => {
-            persistedPersonalitySchema.parse({
-              id: "test-id",
-              name: "Test",
-              bigFive: { ...baseBigFive, neuroticism: [] },
-              behaviors: {},
-              customInstructions: "",
-            });
-          }).toThrow("Neuroticism must be a number");
-        });
       });
     });
 
@@ -634,13 +263,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: "not-an-object",
             customInstructions: "",
           });
@@ -654,13 +276,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: null,
             customInstructions: "",
           });
@@ -674,13 +289,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               creativity: "high",
             },
@@ -694,13 +302,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               creativity: -1,
             },
@@ -714,13 +315,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               creativity: 101,
             },
@@ -735,13 +329,6 @@ describe("persistedPersonalitySchema", () => {
         const result = persistedPersonalitySchema.parse({
           id: "test-id",
           name: "Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
         });
@@ -753,13 +340,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "I".repeat(501), // 501 characters
           });
@@ -771,13 +351,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: 123,
           });
@@ -789,13 +362,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: null,
           });
@@ -807,13 +373,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
           });
         }).toThrow("Custom instructions must be a string");
@@ -825,13 +384,6 @@ describe("persistedPersonalitySchema", () => {
         const result = persistedPersonalitySchema.parse({
           id: "test-id",
           name: "Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
           createdAt: "2025-01-15T10:30:00.000Z",
@@ -843,13 +395,6 @@ describe("persistedPersonalitySchema", () => {
         const result = persistedPersonalitySchema.parse({
           id: "test-id",
           name: "Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
           updatedAt: "2025-01-15T10:30:00.000Z",
@@ -862,13 +407,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
             createdAt: "2025-01-15 10:30:00",
@@ -881,13 +419,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
             updatedAt: "invalid-date",
@@ -900,13 +431,6 @@ describe("persistedPersonalitySchema", () => {
           persistedPersonalitySchema.parse({
             id: "test-id",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
             createdAt: 1642252200000,
@@ -922,13 +446,6 @@ describe("persistedPersonalitySchema", () => {
         persistedPersonalitySchema.parse({
           id: "",
           name: "",
-          bigFive: {
-            openness: 101,
-            conscientiousness: -1,
-            extraversion: "invalid",
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {
             invalidBehavior: 101,
           },
@@ -943,13 +460,6 @@ describe("persistedPersonalitySchema", () => {
         persistedPersonalitySchema.parse({
           id: "test",
           name: "A".repeat(51),
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
         });
@@ -961,53 +471,10 @@ describe("persistedPersonalitySchema", () => {
         persistedPersonalitySchema.parse({
           id: "test",
           name: "test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "I".repeat(501),
         });
       }).toThrow("Custom instructions cannot exceed 500 characters");
-    });
-
-    it("should include numeric limits in error messages", () => {
-      expect(() => {
-        persistedPersonalitySchema.parse({
-          id: "test",
-          name: "test",
-          bigFive: {
-            openness: 101,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
-          behaviors: {},
-          customInstructions: "",
-        });
-      }).toThrow("Openness cannot exceed 100");
-
-      expect(() => {
-        persistedPersonalitySchema.parse({
-          id: "test",
-          name: "test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
-          behaviors: {
-            behavior: -1,
-          },
-          customInstructions: "",
-        });
-      }).toThrow("Behavior values must be at least 0");
     });
   });
 
@@ -1018,13 +485,6 @@ describe("persistedPersonalitySchema", () => {
       const testPersonality: InferredType = {
         id: "test-personality",
         name: "Test Personality",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 65,
-          extraversion: 55,
-          agreeableness: 80,
-          neuroticism: 35,
-        },
         behaviors: {
           creativity: 85,
           analysis: 70,
@@ -1044,13 +504,6 @@ describe("persistedPersonalitySchema", () => {
       const testPersonalityNoTimestamps: InferredType = {
         id: "test-personality",
         name: "Test Personality",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 65,
-          extraversion: 55,
-          agreeableness: 80,
-          neuroticism: 35,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -1067,13 +520,6 @@ describe("persistedPersonalitySchema", () => {
       const testPersonalityNullTimestamps: InferredType = {
         id: "test-personality",
         name: "Test Personality",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 65,
-          extraversion: 55,
-          agreeableness: 80,
-          neuroticism: 35,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: null,
@@ -1092,13 +538,6 @@ describe("persistedPersonalitySchema", () => {
       const personalityWithExtraFields = {
         id: "test-personality",
         name: "Test Personality",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 65,
-          extraversion: 55,
-          agreeableness: 80,
-          neuroticism: 35,
-        },
         behaviors: {},
         customInstructions: "",
         extraField: "should be preserved",
@@ -1162,13 +601,6 @@ describe("persistedPersonalitiesSettingsSchema", () => {
         {
           id: "personality-1",
           name: "Creative",
-          bigFive: {
-            openness: 85,
-            conscientiousness: 65,
-            extraversion: 70,
-            agreeableness: 80,
-            neuroticism: 30,
-          },
           behaviors: {
             creativity: 90,
           },
@@ -1177,13 +609,6 @@ describe("persistedPersonalitiesSettingsSchema", () => {
         {
           id: "personality-2",
           name: "Analytical",
-          bigFive: {
-            openness: 60,
-            conscientiousness: 90,
-            extraversion: 40,
-            agreeableness: 70,
-            neuroticism: 25,
-          },
           behaviors: {
             logic: 95,
           },
@@ -1206,13 +631,6 @@ describe("persistedPersonalitiesSettingsSchema", () => {
           {
             id: "personality-1",
             name: "Balanced",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
             createdAt: "2025-01-15T10:30:00.000Z",
@@ -1285,26 +703,12 @@ describe("persistedPersonalitiesSettingsSchema", () => {
         {
           id: "valid-personality",
           name: "Valid",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
         },
         {
           id: "", // Invalid - empty ID
           name: "Invalid",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
         },
@@ -1322,26 +726,12 @@ describe("persistedPersonalitiesSettingsSchema", () => {
         {
           id: "personality-1",
           name: "Valid Personality",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
         },
         {
           id: "personality-2",
           name: "A".repeat(51), // Invalid - exceeds 50 chars
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "",
         },
@@ -1419,13 +809,6 @@ describe("persistedPersonalitiesSettingsSchema", () => {
           {
             id: "personality-1",
             name: "Test Personality",
-            bigFive: {
-              openness: 75,
-              conscientiousness: 65,
-              extraversion: 55,
-              agreeableness: 80,
-              neuroticism: 35,
-            },
             behaviors: {
               creativity: 85,
             },
@@ -1454,13 +837,6 @@ describe("persistedPersonalitiesSettingsSchema", () => {
           {
             id: "test",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           },

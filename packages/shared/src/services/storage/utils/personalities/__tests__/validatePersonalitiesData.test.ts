@@ -5,13 +5,6 @@ describe("validatePersonalitiesData", () => {
   const validPersonality1 = {
     id: "personality-1",
     name: "Creative Thinker",
-    bigFive: {
-      openness: 85,
-      conscientiousness: 70,
-      extraversion: 60,
-      agreeableness: 75,
-      neuroticism: 45,
-    },
     behaviors: {
       analytical: 70,
       creative: 90,
@@ -24,13 +17,6 @@ describe("validatePersonalitiesData", () => {
   const validPersonality2 = {
     id: "personality-2",
     name: "Analytical Mind",
-    bigFive: {
-      openness: 65,
-      conscientiousness: 90,
-      extraversion: 40,
-      agreeableness: 60,
-      neuroticism: 30,
-    },
     behaviors: {
       analytical: 95,
       methodical: 85,
@@ -73,13 +59,6 @@ describe("validatePersonalitiesData", () => {
           {
             id: "min",
             name: "M",
-            bigFive: {
-              openness: 0,
-              conscientiousness: 0,
-              extraversion: 0,
-              agreeableness: 0,
-              neuroticism: 0,
-            },
             behaviors: {},
             customInstructions: "",
           },
@@ -252,33 +231,6 @@ describe("validatePersonalitiesData", () => {
   });
 
   describe("individual personality validation", () => {
-    it("should reject file with invalid personality", () => {
-      const withInvalidPersonality = {
-        ...validCompleteData,
-        personalities: [
-          validPersonality1,
-          {
-            ...validPersonality2,
-            bigFive: {
-              ...validPersonality2.bigFive,
-              openness: 150, // Invalid value
-            },
-          },
-        ],
-      };
-
-      const result = validatePersonalitiesData(withInvalidPersonality);
-
-      expect(result.isValid).toBe(false);
-      expect(result.error || result.errors?.join(" ")).toContain(
-        "Personality 1",
-      );
-      expect(result.error || result.errors?.join(" ")).toContain("openness");
-      expect(result.error || result.errors?.join(" ")).toContain(
-        "cannot exceed 100",
-      );
-    });
-
     it("should aggregate multiple personality validation errors", () => {
       const withMultipleInvalidPersonalities = {
         ...validCompleteData,
@@ -305,37 +257,6 @@ describe("validatePersonalitiesData", () => {
       ).toBe(true);
       expect(
         result.errors!.some((error) => error.includes("Personality 1")),
-      ).toBe(true);
-    });
-  });
-
-  describe("error aggregation", () => {
-    it("should combine global and individual personality errors", () => {
-      const withBothTypes = {
-        ...validCompleteData,
-        personalities: [
-          validPersonality1,
-          { ...validPersonality1, id: "personality-1" }, // Duplicate ID + reuse same object
-          {
-            ...validPersonality2,
-            bigFive: {
-              ...validPersonality2.bigFive,
-              openness: -5, // Invalid trait value
-            },
-          },
-        ],
-      };
-
-      const result = validatePersonalitiesData(withBothTypes);
-
-      expect(result.isValid).toBe(false);
-      expect(result.errors).toBeDefined();
-      // Should have duplicate ID error and personality validation error
-      expect(result.errors!.some((error) => error.includes("Duplicate"))).toBe(
-        true,
-      );
-      expect(
-        result.errors!.some((error) => error.includes("Personality 2")),
       ).toBe(true);
     });
   });

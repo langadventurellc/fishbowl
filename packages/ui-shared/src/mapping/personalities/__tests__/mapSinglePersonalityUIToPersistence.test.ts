@@ -2,8 +2,8 @@
  * Unit tests for mapSinglePersonalityUIToPersistence mapping function
  */
 
-import { mapSinglePersonalityUIToPersistence } from "../mapSinglePersonalityUIToPersistence";
 import type { PersonalityViewModel } from "../../../types/settings/PersonalityViewModel";
+import { mapSinglePersonalityUIToPersistence } from "../mapSinglePersonalityUIToPersistence";
 
 describe("mapSinglePersonalityUIToPersistence", () => {
   const mockDate = "2025-01-15T10:00:00.000Z";
@@ -22,13 +22,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Creative Thinker",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 70,
-          extraversion: 60,
-          agreeableness: 80,
-          neuroticism: 30,
-        },
         behaviors: { creativity: 85, empathy: 75, leadership: 65 },
         customInstructions: "Focus on creative and innovative solutions",
         createdAt: "2025-01-10T09:00:00.000Z",
@@ -40,13 +33,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       expect(result).toEqual({
         id: "personality-123",
         name: "Creative Thinker",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 70,
-          extraversion: 60,
-          agreeableness: 80,
-          neuroticism: 30,
-        },
         behaviors: { creativity: 85, empathy: 75, leadership: 65 },
         customInstructions: "Focus on creative and innovative solutions",
         createdAt: "2025-01-10T09:00:00.000Z",
@@ -60,13 +46,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
         createdAt: "2025-01-10T09:00:00.000Z",
@@ -82,13 +61,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
       };
@@ -103,13 +75,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
         createdAt: "2025-01-10T09:00:00.000Z",
@@ -127,13 +92,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
       };
@@ -147,13 +105,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "existing-id",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
       };
@@ -164,46 +115,11 @@ describe("mapSinglePersonalityUIToPersistence", () => {
     });
   });
 
-  describe("Big Five traits preservation", () => {
-    it("should preserve Big Five traits exactly", () => {
-      const uiPersonality: PersonalityViewModel = {
-        id: "personality-123",
-        name: "Test Personality",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 75,
-          extraversion: 60,
-          agreeableness: 85,
-          neuroticism: 25,
-        },
-        behaviors: {},
-        customInstructions: "Test instructions",
-      };
-
-      const result = mapSinglePersonalityUIToPersistence(uiPersonality);
-
-      expect(result.bigFive).toEqual({
-        openness: 90,
-        conscientiousness: 75,
-        extraversion: 60,
-        agreeableness: 85,
-        neuroticism: 25,
-      });
-    });
-  });
-
   describe("behaviors preservation", () => {
     it("should preserve behaviors exactly", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: { creativity: 80, empathy: 90, leadership: 60 },
         customInstructions: "Test instructions",
       };
@@ -221,13 +137,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
       };
@@ -243,13 +152,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Creative Thinker",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
       };
@@ -263,13 +165,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Focus on creativity and innovation",
       };
@@ -287,13 +182,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: { test: 75 },
         customInstructions: "Test instructions",
         createdAt: "2025-01-10T09:00:00.000Z",
@@ -305,7 +193,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       // Verify all required properties exist
       expect(result).toHaveProperty("id");
       expect(result).toHaveProperty("name");
-      expect(result).toHaveProperty("bigFive");
       expect(result).toHaveProperty("behaviors");
       expect(result).toHaveProperty("customInstructions");
       expect(result).toHaveProperty("createdAt");
@@ -314,7 +201,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       // Verify types
       expect(typeof result.id).toBe("string");
       expect(typeof result.name).toBe("string");
-      expect(typeof result.bigFive).toBe("object");
       expect(typeof result.behaviors).toBe("object");
       expect(typeof result.customInstructions).toBe("string");
       expect(typeof result.createdAt).toBe("string");
@@ -325,13 +211,6 @@ describe("mapSinglePersonalityUIToPersistence", () => {
       const uiPersonality: PersonalityViewModel = {
         id: "personality-123",
         name: "Test Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Test instructions",
       };

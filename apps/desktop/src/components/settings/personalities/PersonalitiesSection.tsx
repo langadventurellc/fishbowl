@@ -13,19 +13,19 @@
  */
 
 import type {
-  PersonalityViewModel,
-  PersonalityFormData,
   PersonalitiesSectionProps,
+  PersonalityFormData,
+  PersonalityViewModel,
 } from "@fishbowl-ai/ui-shared";
 import { usePersonalitiesStore } from "@fishbowl-ai/ui-shared";
-import React, { useCallback, useState, useMemo } from "react";
-import { UserPlus, Plus, AlertCircle, RotateCcw, X } from "lucide-react";
+import { AlertCircle, Plus, RotateCcw, UserPlus, X } from "lucide-react";
+import React, { useCallback, useMemo, useState } from "react";
+import { useServices } from "../../../contexts";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
-import { PersonalitiesList } from "./PersonalitiesList";
 import { DeletePersonalityDialog } from "./DeletePersonalityDialog";
+import { PersonalitiesList } from "./PersonalitiesList";
 import { PersonalityFormModal } from "./PersonalityFormModal";
-import { useServices } from "../../../contexts";
 
 export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
   className,
@@ -105,19 +105,6 @@ export const PersonalitiesSection: React.FC<PersonalitiesSectionProps> = ({
       const changed: string[] = [];
 
       if (original.name !== updated.name) changed.push("name");
-      if (original.bigFive.openness !== updated.bigFive.openness)
-        changed.push("bigFive.openness");
-      if (
-        original.bigFive.conscientiousness !== updated.bigFive.conscientiousness
-      )
-        changed.push("bigFive.conscientiousness");
-      if (original.bigFive.extraversion !== updated.bigFive.extraversion)
-        changed.push("bigFive.extraversion");
-      if (original.bigFive.agreeableness !== updated.bigFive.agreeableness)
-        changed.push("bigFive.agreeableness");
-      if (original.bigFive.neuroticism !== updated.bigFive.neuroticism)
-        changed.push("bigFive.neuroticism");
-
       // Compare behaviors if they exist
       if (original.behaviors || updated.behaviors) {
         const originalBehaviors = original.behaviors || {};

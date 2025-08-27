@@ -94,6 +94,12 @@ affectedFiles:
     Integrated PersonalityDefinitionsClient into dependency injection pattern
     with constructor initialization
   apps/desktop/src/renderer/services/index.ts: Added PersonalityDefinitionsClient export to services barrel file
+  packages/ui-shared/src/schemas/personalitySchema.ts: Updated schema to use
+    discrete values and unified behaviors structure with Zod refinement
+    validation
+  packages/ui-shared/src/schemas/__tests__/personalitySchema.test.ts:
+    Created comprehensive test suite covering discrete value validation, edge
+    cases, and real-world usage scenarios
 log: []
 schema: v1.0
 childrenIds:

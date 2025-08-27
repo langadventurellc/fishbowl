@@ -22,13 +22,6 @@ import { mapSinglePersonalityPersistenceToUI } from "./mapSinglePersonalityPersi
  *       name: "Creative Thinker",
  *       description: "A creative and innovative personality",
  *       systemPrompt: "You are a creative and innovative thinker...",
- *       bigFive: {
- *         openness: 0.9,
- *         conscientiousness: 0.7,
- *         extraversion: 0.6,
- *         agreeableness: 0.8,
- *         neuroticism: 0.3
- *       },
  *       behaviors: {
  *         communicationStyle: "expressive",
  *         decisionMaking: "intuitive",

@@ -1,5 +1,5 @@
-import type { PersonalityViewModel } from "../../types/settings/PersonalityViewModel";
 import type { PersistedPersonalityData } from "@fishbowl-ai/shared";
+import type { PersonalityViewModel } from "../../types/settings/PersonalityViewModel";
 
 /**
  * Maps a single UI personality to persistence format.
@@ -16,13 +16,6 @@ import type { PersistedPersonalityData } from "@fishbowl-ai/shared";
  * const uiPersonality: PersonalityViewModel = {
  *   id: "personality-123",
  *   name: "Creative Thinker",
- *   bigFive: {
- *     openness: 90,
- *     conscientiousness: 70,
- *     extraversion: 60,
- *     agreeableness: 80,
- *     neuroticism: 30
- *   },
  *   behaviors: { "creativity": 85, "empathy": 75 },
  *   customInstructions: "Focus on creative solutions",
  *   createdAt: "2025-01-10T09:00:00.000Z",
@@ -39,7 +32,6 @@ export function mapSinglePersonalityUIToPersistence(
   return {
     id: personality.id || "",
     name: personality.name,
-    bigFive: personality.bigFive,
     behaviors: personality.behaviors,
     customInstructions: personality.customInstructions,
     createdAt: personality.createdAt || new Date().toISOString(),

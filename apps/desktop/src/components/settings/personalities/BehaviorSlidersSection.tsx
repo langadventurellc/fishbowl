@@ -10,7 +10,6 @@
  * - Collapsible with session persistence for expanded state
  * - Smooth 200ms animations for expand/collapse
  * - Full accessibility support with ARIA labels and screen reader announcements
- * - Consistent styling matching BigFiveSliders component
  *
  * @module components/settings/BehaviorSlidersSection
  */

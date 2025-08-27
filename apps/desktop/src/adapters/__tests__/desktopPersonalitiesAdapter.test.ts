@@ -58,13 +58,6 @@ const mockPersonalitiesData: PersistedPersonalitiesSettingsData = {
     {
       id: "personality-1",
       name: "Analyst",
-      bigFive: {
-        openness: 85,
-        conscientiousness: 90,
-        extraversion: 40,
-        agreeableness: 70,
-        neuroticism: 20,
-      },
       behaviors: {
         analytical: 95,
         methodical: 90,
@@ -207,13 +200,6 @@ describe("DesktopPersonalitiesAdapter", () => {
           {
             id: "personality-1",
             name: "Analyst",
-            bigFive: {
-              openness: 85,
-              conscientiousness: 90,
-              extraversion: 40,
-              agreeableness: 70,
-              neuroticism: 20,
-            },
             behaviors: {
               analytical: 95,
               methodical: 90,
@@ -737,13 +723,6 @@ describe("DesktopPersonalitiesAdapter", () => {
         personalities: Array.from({ length: 100 }, (_, i) => ({
           id: `personality-${i}`,
           name: `Personality ${i}`,
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {
             analytical: 50,
           },

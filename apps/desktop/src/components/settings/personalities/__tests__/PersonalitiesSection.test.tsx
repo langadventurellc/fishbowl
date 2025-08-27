@@ -246,13 +246,6 @@ describe("PersonalitiesSection Component", () => {
           {
             id: "test-1",
             name: "Test Personality",
-            bigFive: {
-              openness: 4.0,
-              conscientiousness: 3.5,
-              extraversion: 4.5,
-              agreeableness: 3.8,
-              neuroticism: 2.2,
-            },
             behaviors: { creativity: 0.8 },
             customInstructions: "Test instructions",
             createdAt: "2024-01-01T00:00:00.000Z",

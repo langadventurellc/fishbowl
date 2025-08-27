@@ -6,13 +6,6 @@ import { PersonalityCard } from "../PersonalityCard";
 const mockPersonality: PersonalityViewModel = {
   id: "test-personality-1",
   name: "Creative Thinker",
-  bigFive: {
-    openness: 85,
-    conscientiousness: 70,
-    extraversion: 60,
-    agreeableness: 75,
-    neuroticism: 30,
-  },
   behaviors: {
     creativity: 90,
     analytical: 70,
@@ -47,15 +40,6 @@ describe("PersonalityCard Component", () => {
       "2 behaviors • Be creative and think outside the box",
     );
     expect(descriptionText).toBeInTheDocument();
-  });
-
-  it("displays Big Five traits in correct format", () => {
-    render(<PersonalityCard {...defaultProps} />);
-
-    const traitsText = screen.getByText("O:85 C:70 E:60 A:75 N:30");
-    expect(traitsText).toBeInTheDocument();
-    expect(traitsText).toHaveClass("font-mono");
-    expect(traitsText).toHaveClass("text-muted-foreground");
   });
 
   it("renders edit and delete buttons with proper accessibility", () => {
@@ -95,26 +79,6 @@ describe("PersonalityCard Component", () => {
       .getByText("Creative Thinker")
       .closest('[data-slot="card"]');
     expect(cardElement).toHaveClass("hover:shadow-md", "transition-shadow");
-  });
-
-  it("formats Big Five traits correctly with different values", () => {
-    const customPersonality: PersonalityViewModel = {
-      ...mockPersonality,
-      bigFive: {
-        openness: 100,
-        conscientiousness: 0,
-        extraversion: 50,
-        agreeableness: 25,
-        neuroticism: 75,
-      },
-    };
-
-    render(
-      <PersonalityCard {...defaultProps} personality={customPersonality} />,
-    );
-
-    const traitsText = screen.getByText("O:100 C:0 E:50 A:25 N:75");
-    expect(traitsText).toBeInTheDocument();
   });
 
   it("handles long personality names appropriately", () => {

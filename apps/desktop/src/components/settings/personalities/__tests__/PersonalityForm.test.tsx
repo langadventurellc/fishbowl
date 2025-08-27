@@ -7,10 +7,9 @@
  * @module components/settings/personalities/__tests__/PersonalityForm
  */
 
-import { render, screen } from "@testing-library/react";
-import React from "react";
-import { PersonalityForm } from "../PersonalityForm";
 import type { CreatePersonalityFormProps } from "@fishbowl-ai/ui-shared";
+import { render, screen } from "@testing-library/react";
+import { PersonalityForm } from "../PersonalityForm";
 
 // Mock the services context
 jest.mock("../../../../contexts", () => ({
@@ -59,7 +58,6 @@ describe("PersonalityForm", () => {
 
     // Basic form elements should render
     expect(screen.getByText("Personality Name")).toBeInTheDocument();
-    expect(screen.getByText("Big Five Personality Traits")).toBeInTheDocument();
     expect(screen.getByText("Advanced Behavior Settings")).toBeInTheDocument();
     expect(screen.getByText("Custom Instructions")).toBeInTheDocument();
     expect(screen.getByText("Create Personality")).toBeInTheDocument();
@@ -83,13 +81,6 @@ describe("PersonalityForm", () => {
     const initialData = {
       id: "test-id",
       name: "Test Personality",
-      bigFive: {
-        openness: 60,
-        conscientiousness: 70,
-        extraversion: 40,
-        agreeableness: 80,
-        neuroticism: 30,
-      },
       behaviors: {
         formalityLevel: 60,
         verbosity: 40,

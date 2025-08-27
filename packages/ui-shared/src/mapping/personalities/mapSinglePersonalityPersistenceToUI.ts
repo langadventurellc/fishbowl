@@ -18,13 +18,6 @@ import { handleNullTimestamps } from "../utils/transformers/handleNullTimestamps
  * const persistedPersonality: PersistedPersonalityData = {
  *   id: "personality-123",
  *   name: "Creative Thinker",
- *   bigFive: {
- *     openness: 90,
- *     conscientiousness: 70,
- *     extraversion: 60,
- *     agreeableness: 80,
- *     neuroticism: 30
- *   },
  *   behaviors: { "creativity": 85, "empathy": 75 },
  *   customInstructions: "Focus on creative solutions",
  *   createdAt: null,
@@ -46,13 +39,6 @@ export function mapSinglePersonalityPersistenceToUI(
   return {
     id: persistedPersonality.id || "",
     name: persistedPersonality.name || "",
-    bigFive: persistedPersonality.bigFive || {
-      openness: 50,
-      conscientiousness: 50,
-      extraversion: 50,
-      agreeableness: 50,
-      neuroticism: 50,
-    },
     behaviors: persistedPersonality.behaviors || {},
     customInstructions: persistedPersonality.customInstructions || "",
     createdAt: timestamps.createdAt,

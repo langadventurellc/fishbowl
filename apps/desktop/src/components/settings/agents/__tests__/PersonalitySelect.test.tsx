@@ -9,9 +9,9 @@
  * - Props interface functionality
  */
 
+import type { PersonalityViewModel } from "@fishbowl-ai/ui-shared";
 import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
-import type { PersonalityViewModel } from "@fishbowl-ai/ui-shared";
 import { PersonalitySelect } from "../PersonalitySelect";
 
 // Mock the store hook
@@ -25,13 +25,6 @@ const mockPersonalities: PersonalityViewModel[] = [
   {
     id: "personality-1",
     name: "Creative Thinker",
-    bigFive: {
-      openness: 85,
-      conscientiousness: 70,
-      extraversion: 60,
-      agreeableness: 75,
-      neuroticism: 30,
-    },
     behaviors: {
       creativity: 90,
       analytical: 70,
@@ -43,13 +36,6 @@ const mockPersonalities: PersonalityViewModel[] = [
   {
     id: "personality-2",
     name: "Analytical Expert",
-    bigFive: {
-      openness: 60,
-      conscientiousness: 90,
-      extraversion: 40,
-      agreeableness: 60,
-      neuroticism: 20,
-    },
     behaviors: {
       analytical: 95,
       creativity: 50,
@@ -62,13 +48,6 @@ const mockPersonalities: PersonalityViewModel[] = [
   {
     id: "personality-3",
     name: "Collaborative Assistant",
-    bigFive: {
-      openness: 75,
-      conscientiousness: 80,
-      extraversion: 85,
-      agreeableness: 95,
-      neuroticism: 25,
-    },
     behaviors: {
       empathy: 90,
       communication: 85,
