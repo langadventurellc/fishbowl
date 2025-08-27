@@ -1,7 +1,7 @@
 /**
- * AgentViewModel interface for conversation UI system.
+ * AgentPillViewModel interface for conversation UI system.
  */
-export interface AgentViewModel {
+export interface AgentPillViewModel {
   /**
    * Display name of the AI agent.
    * Used in agent pills, message headers, and throughout the UI

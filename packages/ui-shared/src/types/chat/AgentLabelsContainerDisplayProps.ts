@@ -5,14 +5,14 @@
  */
 
 import type React from "react";
-import { AgentViewModel } from "../AgentViewModel";
+import { AgentPillViewModel } from "../AgentPillViewModel";
 
 export interface AgentLabelsContainerDisplayProps {
   /**
    * Array of agent data to display as pills.
    * Component internally creates AgentPill components from this data.
    */
-  agents: AgentViewModel[];
+  agents: AgentPillViewModel[];
 
   /**
    * Optional callback for the built-in "Add New Agent" button.

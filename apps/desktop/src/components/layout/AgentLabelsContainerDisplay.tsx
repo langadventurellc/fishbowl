@@ -1,14 +1,14 @@
 import {
   AgentLabelsContainerDisplayProps,
-  AgentViewModel,
+  AgentPillViewModel,
 } from "@fishbowl-ai/ui-shared";
-import React, { useState, useCallback } from "react";
+import { AlertCircle, Loader2 } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
 import { cn } from "../../lib/utils";
 import { AgentPill } from "../chat";
 import { Button } from "../input";
-import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
 import { AddAgentToConversationModal } from "../modals/AddAgentToConversationModal";
-import { AlertCircle, Loader2 } from "lucide-react";
 
 /**
  * AgentLabelsContainerDisplay - Horizontal agent labels bar layout component
@@ -98,7 +98,7 @@ export const AgentLabelsContainerDisplay: React.FC<
           !error &&
           displayAgents.map((agent, index) => {
             // Transform AgentSettingsViewModel to AgentViewModel if needed
-            const agentViewModel: AgentViewModel =
+            const agentViewModel: AgentPillViewModel =
               "id" in agent
                 ? {
                     name: agent.name,

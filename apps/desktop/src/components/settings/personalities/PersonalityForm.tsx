@@ -16,16 +16,16 @@
  */
 
 import {
+  DiscreteValue,
+  PersonalitySectionDef,
+  snapToNearestDiscrete,
+} from "@fishbowl-ai/shared";
+import {
   personalitySchema,
   useUnsavedChanges,
   type CreatePersonalityFormProps,
   type PersonalityFormData,
 } from "@fishbowl-ai/ui-shared";
-import {
-  PersonalitySectionDef,
-  DiscreteValue,
-  snapToNearestDiscrete,
-} from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import {
@@ -46,8 +46,8 @@ import {
   FormItem,
   FormMessage,
 } from "../../ui/form";
-import { DynamicBehaviorSections } from "./DynamicBehaviorSections";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
+import { DynamicBehaviorSections } from "./DynamicBehaviorSections";
 import { PersonalityNameInput } from "./PersonalityNameInput";
 
 export interface PersonalityFormRef {
@@ -217,6 +217,7 @@ export const PersonalityForm = forwardRef<
           setUnsavedChanges(false);
         },
       }),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [form, initialData, setUnsavedChanges],
     );
 

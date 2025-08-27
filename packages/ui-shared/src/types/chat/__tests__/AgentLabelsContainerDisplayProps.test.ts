@@ -7,11 +7,11 @@
  * @module types/chat/__tests__/AgentLabelsContainerDisplayProps.test
  */
 
+import type { AgentPillViewModel } from "../../AgentPillViewModel";
 import type { AgentLabelsContainerDisplayProps } from "../AgentLabelsContainerDisplayProps";
-import type { AgentViewModel } from "../../AgentViewModel";
 
 describe("AgentLabelsContainerDisplayProps", () => {
-  const mockAgent: AgentViewModel = {
+  const mockAgent: AgentPillViewModel = {
     name: "Test Agent",
     role: "Test Role",
     color: "#3b82f6",

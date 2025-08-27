@@ -7,7 +7,7 @@
  * @module types/ui/components/AgentPillProps
  */
 
-import { AgentViewModel } from "../AgentViewModel";
+import { AgentPillViewModel } from "../AgentPillViewModel";
 
 /**
  * Props interface for the AgentPill component.
@@ -52,7 +52,7 @@ export interface AgentPillProps {
    * and the isThinking property controls the display of the pulsing
    * thinking indicator animation.
    */
-  agent: AgentViewModel;
+  agent: AgentPillViewModel;
 
   /**
    * Optional click handler for agent pill interactions.
