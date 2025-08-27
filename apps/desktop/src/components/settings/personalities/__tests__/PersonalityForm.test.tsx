@@ -8,6 +8,7 @@
  */
 
 import type { CreatePersonalityFormProps } from "@fishbowl-ai/ui-shared";
+import { PersonalitySectionDef, DiscreteValue } from "@fishbowl-ai/shared";
 import { render, screen } from "@testing-library/react";
 import { PersonalityForm } from "../PersonalityForm";
 
@@ -150,5 +151,139 @@ describe("PersonalityForm", () => {
     render(<PersonalityForm {...props} />);
 
     expect(screen.getByText("Creating...")).toBeInTheDocument();
+  });
+
+  describe("Dynamic path with dynamicSections and dynamicGetShort", () => {
+    const mockSections: PersonalitySectionDef[] = [
+      {
+        id: "test-section",
+        name: "Test Section",
+        description: "Test section description",
+        values: [
+          {
+            id: "test-trait",
+            name: "Test Trait",
+            values: {
+              "0": { short: "Low test" },
+              "20": { short: "Below average test" },
+              "40": { short: "Average test" },
+              "60": { short: "Above average test" },
+              "80": { short: "High test" },
+              "100": { short: "Maximum test" },
+            },
+          },
+        ],
+      },
+    ];
+
+    const mockGetShort = (
+      traitId: string,
+      value: DiscreteValue,
+    ): string | undefined => {
+      if (traitId === "test-trait") {
+        const valueKey = `${value}` as "0" | "20" | "40" | "60" | "80" | "100";
+        return mockSections[0]?.values[0]?.values[valueKey]?.short;
+      }
+      return undefined;
+    };
+
+    it("renders DynamicBehaviorSections when dynamic props are provided", () => {
+      const dynamicProps = {
+        ...defaultProps,
+        dynamicSections: mockSections,
+        dynamicGetShort: mockGetShort,
+      };
+
+      render(<PersonalityForm {...dynamicProps} />);
+
+      // Should render the dynamic section
+      expect(screen.getByText("Test Section")).toBeInTheDocument();
+    });
+
+    it("propagates form values to DynamicBehaviorSections correctly", () => {
+      const initialData = {
+        id: "test-id",
+        name: "Test Personality",
+        behaviors: {
+          "test-trait": 60,
+        },
+        customInstructions: "",
+      };
+
+      const dynamicProps = {
+        ...defaultProps,
+        mode: "edit" as const,
+        initialData,
+        dynamicSections: mockSections,
+        dynamicGetShort: mockGetShort,
+      };
+
+      render(<PersonalityForm {...dynamicProps} />);
+
+      // The form should render without errors with the dynamic values
+      expect(screen.getByText("Test Section")).toBeInTheDocument();
+      expect(screen.getByText("Update Personality")).toBeInTheDocument();
+    });
+
+    it("renders form correctly with dynamic sections and allows interaction", () => {
+      const mockOnSave = jest.fn();
+
+      const dynamicProps = {
+        ...defaultProps,
+        onSave: mockOnSave,
+        dynamicSections: mockSections,
+        dynamicGetShort: mockGetShort,
+      };
+
+      render(<PersonalityForm {...dynamicProps} />);
+
+      // Should render the dynamic section and form elements
+      expect(screen.getByText("Test Section")).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText("Enter a unique name for this personality"),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Create Personality")).toBeInTheDocument();
+    });
+
+    it("disables save button when defsError is true", () => {
+      const dynamicProps = {
+        ...defaultProps,
+        dynamicSections: mockSections,
+        dynamicGetShort: mockGetShort,
+        defsError: true,
+      };
+
+      render(<PersonalityForm {...dynamicProps} />);
+
+      // Should show error state in DynamicBehaviorSections
+      expect(
+        screen.getByText(/Failed to load personality definitions/),
+      ).toBeInTheDocument();
+    });
+
+    it("shows loading state when defsLoading is true", () => {
+      const dynamicProps = {
+        ...defaultProps,
+        dynamicSections: mockSections,
+        dynamicGetShort: mockGetShort,
+        defsLoading: true,
+      };
+
+      render(<PersonalityForm {...dynamicProps} />);
+
+      // Should show loading state
+      expect(
+        screen.getByLabelText("Loading personality sections"),
+      ).toBeInTheDocument();
+    });
+
+    it("falls back to BehaviorSlidersSection when dynamic props are not provided", () => {
+      render(<PersonalityForm {...defaultProps} />);
+
+      // Should show the legacy behavior sliders section
+      expect(
+        screen.getByText("Advanced Behavior Settings"),
+      ).toBeInTheDocument();
+    });
   });
 });

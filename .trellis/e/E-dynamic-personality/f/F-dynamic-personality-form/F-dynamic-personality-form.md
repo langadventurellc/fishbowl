@@ -18,13 +18,25 @@ affectedFiles:
     Created comprehensive unit tests covering 19 test cases including basic
     rendering, trait interactions, collapsible behavior, loading/error states,
     edge cases, and accessibility features. All tests passing.
+  apps/desktop/src/components/settings/personalities/PersonalityForm.tsx:
+    Extended component with PersonalityFormProps interface adding optional
+    dynamic props (dynamicSections, dynamicGetShort, defsLoading, defsError).
+    Added discrete value conversion helper. Implemented conditional rendering
+    logic to use DynamicBehaviorSections when dynamic props are provided,
+    otherwise fallback to BehaviorSlidersSection. Maintained existing form
+    functionality and unsaved changes tracking.
+  apps/desktop/src/components/settings/personalities/__tests__/PersonalityForm.test.tsx:
+    "Added comprehensive unit tests for dynamic path functionality including:
+    rendering DynamicBehaviorSections with dynamic props, value propagation,
+    form interaction, loading states, error states, and fallback behavior. All
+    13 tests pass including 6 new dynamic path tests."
 log: []
 schema: v1.0
 childrenIds:
-  - T-implement-dynamicbehaviorsecti
   - T-integrate-dynamicbehaviorsecti
   - T-load-personality-definitions
   - T-remove-legacy-behaviorsliderss
+  - T-implement-dynamicbehaviorsecti
 created: 2025-08-27T05:15:23.921Z
 updated: 2025-08-27T05:15:23.921Z
 ---

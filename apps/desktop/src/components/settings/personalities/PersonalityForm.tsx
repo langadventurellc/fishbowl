@@ -21,6 +21,11 @@ import {
   type CreatePersonalityFormProps,
   type PersonalityFormData,
 } from "@fishbowl-ai/ui-shared";
+import {
+  PersonalitySectionDef,
+  DiscreteValue,
+  snapToNearestDiscrete,
+} from "@fishbowl-ai/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import {
@@ -42,6 +47,7 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { BehaviorSlidersSection } from "./BehaviorSlidersSection";
+import { DynamicBehaviorSections } from "./DynamicBehaviorSections";
 import { CustomInstructionsTextarea } from "./CustomInstructionsTextarea";
 import { PersonalityNameInput } from "./PersonalityNameInput";
 
@@ -49,9 +55,24 @@ export interface PersonalityFormRef {
   resetToInitialData: () => void;
 }
 
+// Internal props interface that extends CreatePersonalityFormProps with optional dynamic fields
+interface PersonalityFormProps extends CreatePersonalityFormProps {
+  /** Optional personality sections for dynamic rendering */
+  dynamicSections?: PersonalitySectionDef[];
+  /** Optional synchronous function to get short descriptions */
+  dynamicGetShort?: (
+    traitId: string,
+    value: DiscreteValue,
+  ) => string | undefined;
+  /** Whether personality definitions are loading */
+  defsLoading?: boolean;
+  /** Whether an error occurred loading personality definitions */
+  defsError?: boolean;
+}
+
 export const PersonalityForm = forwardRef<
   PersonalityFormRef,
-  CreatePersonalityFormProps
+  PersonalityFormProps
 >(
   (
     {
@@ -61,6 +82,10 @@ export const PersonalityForm = forwardRef<
       onCancel,
       existingPersonalities = [],
       isLoading = false,
+      dynamicSections,
+      dynamicGetShort,
+      defsLoading = false,
+      defsError = false,
     },
     ref,
   ) => {
@@ -68,6 +93,18 @@ export const PersonalityForm = forwardRef<
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { setUnsavedChanges } = useUnsavedChanges();
     const isEditMode = mode === "edit";
+
+    // Helper to convert numeric values to discrete values
+    const convertToDiscreteValues = useCallback(
+      (values: Record<string, number>): Record<string, DiscreteValue> => {
+        const result: Record<string, DiscreteValue> = {};
+        Object.entries(values).forEach(([key, value]) => {
+          result[key] = snapToNearestDiscrete(value);
+        });
+        return result;
+      },
+      [],
+    );
 
     const form = useForm<PersonalityFormData>({
       resolver: zodResolver(personalitySchema),
@@ -246,16 +283,33 @@ export const PersonalityForm = forwardRef<
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <BehaviorSlidersSection
-                      values={field.value}
-                      onChange={(behavior, value) => {
-                        field.onChange({
-                          ...field.value,
-                          [behavior]: value,
-                        });
-                      }}
-                      disabled={isSubmitting || isLoading}
-                    />
+                    {dynamicSections && dynamicGetShort ? (
+                      <DynamicBehaviorSections
+                        sections={dynamicSections}
+                        getShort={dynamicGetShort}
+                        values={convertToDiscreteValues(field.value)}
+                        onChange={(traitId, value) => {
+                          field.onChange({
+                            ...field.value,
+                            [traitId]: value,
+                          });
+                        }}
+                        disabled={isSubmitting || isLoading || defsError}
+                        isLoading={defsLoading}
+                        isError={defsError}
+                      />
+                    ) : (
+                      <BehaviorSlidersSection
+                        values={field.value}
+                        onChange={(behavior, value) => {
+                          field.onChange({
+                            ...field.value,
+                            [behavior]: value,
+                          });
+                        }}
+                        disabled={isSubmitting || isLoading}
+                      />
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
