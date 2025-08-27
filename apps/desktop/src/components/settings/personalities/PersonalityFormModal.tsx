@@ -18,7 +18,9 @@ import {
   useUnsavedChanges,
   type PersonalityFormData,
 } from "@fishbowl-ai/ui-shared";
-import React, { useCallback, useEffect, useRef } from "react";
+import { PersonalitySectionDef, DiscreteValue } from "@fishbowl-ai/shared";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { PersonalityDefinitionsClient } from "../../../renderer/services/personalityDefinitionsClient";
 import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
@@ -44,6 +46,17 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
   const { hasUnsavedChanges } = useUnsavedChanges();
   const { personalities } = usePersonalities();
 
+  // Personality definitions state
+  const [sections, setSections] = useState<PersonalitySectionDef[]>([]);
+  const [defsLoading, setDefsLoading] = useState(false);
+  const [defsError, setDefsError] = useState(false);
+  const [dynamicGetShort, setDynamicGetShort] = useState<
+    ((traitId: string, value: DiscreteValue) => string | undefined) | undefined
+  >(undefined);
+
+  // PersonalityDefinitionsClient instance
+  const [client] = useState(() => new PersonalityDefinitionsClient());
+
   // Focus trap setup
   const triggerRef = useRef<HTMLElement | null>(null);
   const formRef = useRef<PersonalityFormRef>(null);
@@ -52,6 +65,70 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
     restoreFocus: true,
     initialFocusSelector: "[data-personality-modal-initial-focus]",
   });
+
+  // Load personality definitions when modal opens
+  useEffect(() => {
+    if (!isOpen) return;
+
+    let isMounted = true;
+
+    const loadDefinitions = async () => {
+      try {
+        setDefsLoading(true);
+        setDefsError(false);
+
+        const definitions = await client.getDefinitions();
+
+        if (!isMounted) return;
+
+        setSections(definitions.sections);
+
+        // Build synchronous getShort function backed by in-memory maps
+        const traitMaps = new Map<
+          string,
+          Map<DiscreteValue, string | undefined>
+        >();
+
+        definitions.sections.forEach((section) => {
+          section.values.forEach((trait) => {
+            const valueMaps = new Map<DiscreteValue, string | undefined>();
+
+            // Iterate over discrete values and populate short descriptions
+            const discreteValues: DiscreteValue[] = [0, 20, 40, 60, 80, 100];
+            discreteValues.forEach((value) => {
+              const valueKey = String(value) as keyof typeof trait.values;
+              const meta = trait.values[valueKey];
+              valueMaps.set(value, meta?.short);
+            });
+
+            traitMaps.set(trait.id, valueMaps);
+          });
+        });
+
+        setDynamicGetShort(
+          () => (traitId: string, value: DiscreteValue) =>
+            traitMaps.get(traitId)?.get(value),
+        );
+      } catch (error) {
+        if (!isMounted) return;
+
+        console.error("Failed to load personality definitions:", error);
+        setDefsError(true);
+        setSections([]);
+        setDynamicGetShort(undefined);
+      } finally {
+        if (isMounted) {
+          setDefsLoading(false);
+        }
+      }
+    };
+
+    loadDefinitions();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isOpen, client]);
 
   // Store the trigger element when modal opens and announce to screen readers
   useEffect(() => {
@@ -66,6 +143,25 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
       announceToScreenReader(message, "polite");
     }
   }, [isOpen, mode]);
+
+  // Announce loading and error state changes
+  useEffect(() => {
+    if (!isOpen) return;
+
+    if (defsLoading) {
+      announceToScreenReader("Loading personality definitions...", "polite");
+    } else if (defsError) {
+      announceToScreenReader(
+        "Error loading personality definitions. Some features may be unavailable.",
+        "assertive",
+      );
+    } else if (sections.length > 0) {
+      announceToScreenReader(
+        "Personality definitions loaded successfully.",
+        "polite",
+      );
+    }
+  }, [isOpen, defsLoading, defsError, sections.length]);
 
   // Handle modal close with unsaved changes protection
   const handleOpenChange = useCallback(
@@ -165,6 +261,10 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
           onCancel={handleCancel}
           existingPersonalities={personalities}
           isLoading={isLoading}
+          dynamicSections={sections}
+          dynamicGetShort={dynamicGetShort}
+          defsLoading={defsLoading}
+          defsError={defsError}
         />
       </DialogContent>
 

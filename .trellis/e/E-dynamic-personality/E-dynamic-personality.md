@@ -137,6 +137,16 @@ affectedFiles:
     rendering DynamicBehaviorSections with dynamic props, value propagation,
     form interaction, loading states, error states, and fallback behavior. All
     13 tests pass including 6 new dynamic path tests."
+  apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx:
+    "Enhanced PersonalityFormModal with personality definitions loading: Added
+    state management for sections, loading, and error states. Instantiated
+    PersonalityDefinitionsClient and implemented async loading on modal open
+    with proper cleanup. Built synchronous dynamicGetShort function using nested
+    Maps for trait-to-value lookups. Added accessibility announcements for
+    loading/error state changes. Passed new dynamic props (dynamicSections,
+    dynamicGetShort, defsLoading, defsError) to PersonalityForm component. Added
+    proper imports for PersonalitySectionDef, DiscreteValue, and
+    PersonalityDefinitionsClient."
 log: []
 schema: v1.0
 childrenIds:

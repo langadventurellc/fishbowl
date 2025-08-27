@@ -1,13 +1,31 @@
 ---
 id: T-load-personality-definitions
 title: Load personality definitions in PersonalityFormModal and pass dynamic props
-status: open
+status: done
 priority: medium
 parent: F-dynamic-personality-form
 prerequisites:
   - T-integrate-dynamicbehaviorsecti
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx:
+    "Enhanced PersonalityFormModal with personality definitions loading: Added
+    state management for sections, loading, and error states. Instantiated
+    PersonalityDefinitionsClient and implemented async loading on modal open
+    with proper cleanup. Built synchronous dynamicGetShort function using nested
+    Maps for trait-to-value lookups. Added accessibility announcements for
+    loading/error state changes. Passed new dynamic props (dynamicSections,
+    dynamicGetShort, defsLoading, defsError) to PersonalityForm component. Added
+    proper imports for PersonalitySectionDef, DiscreteValue, and
+    PersonalityDefinitionsClient."
+log:
+  - Enhanced PersonalityFormModal to load personality section definitions on
+    modal open, manage loading/error states, and pass dynamic props to
+    PersonalityForm. Implemented PersonalityDefinitionsClient instantiation with
+    proper state management, built synchronous dynamicGetShort function backed
+    by in-memory maps for O(1) lookups, and added comprehensive accessibility
+    support with screen reader announcements for loading/error states. The modal
+    now handles definition loading failures gracefully by disabling form
+    interactions, and all quality checks pass successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-27T19:47:49.158Z
