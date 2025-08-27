@@ -4,7 +4,10 @@ title: Dynamic Personality Configuration System
 status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/package.json:
+    Added personality_definitions.json to extraResources
+    configuration with proper from/to mapping
 log: []
 schema: v1.0
 childrenIds:

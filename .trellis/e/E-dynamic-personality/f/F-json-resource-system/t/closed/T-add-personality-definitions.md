@@ -1,12 +1,22 @@
 ---
 id: T-add-personality-definitions
 title: Add personality definitions JSON to desktop build configuration
-status: in-progress
+status: done
 priority: high
 parent: F-json-resource-system
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/package.json:
+    Added personality_definitions.json to extraResources
+    configuration with proper from/to mapping
+log:
+  - Successfully added personality definitions JSON to desktop build
+    configuration. Added resources/personality_definitions.json to
+    extraResources in apps/desktop/package.json with proper mapping
+    configuration. The JSON file will now be bundled with the desktop
+    application during builds and available at path.join(process.resourcesPath,
+    'personality_definitions.json') in packaged builds. Configuration follows
+    the existing pattern used for migrations and all quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-27T15:40:43.742Z
