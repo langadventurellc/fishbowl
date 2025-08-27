@@ -2,13 +2,26 @@
 id: T-add-metadata-description
 title: Add metadata description display and ARIA valued text to
   PersonalitySlider (with tests)
-status: open
+status: done
 priority: medium
 parent: F-dynamic-personality-slider
 prerequisites:
   - T-add-discrete-tick-marks-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitySlider.tsx:
+    Extended PersonalitySliderProps interface with shortText and getShort props;
+    Added description resolution logic with fallback to 'No description
+    available'; Implemented description rendering below slider with truncation
+    styling; Wired ARIA attributes including aria-valuetext using resolved
+    description and aria-describedby pointing to description element
+log:
+  - Enhanced PersonalitySlider component with metadata description display and
+    comprehensive ARIA support. Added shortText and getShort props for flexible
+    description sourcing, implemented description resolution logic with graceful
+    fallbacks, and wired proper ARIA attributes (aria-valuetext,
+    aria-describedby) for accessibility. Description renders below slider with
+    truncation styling for responsive layouts. All quality checks pass with
+    clean linting and type checking.
 schema: v1.0
 childrenIds: []
 created: 2025-08-27T18:52:14.711Z

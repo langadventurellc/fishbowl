@@ -15,6 +15,8 @@ interface PersonalitySliderProps {
   onChange: (value: DiscreteValue) => void;
   disabled?: boolean;
   className?: string;
+  shortText?: string;
+  getShort?: (traitId: string, value: DiscreteValue) => string | undefined;
 }
 
 /**
@@ -28,12 +30,29 @@ export const PersonalitySlider: React.FC<PersonalitySliderProps> = ({
   onChange,
   disabled = false,
   className,
+  shortText,
+  getShort,
 }) => {
   // Convert single DiscreteValue to array for Radix slider
   const sliderValue = useMemo(() => [value], [value]);
 
   // Tick mark positions corresponding to discrete values
   const tickPositions = useMemo(() => [0, 20, 40, 60, 80, 100], []);
+
+  // Description resolution with fallback
+  const resolvedDescription = useMemo(() => {
+    if (shortText) return shortText;
+    if (getShort) {
+      const description = getShort(traitId, value);
+      if (description && description.trim()) return description;
+    }
+    return "No description available";
+  }, [shortText, getShort, traitId, value]);
+
+  // Generate unique IDs for ARIA
+  const sliderId = `slider-${traitId}`;
+  const labelId = `label-${traitId}`;
+  const descriptionId = `description-${traitId}`;
 
   // ARIA attributes for accessibility
   const ariaLabel = `${label} slider`;
@@ -94,22 +113,18 @@ export const PersonalitySlider: React.FC<PersonalitySliderProps> = ({
   return (
     <div className={cn("space-y-2", className)}>
       <div className="flex items-center justify-between">
-        <Label htmlFor={`slider-${traitId}`} className="text-sm font-medium">
+        <Label id={labelId} htmlFor={sliderId} className="text-sm font-medium">
           {label}
         </Label>
         <span className="text-sm text-muted-foreground" aria-live="polite">
           {value}
         </span>
       </div>
-      <div
-        onKeyDown={handleKeyDown}
-        role="group"
-        aria-labelledby={`label-${traitId}`}
-      >
+      <div onKeyDown={handleKeyDown} role="group" aria-labelledby={labelId}>
         {/* Slider container with tick marks */}
         <div className="relative">
           <Slider
-            id={`slider-${traitId}`}
+            id={sliderId}
             value={sliderValue}
             onValueChange={handleValueChange}
             min={ariaValuemin}
@@ -117,9 +132,12 @@ export const PersonalitySlider: React.FC<PersonalitySliderProps> = ({
             step={DISCRETE_STEP}
             disabled={disabled}
             aria-label={ariaLabel}
+            aria-labelledby={labelId}
             aria-valuemin={ariaValuemin}
             aria-valuemax={ariaValuemax}
             aria-valuenow={ariaValuenow}
+            aria-valuetext={resolvedDescription}
+            aria-describedby={descriptionId}
             className="cursor-pointer data-[disabled]:cursor-not-allowed"
           />
 
@@ -143,6 +161,15 @@ export const PersonalitySlider: React.FC<PersonalitySliderProps> = ({
             })}
           </div>
         </div>
+      </div>
+
+      {/* Description text */}
+      <div
+        id={descriptionId}
+        className="text-sm text-muted-foreground truncate"
+        aria-live="polite"
+      >
+        {resolvedDescription}
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ status: open
 priority: low
 parent: F-dynamic-personality-slider
 prerequisites:
-  - T-add-debounced-live-announcemen
+  - T-add-metadata-description
 affectedFiles: {}
 log: []
 schema: v1.0
