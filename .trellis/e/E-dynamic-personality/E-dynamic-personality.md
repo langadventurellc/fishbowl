@@ -8,6 +8,15 @@ affectedFiles:
   apps/desktop/package.json:
     Added personality_definitions.json to extraResources
     configuration with proper from/to mapping
+  packages/shared/src/utils/discreteValues.ts: Created discrete value utilities
+    with constants (DISCRETE_VALUES, DISCRETE_STEP, DISCRETE_VALUE_SET), types
+    (DiscreteValue), and functions (snapToNearestDiscrete, isDiscreteValue,
+    convertToDiscreteValue)
+  packages/shared/src/utils/__tests__/discreteValues.test.ts:
+    Added comprehensive
+    unit tests covering constants, snapping logic, validation, type safety,
+    function purity, and performance characteristics
+  packages/shared/src/utils/index.ts: Added barrel export for discrete value utilities
 log: []
 schema: v1.0
 childrenIds:
