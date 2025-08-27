@@ -32,6 +32,9 @@ export const PersonalitySlider: React.FC<PersonalitySliderProps> = ({
   // Convert single DiscreteValue to array for Radix slider
   const sliderValue = useMemo(() => [value], [value]);
 
+  // Tick mark positions corresponding to discrete values
+  const tickPositions = useMemo(() => [0, 20, 40, 60, 80, 100], []);
+
   // ARIA attributes for accessibility
   const ariaLabel = `${label} slider`;
   const ariaValuemin = 0;
@@ -103,20 +106,43 @@ export const PersonalitySlider: React.FC<PersonalitySliderProps> = ({
         role="group"
         aria-labelledby={`label-${traitId}`}
       >
-        <Slider
-          id={`slider-${traitId}`}
-          value={sliderValue}
-          onValueChange={handleValueChange}
-          min={ariaValuemin}
-          max={ariaValuemax}
-          step={DISCRETE_STEP}
-          disabled={disabled}
-          aria-label={ariaLabel}
-          aria-valuemin={ariaValuemin}
-          aria-valuemax={ariaValuemax}
-          aria-valuenow={ariaValuenow}
-          className="cursor-pointer data-[disabled]:cursor-not-allowed"
-        />
+        {/* Slider container with tick marks */}
+        <div className="relative">
+          <Slider
+            id={`slider-${traitId}`}
+            value={sliderValue}
+            onValueChange={handleValueChange}
+            min={ariaValuemin}
+            max={ariaValuemax}
+            step={DISCRETE_STEP}
+            disabled={disabled}
+            aria-label={ariaLabel}
+            aria-valuemin={ariaValuemin}
+            aria-valuemax={ariaValuemax}
+            aria-valuenow={ariaValuenow}
+            className="cursor-pointer data-[disabled]:cursor-not-allowed"
+          />
+
+          {/* Tick marks */}
+          <div className="absolute inset-0 pointer-events-none">
+            {tickPositions.map((position) => {
+              const isActive = position === value;
+              return (
+                <div
+                  key={position}
+                  data-position={position}
+                  data-testid={`tick-${position}`}
+                  className={cn(
+                    "absolute top-1/2 -translate-y-1/2 w-1 h-1 rounded-full transition-colors",
+                    isActive ? "bg-primary shadow-sm" : "bg-border",
+                    disabled && "opacity-50",
+                  )}
+                  style={{ left: `${position}%` }}
+                />
+              );
+            })}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -2,13 +2,25 @@
 id: T-add-discrete-tick-marks-and
 title: Add discrete tick marks and current-value highlight to PersonalitySlider
   (with tests)
-status: open
+status: done
 priority: medium
 parent: F-dynamic-personality-slider
 prerequisites:
   - T-implement-base-personalityslid
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitySlider.tsx:
+    Added discrete tick marks with absolute positioning, active tick
+    highlighting, and disabled state styling
+log:
+  - Enhanced PersonalitySlider with discrete tick marks and active value
+    highlighting. Implemented 6 tick marks positioned at 0%, 20%, 40%, 60%, 80%,
+    100% along the slider track using absolute positioning within a relative
+    container. Active tick is highlighted with primary color and shadow, while
+    inactive ticks use border color. Disabled state applies 50% opacity to all
+    ticks while maintaining color distinction. All tick marks use
+    percentage-based positioning for responsive alignment and
+    pointer-events-none to avoid interfering with slider interaction. Quality
+    checks pass with proper linting, formatting, and type checking.
 schema: v1.0
 childrenIds: []
 created: 2025-08-27T18:52:02.091Z
