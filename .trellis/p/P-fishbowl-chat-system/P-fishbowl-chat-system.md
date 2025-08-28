@@ -16,7 +16,7 @@ updated: 2025-08-27T02:08:21.833Z
 
 ## Executive Summary
 
-Implement the core chat functionality for the Fishbowl application - a desktop and mobile platform that enables conversations between users and multiple AI agents simultaneously. The chat system is the central feature that brings together all the existing configuration capabilities (agents, roles, personalities, LLM providers) into a functional multi-agent conversation interface.
+Implement the core chat functionality for the Fishbowl application - a desktop (only) platform that enables conversations between users and multiple AI agents simultaneously. The chat system is the central feature that brings together all the existing configuration capabilities (agents, roles, personalities, LLM providers) into a functional multi-agent conversation interface.
 
 ## Project Overview
 
@@ -88,12 +88,13 @@ ADD COLUMN enabled BOOLEAN DEFAULT 1;
 CREATE TABLE messages (
     id TEXT PRIMARY KEY,                    -- UUID
     conversation_id TEXT NOT NULL,          -- FK to conversations
-    agent_id TEXT,                         -- NULL for user messages, references configured agent ID from settings for agent messages
+    conversation_agent_id TEXT,             -- NULL for user messages, references configured agent ID from settings for agent messages
     role TEXT NOT NULL,                    -- 'user' | 'assistant' | 'system'
     content TEXT NOT NULL,                 -- Message text content (max 5000 characters)
     included BOOLEAN DEFAULT 1,            -- Whether to include in future LLM context (system messages always excluded)
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (conversation_id) REFERENCES conversations(id) ON DELETE CASCADE
+    FOREIGN KEY (conversation_agent_id) REFERENCES conversation_agents(id) ON DELETE SET NULL
 );
 
 CREATE INDEX idx_messages_conversation_order
@@ -308,7 +309,7 @@ ON messages(conversation_id, created_at);
 
 - Must work with existing SQLite database
 - Must follow established repository patterns
-- Must maintain platform separation (desktop/mobile/shared)
+- Must maintain platform separation (desktop/shared)
 - Cannot use platform-specific APIs in shared code
 
 ### Design Constraints
