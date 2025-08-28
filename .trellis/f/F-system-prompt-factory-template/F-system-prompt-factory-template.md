@@ -7,6 +7,9 @@ prerequisites: []
 affectedFiles:
   apps/desktop/system-prompt.txt: Created new system prompt template file with
     dynamic placeholders and version header
+  apps/desktop/package.json: Added system-prompt.txt to extraResources array in
+    electron-builder configuration
+  resources/system-prompt.txt: Moved from apps/desktop/ to follow existing resource pattern
 log: []
 schema: v1.0
 childrenIds:

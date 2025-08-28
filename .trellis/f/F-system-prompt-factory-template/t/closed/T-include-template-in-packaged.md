@@ -1,13 +1,22 @@
 ---
 id: T-include-template-in-packaged
 title: Include template in packaged desktop build (extraResources)
-status: open
+status: done
 priority: medium
 parent: F-system-prompt-factory-template
 prerequisites:
   - T-author-desktop-system-prompt
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/package.json: Added system-prompt.txt to extraResources array in
+    electron-builder configuration
+  resources/system-prompt.txt: Moved from apps/desktop/ to follow existing resource pattern
+log:
+  - Successfully updated electron-builder configuration to include
+    system-prompt.txt template in packaged desktop builds. The template file was
+    moved from apps/desktop/ to the root resources/ folder to follow existing
+    patterns and added to the extraResources configuration in
+    apps/desktop/package.json. Validation confirmed the build system correctly
+    finds and includes the file without errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T00:24:10.165Z
