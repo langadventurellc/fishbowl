@@ -10,6 +10,17 @@ affectedFiles:
   apps/desktop/package.json: Added system-prompt.txt to extraResources array in
     electron-builder configuration
   resources/system-prompt.txt: Moved from apps/desktop/ to follow existing resource pattern
+  apps/desktop/src/electron/startup/ensureSystemPromptTemplate.ts:
+    Created new startup module that copies system-prompt.txt from resources to
+    userData/system-prompts/ with mtime comparison and proper error handling
+  apps/desktop/src/electron/startup/shouldCopyFile.ts: Created extracted helper
+    function for file mtime comparison logic to enable unit testing
+  apps/desktop/src/electron/main.ts: Added import and call to
+    ensureSystemPromptTemplate in initializeApplication function
+  apps/desktop/src/electron/__tests__/shouldCopyFile.test.ts:
+    "Added comprehensive
+    unit tests for shouldCopy helper covering all scenarios: missing dest, newer
+    source, older source, same mtime, and error conditions"
 log: []
 schema: v1.0
 childrenIds:
@@ -17,9 +28,9 @@ childrenIds:
   - T-docs-usage-guidance-and
   - T-implement-systempromptfactory
   - T-implement-template-renderer
-  - T-include-template-in-packaged
   - T-scaffold-shared-system-prompt
   - T-author-desktop-system-prompt
+  - T-include-template-in-packaged
 created: 2025-08-28T00:04:12.070Z
 updated: 2025-08-28T00:04:12.070Z
 ---

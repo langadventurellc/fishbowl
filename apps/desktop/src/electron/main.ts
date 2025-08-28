@@ -11,6 +11,7 @@ import { fileURLToPath } from "node:url";
 import { StructuredLogger } from "@fishbowl-ai/shared";
 import { MainProcessServices } from "../main/services/MainProcessServices.js";
 import { ensurePersonalityDefinitions } from "./startup/ensurePersonalityDefinitions.js";
+import { ensureSystemPromptTemplate } from "./startup/ensureSystemPromptTemplate.js";
 import { setupAgentsHandlers } from "./agentsHandlers.js";
 import { setupConversationAgentHandlers } from "./conversationAgentHandlers.js";
 import { setupConversationsHandlers } from "./conversationsHandlers.js";
@@ -590,6 +591,9 @@ The application will now exit.`,
 async function initializeApplication(): Promise<void> {
   // Ensure personality definitions are copied to userData on first run
   await ensurePersonalityDefinitions();
+
+  // Ensure system prompt template is copied to userData on startup
+  await ensureSystemPromptTemplate();
 
   // Initialize main process services container
   mainProcessServices = initializeMainProcessServices();

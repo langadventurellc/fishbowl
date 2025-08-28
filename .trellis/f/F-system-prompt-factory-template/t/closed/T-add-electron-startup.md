@@ -1,14 +1,51 @@
 ---
 id: T-add-electron-startup
 title: Add Electron startup ensureSystemPromptTemplate
-status: open
+status: done
 priority: high
 parent: F-system-prompt-factory-template
 prerequisites:
   - T-author-desktop-system-prompt
   - T-include-template-in-packaged
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/startup/ensureSystemPromptTemplate.ts:
+    Created new startup module that copies system-prompt.txt from resources to
+    userData/system-prompts/ with mtime comparison and proper error handling
+  apps/desktop/src/electron/startup/shouldCopyFile.ts: Created extracted helper
+    function for file mtime comparison logic to enable unit testing
+  apps/desktop/src/electron/main.ts: Added import and call to
+    ensureSystemPromptTemplate in initializeApplication function
+  apps/desktop/src/electron/__tests__/shouldCopyFile.test.ts:
+    "Added comprehensive
+    unit tests for shouldCopy helper covering all scenarios: missing dest, newer
+    source, older source, same mtime, and error conditions"
+log:
+  - >-
+    Successfully implemented Electron startup ensureSystemPromptTemplate
+    functionality. Added a startup step in the Electron main process to copy
+    system-prompt.txt into the user data directory for dev, packaged, and test
+    runs, mirroring the pattern used by ensurePersonalityDefinitions.ts.
+
+
+    Key implementation details:
+
+    - Created ensureSystemPromptTemplate.ts following the existing patterns and
+    logging conventions
+
+    - Extracted shouldCopy helper function for unit testing with mtime
+    comparison logic
+
+    - Handles path resolution for packaged vs dev/test environments correctly
+
+    - Added comprehensive error handling and logging using shared logger
+
+    - Wired into main startup flow alongside existing ensure steps
+
+    - Implemented security measures to validate source file paths
+
+    - All quality checks pass (linting, formatting, type-checking)
+
+    - Unit tests provide 100% coverage for shouldCopy helper with all edge cases
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T00:24:19.755Z
