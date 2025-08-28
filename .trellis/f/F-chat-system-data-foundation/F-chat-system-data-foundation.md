@@ -11,12 +11,32 @@ affectedFiles:
     key constraints (CASCADE DELETE for conversations, SET NULL for
     conversation_agents), composite index for efficient message retrieval, and
     added enabled column to conversation_agents table for participation control
+  packages/shared/src/types/messages/Message.ts: Created core Message interface with full JSDoc documentation
+  packages/shared/src/types/messages/MessageRole.ts: Created MessageRole constants and type with user/agent/system values
+  packages/shared/src/types/messages/CreateMessageInput.ts: Created input type for message creation with optional fields
+  packages/shared/src/types/messages/UpdateMessageInclusionInput.ts: Created input type for message inclusion updates
+  packages/shared/src/types/messages/schemas/MessageSchema.ts:
+    Implemented comprehensive Zod schema with conditional validation for
+    conversation_agent_id
+  packages/shared/src/types/messages/schemas/CreateMessageInputSchema.ts: Created Zod schema for message creation with role-based validation
+  packages/shared/src/types/messages/schemas/UpdateMessageInclusionInputSchema.ts: Created Zod schema for inclusion updates
+  packages/shared/src/types/messages/errors/MessageNotFoundError.ts: Implemented error class for missing messages with JSON serialization
+  packages/shared/src/types/messages/errors/MessageValidationError.ts: Implemented error class for validation failures with JSON serialization
+  packages/shared/src/types/messages/schemas/index.ts: Created barrel exports for schemas
+  packages/shared/src/types/messages/errors/index.ts: Created barrel exports for error classes
+  packages/shared/src/types/messages/index.ts: Created main barrel exports for all message types
+  packages/shared/src/types/index.ts: Added message exports to main types index
+  packages/shared/src/types/messages/__tests__/Message.test.ts: Comprehensive test suite for Message schema validation with 13 test cases
+  packages/shared/src/types/messages/__tests__/CreateMessageInput.test.ts: Comprehensive test suite for CreateMessageInput validation with 13 test cases
+  packages/shared/src/types/messages/__tests__/UpdateMessageInclusionInput.test.ts:
+    Comprehensive test suite for UpdateMessageInclusionInput validation with 6
+    test cases
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-messages-table
   - T-implement-message-typescript
   - T-implement-messagerepository
+  - T-create-messages-table
 created: 2025-08-28T03:19:44.215Z
 updated: 2025-08-28T03:19:44.215Z
 ---

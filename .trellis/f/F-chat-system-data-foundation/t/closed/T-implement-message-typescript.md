@@ -1,13 +1,42 @@
 ---
 id: T-implement-message-typescript
 title: Implement message TypeScript types and Zod validation schemas
-status: open
+status: done
 priority: high
 parent: F-chat-system-data-foundation
 prerequisites:
   - T-create-messages-table
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/messages/Message.ts: Created core Message interface with full JSDoc documentation
+  packages/shared/src/types/messages/MessageRole.ts: Created MessageRole constants and type with user/agent/system values
+  packages/shared/src/types/messages/CreateMessageInput.ts: Created input type for message creation with optional fields
+  packages/shared/src/types/messages/UpdateMessageInclusionInput.ts: Created input type for message inclusion updates
+  packages/shared/src/types/messages/schemas/MessageSchema.ts:
+    Implemented comprehensive Zod schema with conditional validation for
+    conversation_agent_id
+  packages/shared/src/types/messages/schemas/CreateMessageInputSchema.ts: Created Zod schema for message creation with role-based validation
+  packages/shared/src/types/messages/schemas/UpdateMessageInclusionInputSchema.ts: Created Zod schema for inclusion updates
+  packages/shared/src/types/messages/errors/MessageNotFoundError.ts: Implemented error class for missing messages with JSON serialization
+  packages/shared/src/types/messages/errors/MessageValidationError.ts: Implemented error class for validation failures with JSON serialization
+  packages/shared/src/types/messages/schemas/index.ts: Created barrel exports for schemas
+  packages/shared/src/types/messages/errors/index.ts: Created barrel exports for error classes
+  packages/shared/src/types/messages/index.ts: Created main barrel exports for all message types
+  packages/shared/src/types/index.ts: Added message exports to main types index
+  packages/shared/src/types/messages/__tests__/Message.test.ts: Comprehensive test suite for Message schema validation with 13 test cases
+  packages/shared/src/types/messages/__tests__/CreateMessageInput.test.ts: Comprehensive test suite for CreateMessageInput validation with 13 test cases
+  packages/shared/src/types/messages/__tests__/UpdateMessageInclusionInput.test.ts:
+    Comprehensive test suite for UpdateMessageInclusionInput validation with 6
+    test cases
+log:
+  - Successfully implemented comprehensive TypeScript types and Zod validation
+    schemas for the messages system. Created Message interface with MessageRole
+    enum ("user", "agent", "system"), CreateMessageInput and
+    UpdateMessageInclusionInput types with corresponding Zod schemas.
+    Implemented conditional validation ensuring conversation_agent_id is present
+    for agent messages and null otherwise. Added comprehensive error classes
+    (MessageNotFoundError, MessageValidationError) and complete test coverage
+    with 34 passing tests. All quality checks (lint, format, type-check) pass
+    successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T03:47:53.878Z
