@@ -1,13 +1,31 @@
 ---
 id: T-update-llmmodel-interface-and
 title: Update LlmModel interface and useLlmModels hook
-status: open
+status: done
 priority: high
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-add-llmconfigid-to-ui-schema
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/settings/LlmModel.ts: Added configId and
+    configLabel fields to LlmModel interface with proper JSDoc documentation
+  apps/desktop/src/hooks/useLlmModels.ts: Updated hook to populate configId from
+    config.id and configLabel from config.customName || config.provider, while
+    keeping provider as canonical identifier
+  apps/desktop/src/hooks/__tests__/useLlmModels.test.tsx:
+    Added comprehensive unit
+    tests for new configId and configLabel functionality, including tests for
+    multiple configurations, display labels, canonical provider handling, and
+    error scenarios
+log:
+  - Successfully updated LlmModel interface and useLlmModels hook to include
+    configId and configLabel fields. The implementation correctly populates
+    these fields from LLM configuration data, enabling the UI to distinguish
+    between multiple providers offering the same model. Fixed the previous issue
+    where provider field was overwritten with display names - now provider
+    remains canonical for grouping while configLabel provides the display value.
+    Added comprehensive unit tests covering all scenarios including multiple
+    configurations, custom names, and error handling. All quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:34:28.171Z

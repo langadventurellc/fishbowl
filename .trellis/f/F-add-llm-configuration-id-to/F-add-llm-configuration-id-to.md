@@ -25,10 +25,19 @@ affectedFiles:
     Added comprehensive tests for optional llmConfigId field covering
     validation, type inference, invalid data cases including whitespace-only
     strings, and integration with AgentFormData type
+  packages/ui-shared/src/types/settings/LlmModel.ts: Added configId and
+    configLabel fields to LlmModel interface with proper JSDoc documentation
+  apps/desktop/src/hooks/useLlmModels.ts: Updated hook to populate configId from
+    config.id and configLabel from config.customName || config.provider, while
+    keeping provider as canonical identifier
+  apps/desktop/src/hooks/__tests__/useLlmModels.test.tsx:
+    Added comprehensive unit
+    tests for new configId and configLabel functionality, including tests for
+    multiple configurations, display labels, canonical provider handling, and
+    error scenarios
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-llmconfigid-to-ui-schema
   - T-fix-model-defaults-and
   - T-update-agent-mapping
   - T-update-agentcard-to-resolve
@@ -37,6 +46,7 @@ childrenIds:
   - T-update-modelselect-component
   - T-update-useagentsstore-to
   - T-add-llmconfigid-to-shared
+  - T-add-llmconfigid-to-ui-schema
 created: 2025-08-28T18:00:35.321Z
 updated: 2025-08-28T18:00:35.321Z
 ---
