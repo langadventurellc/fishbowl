@@ -1,14 +1,47 @@
 ---
 id: T-implement-systempromptfactory
 title: Implement SystemPromptFactory with constructor DI
-status: open
+status: done
 priority: high
 parent: F-system-prompt-factory-template
 prerequisites:
   - T-scaffold-shared-system-prompt
   - T-implement-template-renderer
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/prompts/system/SystemPromptFactory.ts: Enhanced
+    SystemPromptFactory class with complete createSystemPrompt implementation
+    and constructor accepting template parameter
+  packages/shared/src/prompts/system/__tests__/SystemPromptFactory.test.ts:
+    Created comprehensive unit test suite with 12 tests covering all
+    functionality requirements including mocking, validation, and edge cases
+log:
+  - >-
+    Implemented SystemPromptFactory with constructor dependency injection and
+    comprehensive unit tests. The factory wires resolvers and the renderer to
+    produce final system prompts from PersistedAgentData input.
+
+
+    Key implementation details:
+
+    - Updated constructor to accept template parameter (as designed - no file
+    I/O)
+
+    - Enhanced createSystemPrompt method to resolve personality/role via
+    injected resolvers
+
+    - Builds SystemPromptRenderData including agent system prompt, names,
+    descriptions, and behaviors
+
+    - Calls renderSystemPrompt with template and data to return final prompt
+    string
+
+    - Added input validation with fail-fast error handling for missing
+    role/personality
+
+    - Supports behavior overrides from agent configuration
+
+    - All SystemPromptFactory tests passing with 100% coverage including edge
+    cases and error conditions
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T00:23:55.560Z

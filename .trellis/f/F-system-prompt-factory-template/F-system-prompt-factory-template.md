@@ -1,7 +1,7 @@
 ---
 id: F-system-prompt-factory-template
 title: System Prompt Factory & Template
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -23,7 +23,9 @@ affectedFiles:
     source, older source, same mtime, and error conditions"
   packages/shared/src/prompts/system/SystemPromptFactory.ts: Created
     SystemPromptFactory class with DI constructor accepting resolvers and
-    optional logger
+    optional logger; Enhanced SystemPromptFactory class with complete
+    createSystemPrompt implementation and constructor accepting template
+    parameter
   packages/shared/src/prompts/system/SystemPromptResolvers.ts:
     Created SystemPromptResolvers interface defining personality and role
     resolver methods
@@ -45,14 +47,17 @@ affectedFiles:
   packages/shared/src/prompts/system/__tests__/systemPromptRenderer.test.ts:
     Created comprehensive test suite with 17 tests covering all functionality
     requirements
-log: []
+  packages/shared/src/prompts/system/__tests__/SystemPromptFactory.test.ts:
+    Created comprehensive unit test suite with 12 tests covering all
+    functionality requirements including mocking, validation, and edge cases
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-docs-usage-guidance-and
-  - T-implement-systempromptfactory
-  - T-implement-template-renderer
   - T-add-electron-startup
   - T-author-desktop-system-prompt
+  - T-implement-systempromptfactory
+  - T-implement-template-renderer
   - T-include-template-in-packaged
   - T-scaffold-shared-system-prompt
 created: 2025-08-28T00:04:12.070Z

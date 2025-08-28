@@ -2,12 +2,16 @@ import type { PersistedAgentData } from "../../types/agents/PersistedAgentData";
 import type { StructuredLogger } from "../../logging/types/StructuredLogger";
 import { createLoggerSync } from "../../logging/createLoggerSync";
 import type { SystemPromptResolvers } from "./SystemPromptResolvers";
+import type { SystemPromptRenderData } from "./systemPromptTypes";
+import type { BehaviorRenderData } from "./BehaviorRenderData";
+import { renderSystemPrompt } from "./systemPromptRenderer";
 
 export class SystemPromptFactory {
   private readonly logger: StructuredLogger;
 
   constructor(
     private readonly resolvers: SystemPromptResolvers,
+    private readonly template: string,
     logger?: StructuredLogger,
   ) {
     this.logger =
@@ -20,8 +24,46 @@ export class SystemPromptFactory {
   async createSystemPrompt(agent: PersistedAgentData): Promise<string> {
     this.logger.info("Creating system prompt for agent", { agentId: agent.id });
 
-    // TODO: Implement actual system prompt generation
-    // This placeholder will be replaced in later tasks
-    return `System prompt placeholder for agent ${agent.name}`;
+    // Validate inputs
+    if (!agent.role) {
+      throw new Error(`Agent ${agent.id} missing role`);
+    }
+    if (!agent.personality) {
+      throw new Error(`Agent ${agent.id} missing personality`);
+    }
+
+    // Resolve personality and role data
+    const [personality, role] = await Promise.all([
+      this.resolvers.resolvePersonality(agent.personality),
+      this.resolvers.resolveRole(agent.role),
+    ]);
+
+    // Build behaviors data
+    const behaviors: BehaviorRenderData = {
+      personalityBehaviors: personality.behaviors || {},
+      agentOverrides: agent.personalityBehaviors,
+    };
+
+    // Build render data
+    const renderData: SystemPromptRenderData = {
+      agentSystemPrompt: agent.systemPrompt,
+      agentName: agent.name,
+      roleName: role.name,
+      roleDescription: role.description,
+      roleSystemPrompt: role.systemPrompt,
+      personalityName: personality.name,
+      personalityCustomInstructions: personality.customInstructions || "",
+      behaviors,
+    };
+
+    // Render the system prompt
+    const result = renderSystemPrompt(this.template, renderData);
+
+    this.logger.info("System prompt created successfully", {
+      agentId: agent.id,
+      promptLength: result.length,
+    });
+
+    return result;
   }
 }
