@@ -15,7 +15,7 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
       {
         id: "1",
         name: "Research Assistant",
-        model: "Claude 3.5 Sonnet",
+        model: "claude-3-5-sonnet",
         role: "Research and Analysis",
         personality: "Analytical and thorough",
         temperature: 0.7,
@@ -28,7 +28,7 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
       {
         id: "2",
         name: "Code Reviewer",
-        model: "GPT-4",
+        model: "gpt-4",
         role: "Code Analysis",
         personality: "Detail-oriented and constructive",
         temperature: 0.3,

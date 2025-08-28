@@ -1,13 +1,36 @@
 ---
 id: T-fix-model-defaults-and
 title: Fix model defaults and standardize on canonical model IDs
-status: open
+status: done
 priority: low
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-update-agentform-to-handle
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx:
+    Updated default model
+    values to use canonical ID 'gpt-4' instead of display name 'Claude 3.5
+    Sonnet' for consistency with openai-config-1 llmConfigId
+  packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
+    Replaced all instances of 'Claude 3.5 Sonnet' with canonical ID
+    'claude-3-5-sonnet'
+  packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
+    "Updated test data to use canonical IDs: 'claude-3-5-sonnet' and 'gpt-4'
+    instead of display names"
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts: Standardized test data to use 'claude-3-5-sonnet' instead of display name
+  packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
+    Updated test data to use canonical IDs 'claude-3-5-sonnet' and
+    'claude-3-haiku'
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Replaced 'Claude 3.5 Sonnet' with canonical ID 'claude-3-5-sonnet'
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx: Updated mock data to use canonical IDs 'claude-3-5-sonnet' and 'gpt-4'
+log:
+  - 'Successfully standardized model identification across the application to
+    use canonical model IDs instead of display names. Updated AgentForm defaults
+    to use "gpt-4" (canonical) instead of "Claude 3.5 Sonnet" (display name),
+    and ensured consistency with "openai-config-1" llmConfigId. Systematically
+    updated test fixtures and mock data throughout the codebase to use canonical
+    IDs: "claude-3-5-sonnet", "claude-3-haiku", "gpt-4", etc. All quality checks
+    (linting, formatting, type-checking) and unit tests pass successfully.'
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:36:20.102Z

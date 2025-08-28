@@ -15,7 +15,7 @@ describe("agentSchema", () => {
     it("should validate complete agent data with all fields", () => {
       const validData = {
         name: "AI Assistant",
-        model: "Claude 3.5 Sonnet",
+        model: "claude-3-5-sonnet",
         llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
@@ -33,7 +33,7 @@ describe("agentSchema", () => {
     it("should validate agent data without optional systemPrompt", () => {
       const validData = {
         name: "Simple Agent",
-        model: "GPT-4",
+        model: "gpt-4",
         llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
@@ -57,7 +57,7 @@ describe("agentSchema", () => {
     it("should validate agent data with optional llmConfigId", () => {
       const validData = {
         name: "AI Assistant",
-        model: "Claude 3.5 Sonnet",
+        model: "claude-3-5-sonnet",
         llmConfigId: "config-123",
         role: "role-id",
         personality: "personality-id",
@@ -76,7 +76,7 @@ describe("agentSchema", () => {
     it("should fail validation when llmConfigId is missing (required field)", () => {
       const invalidData = {
         name: "Simple Agent",
-        model: "GPT-4",
+        model: "gpt-4",
         role: "role-id",
         personality: "personality-id",
       };

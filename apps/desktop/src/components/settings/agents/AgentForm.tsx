@@ -62,7 +62,7 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
         // Editing mode: use existing agent data
         return {
           name: initialData.name || "",
-          model: initialData.model || "Claude 3.5 Sonnet",
+          model: initialData.model || "gpt-4",
           role: initialData.role || "",
           personality: initialData.personality || "",
           systemPrompt: initialData.systemPrompt || "",
@@ -73,7 +73,7 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
       // Create mode: use store defaults with fallback values
       return {
         name: "",
-        model: "Claude 3.5 Sonnet",
+        model: "gpt-4",
         role: "",
         personality: "",
         systemPrompt: "",

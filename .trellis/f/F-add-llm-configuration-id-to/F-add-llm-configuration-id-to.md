@@ -1,7 +1,7 @@
 ---
 id: F-add-llm-configuration-id-to
 title: Add LLM Configuration ID to Agent Settings
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -13,7 +13,8 @@ affectedFiles:
     Added comprehensive tests for optional llmConfigId field covering valid
     values, missing values, empty strings, and invalid types; Updated multiple
     test cases to include required llmConfigId field and fixed test that
-    expected field to be optional
+    expected field to be optional; Replaced all instances of 'Claude 3.5 Sonnet'
+    with canonical ID 'claude-3-5-sonnet'
   packages/ui-shared/src/schemas/agentSchema.ts:
     Added optional llmConfigId field
     to agentSchema with proper validation (non-empty string when present)
@@ -27,11 +28,12 @@ affectedFiles:
     Updated normalizeAgentFields function to handle optional llmConfigId field
     with proper trimming and updated documentation
   packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
-    Added comprehensive tests for optional llmConfigId field covering
+    "Added comprehensive tests for optional llmConfigId field covering
     validation, type inference, invalid data cases including whitespace-only
     strings, and integration with AgentFormData type; Updated multiple test
     cases to include required llmConfigId field for all valid test scenarios and
-    converted optional test to expect validation failure
+    converted optional test to expect validation failure; Updated test data to
+    use canonical IDs: 'claude-3-5-sonnet' and 'gpt-4' instead of display names"
   packages/ui-shared/src/types/settings/LlmModel.ts: Added configId and
     configLabel fields to LlmModel interface with proper JSDoc documentation
   apps/desktop/src/hooks/useLlmModels.ts: Updated hook to populate configId from
@@ -49,11 +51,16 @@ affectedFiles:
     Added llmConfigId field to mapping function to preserve the field during
     persistence to UI transformation
   packages/shared/src/prompts/system/__tests__/SystemPromptFactory.test.ts: Updated test data to include required llmConfigId field for all mock agents
-  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts: Added llmConfigId field to all test agent data
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts:
+    Added llmConfigId field to all test agent data; Standardized test data to
+    use 'claude-3-5-sonnet' instead of display name
   packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
     Added llmConfigId field to test data and updated round-trip validation to
-    check llmConfigId preservation
-  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Added llmConfigId field to test data and updated expected results
+    check llmConfigId preservation; Updated test data to use canonical IDs
+    'claude-3-5-sonnet' and 'claude-3-haiku'
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts:
+    Added llmConfigId field to test data and updated expected results; Replaced
+    'Claude 3.5 Sonnet' with canonical ID 'claude-3-5-sonnet'
   packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts:
     Updated test agent data to include required llmConfigId field; Added
     comprehensive tests for llmConfigId validation including missing values,
@@ -76,7 +83,9 @@ affectedFiles:
     state management, added handleModelChange callback to split composite values
     into llmConfigId and model form fields, updated ModelSelect integration to
     use composite values, added hidden FormField for llmConfigId validation,
-    enhanced reset and save operations to maintain composite state
+    enhanced reset and save operations to maintain composite state; Updated
+    default model values to use canonical ID 'gpt-4' instead of display name
+    'Claude 3.5 Sonnet' for consistency with openai-config-1 llmConfigId
   apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed test data to include required llmConfigId field
   apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Fixed test data to include required llmConfigId field
   apps/desktop/src/components/settings/agents/ModelSelect.tsx:
@@ -87,18 +96,20 @@ affectedFiles:
     Updated mock models to include configId and configLabel fields, modified
     tests to expect composite values in onChange calls, added tests for
     configuration label display and multi-configuration disambiguation
-log: []
+  apps/desktop/src/components/settings/agents/__tests__/AgentsSection.test.tsx: Updated mock data to use canonical IDs 'claude-3-5-sonnet' and 'gpt-4'
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-fix-model-defaults-and
-  - T-update-useagentsstore-to
   - T-add-llmconfigid-to-shared
   - T-add-llmconfigid-to-ui-schema
+  - T-fix-model-defaults-and
   - T-update-agent-mapping
   - T-update-agentcard-to-resolve
   - T-update-agentform-to-handle
   - T-update-llmmodel-interface-and
   - T-update-modelselect-component
+  - T-update-useagentsstore-to
 created: 2025-08-28T18:00:35.321Z
 updated: 2025-08-28T18:00:35.321Z
 ---

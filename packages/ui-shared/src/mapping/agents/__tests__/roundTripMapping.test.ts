@@ -9,7 +9,7 @@ describe("Agent Mapping Round Trip", () => {
         {
           id: "test-id-1",
           name: "Test Agent 1",
-          model: "Claude 3.5 Sonnet",
+          model: "claude-3-5-sonnet",
           llmConfigId: "test-config-id-1",
           role: "role-id-1",
           personality: "personality-id-1",
@@ -20,7 +20,7 @@ describe("Agent Mapping Round Trip", () => {
         {
           id: "test-id-2",
           name: "Test Agent 2",
-          model: "Claude 3.5 Haiku",
+          model: "claude-3-haiku",
           llmConfigId: "test-config-id-2",
           role: "role-id-2",
           personality: "personality-id-2",
