@@ -761,6 +761,7 @@
         {
           "id": "responseLength",
           "name": "Response Length",
+          "special": "max_tokens",
           "values": {
             "0": {
               "short": "Very brief, minimal responses",
@@ -791,6 +792,7 @@
         {
           "id": "randomness",
           "name": "Randomness",
+          "special": "temperature",
           "values": {
             "0": {
               "short": "Highly predictable, consistent",
@@ -821,6 +823,7 @@
         {
           "id": "focus",
           "name": "Focus",
+          "special": "top_p",
           "values": {
             "0": {
               "short": "Laser-focused, narrow responses",
