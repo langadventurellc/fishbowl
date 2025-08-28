@@ -1,13 +1,31 @@
 ---
 id: T-implement-template-renderer
 title: Implement template renderer with dynamic behaviors
-status: open
+status: done
 priority: medium
 parent: F-system-prompt-factory-template
 prerequisites:
   - T-scaffold-shared-system-prompt
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/prompts/system/systemPromptRenderer.ts:
+    Implemented complete
+    renderSystemPrompt function with token replacement, behavior rendering with
+    override support, and whitespace cleanup
+  packages/shared/src/prompts/system/systemPromptTypes.ts: Updated
+    SystemPromptRenderData to use BehaviorRenderData type for behaviors field
+  packages/shared/src/prompts/system/BehaviorRenderData.ts:
+    Created new interface
+    for behavior render data with personality behaviors and agent overrides
+  packages/shared/src/prompts/system/index.ts: Added BehaviorRenderData export to barrel file
+  packages/shared/src/prompts/system/__tests__/systemPromptRenderer.test.ts:
+    Created comprehensive test suite with 17 tests covering all functionality
+    requirements
+log:
+  - Implemented template renderer with dynamic behavior rendering. The
+    renderSystemPrompt function replaces all template tokens safely, renders
+    behaviors alphabetically with override support, and cleans up empty
+    sections. All 17 unit tests pass, covering token replacement, behavior
+    rendering, edge cases, and deterministic output.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T00:23:38.078Z

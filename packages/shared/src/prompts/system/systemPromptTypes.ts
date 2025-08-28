@@ -1,3 +1,5 @@
+import type { BehaviorRenderData } from "./BehaviorRenderData";
+
 export interface SystemPromptRenderData {
   agentSystemPrompt?: string;
   agentName: string;
@@ -6,5 +8,5 @@ export interface SystemPromptRenderData {
   roleSystemPrompt: string;
   personalityName: string;
   personalityCustomInstructions: string;
-  behaviors: string;
+  behaviors: BehaviorRenderData;
 }

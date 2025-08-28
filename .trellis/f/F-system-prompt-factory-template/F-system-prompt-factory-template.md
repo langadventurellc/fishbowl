@@ -29,21 +29,32 @@ affectedFiles:
     resolver methods
   packages/shared/src/prompts/system/systemPromptTypes.ts: Created
     SystemPromptRenderData interface with all required template placeholder
-    fields
-  packages/shared/src/prompts/system/systemPromptRenderer.ts: Created renderSystemPrompt function stub for template token replacement
-  packages/shared/src/prompts/system/index.ts: Created barrel file exporting all module components
+    fields; Updated SystemPromptRenderData to use BehaviorRenderData type for
+    behaviors field
+  packages/shared/src/prompts/system/systemPromptRenderer.ts: Created
+    renderSystemPrompt function stub for template token replacement; Implemented
+    complete renderSystemPrompt function with token replacement, behavior
+    rendering with override support, and whitespace cleanup
+  packages/shared/src/prompts/system/index.ts: Created barrel file exporting all
+    module components; Added BehaviorRenderData export to barrel file
   packages/shared/src/prompts/index.ts: Created prompts barrel file
   packages/shared/src/index.ts: Added prompts export to main shared package barrel
+  packages/shared/src/prompts/system/BehaviorRenderData.ts:
+    Created new interface
+    for behavior render data with personality behaviors and agent overrides
+  packages/shared/src/prompts/system/__tests__/systemPromptRenderer.test.ts:
+    Created comprehensive test suite with 17 tests covering all functionality
+    requirements
 log: []
 schema: v1.0
 childrenIds:
   - T-docs-usage-guidance-and
   - T-implement-systempromptfactory
   - T-implement-template-renderer
-  - T-scaffold-shared-system-prompt
   - T-add-electron-startup
   - T-author-desktop-system-prompt
   - T-include-template-in-packaged
+  - T-scaffold-shared-system-prompt
 created: 2025-08-28T00:04:12.070Z
 updated: 2025-08-28T00:04:12.070Z
 ---
