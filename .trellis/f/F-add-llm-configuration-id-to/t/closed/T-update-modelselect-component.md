@@ -1,13 +1,27 @@
 ---
 id: T-update-modelselect-component
 title: Update ModelSelect component with composite values and configuration labels
-status: open
+status: done
 priority: medium
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-update-llmmodel-interface-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/ModelSelect.tsx:
+    Added buildComposite utility function, updated SelectItem values to use
+    composite format, changed sublabel display from model.provider to
+    model.configLabel
+  apps/desktop/src/components/settings/agents/__tests__/ModelSelect.test.tsx:
+    Updated mock models to include configId and configLabel fields, modified
+    tests to expect composite values in onChange calls, added tests for
+    configuration label display and multi-configuration disambiguation
+log:
+  - Updated ModelSelect component to use composite values (configId:modelId) and
+    display configuration labels for LLM model disambiguation. Implemented
+    buildComposite utility function, modified option values to use composite
+    format, updated display to show configLabel instead of raw provider name,
+    and enhanced unit tests to verify composite functionality and
+    multi-configuration support.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:35:04.534Z

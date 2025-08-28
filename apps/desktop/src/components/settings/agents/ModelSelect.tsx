@@ -10,6 +10,9 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { useLlmModels } from "../../../hooks/useLlmModels";
 import { type ModelSelectProps } from "@fishbowl-ai/ui-shared";
 
+const buildComposite = (configId: string, modelId: string): string =>
+  `${configId}:${modelId}`;
+
 export const ModelSelect: React.FC<ModelSelectProps> = ({
   value,
   onChange,
@@ -82,11 +85,14 @@ export const ModelSelect: React.FC<ModelSelectProps> = ({
                   {providerName}
                 </div>
                 {providerModels.map((model) => (
-                  <SelectItem key={model.id} value={model.id}>
+                  <SelectItem
+                    key={buildComposite(model.configId, model.id)}
+                    value={buildComposite(model.configId, model.id)}
+                  >
                     <div className="flex flex-col">
                       <span>{model.name}</span>
                       <span className="text-xs text-muted-foreground">
-                        {model.provider}
+                        {model.configLabel}
                       </span>
                     </div>
                   </SelectItem>

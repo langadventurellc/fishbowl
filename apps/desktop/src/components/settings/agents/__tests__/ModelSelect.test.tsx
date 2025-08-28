@@ -26,6 +26,8 @@ const mockModels = [
     id: "gpt-4o",
     name: "GPT-4o",
     provider: "OpenAI",
+    configId: "openai-config-1",
+    configLabel: "OpenAI Primary",
     contextLength: 128000,
     vision: true,
     functionCalling: true,
@@ -34,6 +36,18 @@ const mockModels = [
     id: "gpt-4",
     name: "GPT-4",
     provider: "OpenAI",
+    configId: "openai-config-1",
+    configLabel: "OpenAI Primary",
+    contextLength: 8192,
+    vision: false,
+    functionCalling: true,
+  },
+  {
+    id: "gpt-4",
+    name: "GPT-4",
+    provider: "OpenAI",
+    configId: "openai-config-2",
+    configLabel: "OpenAI Secondary",
     contextLength: 8192,
     vision: false,
     functionCalling: true,
@@ -42,6 +56,8 @@ const mockModels = [
     id: "claude-3-5-sonnet",
     name: "Claude 3.5 Sonnet",
     provider: "Anthropic",
+    configId: "anthropic-config-1",
+    configLabel: "Anthropic",
     contextLength: 200000,
     vision: true,
     functionCalling: false,
@@ -174,15 +190,15 @@ describe("ModelSelect Component", () => {
 
       // Check for model options
       expect(screen.getByText("GPT-4o")).toBeInTheDocument();
-      expect(screen.getByText("GPT-4")).toBeInTheDocument();
+      expect(screen.getAllByText("GPT-4").length).toBe(2); // Two GPT-4 options with different configs
       expect(screen.getByText("Claude 3.5 Sonnet")).toBeInTheDocument();
 
-      // Check that provider names appear somewhere (in headers or items)
+      // Check that provider names appear in group headers
       expect(screen.getAllByText("OpenAI").length).toBeGreaterThan(0);
       expect(screen.getAllByText("Anthropic").length).toBeGreaterThan(0);
     });
 
-    it("calls onChange when model is selected", () => {
+    it("calls onChange when model is selected with composite value", () => {
       const mockOnChange = jest.fn();
       render(<ModelSelect {...defaultProps} onChange={mockOnChange} />);
 
@@ -192,7 +208,7 @@ describe("ModelSelect Component", () => {
       const option = screen.getByRole("option", { name: /GPT-4o/ });
       fireEvent.click(option);
 
-      expect(mockOnChange).toHaveBeenCalledWith("gpt-4o");
+      expect(mockOnChange).toHaveBeenCalledWith("openai-config-1:gpt-4o");
     });
 
     it("respects disabled prop", () => {
@@ -202,7 +218,7 @@ describe("ModelSelect Component", () => {
       expect(trigger).toBeDisabled();
     });
 
-    it("displays selected value correctly", () => {
+    it("displays selected value correctly with composite value", () => {
       render(<ModelSelect {...defaultProps} value="openai-config-1:gpt-4o" />);
 
       // The Select component should have the correct value set
@@ -226,23 +242,28 @@ describe("ModelSelect Component", () => {
 
       // Check that models are displayed
       expect(screen.getByText("GPT-4o")).toBeInTheDocument();
-      expect(screen.getByText("GPT-4")).toBeInTheDocument();
+      expect(screen.getAllByText("GPT-4").length).toBe(2); // Two GPT-4 models
       expect(screen.getByText("Claude 3.5 Sonnet")).toBeInTheDocument();
     });
 
-    it("displays provider name in model options", () => {
+    it("displays configuration labels in model options", () => {
       render(<ModelSelect {...defaultProps} />);
 
       const trigger = screen.getByRole("combobox");
       fireEvent.click(trigger);
 
-      // Check that each model option shows the provider name
+      // Check that each model option shows the config label
       const options = screen.getAllByRole("option");
       expect(options.length).toBeGreaterThan(0);
 
-      // Check that provider names are included in the options
+      // Check that config labels are included in the options
       const optionTexts = options.map((option) => option.textContent);
-      expect(optionTexts.some((text) => text?.includes("OpenAI"))).toBe(true);
+      expect(optionTexts.some((text) => text?.includes("OpenAI Primary"))).toBe(
+        true,
+      );
+      expect(
+        optionTexts.some((text) => text?.includes("OpenAI Secondary")),
+      ).toBe(true);
       expect(optionTexts.some((text) => text?.includes("Anthropic"))).toBe(
         true,
       );
@@ -278,7 +299,55 @@ describe("ModelSelect Component", () => {
       });
       fireEvent.click(claudeOption);
 
-      expect(mockOnChange).toHaveBeenCalledWith("claude-3-5-sonnet");
+      expect(mockOnChange).toHaveBeenCalledWith(
+        "anthropic-config-1:claude-3-5-sonnet",
+      );
+    });
+  });
+
+  describe("Composite Values and Configuration Labels", () => {
+    beforeEach(() => {
+      useLlmModels.mockReturnValue({
+        models: mockModels,
+        loading: false,
+        error: null,
+      });
+    });
+
+    it("displays configuration labels instead of provider names in options", () => {
+      render(<ModelSelect {...defaultProps} />);
+
+      const trigger = screen.getByRole("combobox");
+      fireEvent.click(trigger);
+
+      // Check that config labels are displayed in options
+      expect(screen.getAllByText("OpenAI Primary").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("OpenAI Secondary").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("Anthropic").length).toBeGreaterThan(0);
+    });
+
+    it("distinguishes between multiple configurations of the same model", () => {
+      render(<ModelSelect {...defaultProps} />);
+
+      const trigger = screen.getByRole("combobox");
+      fireEvent.click(trigger);
+
+      // Should have two different GPT-4 options with different config labels
+      const gpt4Options = screen.getAllByText("GPT-4");
+      expect(gpt4Options.length).toBe(2);
+
+      expect(screen.getAllByText("OpenAI Primary").length).toBeGreaterThan(0);
+      expect(screen.getAllByText("OpenAI Secondary").length).toBeGreaterThan(0);
+    });
+
+    it("handles composite values as selected values", () => {
+      render(<ModelSelect {...defaultProps} value="openai-config-2:gpt-4" />);
+
+      const trigger = screen.getByRole("combobox");
+      expect(trigger).toHaveAttribute("aria-expanded", "false");
+
+      // Component should accept and work with composite value
+      expect(trigger).not.toBeDisabled();
     });
   });
 });

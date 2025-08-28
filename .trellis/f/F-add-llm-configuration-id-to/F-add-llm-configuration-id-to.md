@@ -70,17 +70,25 @@ affectedFiles:
     values to include proper llmConfigId for both create and edit modes
   apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed test data to include required llmConfigId field
   apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Fixed test data to include required llmConfigId field
+  apps/desktop/src/components/settings/agents/ModelSelect.tsx:
+    Added buildComposite utility function, updated SelectItem values to use
+    composite format, changed sublabel display from model.provider to
+    model.configLabel
+  apps/desktop/src/components/settings/agents/__tests__/ModelSelect.test.tsx:
+    Updated mock models to include configId and configLabel fields, modified
+    tests to expect composite values in onChange calls, added tests for
+    configuration label display and multi-configuration disambiguation
 log: []
 schema: v1.0
 childrenIds:
   - T-fix-model-defaults-and
-  - T-update-agentcard-to-resolve
   - T-update-agentform-to-handle
   - T-update-modelselect-component
   - T-update-useagentsstore-to
   - T-add-llmconfigid-to-shared
   - T-add-llmconfigid-to-ui-schema
   - T-update-agent-mapping
+  - T-update-agentcard-to-resolve
   - T-update-llmmodel-interface-and
 created: 2025-08-28T18:00:35.321Z
 updated: 2025-08-28T18:00:35.321Z
