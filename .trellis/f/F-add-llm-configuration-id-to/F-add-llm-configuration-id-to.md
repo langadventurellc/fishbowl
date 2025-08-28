@@ -55,17 +55,32 @@ affectedFiles:
     check llmConfigId preservation
   packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Added llmConfigId field to test data and updated expected results
   packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts: Updated test agent data to include required llmConfigId field
+  apps/desktop/src/components/settings/agents/AgentCard.tsx:
+    Updated model lookup
+    logic to use dual-field pattern (configId + model) with fallback to
+    agent.model string
+  apps/desktop/src/components/settings/agents/__tests__/AgentCard.test.tsx:
+    Added comprehensive unit tests for dual-field lookup, fallback behavior, and
+    edge cases; updated mock data to include configId and configLabel fields
+  apps/desktop/src/components/modals/__tests__/AddAgentToConversationModal.test.tsx: Fixed test data to include required llmConfigId field
+  apps/desktop/src/components/settings/agents/__tests__/LibraryTab.test.tsx:
+    Updated mock models to include configId and configLabel fields; fixed agent
+    test data to use matching configIds
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Updated default
+    values to include proper llmConfigId for both create and edit modes
+  apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed test data to include required llmConfigId field
+  apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Fixed test data to include required llmConfigId field
 log: []
 schema: v1.0
 childrenIds:
   - T-fix-model-defaults-and
-  - T-update-agent-mapping
   - T-update-agentcard-to-resolve
   - T-update-agentform-to-handle
   - T-update-modelselect-component
   - T-update-useagentsstore-to
   - T-add-llmconfigid-to-shared
   - T-add-llmconfigid-to-ui-schema
+  - T-update-agent-mapping
   - T-update-llmmodel-interface-and
 created: 2025-08-28T18:00:35.321Z
 updated: 2025-08-28T18:00:35.321Z

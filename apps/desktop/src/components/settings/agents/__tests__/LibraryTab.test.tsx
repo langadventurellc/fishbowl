@@ -26,18 +26,18 @@ jest.mock("../../../../hooks/useLlmModels", () => ({
       {
         id: "gpt-4-turbo",
         name: "GPT-4 Turbo",
-        provider: "OpenAI",
+        provider: "openai",
+        configId: "openai-config-1",
+        configLabel: "OpenAI",
         contextLength: 128000,
-        vision: true,
-        functionCalling: true,
       },
       {
         id: "claude-3-sonnet",
         name: "Claude 3 Sonnet",
-        provider: "Anthropic",
+        provider: "anthropic",
+        configId: "anthropic-config-1",
+        configLabel: "Anthropic",
         contextLength: 200000,
-        vision: true,
-        functionCalling: false,
       },
     ],
     loading: false,
@@ -102,6 +102,7 @@ const mockAgents: AgentSettingsViewModel[] = [
     systemPrompt: "You are a research assistant",
     createdAt: "2023-01-01T00:00:00Z",
     updatedAt: "2023-01-01T00:00:00Z",
+    llmConfigId: "anthropic-config-1",
   },
   {
     id: "agent-2",
@@ -112,6 +113,7 @@ const mockAgents: AgentSettingsViewModel[] = [
     systemPrompt: "You are a code reviewer",
     createdAt: "2023-01-02T00:00:00Z",
     updatedAt: "2023-01-02T00:00:00Z",
+    llmConfigId: "openai-config-1",
   },
 ];
 

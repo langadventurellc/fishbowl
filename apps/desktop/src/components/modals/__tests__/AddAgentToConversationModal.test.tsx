@@ -6,14 +6,13 @@
  * @module components/modals/__tests__/AddAgentToConversationModal.test
  */
 
-import React from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import type {
   AgentSettingsViewModel,
   ConversationAgentViewModel,
 } from "@fishbowl-ai/ui-shared";
-import { AddAgentToConversationModal } from "../AddAgentToConversationModal";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { useConversationAgents } from "../../../hooks/conversationAgents/useConversationAgents";
+import { AddAgentToConversationModal } from "../AddAgentToConversationModal";
 
 // Mock hooks
 const mockUseAgentsStore = jest.fn();
@@ -39,6 +38,7 @@ const mockAgent1: AgentSettingsViewModel = {
   systemPrompt: "You are a helpful assistant",
   createdAt: "2023-01-01T10:00:00.000Z",
   updatedAt: "2023-01-01T10:00:00.000Z",
+  llmConfigId: "openai-config-1",
 };
 
 const mockAgent2: AgentSettingsViewModel = {
@@ -47,6 +47,7 @@ const mockAgent2: AgentSettingsViewModel = {
   role: "Developer",
   personality: "Analytical",
   model: "claude-3-sonnet",
+  llmConfigId: "openai-config-1",
   systemPrompt: "You are a coding assistant",
   createdAt: "2023-01-02T10:00:00.000Z",
   updatedAt: "2023-01-02T10:00:00.000Z",
@@ -58,6 +59,7 @@ const mockAgent3: AgentSettingsViewModel = {
   role: "Researcher",
   personality: "Curious",
   model: "gpt-4",
+  llmConfigId: "openai-config-1",
   systemPrompt: "You are a research assistant",
   createdAt: "2023-01-03T10:00:00.000Z",
   updatedAt: "2023-01-03T10:00:00.000Z",

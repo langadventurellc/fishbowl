@@ -49,6 +49,7 @@ const mockAgent1: AgentSettingsViewModel = {
   systemPrompt: "You are a helpful assistant",
   createdAt: "2023-01-01T10:00:00.000Z",
   updatedAt: "2023-01-01T10:00:00.000Z",
+  llmConfigId: "openai-config-1",
 };
 
 const mockAgent2: AgentSettingsViewModel = {
@@ -60,6 +61,7 @@ const mockAgent2: AgentSettingsViewModel = {
   systemPrompt: "You are a coding assistant",
   createdAt: "2023-01-02T10:00:00.000Z",
   updatedAt: "2023-01-02T10:00:00.000Z",
+  llmConfigId: "openai-config-1",
 };
 
 const mockConversationAgent1: ConversationAgent = {

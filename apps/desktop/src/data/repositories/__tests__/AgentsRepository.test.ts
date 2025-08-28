@@ -1,8 +1,8 @@
-import { AgentsRepository } from "../AgentsRepository";
-import { FileStorageService, FileStorageError } from "@fishbowl-ai/shared";
+import { FileStorageError, FileStorageService } from "@fishbowl-ai/shared";
 import { NodeFileSystemBridge } from "../../../main/services/NodeFileSystemBridge";
 import { NodeCryptoUtils } from "../../../main/utils/NodeCryptoUtils";
 import { NodePathUtils } from "../../../main/utils/NodePathUtils";
+import { AgentsRepository } from "../AgentsRepository";
 
 // Helper to create mock FileStorageError
 const createMockFileStorageError = (
@@ -53,6 +53,7 @@ describe("AgentsRepository", () => {
         id: "agent-1",
         name: "Test Agent",
         model: "Claude 3.5 Sonnet",
+        llmConfigId: "llm-config-1",
         role: "role-id",
         personality: "personality-id",
         temperature: 1.0,

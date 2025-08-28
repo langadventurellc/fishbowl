@@ -7,16 +7,15 @@ import {
 } from "@fishbowl-ai/ui-shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
-import React, {
+import {
+  forwardRef,
   useCallback,
   useEffect,
-  useState,
   useImperativeHandle,
-  forwardRef,
+  useState,
 } from "react";
 import { useForm } from "react-hook-form";
 import { CharacterCounter, PersonalitySelect, RoleSelect } from "../";
-import { ModelSelect } from "./ModelSelect";
 import { useServices } from "../../../contexts";
 import { Button } from "../../ui/button";
 import {
@@ -29,6 +28,7 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
+import { ModelSelect } from "./ModelSelect";
 
 export interface AgentFormRef {
   resetToInitialData: () => void;
@@ -49,6 +49,7 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
           role: initialData.role || "",
           personality: initialData.personality || "",
           systemPrompt: initialData.systemPrompt || "",
+          llmConfigId: initialData.llmConfigId || "openai-config-1",
         };
       }
 
@@ -59,6 +60,7 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
         role: "",
         personality: "",
         systemPrompt: "",
+        llmConfigId: "openai-config-1",
       };
     }, [mode, initialData]);
 

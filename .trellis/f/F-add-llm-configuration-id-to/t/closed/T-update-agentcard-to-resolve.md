@@ -1,13 +1,35 @@
 ---
 id: T-update-agentcard-to-resolve
 title: Update AgentCard to resolve model display using dual-field lookup
-status: open
+status: done
 priority: medium
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-update-llmmodel-interface-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentCard.tsx:
+    Updated model lookup
+    logic to use dual-field pattern (configId + model) with fallback to
+    agent.model string
+  apps/desktop/src/components/settings/agents/__tests__/AgentCard.test.tsx:
+    Added comprehensive unit tests for dual-field lookup, fallback behavior, and
+    edge cases; updated mock data to include configId and configLabel fields
+  apps/desktop/src/components/modals/__tests__/AddAgentToConversationModal.test.tsx: Fixed test data to include required llmConfigId field
+  apps/desktop/src/components/settings/agents/__tests__/LibraryTab.test.tsx:
+    Updated mock models to include configId and configLabel fields; fixed agent
+    test data to use matching configIds
+  apps/desktop/src/components/settings/agents/AgentForm.tsx: Updated default
+    values to include proper llmConfigId for both create and edit modes
+  apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed test data to include required llmConfigId field
+  apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Fixed test data to include required llmConfigId field
+log:
+  - "Updated AgentCard component to use dual-field model lookup (llmConfigId +
+    model) with graceful fallback to the stored model string when lookup fails.
+    Implemented the exact pattern specified in requirements: models.find(m =>
+    m.configId === agent.llmConfigId && m.id === agent.model). Added
+    comprehensive test coverage for successful lookup, failed lookup fallback,
+    and missing llmConfigId scenarios. Fixed all related test files to include
+    proper llmConfigId values. All quality checks pass."
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:35:44.372Z

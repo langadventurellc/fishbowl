@@ -51,6 +51,7 @@ export function useConversationAgents(
         id: conversationAgent.agent_id,
         name: `Unknown Agent (${conversationAgent.agent_id.slice(0, 8)})`,
         model: "Unknown Model",
+        llmConfigId: "Unknown LLM Config",
         role: "Unknown Role",
         personality: "Unknown Personality",
         systemPrompt: "",

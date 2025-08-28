@@ -39,8 +39,14 @@ export const AgentCard: React.FC<AgentCardProps> = ({
 
   // Get display names
   const roleDisplayName = getRoleById(agent.role)?.name || agent.role;
-  const modelDisplayName =
-    models.find((m) => m.id === agent.model)?.name || agent.model;
+
+  // Find model using both configId and model id for accurate resolution
+  const resolvedModel = models.find(
+    (m) => m.configId === agent.llmConfigId && m.id === agent.model,
+  );
+
+  // Fallback to stored model string if not found
+  const modelDisplayName = resolvedModel?.name || agent.model;
 
   return (
     <Card

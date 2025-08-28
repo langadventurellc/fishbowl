@@ -22,6 +22,7 @@ const mockAgent: AgentCardType = {
   name: "Research Assistant",
   model: "gpt-4-turbo", // ID instead of display name
   role: "project-manager", // ID instead of display name
+  llmConfigId: "openai-config-1",
 };
 
 const defaultProps = {
@@ -35,18 +36,18 @@ const mockModels = [
   {
     id: "gpt-4-turbo",
     name: "GPT-4 Turbo",
-    provider: "OpenAI",
+    provider: "openai",
+    configId: "openai-config-1",
+    configLabel: "OpenAI",
     contextLength: 128000,
-    vision: true,
-    functionCalling: true,
   },
   {
     id: "claude-3-sonnet",
     name: "Claude 3 Sonnet",
-    provider: "Anthropic",
+    provider: "anthropic",
+    configId: "anthropic-config-1",
+    configLabel: "Anthropic",
     contextLength: 200000,
-    vision: true,
-    functionCalling: false,
   },
 ];
 
@@ -250,6 +251,7 @@ describe("AgentCard Component", () => {
         ...mockAgent,
         model: "claude-3-sonnet",
         role: "technical-advisor",
+        llmConfigId: "anthropic-config-1", // Update to match Claude model's configId
       };
 
       render(<AgentCard agent={differentAgent} />);
@@ -258,12 +260,51 @@ describe("AgentCard Component", () => {
       expect(screen.getByText("Technical Advisor")).toBeInTheDocument();
     });
 
+    it("resolves model display using dual-field lookup (configId + model)", () => {
+      const agentWithConfig = {
+        ...mockAgent,
+        model: "gpt-4-turbo",
+        llmConfigId: "openai-config-1",
+      };
+
+      render(<AgentCard agent={agentWithConfig} />);
+
+      // Should display resolved model name
+      expect(screen.getByText("GPT-4 Turbo")).toBeInTheDocument();
+    });
+
+    it("falls back to model string when lookup fails", () => {
+      const agentWithMissingModel = {
+        ...mockAgent,
+        model: "unknown-model",
+        llmConfigId: "unknown-config",
+      };
+
+      render(<AgentCard agent={agentWithMissingModel} />);
+
+      // Should display fallback model string
+      expect(screen.getByText("unknown-model")).toBeInTheDocument();
+    });
+
+    it("handles missing llmConfigId gracefully", () => {
+      const agentWithoutConfigId = {
+        ...mockAgent,
+        llmConfigId: "",
+      };
+
+      render(<AgentCard agent={agentWithoutConfigId} />);
+
+      // Should display fallback model string when configId is empty
+      expect(screen.getByText("gpt-4-turbo")).toBeInTheDocument();
+    });
+
     it("handles empty or minimal data gracefully", () => {
       const minimalAgent = {
         id: "minimal",
         name: "",
         model: "",
         role: "",
+        llmConfigId: "config-1",
       };
 
       expect(() => {
