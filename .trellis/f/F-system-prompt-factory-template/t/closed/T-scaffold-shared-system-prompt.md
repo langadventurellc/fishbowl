@@ -1,12 +1,31 @@
 ---
 id: T-scaffold-shared-system-prompt
 title: Scaffold shared system prompt module
-status: open
+status: done
 priority: medium
 parent: F-system-prompt-factory-template
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/prompts/system/SystemPromptFactory.ts: Created
+    SystemPromptFactory class with DI constructor accepting resolvers and
+    optional logger
+  packages/shared/src/prompts/system/SystemPromptResolvers.ts:
+    Created SystemPromptResolvers interface defining personality and role
+    resolver methods
+  packages/shared/src/prompts/system/systemPromptTypes.ts: Created
+    SystemPromptRenderData interface with all required template placeholder
+    fields
+  packages/shared/src/prompts/system/systemPromptRenderer.ts: Created renderSystemPrompt function stub for template token replacement
+  packages/shared/src/prompts/system/index.ts: Created barrel file exporting all module components
+  packages/shared/src/prompts/index.ts: Created prompts barrel file
+  packages/shared/src/index.ts: Added prompts export to main shared package barrel
+log:
+  - Successfully scaffolded the shared system prompt module with proper
+    structure. Created SystemPromptFactory class with DI constructor,
+    SystemPromptResolvers interface, SystemPromptRenderData type, and
+    renderSystemPrompt function. All files follow one-export-per-file convention
+    and use proper barrel exports. Quality checks pass and shared library builds
+    successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T00:23:29.544Z

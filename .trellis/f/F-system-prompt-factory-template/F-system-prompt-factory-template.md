@@ -21,14 +21,27 @@ affectedFiles:
     "Added comprehensive
     unit tests for shouldCopy helper covering all scenarios: missing dest, newer
     source, older source, same mtime, and error conditions"
+  packages/shared/src/prompts/system/SystemPromptFactory.ts: Created
+    SystemPromptFactory class with DI constructor accepting resolvers and
+    optional logger
+  packages/shared/src/prompts/system/SystemPromptResolvers.ts:
+    Created SystemPromptResolvers interface defining personality and role
+    resolver methods
+  packages/shared/src/prompts/system/systemPromptTypes.ts: Created
+    SystemPromptRenderData interface with all required template placeholder
+    fields
+  packages/shared/src/prompts/system/systemPromptRenderer.ts: Created renderSystemPrompt function stub for template token replacement
+  packages/shared/src/prompts/system/index.ts: Created barrel file exporting all module components
+  packages/shared/src/prompts/index.ts: Created prompts barrel file
+  packages/shared/src/index.ts: Added prompts export to main shared package barrel
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-electron-startup
   - T-docs-usage-guidance-and
   - T-implement-systempromptfactory
   - T-implement-template-renderer
   - T-scaffold-shared-system-prompt
+  - T-add-electron-startup
   - T-author-desktop-system-prompt
   - T-include-template-in-packaged
 created: 2025-08-28T00:04:12.070Z
