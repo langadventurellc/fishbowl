@@ -242,6 +242,7 @@ describe("useAgentsStore", () => {
       role: "test-role-id",
       personality: "test-personality-id",
       systemPrompt: "You are a helpful test agent.",
+      llmConfigId: "test-config-id",
     };
 
     describe("createAgent", () => {

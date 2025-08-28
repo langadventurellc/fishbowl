@@ -1,13 +1,48 @@
 ---
 id: T-update-agent-mapping
 title: Update agent mapping functions to handle llmConfigId
-status: open
+status: done
 priority: medium
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-add-llmconfigid-to-ui-schema
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/mapping/agents/mapSingleAgentUIToPersistence.ts:
+    Added llmConfigId field to mapping function to preserve the field during UI
+    to persistence transformation
+  packages/ui-shared/src/mapping/agents/mapSingleAgentPersistenceToUI.ts:
+    Added llmConfigId field to mapping function to preserve the field during
+    persistence to UI transformation
+  packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
+    Made llmConfigId field required by removing .optional() from schema
+    definition
+  packages/ui-shared/src/schemas/agentSchema.ts: Made llmConfigId field required
+    by removing .optional() from schema definition
+  packages/ui-shared/src/types/settings/AgentCard.ts:
+    Updated AgentCard interface
+    to make llmConfigId field required (removed ? optional marker)
+  packages/shared/src/prompts/system/__tests__/SystemPromptFactory.test.ts: Updated test data to include required llmConfigId field for all mock agents
+  packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
+    Updated multiple test cases to include required llmConfigId field and fixed
+    test that expected field to be optional
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts: Added llmConfigId field to all test agent data
+  packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
+    Added llmConfigId field to test data and updated round-trip validation to
+    check llmConfigId preservation
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Added llmConfigId field to test data and updated expected results
+  packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
+    Updated multiple test cases to include required llmConfigId field for all
+    valid test scenarios and converted optional test to expect validation
+    failure
+  packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts: Updated test agent data to include required llmConfigId field
+log:
+  - Successfully updated all agent mapping functions to handle llmConfigId and
+    completed the gradual migration by making llmConfigId required in both
+    schemas. All mappers now preserve llmConfigId during round-trip operations,
+    ensuring data integrity. Updated extensive test coverage to include required
+    llmConfigId field throughout the codebase. Both persistence and UI schemas
+    now require llmConfigId, UI types have been updated to remove optional
+    markers, and all quality checks pass with zero errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:34:45.332Z

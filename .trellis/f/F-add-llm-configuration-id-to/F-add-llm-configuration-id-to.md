@@ -7,24 +7,31 @@ prerequisites: []
 affectedFiles:
   packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
     Added optional llmConfigId field to persistedAgentSchema with proper
-    validation (non-empty string when present)
+    validation (non-empty string when present); Made llmConfigId field required
+    by removing .optional() from schema definition
   packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
     Added comprehensive tests for optional llmConfigId field covering valid
-    values, missing values, empty strings, and invalid types
+    values, missing values, empty strings, and invalid types; Updated multiple
+    test cases to include required llmConfigId field and fixed test that
+    expected field to be optional
   packages/ui-shared/src/schemas/agentSchema.ts:
     Added optional llmConfigId field
     to agentSchema with proper validation (non-empty string when present)
     including whitespace trimming and helpful comments about gradual migration
-    strategy
+    strategy; Made llmConfigId field required by removing .optional() from
+    schema definition
   packages/ui-shared/src/types/settings/AgentCard.ts: Added optional llmConfigId
-    property to AgentCard interface for display purposes
+    property to AgentCard interface for display purposes; Updated AgentCard
+    interface to make llmConfigId field required (removed ? optional marker)
   packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts:
     Updated normalizeAgentFields function to handle optional llmConfigId field
     with proper trimming and updated documentation
   packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
     Added comprehensive tests for optional llmConfigId field covering
     validation, type inference, invalid data cases including whitespace-only
-    strings, and integration with AgentFormData type
+    strings, and integration with AgentFormData type; Updated multiple test
+    cases to include required llmConfigId field for all valid test scenarios and
+    converted optional test to expect validation failure
   packages/ui-shared/src/types/settings/LlmModel.ts: Added configId and
     configLabel fields to LlmModel interface with proper JSDoc documentation
   apps/desktop/src/hooks/useLlmModels.ts: Updated hook to populate configId from
@@ -35,6 +42,19 @@ affectedFiles:
     tests for new configId and configLabel functionality, including tests for
     multiple configurations, display labels, canonical provider handling, and
     error scenarios
+  packages/ui-shared/src/mapping/agents/mapSingleAgentUIToPersistence.ts:
+    Added llmConfigId field to mapping function to preserve the field during UI
+    to persistence transformation
+  packages/ui-shared/src/mapping/agents/mapSingleAgentPersistenceToUI.ts:
+    Added llmConfigId field to mapping function to preserve the field during
+    persistence to UI transformation
+  packages/shared/src/prompts/system/__tests__/SystemPromptFactory.test.ts: Updated test data to include required llmConfigId field for all mock agents
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsUIToPersistence.test.ts: Added llmConfigId field to all test agent data
+  packages/ui-shared/src/mapping/agents/__tests__/roundTripMapping.test.ts:
+    Added llmConfigId field to test data and updated round-trip validation to
+    check llmConfigId preservation
+  packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Added llmConfigId field to test data and updated expected results
+  packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts: Updated test agent data to include required llmConfigId field
 log: []
 schema: v1.0
 childrenIds:
@@ -42,11 +62,11 @@ childrenIds:
   - T-update-agent-mapping
   - T-update-agentcard-to-resolve
   - T-update-agentform-to-handle
-  - T-update-llmmodel-interface-and
   - T-update-modelselect-component
   - T-update-useagentsstore-to
   - T-add-llmconfigid-to-shared
   - T-add-llmconfigid-to-ui-schema
+  - T-update-llmmodel-interface-and
 created: 2025-08-28T18:00:35.321Z
 updated: 2025-08-28T18:00:35.321Z
 ---

@@ -7,8 +7,8 @@
  * @module schemas/__tests__/agentSchema.test
  */
 
-import { agentSchema } from "../agentSchema";
 import type { AgentFormData } from "../../types/settings/AgentFormData";
+import { agentSchema } from "../agentSchema";
 
 describe("agentSchema", () => {
   describe("valid data", () => {
@@ -16,6 +16,7 @@ describe("agentSchema", () => {
       const validData = {
         name: "AI Assistant",
         model: "Claude 3.5 Sonnet",
+        llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
         systemPrompt: "You are a helpful assistant.",
@@ -33,6 +34,7 @@ describe("agentSchema", () => {
       const validData = {
         name: "Simple Agent",
         model: "GPT-4",
+        llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
         temperature: 0.7,
@@ -71,30 +73,24 @@ describe("agentSchema", () => {
       }
     });
 
-    it("should validate agent data without optional llmConfigId", () => {
-      const validData = {
+    it("should fail validation when llmConfigId is missing (required field)", () => {
+      const invalidData = {
         name: "Simple Agent",
         model: "GPT-4",
         role: "role-id",
         personality: "personality-id",
       };
 
-      const result = agentSchema.safeParse(validData);
+      const result = agentSchema.safeParse(invalidData);
 
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.name).toBe(validData.name);
-        expect(result.data.model).toBe(validData.model);
-        expect(result.data.role).toBe(validData.role);
-        expect(result.data.personality).toBe(validData.personality);
-        expect(result.data.llmConfigId).toBeUndefined();
-      }
+      expect(result.success).toBe(false);
     });
 
     it("should accept name with valid characters", () => {
       const validData = {
         name: "AI-Assistant_v2 Agent",
         model: "Claude",
+        llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
         systemPrompt: "Test system prompt",
@@ -109,6 +105,7 @@ describe("agentSchema", () => {
       const validData = {
         name: "A".repeat(100),
         model: "Claude",
+        llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
         systemPrompt: "Test system prompt",
@@ -123,6 +120,7 @@ describe("agentSchema", () => {
       const validData = {
         name: "Valid Name",
         model: "Claude",
+        llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
         systemPrompt: "A".repeat(5000),
@@ -137,6 +135,7 @@ describe("agentSchema", () => {
       const validData = {
         name: "Ab", // minimum length
         model: "Claude",
+        llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
         temperature: 0, // minimum
@@ -153,6 +152,7 @@ describe("agentSchema", () => {
       const validData = {
         name: "A".repeat(100), // maximum length
         model: "Claude",
+        llmConfigId: "test-config-id",
         role: "role-id",
         personality: "personality-id",
         temperature: 2, // maximum
@@ -411,6 +411,7 @@ describe("agentSchema", () => {
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
+        llmConfigId: "test-config-id",
       };
 
       const result2 = agentSchema.safeParse(agentFormDataMinimal);

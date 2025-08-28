@@ -40,7 +40,7 @@ export function normalizeAgentFields(agent: {
   role: string;
   personality: string;
   systemPrompt?: string | null;
-  llmConfigId?: string;
+  llmConfigId: string;
 }): {
   id: string;
   name: string;
@@ -48,7 +48,7 @@ export function normalizeAgentFields(agent: {
   role: string;
   personality: string;
   systemPrompt?: string;
-  llmConfigId?: string;
+  llmConfigId: string;
 } {
   return {
     id: agent.id?.trim() || "",
@@ -59,6 +59,6 @@ export function normalizeAgentFields(agent: {
     systemPrompt: agent.systemPrompt?.trim()
       ? clampString(agent.systemPrompt.trim(), 0, 5000)
       : undefined,
-    llmConfigId: agent.llmConfigId?.trim() || undefined,
+    llmConfigId: agent.llmConfigId?.trim() || "",
   };
 }

@@ -46,6 +46,7 @@ export function mapSingleAgentPersistenceToUI(
     id: normalizedFields.id,
     name: normalizedFields.name,
     model: normalizedFields.model,
+    llmConfigId: normalizedFields.llmConfigId,
     role: normalizedFields.role,
     personality: normalizedFields.personality,
     systemPrompt: normalizedFields.systemPrompt,

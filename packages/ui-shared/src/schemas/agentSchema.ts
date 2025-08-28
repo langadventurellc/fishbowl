@@ -25,8 +25,7 @@ export const agentSchema = z.object({
     .refine(
       (val) => val.trim().length > 0,
       "LLM Configuration ID cannot be only whitespace",
-    )
-    .optional(), // Will be made required in later task after mappers updated
+    ),
   role: z.string().min(1, "Role is required"),
   personality: z.string().min(1, "Personality is required"),
   systemPrompt: z

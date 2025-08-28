@@ -20,6 +20,7 @@ describe("persistedAgentsSettingsSchema", () => {
           id: "test-id",
           name: "Test Agent",
           model: "Claude 3.5 Sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           systemPrompt: "Test prompt",
@@ -42,6 +43,7 @@ describe("persistedAgentsSettingsSchema", () => {
           id: "test-id",
           name: "Test Agent",
           model: "Claude 3.5 Sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           // systemPrompt is optional
@@ -84,6 +86,7 @@ describe("persistedAgentsSettingsSchema", () => {
           id: "test-id",
           name: "", // Empty name should fail
           model: "Claude 3.5 Sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           createdAt: new Date().toISOString(),
@@ -106,6 +109,7 @@ describe("persistedAgentsSettingsSchema", () => {
           id: "test-id",
           name: "Test Agent",
           model: "Claude 3.5 Sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           systemPrompt: longPrompt,
@@ -128,6 +132,7 @@ describe("persistedAgentsSettingsSchema", () => {
           id: "test-id",
           name: "Test Agent",
           model: "Claude 3.5 Sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           personalityBehaviors: {
@@ -160,6 +165,7 @@ describe("persistedAgentsSettingsSchema", () => {
           id: "test-id",
           name: "Test Agent",
           model: "Claude 3.5 Sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           // personalityBehaviors is optional
@@ -255,6 +261,7 @@ describe("persistedAgentSchema", () => {
       id: "test-id",
       name: "Test Agent",
       model: "Claude 3.5 Sonnet",
+      llmConfigId: "test-config-id",
       role: "role-id",
       personality: "personality-id",
       personalityBehaviors: {
@@ -277,6 +284,7 @@ describe("persistedAgentSchema", () => {
       id: "test-id",
       name: "Test Agent",
       model: "Claude 3.5 Sonnet",
+      llmConfigId: "test-config-id",
       role: "role-id",
       personality: "personality-id",
       temperature: 0.7, // Should not be present
@@ -317,20 +325,20 @@ it("should validate agent with valid llmConfigId", () => {
   expect(result.success).toBe(true);
 });
 
-it("should validate agent without llmConfigId (optional field)", () => {
-  const validAgent = {
+it("should fail validation when llmConfigId is missing (required field)", () => {
+  const invalidAgent = {
     id: "test-id",
     name: "Test Agent",
     model: "Claude 3.5 Sonnet",
-    // llmConfigId is optional
+    // llmConfigId is now required
     role: "role-id",
     personality: "personality-id",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
 
-  const result = persistedAgentSchema.safeParse(validAgent);
-  expect(result.success).toBe(true);
+  const result = persistedAgentSchema.safeParse(invalidAgent);
+  expect(result.success).toBe(false);
 });
 
 it("should fail validation for empty llmConfigId", () => {
