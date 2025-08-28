@@ -52,6 +52,45 @@ describe("agentSchema", () => {
       }
     });
 
+    it("should validate agent data with optional llmConfigId", () => {
+      const validData = {
+        name: "AI Assistant",
+        model: "Claude 3.5 Sonnet",
+        llmConfigId: "config-123",
+        role: "role-id",
+        personality: "personality-id",
+        systemPrompt: "You are a helpful assistant.",
+      };
+
+      const result = agentSchema.safeParse(validData);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data).toEqual(validData);
+        expect(result.data.llmConfigId).toBe("config-123");
+      }
+    });
+
+    it("should validate agent data without optional llmConfigId", () => {
+      const validData = {
+        name: "Simple Agent",
+        model: "GPT-4",
+        role: "role-id",
+        personality: "personality-id",
+      };
+
+      const result = agentSchema.safeParse(validData);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.name).toBe(validData.name);
+        expect(result.data.model).toBe(validData.model);
+        expect(result.data.role).toBe(validData.role);
+        expect(result.data.personality).toBe(validData.personality);
+        expect(result.data.llmConfigId).toBeUndefined();
+      }
+    });
+
     it("should accept name with valid characters", () => {
       const validData = {
         name: "AI-Assistant_v2 Agent",
@@ -281,6 +320,45 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(invalidData);
       expect(result.success).toBe(false);
     });
+
+    it("should reject empty llmConfigId", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        llmConfigId: "",
+        role: "role-id",
+        personality: "personality-id",
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject llmConfigId with only whitespace", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        llmConfigId: "   ",
+        role: "role-id",
+        personality: "personality-id",
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject non-string llmConfigId", () => {
+      const invalidData = {
+        name: "Valid Name",
+        model: "Claude",
+        llmConfigId: 123,
+        role: "role-id",
+        personality: "personality-id",
+      };
+
+      const result = agentSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+    });
   });
 
   describe("type inference", () => {
@@ -288,6 +366,7 @@ describe("agentSchema", () => {
       const validData = {
         name: "Test Agent",
         model: "Claude",
+        llmConfigId: "config-456",
         role: "role-id",
         personality: "personality-id",
         systemPrompt: "Test prompt",
@@ -299,12 +378,14 @@ describe("agentSchema", () => {
         // These should compile without TypeScript errors
         const name: string = result.data.name;
         const model: string = result.data.model;
+        const llmConfigId: string | undefined = result.data.llmConfigId;
         const role: string = result.data.role;
         const personality: string = result.data.personality;
         const systemPrompt: string | undefined = result.data.systemPrompt;
 
         expect(name).toBe(validData.name);
         expect(model).toBe(validData.model);
+        expect(llmConfigId).toBe(validData.llmConfigId);
         expect(role).toBe(validData.role);
         expect(personality).toBe(validData.personality);
         expect(systemPrompt).toBe(validData.systemPrompt);
@@ -315,6 +396,7 @@ describe("agentSchema", () => {
       const agentFormData: AgentFormData = {
         name: "Test Agent",
         model: "Claude",
+        llmConfigId: "config-789",
         role: "role-id",
         personality: "personality-id",
         systemPrompt: "Test prompt",
@@ -323,15 +405,15 @@ describe("agentSchema", () => {
       const result = agentSchema.safeParse(agentFormData);
       expect(result.success).toBe(true);
 
-      // Test without systemPrompt
-      const agentFormDataWithoutPrompt: AgentFormData = {
+      // Test without optional fields
+      const agentFormDataMinimal: AgentFormData = {
         name: "Test Agent",
         model: "Claude",
         role: "role-id",
         personality: "personality-id",
       };
 
-      const result2 = agentSchema.safeParse(agentFormDataWithoutPrompt);
+      const result2 = agentSchema.safeParse(agentFormDataMinimal);
       expect(result2.success).toBe(true);
     });
   });

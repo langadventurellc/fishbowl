@@ -9,4 +9,5 @@ export interface AgentCard {
   name: string;
   model: string;
   role: string;
+  llmConfigId?: string;
 }

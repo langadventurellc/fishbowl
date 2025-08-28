@@ -1,13 +1,35 @@
 ---
 id: T-add-llmconfigid-to-ui-schema
 title: Add llmConfigId to UI schema and types
-status: open
+status: done
 priority: high
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-add-llmconfigid-to-shared
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/schemas/agentSchema.ts:
+    Added optional llmConfigId field
+    to agentSchema with proper validation (non-empty string when present)
+    including whitespace trimming and helpful comments about gradual migration
+    strategy
+  packages/ui-shared/src/types/settings/AgentCard.ts: Added optional llmConfigId
+    property to AgentCard interface for display purposes
+  packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts:
+    Updated normalizeAgentFields function to handle optional llmConfigId field
+    with proper trimming and updated documentation
+  packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
+    Added comprehensive tests for optional llmConfigId field covering
+    validation, type inference, invalid data cases including whitespace-only
+    strings, and integration with AgentFormData type
+log:
+  - Successfully implemented optional llmConfigId field in UI schema and types
+    following the gradual migration strategy. Added comprehensive validation
+    with Zod schema including whitespace trimming, updated all necessary type
+    definitions, implemented normalization logic, and added extensive test
+    coverage. Fixed validation edge case for whitespace-only strings. All
+    quality checks and tests pass and shared packages have been rebuilt. The
+    implementation is backward compatible - existing code continues working
+    while new functionality is properly validated.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:34:09.695Z

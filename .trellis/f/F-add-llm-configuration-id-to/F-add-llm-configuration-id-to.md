@@ -11,10 +11,23 @@ affectedFiles:
   packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
     Added comprehensive tests for optional llmConfigId field covering valid
     values, missing values, empty strings, and invalid types
+  packages/ui-shared/src/schemas/agentSchema.ts:
+    Added optional llmConfigId field
+    to agentSchema with proper validation (non-empty string when present)
+    including whitespace trimming and helpful comments about gradual migration
+    strategy
+  packages/ui-shared/src/types/settings/AgentCard.ts: Added optional llmConfigId
+    property to AgentCard interface for display purposes
+  packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts:
+    Updated normalizeAgentFields function to handle optional llmConfigId field
+    with proper trimming and updated documentation
+  packages/ui-shared/src/schemas/__tests__/agentSchema.test.ts:
+    Added comprehensive tests for optional llmConfigId field covering
+    validation, type inference, invalid data cases including whitespace-only
+    strings, and integration with AgentFormData type
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-llmconfigid-to-shared
   - T-add-llmconfigid-to-ui-schema
   - T-fix-model-defaults-and
   - T-update-agent-mapping
@@ -23,6 +36,7 @@ childrenIds:
   - T-update-llmmodel-interface-and
   - T-update-modelselect-component
   - T-update-useagentsstore-to
+  - T-add-llmconfigid-to-shared
 created: 2025-08-28T18:00:35.321Z
 updated: 2025-08-28T18:00:35.321Z
 ---
