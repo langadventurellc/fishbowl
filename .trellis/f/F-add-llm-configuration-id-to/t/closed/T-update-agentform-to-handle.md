@@ -1,14 +1,27 @@
 ---
 id: T-update-agentform-to-handle
 title: Update AgentForm to handle composite model selection and split values
-status: open
+status: done
 priority: medium
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-update-modelselect-component
   - T-add-llmconfigid-to-ui-schema
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentForm.tsx:
+    Added parseComposite
+    and buildComposite utilities, implemented selectedComposite state
+    management, added handleModelChange callback to split composite values into
+    llmConfigId and model form fields, updated ModelSelect integration to use
+    composite values, added hidden FormField for llmConfigId validation,
+    enhanced reset and save operations to maintain composite state
+log:
+  - Updated AgentForm to handle composite model selection values by adding local
+    state management and value splitting. The form now correctly manages the
+    composite value from ModelSelect (configId:modelId format) and splits it
+    into separate llmConfigId and model fields for form validation. All
+    initialization scenarios (create/edit modes) and reset operations properly
+    maintain composite state synchronization.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:35:22.763Z

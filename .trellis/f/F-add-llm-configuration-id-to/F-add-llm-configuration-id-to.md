@@ -67,7 +67,12 @@ affectedFiles:
     Updated mock models to include configId and configLabel fields; fixed agent
     test data to use matching configIds
   apps/desktop/src/components/settings/agents/AgentForm.tsx: Updated default
-    values to include proper llmConfigId for both create and edit modes
+    values to include proper llmConfigId for both create and edit modes; Added
+    parseComposite and buildComposite utilities, implemented selectedComposite
+    state management, added handleModelChange callback to split composite values
+    into llmConfigId and model form fields, updated ModelSelect integration to
+    use composite values, added hidden FormField for llmConfigId validation,
+    enhanced reset and save operations to maintain composite state
   apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: Fixed test data to include required llmConfigId field
   apps/desktop/src/electron/__tests__/agentsHandlers.test.ts: Fixed test data to include required llmConfigId field
   apps/desktop/src/components/settings/agents/ModelSelect.tsx:
@@ -83,13 +88,13 @@ schema: v1.0
 childrenIds:
   - T-fix-model-defaults-and
   - T-update-agentform-to-handle
-  - T-update-modelselect-component
   - T-update-useagentsstore-to
   - T-add-llmconfigid-to-shared
   - T-add-llmconfigid-to-ui-schema
   - T-update-agent-mapping
   - T-update-agentcard-to-resolve
   - T-update-llmmodel-interface-and
+  - T-update-modelselect-component
 created: 2025-08-28T18:00:35.321Z
 updated: 2025-08-28T18:00:35.321Z
 ---

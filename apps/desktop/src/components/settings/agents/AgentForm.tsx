@@ -30,6 +30,22 @@ import { Input } from "../../ui/input";
 import { Textarea } from "../../ui/textarea";
 import { ModelSelect } from "./ModelSelect";
 
+const buildComposite = (configId: string, modelId: string): string =>
+  `${configId}:${modelId}`;
+
+const parseComposite = (
+  composite: string,
+): { llmConfigId: string; model: string } | null => {
+  if (!composite || !composite.includes(":")) {
+    return null;
+  }
+  const [llmConfigId, model] = composite.split(":", 2);
+  if (!llmConfigId || !model) {
+    return null;
+  }
+  return { llmConfigId, model };
+};
+
 export interface AgentFormRef {
   resetToInitialData: () => void;
 }
@@ -39,6 +55,7 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
     const { logger } = useServices();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const { setUnsavedChanges } = useUnsavedChanges();
+    const [selectedComposite, setSelectedComposite] = useState<string>("");
 
     const getDefaultValues = useCallback((): AgentFormData => {
       if (mode === "edit" && initialData) {
@@ -70,10 +87,38 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
       mode: "onChange",
     });
 
+    // Initialize composite state
+    useEffect(() => {
+      if (mode === "edit" && initialData?.llmConfigId && initialData?.model) {
+        setSelectedComposite(
+          buildComposite(initialData.llmConfigId, initialData.model),
+        );
+      } else {
+        setSelectedComposite("");
+      }
+    }, [mode, initialData]);
+
+    // Handle model selection with composite value splitting
+    const handleModelChange = useCallback(
+      (compositeValue: string) => {
+        setSelectedComposite(compositeValue);
+
+        const parsed = parseComposite(compositeValue);
+        if (parsed) {
+          form.setValue("llmConfigId", parsed.llmConfigId, {
+            shouldValidate: true,
+          });
+          form.setValue("model", parsed.model, { shouldValidate: true });
+        }
+      },
+      [form],
+    );
+
     // Update form when mode changes (for create mode)
     useEffect(() => {
       if (mode === "create") {
         form.reset(getDefaultValues());
+        setSelectedComposite("");
       }
     }, [mode, form, getDefaultValues]);
 
@@ -87,11 +132,25 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
       ref,
       () => ({
         resetToInitialData: () => {
-          form.reset(getDefaultValues());
+          const defaultValues = getDefaultValues();
+          form.reset(defaultValues);
           setUnsavedChanges(false);
+
+          // Reset composite state
+          if (
+            mode === "edit" &&
+            initialData?.llmConfigId &&
+            initialData?.model
+          ) {
+            setSelectedComposite(
+              buildComposite(initialData.llmConfigId, initialData.model),
+            );
+          } else {
+            setSelectedComposite("");
+          }
         },
       }),
-      [form, getDefaultValues, setUnsavedChanges],
+      [form, getDefaultValues, setUnsavedChanges, mode, initialData],
     );
 
     const handleSave = useCallback(
@@ -106,6 +165,11 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
             keepErrors: false,
           });
           setUnsavedChanges(false);
+
+          // Update composite state with the saved data
+          if (data.llmConfigId && data.model) {
+            setSelectedComposite(buildComposite(data.llmConfigId, data.model));
+          }
         } catch (error) {
           logger.error("Failed to save agent", error as Error);
         } finally {
@@ -131,7 +195,7 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
               <FormField
                 control={form.control}
                 name="model"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel htmlFor="agent-model">
                       Model
@@ -141,11 +205,22 @@ export const AgentForm = forwardRef<AgentFormRef, AgentFormProps>(
                     </FormLabel>
                     <FormControl>
                       <ModelSelect
-                        value={field.value}
-                        onChange={field.onChange}
+                        value={selectedComposite}
+                        onChange={handleModelChange}
                         disabled={isSubmitting || isLoading}
                       />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Hidden LLM Config ID Field for validation */}
+              <FormField
+                control={form.control}
+                name="llmConfigId"
+                render={() => (
+                  <FormItem className="hidden">
                     <FormMessage />
                   </FormItem>
                 )}
