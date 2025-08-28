@@ -17,7 +17,9 @@ Personality Profile: {{personalityName}}
 
 {{behaviors}}
 
-Agent: {{agentName}}`;
+Agent: {{agentName}}
+
+{{participants}}`;
 
   const mockPersonality: PersistedPersonalityData = {
     id: "test-personality",
@@ -243,6 +245,74 @@ Agent: {{agentName}}`;
       expect(result).toBeTruthy();
       expect(result.length).toBeGreaterThan(0);
       expect(result).not.toContain("{{");
+    });
+
+    test("includes participants when provided", async () => {
+      const resolvers = createMockResolvers();
+      const factory = new SystemPromptFactory(resolvers, mockTemplate);
+
+      const participants: PersistedAgentData[] = [
+        {
+          id: "participant-1",
+          name: "Alice",
+          model: "claude-3-sonnet",
+          role: "test-role",
+          personality: "test-personality",
+          createdAt: "2023-01-01T00:00:00Z",
+          updatedAt: "2023-01-01T00:00:00Z",
+        },
+        {
+          id: "participant-2",
+          name: "Bob",
+          model: "claude-3-sonnet",
+          role: "test-role",
+          personality: "test-personality",
+          createdAt: "2023-01-01T00:00:00Z",
+          updatedAt: "2023-01-01T00:00:00Z",
+        },
+      ];
+
+      const result = await factory.createSystemPrompt(mockAgent, participants);
+
+      expect(result).toContain(
+        "You are in a conversation with multiple participants:",
+      );
+      expect(result).toContain("- Alice: test-role");
+      expect(result).toContain("- Bob: test-role");
+      expect(result).toContain(
+        "When you see messages prefixed with [ParticipantName]: that indicates who is speaking.",
+      );
+      expect(result).toContain(
+        "Respond naturally as Claude based on your configured personality and role.",
+      );
+    });
+
+    test("handles empty participants array", async () => {
+      const resolvers = createMockResolvers();
+      const factory = new SystemPromptFactory(resolvers, mockTemplate);
+
+      const result = await factory.createSystemPrompt(mockAgent, []);
+
+      expect(result).not.toContain(
+        "You are in a conversation with multiple participants:",
+      );
+      expect(result).not.toContain(
+        "When you see messages prefixed with [ParticipantName]:",
+      );
+    });
+
+    test("handles no participants parameter", async () => {
+      const resolvers = createMockResolvers();
+      const factory = new SystemPromptFactory(resolvers, mockTemplate);
+
+      const result = await factory.createSystemPrompt(mockAgent);
+
+      expect(result).not.toContain(
+        "You are in a conversation with multiple participants:",
+      );
+      expect(result).not.toContain(
+        "When you see messages prefixed with [ParticipantName]:",
+      );
     });
   });
 });

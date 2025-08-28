@@ -16,6 +16,7 @@ export function renderSystemPrompt(
     "{{roleSystemPrompt}}": data.roleSystemPrompt,
     "{{personalityName}}": data.personalityName,
     "{{personalityCustomInstructions}}": data.personalityCustomInstructions,
+    "{{participants}}": data.participants,
   };
 
   // Replace all simple tokens

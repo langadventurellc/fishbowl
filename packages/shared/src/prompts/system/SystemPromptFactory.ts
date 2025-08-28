@@ -21,7 +21,10 @@ export class SystemPromptFactory {
       });
   }
 
-  async createSystemPrompt(agent: PersistedAgentData): Promise<string> {
+  async createSystemPrompt(
+    agent: PersistedAgentData,
+    participants: PersistedAgentData[] = [],
+  ): Promise<string> {
     this.logger.info("Creating system prompt for agent", { agentId: agent.id });
 
     // Validate inputs
@@ -44,6 +47,16 @@ export class SystemPromptFactory {
       agentOverrides: agent.personalityBehaviors,
     };
 
+    // Build participants string
+    const participantsString =
+      participants.length > 0
+        ? `You are in a conversation with multiple participants:
+${participants.map((p) => `- ${p.name}: ${p.role}`).join("\n")}
+
+When you see messages prefixed with [ParticipantName]: that indicates who is speaking.
+Respond naturally as ${agent.name} based on your configured personality and role.`
+        : "";
+
     // Build render data
     const renderData: SystemPromptRenderData = {
       agentSystemPrompt: agent.systemPrompt,
@@ -54,6 +67,7 @@ export class SystemPromptFactory {
       personalityName: personality.name,
       personalityCustomInstructions: personality.customInstructions || "",
       behaviors,
+      participants: participantsString,
     };
 
     // Render the system prompt

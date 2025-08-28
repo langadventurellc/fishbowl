@@ -9,4 +9,5 @@ export interface SystemPromptRenderData {
   personalityName: string;
   personalityCustomInstructions: string;
   behaviors: BehaviorRenderData;
+  participants: string;
 }

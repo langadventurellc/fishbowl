@@ -13,7 +13,9 @@ Personality Profile: {{personalityName}}
 
 {{personalityCustomInstructions}}
 
-{{behaviors}}`;
+{{behaviors}}
+
+{{participants}}`;
 
   const createBasicData = (): SystemPromptRenderData => ({
     agentSystemPrompt: "You are an AI assistant",
@@ -30,6 +32,7 @@ Personality Profile: {{personalityName}}
       },
       agentOverrides: {},
     },
+    participants: "",
   });
 
   describe("token replacement", () => {
@@ -283,6 +286,7 @@ Integrate all the above traits naturally in your responses.`;
             formality: 40,
           },
         },
+        participants: "",
       };
 
       const result = renderSystemPrompt(realTemplate, data);
@@ -304,6 +308,71 @@ Integrate all the above traits naturally in your responses.`;
       expect(result).toContain("Integrate all the above traits naturally");
       expect(result).not.toContain("{{");
       expect(result).not.toContain("}}");
+    });
+  });
+
+  describe("participants token", () => {
+    test("replaces participants token with provided content", () => {
+      const template = "Agent info\n\n{{participants}}";
+      const data = createBasicData();
+      data.participants =
+        "You are in a conversation with multiple participants:\n- Alice: researcher\n- Bob: analyst";
+
+      const result = renderSystemPrompt(template, data);
+
+      expect(result).toContain(
+        "You are in a conversation with multiple participants:",
+      );
+      expect(result).toContain("- Alice: researcher");
+      expect(result).toContain("- Bob: analyst");
+      expect(result).not.toContain("{{participants}}");
+    });
+
+    test("replaces empty participants token", () => {
+      const template = "Agent info\n\n{{participants}}\n\nEnd";
+      const data = createBasicData();
+      data.participants = "";
+
+      const result = renderSystemPrompt(template, data);
+
+      expect(result).not.toContain("{{participants}}");
+      expect(result).toContain("Agent info");
+      expect(result).toContain("End");
+      // Should not have extra blank lines where participants was empty
+      expect(result).not.toMatch(/\n\s*\n\s*\n\s*End/);
+    });
+
+    test("handles participants token in complex template", () => {
+      const complexTemplate = `{{agentSystemPrompt}}
+
+Core Role: {{roleName}}
+{{roleSystemPrompt}}
+
+{{participants}}
+
+Additional instructions here.`;
+
+      const data = createBasicData();
+      data.participants = "Multi-agent conversation context here.";
+
+      const result = renderSystemPrompt(complexTemplate, data);
+
+      expect(result).toContain("Multi-agent conversation context here.");
+      expect(result).toContain("You are an AI assistant");
+      expect(result).toContain("Core Role: Assistant");
+      expect(result).toContain("Additional instructions here.");
+      expect(result).not.toContain("{{");
+    });
+
+    test("handles multiple participants tokens in template", () => {
+      const template = "Start {{participants}} Middle {{participants}} End";
+      const data = createBasicData();
+      data.participants = "PARTICIPANT_INFO";
+
+      const result = renderSystemPrompt(template, data);
+
+      expect(result).toBe("Start PARTICIPANT_INFO Middle PARTICIPANT_INFO End");
+      expect(result).not.toContain("{{participants}}");
     });
   });
 });
