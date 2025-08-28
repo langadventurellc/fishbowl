@@ -1,12 +1,28 @@
 ---
 id: T-create-messages-table
 title: Create messages table migration and update conversation_agents schema
-status: open
+status: done
 priority: high
 parent: F-chat-system-data-foundation
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  migrations/003_create_messages.sql: Created new migration file implementing
+    messages table schema with all 7 required columns (id, conversation_id,
+    conversation_agent_id, role, content, included, created_at), proper foreign
+    key constraints (CASCADE DELETE for conversations, SET NULL for
+    conversation_agents), composite index for efficient message retrieval, and
+    added enabled column to conversation_agents table for participation control
+log:
+  - Successfully implemented messages table migration and conversation_agents
+    schema update. Created 003_create_messages.sql with comprehensive messaging
+    infrastructure including proper foreign key relationships, composite
+    indexing for optimal query performance, and conversation agent participation
+    control. The migration follows all established patterns from existing
+    migrations (idempotent SQL, house-style index naming, comprehensive
+    comments) and passes all quality checks. Key features include CASCADE DELETE
+    for conversation messages, SET NULL for agent references to preserve message
+    history, and efficient retrieval indexing on (conversation_id, created_at)
+    for chat UI performance.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T03:47:09.037Z

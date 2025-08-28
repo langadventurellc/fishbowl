@@ -1,13 +1,22 @@
 ---
 id: F-chat-system-data-foundation
 title: Chat System Data Foundation
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  migrations/003_create_messages.sql: Created new migration file implementing
+    messages table schema with all 7 required columns (id, conversation_id,
+    conversation_agent_id, role, content, included, created_at), proper foreign
+    key constraints (CASCADE DELETE for conversations, SET NULL for
+    conversation_agents), composite index for efficient message retrieval, and
+    added enabled column to conversation_agents table for participation control
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-messages-table
+  - T-implement-message-typescript
+  - T-implement-messagerepository
 created: 2025-08-28T03:19:44.215Z
 updated: 2025-08-28T03:19:44.215Z
 ---
