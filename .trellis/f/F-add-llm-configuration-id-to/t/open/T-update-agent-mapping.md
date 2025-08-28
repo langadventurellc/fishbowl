@@ -18,83 +18,148 @@ updated: 2025-08-28T18:34:45.332Z
 
 ## Context
 
-Update all agent mapping functions to pass through the `llmConfigId` field between UI and persistence layers, ensuring data integrity and round-trip compatibility.
+Update all agent mapping functions to pass through the `llmConfigId` field between UI and persistence layers, ensuring data integrity and round-trip compatibility. **This task also finalizes the gradual migration by making `llmConfigId` required in both schemas.**
+
+## ✅ **Complete the Gradual Migration**
+
+This task completes the 3-phase gradual migration:
+
+1. ✅ **Phase 1:** Added optional `llmConfigId` to shared schema
+2. ✅ **Phase 2:** Added optional `llmConfigId` to UI schema
+3. 🎯 **Phase 3:** Update mappers + **make both schemas required**
 
 ## Technical Approach
 
 1. Update individual mapper functions to include `llmConfigId` in data transformation
 2. Update array mapping functions to preserve `llmConfigId` across batch operations
-3. Ensure round-trip mapping preserves the field without modification
-4. Keep mapping logic simple with direct pass-through (no composite parsing)
+3. **Make `llmConfigId` required in both schemas** (remove `.optional()`)
+4. Update test data to include required `llmConfigId` values
+5. Ensure round-trip mapping preserves the field without modification
 
 ## Specific Implementation Requirements
 
-### Individual Mappers
-
-Update `packages/ui-shared/src/mapping/agents/`:
+### 🔄 **Mapper Updates**
 
 **mapSingleAgentUIToPersistence.ts**:
 
 - Add `llmConfigId: uiAgent.llmConfigId` to returned object
-- Follow existing field mapping patterns
-- Include in function's JSDoc if present
+- Remove any default value fallbacks (field will now be required)
 
 **mapSingleAgentPersistenceToUI.ts**:
 
 - Add `llmConfigId: persistedAgent.llmConfigId` to returned object
-- Follow existing field mapping patterns
-- Include in function's JSDoc if present
+- Direct pass-through from persistence to UI
 
-### Array Mappers
+**mapAgentsUIToPersistence.ts** & **mapAgentsPersistenceToUI.ts**:
 
-**mapAgentsUIToPersistence.ts**:
+- Verify these use the single mappers (they should inherit the fix automatically)
 
-- Verify the function uses `mapSingleAgentUIToPersistence` internally
-- If it manually maps fields, add `llmConfigId` pass-through
-- Maintain existing error handling
+### 🔒 **Make Schemas Required**
 
-**mapAgentsPersistenceToUI.ts**:
+**In `packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts`**:
 
-- Verify the function uses `mapSingleAgentPersistenceToUI` internally
-- If it manually maps fields, add `llmConfigId` pass-through
-- Maintain existing error handling
+```typescript
+// Remove .optional() to make required
+llmConfigId: z
+  .string({ message: "LLM Configuration ID must be a string" })
+  .min(1, "LLM Configuration ID is required"), // ← Remove .optional()
+```
+
+**In `packages/ui-shared/src/schemas/agentSchema.ts`**:
+
+```typescript
+// Remove .optional() to make required
+llmConfigId: z
+  .string({ message: "LLM Configuration ID must be a string" })
+  .min(1, "LLM Configuration is required"), // ← Remove .optional()
+```
+
+**In UI Types** - Change from optional to required:
+
+- `AgentFormData`: `llmConfigId: string` (remove `?`)
+- `AgentSettingsViewModel`: `llmConfigId: string` (remove `?`)
+- `AgentCard`: `llmConfigId: string` (remove `?`)
+
+### 🧪 **Test Data Updates**
+
+- Update all existing test data to include `llmConfigId` values
+- Update round-trip mapping tests to verify `llmConfigId` preservation
+- Add test cases that verify required field validation
+
+## Why This Works
+
+1. **Mappers preserve the field** - Round-trip operations won't lose data
+2. **Both schemas support it** - Required validation will catch missing values
+3. **Full data flow tested** - Any gaps in preservation will be immediately visible
+4. **Migration complete** - Field is now fully integrated and required
 
 ## Detailed Acceptance Criteria
+
+### Mapper Functionality
 
 - [ ] `mapSingleAgentUIToPersistence` passes through `llmConfigId` unchanged
 - [ ] `mapSingleAgentPersistenceToUI` passes through `llmConfigId` unchanged
 - [ ] Array mapping functions preserve `llmConfigId` for all agents
 - [ ] Round-trip mapping (UI → Persistence → UI) preserves `llmConfigId` exactly
-- [ ] No composite value parsing/generation in mapping layer
-- [ ] Existing mapper functionality remains unchanged
-- [ ] All TypeScript types resolve correctly
 
-## Dependencies
+### Schema Requirements
 
-- Requires: T-add-llmconfigid-to-ui-schema (types must be available in both layers)
+- [ ] `persistedAgentSchema` requires `llmConfigId` (`.optional()` removed)
+- [ ] `agentSchema` requires `llmConfigId` (`.optional()` removed)
+- [ ] All UI types have `llmConfigId: string` (no `?`)
+- [ ] Schema validation fails for missing `llmConfigId`
 
-## Security Considerations
+### Testing
 
-- Direct pass-through maintains data integrity
-- No additional validation or transformation that could introduce vulnerabilities
-- Follows existing secure mapping patterns
-
-## Testing Requirements
-
-- Unit tests for individual mappers with `llmConfigId` field
-- Round-trip mapping test: UI data → Persistence → UI should preserve `llmConfigId`
-- Test array mapping preserves `llmConfigId` for multiple agents
-- Verify existing mapper tests still pass
+- [ ] All existing tests pass with updated data
+- [ ] Round-trip tests verify `llmConfigId` preservation
+- [ ] New tests verify required field validation
+- [ ] No TypeScript errors
 
 ## Files to Modify
+
+### Mappers
 
 - `packages/ui-shared/src/mapping/agents/mapSingleAgentUIToPersistence.ts`
 - `packages/ui-shared/src/mapping/agents/mapSingleAgentPersistenceToUI.ts`
 - `packages/ui-shared/src/mapping/agents/mapAgentsUIToPersistence.ts`
 - `packages/ui-shared/src/mapping/agents/mapAgentsPersistenceToUI.ts`
 
-## Out of Scope
+### Schemas (Make Required)
 
-- Composite value handling (that's in UI components)
-- Store integration (separate task)
-- Validation logic (handled in schemas)
+- `packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts` - Remove `.optional()`
+- `packages/ui-shared/src/schemas/agentSchema.ts` - Remove `.optional()`
+
+### UI Types (Make Required)
+
+- `packages/ui-shared/src/types/settings/AgentFormData.ts` - Remove `?`
+- `packages/ui-shared/src/types/settings/AgentSettingsViewModel.ts` - Remove `?`
+- `packages/ui-shared/src/types/settings/AgentCard.ts` - Remove `?`
+
+### Tests
+
+- All mapper tests - Add `llmConfigId` to test data
+- Round-trip tests - Verify preservation
+- Schema tests - Test required validation
+
+## Dependencies
+
+- Requires: T-add-llmconfigid-to-ui-schema (optional field must exist first)
+
+## Success Criteria
+
+- [ ] **All mappers preserve `llmConfigId`** during round-trip operations
+- [ ] **Both schemas require `llmConfigId`** (migration complete)
+- [ ] **All tests pass** with required field
+- [ ] **Zero TypeScript errors** after making field required
+- [ ] **Round-trip data integrity** verified
+
+## Testing Requirements
+
+- Unit tests for individual mappers with required `llmConfigId` field
+- Round-trip mapping test: UI data → Persistence → UI preserves `llmConfigId`
+- Test array mapping preserves `llmConfigId` for multiple agents
+- Test schema validation fails for missing `llmConfigId`
+- Verify existing functionality remains unchanged
+
+This task completes the gradual migration and ensures `llmConfigId` is fully integrated throughout the data layer.

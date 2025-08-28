@@ -20,71 +20,140 @@ updated: 2025-08-28T18:34:09.695Z
 
 Update the UI-shared package schemas and TypeScript types to include `llmConfigId` field, enabling form validation and type safety for the LLM configuration feature.
 
-## Technical Approach
+## ⚠️ CRITICAL: Gradual Migration Strategy Required
 
-1. Update `agentSchema` in `packages/ui-shared/src/schemas/agentSchema.ts`
-2. Add `llmConfigId` to all relevant UI types: `AgentFormData`, `AgentSettingsViewModel`, `AgentCard`
-3. Update `normalizeAgentFields` to handle `llmConfigId` trimming and validation
-4. Ensure consistent TypeScript types across the UI layer
+**This task will fail if we make `llmConfigId` required immediately!** The mappers, stores, and components aren't updated yet (separate tasks), which will cause widespread TypeScript errors and test failures.
+
+## Recommended Gradual Approach
+
+### Phase 1: Make llmConfigId OPTIONAL in UI (This Task)
+
+Update `agentSchema` with:
+
+```typescript
+// LLM configuration identifier - OPTIONAL initially for gradual migration
+llmConfigId: z
+  .string({ message: "LLM Configuration ID must be a string" })
+  .min(1, "LLM Configuration is required")
+  .optional(), // ← KEY: Optional until mappers and stores are updated
+```
+
+### What to Update (Minimal Changes)
+
+1. **UI Schema only** - Add optional field to `agentSchema`
+2. **Types as optional** - Add `llmConfigId?: string` to UI types
+3. **Normalization** - Handle optional field in `normalizeAgentFields`
+4. **Leave mappers/stores alone** - Don't touch any mapping or store code yet
+
+### What NOT to Touch
+
+- ❌ Don't modify any mapper functions (separate task)
+- ❌ Don't update store validation logic (separate task)
+- ❌ Don't make field required yet
+- ❌ Don't touch existing test data
+
+## Technical Approach (Revised)
+
+1. Update `agentSchema` with **optional** `llmConfigId` field
+2. Add **optional** field to all UI types (`llmConfigId?: string`)
+3. Update `normalizeAgentFields` to handle optional field
+4. Add validation tests for the optional field
+5. Ensure backward compatibility with existing code
 
 ## Specific Implementation Requirements
 
-### UI Schema Update
+### UI Schema Update (Optional)
 
-- Add `llmConfigId: z.string().min(1, "LLM Configuration is required")` to `agentSchema`
-- Place after the `model` field for consistency with persistence schema
-- Keep validation message user-friendly
+```typescript
+export const agentSchema = z.object({
+  // ... existing fields ...
+  model: z.string().min(1, "Model is required"),
 
-### Type Updates
+  // LLM configuration identifier - OPTIONAL initially for gradual migration
+  llmConfigId: z
+    .string({ message: "LLM Configuration ID must be a string" })
+    .min(1, "LLM Configuration is required")
+    .optional(), // Will be made required in later task after mappers updated
 
-Add `llmConfigId: string` to the following interfaces:
+  // ... rest of fields ...
+});
+```
 
-- `packages/ui-shared/src/types/settings/AgentFormData.ts`
-- `packages/ui-shared/src/types/settings/AgentSettingsViewModel.ts`
-- `packages/ui-shared/src/types/settings/AgentCard.ts`
+### Type Updates (All Optional)
 
-### Normalization Logic
+Add `llmConfigId?: string` (note the `?`) to:
 
-- Update `packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts`
-- Add `llmConfigId: (data.llmConfigId || '').trim()` to trim whitespace
-- Follow existing pattern for string field normalization
+- `AgentFormData` - `llmConfigId?: string`
+- `AgentSettingsViewModel` - `llmConfigId?: string`
+- `AgentCard` - `llmConfigId?: string`
 
-## Detailed Acceptance Criteria
+### Normalization Logic (Safe)
 
-- [ ] `agentSchema` includes required `llmConfigId` field with user-friendly validation message
-- [ ] `AgentFormData` interface includes `llmConfigId: string`
-- [ ] `AgentSettingsViewModel` interface includes `llmConfigId: string`
-- [ ] `AgentCard` interface includes `llmConfigId: string`
-- [ ] `normalizeAgentFields` trims and preserves `llmConfigId`
-- [ ] All TypeScript compilation passes without errors
-- [ ] Schema validation works correctly for form data
+```typescript
+export function normalizeAgentFields(agent: {
+  // ... existing fields ...
+  llmConfigId?: string; // Optional
+}): {
+  // ... existing fields ...
+  llmConfigId?: string; // Optional return too
+} {
+  return {
+    // ... existing fields ...
+    llmConfigId: agent.llmConfigId?.trim() || undefined,
+  };
+}
+```
+
+## Why This Works
+
+1. **Existing code continues working** - optional fields don't break anything
+2. **Types are backward compatible** - optional means old code still compiles
+3. **Tests pass** - missing optional field is valid
+4. **Mappers work unchanged** - they can ignore optional fields
+5. **Future tasks can make it required** - once mappers and stores are updated
+
+## Test Strategy
+
+- Add tests for optional `llmConfigId` validation
+- Test `normalizeAgentFields` with and without the field
+- **Don't update existing test data** - keep it working as-is
+- Ensure schema validates both present and missing field
+
+## Files to Modify (Minimal Set)
+
+- `packages/ui-shared/src/schemas/agentSchema.ts` - Add optional field
+- `packages/ui-shared/src/types/settings/AgentFormData.ts` - Add optional type
+- `packages/ui-shared/src/types/settings/AgentSettingsViewModel.ts` - Add optional type
+- `packages/ui-shared/src/types/settings/AgentCard.ts` - Add optional type
+- `packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts` - Handle optional field
+
+## Later Tasks Will Handle
+
+- Making field required (remove `.optional()` and `?`)
+- Updating mappers to preserve field
+- Updating stores to validate and handle field
+- Component integration
+
+## Detailed Acceptance Criteria (Revised)
+
+- [ ] `agentSchema` includes **optional** `llmConfigId` field
+- [ ] All UI type interfaces include `llmConfigId?: string` (optional)
+- [ ] `normalizeAgentFields` handles optional `llmConfigId` safely
+- [ ] All existing TypeScript compilation passes without errors
+- [ ] Schema validation works for both present and missing field
+- [ ] All existing tests continue to pass
+- [ ] No breaking changes to any existing APIs
 
 ## Dependencies
 
 - Requires: T-add-llmconfigid-to-shared (shared schema must be updated first)
 
-## Security Considerations
+## Success Criteria (Revised)
 
-- Client-side validation prevents empty configuration IDs
-- Field trimming prevents accidental whitespace issues
-- No sensitive data stored in types
+- [ ] **Zero TypeScript errors** after changes
+- [ ] **All existing tests pass** without modification
+- [ ] New optional field validates correctly when present
+- [ ] Field is safely ignored when missing
+- [ ] `pnpm build:libs` succeeds
 
-## Testing Requirements
-
-- Unit tests for `agentSchema` validation with `llmConfigId`
-- Test `normalizeAgentFields` properly handles `llmConfigId` trimming
-- Verify TypeScript types compile correctly
-
-## Files to Modify
-
-- `packages/ui-shared/src/schemas/agentSchema.ts` - Add schema field
-- `packages/ui-shared/src/types/settings/AgentFormData.ts` - Add type field
-- `packages/ui-shared/src/types/settings/AgentSettingsViewModel.ts` - Add type field
-- `packages/ui-shared/src/types/settings/AgentCard.ts` - Add type field
-- `packages/ui-shared/src/mapping/agents/utils/normalizeAgentFields.ts` - Add normalization
-
-## Out of Scope
-
-- Mapper implementation (separate task)
-- Component integration (separate task)
-- Store validation logic (separate task)
+This gradual approach ensures **no breaking changes** while preparing the UI layer for full integration.
