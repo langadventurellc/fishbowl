@@ -54,7 +54,11 @@ affectedFiles:
     Added llmConfigId field to test data and updated round-trip validation to
     check llmConfigId preservation
   packages/ui-shared/src/mapping/agents/__tests__/mapAgentsPersistenceToUI.test.ts: Added llmConfigId field to test data and updated expected results
-  packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts: Updated test agent data to include required llmConfigId field
+  packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts:
+    Updated test agent data to include required llmConfigId field; Added
+    comprehensive tests for llmConfigId validation including missing values,
+    whitespace-only values, preservation during creation, validation errors on
+    updates, and successful llmConfigId updates
   apps/desktop/src/components/settings/agents/AgentCard.tsx:
     Updated model lookup
     logic to use dual-field pattern (configId + model) with fallback to
@@ -87,12 +91,12 @@ log: []
 schema: v1.0
 childrenIds:
   - T-fix-model-defaults-and
-  - T-update-agentform-to-handle
   - T-update-useagentsstore-to
   - T-add-llmconfigid-to-shared
   - T-add-llmconfigid-to-ui-schema
   - T-update-agent-mapping
   - T-update-agentcard-to-resolve
+  - T-update-agentform-to-handle
   - T-update-llmmodel-interface-and
   - T-update-modelselect-component
 created: 2025-08-28T18:00:35.321Z

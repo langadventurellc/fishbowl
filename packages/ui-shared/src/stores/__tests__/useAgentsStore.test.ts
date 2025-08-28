@@ -308,6 +308,52 @@ describe("useAgentsStore", () => {
         expect(state.error?.message).toContain("Agent name is required");
       });
 
+      it("should handle missing llmConfigId validation errors", () => {
+        const store = useAgentsStore.getState();
+
+        const invalidData = {
+          ...validAgentData,
+          llmConfigId: "", // Invalid: empty llmConfigId
+        };
+
+        const agentId = store.createAgent(invalidData);
+
+        expect(agentId).toBe("");
+        const state = useAgentsStore.getState();
+        expect(state.agents).toHaveLength(0);
+        expect(state.error?.message).toContain("LLM Configuration is required");
+      });
+
+      it("should handle whitespace-only llmConfigId validation errors", () => {
+        const store = useAgentsStore.getState();
+
+        const invalidData = {
+          ...validAgentData,
+          llmConfigId: "   ", // Invalid: whitespace-only llmConfigId
+        };
+
+        const agentId = store.createAgent(invalidData);
+
+        expect(agentId).toBe("");
+        const state = useAgentsStore.getState();
+        expect(state.agents).toHaveLength(0);
+        expect(state.error?.message).toContain(
+          "LLM Configuration ID cannot be only whitespace",
+        );
+      });
+
+      it("should preserve llmConfigId in created agent", () => {
+        const store = useAgentsStore.getState();
+
+        const agentId = store.createAgent(validAgentData);
+
+        expect(agentId).toBeTruthy();
+        const state = useAgentsStore.getState();
+        expect(state.agents).toHaveLength(1);
+        expect(state.agents[0]!.llmConfigId).toBe("test-config-id");
+        expect(state.error?.message).toBeNull();
+      });
+
       it("should generate unique IDs", () => {
         const store = useAgentsStore.getState();
 
@@ -424,6 +470,46 @@ describe("useAgentsStore", () => {
         const state = useAgentsStore.getState();
         const updatedAgent = state.agents.find((a) => a.id === agentId);
         expect(updatedAgent?.model).toBe("claude-3-opus");
+        expect(state.error?.message).toBeNull();
+      });
+
+      it("should handle missing llmConfigId validation errors on update", () => {
+        const store = useAgentsStore.getState();
+
+        const agentId = store.createAgent(validAgentData);
+        expect(agentId).toBeTruthy();
+
+        const invalidUpdateData = {
+          ...validAgentData,
+          llmConfigId: "", // Invalid: empty llmConfigId
+        };
+
+        store.updateAgent(agentId, invalidUpdateData);
+
+        const state = useAgentsStore.getState();
+        expect(state.error?.message).toContain("LLM Configuration is required");
+
+        // Agent should not have been updated
+        const agent = state.agents.find((a) => a.id === agentId);
+        expect(agent?.llmConfigId).toBe("test-config-id"); // Should still have original value
+      });
+
+      it("should update llmConfigId successfully", () => {
+        const store = useAgentsStore.getState();
+
+        const agentId = store.createAgent(validAgentData);
+        expect(agentId).toBeTruthy();
+
+        const updateData = {
+          ...validAgentData,
+          llmConfigId: "updated-config-id",
+        };
+
+        store.updateAgent(agentId, updateData);
+
+        const state = useAgentsStore.getState();
+        const updatedAgent = state.agents.find((a) => a.id === agentId);
+        expect(updatedAgent?.llmConfigId).toBe("updated-config-id");
         expect(state.error?.message).toBeNull();
       });
     });

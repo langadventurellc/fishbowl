@@ -1,14 +1,24 @@
 ---
 id: T-update-useagentsstore-to
 title: Update useAgentsStore to validate with new schema and handle llmConfigId
-status: open
+status: done
 priority: medium
 parent: F-add-llm-configuration-id-to
 prerequisites:
   - T-update-agent-mapping
   - T-add-llmconfigid-to-ui-schema
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/__tests__/useAgentsStore.test.ts:
+    Added comprehensive tests for llmConfigId validation including missing
+    values, whitespace-only values, preservation during creation, validation
+    errors on updates, and successful llmConfigId updates
+log:
+  - Successfully updated useAgentsStore to validate with new schema and handle
+    llmConfigId. The store already used the updated agentSchema with proper
+    validation, and all create/update operations handle llmConfigId correctly
+    through schema validation. Added comprehensive tests to verify llmConfigId
+    validation errors and successful operations. All existing functionality
+    remains unchanged while properly supporting the required llmConfigId field.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:36:02.780Z
