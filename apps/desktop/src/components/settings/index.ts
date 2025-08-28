@@ -11,7 +11,6 @@ export { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 export * from "./agents";
 export { CharacterCounter } from "./CharacterCounter";
 export * from "./llm-setup";
-export { ModelSelect } from "./ModelSelect";
 export * from "./personalities";
 export * from "./roles";
 export * from "./SettingsContent";
