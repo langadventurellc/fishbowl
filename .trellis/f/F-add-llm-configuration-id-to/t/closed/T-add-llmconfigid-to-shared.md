@@ -1,12 +1,23 @@
 ---
 id: T-add-llmconfigid-to-shared
 title: Add llmConfigId to shared persistence schema and rebuild libs
-status: open
+status: done
 priority: high
 parent: F-add-llm-configuration-id-to
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
+    Added optional llmConfigId field to persistedAgentSchema with proper
+    validation (non-empty string when present)
+  packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
+    Added comprehensive tests for optional llmConfigId field covering valid
+    values, missing values, empty strings, and invalid types
+log:
+  - Successfully implemented optional llmConfigId field in shared persistence
+    schema following gradual migration strategy. Added comprehensive validation
+    tests and ensured all existing functionality remains intact. The optional
+    field allows gradual rollout without breaking existing code or round-trip
+    mappings.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T18:33:54.065Z

@@ -91,6 +91,12 @@ export const persistedAgentSchema = z
       .string({ message: "Model must be a string" })
       .min(1, "Model is required"),
 
+    // LLM configuration identifier - OPTIONAL initially for gradual migration
+    llmConfigId: z
+      .string({ message: "LLM Configuration ID must be a string" })
+      .min(1, "LLM Configuration ID is required")
+      .optional(), // Will be made required in later task after UI support
+
     // Role identifier
     role: z
       .string({ message: "Role must be a string" })
@@ -123,7 +129,7 @@ export const persistedAgentSchema = z
       .nullable()
       .optional(),
   })
-  .passthrough(); // Allow unknown fields for schema evolution
+  .passthrough(); // Allow unknown fields for schema evolution; // Allow unknown fields for schema evolution
 
 /**
  * Master Zod schema for validating complete agents settings file.

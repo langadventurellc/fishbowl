@@ -300,3 +300,67 @@ describe("persistedAgentSchema", () => {
     }
   });
 });
+
+it("should validate agent with valid llmConfigId", () => {
+  const validAgent = {
+    id: "test-id",
+    name: "Test Agent",
+    model: "Claude 3.5 Sonnet",
+    llmConfigId: "config-123",
+    role: "role-id",
+    personality: "personality-id",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const result = persistedAgentSchema.safeParse(validAgent);
+  expect(result.success).toBe(true);
+});
+
+it("should validate agent without llmConfigId (optional field)", () => {
+  const validAgent = {
+    id: "test-id",
+    name: "Test Agent",
+    model: "Claude 3.5 Sonnet",
+    // llmConfigId is optional
+    role: "role-id",
+    personality: "personality-id",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const result = persistedAgentSchema.safeParse(validAgent);
+  expect(result.success).toBe(true);
+});
+
+it("should fail validation for empty llmConfigId", () => {
+  const invalidAgent = {
+    id: "test-id",
+    name: "Test Agent",
+    model: "Claude 3.5 Sonnet",
+    llmConfigId: "", // Empty string should fail
+    role: "role-id",
+    personality: "personality-id",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const result = persistedAgentSchema.safeParse(invalidAgent);
+  expect(result.success).toBe(false);
+});
+
+it("should fail validation for non-string llmConfigId", () => {
+  const invalidAgent = {
+    id: "test-id",
+    name: "Test Agent",
+    model: "Claude 3.5 Sonnet",
+    llmConfigId: 123, // Should be string
+    role: "role-id",
+    personality: "personality-id",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const result = persistedAgentSchema.safeParse(invalidAgent);
+  expect(result.success).toBe(false);
+});

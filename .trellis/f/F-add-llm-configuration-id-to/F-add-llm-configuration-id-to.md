@@ -1,10 +1,16 @@
 ---
 id: F-add-llm-configuration-id-to
 title: Add LLM Configuration ID to Agent Settings
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/types/agents/persistedAgentsSettingsSchema.ts:
+    Added optional llmConfigId field to persistedAgentSchema with proper
+    validation (non-empty string when present)
+  packages/shared/src/types/agents/__tests__/persistedAgentsSettingsSchema.test.ts:
+    Added comprehensive tests for optional llmConfigId field covering valid
+    values, missing values, empty strings, and invalid types
 log: []
 schema: v1.0
 childrenIds:
