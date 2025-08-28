@@ -38,7 +38,7 @@ Technical Approach
 
 - Create types:
   - `SystemPromptResolvers` with `resolvePersonality`, `resolveRole`
-  - `SystemPromptRenderData` shape with fields anticipated by renderer
+  - `SystemPromptRenderData` shape with fields anticipated by renderer: `agentSystemPrompt`, `agentName`, `roleName`, `roleDescription`, `roleSystemPrompt`, `personalityName`, `personalityCustomInstructions`, `behaviors`
 - `SystemPromptFactory` class stub:
   - Constructor accepts `resolvers: SystemPromptResolvers` and optional logger
   - Method signature `createSystemPrompt(agent: PersistedAgentData): Promise<string>`; return a placeholder string for now (to be implemented in later tasks)

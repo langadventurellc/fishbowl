@@ -1,13 +1,22 @@
 ---
 id: F-system-prompt-factory-template
 title: System Prompt Factory & Template
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/system-prompt.txt: Created new system prompt template file with
+    dynamic placeholders and version header
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-electron-startup
+  - T-docs-usage-guidance-and
+  - T-implement-systempromptfactory
+  - T-implement-template-renderer
+  - T-include-template-in-packaged
+  - T-scaffold-shared-system-prompt
+  - T-author-desktop-system-prompt
 created: 2025-08-28T00:04:12.070Z
 updated: 2025-08-28T00:04:12.070Z
 ---
@@ -18,7 +27,7 @@ Implement a shared system prompt factory that generates a model-ready system pro
 Scope
 
 - Add `SystemPromptFactory` in shared: accepts a `PersistedAgentData` and resolves personality + role to construct the prompt via a template renderer.
-- Introduce a system prompt template stored under desktop `resources/` and ensure it’s included in packaged builds and copied to user data on app start across environments.
+- Introduce a system prompt template stored under desktop `resources/` and ensure it's included in packaged builds and copied to user data on app start across environments.
 - No UI components; only shared logic + desktop startup resource handling.
 
 Key Components
@@ -34,8 +43,8 @@ Key Components
     - Uses logger from `@fishbowl-ai/shared` for traceability.
 
 - Template and renderer:
-  - Template file created from `docs/specifications/system-prompt-template-prototype.txt` as a versioned text template (e.g., `system-prompt.txt`) with placeholders `{{agentName}}`, `{{roleName}}`, `{{personalityName}}`, `{{behaviors}}`, `{{tools}}`, `{{constraints}}`, `{{memoryGuidance}}`.
-  - Behaviors are dynamically rendered from the personality’s `behaviors` (keys + values). If `agent.personalityBehaviors` provides overrides, reflect those values.
+  - Template file created from `docs/specifications/system-prompt-template-prototype.txt` as a versioned text template (e.g., `system-prompt.txt`) with placeholders `{{agentSystemPrompt}}`, `{{agentName}}`, `{{roleName}}`, `{{roleDescription}}`, `{{roleSystemPrompt}}`, `{{personalityName}}`, `{{personalityCustomInstructions}}`, `{{behaviors}}`.
+  - Behaviors are dynamically rendered from the personality's `behaviors` (keys + values).
   - Renderer omits empty sections cleanly.
 
 - Desktop resource inclusion + startup copy:
@@ -58,9 +67,8 @@ Acceptance Criteria
 
 - Shared factory:
   - `SystemPromptFactory` constructed with resolvers; `createSystemPrompt(agent)` returns a full prompt string.
-  - Output includes agent name, role name/description or role system prompt guidance, personality name/custom instructions.
-  - Behavior section lists only defined behaviors; reflects agent-level overrides when present.
-  - Optional sections (tools, constraints, memory guidance) render only when provided; otherwise omitted.
+  - Output includes agent system prompt, agent name, role name/description and role system prompt guidance, personality name and custom instructions.
+  - Behavior section lists only defined behaviors
   - Single-responsibility files; barrel export.
   - No app-specific imports; all platform access injected via constructor.
 

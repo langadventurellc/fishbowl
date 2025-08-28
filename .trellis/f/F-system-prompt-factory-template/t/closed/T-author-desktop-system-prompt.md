@@ -1,12 +1,22 @@
 ---
 id: T-author-desktop-system-prompt
 title: Author desktop system prompt template file
-status: open
+status: done
 priority: medium
 parent: F-system-prompt-factory-template
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/system-prompt.txt: Created new system prompt template file with
+    dynamic placeholders and version header
+log:
+  - Created desktop system prompt template file at
+    apps/desktop/system-prompt.txt based on the prototype. The template includes
+    all required dynamic placeholders ({{agentName}}, {{roleName}},
+    {{personalityName}}, {{behaviors}}) and replaces static behavior enumerations with the
+    dynamic {{behaviors}} placeholder. Added version header (v1) with guidance
+    not to edit at runtime. Template follows instruction-first formatting
+    suitable for LLM system prompts and maintains the structure from the
+    prototype while adapting it for use by the SystemPromptFactory.
 schema: v1.0
 childrenIds: []
 created: 2025-08-28T00:24:03.762Z
@@ -20,7 +30,7 @@ References
 
 - Feature spec template location
 - Prototype: `docs/specifications/system-prompt-template-prototype.txt`
-- Token list: {{agentName}}, {{roleName}}, {{personalityName}}, {{behaviors}}, {{tools}}, {{constraints}}, {{memoryGuidance}}
+- Token list: {{agentName}}, {{roleName}}, {{personalityName}}, {{behaviors}}
 
 Implementation Requirements
 

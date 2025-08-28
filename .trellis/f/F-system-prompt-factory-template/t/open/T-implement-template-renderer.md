@@ -20,7 +20,7 @@ Build the pure rendering function that consumes a text template and structured d
 References
 
 - Feature spec (factory shape and placeholders)
-- Template placeholders: {{agentName}}, {{roleName}}, {{personalityName}}, {{behaviors}}, {{tools}}, {{constraints}}, {{memoryGuidance}}
+- Template placeholders: {{agentSystemPrompt}}, {{agentName}}, {{roleName}}, {{roleDescription}}, {{roleSystemPrompt}}, {{personalityName}}, {{personalityCustomInstructions}}, {{behaviors}}
 - Personality model: `PersistedPersonalityData.behaviors: Record<string, number>`; agent overrides: `PersistedAgentData.personalityBehaviors`
 
 Implementation Requirements
@@ -30,7 +30,6 @@ Implementation Requirements
 - Replace tokens safely:
   - Unknown/missing tokens => remove section headers and avoid dangling tokens
   - Behaviors: render deterministically (alphabetical by key). Format: "- <Key>: <Value>"; if override present, use "- <Key>: <Base> (override: <Agent>)"
-  - Tools/constraints/memoryGuidance: if arrays/strings are empty or undefined, omit their sections cleanly
 - Keep implementation dependency-free (no external templating libraries)
 - Include thorough unit tests (Jest):
   - Replaces all placeholders with provided values
@@ -41,7 +40,7 @@ Implementation Requirements
 Technical Approach
 
 - Use simple token map and `.replace` with RegExp for each token
-- For sections like behaviors/tools, generate text block first, then inject
+- For sections like behaviors, generate text block first, then inject
 - Add small helpers (internal) for formatting lists and for safe section removal
 
 Acceptance Criteria
