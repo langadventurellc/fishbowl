@@ -81,6 +81,13 @@ export interface ConversationAgentViewModel {
   isActive: boolean;
 
   /**
+   * Whether this agent participates in new messages.
+   * Controls whether the agent will receive and respond to new messages
+   * in the conversation. Can be toggled independently of isActive.
+   */
+  enabled: boolean;
+
+  /**
    * Display ordering for UI presentation.
    * Lower numbers appear first in agent lists and pills.
    * Used for future enhancement of agent reordering functionality.

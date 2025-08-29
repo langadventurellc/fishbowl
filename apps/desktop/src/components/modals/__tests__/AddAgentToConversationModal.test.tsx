@@ -72,6 +72,7 @@ const mockConversationAgent1: ConversationAgentViewModel = {
   agent: mockAgent1,
   addedAt: "2023-01-01T12:00:00.000Z",
   isActive: true,
+  enabled: true,
   displayOrder: 0,
 };
 

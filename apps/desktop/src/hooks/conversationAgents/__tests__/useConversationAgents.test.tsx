@@ -70,6 +70,7 @@ const mockConversationAgent1: ConversationAgent = {
   agent_id: "agent-1",
   added_at: "2023-01-01T12:00:00.000Z",
   is_active: true,
+  enabled: true,
   display_order: 0,
 };
 
@@ -79,6 +80,7 @@ const mockConversationAgent2: ConversationAgent = {
   agent_id: "agent-2",
   added_at: "2023-01-01T13:00:00.000Z",
   is_active: true,
+  enabled: true,
   display_order: 1,
 };
 
@@ -88,6 +90,7 @@ const mockConversationAgent3: ConversationAgent = {
   agent_id: "agent-3", // This agent doesn't exist in store
   added_at: "2023-01-01T14:00:00.000Z",
   is_active: true,
+  enabled: true,
   display_order: 2,
 };
 

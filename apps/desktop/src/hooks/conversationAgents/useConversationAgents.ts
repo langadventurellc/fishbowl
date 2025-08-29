@@ -72,6 +72,7 @@ export function useConversationAgents(
         agent,
         addedAt: conversationAgent.added_at,
         isActive: conversationAgent.is_active,
+        enabled: conversationAgent.enabled,
         displayOrder: conversationAgent.display_order,
       };
     },

@@ -118,6 +118,7 @@ describe("Conversation Agents IPC Types", () => {
       agent_id: "agent-456",
       added_at: new Date().toISOString(),
       is_active: true,
+      enabled: true,
       display_order: 0,
     };
 
@@ -281,6 +282,7 @@ describe("Type-only Imports", () => {
         agent_id: _request.agent_id,
         added_at: new Date().toISOString(),
         is_active: true,
+        enabled: true,
         display_order: _request.display_order || 0,
       },
     });

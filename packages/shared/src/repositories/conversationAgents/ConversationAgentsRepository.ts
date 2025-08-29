@@ -29,6 +29,7 @@ interface ConversationAgentRow {
   agent_id: string;
   added_at: string;
   is_active: number; // SQLite stores boolean as 0/1
+  enabled: number; // SQLite stores boolean as 0/1
   display_order: number;
 }
 
@@ -93,6 +94,7 @@ export class ConversationAgentsRepository {
         agent_id: validatedInput.agent_id,
         added_at: timestamp,
         is_active: true,
+        enabled: true,
         display_order: validatedInput.display_order ?? 0,
       };
 
@@ -102,8 +104,8 @@ export class ConversationAgentsRepository {
 
       // Insert into database
       const sql = `
-        INSERT INTO conversation_agents (id, conversation_id, agent_id, added_at, is_active, display_order)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO conversation_agents (id, conversation_id, agent_id, added_at, is_active, enabled, display_order)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
 
       await this.databaseBridge.execute(sql, [
@@ -112,6 +114,7 @@ export class ConversationAgentsRepository {
         validatedConversationAgent.agent_id,
         validatedConversationAgent.added_at,
         validatedConversationAgent.is_active ? 1 : 0,
+        validatedConversationAgent.enabled ? 1 : 0,
         validatedConversationAgent.display_order,
       ]);
 
@@ -157,7 +160,7 @@ export class ConversationAgentsRepository {
 
       // Query database
       const sql = `
-        SELECT id, conversation_id, agent_id, added_at, is_active, display_order
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
         FROM conversation_agents
         WHERE id = ?
       `;
@@ -335,7 +338,7 @@ export class ConversationAgentsRepository {
       }
 
       const sql = `
-        SELECT id, conversation_id, agent_id, added_at, is_active, display_order
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
         FROM conversation_agents
         WHERE conversation_id = ?
         ORDER BY display_order ASC, added_at ASC
@@ -379,7 +382,7 @@ export class ConversationAgentsRepository {
       }
 
       const sql = `
-        SELECT id, conversation_id, agent_id, added_at, is_active, display_order
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
         FROM conversation_agents
         WHERE agent_id = ?
         ORDER BY added_at DESC
@@ -559,6 +562,11 @@ export class ConversationAgentsRepository {
       params.push(input.display_order);
     }
 
+    if (input.enabled !== undefined) {
+      updates.push("enabled = ?");
+      params.push(input.enabled ? 1 : 0);
+    }
+
     if (updates.length === 0) {
       return false; // No updates to perform
     }
@@ -584,6 +592,7 @@ export class ConversationAgentsRepository {
     return {
       ...row,
       is_active: Boolean(row.is_active),
+      enabled: Boolean(row.enabled),
     };
   }
 
