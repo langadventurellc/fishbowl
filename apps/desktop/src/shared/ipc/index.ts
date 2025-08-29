@@ -44,6 +44,16 @@ export type { ConversationAgentChannelType } from "./conversationAgentsConstants
 export { MESSAGES_CHANNELS } from "./messagesConstants";
 export type { MessagesChannelType } from "./messagesConstants";
 
+// Chat constants
+export { CHAT_CHANNELS, CHAT_EVENTS } from "./chat";
+export type {
+  ChatChannel,
+  ChatEvent,
+  AgentUpdateEvent,
+  AllCompleteEvent,
+  SendToAgentsRequest,
+} from "./chat";
+
 // Base types
 export type { IPCResponse } from "./base";
 export type { SerializableError } from "./types";

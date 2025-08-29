@@ -23,7 +23,8 @@ affectedFiles:
     IPCResponse<Message>
   apps/desktop/src/shared/ipc/messages/index.ts: Created barrel file exporting all messages request/response types
   apps/desktop/src/shared/ipc/index.ts: Added messages constants, request types,
-    and response types exports to main IPC index
+    and response types exports to main IPC index; Updated main index to export
+    chat constants and types
   apps/desktop/src/main/services/MainProcessServices.ts: Added MessageRepository
     import and initialization with proper error handling; Integrated
     ChatOrchestrationService into MainProcessServices constructor with proper
@@ -164,6 +165,16 @@ affectedFiles:
     Created comprehensive unit tests covering dependency injection, factory
     pattern, error scenarios, and service creation with all edge cases and
     failure modes tested
+  apps/desktop/src/shared/ipc/chat/chatConstants.ts: Created chat channel constants with SEND_TO_AGENTS channel
+  apps/desktop/src/shared/ipc/chat/chatEvents.ts: Created chat event constants with AGENT_UPDATE and ALL_COMPLETE events
+  apps/desktop/src/shared/ipc/chat/chatChannelType.ts: Created ChatChannel type definition
+  apps/desktop/src/shared/ipc/chat/chatEventType.ts: Created ChatEvent type definition
+  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts: Created AgentUpdateEvent interface for agent status updates
+  apps/desktop/src/shared/ipc/chat/allCompleteEvent.ts: Created AllCompleteEvent interface for completion notifications
+  apps/desktop/src/shared/ipc/chat/sendToAgentsRequest.ts: Created SendToAgentsRequest interface for chat triggers
+  apps/desktop/src/shared/ipc/chat/index.ts: Created barrel export file for chat IPC module
+  apps/desktop/src/shared/ipc/__tests__/chatIPC.test.ts: Created comprehensive
+    unit tests with 14 test cases covering constants, types, and interfaces
 log: []
 schema: v1.0
 childrenIds:
