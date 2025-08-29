@@ -35,6 +35,7 @@ Implement a complete chat system that enables users to have conversations with m
 - **Chat Store**: Zustand store for transient chat UI state (thinking indicators, sending state)
 - **Chat Orchestration Service**: Service layer connecting UI to LLM providers via IPC bridge
 - **IPC Bridge Implementation**: Main process bridge for secure LLM provider invocation
+- **Messages IPC**: Main-process handlers and preload exposure for messages list/create/updateInclusion operations
 - **Component Wiring**: Integration of existing UI components with new state management
 
 ## Technical Requirements
@@ -44,13 +45,14 @@ Implement a complete chat system that enables users to have conversations with m
 - **Leverage Existing Components**: Reuse all existing UI components and hooks
 - **Simplicity First**: No concurrency limits, no complex queuing, no premature optimizations
 - **Follow Established Patterns**: Use existing hook patterns (`useMessages` like `useConversations`)
-- **Immediate Persistence**: Direct MessageRepository calls, no caching or debouncing
+- **Immediate Persistence**: MessageRepository calls from main via IPC; no caching or debouncing
 - **Clear Store Separation**: Transient UI state in stores, persistent data via repositories
 
 ### Execution Boundary & Security
 - **Main-Process LLM Calls**: Provider credentials are read from secure storage and used exclusively in the Electron main process.
 - **IPC Bridge**: Renderer interacts with a minimal main-process bridge for LLM invocations and receives only redacted results/errors.
 - **Shared Interfaces**: Define bridge interfaces in `packages/shared` and inject platform implementations from `apps/desktop/src/main`.
+- **Main-Process DB Access**: All message reads/writes occur in main via repositories; renderer uses typed IPC only (no direct DB access in renderer).
 
 ### Technology Stack
 - **Frontend**: React with TypeScript in Electron renderer process
@@ -84,6 +86,10 @@ Implement a complete chat system that enables users to have conversations with m
 - **History Inclusion**: Only messages marked `included: true` sent to LLM providers
 - **Context Format**: System prompt + chronological message history formatted per provider requirements
 - **User Control**: Existing checkbox UI allows users to exclude specific messages from future context
+
+### Error Persistence Strategy (MVP)
+- **Persisted Summary**: Persist a concise, user-safe system message on provider failure (no schema change in Phase 1).
+- **Structured Detail in Logs**: Keep `{ provider, statusCode, safeMessage }` in logs; never store raw exceptions or secrets in DB.
 
 ### User Experience
 - **Timestamps**: All messages display creation timestamps
@@ -150,14 +156,19 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
   const { updateMessage } = useUpdateMessage();
   ```
 
-### State Management (`packages/shared/src/stores/chat/`)
+Implementation notes:
+- Hooks call `window.electronAPI.messages.*` (preload) which invokes main-process handlers.
+- Sorting: Ensure stable order by `created_at ASC, id ASC` (prefer server-side SQL; otherwise sort in hook).
+- Pagination: Phase 1 may fetch all; design hooks to accept optional pagination params for Phase 2/3.
+
+### State Management (MVP location: `apps/desktop/src/stores/chat/`)
 - **useChatStore**: Minimal store for transient UI state only
   ```typescript
   interface ChatStore {
     // Transient UI state
     sendingMessage: boolean;
-    agentThinking: Map<string, boolean>; // conversationAgentId -> thinking
-    lastError: Map<string, string>;       // conversationAgentId -> error
+    agentThinking: Record<string, boolean>; // conversationAgentId -> thinking
+    lastError: Record<string, string>;       // conversationAgentId -> error
     
     // Actions (delegate to repositories/services)
     setSending: (sending: boolean) => void;
@@ -167,11 +178,12 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
   }
   ```
 - **Key Principle**: Store only holds UI state; all data operations go through repositories
+ - **Placement**: Keep store in desktop app for MVP (renderer-only state); consider lifting to shared only if/when mobile needs it.
 
 ### Service Layer (`packages/shared/src/services/chat/`)
-- **ChatOrchestrationService**: Coordinates message flow, simplified for Phase 1
-- **MessageContextBuilder**: Builds LLM request context from conversation history
-- **LlmBridge Interface**: Platform-specific bridge for secure LLM invocation
+- **ChatOrchestrationService (main)**: Coordinates message flow, simplified for Phase 1; runs in main process.
+- **Message Context Assembly**: Compose `SystemPromptFactory` + `MessageFormatterService` to build provider-ready context (no new builder class in Phase 1).
+- **LlmBridge Interface**: Define in shared; main implementation resolves `LlmConfig` (via `LlmStorageService`), instantiates provider with `createProvider`, and performs `sendMessage`.
 
 ### UI Component Mapping
 **Existing Components to Wire Together**:
@@ -190,7 +202,7 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
   - All sidebar components - Already exist, work as-is
 
 ### Integration Points
-- **Agent Store**: Read enabled/disabled state from existing useAgentsStore
+- **Agent Enablement (main)**: Determine enabled conversation agents via `ConversationAgentsRepository` in main (renderer hooks are UI-only).
 - **Conversation Store**: Connect with existing conversation management
 - **Message Store**: Direct integration with existing MessageRepository
  - **IPC Contract**: Renderer calls `sendToAgents(conversationId, userMessageId)`; main returns per-agent completion events
@@ -202,7 +214,7 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
 - **WHEN** the service processes the message
 - **THEN** it should:
   - Save user message to database immediately via MessageRepository
-  - Identify ALL enabled conversation agents from useConversationAgents
+  - Identify ALL enabled conversation agents from `ConversationAgentsRepository` (main), or accept enabled IDs explicitly from the IPC request
   - Build context for each agent using SystemPromptFactory
   - Make parallel LLM calls for all enabled agents (MVP requirement)
   - Update thinking state for each agent via useChatStore
@@ -210,13 +222,13 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
   - Handle partial failures (some agents succeed, others fail)
   - Update UI state for each agent independently
 
-### MessageContextBuilder
+### Message Context Assembly
 - **GIVEN** a conversation with message history
 - **WHEN** building context for an LLM request
 - **THEN** it should:
   - Filter messages where `included: true`
   - Generate system prompt using agent's personality and role via SystemPromptFactory
-  - Format messages chronologically with proper role assignments
+  - Format messages chronologically with proper role assignments using `MessageFormatterService` (target agent as assistant; other agents prefixed as user content)
   - Return valid LLM provider request format
   - Phase 3: Add message trimming if context gets too large
 
@@ -225,8 +237,8 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
 - **WHEN** UI needs to show temporary states
 - **THEN** the store should:
   - Track `sendingMessage` boolean for input disable state
-  - Maintain `agentThinking` Map for individual agent loading indicators
-  - Store `lastError` Map for displaying agent-specific errors
+  - Maintain `agentThinking` record for individual agent loading indicators
+  - Store `lastError` record for displaying agent-specific errors
   - **NOT store messages** - use `useMessages` hook instead
   - **NOT store conversation data** - use `useConversation` hook instead
   - **NOT store agent data** - use `useConversationAgents` hook instead
@@ -304,7 +316,7 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
 ## Security Requirements
 - **API Keys**: Use existing secure storage for LLM provider credentials (main process only)
 - **Input Validation**: Sanitize user input before database storage
-- **Error Messages**: Don't expose internal system details in user-facing errors
+- **Error Messages**: Don't expose internal system details in user-facing errors; persist only concise summaries as system messages (see Error Persistence Strategy)
  - **IPC Hygiene**: Only pass minimal data across IPC; never transmit secrets to renderer
 
 ## Success Metrics
@@ -341,11 +353,28 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
 // Renderer → Main
 sendToAgents(conversationId: string, userMessageId: string) → void
 
-// Main → Renderer events (required for multi-agent)
+// Main → Renderer (MVP simplified single channel)
+'agent:update' → { conversationAgentId: string, status: 'thinking' | 'complete' | 'error', messageId?: string, error?: string }
+// Optional: emit 'all:complete' → { conversationId: string } after all agents resolve
+```
+
+### Alternative (richer events; optional later adoption)
+```typescript
 'agent:thinking' → { conversationAgentId: string }
 'agent:complete' → { conversationAgentId: string, messageId: string }
 'agent:error' → { conversationAgentId: string, error: string }
 'all:complete' → { conversationId: string }
+```
+
+### Messages IPC (Renderer ↔ Main)
+```typescript
+// Renderer → Main (invoke)
+messages.list(conversationId: string) → Promise<Message[]>
+messages.create(input: CreateMessageInput) → Promise<Message>
+messages.updateInclusion(id: string, included: boolean) → Promise<Message>
+
+// Preload exposure (renderer)
+window.electronAPI.messages = { list, create, updateInclusion }
 ```
 
 ### Phase 2: Enhanced Control
@@ -372,6 +401,8 @@ setAgentTimeout(timeout: number) → void
 - **Thinking states**: Individual agent thinking indicators
 - **Partial failures**: Some agents succeed while others fail
 - **End-to-end**: User sends message, multiple agents respond
+- **Messages IPC**: Handlers for list/create/updateInclusion return correct data and enforce main/renderer boundary
+- **Provider resolution**: Orchestrator resolves `llmConfigId` → `LlmConfig` via `LlmStorageService` and selects correct provider
 
 ### Phase 2: Enhanced UX Tests  
 - **Retry functionality**: Failed agents can be retried individually
@@ -396,6 +427,7 @@ setAgentTimeout(timeout: number) → void
 - **Race conditions in parallel saves**: Message ordering by timestamp + ID
 - **Partial failures confuse users**: Clear UI indicators for each agent's status
 - **No enabled agents**: Show helpful message instead of silent failure
+- **Renderer DB access**: Risk of accidental direct DB calls in renderer → enforce message persistence through main-process IPC only
 
 ### Phase 2: Enhanced UX Risks
 - **Retry storms**: Limit retry to manual user action
@@ -409,3 +441,15 @@ setAgentTimeout(timeout: number) → void
 **Key Mitigation**: Multi-agent is core functionality in Phase 1, ensuring the primary value proposition works from the start
 
 This project delivers a complete, working chat system using existing infrastructure while maintaining simplicity and avoiding over-engineering. The architecture supports future enhancements while providing immediate value to users.
+
+## Over-Engineering Guardrails (MVP)
+- **No new builder class**: Compose existing `SystemPromptFactory` + `MessageFormatterService`; defer a dedicated builder until needed.
+- **Consolidated events**: Use a single `agent:update` event for MVP; split into multiple events only if richer progress states are required.
+- **Simple store structures**: Prefer plain records over `Map` in Zustand for serializable, predictable updates.
+- **Avoid premature queuing/limits**: No concurrency limits or queues unless bottlenecks are observed in profiling.
+- **Desktop-only store**: Keep transient chat store in desktop app until there’s a concrete mobile need.
+
+## Database & Ordering Notes
+- All message writes and reads are executed in main via repositories (renderer communicates over IPC).
+- Ensure stable ordering by `created_at ASC, id ASC` when returning messages to prevent UI jitter.
+- Phase 2+: Add pagination parameters to `messages.list` and UI hooks as histories grow.
