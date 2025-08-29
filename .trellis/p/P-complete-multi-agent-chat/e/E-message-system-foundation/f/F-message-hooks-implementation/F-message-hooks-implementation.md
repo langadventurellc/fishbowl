@@ -4,7 +4,8 @@ title: Message Hooks Implementation
 status: open
 priority: medium
 parent: E-message-system-foundation
-prerequisites: []
+prerequisites:
+  - F-messages-ipc-bridge
 affectedFiles: {}
 log: []
 schema: v1.0
@@ -40,7 +41,6 @@ Implement the core React hooks for message management that follow the establishe
 
 - Update message properties (inclusion flags, content)
 - Support inclusion flag changes for context control
-- Provide optimistic updates with rollback on failure
 - Persist changes immediately to database
 
 ## Detailed Acceptance Criteria
@@ -85,10 +85,8 @@ Implement the core React hooks for message management that follow the establishe
 - Support inclusion flag changes via `updateInclusion(id, included)`
 - Call `window.electronAPI.messages.updateInclusion(id, included)`
 - Return `{ updateMessage, updating, error }` interface
-- Provide optimistic updates with rollback on failure
 - Handle network/database errors gracefully
 - Update local state immediately for responsive UI
-- Revert changes if server update fails
 
 ## Implementation Guidance
 
@@ -139,7 +137,7 @@ apps/desktop/src/hooks/messages/
 
 - **useMessages**: Empty results, successful load, error states, refetch
 - **useCreateMessage**: Successful creation, validation errors, network failures
-- **useUpdateMessage**: Successful updates, optimistic UI, rollback scenarios
+- **useUpdateMessage**: Successful updates
 
 ## Security Considerations
 

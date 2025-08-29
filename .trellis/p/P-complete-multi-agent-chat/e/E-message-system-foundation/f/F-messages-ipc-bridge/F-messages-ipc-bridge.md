@@ -4,8 +4,7 @@ title: Messages IPC Bridge
 status: open
 priority: medium
 parent: E-message-system-foundation
-prerequisites:
-  - F-message-hooks-implementation
+prerequisites: []
 affectedFiles: {}
 log: []
 schema: v1.0
