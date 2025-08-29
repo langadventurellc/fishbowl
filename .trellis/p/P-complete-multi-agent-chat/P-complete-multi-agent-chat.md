@@ -46,7 +46,8 @@ affectedFiles:
     fetching via IPC, proper error handling, and stable chronological sorting
   apps/desktop/src/hooks/messages/index.ts: Created barrel export file for
     messages hooks with proper JSDoc documentation; Updated barrel export file
-    to include useCreateMessage hook with documentation examples
+    to include useCreateMessage hook with documentation examples; Updated barrel
+    export file to include useUpdateMessage hook with documentation examples
   apps/desktop/src/hooks/messages/__tests__/useMessages.test.tsx:
     Created comprehensive unit test suite with 18 test scenarios covering all
     hook functionality including success cases, error handling, environment
@@ -58,6 +59,13 @@ affectedFiles:
     Created comprehensive unit test suite with 23 test scenarios covering all
     hook functionality including success cases, validation errors, IPC errors,
     environment detection, and memory cleanup
+  apps/desktop/src/hooks/messages/useUpdateMessage.ts: Created new
+    useUpdateMessage hook with updateInclusion function, proper error handling,
+    environment detection, and state management following established patterns
+  apps/desktop/src/hooks/messages/__tests__/useUpdateMessage.test.tsx:
+    Created comprehensive unit test suite with 22 test scenarios covering all
+    hook functionality including success cases, validation errors, IPC errors,
+    environment detection, and concurrent operations
 log: []
 schema: v1.0
 childrenIds:

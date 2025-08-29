@@ -1,13 +1,30 @@
 ---
 id: T-implement-useupdatemessage
 title: Implement useUpdateMessage hook with inclusion flags and unit tests
-status: open
+status: done
 priority: medium
 parent: F-message-hooks-implementation
 prerequisites:
   - T-implement-usemessages-hook
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/messages/useUpdateMessage.ts: Created new
+    useUpdateMessage hook with updateInclusion function, proper error handling,
+    environment detection, and state management following established patterns
+  apps/desktop/src/hooks/messages/__tests__/useUpdateMessage.test.tsx:
+    Created comprehensive unit test suite with 22 test scenarios covering all
+    hook functionality including success cases, validation errors, IPC errors,
+    environment detection, and concurrent operations
+  apps/desktop/src/hooks/messages/index.ts:
+    Updated barrel export file to include
+    useUpdateMessage hook with documentation examples
+log:
+  - Successfully implemented useUpdateMessage hook with inclusion flags and
+    comprehensive unit tests. The hook follows established patterns from
+    useCreateConversation and useCreateMessage, providing proper error handling,
+    environment detection, loading states, and validation. Created 22 unit tests
+    covering all functionality including success scenarios, validation errors,
+    IPC errors, environment detection, reset functionality, sequential and
+    concurrent operations.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T18:16:08.827Z
