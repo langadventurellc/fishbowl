@@ -1,13 +1,20 @@
 ---
 id: T-integrate-chat-orchestration
 title: Integrate chat orchestration into MainProcessServices with factory method
-status: open
+status: done
 priority: low
 parent: F-chat-orchestration-service
 prerequisites:
   - T-create-mainprocesschatorchestr
 affectedFiles: {}
-log: []
+log:
+  - Chat orchestration service integration was already completed in
+    MainProcessServices. Verified proper service property declaration,
+    factory-based initialization with dependency injection, structured error
+    handling and logging, and all quality checks pass. The service is properly
+    accessible via mainServices.chatOrchestrationService following established
+    service container patterns. IPC handler setup appears to be part of a
+    separate task as setupChatHandlers function doesn't exist yet.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T19:43:58.194Z
