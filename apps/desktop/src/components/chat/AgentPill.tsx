@@ -8,28 +8,49 @@ import { AgentPillProps } from "@fishbowl-ai/ui-shared";
  * indicator with proper theme-aware styling. Features hover effects, keyboard
  * navigation, and proper accessibility attributes for interactive elements.
  */
-export function AgentPill({ agent, onClick, className }: AgentPillProps) {
+export function AgentPill({
+  agent,
+  onClick,
+  onToggleEnabled,
+  conversationAgentId,
+  className,
+}: AgentPillProps) {
   const handleClick = () => {
-    if (onClick) {
+    if (onToggleEnabled && conversationAgentId) {
+      onToggleEnabled(conversationAgentId);
+    } else if (onClick) {
       onClick(agent.name);
     }
   };
+
+  const isClickable = !!(onToggleEnabled || onClick);
 
   return (
     <div
       style={{ backgroundColor: agent.color }}
       onClick={handleClick}
       className={cn(
-        "flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-white transition-opacity duration-150",
-        onClick && "cursor-pointer hover:opacity-80",
+        "flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium text-white transition-all duration-150",
+        agent.enabled ? "opacity-100" : "opacity-50",
+        isClickable && "cursor-pointer hover:opacity-80",
         className,
       )}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
+      role={isClickable ? "button" : undefined}
+      tabIndex={isClickable ? 0 : undefined}
+      aria-pressed={onToggleEnabled ? agent.enabled : undefined}
+      aria-label={
+        onToggleEnabled
+          ? `${agent.name} | ${agent.role} - ${agent.enabled ? "enabled" : "disabled"}`
+          : undefined
+      }
       onKeyDown={(e) => {
-        if (onClick && (e.key === "Enter" || e.key === " ")) {
+        if (isClickable && (e.key === "Enter" || e.key === " ")) {
           e.preventDefault();
-          onClick(agent.name);
+          if (onToggleEnabled && conversationAgentId) {
+            onToggleEnabled(conversationAgentId);
+          } else if (onClick) {
+            onClick(agent.name);
+          }
         }
       }}
     >

@@ -1,13 +1,34 @@
 ---
 id: T-update-agentpill-component
 title: Update AgentPill component with enabled state styling and click handling
-status: open
+status: done
 priority: high
 parent: F-agent-pill-toggle-enabled
 prerequisites:
   - T-update-agentpillviewmodel-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/chat/AgentPillProps.ts: Added onToggleEnabled
+    callback and conversationAgentId props for toggle functionality with
+    detailed JSDoc documentation
+  apps/desktop/src/components/chat/AgentPill.tsx: Updated component with
+    enabled/disabled styling using opacity, click handling for toggle
+    functionality, proper accessibility attributes (aria-pressed, aria-label),
+    and enhanced keyboard navigation support
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    "Fixed type compatibility by adding enabled: true property to
+    AgentPillViewModel transformation for AgentSettingsViewModel objects"
+  apps/desktop/src/components/chat/__tests__/AgentPill.test.tsx:
+    Created comprehensive unit test suite with 20 tests covering enabled state
+    styling, toggle functionality, accessibility, keyboard navigation, and
+    legacy onClick behavior
+log:
+  - Updated AgentPill component with enabled state styling and click handling
+    functionality. Added visual distinction for enabled/disabled agents using
+    opacity (100% enabled, 50% disabled), implemented toggle click handling with
+    new onToggleEnabled prop, enhanced accessibility with proper ARIA
+    attributes, and maintained backward compatibility with existing onClick
+    functionality. Created comprehensive test suite with 20 tests covering all
+    functionality.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T03:59:25.836Z

@@ -44,17 +44,31 @@ affectedFiles:
   packages/ui-shared/src/types/chat/__tests__/AgentLabelsContainerDisplayProps.test.ts:
     "Updated mock AgentPillViewModel object to include enabled: true property to
     maintain TypeScript compatibility"
+  packages/ui-shared/src/types/chat/AgentPillProps.ts: Added onToggleEnabled
+    callback and conversationAgentId props for toggle functionality with
+    detailed JSDoc documentation
+  apps/desktop/src/components/chat/AgentPill.tsx: Updated component with
+    enabled/disabled styling using opacity, click handling for toggle
+    functionality, proper accessibility attributes (aria-pressed, aria-label),
+    and enhanced keyboard navigation support
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    "Fixed type compatibility by adding enabled: true property to
+    AgentPillViewModel transformation for AgentSettingsViewModel objects"
+  apps/desktop/src/components/chat/__tests__/AgentPill.test.tsx:
+    Created comprehensive unit test suite with 20 tests covering enabled state
+    styling, toggle functionality, accessibility, keyboard navigation, and
+    legacy onClick behavior
 log: []
 schema: v1.0
 childrenIds:
   - T-update-agentlabelscontainerdis
   - T-update-agentpill-component
-  - T-update-agentpillviewmodel-to
   - T-add-toggleenabled-function-to
   - T-add-update-channel-to
   - T-add-update-handler-to
   - T-add-update-method-to-electron
   - T-create-conversation-agent
+  - T-update-agentpillviewmodel-to
 created: 2025-08-29T03:51:28.173Z
 updated: 2025-08-29T03:51:28.173Z
 ---

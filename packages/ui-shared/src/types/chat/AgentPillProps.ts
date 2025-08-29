@@ -67,6 +67,19 @@ export interface AgentPillProps {
   onClick?: (agentName: string) => void;
 
   /**
+   * Optional handler for toggling agent enabled state.
+   * Called when user clicks the pill to toggle enabled/disabled.
+   * Receives the conversation agent ID for identification.
+   */
+  onToggleEnabled?: (conversationAgentId: string) => void;
+
+  /**
+   * Conversation agent ID for toggle operations.
+   * Required when onToggleEnabled is provided.
+   */
+  conversationAgentId?: string;
+
+  /**
    * Optional CSS class name for additional styling.
    * Allows for custom styling of the agent pill component
    * beyond the default theme-aware styling.
