@@ -10,6 +10,10 @@ export const updateConversationAgentInputSchema = z
       .boolean({ message: "Active status must be a boolean" })
       .optional(),
 
+    enabled: z
+      .boolean({ message: "Enabled status must be a boolean" })
+      .optional(),
+
     display_order: z
       .number({ message: "Display order must be a number" })
       .int("Display order must be an integer")
