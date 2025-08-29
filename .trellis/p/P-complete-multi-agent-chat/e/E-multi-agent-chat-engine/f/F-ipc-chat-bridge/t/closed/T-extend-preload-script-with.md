@@ -1,13 +1,34 @@
 ---
 id: T-extend-preload-script-with
 title: Extend preload script with chat API
-status: open
+status: done
 priority: high
 parent: F-ipc-chat-bridge
 prerequisites:
   - T-create-ipc-constants-for-chat
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts: Extended electronAPI object with chat
+    property containing sendToAgents method for triggering multi-agent responses
+    and onAgentUpdate method for subscribing to real-time agent status updates.
+    Implemented secure contextBridge patterns with proper error handling and
+    event listener management.
+  apps/desktop/src/types/electron.d.ts: Added chat API interface to ElectronAPI
+    with comprehensive JSDoc documentation for sendToAgents and onAgentUpdate
+    methods, including proper TypeScript typing for parameters and return
+    values.
+  apps/desktop/src/electron/__tests__/preload.chat.test.ts:
+    Created comprehensive
+    unit test suite with 14 test cases covering both chat methods, error
+    handling scenarios, security boundaries, and contextBridge integration.
+    Tests verify proper IPC invocation, event listener management, and secure
+    callback wrapping.
+log:
+  - Successfully extended the preload script with a secure chat API that exposes
+    sendToAgents() and onAgentUpdate() methods to the renderer process. The
+    implementation follows established security patterns, includes comprehensive
+    error handling, and provides proper event listener cleanup to prevent memory
+    leaks. Added full TypeScript definitions and comprehensive unit tests
+    covering all functionality and edge cases.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T21:28:29.433Z

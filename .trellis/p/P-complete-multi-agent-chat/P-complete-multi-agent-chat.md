@@ -37,10 +37,17 @@ affectedFiles:
   apps/desktop/src/electron/preload.ts:
     Extended electronAPI object with messages
     API implementing list, create, and updateInclusion operations following
-    established patterns from conversations API
+    established patterns from conversations API; Extended electronAPI object
+    with chat property containing sendToAgents method for triggering multi-agent
+    responses and onAgentUpdate method for subscribing to real-time agent status
+    updates. Implemented secure contextBridge patterns with proper error
+    handling and event listener management.
   apps/desktop/src/types/electron.d.ts:
     Added MessagesAPI interface to ElectronAPI
-    type definition with proper JSDoc documentation for all three operations
+    type definition with proper JSDoc documentation for all three operations;
+    Added chat API interface to ElectronAPI with comprehensive JSDoc
+    documentation for sendToAgents and onAgentUpdate methods, including proper
+    TypeScript typing for parameters and return values.
   apps/desktop/src/electron/__tests__/preload.messages.test.ts:
     Created comprehensive unit tests for messages preload API with 24 test cases
     covering success scenarios, error handling, IPC communication failures, and
@@ -175,6 +182,12 @@ affectedFiles:
   apps/desktop/src/shared/ipc/chat/index.ts: Created barrel export file for chat IPC module
   apps/desktop/src/shared/ipc/__tests__/chatIPC.test.ts: Created comprehensive
     unit tests with 14 test cases covering constants, types, and interfaces
+  apps/desktop/src/electron/__tests__/preload.chat.test.ts:
+    Created comprehensive
+    unit test suite with 14 test cases covering both chat methods, error
+    handling scenarios, security boundaries, and contextBridge integration.
+    Tests verify proper IPC invocation, event listener management, and secure
+    callback wrapping.
 log: []
 schema: v1.0
 childrenIds:

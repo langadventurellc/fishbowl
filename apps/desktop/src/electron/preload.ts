@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 import type { ElectronAPI } from "../types/electron";
 
@@ -13,6 +13,12 @@ import { CONVERSATION_CHANNELS } from "../shared/ipc/conversationsConstants";
 import { CONVERSATION_AGENT_CHANNELS } from "../shared/ipc/conversationAgentsConstants";
 import { PERSONALITY_DEFINITIONS_CHANNELS } from "../shared/ipc/personalityDefinitionsConstants";
 import { MESSAGES_CHANNELS } from "../shared/ipc/messagesConstants";
+import {
+  CHAT_CHANNELS,
+  CHAT_EVENTS,
+  SendToAgentsRequest,
+  AgentUpdateEvent,
+} from "../shared/ipc/chat";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -910,6 +916,70 @@ const electronAPI: ElectronAPI = {
         throw error instanceof Error
           ? error
           : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  chat: {
+    sendToAgents: async (
+      conversationId: string,
+      userMessageId: string,
+    ): Promise<void> => {
+      try {
+        const request: SendToAgentsRequest = { conversationId, userMessageId };
+        await ipcRenderer.invoke(CHAT_CHANNELS.SEND_TO_AGENTS, request);
+      } catch (error) {
+        logger.error(
+          "Error sending to agents:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+
+    onAgentUpdate: (
+      callback: (event: AgentUpdateEvent) => void,
+    ): (() => void) => {
+      try {
+        // Create wrapped callback to prevent event object exposure
+        const wrappedCallback = (
+          _: IpcRendererEvent,
+          eventData: AgentUpdateEvent,
+        ) => {
+          try {
+            callback(eventData);
+          } catch (error) {
+            logger.error(
+              "Error in agent update callback:",
+              error instanceof Error ? error : new Error(String(error)),
+            );
+          }
+        };
+
+        // Register the IPC listener
+        ipcRenderer.on(CHAT_EVENTS.AGENT_UPDATE, wrappedCallback);
+
+        // Return cleanup function
+        return () => {
+          try {
+            ipcRenderer.removeListener(
+              CHAT_EVENTS.AGENT_UPDATE,
+              wrappedCallback,
+            );
+          } catch (error) {
+            logger.error(
+              "Error removing agent update listener:",
+              error instanceof Error ? error : new Error(String(error)),
+            );
+          }
+        };
+      } catch (error) {
+        logger.error(
+          "Error setting up agent update listener:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        return () => {}; // Return no-op cleanup function if setup fails
       }
     },
   },

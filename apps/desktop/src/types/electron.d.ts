@@ -284,6 +284,29 @@ export interface ElectronAPI {
       included: boolean,
     ): Promise<import("@fishbowl-ai/shared").Message>;
   };
+  /**
+   * Chat operations for multi-agent conversation processing.
+   * Provides secure interface for triggering agent responses and receiving real-time updates.
+   */
+  chat: {
+    /**
+     * Trigger multi-agent responses for a user message in a conversation.
+     * Initiates parallel processing by all agents in the conversation.
+     * @param conversationId - Unique identifier for the conversation
+     * @param userMessageId - Unique identifier for the user message triggering responses
+     * @returns Promise resolving when agent processing is initiated (fire-and-forget)
+     */
+    sendToAgents(conversationId: string, userMessageId: string): Promise<void>;
+    /**
+     * Register a callback to receive real-time agent status updates.
+     * Updates are emitted as agents transition between thinking, complete, and error states.
+     * @param callback - Function to execute when agent status changes
+     * @returns Cleanup function to remove the event listener and prevent memory leaks
+     */
+    onAgentUpdate(
+      callback: (event: import("../shared/ipc/chat").AgentUpdateEvent) => void,
+    ): () => void;
+  };
 }
 
 declare global {
