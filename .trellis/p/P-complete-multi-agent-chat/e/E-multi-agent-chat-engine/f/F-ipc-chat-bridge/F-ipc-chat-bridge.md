@@ -46,10 +46,10 @@ log: []
 schema: v1.0
 childrenIds:
   - T-extend-typescript-definitions
-  - T-implement-main-process-chat
   - T-integrate-chat-handlers-into
   - T-create-ipc-constants-for-chat
   - T-extend-preload-script-with
+  - T-implement-main-process-chat
 created: 2025-08-29T19:20:45.559Z
 updated: 2025-08-29T19:20:45.559Z
 ---
