@@ -41,6 +41,14 @@ affectedFiles:
     Created comprehensive unit tests for messages preload API with 24 test cases
     covering success scenarios, error handling, IPC communication failures, and
     contextBridge integration
+  apps/desktop/src/hooks/messages/useMessages.ts: Created new useMessages hook
+    following useConversations pattern with conversationId parameter, message
+    fetching via IPC, proper error handling, and stable chronological sorting
+  apps/desktop/src/hooks/messages/index.ts: Created barrel export file for messages hooks with proper JSDoc documentation
+  apps/desktop/src/hooks/messages/__tests__/useMessages.test.tsx:
+    Created comprehensive unit test suite with 18 test scenarios covering all
+    hook functionality including success cases, error handling, environment
+    detection, refetch operations, sorting behavior, and memory cleanup
 log: []
 schema: v1.0
 childrenIds:

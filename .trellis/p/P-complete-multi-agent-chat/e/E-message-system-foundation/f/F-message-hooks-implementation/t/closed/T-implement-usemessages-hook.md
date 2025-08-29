@@ -1,12 +1,80 @@
 ---
 id: T-implement-usemessages-hook
 title: Implement useMessages hook with real-time updates and unit tests
-status: open
+status: done
 priority: high
 parent: F-message-hooks-implementation
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/messages/useMessages.ts: Created new useMessages hook
+    following useConversations pattern with conversationId parameter, message
+    fetching via IPC, proper error handling, and stable chronological sorting
+  apps/desktop/src/hooks/messages/index.ts: Created barrel export file for messages hooks with proper JSDoc documentation
+  apps/desktop/src/hooks/messages/__tests__/useMessages.test.tsx:
+    Created comprehensive unit test suite with 18 test scenarios covering all
+    hook functionality including success cases, error handling, environment
+    detection, refetch operations, sorting behavior, and memory cleanup
+log:
+  - >-
+    Implemented useMessages hook with real-time updates and comprehensive unit
+    tests following the exact pattern from useConversations hook. The hook
+    provides complete message fetching functionality for a conversation with
+    proper TypeScript types, error handling, and Electron environment detection.
+
+
+    Key Implementation Features:
+
+    - Follows exact pattern from useConversations.ts for consistency
+
+    - Accepts conversationId parameter and calls
+    window.electronAPI.messages.list(conversationId)
+
+    - Returns UseMessagesResult interface with messages, isLoading, error,
+    refetch, and isEmpty properties
+
+    - Messages are sorted by created_at ASC, then by id ASC for stable
+    chronological ordering
+
+    - Includes proper Electron environment detection with fallback and warning
+    logging
+
+    - Uses useServices() hook for logging with debug and error messages
+
+    - Implements performance optimizations with useCallback and useMemo
+
+    - Provides manual refetch functionality for real-time updates
+
+
+    Unit Testing Coverage:
+
+    - Created comprehensive test suite with 18 test scenarios covering all
+    functionality
+
+    - Tests successful message loading, empty conversation handling, error
+    scenarios
+
+    - Tests Electron environment detection and graceful degradation
+
+    - Tests refetch functionality including loading states and error recovery
+
+    - Tests sorting behavior including secondary sorting by id when timestamps
+    are equal
+
+    - Tests memory cleanup and proper unmounting behavior
+
+    - All tests pass with 100% coverage of hook functionality
+
+
+    Quality Assurance:
+
+    - All quality checks pass (lint, format, type-check)
+
+    - Fixed MessageRoleType usage (used "agent" instead of "assistant")
+
+    - Code follows project conventions and Clean Code Charter
+
+    - Implements proper security measures with input validation through IPC
+    layer
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T18:15:02.570Z
