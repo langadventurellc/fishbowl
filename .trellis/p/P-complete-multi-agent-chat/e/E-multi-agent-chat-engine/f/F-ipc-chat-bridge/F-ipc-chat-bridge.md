@@ -1,7 +1,7 @@
 ---
 id: F-ipc-chat-bridge
 title: IPC Chat Bridge
-status: in-progress
+status: done
 priority: medium
 parent: E-multi-agent-chat-engine
 prerequisites:
@@ -42,14 +42,20 @@ affectedFiles:
     unit test suite with 13 test cases covering handler registration, input
     validation, service integration, event emission, error handling, and edge
     cases
-log: []
+  apps/desktop/src/electron/main.ts: Added import for setupChatHandlers from
+    chatHandlers.js and integrated it into the setupIpcHandlers function
+    alongside other service-dependent handlers (conversations,
+    conversationAgents, messages). Chat handlers now properly initialize during
+    main process startup with access to MainProcessServices.
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-extend-typescript-definitions
-  - T-integrate-chat-handlers-into
   - T-create-ipc-constants-for-chat
   - T-extend-preload-script-with
+  - T-extend-typescript-definitions
   - T-implement-main-process-chat
+  - T-integrate-chat-handlers-into
 created: 2025-08-29T19:20:45.559Z
 updated: 2025-08-29T19:20:45.559Z
 ---

@@ -16,6 +16,7 @@ import { setupAgentsHandlers } from "./agentsHandlers.js";
 import { setupConversationAgentHandlers } from "./conversationAgentHandlers.js";
 import { setupConversationsHandlers } from "./conversationsHandlers.js";
 import { setupMessagesHandlers } from "./messagesHandlers.js";
+import { setupChatHandlers } from "./chatHandlers.js";
 import { llmConfigServiceManager } from "./getLlmConfigService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
@@ -347,6 +348,7 @@ function setupIpcHandlers(
     setupConversationsIpcHandlers(services);
     setupConversationAgentsIpcHandlers(services);
     setupMessagesIpcHandlers(services);
+    setupChatHandlers(services);
   }
 }
 

@@ -107,6 +107,11 @@ affectedFiles:
     unit test suite with 13 test cases covering handler registration, input
     validation, service integration, event emission, error handling, and edge
     cases
+  apps/desktop/src/electron/main.ts: Added import for setupChatHandlers from
+    chatHandlers.js and integrated it into the setupIpcHandlers function
+    alongside other service-dependent handlers (conversations,
+    conversationAgents, messages). Chat handlers now properly initialize during
+    main process startup with access to MainProcessServices.
 log: []
 schema: v1.0
 childrenIds:

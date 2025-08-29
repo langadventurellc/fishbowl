@@ -1,13 +1,25 @@
 ---
 id: T-integrate-chat-handlers-into
 title: Integrate chat handlers into main process initialization
-status: open
+status: done
 priority: medium
 parent: F-ipc-chat-bridge
 prerequisites:
   - T-implement-main-process-chat
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/main.ts: Added import for setupChatHandlers from
+    chatHandlers.js and integrated it into the setupIpcHandlers function
+    alongside other service-dependent handlers (conversations,
+    conversationAgents, messages). Chat handlers now properly initialize during
+    main process startup with access to MainProcessServices.
+log:
+  - Successfully integrated chat handlers into main process initialization
+    sequence. Added import for setupChatHandlers and registered it alongside
+    other service-dependent handlers in the setupIpcHandlers function. The chat
+    handlers are now properly initialized with MainProcessServices dependency
+    injection during main process startup, following established patterns from
+    existing handlers. All quality checks (lint, format, type-check) pass
+    successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T21:29:08.118Z

@@ -33,7 +33,12 @@ affectedFiles:
     setupMessagesHandlers function implementing messages:list, messages:create,
     and messages:updateInclusion handlers
   apps/desktop/src/electron/main.ts: Added import for setupMessagesHandlers and
-    created setupMessagesIpcHandlers function following established patterns
+    created setupMessagesIpcHandlers function following established patterns;
+    Added import for setupChatHandlers from chatHandlers.js and integrated it
+    into the setupIpcHandlers function alongside other service-dependent
+    handlers (conversations, conversationAgents, messages). Chat handlers now
+    properly initialize during main process startup with access to
+    MainProcessServices.
   apps/desktop/src/electron/preload.ts:
     Extended electronAPI object with messages
     API implementing list, create, and updateInclusion operations following
