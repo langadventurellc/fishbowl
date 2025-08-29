@@ -1,14 +1,30 @@
 ---
 id: T-extend-preload-interface-with
 title: Extend preload interface with messages API
-status: open
+status: done
 priority: high
 parent: F-messages-ipc-bridge
 prerequisites:
   - T-create-messages-ipc-channel
   - T-implement-messages-ipc
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts:
+    Extended electronAPI object with messages
+    API implementing list, create, and updateInclusion operations following
+    established patterns from conversations API
+  apps/desktop/src/types/electron.d.ts:
+    Added MessagesAPI interface to ElectronAPI
+    type definition with proper JSDoc documentation for all three operations
+  apps/desktop/src/electron/__tests__/preload.messages.test.ts:
+    Created comprehensive unit tests for messages preload API with 24 test cases
+    covering success scenarios, error handling, IPC communication failures, and
+    contextBridge integration
+log:
+  - Successfully extended the preload interface with messages API following
+    established patterns. Implemented all three required operations (list,
+    create, updateInclusion) with proper error handling, logging, and TypeScript
+    type safety. Added comprehensive unit tests with 100% coverage (24 tests
+    passing). All quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T17:44:07.398Z

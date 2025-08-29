@@ -252,6 +252,38 @@ export interface ElectronAPI {
      */
     list(): Promise<import("@fishbowl-ai/shared").ConversationAgent[]>;
   };
+  /**
+   * Messages operations for managing conversation messages.
+   * Provides CRUD operations for messages through IPC handlers.
+   */
+  messages: {
+    /**
+     * List all messages for a specific conversation.
+     * @param conversationId - ID of the conversation
+     * @returns Promise resolving to array of messages
+     */
+    list(
+      conversationId: string,
+    ): Promise<import("@fishbowl-ai/shared").Message[]>;
+    /**
+     * Create a new message in a conversation.
+     * @param input - Input data for creating the message
+     * @returns Promise resolving to the created message
+     */
+    create(
+      input: import("@fishbowl-ai/shared").CreateMessageInput,
+    ): Promise<import("@fishbowl-ai/shared").Message>;
+    /**
+     * Update a message's inclusion flag for context control.
+     * @param id - Message ID
+     * @param included - Whether the message should be included
+     * @returns Promise resolving to the updated message
+     */
+    updateInclusion(
+      id: string,
+      included: boolean,
+    ): Promise<import("@fishbowl-ai/shared").Message>;
+  };
 }
 
 declare global {

@@ -12,6 +12,7 @@ import { AGENTS_CHANNELS } from "../shared/ipc/agentsConstants";
 import { CONVERSATION_CHANNELS } from "../shared/ipc/conversationsConstants";
 import { CONVERSATION_AGENT_CHANNELS } from "../shared/ipc/conversationAgentsConstants";
 import { PERSONALITY_DEFINITIONS_CHANNELS } from "../shared/ipc/personalityDefinitionsConstants";
+import { MESSAGES_CHANNELS } from "../shared/ipc/messagesConstants";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -58,6 +59,12 @@ import type {
   ConversationAgentUpdateResponse,
   GetDefinitionsRequest,
   GetDefinitionsResponse,
+  MessagesListRequest,
+  MessagesListResponse,
+  MessagesCreateRequest,
+  MessagesCreateResponse,
+  MessagesUpdateInclusionRequest,
+  MessagesUpdateInclusionResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -74,6 +81,8 @@ import type {
   AddAgentToConversationInput,
   RemoveAgentFromConversationInput,
   PersonalityDefinitions,
+  CreateMessageInput,
+  Message,
 } from "@fishbowl-ai/shared";
 import type { SettingsCategory } from "@fishbowl-ai/ui-shared";
 
@@ -824,6 +833,78 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error listing conversation agents:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  messages: {
+    list: async (conversationId: string): Promise<Message[]> => {
+      try {
+        const request: MessagesListRequest = { conversationId };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.LIST,
+          request,
+        )) as MessagesListResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to list messages");
+        }
+        return response.data || [];
+      } catch (error) {
+        logger.error(
+          "Error listing messages:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    create: async (input: CreateMessageInput): Promise<Message> => {
+      try {
+        const request: MessagesCreateRequest = { input };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.CREATE,
+          request,
+        )) as MessagesCreateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to create message",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error creating message:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    updateInclusion: async (
+      id: string,
+      included: boolean,
+    ): Promise<Message> => {
+      try {
+        const request: MessagesUpdateInclusionRequest = { id, included };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.UPDATE_INCLUSION,
+          request,
+        )) as MessagesUpdateInclusionResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to update message inclusion",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error updating message inclusion:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error
