@@ -88,6 +88,7 @@ export type { ConversationAgentAddRequest } from "./conversationAgents/conversat
 export type { ConversationAgentGetByConversationRequest } from "./conversationAgents/conversationAgentGetByConversationRequest";
 export type { ConversationAgentListRequest } from "./conversationAgents/conversationAgentListRequest";
 export type { ConversationAgentRemoveRequest } from "./conversationAgents/conversationAgentRemoveRequest";
+export type { ConversationAgentUpdateRequest } from "./conversationAgents/conversationAgentUpdateRequest";
 
 // Response types
 export type { SettingsLoadResponse } from "./loadResponse";
@@ -134,6 +135,7 @@ export type { ConversationAgentAddResponse } from "./conversationAgents/conversa
 export type { ConversationAgentGetByConversationResponse } from "./conversationAgents/conversationAgentGetByConversationResponse";
 export type { ConversationAgentListResponse } from "./conversationAgents/conversationAgentListResponse";
 export type { ConversationAgentRemoveResponse } from "./conversationAgents/conversationAgentRemoveResponse";
+export type { ConversationAgentUpdateResponse } from "./conversationAgents/conversationAgentUpdateResponse";
 
 // LLM Models request types
 export type { LlmModelsSaveRequest } from "./llmModels/saveRequest";

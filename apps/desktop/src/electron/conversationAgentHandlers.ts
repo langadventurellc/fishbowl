@@ -4,10 +4,12 @@ import {
   type ConversationAgentGetByConversationRequest,
   type ConversationAgentAddRequest,
   type ConversationAgentRemoveRequest,
+  type ConversationAgentUpdateRequest,
   type ConversationAgentListRequest,
   type ConversationAgentGetByConversationResponse,
   type ConversationAgentAddResponse,
   type ConversationAgentRemoveResponse,
+  type ConversationAgentUpdateResponse,
   type ConversationAgentListResponse,
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
@@ -69,6 +71,34 @@ export function setupConversationAgentHandlers(
         return { success: true, data: agent };
       } catch (error) {
         logger.error("Failed to add agent to conversation", error as Error);
+        return { success: false, error: serializeError(error) };
+      }
+    },
+  );
+
+  ipcMain.handle(
+    CONVERSATION_AGENT_CHANNELS.UPDATE,
+    async (
+      _event,
+      request: ConversationAgentUpdateRequest,
+    ): Promise<ConversationAgentUpdateResponse> => {
+      logger.debug("Updating conversation agent", {
+        conversationAgentId: request.conversationAgentId,
+        updates: request.updates,
+      });
+      try {
+        const agent = await mainServices.conversationAgentsRepository.update(
+          request.conversationAgentId,
+          request.updates,
+        );
+        logger.debug("Conversation agent updated successfully", {
+          id: agent.id,
+          conversationId: agent.conversation_id,
+          agentId: agent.agent_id,
+        });
+        return { success: true, data: agent };
+      } catch (error) {
+        logger.error("Failed to update conversation agent", error as Error);
         return { success: false, error: serializeError(error) };
       }
     },

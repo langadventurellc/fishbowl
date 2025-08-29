@@ -16,17 +16,24 @@ affectedFiles:
     Created ConversationAgentUpdateResponse interface extending
     IPCResponse<ConversationAgent>, includes comprehensive JSDoc with
     success/error examples
+  apps/desktop/src/electron/conversationAgentHandlers.ts:
+    Added UPDATE handler to
+    setupConversationAgentHandlers function, following existing patterns for
+    error handling and logging, and exported the function
+  apps/desktop/src/shared/ipc/index.ts: Added exports for
+    ConversationAgentUpdateRequest and ConversationAgentUpdateResponse types to
+    make them available for import in handlers
 log: []
 schema: v1.0
 childrenIds:
   - T-add-toggleenabled-function-to
   - T-add-update-handler-to
   - T-add-update-method-to-electron
-  - T-create-conversation-agent
   - T-update-agentlabelscontainerdis
   - T-update-agentpill-component
   - T-update-agentpillviewmodel-to
   - T-add-update-channel-to
+  - T-create-conversation-agent
 created: 2025-08-29T03:51:28.173Z
 updated: 2025-08-29T03:51:28.173Z
 ---

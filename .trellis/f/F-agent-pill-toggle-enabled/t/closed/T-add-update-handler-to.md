@@ -1,13 +1,26 @@
 ---
 id: T-add-update-handler-to
 title: Add update handler to conversation agent IPC handlers
-status: open
+status: done
 priority: medium
 parent: F-agent-pill-toggle-enabled
 prerequisites:
   - T-create-conversation-agent
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/conversationAgentHandlers.ts:
+    Added UPDATE handler to
+    setupConversationAgentHandlers function, following existing patterns for
+    error handling and logging, and exported the function
+  apps/desktop/src/shared/ipc/index.ts: Added exports for
+    ConversationAgentUpdateRequest and ConversationAgentUpdateResponse types to
+    make them available for import in handlers
+log:
+  - Implemented UPDATE handler in conversation agent IPC handlers to support
+    updating conversation agent properties, particularly the enabled state.
+    Added the handler following existing code patterns with proper error
+    handling, logging, and serialization. Updated IPC exports to include the new
+    request/response types. All quality checks pass including linting,
+    formatting, and type checking.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T03:58:33.434Z
