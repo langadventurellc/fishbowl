@@ -12,17 +12,21 @@ affectedFiles:
   packages/shared/src/services/llm/interfaces/FormattedMessage.ts: Provider-formatted message interface with user/assistant roles
   packages/shared/src/services/llm/interfaces/LlmResponse.ts: Simple provider response interface with content string
   packages/shared/src/services/llm/interfaces/index.ts: Barrel export file for all LLM interfaces
+  packages/shared/src/services/llm/errors/LlmProviderError.ts:
+    Created main error class extending Error with message and optional provider
+    properties
+  packages/shared/src/services/llm/errors/index.ts: Created barrel export for the error classes
 log: []
 schema: v1.0
 childrenIds:
   - T-create-barrel-exports-for-llm
-  - T-create-core-llm-provider
   - T-create-llm-provider-error
   - T-create-llm-provider-factory
   - T-create-mockprovider-for
   - T-implement-anthropic-provider
   - T-implement-messageformatterserv
   - T-implement-openai-provider
+  - T-create-core-llm-provider
 created: 2025-08-29T00:06:15.858Z
 updated: 2025-08-29T00:06:15.858Z
 ---
