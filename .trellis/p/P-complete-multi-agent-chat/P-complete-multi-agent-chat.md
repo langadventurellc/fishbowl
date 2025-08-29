@@ -1,13 +1,36 @@
 ---
 id: P-complete-multi-agent-chat
 title: Complete Multi-Agent Chat System Implementation
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/shared/ipc/messagesConstants.ts:
+    Created IPC channel constants
+    for messages operations with MESSAGES_CHANNELS object and
+    MessagesChannelType union type
+  apps/desktop/src/shared/ipc/messages/listRequest.ts:
+    Created MessagesListRequest
+    interface for retrieving messages by conversationId
+  apps/desktop/src/shared/ipc/messages/listResponse.ts: Created MessagesListResponse interface extending IPCResponse<Message[]>
+  apps/desktop/src/shared/ipc/messages/createRequest.ts: Created MessagesCreateRequest interface accepting CreateMessageInput
+  apps/desktop/src/shared/ipc/messages/createResponse.ts: Created MessagesCreateResponse interface extending IPCResponse<Message>
+  apps/desktop/src/shared/ipc/messages/updateInclusionRequest.ts:
+    Created MessagesUpdateInclusionRequest interface for updating message
+    inclusion flags
+  apps/desktop/src/shared/ipc/messages/updateInclusionResponse.ts:
+    Created MessagesUpdateInclusionResponse interface extending
+    IPCResponse<Message>
+  apps/desktop/src/shared/ipc/messages/index.ts: Created barrel file exporting all messages request/response types
+  apps/desktop/src/shared/ipc/index.ts: Added messages constants, request types,
+    and response types exports to main IPC index
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - E-chat-ui-integration
+  - E-enhanced-user-experience
+  - E-message-system-foundation
+  - E-multi-agent-chat-engine
 created: 2025-08-29T15:26:19.801Z
 updated: 2025-08-29T15:26:19.801Z
 ---
@@ -188,6 +211,7 @@ Implementation notes:
 ### State Management (MVP location: `apps/desktop/src/stores/chat/`)
 
 - **useChatStore**: Minimal store for transient UI state only
+
   ```typescript
   interface ChatStore {
     // Transient UI state
@@ -202,6 +226,7 @@ Implementation notes:
     clearAllThinking: () => void;
   }
   ```
+
 - **Key Principle**: Store only holds UI state; all data operations go through repositories
 - **Placement**: Keep store in desktop app for MVP (renderer-only state); consider lifting to shared only if/when mobile needs it.
 

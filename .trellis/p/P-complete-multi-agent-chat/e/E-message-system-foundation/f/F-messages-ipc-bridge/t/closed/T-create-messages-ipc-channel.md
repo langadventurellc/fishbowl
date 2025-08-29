@@ -1,12 +1,39 @@
 ---
 id: T-create-messages-ipc-channel
 title: Create messages IPC channel constants and type definitions
-status: open
+status: done
 priority: high
 parent: F-messages-ipc-bridge
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/shared/ipc/messagesConstants.ts:
+    Created IPC channel constants
+    for messages operations with MESSAGES_CHANNELS object and
+    MessagesChannelType union type
+  apps/desktop/src/shared/ipc/messages/listRequest.ts:
+    Created MessagesListRequest
+    interface for retrieving messages by conversationId
+  apps/desktop/src/shared/ipc/messages/listResponse.ts: Created MessagesListResponse interface extending IPCResponse<Message[]>
+  apps/desktop/src/shared/ipc/messages/createRequest.ts: Created MessagesCreateRequest interface accepting CreateMessageInput
+  apps/desktop/src/shared/ipc/messages/createResponse.ts: Created MessagesCreateResponse interface extending IPCResponse<Message>
+  apps/desktop/src/shared/ipc/messages/updateInclusionRequest.ts:
+    Created MessagesUpdateInclusionRequest interface for updating message
+    inclusion flags
+  apps/desktop/src/shared/ipc/messages/updateInclusionResponse.ts:
+    Created MessagesUpdateInclusionResponse interface extending
+    IPCResponse<Message>
+  apps/desktop/src/shared/ipc/messages/index.ts: Created barrel file exporting all messages request/response types
+  apps/desktop/src/shared/ipc/index.ts: Added messages constants, request types,
+    and response types exports to main IPC index
+log:
+  - Successfully implemented messages IPC channel constants and type definitions
+    following existing patterns from conversations module. Created
+    MESSAGES_CHANNELS with LIST, CREATE, and UPDATE_INCLUSION operations.
+    Implemented complete request/response type structure with proper TypeScript
+    interfaces extending IPCResponse. All types are properly integrated into
+    main IPC index for seamless import. Followed "one export per file" rule and
+    maintained consistency with established patterns. All quality checks pass
+    with clean lint, format, and TypeScript compilation.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T17:42:46.592Z

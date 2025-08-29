@@ -40,6 +40,10 @@ export type { ConversationsChannelType } from "./conversationsConstants";
 export { CONVERSATION_AGENT_CHANNELS } from "./conversationAgentsConstants";
 export type { ConversationAgentChannelType } from "./conversationAgentsConstants";
 
+// Messages constants
+export { MESSAGES_CHANNELS } from "./messagesConstants";
+export type { MessagesChannelType } from "./messagesConstants";
+
 // Base types
 export type { IPCResponse } from "./base";
 export type { SerializableError } from "./types";
@@ -90,6 +94,11 @@ export type { ConversationAgentListRequest } from "./conversationAgents/conversa
 export type { ConversationAgentRemoveRequest } from "./conversationAgents/conversationAgentRemoveRequest";
 export type { ConversationAgentUpdateRequest } from "./conversationAgents/conversationAgentUpdateRequest";
 
+// Messages request types
+export type { MessagesListRequest } from "./messages/listRequest";
+export type { MessagesCreateRequest } from "./messages/createRequest";
+export type { MessagesUpdateInclusionRequest } from "./messages/updateInclusionRequest";
+
 // Response types
 export type { SettingsLoadResponse } from "./loadResponse";
 export type { SettingsResetResponse } from "./resetResponse";
@@ -136,6 +145,11 @@ export type { ConversationAgentGetByConversationResponse } from "./conversationA
 export type { ConversationAgentListResponse } from "./conversationAgents/conversationAgentListResponse";
 export type { ConversationAgentRemoveResponse } from "./conversationAgents/conversationAgentRemoveResponse";
 export type { ConversationAgentUpdateResponse } from "./conversationAgents/conversationAgentUpdateResponse";
+
+// Messages response types
+export type { MessagesListResponse } from "./messages/listResponse";
+export type { MessagesCreateResponse } from "./messages/createResponse";
+export type { MessagesUpdateInclusionResponse } from "./messages/updateInclusionResponse";
 
 // LLM Models request types
 export type { LlmModelsSaveRequest } from "./llmModels/saveRequest";
