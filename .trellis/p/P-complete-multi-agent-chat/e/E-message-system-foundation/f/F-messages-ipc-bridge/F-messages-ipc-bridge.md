@@ -22,26 +22,30 @@ Implement the Inter-Process Communication (IPC) bridge that enables secure commu
 
 ## Key Components to Implement
 
-### Main Process Handlers (`apps/desktop/src/main/handlers/messages/`)
+### Main Process Handlers (Electron)
 
-- **messages.list**: Retrieve all messages for a conversation
-- **messages.create**: Create new user or system messages
-- **messages.updateInclusion**: Update message inclusion flags for context control
+- Location: `apps/desktop/src/electron/messagesHandlers.ts` (match `conversationsHandlers.ts` pattern)
+- Handlers:
+  - `messages.list`: Retrieve all messages for a conversation
+  - `messages.create`: Create new user or system messages
+  - `messages.updateInclusion`: Update message inclusion flags for context control
 - Full TypeScript contracts between renderer and main
 - Direct integration with existing MessageRepository
 
-### Preload Exposure (`apps/desktop/src/preload/messages.ts`)
+### Preload Exposure (centralized)
 
+- Location: `apps/desktop/src/electron/preload.ts`
 - Safe renderer access via `window.electronAPI.messages`
 - Type-safe interface exposure following existing patterns
 - Security validation and error handling
-- Integration with existing preload architecture
+- Integration with centralized preload architecture
 
 ### IPC Type Definitions
 
-- Complete TypeScript interfaces for all message operations
-- Input/output type validation and error handling
-- Consistent error messaging across IPC boundary
+- Add `apps/desktop/src/shared/ipc/messagesConstants.ts` with `MESSAGES_CHANNELS`
+- Add request/response types under `apps/desktop/src/shared/ipc/messages/`
+- Re-export from `apps/desktop/src/shared/ipc/index.ts`
+- Follow conversations/conversationAgents typing patterns
 
 ## Detailed Acceptance Criteria
 
@@ -57,19 +61,19 @@ Implement the Inter-Process Communication (IPC) bridge that enables secure commu
 - Return `Promise<Message[]>` with all messages for conversation
 - Sort messages by `created_at ASC, id ASC` using SQL ORDER BY for stability
 - Handle invalid conversationId with clear error message
-- Use existing MessageRepository.findByConversationId() method
+- Use existing `MessageRepository.getByConversation(conversationId)`
 - Include proper error logging with conversation context
 - Return empty array for conversations with no messages
 
 #### messages.create Handler
 
-- Accept `CreateMessageInput` with conversation_id, role, content, conversation_agent_id
+- Accept `CreateMessageInput` with `conversation_id`, `role`, `content`, optional `conversation_agent_id`
 - Validate all required fields before database operation
 - Return `Promise<Message>` with created message including generated ID
-- Use existing MessageRepository.create() method
+- Use existing `MessageRepository.create()` method
 - Handle validation errors (empty content, invalid conversation_id)
 - Include proper error logging with input context
-- Set default values: included=true, created_at=now()
+- Defaults applied by repository: `included=true` (when not provided), `created_at=now()`
 
 #### messages.updateInclusion Handler
 
@@ -86,9 +90,9 @@ Implement the Inter-Process Communication (IPC) bridge that enables secure commu
 **WHEN** using `window.electronAPI.messages` interface
 **THEN** it should:
 
-- Expose typed `{ list, create, updateInclusion }` interface
-- Follow exact patterns from existing `window.electronAPI.conversations`
-- Include proper TypeScript definitions for all methods
+- Expose typed `{ list, create, updateInclusion }` interface in centralized `preload.ts`
+- Follow exact patterns from existing `electronAPI.conversations` and `electronAPI.conversationAgent`
+- Extend `apps/desktop/src/types/electron.d.ts` with messages API surface
 - Handle IPC errors and convert to user-friendly messages
 - Validate parameters before sending to main process
 - Provide consistent error format across all operations
@@ -124,43 +128,42 @@ Implement the Inter-Process Communication (IPC) bridge that enables secure commu
 ### File Structure
 
 ```
-apps/desktop/src/main/handlers/messages/
-├── index.ts                    # Main handler registration
-├── messagesListHandler.ts      # messages.list implementation
-├── messagesCreateHandler.ts    # messages.create implementation
-├── messagesUpdateHandler.ts    # messages.updateInclusion implementation
-└── types.ts                    # IPC-specific type definitions
+apps/desktop/src/electron/
+├── messagesHandlers.ts             # Register messages:list/create/updateInclusion handlers
+├── conversationsHandlers.ts        # Reference for pattern consistency (existing)
+├── preload.ts                      # Extend to expose electronAPI.messages
+└── handlers/                       # Other existing handler modules
 
-apps/desktop/src/preload/
-├── messages.ts                 # Message-specific preload exposure
-└── index.ts                    # Updated to include messages
+apps/desktop/src/shared/ipc/
+├── messagesConstants.ts            # Channel constants (MESSAGES_CHANNELS)
+└── messages/                       # Messages request/response types (list/create/updateInclusion)
 
 apps/desktop/src/types/
-└── ipc.ts                     # Updated with message IPC types
+└── electron.d.ts                   # Extend ElectronAPI with messages API
 ```
 
 ### Pattern Consistency
 
-- Follow exact patterns from existing `conversations` IPC implementation
+- Follow exact patterns from existing conversations/conversationAgent IPC implementations
 - Use same error handling and logging approach as existing handlers
-- Integrate with existing preload architecture and contextBridge
+- Integrate with centralized preload architecture and contextBridge
 - Follow established TypeScript interface naming conventions
-- Use existing MessageRepository methods without modifications
+- Use existing `MessageRepository` methods without modifications
 
 ### Error Handling Strategy
 
 - Convert database errors to user-friendly messages
 - Log detailed errors server-side for debugging
-- Return consistent error format: `{ success: false, error: string }`
-- Handle network timeouts and connection issues
+- Return consistent envelope: `{ success: boolean, data?, error? }`
 - Provide specific error messages for validation failures
 
 ### Integration Points
 
-- Uses existing MessageRepository from `packages/shared/src/repositories/messages/`
-- Integrates with existing Electron main process architecture
-- Follows established IPC security patterns
-- Connects with Message Hooks feature for complete data flow
+- Use `MessageRepository` from `@fishbowl-ai/shared`
+- Wire `messageRepository` in `apps/desktop/src/main/services/MainProcessServices.ts`
+- Integrate with existing Electron main process architecture
+- Follow established IPC security patterns
+- Connect with Message Hooks feature for complete data flow
 
 ## Testing Requirements
 

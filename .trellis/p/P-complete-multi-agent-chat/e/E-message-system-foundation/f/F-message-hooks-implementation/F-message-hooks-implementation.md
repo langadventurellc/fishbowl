@@ -121,6 +121,8 @@ apps/desktop/src/hooks/messages/
 - `CreateMessageInput` type should be imported from shared package
 - Message sorting should prefer SQL ORDER BY but fallback to JavaScript sort
 - Real-time updates via refetch mechanism (no global event bus in MVP)
+- Preload is centralized in `apps/desktop/src/electron/preload.ts`; ensure `ElectronAPI` is extended in `apps/desktop/src/types/electron.d.ts`
+- Follow refetch pattern used in `useConversationAgents` after create/update for real-time sync
 
 ## Testing Requirements
 

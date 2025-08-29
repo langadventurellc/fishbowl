@@ -30,15 +30,15 @@ Enhance and validate the existing MessageRepository to ensure it fully supports 
 
 ### Message Repository Method Validation
 
-- Verify `findByConversationId()` method works correctly with sorting
-- Ensure `create()` method handles all required fields and validation
+- Verify `getByConversation()` returns messages in stable order (see sorting)
+- Ensure `create()` handles all required fields and validation
 - Validate `updateInclusion()` method for context control functionality
-- Add any missing methods needed by the IPC bridge
+- Add only methods needed by the IPC bridge (avoid unnecessary CRUD for MVP)
 
 ### Transaction Support and Concurrency
 
 - Ensure safe concurrent access for multiple message operations
-- Provide transaction support for complex operations if needed
+- Transaction support is NOT required for MVP; revisit for multi-step ops
 - Handle database lock contention gracefully
 - Implement proper error handling for database constraints
 
@@ -93,8 +93,8 @@ Enhance and validate the existing MessageRepository to ensure it fully supports 
 
 - Verify `messages` table has all required columns with correct types
 - Ensure proper indexes exist for performance:
-  - Index on `conversation_id` for message retrieval
-  - Composite index on `(conversation_id, created_at, id)` for sorted queries
+  - Composite index on `(conversation_id, created_at)` for retrieval in order
+  - Do NOT add `(conversation_id, created_at, id)` for MVP; revisit if needed
 - Validate foreign key constraints to conversations and conversation_agents tables
 - Check column constraints (NOT NULL, default values) are properly defined
 - Ensure database supports the expected query patterns efficiently
@@ -127,22 +127,19 @@ INSERT INTO messages (conversation_id, role, content, conversation_agent_id, inc
 VALUES (?, ?, ?, ?, COALESCE(?, true), COALESCE(?, CURRENT_TIMESTAMP));
 
 -- Inclusion flag updates
-UPDATE messages SET included = ?, updated_at = CURRENT_TIMESTAMP
-WHERE id = ? RETURNING *;
+UPDATE messages SET included = ?
+WHERE id = ?;
 ```
 
 ### Required Repository Methods
 
 ```typescript
-// Verify these methods exist and work correctly
-findByConversationId(conversationId: string): Promise<Message[]>
+// Methods required for MVP (match repository implementation)
+getByConversation(conversationId: string): Promise<Message[]>
 create(input: CreateMessageInput): Promise<Message>
+get(id: string): Promise<Message>
 updateInclusion(id: string, included: boolean): Promise<Message>
-
-// Additional methods that may be needed
-findById(id: string): Promise<Message | null>
-update(id: string, updates: Partial<Message>): Promise<Message>
-deleteById(id: string): Promise<void>
+exists(id: string): Promise<boolean>
 ```
 
 ### Performance Optimization
@@ -160,6 +157,7 @@ deleteById(id: string): Promise<void>
 - Validate transaction behavior and rollback scenarios
 - Test concurrent access patterns and lock contention
 - Ensure data integrity under various failure conditions
+- Verify wiring into `MainProcessServices` and IPC handler calls
 
 ## Testing Requirements
 
