@@ -9,7 +9,7 @@
 
 import { create } from "zustand";
 
-interface ChatStore {
+export interface ChatStore {
   // Transient UI state only
   sendingMessage: boolean;
   agentThinking: Record<string, boolean>; // conversationAgentId -> thinking

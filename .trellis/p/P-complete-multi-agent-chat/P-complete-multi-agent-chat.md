@@ -206,11 +206,22 @@ affectedFiles:
     for managing transient chat UI states during multi-agent processing with
     actions for setSending, setAgentThinking, setAgentError,
     setProcessingConversation, clearAgentState, clearAllThinking, and
-    clearConversationState
+    clearConversationState; Added export keyword to ChatStore interface to make
+    it available for barrel export
   packages/ui-shared/src/stores/chat/__tests__/useChatStore.test.ts:
     Created comprehensive unit test suite with 23 test cases covering store
     initialization, all action methods, concurrent state updates, state
     immutability, and edge cases with 100% functionality coverage
+  packages/ui-shared/src/stores/chat/index.ts: Created chat store barrel export
+    file with JSDoc documentation, exporting useChatStore hook and ChatStore
+    type interface
+  packages/ui-shared/src/stores/index.ts:
+    Added chat store exports to main stores
+    index using barrel export pattern (export * from './chat')
+  packages/ui-shared/src/stores/chat/__tests__/index.test.ts: Created
+    comprehensive barrel export test suite covering hook exports, React
+    integration, TypeScript types, store functionality, and import resolution
+    with 10 passing test cases
 log: []
 schema: v1.0
 childrenIds:
