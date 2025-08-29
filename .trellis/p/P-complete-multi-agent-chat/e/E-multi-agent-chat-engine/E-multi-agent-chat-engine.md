@@ -98,6 +98,15 @@ affectedFiles:
     handling scenarios, security boundaries, and contextBridge integration.
     Tests verify proper IPC invocation, event listener management, and secure
     callback wrapping.
+  apps/desktop/src/electron/chatHandlers.ts:
+    Created main process IPC handlers for
+    chat operations with sendToAgents method, event emission system, input
+    validation, error handling, and ChatOrchestrationService integration
+  apps/desktop/src/electron/__tests__/chatHandlers.test.ts:
+    Created comprehensive
+    unit test suite with 13 test cases covering handler registration, input
+    validation, service integration, event emission, error handling, and edge
+    cases
 log: []
 schema: v1.0
 childrenIds:

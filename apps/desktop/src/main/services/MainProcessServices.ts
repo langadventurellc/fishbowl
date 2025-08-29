@@ -69,6 +69,7 @@ export class MainProcessServices {
    */
   readonly chatOrchestrationService: ChatOrchestrationService;
 
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   constructor() {
     // Initialize Node.js implementations
     this.fileSystemBridge = new NodeFileSystemBridge();
