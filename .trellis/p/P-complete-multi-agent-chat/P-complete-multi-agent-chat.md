@@ -44,11 +44,20 @@ affectedFiles:
   apps/desktop/src/hooks/messages/useMessages.ts: Created new useMessages hook
     following useConversations pattern with conversationId parameter, message
     fetching via IPC, proper error handling, and stable chronological sorting
-  apps/desktop/src/hooks/messages/index.ts: Created barrel export file for messages hooks with proper JSDoc documentation
+  apps/desktop/src/hooks/messages/index.ts: Created barrel export file for
+    messages hooks with proper JSDoc documentation; Updated barrel export file
+    to include useCreateMessage hook with documentation examples
   apps/desktop/src/hooks/messages/__tests__/useMessages.test.tsx:
     Created comprehensive unit test suite with 18 test scenarios covering all
     hook functionality including success cases, error handling, environment
     detection, refetch operations, sorting behavior, and memory cleanup
+  apps/desktop/src/hooks/messages/useCreateMessage.ts: Created new
+    useCreateMessage hook with validation, error handling, and IPC integration
+    following useCreateConversation pattern
+  apps/desktop/src/hooks/messages/__tests__/useCreateMessage.test.tsx:
+    Created comprehensive unit test suite with 23 test scenarios covering all
+    hook functionality including success cases, validation errors, IPC errors,
+    environment detection, and memory cleanup
 log: []
 schema: v1.0
 childrenIds:
