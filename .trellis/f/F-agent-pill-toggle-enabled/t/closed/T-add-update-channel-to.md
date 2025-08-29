@@ -1,12 +1,21 @@
 ---
 id: T-add-update-channel-to
 title: Add UPDATE channel to conversation agent IPC constants
-status: open
+status: done
 priority: medium
 parent: F-agent-pill-toggle-enabled
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/shared/ipc/conversationAgentsConstants.ts: Added UPDATE channel constant following naming pattern
+  apps/desktop/src/shared/ipc/__tests__/conversationAgentsIPC.test.ts:
+    Updated tests to validate UPDATE channel and adjusted expected channel count
+    from 4 to 5
+log:
+  - Successfully added UPDATE channel to conversation agent IPC constants
+    following established patterns. Added "conversationAgent:update" channel
+    constant and updated comprehensive test suite to validate the new channel.
+    All quality checks pass and the implementation maintains type safety and
+    consistency with existing code.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T03:58:05.396Z

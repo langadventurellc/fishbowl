@@ -1,13 +1,25 @@
 ---
 id: F-agent-pill-toggle-enabled
 title: Agent Pill Toggle Enabled State
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/shared/ipc/conversationAgentsConstants.ts: Added UPDATE channel constant following naming pattern
+  apps/desktop/src/shared/ipc/__tests__/conversationAgentsIPC.test.ts:
+    Updated tests to validate UPDATE channel and adjusted expected channel count
+    from 4 to 5
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-toggleenabled-function-to
+  - T-add-update-channel-to
+  - T-add-update-handler-to
+  - T-add-update-method-to-electron
+  - T-create-conversation-agent
+  - T-update-agentlabelscontainerdis
+  - T-update-agentpill-component
+  - T-update-agentpillviewmodel-to
 created: 2025-08-29T03:51:28.173Z
 updated: 2025-08-29T03:51:28.173Z
 ---

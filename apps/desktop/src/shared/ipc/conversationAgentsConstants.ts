@@ -8,6 +8,7 @@ export const CONVERSATION_AGENT_CHANNELS = {
   GET_BY_CONVERSATION: "conversationAgent:getByConversation",
   ADD: "conversationAgent:add",
   REMOVE: "conversationAgent:remove",
+  UPDATE: "conversationAgent:update",
   LIST: "conversationAgent:list", // For debugging
 } as const;
 
