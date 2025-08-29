@@ -69,11 +69,19 @@ affectedFiles:
     environment detection, and concurrent operations
   packages/shared/src/repositories/messages/MessageRepository.ts:
     Updated SQL query in getByConversation() method to include stable ordering
-    (ORDER BY created_at ASC, id ASC) and improved query comment for clarity
+    (ORDER BY created_at ASC, id ASC) and improved query comment for clarity;
+    Enhanced handleDatabaseError method with specific constraint violation
+    handling for foreign key, unique, and not null constraints. Added imports
+    for ConstraintViolationError and DatabaseErrorCode to enable detailed error
+    categorization and user-friendly error messages.
   packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
     Updated existing ordering test to expect new query format and added
     comprehensive test case for stable ordering with identical timestamps to
-    ensure consistent message display
+    ensure consistent message display; Expanded unit test coverage with 21 new
+    test cases covering foreign key constraint violations, unique constraint
+    violations, not null constraints, malformed input handling, concurrent
+    update conflicts, large result sets, and comprehensive edge cases. Added
+    imports for constraint violation testing infrastructure.
 log: []
 schema: v1.0
 childrenIds:

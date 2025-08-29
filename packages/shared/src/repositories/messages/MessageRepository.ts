@@ -2,6 +2,8 @@ import { createLoggerSync } from "../../logging/createLoggerSync";
 import { DatabaseBridge } from "../../services/database/DatabaseBridge";
 import { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
 import { DatabaseError } from "../../services/database/types/DatabaseError";
+import { ConstraintViolationError } from "../../services/database/types/ConstraintViolationError";
+import { DatabaseErrorCode } from "../../services/database/types/DatabaseErrorCode";
 import {
   Message,
   CreateMessageInput,
@@ -258,6 +260,37 @@ export class MessageRepository {
   private handleDatabaseError(error: unknown, operation: string): never {
     this.logger.error(`Database error during ${operation}`, error as Error);
 
+    // Handle specific constraint violations with clear error messages
+    if (error instanceof ConstraintViolationError) {
+      if (error.code === DatabaseErrorCode.FOREIGN_KEY_CONSTRAINT_VIOLATION) {
+        const context = error.context as Record<string, unknown>;
+        const columnName = context?.columnName as string;
+
+        if (columnName === "conversation_id") {
+          throw new MessageValidationError([
+            `conversation_id: Referenced conversation does not exist`,
+          ]);
+        } else if (columnName === "conversation_agent_id") {
+          throw new MessageValidationError([
+            `conversation_agent_id: Referenced conversation agent does not exist`,
+          ]);
+        } else {
+          throw new MessageValidationError([`foreign_key: ${error.message}`]);
+        }
+      } else if (error.code === DatabaseErrorCode.UNIQUE_CONSTRAINT_VIOLATION) {
+        throw new MessageValidationError([
+          `unique_constraint: ${error.message}`,
+        ]);
+      } else if (
+        error.code === DatabaseErrorCode.NOT_NULL_CONSTRAINT_VIOLATION
+      ) {
+        throw new MessageValidationError([`required_field: ${error.message}`]);
+      } else {
+        throw new MessageValidationError([`constraint: ${error.message}`]);
+      }
+    }
+
+    // Handle general database errors
     if (error instanceof DatabaseError) {
       throw new MessageValidationError([`database: ${error.message}`]);
     }

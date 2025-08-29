@@ -9,6 +9,8 @@ import {
   MessageRole,
 } from "../../../types/messages";
 import { ConnectionError } from "../../../services/database";
+import { ConstraintViolationError } from "../../../services/database/types/ConstraintViolationError";
+import { DatabaseErrorCode } from "../../../services/database/types/DatabaseErrorCode";
 
 // Mock dependencies
 const mockDatabaseBridge = {
@@ -220,6 +222,111 @@ describe("MessageRepository", () => {
 
       await expect(repository.create(input)).rejects.toThrow();
     });
+
+    it("should throw specific error for foreign key constraint violation on conversation_id", async () => {
+      const fkError = new ConstraintViolationError(
+        "FOREIGN KEY constraint failed: messages.conversation_id",
+        "foreign_key",
+        "messages",
+        "conversation_id",
+      );
+      mockDatabaseBridge.execute.mockRejectedValue(fkError);
+
+      const input: CreateMessageInput = {
+        conversation_id: "999e9999-e89b-12d3-a456-426614174999", // Valid UUID format but non-existent
+        role: MessageRole.USER,
+        content: "Test message",
+      };
+
+      await expect(repository.create(input)).rejects.toThrow(
+        MessageValidationError,
+      );
+
+      try {
+        await repository.create(input);
+      } catch (error) {
+        expect(error).toBeInstanceOf(MessageValidationError);
+        expect((error as MessageValidationError).validationErrors).toEqual([
+          "conversation_id: Referenced conversation does not exist",
+        ]);
+      }
+    });
+
+    it("should throw specific error for foreign key constraint violation on conversation_agent_id", async () => {
+      const fkError = new ConstraintViolationError(
+        "FOREIGN KEY constraint failed: messages.conversation_agent_id",
+        "foreign_key",
+        "messages",
+        "conversation_agent_id",
+      );
+      mockDatabaseBridge.execute.mockRejectedValue(fkError);
+
+      const input: CreateMessageInput = {
+        conversation_id: mockConversationId,
+        conversation_agent_id: "888e8888-e89b-12d3-a456-426614174888", // Valid UUID format but non-existent
+        role: MessageRole.AGENT,
+        content: "Test message",
+      };
+
+      try {
+        await repository.create(input);
+      } catch (error) {
+        expect(error).toBeInstanceOf(MessageValidationError);
+        expect((error as MessageValidationError).validationErrors).toEqual([
+          "conversation_agent_id: Referenced conversation agent does not exist",
+        ]);
+      }
+    });
+
+    it("should handle unique constraint violations", async () => {
+      const uniqueError = new ConstraintViolationError(
+        "UNIQUE constraint failed: messages.id",
+        "unique",
+        "messages",
+        "id",
+      );
+      mockDatabaseBridge.execute.mockRejectedValue(uniqueError);
+
+      const input: CreateMessageInput = {
+        conversation_id: mockConversationId,
+        role: MessageRole.USER,
+        content: "Test message",
+      };
+
+      try {
+        await repository.create(input);
+      } catch (error) {
+        expect(error).toBeInstanceOf(MessageValidationError);
+        expect((error as MessageValidationError).validationErrors[0]).toContain(
+          "unique_constraint",
+        );
+      }
+    });
+
+    it("should handle not null constraint violations", async () => {
+      const notNullError = new ConstraintViolationError(
+        "NOT NULL constraint failed: messages.content",
+        "not_null",
+        "messages",
+        "content",
+      );
+      mockDatabaseBridge.execute.mockRejectedValue(notNullError);
+
+      const input: CreateMessageInput = {
+        conversation_id: mockConversationId,
+        role: MessageRole.USER,
+        content: "Test message",
+      };
+
+      try {
+        await repository.create(input);
+      } catch (error) {
+        expect(error).toBeInstanceOf(MessageValidationError);
+        expect((error as MessageValidationError).validationErrors[0]).toContain(
+          "required_field",
+        );
+      }
+    });
   });
 
   describe("get", () => {
@@ -268,6 +375,30 @@ describe("MessageRepository", () => {
       );
 
       await expect(repository.get(mockMessageId)).rejects.toThrow();
+    });
+
+    it("should handle malformed UUID gracefully", async () => {
+      const malformedIds = [
+        "", // empty string
+        "not-a-uuid", // invalid format
+        "123", // too short
+        "123e4567-e89b-12d3-a456-42661417400", // too short
+        "123e4567-e89b-12d3-a456-426614174000-extra", // too long
+        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", // invalid characters
+      ];
+
+      for (const id of malformedIds) {
+        await expect(repository.get(id)).rejects.toThrow(MessageNotFoundError);
+      }
+    });
+
+    it("should handle null/undefined ID", async () => {
+      await expect(repository.get(null as unknown as string)).rejects.toThrow(
+        MessageNotFoundError,
+      );
+      await expect(
+        repository.get(undefined as unknown as string),
+      ).rejects.toThrow(MessageNotFoundError);
     });
   });
 
@@ -365,6 +496,46 @@ describe("MessageRepository", () => {
         repository.getByConversation(mockConversationId),
       ).rejects.toThrow();
     });
+
+    it("should handle malformed conversation ID", async () => {
+      const malformedIds = ["", "not-a-uuid", "123", "invalid-format"];
+
+      for (const id of malformedIds) {
+        await expect(repository.getByConversation(id)).rejects.toThrow(
+          MessageValidationError,
+        );
+      }
+    });
+
+    it("should handle null/undefined conversation ID", async () => {
+      await expect(
+        repository.getByConversation(null as unknown as string),
+      ).rejects.toThrow(MessageValidationError);
+      await expect(
+        repository.getByConversation(undefined as unknown as string),
+      ).rejects.toThrow(MessageValidationError);
+    });
+
+    it("should handle large result sets efficiently", async () => {
+      // Create a large array of messages (simulating 1000+ messages)
+      const largeMessageSet = Array.from({ length: 1000 }, (_, i) => ({
+        id: `123e4567-e89b-12d3-a456-42661417${i.toString().padStart(4, "0")}`,
+        conversation_id: mockConversationId,
+        conversation_agent_id: null,
+        role: MessageRole.USER,
+        content: `Message ${i}`,
+        included: true,
+        created_at: new Date(Date.now() + i * 1000).toISOString(),
+      }));
+
+      mockDatabaseBridge.query.mockResolvedValue(largeMessageSet);
+
+      const result = await repository.getByConversation(mockConversationId);
+
+      expect(result).toHaveLength(1000);
+      expect(result[0]?.content).toBe("Message 0");
+      expect(result[999]?.content).toBe("Message 999");
+    });
   });
 
   describe("updateInclusion", () => {
@@ -456,6 +627,65 @@ describe("MessageRepository", () => {
 
       expect(result).toEqual(updatedMessage);
     });
+
+    it("should handle concurrent update conflicts", async () => {
+      // Simulate a case where message exists check passes but update fails due to concurrent deletion
+      mockDatabaseBridge.query
+        .mockResolvedValueOnce([{ 1: 1 }]) // exists call succeeds
+        .mockResolvedValueOnce([]); // get call after update fails - message was deleted
+
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+
+      await expect(
+        repository.updateInclusion(mockMessageId, false),
+      ).rejects.toThrow(MessageNotFoundError);
+    });
+
+    it("should handle database constraint violations during update", async () => {
+      const constraintError = new ConstraintViolationError(
+        "CHECK constraint failed: messages.included",
+        "check",
+        "messages",
+        "included",
+      );
+
+      mockDatabaseBridge.query.mockResolvedValueOnce([{ 1: 1 }]); // exists check
+      mockDatabaseBridge.execute.mockRejectedValue(constraintError);
+
+      try {
+        await repository.updateInclusion(mockMessageId, false);
+      } catch (error) {
+        expect(error).toBeInstanceOf(MessageValidationError);
+        expect((error as MessageValidationError).validationErrors[0]).toContain(
+          "constraint",
+        );
+      }
+    });
+
+    it("should validate included parameter types", async () => {
+      // Test with invalid boolean values
+      const invalidValues = [
+        "true", // string instead of boolean
+        1, // number instead of boolean
+        null,
+        undefined,
+        {},
+        [],
+      ];
+
+      for (const invalidValue of invalidValues) {
+        await expect(
+          repository.updateInclusion(
+            mockMessageId,
+            invalidValue as unknown as boolean,
+          ),
+        ).rejects.toThrow(MessageValidationError);
+      }
+    });
   });
 
   describe("exists", () => {
@@ -497,6 +727,37 @@ describe("MessageRepository", () => {
       const result = await repository.exists(mockMessageId);
 
       expect(result).toBe(false);
+    });
+
+    it("should handle various database error types gracefully", async () => {
+      const errors = [
+        new ConnectionError("Connection failed"),
+        new ConstraintViolationError("Constraint failed", "unique"),
+        new Error("Generic database error"),
+      ];
+
+      for (const error of errors) {
+        mockDatabaseBridge.query.mockRejectedValue(error);
+
+        const result = await repository.exists(mockMessageId);
+        expect(result).toBe(false);
+      }
+    });
+
+    it("should handle edge case inputs", async () => {
+      const edgeCases = [
+        "", // empty string
+        " ", // whitespace
+        "\n", // newline
+        "\t", // tab
+        "null", // string 'null'
+        "undefined", // string 'undefined'
+      ];
+
+      for (const input of edgeCases) {
+        const result = await repository.exists(input);
+        expect(result).toBe(false);
+      }
     });
   });
 });
