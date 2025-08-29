@@ -93,7 +93,7 @@ Implement the Inter-Process Communication (IPC) bridge that enables secure commu
 - Follow exact patterns from existing `electronAPI.conversations` and `electronAPI.conversationAgent`
 - Extend `apps/desktop/src/types/electron.d.ts` with messages API surface
 - Handle IPC errors and convert to user-friendly messages
-- Validate parameters before sending to main process
+- Perform minimal guard checks (presence/primitive types) before invoking IPC; rely on repository for schema validation
 - Provide consistent error format across all operations
 
 ### Security Boundary Requirements
@@ -155,14 +155,16 @@ apps/desktop/src/types/
 - Log detailed errors server-side for debugging
 - Return consistent envelope: `{ success: boolean, data?, error? }`
 - Provide specific error messages for validation failures
+- Map domain errors to standardized error codes (e.g., `VALIDATION_ERROR`, `NOT_FOUND`) via existing `serializeError`
 
 ### Integration Points
 
 - Use `MessageRepository` from `@fishbowl-ai/shared`
-- Wire `messageRepository` in `apps/desktop/src/main/services/MainProcessServices.ts`
-- Integrate with existing Electron main process architecture
+- Wire `messagesRepository` in `apps/desktop/src/main/services/MainProcessServices.ts` (or construct within handler module for MVP, then promote)
+- Register `setupMessagesIpcHandlers(services)` from `apps/desktop/src/electron/main.ts` alongside existing handler setup functions
+- Extend `apps/desktop/src/electron/preload.ts` to expose `electronAPI.messages`
+- Extend `apps/desktop/src/types/electron.d.ts` to add `messages` API surface
 - Follow established IPC security patterns
-- Connect with Message Hooks feature for complete data flow
 
 ## Testing Requirements
 
@@ -200,11 +202,11 @@ apps/desktop/src/types/
 
 ### Input Validation
 
-- Validate all parameters before processing
+- Perform minimal guards in preload (presence/primitive type checks)
+- Perform schema validation and business rules in repository layer using shared Zod schemas
 - Sanitize user content before database storage
-- Check conversation_id references exist and are accessible
-- Validate message roles against allowed values
-- Enforce content length limits for safety
+- Check conversation_id references exist and are accessible (repository)
+- Validate message roles against allowed values (repository)
 
 ### Error Information Disclosure
 
@@ -228,4 +230,3 @@ apps/desktop/src/types/
 - Depends on established Electron main/preload/renderer architecture
 - Uses existing IPC patterns and security implementation
 - Integrates with logging infrastructure from shared package
-- Connects to Message Hooks feature for complete message management

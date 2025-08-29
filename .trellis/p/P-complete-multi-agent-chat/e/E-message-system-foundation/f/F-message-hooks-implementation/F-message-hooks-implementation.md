@@ -146,14 +146,6 @@ apps/desktop/src/hooks/messages/
 - Error messages should not expose internal system details
 - Handle malformed responses from main process gracefully
 
-## Performance Requirements
-
-- Message loading should complete within 100ms for typical conversations
-- Hooks should not cause unnecessary re-renders
-- Use proper React optimization patterns (useCallback, useMemo)
-- Efficient sorting and filtering operations
-- Minimal memory footprint for message storage
-
 ## Dependencies
 
 - Must wait for Messages IPC Bridge feature to provide the IPC interface
