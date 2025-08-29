@@ -17,23 +17,26 @@ updated: 2025-08-29T16:36:14.923Z
 # Enhanced User Experience
 
 ## Purpose and Goals
+
 Polish the multi-agent chat experience with advanced features, improved error handling, and performance optimizations. This epic transforms the functional MVP into a refined, production-ready application.
 
 ## Major Components and Deliverables
 
 ### Advanced Error Handling and Recovery
+
 - **Manual Retry System**: Individual agent response retry functionality
 - **Cancellation Support**: Cancel in-flight requests when user sends new message
 - **Enhanced Error Display**: Detailed error messages with recovery suggestions
 - **Timeout Handling**: Graceful handling of slow or stuck agent requests
 
 ### Performance Optimizations
+
 - **Large Conversation Handling**: Efficient display and processing of 100+ messages
-- **Context Management**: Smart trimming of message history for LLM context limits
 - **UI Optimizations**: Virtual scrolling and efficient re-rendering for many messages
 - **Memory Management**: Cleanup of unused resources and event listeners
 
 ### Advanced UX Features
+
 - **Enhanced Thinking Animations**: More sophisticated loading indicators per agent
 - **Message Timestamps**: Rich timestamp display with relative times
 - **Agent Response Indicators**: Clear visual markers for which agent is responding
@@ -42,6 +45,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
 ## Detailed Acceptance Criteria
 
 ### Manual Retry System
+
 - **GIVEN** an agent response has failed
 - **WHEN** user wants to retry the specific agent
 - **THEN** it should:
@@ -53,6 +57,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Show retry attempt indicators to prevent spam clicking
 
 ### Request Cancellation
+
 - **GIVEN** agents are currently processing a user message
 - **WHEN** user sends a new message or switches conversations
 - **THEN** it should:
@@ -63,6 +68,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Prevent orphaned responses from appearing later
 
 ### Enhanced Error Display
+
 - **GIVEN** various types of errors occur during agent processing
 - **WHEN** displaying error information to users
 - **THEN** it should:
@@ -74,6 +80,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Log detailed error info for debugging while showing user-friendly messages
 
 ### Timeout Handling
+
 - **GIVEN** agent requests exceed reasonable response times
 - **WHEN** managing long-running or stuck requests
 - **THEN** it should:
@@ -85,10 +92,11 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Allow users to adjust timeout preferences
 
 ### Large Conversation Performance
+
 - **GIVEN** conversations with 100+ messages
 - **WHEN** displaying and interacting with chat history
 - **THEN** it should:
-  - Implement virtual scrolling for efficient rendering
+  - Implement virtual scrolling for efficient rendering (gate behind threshold, e.g., >100 messages or observed jank)
   - Load messages in chunks/pages to reduce memory usage
   - Maintain smooth scrolling performance
   - Optimize message component re-rendering
@@ -96,6 +104,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Preserve scroll position during updates
 
 ### Context Management and Trimming
+
 - **GIVEN** conversations that exceed LLM context limits
 - **WHEN** building context for agent requests
 - **THEN** it should:
@@ -107,6 +116,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Handle different provider limits (OpenAI vs Anthropic)
 
 ### Enhanced Thinking Animations
+
 - **GIVEN** agents are processing user messages
 - **WHEN** displaying thinking states
 - **THEN** it should:
@@ -118,6 +128,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Allow users to minimize/expand thinking details
 
 ### Rich Timestamp Display
+
 - **GIVEN** messages in conversation history
 - **WHEN** displaying temporal information
 - **THEN** it should:
@@ -129,6 +140,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Update relative times periodically
 
 ### Keyboard Shortcuts and Navigation
+
 - **GIVEN** users want efficient keyboard interaction
 - **WHEN** navigating and using the chat interface
 - **THEN** it should:
@@ -140,6 +152,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Provide shortcut help overlay (Ctrl+?)
 
 ### Agent Response Indicators
+
 - **GIVEN** multiple agents responding to messages
 - **WHEN** displaying agent activity and results
 - **THEN** it should:
@@ -151,6 +164,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
   - Support customizable agent visual themes
 
 ## Technical Considerations
+
 - **Performance**: Optimize for large datasets and many concurrent operations
 - **Memory Management**: Prevent memory leaks from cancelled operations
 - **Event Cleanup**: Proper cleanup of listeners and subscriptions
@@ -158,14 +172,17 @@ Polish the multi-agent chat experience with advanced features, improved error ha
 - **Accessibility**: Full WCAG compliance for enhanced features
 
 ## Dependencies on Other Epics
+
 - **Requires**: E-chat-ui-integration (complete basic chat functionality)
 - **Enhances**: All previous epics with polish and advanced features
 
 ## Estimated Scale
+
 - **5-6 Features** covering retry, cancellation, performance, and UX enhancements
 - **Quality and polish** that makes the application production-ready
 
 ## User Stories
+
 - As a user, I want to retry failed agent responses individually without losing other successful responses
 - As a user, I want responsive performance even with very long conversation histories
 - As a user, I want clear feedback about what's happening when things take time or go wrong
@@ -173,6 +190,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
 - As a user, I want sophisticated visual feedback that makes multi-agent interactions feel natural
 
 ## Non-functional Requirements
+
 - **Performance**: Handle 500+ messages without noticeable lag
 - **Responsiveness**: All UI interactions respond within 100ms
 - **Memory Usage**: Efficient memory management for long-running sessions
@@ -180,6 +198,7 @@ Polish the multi-agent chat experience with advanced features, improved error ha
 - **Accessibility**: Full keyboard navigation and screen reader support
 
 ## Testing and Validation Requirements
+
 - **Performance Testing**: Verify smooth operation with large datasets
 - **Error Scenario Testing**: Comprehensive coverage of error conditions and recovery
 - **Timeout Testing**: Verify timeout handling across different network conditions

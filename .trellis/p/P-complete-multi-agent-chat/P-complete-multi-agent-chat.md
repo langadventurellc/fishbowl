@@ -23,6 +23,7 @@ Implement a complete chat system that enables users to have conversations with m
 ## Current State
 
 ### ✅ Completed Components
+
 - **Agent Management**: Full CRUD operations with enable/disable functionality via AgentPill clicks
 - **LLM Providers**: OpenAI and Anthropic provider implementations with factory pattern
 - **Message Data Model**: Complete Message interface and MessageRepository with SQLite persistence
@@ -31,6 +32,7 @@ Implement a complete chat system that enables users to have conversations with m
 - **Database Schema**: Tables for conversations, conversation_agents, and messages
 
 ### 🎯 Missing Implementation
+
 - **Message Hooks**: `useMessages`, `useCreateMessage`, `useUpdateMessage` following existing patterns
 - **Chat Store**: Zustand store for transient chat UI state (thinking indicators, sending state)
 - **Chat Orchestration Service**: Service layer connecting UI to LLM providers via IPC bridge
@@ -41,20 +43,26 @@ Implement a complete chat system that enables users to have conversations with m
 ## Technical Requirements
 
 ### Architecture Principles
+
 - **Phased Implementation**: Start with single-agent chat, then add multi-agent, then polish
 - **Leverage Existing Components**: Reuse all existing UI components and hooks
 - **Simplicity First**: No concurrency limits, no complex queuing, no premature optimizations
 - **Follow Established Patterns**: Use existing hook patterns (`useMessages` like `useConversations`)
 - **Immediate Persistence**: MessageRepository calls from main via IPC; no caching or debouncing
 - **Clear Store Separation**: Transient UI state in stores, persistent data via repositories
+- **Orchestrator in Main**: Implement the concrete ChatOrchestrationService in Electron main; keep only interfaces/ports in shared
+- **Single Event Channel**: Use one consolidated `agent:update` IPC event for MVP; split events only if needed later
+- **No Global Bus**: MVP "real-time" = refetch-after-write + listen to `agent:update`; avoid generic pub/sub buses
 
 ### Execution Boundary & Security
+
 - **Main-Process LLM Calls**: Provider credentials are read from secure storage and used exclusively in the Electron main process.
 - **IPC Bridge**: Renderer interacts with a minimal main-process bridge for LLM invocations and receives only redacted results/errors.
 - **Shared Interfaces**: Define bridge interfaces in `packages/shared` and inject platform implementations from `apps/desktop/src/main`.
 - **Main-Process DB Access**: All message reads/writes occur in main via repositories; renderer uses typed IPC only (no direct DB access in renderer).
 
 ### Technology Stack
+
 - **Frontend**: React with TypeScript in Electron renderer process
 - **State Management**: Zustand stores following existing `useAgentsStore` patterns
 - **Database**: SQLite with immediate persistence via existing MessageRepository
@@ -63,6 +71,7 @@ Implement a complete chat system that enables users to have conversations with m
 - **Process Boundary**: LLM providers invoked in main via bridge; renderer subscribes to progress/results.
 
 ### Platform Support
+
 - **Desktop**: Electron application (primary focus)
 - **Shared Logic**: Business logic in `packages/shared` for future mobile compatibility
 - **UI Components**: Platform-specific implementations in `apps/desktop/src`
@@ -70,6 +79,7 @@ Implement a complete chat system that enables users to have conversations with m
 ## Functional Requirements
 
 ### Core Chat Flow
+
 1. **Message Input**: User types message in input field and clicks send
 2. **Agent Processing**: All enabled conversation agents receive message simultaneously
 3. **Parallel LLM Requests**: Each enabled agent makes independent LLM API call
@@ -78,34 +88,40 @@ Implement a complete chat system that enables users to have conversations with m
 6. **Error Handling**: Failed agent responses show error messages in chat
 
 ### Agent Management Integration
+
 - **Enable/Disable**: Existing AgentPill click functionality determines which agents participate
 - **Thinking Indicators**: Visual feedback while agents process requests (animated dots)
 - **Agent Context**: Each agent receives system prompt with their personality/role configuration
 
 ### Message Context Building
+
 - **History Inclusion**: Only messages marked `included: true` sent to LLM providers
 - **Context Format**: System prompt + chronological message history formatted per provider requirements
 - **User Control**: Existing checkbox UI allows users to exclude specific messages from future context
 
 ### Error Persistence Strategy (MVP)
+
 - **Persisted Summary**: Persist a concise, user-safe system message on provider failure (no schema change in Phase 1).
 - **Structured Detail in Logs**: Keep `{ provider, statusCode, safeMessage }` in logs; never store raw exceptions or secrets in DB.
 
 ### User Experience
+
 - **Timestamps**: All messages display creation timestamps
- - **Loading States**: Disable send during processing; allow typing but prevent submission until all agents complete; show per-agent thinking indicators
+- **Loading States**: Disable send during processing; allow typing but prevent submission until all agents complete; show per-agent thinking indicators
 - **Error Display**: Failed LLM requests show as system messages in chat
 - **Simple UI**: No complex threading, notifications, or advanced features
- - **No Agents Enabled**: Persist user message and add a system message indicating no agents are enabled; skip LLM calls
+- **No Agents Enabled**: Persist user message and add a system message indicating no agents are enabled; skip LLM calls
 
 ## Phased Implementation Approach
 
 ### Phase 1: Multi-Agent Chat MVP
+
 **Goal**: Deliver core multi-agent chat functionality
 
 **Scope**:
+
 - Create `useMessages` hook for message fetching
-- Create `useCreateMessage` hook for sending messages  
+- Create `useCreateMessage` hook for sending messages
 - Wire existing `MessageInputDisplay` and `SendButtonDisplay` components
 - IPC bridge supporting parallel LLM calls for all enabled agents
 - Implement `useChatStore` for agent thinking states
@@ -116,9 +132,11 @@ Implement a complete chat system that enables users to have conversations with m
 **Success Criteria**: Multiple enabled agents respond simultaneously to user messages
 
 ### Phase 2: Enhanced UX & Error Handling
+
 **Goal**: Polish the multi-agent experience
 
 **Scope**:
+
 - Manual retry for failed agent messages
 - Cancellation when user sends new message or switches conversations
 - Improved error messages with agent identification
@@ -128,9 +146,11 @@ Implement a complete chat system that enables users to have conversations with m
 **Success Criteria**: Polished multi-agent chat with graceful error handling
 
 ### Phase 3: Performance & Advanced Features
+
 **Goal**: Optimize for scale and add advanced capabilities
 
 **Scope**:
+
 - Add timeout handling if needed
 - Optimize for large message histories (trimming/pagination)
 - Performance improvements for many agents (>5)
@@ -142,7 +162,9 @@ Implement a complete chat system that enables users to have conversations with m
 ## Implementation Architecture
 
 ### Hook Layer (`apps/desktop/src/hooks/messages/`)
+
 Following existing patterns from `useConversations`, `useConversationAgents`:
+
 - **useMessages**: Fetch messages for a conversation, with real-time updates
   ```typescript
   const { messages, loading, error, refetch } = useMessages(conversationId);
@@ -157,19 +179,22 @@ Following existing patterns from `useConversations`, `useConversationAgents`:
   ```
 
 Implementation notes:
+
 - Hooks call `window.electronAPI.messages.*` (preload) which invokes main-process handlers.
 - Sorting: Ensure stable order by `created_at ASC, id ASC` (prefer server-side SQL; otherwise sort in hook).
 - Pagination: Phase 1 may fetch all; design hooks to accept optional pagination params for Phase 2/3.
+- Real-time: Use simple refetch-after-create/update and subscribe to `agent:update` for per-agent status; avoid a global event bus in MVP.
 
 ### State Management (MVP location: `apps/desktop/src/stores/chat/`)
+
 - **useChatStore**: Minimal store for transient UI state only
   ```typescript
   interface ChatStore {
     // Transient UI state
     sendingMessage: boolean;
     agentThinking: Record<string, boolean>; // conversationAgentId -> thinking
-    lastError: Record<string, string>;       // conversationAgentId -> error
-    
+    lastError: Record<string, string>; // conversationAgentId -> error
+
     // Actions (delegate to repositories/services)
     setSending: (sending: boolean) => void;
     setAgentThinking: (agentId: string, thinking: boolean) => void;
@@ -178,16 +203,19 @@ Implementation notes:
   }
   ```
 - **Key Principle**: Store only holds UI state; all data operations go through repositories
- - **Placement**: Keep store in desktop app for MVP (renderer-only state); consider lifting to shared only if/when mobile needs it.
+- **Placement**: Keep store in desktop app for MVP (renderer-only state); consider lifting to shared only if/when mobile needs it.
 
 ### Service Layer (`packages/shared/src/services/chat/`)
-- **ChatOrchestrationService (main)**: Coordinates message flow, simplified for Phase 1; runs in main process.
+
+- **ChatOrchestrationService (main)**: Coordinates message flow, simplified for Phase 1; concrete implementation lives in Electron main.
 - **Message Context Assembly**: Compose `SystemPromptFactory` + `MessageFormatterService` to build provider-ready context (no new builder class in Phase 1).
-- **LlmBridge Interface**: Define in shared; main implementation resolves `LlmConfig` (via `LlmStorageService`), instantiates provider with `createProvider`, and performs `sendMessage`.
+- **LlmBridge Interface**: Define in shared (ports only). Electron main resolves `LlmConfig` (via `LlmStorageService`), instantiates provider with `createProvider`, and performs `sendMessage`.
 
 ### UI Component Mapping
+
 **Existing Components to Wire Together**:
-- **Input Area**: 
+
+- **Input Area**:
   - `MessageInputDisplay` - Already exists, needs `useCreateMessage` hook
   - `SendButtonDisplay` - Already exists, needs sending state from `useChatStore`
 - **Message Display**:
@@ -202,14 +230,16 @@ Implementation notes:
   - All sidebar components - Already exist, work as-is
 
 ### Integration Points
+
 - **Agent Enablement (main)**: Determine enabled conversation agents via `ConversationAgentsRepository` in main (renderer hooks are UI-only).
 - **Conversation Store**: Connect with existing conversation management
 - **Message Store**: Direct integration with existing MessageRepository
- - **IPC Contract**: Renderer calls `sendToAgents(conversationId, userMessageId)`; main returns per-agent completion events
+- **IPC Contract**: Renderer calls `sendToAgents(conversationId, userMessageId)`; main returns per-agent completion events via a single `agent:update` channel
 
 ## Detailed Acceptance Criteria
 
 ### ChatOrchestrationService (Multi-Agent MVP)
+
 - **GIVEN** a user submits a message in an active conversation
 - **WHEN** the service processes the message
 - **THEN** it should:
@@ -223,6 +253,7 @@ Implementation notes:
   - Update UI state for each agent independently
 
 ### Message Context Assembly
+
 - **GIVEN** a conversation with message history
 - **WHEN** building context for an LLM request
 - **THEN** it should:
@@ -231,8 +262,10 @@ Implementation notes:
   - Format messages chronologically with proper role assignments using `MessageFormatterService` (target agent as assistant; other agents prefixed as user content)
   - Return valid LLM provider request format
   - Phase 3: Add message trimming if context gets too large
+  - Ensure stable sorting by `created_at ASC, id ASC` when assembling context
 
 ### useChatStore (Zustand) - Transient UI State Only
+
 - **GIVEN** chat interactions occur
 - **WHEN** UI needs to show temporary states
 - **THEN** the store should:
@@ -245,6 +278,7 @@ Implementation notes:
   - Provide simple actions: `setSending`, `setAgentThinking`, `setAgentError`
 
 ### MessageInput Component
+
 - **GIVEN** user wants to send a message
 - **WHEN** they interact with the input component
 - **THEN** it should:
@@ -254,8 +288,10 @@ Implementation notes:
   - Clear input field after successful send
   - Display validation errors for empty messages
   - Surface a manual retry action on failed agent messages
+  - If no agents are enabled, persist a system message: "No agents are enabled for this conversation" and do not invoke providers
 
 ### Agent Thinking Indicators
+
 - **GIVEN** agents are processing LLM requests
 - **WHEN** the UI needs to show progress
 - **THEN** it should:
@@ -265,6 +301,7 @@ Implementation notes:
   - Clear thinking state on timeout or cancellation
 
 ### Error Handling
+
 - **GIVEN** LLM provider failures occur
 - **WHEN** processing agent responses
 - **THEN** it should:
@@ -275,6 +312,7 @@ Implementation notes:
   - Persist minimal error taxonomy: `{ provider, statusCode, safeMessage }`; redact internal details
 
 ### Message Display
+
 - **GIVEN** a conversation with user and agent messages
 - **WHEN** displaying the chat interface
 - **THEN** it should:
@@ -286,6 +324,7 @@ Implementation notes:
   - Stabilize ordering by `created_at` then `id` to prevent jitter
 
 ### Database Integration (Simplified)
+
 - **GIVEN** any message creation (user, agent, or error)
 - **WHEN** the message is generated
 - **THEN** it should:
@@ -297,29 +336,40 @@ Implementation notes:
   - Phase 2: Handle parallel saves if needed
   - Phase 3: Add optimizations only if lock contention occurs
 
+### Non-Goals (MVP)
+
+- Streaming responses
+- Generic real-time pub/sub beyond `agent:update`
+- Concurrency limits or queuing beyond parallel per-message requests
+
 ## Performance Requirements
 
 ### Phase 1: Multi-Agent MVP
+
 - **Concurrent Agents**: Support 2-5 agents responding simultaneously
 - **Response Time**: Agent responses appear as they complete (not waiting for all)
 - **UI Responsiveness**: Input remains responsive during multi-agent processing
 
 ### Phase 2: Enhanced UX
+
 - **Error Recovery**: Failed agents can be retried without affecting others
 - **Message Updates**: Inclusion checkbox changes update immediately
 
 ### Phase 3: Scale & Optimization
+
 - **Many Agents**: Support 5+ agents efficiently
 - **Large Conversations**: Handle 100+ messages without degradation
 - **Add optimizations based on observed bottlenecks**
 
 ## Security Requirements
+
 - **API Keys**: Use existing secure storage for LLM provider credentials (main process only)
 - **Input Validation**: Sanitize user input before database storage
 - **Error Messages**: Don't expose internal system details in user-facing errors; persist only concise summaries as system messages (see Error Persistence Strategy)
- - **IPC Hygiene**: Only pass minimal data across IPC; never transmit secrets to renderer
+- **IPC Hygiene**: Only pass minimal data across IPC; never transmit secrets to renderer
 
 ## Success Metrics
+
 - **Functional**: Users can send messages and receive responses from multiple agents
 - **Performance**: Messages appear in UI within 2 seconds of LLM response
 - **Reliability**: Message persistence works 100% of the time for local database
@@ -328,19 +378,22 @@ Implementation notes:
 ## Integration Requirements
 
 ### Existing Systems
+
 - **Agent Configuration**: Read from useAgentsStore for enabled/disabled state
-- **Conversation Management**: Use existing conversation CRUD operations  
+- **Conversation Management**: Use existing conversation CRUD operations
 - **Message Persistence**: Direct integration with MessageRepository
 - **LLM Providers**: Use createProvider factory with existing OpenAI/Anthropic implementations
 - **System Prompts**: Use SystemPromptFactory with agent personality/role data
 
 ### Future Compatibility
+
 - **Mobile Platform**: Business logic in shared package supports future React Native implementation
 - **Additional LLM Providers**: Architecture supports new providers via existing factory pattern
 - **Enhanced Features**: Foundation supports future message threading, search, export features
- - **Streaming Responses**: Out of scope for MVP; plan for optional future adoption via provider-specific streams
+- **Streaming Responses**: Out of scope for MVP; plan for optional future adoption via provider-specific streams
 
 ## Development Approach
+
 - **Incremental Implementation**: Build and test each component independently
 - **Existing Pattern Consistency**: Follow established Zustand store and service patterns
 - **Simple Solutions**: Choose straightforward implementations over complex architectures
@@ -349,6 +402,7 @@ Implementation notes:
 ## IPC Contract (Desktop)
 
 ### Phase 1: Multi-Agent MVP
+
 ```typescript
 // Renderer → Main
 sendToAgents(conversationId: string, userMessageId: string) → void
@@ -359,6 +413,7 @@ sendToAgents(conversationId: string, userMessageId: string) → void
 ```
 
 ### Alternative (richer events; optional later adoption)
+
 ```typescript
 'agent:thinking' → { conversationAgentId: string }
 'agent:complete' → { conversationAgentId: string, messageId: string }
@@ -367,6 +422,7 @@ sendToAgents(conversationId: string, userMessageId: string) → void
 ```
 
 ### Messages IPC (Renderer ↔ Main)
+
 ```typescript
 // Renderer → Main (invoke)
 messages.list(conversationId: string) → Promise<Message[]>
@@ -378,13 +434,15 @@ window.electronAPI.messages = { list, create, updateInclusion }
 ```
 
 ### Phase 2: Enhanced Control
+
 ```typescript
 // Renderer → Main
-retryAgent(conversationId: string, conversationAgentId: string, context: Message[]) 
+retryAgent(conversationId: string, conversationAgentId: string, context: Message[])
   → Promise<{ messageId: string } | { error: string }>
 ```
 
 ### Phase 3: Advanced Features
+
 ```typescript
 // Renderer → Main
 cancelAgents(conversationId: string) → void
@@ -394,6 +452,7 @@ setAgentTimeout(timeout: number) → void
 ## Testing Plan
 
 ### Phase 1: Multi-Agent MVP Tests
+
 - **useMessages hook**: Fetch and display messages from multiple agents
 - **useCreateMessage hook**: Trigger multi-agent response flow
 - **IPC Bridge**: Parallel LLM calls with event-based updates
@@ -404,18 +463,21 @@ setAgentTimeout(timeout: number) → void
 - **Messages IPC**: Handlers for list/create/updateInclusion return correct data and enforce main/renderer boundary
 - **Provider resolution**: Orchestrator resolves `llmConfigId` → `LlmConfig` via `LlmStorageService` and selects correct provider
 
-### Phase 2: Enhanced UX Tests  
+### Phase 2: Enhanced UX Tests
+
 - **Retry functionality**: Failed agents can be retried individually
 - **Message inclusion**: Checkbox toggles affect context building
 - **Error display**: Clear agent-specific error messages
 - **Cancellation**: New message cancels in-flight requests
 
 ### Phase 3: Performance Tests
+
 - **Many agents**: System handles 5+ agents gracefully
 - **Large histories**: Performance with 100+ messages
 - **Timeout handling**: Long-running requests handled properly
 
 ## Logging & Observability
+
 - Use `@fishbowl-ai/shared` logger; emit structured fields: `conversationId`, `conversationAgentId`, `provider`, `durationMs`, `status`
 - Log fan-out start, per-agent completion/failure, cancellation, and DB write outcomes
 - Avoid logging secrets or raw provider exceptions; log sanitized summaries only
@@ -423,6 +485,7 @@ setAgentTimeout(timeout: number) → void
 ## Risks & Mitigations
 
 ### Phase 1: Multi-Agent MVP Risks
+
 - **Multiple agents fail simultaneously**: Each failure handled independently with clear error messages
 - **Race conditions in parallel saves**: Message ordering by timestamp + ID
 - **Partial failures confuse users**: Clear UI indicators for each agent's status
@@ -430,10 +493,12 @@ setAgentTimeout(timeout: number) → void
 - **Renderer DB access**: Risk of accidental direct DB calls in renderer → enforce message persistence through main-process IPC only
 
 ### Phase 2: Enhanced UX Risks
+
 - **Retry storms**: Limit retry to manual user action
 - **Context inconsistency**: Ensure included/excluded state persists correctly
 
-### Phase 3: Performance Risks  
+### Phase 3: Performance Risks
+
 - **Many agents overwhelm UI**: Consider virtualization for agent pills
 - **Large context slows LLM calls**: Implement trimming strategically
 - **SQLite lock contention**: Add queue only if actually observed
@@ -443,6 +508,7 @@ setAgentTimeout(timeout: number) → void
 This project delivers a complete, working chat system using existing infrastructure while maintaining simplicity and avoiding over-engineering. The architecture supports future enhancements while providing immediate value to users.
 
 ## Over-Engineering Guardrails (MVP)
+
 - **No new builder class**: Compose existing `SystemPromptFactory` + `MessageFormatterService`; defer a dedicated builder until needed.
 - **Consolidated events**: Use a single `agent:update` event for MVP; split into multiple events only if richer progress states are required.
 - **Simple store structures**: Prefer plain records over `Map` in Zustand for serializable, predictable updates.
@@ -450,6 +516,7 @@ This project delivers a complete, working chat system using existing infrastruct
 - **Desktop-only store**: Keep transient chat store in desktop app until there’s a concrete mobile need.
 
 ## Database & Ordering Notes
+
 - All message writes and reads are executed in main via repositories (renderer communicates over IPC).
 - Ensure stable ordering by `created_at ASC, id ASC` when returning messages to prevent UI jitter.
 - Phase 2+: Add pagination parameters to `messages.list` and UI hooks as histories grow.
