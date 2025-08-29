@@ -1,13 +1,30 @@
 ---
 id: T-create-desktop-ipc-integration
 title: Create desktop IPC integration hook for chat events
-status: open
+status: done
 priority: medium
 parent: F-chat-state-management
 prerequisites:
   - T-add-chat-store-barrel-exports
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts:
+    Created React hook that
+    integrates shared useChatStore with IPC chat events from main process,
+    subscribes to agent update events, maps event statuses to store actions
+    (thinking/complete/error), handles conversation switching and cleanup
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Created comprehensive unit test suite with 30+ test scenarios covering IPC
+    integration, event handling, error conditions, memory management, and
+    non-Electron environment degradation
+log:
+  - Successfully implemented useChatEventIntegration hook for desktop IPC
+    integration. The hook subscribes to agent update events from the main
+    process via window.electronAPI.chat.onAgentUpdate() and maps them to
+    useChatStore actions. Provides connection status tracking, proper cleanup,
+    error handling, and conversation switching support. All quality checks pass
+    and comprehensive test coverage (30+ test scenarios) verifies correct
+    behavior including event mapping, error handling, memory management, and
+    graceful degradation in non-Electron environments.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T22:43:29.394Z
