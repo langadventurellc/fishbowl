@@ -45,17 +45,22 @@ affectedFiles:
     calls, HTTP error handling, missing content scenarios, error message
     sanitization, and request structure validation - all tests pass with 100%
     coverage of acceptance criteria
+  packages/shared/src/services/llm/providers/MockProvider.ts:
+    Created MockProvider
+    class implementing LlmProvider interface with deterministic rotating
+    responses, realistic timing simulation, and proper error-free operation for
+    testing purposes
 log: []
 schema: v1.0
 childrenIds:
   - T-create-barrel-exports-for-llm
   - T-create-llm-provider-factory
   - T-create-mockprovider-for
-  - T-implement-openai-provider
   - T-create-core-llm-provider
   - T-create-llm-provider-error
   - T-implement-anthropic-provider
   - T-implement-messageformatterserv
+  - T-implement-openai-provider
 created: 2025-08-29T00:06:15.858Z
 updated: 2025-08-29T00:06:15.858Z
 ---
