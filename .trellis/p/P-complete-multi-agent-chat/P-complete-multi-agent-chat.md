@@ -44,12 +44,18 @@ Implement a complete chat system that enables users to have conversations with m
 - **Zustand State Management**: Consistent with existing store patterns in codebase
 - **Chronological Display**: Simple message ordering by timestamp, no threading/grouping
 
+### Execution Boundary & Security
+- **Main-Process LLM Calls**: Provider credentials are read from secure storage and used exclusively in the Electron main process.
+- **IPC Bridge**: Renderer interacts with a minimal main-process bridge for LLM invocations and receives only redacted results/errors.
+- **Shared Interfaces**: Define bridge interfaces in `packages/shared` and inject platform implementations from `apps/desktop/src/main`.
+
 ### Technology Stack
 - **Frontend**: React with TypeScript in Electron renderer process
 - **State Management**: Zustand stores following existing `useAgentsStore` patterns
 - **Database**: SQLite with immediate persistence via existing MessageRepository
 - **LLM Integration**: Existing OpenAI/Anthropic providers via createProvider factory
 - **UI Library**: Existing component system with shadcn/ui styling
+- **Process Boundary**: LLM providers invoked in main via bridge; renderer subscribes to progress/results.
 
 ### Platform Support
 - **Desktop**: Electron application (primary focus)
@@ -78,30 +84,35 @@ Implement a complete chat system that enables users to have conversations with m
 
 ### User Experience
 - **Timestamps**: All messages display creation timestamps
-- **Loading States**: Input disabled while processing, thinking indicators on active agents
+ - **Loading States**: Disable send during processing; allow typing but prevent submission until all agents complete; show per-agent thinking indicators
 - **Error Display**: Failed LLM requests show as system messages in chat
 - **Simple UI**: No complex threading, notifications, or advanced features
+ - **No Agents Enabled**: Persist user message and add a system message indicating no agents are enabled; skip LLM calls
 
 ## Implementation Architecture
 
 ### Service Layer (`packages/shared/src/services/chat/`)
 - **ChatOrchestrationService**: Main business logic coordinating message flow
 - **MessageContextBuilder**: Builds LLM request context from conversation history
-- **Integration with existing**: MessageRepository, SystemPromptFactory, LLM providers
+ - **ProviderBridge Interface**: Defines calls from orchestration to platform bridge (main process) for provider execution and timeout/cancellation
+ - **Integration with existing**: MessageRepository, SystemPromptFactory, LLM providers (via main-process bridge)
 
 ### State Management (`packages/shared/src/stores/chat/`)
 - **useChatStore**: Main Zustand store managing conversations, messages, and UI state
 - **Immediate persistence**: Direct MessageRepository calls, no debouncing
 - **Simple error handling**: Error states without retry logic
+ - **Thinking/Error Maps**: Per-agent thinking flags and last error, keyed by conversation_agent_id
 
 ### UI Layer (`apps/desktop/src/components/chat/`)
 - **MessageInput**: Text input component with send button and loading states
 - **Enhanced existing components**: AgentPill thinking states, message display integration
+ - **Manual Retry**: A retry control on failed agent messages to resend using current context to only the failed agent(s)
 
 ### Integration Points
 - **Agent Store**: Read enabled/disabled state from existing useAgentsStore
 - **Conversation Store**: Connect with existing conversation management
 - **Message Store**: Direct integration with existing MessageRepository
+ - **IPC Contract**: Renderer calls `sendToAgents(conversationId, userMessageId)`; main returns per-agent completion events
 
 ## Detailed Acceptance Criteria
 
@@ -111,18 +122,20 @@ Implement a complete chat system that enables users to have conversations with m
 - **THEN** it should:
   - Save user message to database immediately
   - Identify all enabled conversation agents
-  - Build appropriate context for each agent using SystemPromptFactory
-  - Make parallel LLM provider calls for all enabled agents
+  - Build appropriate context for each agent using SystemPromptFactory, trimmed to the last 20 included messages
+  - Make LLM provider calls with a concurrency cap (default 3) and per-agent timeout (default 60s)
   - Save each agent response (or error) to database immediately
   - Return success/failure status for UI updates
+  - Cancel in-flight requests if a new user message is sent or the conversation changes
 
 ### MessageContextBuilder
 - **GIVEN** a conversation with message history
 - **WHEN** building context for an LLM request
 - **THEN** it should:
   - Filter messages where `included: true`
-  - Generate system prompt using agent's personality and role
-  - Format messages chronologically with proper role assignments
+  - Generate system prompt using agent's personality and role via SystemPromptFactory
+  - Format messages chronologically with proper role assignments (user/assistant/system)
+  - Trim to a configurable limit (default 20 messages) to satisfy provider context constraints
   - Return valid LLM provider request format
 
 ### useChatStore (Zustand)
@@ -134,16 +147,18 @@ Implement a complete chat system that enables users to have conversations with m
   - Handle loading states during message processing
   - Store error states without automatic retry logic
   - Update UI optimistically while persisting to database
+  - Expose a derived `canSend` state that disables send while agents are processing
 
 ### MessageInput Component
 - **GIVEN** user wants to send a message
 - **WHEN** they interact with the input component
 - **THEN** it should:
   - Provide text input field with send button
-  - Disable input during message processing
+  - Disable send during message processing; allow typing
   - Show loading indicator while agents are thinking
   - Clear input field after successful send
   - Display validation errors for empty messages
+  - Surface a manual retry action on failed agent messages
 
 ### Agent Thinking Indicators
 - **GIVEN** agents are processing LLM requests
@@ -152,6 +167,7 @@ Implement a complete chat system that enables users to have conversations with m
   - Display animated thinking dots on active AgentPills
   - Update thinking state immediately when requests start/complete
   - Show individual agent status (not global loading state)
+  - Clear thinking state on timeout or cancellation
 
 ### Error Handling
 - **GIVEN** LLM provider failures occur
@@ -161,6 +177,7 @@ Implement a complete chat system that enables users to have conversations with m
   - Display error in chat chronologically with other messages
   - Not attempt automatic retry
   - Allow manual retry through normal message send flow
+  - Persist minimal error taxonomy: `{ provider, statusCode, safeMessage }`; redact internal details
 
 ### Message Display
 - **GIVEN** a conversation with user and agent messages
@@ -171,6 +188,7 @@ Implement a complete chat system that enables users to have conversations with m
   - Show user messages right-aligned, agent messages left-aligned
   - Include message inclusion checkboxes for context control
   - Handle system/error messages with distinct styling
+  - Stabilize ordering by `created_at` then `id` to prevent jitter
 
 ### Database Integration
 - **GIVEN** any message creation (user, agent, or error)
@@ -181,17 +199,19 @@ Implement a complete chat system that enables users to have conversations with m
   - Set appropriate role (user, assistant, system)
   - Default inclusion to true for new messages
   - Generate proper UUID and ISO timestamp
+  - Use transactions or a single-writer queue for parallel saves to avoid write-locks
 
 ## Performance Requirements
 - **Message Display**: Load and display up to 100 messages without pagination
-- **LLM Requests**: Handle up to 5 concurrent agent requests without blocking UI
-- **Database Operations**: All message saves complete within 100ms for local SQLite
-- **UI Responsiveness**: Input remains responsive during agent processing
+- **LLM Requests**: Process up to 5 agents per send with a concurrency cap of 3 and per-agent timeout of 60s
+- **Database Operations**: Writes should be fast locally; avoid strict SLA and prevent lock contention via transactions/queue
+- **UI Responsiveness**: Keep UI interactive; disable send during processing, typing remains responsive
 
 ## Security Requirements
-- **API Keys**: Use existing secure storage for LLM provider credentials
+- **API Keys**: Use existing secure storage for LLM provider credentials (main process only)
 - **Input Validation**: Sanitize user input before database storage
 - **Error Messages**: Don't expose internal system details in user-facing errors
+ - **IPC Hygiene**: Only pass minimal data across IPC; never transmit secrets to renderer
 
 ## Success Metrics
 - **Functional**: Users can send messages and receive responses from multiple agents
@@ -212,11 +232,38 @@ Implement a complete chat system that enables users to have conversations with m
 - **Mobile Platform**: Business logic in shared package supports future React Native implementation
 - **Additional LLM Providers**: Architecture supports new providers via existing factory pattern
 - **Enhanced Features**: Foundation supports future message threading, search, export features
+ - **Streaming Responses**: Out of scope for MVP; plan for optional future adoption via provider-specific streams
 
 ## Development Approach
 - **Incremental Implementation**: Build and test each component independently
 - **Existing Pattern Consistency**: Follow established Zustand store and service patterns
 - **Simple Solutions**: Choose straightforward implementations over complex architectures
 - **Immediate Validation**: Test each feature as it's built before moving to next component
+
+## IPC Contract (Desktop)
+- `sendToAgents(conversationId: string, userMessageId: string)` → starts processing for all enabled agents; returns immediately; emits per-agent events
+- Events from main to renderer:
+  - `agent:started(conversationAgentId)`
+  - `agent:succeeded(conversationAgentId, agentMessageId)`
+  - `agent:failed(conversationAgentId, errorInfo)`
+  - `agents:allComplete(conversationId)`
+- Cancellation: `cancelAgents(conversationId)` aborts all in-flight requests for that conversation
+
+## Testing Plan
+- **ChatOrchestrationService**: happy path (2 agents), partial failure (1 fails), cancellation on new send, no agents enabled
+- **MessageContextBuilder**: inclusion filter, ordering, trimming, provider-specific formatting snapshots (OpenAI vs. Anthropic)
+- **Repository Integration**: parallel saves with single-writer/transaction strategy; ordering by `created_at` then `id`
+- **IPC Bridge**: mock bridge to verify timeouts, cancellation, and event emission
+
+## Logging & Observability
+- Use `@fishbowl-ai/shared` logger; emit structured fields: `conversationId`, `conversationAgentId`, `provider`, `durationMs`, `status`
+- Log fan-out start, per-agent completion/failure, cancellation, and DB write outcomes
+- Avoid logging secrets or raw provider exceptions; log sanitized summaries only
+
+## Risks & Mitigations
+- **Rate Limits**: Concurrency cap and per-agent timeout; surface clear, user-safe error messages
+- **SQLite Locks**: Transactions/single-writer queue for parallel saves
+- **Context Overflows**: Deterministic trimming to last 20 included messages
+- **Security Leakage**: Main-only key usage; minimal IPC payloads; error redaction
 
 This project delivers a complete, working chat system using existing infrastructure while maintaining simplicity and avoiding over-engineering. The architecture supports future enhancements while providing immediate value to users.
