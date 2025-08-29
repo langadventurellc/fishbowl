@@ -5,6 +5,7 @@ import {
   MessageRepository,
   SettingsRepository,
   createLoggerSync,
+  type ChatOrchestrationService,
   type ConversationsRepositoryInterface,
   type DatabaseBridge,
   type StructuredLogger,
@@ -17,6 +18,7 @@ import { NodePathUtils } from "../utils/NodePathUtils";
 import { MainDatabaseService } from "./MainDatabaseService";
 import { NodeDatabaseBridge } from "./NodeDatabaseBridge";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
+import { ChatOrchestrationServiceFactory } from "./chat/ChatOrchestrationServiceFactory";
 
 /**
  * Service container for Electron main process dependencies.
@@ -61,6 +63,11 @@ export class MainProcessServices {
    * Repository for managing message persistence.
    */
   readonly messagesRepository: MessageRepository;
+
+  /**
+   * Chat orchestration service for multi-agent message processing.
+   */
+  readonly chatOrchestrationService: ChatOrchestrationService;
 
   constructor() {
     // Initialize Node.js implementations
@@ -136,6 +143,19 @@ export class MainProcessServices {
       this.logger,
       pathUtils,
     );
+
+    // Initialize chat orchestration service
+    try {
+      this.chatOrchestrationService =
+        ChatOrchestrationServiceFactory.create(this);
+      this.logger.info("ChatOrchestrationService initialized successfully");
+    } catch (error) {
+      this.logger.error(
+        "Failed to initialize ChatOrchestrationService",
+        error instanceof Error ? error : undefined,
+      );
+      throw new Error("ChatOrchestrationService initialization failed");
+    }
   }
 
   /**

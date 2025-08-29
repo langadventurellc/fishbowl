@@ -24,7 +24,10 @@ affectedFiles:
   apps/desktop/src/shared/ipc/messages/index.ts: Created barrel file exporting all messages request/response types
   apps/desktop/src/shared/ipc/index.ts: Added messages constants, request types,
     and response types exports to main IPC index
-  apps/desktop/src/main/services/MainProcessServices.ts: Added MessageRepository import and initialization with proper error handling
+  apps/desktop/src/main/services/MainProcessServices.ts: Added MessageRepository
+    import and initialization with proper error handling; Integrated
+    ChatOrchestrationService into MainProcessServices constructor with proper
+    error handling and logging, making it available as a readonly property
   apps/desktop/src/electron/messagesHandlers.ts: Created new file with
     setupMessagesHandlers function implementing messages:list, messages:create,
     and messages:updateInclusion handlers
@@ -144,6 +147,23 @@ affectedFiles:
     Added comprehensive unit tests covering configuration validation, error
     scenarios, and security requirements
   packages/shared/src/services/llm/index.ts: Added factory exports to make createProvider available from shared package
+  apps/desktop/src/main/services/chat/MainProcessSystemPromptResolvers.ts:
+    Created system prompt resolvers implementation using repository managers to
+    resolve roles and personalities by ID with comprehensive error handling and
+    structured logging
+  apps/desktop/src/main/services/chat/ChatOrchestrationServiceFactory.ts:
+    Created factory for dependency injection that instantiates
+    ChatOrchestrationService with all required dependencies including
+    SystemPromptFactory, MessageFormatterService, MainProcessLlmBridge, and
+    agents resolver function
+  apps/desktop/src/main/services/chat/__tests__/MainProcessSystemPromptResolvers.test.ts:
+    Created comprehensive unit tests covering successful resolution, error
+    handling, repository failures, and integration scenarios with 100% code
+    coverage
+  apps/desktop/src/main/services/chat/__tests__/ChatOrchestrationServiceFactory.test.ts:
+    Created comprehensive unit tests covering dependency injection, factory
+    pattern, error scenarios, and service creation with all edge cases and
+    failure modes tested
 log: []
 schema: v1.0
 childrenIds:
