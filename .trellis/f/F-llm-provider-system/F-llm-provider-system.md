@@ -1,13 +1,28 @@
 ---
 id: F-llm-provider-system
 title: LLM Provider System Implementation
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/services/llm/interfaces/LlmProvider.ts: Core LLM provider interface with single sendMessage method
+  packages/shared/src/services/llm/interfaces/LlmRequestParams.ts:
+    Request parameters interface with system prompt, model, messages, config,
+    and sampling
+  packages/shared/src/services/llm/interfaces/FormattedMessage.ts: Provider-formatted message interface with user/assistant roles
+  packages/shared/src/services/llm/interfaces/LlmResponse.ts: Simple provider response interface with content string
+  packages/shared/src/services/llm/interfaces/index.ts: Barrel export file for all LLM interfaces
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-barrel-exports-for-llm
+  - T-create-core-llm-provider
+  - T-create-llm-provider-error
+  - T-create-llm-provider-factory
+  - T-create-mockprovider-for
+  - T-implement-anthropic-provider
+  - T-implement-messageformatterserv
+  - T-implement-openai-provider
 created: 2025-08-29T00:06:15.858Z
 updated: 2025-08-29T00:06:15.858Z
 ---
