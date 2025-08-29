@@ -81,6 +81,24 @@ affectedFiles:
     violations, not null constraints, malformed input handling, concurrent
     update conflicts, large result sets, and comprehensive edge cases. Added
     imports for constraint violation testing infrastructure.
+  packages/shared/src/repositories/messages/validateSchema.ts:
+    Created comprehensive MessageSchemaValidator class with methods for
+    validating table structure, constraints, and indexes. Includes
+    EXPECTED_MESSAGES_SCHEMA definition and constraint enforcement testing.
+    Features modular design with helper methods to avoid function complexity
+    lint issues.
+  packages/shared/src/repositories/messages/types/ColumnInfo.ts: Created interface for PRAGMA table_info result structure
+  packages/shared/src/repositories/messages/types/SchemaValidationResult.ts:
+    Created interface extending ValidationResult for table structure validation
+    results
+  packages/shared/src/repositories/messages/types/ConstraintValidationResult.ts:
+    Created interface extending ValidationResult for foreign key constraint
+    validation results
+  packages/shared/src/repositories/messages/types/ForeignKeyInfo.ts: Created interface for PRAGMA foreign_key_list result structure
+  packages/shared/src/repositories/messages/types/IndexValidationResult.ts: Created interface extending ValidationResult for index validation results
+  packages/shared/src/repositories/messages/types/IndexInfo.ts: Created interface for PRAGMA index_list result structure
+  packages/shared/src/repositories/messages/types/IndexColumnInfo.ts: Created interface for PRAGMA index_info result structure
+  packages/shared/src/repositories/messages/types/index.ts: Created barrel file exporting all schema validation type definitions
 log: []
 schema: v1.0
 childrenIds:
