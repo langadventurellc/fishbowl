@@ -294,14 +294,48 @@ describe("MessageRepository", () => {
       },
     ];
 
-    it("should retrieve messages by conversation ID ordered by created_at", async () => {
+    it("should retrieve messages by conversation ID ordered by created_at and id", async () => {
       mockDatabaseBridge.query.mockResolvedValue(mockMessages);
 
       const result = await repository.getByConversation(mockConversationId);
 
       expect(result).toEqual(mockMessages);
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
-        expect.stringContaining("ORDER BY created_at ASC"),
+        expect.stringContaining("ORDER BY created_at ASC, id ASC"),
+        [mockConversationId],
+      );
+    });
+
+    it("should handle stable ordering with identical timestamps", async () => {
+      // Create messages with same timestamp but different IDs
+      const messagesWithSameTimestamp: Message[] = [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174003", // Lower ID (should come first)
+          conversation_id: mockConversationId,
+          conversation_agent_id: null,
+          role: MessageRole.USER,
+          content: "Message with same timestamp - first",
+          included: true,
+          created_at: "2023-01-01T00:00:00.000Z",
+        },
+        {
+          id: "123e4567-e89b-12d3-a456-426614174005", // Higher ID (should come second)
+          conversation_id: mockConversationId,
+          conversation_agent_id: null,
+          role: MessageRole.USER,
+          content: "Message with same timestamp - second",
+          included: true,
+          created_at: "2023-01-01T00:00:00.000Z",
+        },
+      ];
+
+      mockDatabaseBridge.query.mockResolvedValue(messagesWithSameTimestamp);
+
+      const result = await repository.getByConversation(mockConversationId);
+
+      expect(result).toEqual(messagesWithSameTimestamp);
+      expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
+        expect.stringContaining("ORDER BY created_at ASC, id ASC"),
         [mockConversationId],
       );
     });

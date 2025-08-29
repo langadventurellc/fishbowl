@@ -66,6 +66,13 @@ affectedFiles:
     Created comprehensive unit test suite with 22 test scenarios covering all
     hook functionality including success cases, validation errors, IPC errors,
     environment detection, and concurrent operations
+  packages/shared/src/repositories/messages/MessageRepository.ts:
+    Updated SQL query in getByConversation() method to include stable ordering
+    (ORDER BY created_at ASC, id ASC) and improved query comment for clarity
+  packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
+    Updated existing ordering test to expect new query format and added
+    comprehensive test case for stable ordering with identical timestamps to
+    ensure consistent message display
 log: []
 schema: v1.0
 childrenIds:

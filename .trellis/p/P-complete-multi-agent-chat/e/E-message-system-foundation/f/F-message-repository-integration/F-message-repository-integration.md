@@ -1,15 +1,26 @@
 ---
 id: F-message-repository-integration
 title: Message Repository Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-message-system-foundation
 prerequisites:
   - F-messages-ipc-bridge
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/repositories/messages/MessageRepository.ts:
+    Updated SQL query in getByConversation() method to include stable ordering
+    (ORDER BY created_at ASC, id ASC) and improved query comment for clarity
+  packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
+    Updated existing ordering test to expect new query format and added
+    comprehensive test case for stable ordering with identical timestamps to
+    ensure consistent message display
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-messagerepository
+  - T-update-messagerepository
+  - T-validate-database-schema-and
+  - T-validate-messagerepository
 created: 2025-08-29T16:58:17.232Z
 updated: 2025-08-29T16:58:17.232Z
 ---

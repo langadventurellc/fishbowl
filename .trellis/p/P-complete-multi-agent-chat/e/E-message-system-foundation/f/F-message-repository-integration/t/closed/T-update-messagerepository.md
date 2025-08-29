@@ -1,12 +1,27 @@
 ---
 id: T-update-messagerepository
 title: Update MessageRepository query ordering for stable message retrieval
-status: open
+status: done
 priority: high
 parent: F-message-repository-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/repositories/messages/MessageRepository.ts:
+    Updated SQL query in getByConversation() method to include stable ordering
+    (ORDER BY created_at ASC, id ASC) and improved query comment for clarity
+  packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
+    Updated existing ordering test to expect new query format and added
+    comprehensive test case for stable ordering with identical timestamps to
+    ensure consistent message display
+log:
+  - Updated MessageRepository query ordering to provide stable message retrieval
+    by adding secondary sort on ID field. Modified the getByConversation()
+    method's SQL query from 'ORDER BY created_at ASC' to 'ORDER BY created_at
+    ASC, id ASC' to prevent message reordering when multiple messages have
+    identical timestamps. Updated existing unit tests to verify the new query
+    structure and added comprehensive test coverage for stable ordering
+    scenarios with identical timestamps. All quality checks pass with no
+    linting, formatting, or type errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T18:43:14.148Z

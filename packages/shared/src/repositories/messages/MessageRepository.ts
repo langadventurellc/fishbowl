@@ -140,12 +140,12 @@ export class MessageRepository {
         ]);
       }
 
-      // Query database with proper ordering
+      // Query database with proper ordering for stable message retrieval
       const sql = `
         SELECT id, conversation_id, conversation_agent_id, role, content, included, created_at
         FROM messages
         WHERE conversation_id = ?
-        ORDER BY created_at ASC
+        ORDER BY created_at ASC, id ASC
       `;
 
       const rows = await this.databaseBridge.query<Message>(sql, [
