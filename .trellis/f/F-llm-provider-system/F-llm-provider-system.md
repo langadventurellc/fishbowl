@@ -26,17 +26,26 @@ affectedFiles:
     handling, API request/response parsing, error handling, and edge cases
   packages/shared/eslint.config.cjs: Added fetch as global for Node.js 18+
     environments to resolve linting errors in provider implementations
+  packages/shared/src/services/llm/services/MessageFormatterService.ts:
+    Implemented core MessageFormatterService class with formatMessages method
+    for converting conversation messages to provider format with role mapping
+    and name attribution
+  packages/shared/src/services/llm/services/index.ts: Created barrel export file for services directory
+  packages/shared/src/services/llm/services/__tests__/MessageFormatterService.test.ts:
+    "Created comprehensive test suite with 16 unit tests covering all formatting
+    rules: inclusion filtering, system exclusion, role mapping, name prefixing,
+    order preservation, and edge cases"
 log: []
 schema: v1.0
 childrenIds:
   - T-create-barrel-exports-for-llm
   - T-create-llm-provider-factory
   - T-create-mockprovider-for
-  - T-implement-anthropic-provider
   - T-implement-messageformatterserv
   - T-implement-openai-provider
   - T-create-core-llm-provider
   - T-create-llm-provider-error
+  - T-implement-anthropic-provider
 created: 2025-08-29T00:06:15.858Z
 updated: 2025-08-29T00:06:15.858Z
 ---

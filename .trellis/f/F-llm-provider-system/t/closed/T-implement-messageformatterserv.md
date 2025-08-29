@@ -1,13 +1,29 @@
 ---
 id: T-implement-messageformatterserv
 title: Implement MessageFormatterService for provider message formatting
-status: open
+status: done
 priority: high
 parent: F-llm-provider-system
 prerequisites:
   - T-create-core-llm-provider
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/services/llm/services/MessageFormatterService.ts:
+    Implemented core MessageFormatterService class with formatMessages method
+    for converting conversation messages to provider format with role mapping
+    and name attribution
+  packages/shared/src/services/llm/services/index.ts: Created barrel export file for services directory
+  packages/shared/src/services/llm/services/__tests__/MessageFormatterService.test.ts:
+    "Created comprehensive test suite with 16 unit tests covering all formatting
+    rules: inclusion filtering, system exclusion, role mapping, name prefixing,
+    order preservation, and edge cases"
+log:
+  - Successfully implemented MessageFormatterService for provider message
+    formatting with comprehensive test coverage. The service converts internal
+    Message[] arrays to provider-ready FormattedMessage[] arrays with proper
+    role mapping and name attribution. All 16 unit tests pass, covering
+    inclusion filtering, system message exclusion, role mapping scenarios, name
+    prefixing, order preservation, and edge cases. TypeScript compilation and
+    quality checks pass without errors.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T01:56:37.634Z
