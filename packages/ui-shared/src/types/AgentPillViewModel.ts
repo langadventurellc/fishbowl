@@ -38,4 +38,13 @@ export interface AgentPillViewModel {
    * Used for real-time state indication during agent processing.
    */
   isThinking: boolean;
+
+  /**
+   * Whether the agent is enabled for new conversations.
+   * When false, the agent pill should display with reduced opacity
+   * and visual indicators showing it's disabled.
+   *
+   * Used to control agent participation in conversation generation.
+   */
+  enabled: boolean;
 }

@@ -24,8 +24,13 @@ affectedFiles:
     ConversationAgentUpdateRequest and ConversationAgentUpdateResponse types to
     make them available for import in handlers
   apps/desktop/src/electron/preload.ts: Added update method to conversationAgent
-    API following existing patterns with proper error handling
-  apps/desktop/src/types/electron.d.ts: Added update method signature to ElectronAPI interface for TypeScript support
+    API following existing patterns with proper error handling; Contains
+    existing update method implementation (lines 787-810) that correctly bridges
+    to UPDATE IPC channel with proper error handling
+  apps/desktop/src/types/electron.d.ts: Added update method signature to
+    ElectronAPI interface for TypeScript support; Contains existing update
+    method TypeScript interface definition (lines 234-240) with proper typing
+    and JSDoc documentation
   apps/desktop/src/hooks/conversationAgents/useConversationAgents.ts:
     Implemented toggleEnabled function that finds current agent, toggles enabled
     state, calls IPC update, and refetches data
@@ -33,16 +38,22 @@ affectedFiles:
   apps/desktop/src/components/modals/__tests__/AddAgentToConversationModal.test.tsx:
     Updated all test mocks to include toggleEnabled jest.fn() to satisfy
     interface requirements
+  packages/ui-shared/src/types/AgentPillViewModel.ts: "Added enabled: boolean
+    property with detailed JSDoc documentation explaining visual behavior and
+    usage for controlling agent participation"
+  packages/ui-shared/src/types/chat/__tests__/AgentLabelsContainerDisplayProps.test.ts:
+    "Updated mock AgentPillViewModel object to include enabled: true property to
+    maintain TypeScript compatibility"
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-toggleenabled-function-to
-  - T-add-update-method-to-electron
   - T-update-agentlabelscontainerdis
   - T-update-agentpill-component
   - T-update-agentpillviewmodel-to
+  - T-add-toggleenabled-function-to
   - T-add-update-channel-to
   - T-add-update-handler-to
+  - T-add-update-method-to-electron
   - T-create-conversation-agent
 created: 2025-08-29T03:51:28.173Z
 updated: 2025-08-29T03:51:28.173Z

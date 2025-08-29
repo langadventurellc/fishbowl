@@ -1,12 +1,23 @@
 ---
 id: T-update-agentpillviewmodel-to
 title: Update AgentPillViewModel to include enabled state
-status: open
+status: done
 priority: medium
 parent: F-agent-pill-toggle-enabled
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/AgentPillViewModel.ts: "Added enabled: boolean
+    property with detailed JSDoc documentation explaining visual behavior and
+    usage for controlling agent participation"
+  packages/ui-shared/src/types/chat/__tests__/AgentLabelsContainerDisplayProps.test.ts:
+    "Updated mock AgentPillViewModel object to include enabled: true property to
+    maintain TypeScript compatibility"
+log:
+  - Successfully added enabled property to AgentPillViewModel interface with
+    comprehensive JSDoc documentation. The property allows UI components to
+    display visual indication of enabled/disabled agent state. Updated test
+    mocks to maintain TypeScript compatibility. All quality checks pass with no
+    breaking changes to existing implementations.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T03:59:04.393Z

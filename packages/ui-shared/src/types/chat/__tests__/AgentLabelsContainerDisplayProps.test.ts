@@ -16,6 +16,7 @@ describe("AgentLabelsContainerDisplayProps", () => {
     role: "Test Role",
     color: "#3b82f6",
     isThinking: false,
+    enabled: true,
   };
 
   describe("interface structure", () => {
