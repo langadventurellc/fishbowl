@@ -1,6 +1,7 @@
 export * from "./storage";
 export * from "./database";
 export * from "./migrations";
+export * from "./chat";
 export type { PersonalityDefinitionsService } from "./PersonalityDefinitionsService";
 
 // Repositories (for convenience)

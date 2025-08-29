@@ -467,6 +467,53 @@ export class ConversationAgentsRepository {
   }
 
   /**
+   * Get only enabled agents for a conversation ordered by display_order.
+   * This is a critical method for ChatOrchestrationService to find agents that should process messages.
+   *
+   * @param conversationId - Conversation ID to get enabled agents for
+   * @returns Array of enabled conversation agents in display order
+   */
+  async getEnabledByConversationId(
+    conversationId: string,
+  ): Promise<ConversationAgent[]> {
+    try {
+      // Validate conversation ID format
+      const idValidation =
+        conversationAgentSchema.shape.conversation_id.safeParse(conversationId);
+      if (!idValidation.success) {
+        return [];
+      }
+
+      const sql = `
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
+        FROM conversation_agents
+        WHERE conversation_id = ? AND enabled = 1
+        ORDER BY display_order ASC, added_at ASC
+      `;
+
+      const rows = await this.databaseBridge.query<ConversationAgentRow>(sql, [
+        conversationId,
+      ]);
+
+      // Transform database rows and validate
+      const conversationAgents = rows
+        .map((row) => this.transformFromDatabase(row))
+        .map((row) => conversationAgentSchema.parse(row));
+
+      this.logger.debug(
+        `Found ${conversationAgents.length} enabled agents for conversation`,
+        {
+          conversationId,
+        },
+      );
+
+      return conversationAgents;
+    } catch (error) {
+      this.handleDatabaseError(error, "getEnabledByConversationId");
+    }
+  }
+
+  /**
    * Bulk delete all agents for a conversation (for conversation cleanup).
    *
    * @param conversationId - Conversation ID to remove all agents from
