@@ -17,6 +17,8 @@ export interface UseConversationAgentsResult {
   addAgent: (agentId: string) => Promise<void>;
   /** Function to remove an agent from the conversation */
   removeAgent: (agentId: string) => Promise<void>;
+  /** Function to toggle the enabled state of a conversation agent */
+  toggleEnabled: (conversationAgentId: string) => Promise<void>;
   /** Function to manually reload conversation agents */
   refetch: () => Promise<void>;
 }

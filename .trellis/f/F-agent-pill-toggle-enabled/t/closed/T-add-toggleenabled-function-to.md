@@ -1,13 +1,29 @@
 ---
 id: T-add-toggleenabled-function-to
 title: Add toggleEnabled function to useConversationAgents hook
-status: open
+status: done
 priority: medium
 parent: F-agent-pill-toggle-enabled
 prerequisites:
   - T-add-update-handler-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/preload.ts: Added update method to conversationAgent
+    API following existing patterns with proper error handling
+  apps/desktop/src/types/electron.d.ts: Added update method signature to ElectronAPI interface for TypeScript support
+  apps/desktop/src/hooks/conversationAgents/useConversationAgents.ts:
+    Implemented toggleEnabled function that finds current agent, toggles enabled
+    state, calls IPC update, and refetches data
+  apps/desktop/src/hooks/conversationAgents/UseConversationAgentsResult.ts: Added toggleEnabled function to interface with proper JSDoc documentation
+  apps/desktop/src/components/modals/__tests__/AddAgentToConversationModal.test.tsx:
+    Updated all test mocks to include toggleEnabled jest.fn() to satisfy
+    interface requirements
+log:
+  - Implemented toggleEnabled function in useConversationAgents hook that allows
+    toggling the enabled state of conversation agents. The function follows
+    existing patterns by getting the current agent state, calling the UPDATE IPC
+    endpoint with the toggled enabled value, and using the refetch pattern for
+    state consistency. Added proper error handling and TypeScript typing.
+    Updated all interfaces and test mocks accordingly. All quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T03:58:48.900Z

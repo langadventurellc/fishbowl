@@ -54,6 +54,8 @@ import type {
   ConversationAgentAddResponse,
   ConversationAgentRemoveResponse,
   ConversationAgentListResponse,
+  ConversationAgentUpdateRequest,
+  ConversationAgentUpdateResponse,
   GetDefinitionsRequest,
   GetDefinitionsResponse,
 } from "../shared/ipc/index";
@@ -776,6 +778,30 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error removing agent from conversation:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    update: async (
+      request: ConversationAgentUpdateRequest,
+    ): Promise<ConversationAgent> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_AGENT_CHANNELS.UPDATE,
+          request,
+        )) as ConversationAgentUpdateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to update conversation agent",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error updating conversation agent:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error

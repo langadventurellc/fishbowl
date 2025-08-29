@@ -239,6 +239,14 @@ export interface ElectronAPI {
       input: import("@fishbowl-ai/shared").RemoveAgentFromConversationInput,
     ): Promise<boolean>;
     /**
+     * Update a conversation agent's properties.
+     * @param request - Request data containing conversation agent ID and updates
+     * @returns Promise resolving to the updated conversation agent
+     */
+    update(
+      request: import("../shared/ipc/index").ConversationAgentUpdateRequest,
+    ): Promise<import("@fishbowl-ai/shared").ConversationAgent>;
+    /**
      * List all conversation agents (for debugging).
      * @returns Promise resolving to array of all conversation agents
      */

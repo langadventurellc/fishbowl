@@ -100,6 +100,7 @@ beforeEach(() => {
     error: null,
     addAgent: mockAddAgent,
     removeAgent: jest.fn(),
+    toggleEnabled: jest.fn(),
     refetch: jest.fn(),
   });
 });
@@ -174,6 +175,7 @@ describe("AddAgentToConversationModal", () => {
         error: null,
         addAgent: mockAddAgent,
         removeAgent: jest.fn(),
+        toggleEnabled: jest.fn(),
         refetch: jest.fn(),
       });
 
@@ -195,6 +197,7 @@ describe("AddAgentToConversationModal", () => {
         error: null,
         addAgent: mockAddAgent,
         removeAgent: jest.fn(),
+        toggleEnabled: jest.fn(),
         refetch: jest.fn(),
       });
 
@@ -357,6 +360,7 @@ describe("AddAgentToConversationModal", () => {
         error: new Error("Hook error message"),
         addAgent: mockAddAgent,
         removeAgent: jest.fn(),
+        toggleEnabled: jest.fn(),
         refetch: jest.fn(),
       });
 
@@ -397,6 +401,7 @@ describe("AddAgentToConversationModal", () => {
         error: new Error("Previous error"),
         addAgent: mockAddAgent,
         removeAgent: jest.fn(),
+        toggleEnabled: jest.fn(),
         refetch: jest.fn(),
       });
 

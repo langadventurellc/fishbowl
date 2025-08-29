@@ -174,6 +174,40 @@ export function useConversationAgents(
     [conversationId, fetchConversationAgents],
   );
 
+  /**
+   * Toggle the enabled state of a conversation agent with refetch pattern.
+   */
+  const toggleEnabled = useCallback(
+    async (conversationAgentId: string) => {
+      if (!conversationId) return;
+
+      try {
+        // Find the current agent to get its current enabled state
+        const currentAgent = conversationAgents.find(
+          (agent) => agent.id === conversationAgentId,
+        );
+        if (!currentAgent) {
+          throw new Error("Conversation agent not found");
+        }
+
+        // Toggle the enabled state
+        const newEnabledState = !currentAgent.enabled;
+
+        await window.electronAPI.conversationAgent.update({
+          conversationAgentId,
+          updates: {
+            enabled: newEnabledState,
+          },
+        });
+
+        await fetchConversationAgents(); // Refetch to sync state
+      } catch (err) {
+        setError(err as Error);
+      }
+    },
+    [conversationId, conversationAgents, fetchConversationAgents],
+  );
+
   // Auto-fetch when conversation changes
   useEffect(() => {
     fetchConversationAgents();
@@ -185,6 +219,7 @@ export function useConversationAgents(
     error,
     addAgent,
     removeAgent,
+    toggleEnabled,
     refetch: fetchConversationAgents,
   };
 }
