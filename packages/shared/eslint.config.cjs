@@ -5,6 +5,14 @@ module.exports = [
   {
     ignores: ["dist/", "node_modules/"],
   },
+  // Add fetch as global for Node.js 18+ environments
+  {
+    languageOptions: {
+      globals: {
+        fetch: "readonly",
+      },
+    },
+  },
   // Jest configuration for test files
   {
     files: [
