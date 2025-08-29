@@ -9,17 +9,24 @@ affectedFiles:
   apps/desktop/src/shared/ipc/__tests__/conversationAgentsIPC.test.ts:
     Updated tests to validate UPDATE channel and adjusted expected channel count
     from 4 to 5
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentUpdateRequest.ts:
+    Created ConversationAgentUpdateRequest interface with conversationAgentId
+    and updates fields, includes JSDoc with usage examples
+  apps/desktop/src/shared/ipc/conversationAgents/conversationAgentUpdateResponse.ts:
+    Created ConversationAgentUpdateResponse interface extending
+    IPCResponse<ConversationAgent>, includes comprehensive JSDoc with
+    success/error examples
 log: []
 schema: v1.0
 childrenIds:
   - T-add-toggleenabled-function-to
-  - T-add-update-channel-to
   - T-add-update-handler-to
   - T-add-update-method-to-electron
   - T-create-conversation-agent
   - T-update-agentlabelscontainerdis
   - T-update-agentpill-component
   - T-update-agentpillviewmodel-to
+  - T-add-update-channel-to
 created: 2025-08-29T03:51:28.173Z
 updated: 2025-08-29T03:51:28.173Z
 ---
