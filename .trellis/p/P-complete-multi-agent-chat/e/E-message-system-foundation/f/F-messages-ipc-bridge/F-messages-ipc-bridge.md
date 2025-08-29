@@ -25,12 +25,18 @@ affectedFiles:
   apps/desktop/src/shared/ipc/messages/index.ts: Created barrel file exporting all messages request/response types
   apps/desktop/src/shared/ipc/index.ts: Added messages constants, request types,
     and response types exports to main IPC index
+  apps/desktop/src/main/services/MainProcessServices.ts: Added MessageRepository import and initialization with proper error handling
+  apps/desktop/src/electron/messagesHandlers.ts: Created new file with
+    setupMessagesHandlers function implementing messages:list, messages:create,
+    and messages:updateInclusion handlers
+  apps/desktop/src/electron/main.ts: Added import for setupMessagesHandlers and
+    created setupMessagesIpcHandlers function following established patterns
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-messages-ipc-channel
   - T-extend-preload-interface-with
   - T-implement-messages-ipc
+  - T-create-messages-ipc-channel
 created: 2025-08-29T16:57:35.088Z
 updated: 2025-08-29T16:57:35.088Z
 ---

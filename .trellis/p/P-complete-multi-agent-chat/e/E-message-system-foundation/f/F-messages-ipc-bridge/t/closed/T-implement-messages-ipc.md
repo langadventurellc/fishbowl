@@ -1,13 +1,23 @@
 ---
 id: T-implement-messages-ipc
 title: Implement messages IPC handlers in main process
-status: open
+status: done
 priority: high
 parent: F-messages-ipc-bridge
 prerequisites:
   - T-create-messages-ipc-channel
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/main/services/MainProcessServices.ts: Added MessageRepository import and initialization with proper error handling
+  apps/desktop/src/electron/messagesHandlers.ts: Created new file with
+    setupMessagesHandlers function implementing messages:list, messages:create,
+    and messages:updateInclusion handlers
+  apps/desktop/src/electron/main.ts: Added import for setupMessagesHandlers and
+    created setupMessagesIpcHandlers function following established patterns
+log:
+  - Implemented messages IPC handlers in main process with all three required
+    operations following established patterns from conversationsHandlers.ts.
+    Added MessageRepository to MainProcessServices and registered handlers in
+    main.ts with proper error handling and logging. All quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T17:43:23.862Z

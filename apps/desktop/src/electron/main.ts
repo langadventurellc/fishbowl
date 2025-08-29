@@ -15,6 +15,7 @@ import { ensureSystemPromptTemplate } from "./startup/ensureSystemPromptTemplate
 import { setupAgentsHandlers } from "./agentsHandlers.js";
 import { setupConversationAgentHandlers } from "./conversationAgentHandlers.js";
 import { setupConversationsHandlers } from "./conversationsHandlers.js";
+import { setupMessagesHandlers } from "./messagesHandlers.js";
 import { llmConfigServiceManager } from "./getLlmConfigService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
@@ -345,6 +346,7 @@ function setupIpcHandlers(
   if (services) {
     setupConversationsIpcHandlers(services);
     setupConversationAgentsIpcHandlers(services);
+    setupMessagesIpcHandlers(services);
   }
 }
 
@@ -482,6 +484,26 @@ function setupConversationAgentsIpcHandlers(
     );
     throw new Error(
       "Conversation agents IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Setup messages IPC handlers with proper error handling
+ * @param services - Main process services container
+ * @throws {Error} If handler setup fails
+ */
+function setupMessagesIpcHandlers(services: MainProcessServices): void {
+  try {
+    setupMessagesHandlers(services);
+    services.logger.debug("Messages IPC handlers registered successfully");
+  } catch (error) {
+    services.logger.error(
+      "Failed to register messages IPC handlers",
+      error as Error,
+    );
+    throw new Error(
+      "Messages IPC handlers are required for application functionality",
     );
   }
 }
