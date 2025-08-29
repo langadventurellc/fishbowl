@@ -37,7 +37,7 @@ export const AgentLabelsContainerDisplay: React.FC<
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   // Hook integration
-  const { conversationAgents, isLoading, error, refetch } =
+  const { conversationAgents, isLoading, error, refetch, toggleEnabled } =
     useConversationAgents(selectedConversationId || null);
 
   // Transform conversation agents to display format
@@ -96,26 +96,46 @@ export const AgentLabelsContainerDisplay: React.FC<
         {/* Agent pills */}
         {!isLoading &&
           !error &&
-          displayAgents.map((agent, index) => {
-            // Transform AgentSettingsViewModel to AgentViewModel if needed
-            const agentViewModel: AgentPillViewModel =
-              "id" in agent
-                ? {
-                    name: agent.name,
-                    role: agent.role,
-                    color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
-                    isThinking: false,
-                    enabled: true, // Default to enabled for settings view agents
-                  }
-                : agent;
+          (selectedConversationId
+            ? conversationAgents.map((conversationAgent) => {
+                // Transform ConversationAgentViewModel to AgentPillViewModel
+                const agentViewModel: AgentPillViewModel = {
+                  name: conversationAgent.agent.name,
+                  role: conversationAgent.agent.role,
+                  color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
+                  isThinking: false,
+                  enabled: conversationAgent.enabled, // Use actual enabled state from conversation agent
+                };
 
-            return (
-              <AgentPill
-                key={"id" in agent ? agent.id : `agent-${index}`}
-                agent={agentViewModel}
-              />
-            );
-          })}
+                return (
+                  <AgentPill
+                    key={conversationAgent.id}
+                    agent={agentViewModel}
+                    onToggleEnabled={toggleEnabled}
+                    conversationAgentId={conversationAgent.id}
+                  />
+                );
+              })
+            : displayAgents.map((agent, index) => {
+                // Transform AgentSettingsViewModel to AgentPillViewModel for non-conversation view
+                const agentViewModel: AgentPillViewModel =
+                  "id" in agent
+                    ? {
+                        name: agent.name,
+                        role: agent.role,
+                        color: "#3b82f6",
+                        isThinking: false,
+                        enabled: true, // Default to enabled for settings view agents
+                      }
+                    : agent;
+
+                return (
+                  <AgentPill
+                    key={"id" in agent ? agent.id : `agent-${index}`}
+                    agent={agentViewModel}
+                  />
+                );
+              }))}
 
         {/* Add Agent button */}
         {(onAddAgent || selectedConversationId) && (

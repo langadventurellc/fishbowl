@@ -1,14 +1,26 @@
 ---
 id: T-update-agentlabelscontainerdis
 title: Update AgentLabelsContainerDisplay to wire up toggle functionality
-status: open
+status: done
 priority: high
 parent: F-agent-pill-toggle-enabled
 prerequisites:
   - T-add-toggleenabled-function-to
   - T-update-agentpill-component
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Updated component to extract toggleEnabled from hook, restructured agent
+    pill rendering logic to handle conversation vs non-conversation views
+    separately, pass onToggleEnabled handler and conversationAgentId to
+    AgentPill only when conversation is selected, and use actual enabled state
+    from conversationAgents data
+log:
+  - Successfully wired up toggle functionality in AgentLabelsContainerDisplay.
+    Extracted toggleEnabled from useConversationAgents hook, updated data
+    transformation to use actual enabled state from conversation agents, and
+    properly passed toggle handler and conversationAgentId to AgentPill
+    components only when conversation is selected. Fixed TypeScript errors and
+    ensured all quality checks pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T03:59:41.217Z

@@ -1,7 +1,7 @@
 ---
 id: F-agent-pill-toggle-enabled
 title: Agent Pill Toggle Enabled State
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -53,21 +53,27 @@ affectedFiles:
     and enhanced keyboard navigation support
   apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
     "Fixed type compatibility by adding enabled: true property to
-    AgentPillViewModel transformation for AgentSettingsViewModel objects"
+    AgentPillViewModel transformation for AgentSettingsViewModel objects;
+    Updated component to extract toggleEnabled from hook, restructured agent
+    pill rendering logic to handle conversation vs non-conversation views
+    separately, pass onToggleEnabled handler and conversationAgentId to
+    AgentPill only when conversation is selected, and use actual enabled state
+    from conversationAgents data"
   apps/desktop/src/components/chat/__tests__/AgentPill.test.tsx:
     Created comprehensive unit test suite with 20 tests covering enabled state
     styling, toggle functionality, accessibility, keyboard navigation, and
     legacy onClick behavior
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-update-agentlabelscontainerdis
-  - T-update-agentpill-component
   - T-add-toggleenabled-function-to
   - T-add-update-channel-to
   - T-add-update-handler-to
   - T-add-update-method-to-electron
   - T-create-conversation-agent
+  - T-update-agentlabelscontainerdis
+  - T-update-agentpill-component
   - T-update-agentpillviewmodel-to
 created: 2025-08-29T03:51:28.173Z
 updated: 2025-08-29T03:51:28.173Z
