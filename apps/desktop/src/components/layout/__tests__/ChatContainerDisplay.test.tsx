@@ -21,6 +21,14 @@ jest.mock("../../chat/MessageItem", () => ({
   ),
 }));
 
+jest.mock("../../chat/ContextStatistics", () => ({
+  ContextStatistics: ({ messages, variant }: any) => (
+    <div data-testid="context-statistics" data-variant={variant}>
+      Context Stats: {messages.filter((m: any) => m.isActive).length} included
+    </div>
+  ),
+}));
+
 describe("ChatContainerDisplay", () => {
   const mockMessages: MessageViewModel[] = [
     {
@@ -109,7 +117,10 @@ describe("ChatContainerDisplay", () => {
         />,
       );
 
-      const scrollContainer = container.firstChild as Element;
+      // Find the scrollable container (second child due to ContextStatistics wrapper)
+      const scrollContainer =
+        container.querySelector("[ref]") ||
+        (container.querySelector(".overflow-y-auto") as Element);
       fireEvent.scroll(scrollContainer);
 
       expect(mockOnScroll).toHaveBeenCalled();
@@ -119,7 +130,9 @@ describe("ChatContainerDisplay", () => {
       const { container } = render(
         <ChatContainerDisplay messages={mockMessages} />,
       );
-      const scrollContainer = container.firstChild as Element;
+      const scrollContainer = container.querySelector(
+        ".overflow-y-auto",
+      ) as Element;
 
       // Mock being near bottom (within 100px)
       Object.defineProperty(scrollContainer, "scrollTop", { value: 850 });
@@ -139,7 +152,9 @@ describe("ChatContainerDisplay", () => {
       const { container } = render(
         <ChatContainerDisplay messages={mockMessages} />,
       );
-      const scrollContainer = container.firstChild as Element;
+      const scrollContainer = container.querySelector(
+        ".overflow-y-auto",
+      ) as Element;
 
       // Mock being far from bottom (more than 100px)
       Object.defineProperty(scrollContainer, "scrollTop", { value: 200 });
@@ -159,7 +174,9 @@ describe("ChatContainerDisplay", () => {
       const { rerender, container } = render(
         <ChatContainerDisplay messages={mockMessages} />,
       );
-      const scrollContainer = container.firstChild as Element;
+      const scrollContainer = container.querySelector(
+        ".overflow-y-auto",
+      ) as Element;
 
       // Mock being near bottom initially
       Object.defineProperty(scrollContainer, "scrollTop", { value: 850 });
@@ -201,7 +218,9 @@ describe("ChatContainerDisplay", () => {
       const { rerender, container } = render(
         <ChatContainerDisplay messages={mockMessages} />,
       );
-      const scrollContainer = container.firstChild as Element;
+      const scrollContainer = container.querySelector(
+        ".overflow-y-auto",
+      ) as Element;
 
       // Mock being far from bottom (user scrolled up to read history)
       Object.defineProperty(scrollContainer, "scrollTop", { value: 200 });
@@ -267,8 +286,10 @@ describe("ChatContainerDisplay", () => {
         <ChatContainerDisplay messages={mockMessages} style={customStyle} />,
       );
 
-      // Verify the style prop was applied to the element
-      const element = container.firstChild as HTMLElement;
+      // Verify the style prop was applied to the scrollable container
+      const element = container.querySelector(
+        ".overflow-y-auto",
+      ) as HTMLElement;
       expect(element).toBeInTheDocument();
       expect(element.style.backgroundColor).toBe("red");
     });
@@ -295,7 +316,8 @@ describe("ChatContainerDisplay", () => {
         <ChatContainerDisplay messages={mockMessages} maxHeight="300px" />,
       );
 
-      expect(container.firstChild).toHaveClass("max-h-[var(--max-height)]");
+      const scrollableContainer = container.querySelector(".overflow-y-auto");
+      expect(scrollableContainer).toHaveClass("max-h-[var(--max-height)]");
     });
   });
 
@@ -319,6 +341,126 @@ describe("ChatContainerDisplay", () => {
       expect(() => {
         render(<ChatContainerDisplay messages={mockMessages} />);
       }).not.toThrow();
+    });
+  });
+
+  describe("ContextStatistics Integration", () => {
+    it("renders ContextStatistics when messages are present", () => {
+      render(<ChatContainerDisplay messages={mockMessages} />);
+
+      const contextStats = screen.getByTestId("context-statistics");
+      expect(contextStats).toBeInTheDocument();
+      expect(contextStats).toHaveAttribute("data-variant", "compact");
+      expect(contextStats).toHaveTextContent("Context Stats: 2 included");
+    });
+
+    it("does not render ContextStatistics when messages array is empty", () => {
+      render(<ChatContainerDisplay messages={[]} />);
+
+      expect(
+        screen.queryByTestId("context-statistics"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("does not render ContextStatistics when messages is undefined", () => {
+      render(<ChatContainerDisplay />);
+
+      expect(
+        screen.queryByTestId("context-statistics"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("updates statistics when message inclusion changes", () => {
+      const messagesWithMixedInclusion: MessageViewModel[] = [
+        {
+          id: "1",
+          agent: "User",
+          role: "User",
+          content: "Hello world",
+          timestamp: "12:00:00",
+          type: "user",
+          isActive: true,
+          agentColor: "#3b82f6",
+        },
+        {
+          id: "2",
+          agent: "Agent",
+          role: "Agent",
+          content: "Hello! How can I help you?",
+          timestamp: "12:00:05",
+          type: "agent",
+          isActive: false, // This message is not included
+          agentColor: "#22c55e",
+        },
+      ];
+
+      render(<ChatContainerDisplay messages={messagesWithMixedInclusion} />);
+
+      const contextStats = screen.getByTestId("context-statistics");
+      expect(contextStats).toHaveTextContent("Context Stats: 1 included");
+    });
+
+    it("shows zero included when all messages are excluded", () => {
+      const excludedMessages: MessageViewModel[] = [
+        {
+          id: "1",
+          agent: "User",
+          role: "User",
+          content: "Hello world",
+          timestamp: "12:00:00",
+          type: "user",
+          isActive: false,
+          agentColor: "#3b82f6",
+        },
+        {
+          id: "2",
+          agent: "Agent",
+          role: "Agent",
+          content: "Hello! How can I help you?",
+          timestamp: "12:00:05",
+          type: "agent",
+          isActive: false,
+          agentColor: "#22c55e",
+        },
+      ];
+
+      render(<ChatContainerDisplay messages={excludedMessages} />);
+
+      const contextStats = screen.getByTestId("context-statistics");
+      expect(contextStats).toHaveTextContent("Context Stats: 0 included");
+    });
+
+    it("passes correct props to ContextStatistics component", () => {
+      render(<ChatContainerDisplay messages={mockMessages} />);
+
+      const contextStats = screen.getByTestId("context-statistics");
+      expect(contextStats).toHaveAttribute("data-variant", "compact");
+      expect(contextStats).toBeInTheDocument();
+    });
+
+    it("positions ContextStatistics above the scrollable message area", () => {
+      render(<ChatContainerDisplay messages={mockMessages} />);
+
+      const contextStats = screen.getByTestId("context-statistics");
+      const firstMessage = screen.getByTestId("message-1");
+
+      // ContextStatistics should appear in DOM before the first message
+      expect(contextStats.compareDocumentPosition(firstMessage)).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+    });
+
+    it("applies proper styling to ContextStatistics container", () => {
+      const { container } = render(
+        <ChatContainerDisplay messages={mockMessages} />,
+      );
+
+      // Find the ContextStatistics container div
+      const statsContainer = container.querySelector(
+        '[data-testid="context-statistics"]',
+      )?.parentElement;
+
+      expect(statsContainer).toHaveClass("px-6", "py-2", "border-b");
     });
   });
 });

@@ -401,12 +401,23 @@ affectedFiles:
     position tracking (useRef, useState), scroll detection logic with 100px
     threshold, auto-scroll on new messages with smooth behavior, and scroll
     position preservation. Added proper React hooks imports and maintained
-    backward compatibility with existing props.
+    backward compatibility with existing props.; Integrated ContextStatistics
+    component above message list with conditional rendering, compact variant
+    styling, and proper layout structure. Added import for ContextStatistics
+    component. Modified return structure to include statistics header area with
+    border separator and maintained scrollable message area functionality.
   apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.test.tsx:
-    Created comprehensive unit test suite with 16 test cases covering basic
+    "Created comprehensive unit test suite with 16 test cases covering basic
     rendering, scroll behavior detection, auto-scroll on new messages, scroll
     position preservation, styling integration, and context menu functionality.
-    All tests pass and validate proper scroll behavior in various scenarios.
+    All tests pass and validate proper scroll behavior in various scenarios.;
+    Added comprehensive unit test suite for ContextStatistics integration
+    including 8 new test cases covering: component rendering with messages,
+    conditional rendering for empty states, message inclusion count updates,
+    proper props passing, DOM positioning, and styling verification. Updated
+    existing tests to accommodate new component structure changes. Added
+    ContextStatistics mock for isolated testing. All 24 tests passing
+    successfully."
   packages/ui-shared/src/types/chat/ContextStatisticsProps.ts:
     Created new interface for ContextStatistics component props with
     comprehensive TypeScript definitions including messages array, display
