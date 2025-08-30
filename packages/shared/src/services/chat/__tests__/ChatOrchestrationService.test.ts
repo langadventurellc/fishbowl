@@ -609,5 +609,267 @@ describe("ChatOrchestrationService", () => {
         expect(results.successfulAgents).toBe(1);
       });
     });
+
+    describe("Event callback integration", () => {
+      const mockEventCallback = jest.fn();
+      const mockConversationAgents: ConversationAgent[] = [
+        {
+          id: "ca-1",
+          conversation_id: mockConversationId,
+          agent_id: mockAgentId1,
+          added_at: "2023-01-01T00:00:00.000Z",
+          is_active: true,
+          enabled: true,
+          display_order: 0,
+        },
+      ];
+
+      beforeEach(() => {
+        mockEventCallback.mockClear();
+        mockConversationAgentsRepository.getEnabledByConversationId.mockResolvedValue(
+          mockConversationAgents,
+        );
+        mockConversationAgentsRepository.findByConversationId.mockResolvedValue(
+          mockConversationAgents,
+        );
+        mockMessageRepository.getByConversation.mockResolvedValue([
+          mockUserMessage,
+        ]);
+        mockAgentsResolver.mockResolvedValue(mockAgent);
+        mockSystemPromptFactory.createSystemPrompt.mockResolvedValue(
+          "System prompt",
+        );
+        mockMessageFormatterService.formatMessages.mockReturnValue([
+          { role: "user", content: "Test message" },
+        ]);
+      });
+
+      it("should emit thinking, complete events for successful agent processing", async () => {
+        mockLlmBridge.sendToProvider.mockResolvedValue("Success response");
+        mockMessageRepository.create.mockResolvedValue({
+          id: "saved-msg-123",
+        } as Message);
+
+        await service.processUserMessage(
+          mockConversationId,
+          mockUserMessageId,
+          mockEventCallback,
+        );
+
+        expect(mockEventCallback).toHaveBeenCalledTimes(2);
+
+        // First call should be thinking event
+        expect(mockEventCallback).toHaveBeenNthCalledWith(1, {
+          conversationAgentId: "ca-1",
+          status: "thinking",
+          agentName: "Test Agent",
+        });
+
+        // Second call should be complete event
+        expect(mockEventCallback).toHaveBeenNthCalledWith(2, {
+          conversationAgentId: "ca-1",
+          status: "complete",
+          messageId: "saved-msg-123",
+          agentName: "Test Agent",
+        });
+      });
+
+      it("should emit thinking, error events for failed agent processing", async () => {
+        const networkError = new LlmProviderError("Network error", "openai");
+        mockLlmBridge.sendToProvider.mockRejectedValue(networkError);
+        mockMessageRepository.create.mockResolvedValue({
+          id: "system-msg",
+        } as Message);
+
+        await service.processUserMessage(
+          mockConversationId,
+          mockUserMessageId,
+          mockEventCallback,
+        );
+
+        expect(mockEventCallback).toHaveBeenCalledTimes(2);
+
+        // First call should be thinking event
+        expect(mockEventCallback).toHaveBeenNthCalledWith(1, {
+          conversationAgentId: "ca-1",
+          status: "thinking",
+          agentName: "Test Agent",
+        });
+
+        // Second call should be error event
+        expect(mockEventCallback).toHaveBeenNthCalledWith(2, {
+          conversationAgentId: "ca-1",
+          status: "error",
+          error: expect.stringMatching(/Test Agent:.*connect.*AI service/),
+          agentName: "Test Agent",
+          errorType: "network",
+          retryable: true,
+        });
+      });
+
+      it("should map different error types correctly in events", async () => {
+        const authError = new LlmProviderError(
+          "Authentication failed - invalid API key",
+          "anthropic",
+        );
+        mockLlmBridge.sendToProvider.mockRejectedValue(authError);
+        mockMessageRepository.create.mockResolvedValue({
+          id: "system-msg",
+        } as Message);
+
+        await service.processUserMessage(
+          mockConversationId,
+          mockUserMessageId,
+          mockEventCallback,
+        );
+
+        const errorEventCall = mockEventCallback.mock.calls.find(
+          (call) => call[0].status === "error",
+        );
+        expect(errorEventCall[0]).toMatchObject({
+          status: "error",
+          errorType: "auth",
+          retryable: false,
+          agentName: "Test Agent",
+        });
+      });
+
+      it("should handle agent name resolution failure in events", async () => {
+        mockAgentsResolver.mockRejectedValue(new Error("Agent not found"));
+        const error = new LlmProviderError("Network error", "openai");
+        mockLlmBridge.sendToProvider.mockRejectedValue(error);
+        mockMessageRepository.create.mockResolvedValue({
+          id: "system-msg",
+        } as Message);
+
+        await service.processUserMessage(
+          mockConversationId,
+          mockUserMessageId,
+          mockEventCallback,
+        );
+
+        // Should still emit events with fallback agent name
+        const thinkingCall = mockEventCallback.mock.calls.find(
+          (call) => call[0].status === "thinking",
+        );
+        expect(thinkingCall[0].agentName).toBe(`Agent ${mockAgentId1}`);
+
+        const errorCall = mockEventCallback.mock.calls.find(
+          (call) => call[0].status === "error",
+        );
+        expect(errorCall[0].agentName).toBe(`Agent ${mockAgentId1}`);
+      });
+
+      it("should work without event callback (backward compatibility)", async () => {
+        mockLlmBridge.sendToProvider.mockResolvedValue("Success response");
+        mockMessageRepository.create.mockResolvedValue({
+          id: "saved-msg",
+        } as Message);
+
+        // Call without event callback should not throw
+        const result = await service.processUserMessage(
+          mockConversationId,
+          mockUserMessageId,
+        );
+
+        expect(result.successfulAgents).toBe(1);
+        expect(result.failedAgents).toBe(0);
+      });
+
+      it("should emit events for multiple agents in parallel", async () => {
+        const mockAgent2: PersistedAgentData = {
+          id: mockAgentId2,
+          name: "Agent Two",
+          llmConfigId: "config-2",
+          model: "gpt-4",
+          role: "assistant",
+          personality: "analytical",
+        };
+
+        const conversationAgentsWithTwo = [
+          ...mockConversationAgents,
+          {
+            id: "ca-2",
+            conversation_id: mockConversationId,
+            agent_id: mockAgentId2,
+            added_at: "2023-01-01T00:00:00.000Z",
+            is_active: true,
+            enabled: true,
+            display_order: 1,
+          },
+        ];
+
+        mockConversationAgentsRepository.getEnabledByConversationId.mockResolvedValue(
+          conversationAgentsWithTwo,
+        );
+
+        mockAgentsResolver.mockImplementation((agentId: string) => {
+          if (agentId === mockAgentId1) return Promise.resolve(mockAgent);
+          if (agentId === mockAgentId2) return Promise.resolve(mockAgent2);
+          return Promise.reject(new Error("Unknown agent"));
+        });
+
+        mockLlmBridge.sendToProvider
+          .mockResolvedValueOnce("Response from Agent 1")
+          .mockResolvedValueOnce("Response from Agent 2");
+
+        mockMessageRepository.create.mockResolvedValue({
+          id: "saved-msg",
+        } as Message);
+
+        await service.processUserMessage(
+          mockConversationId,
+          mockUserMessageId,
+          mockEventCallback,
+        );
+
+        // Should have 4 total events: thinking + complete for each agent
+        expect(mockEventCallback).toHaveBeenCalledTimes(4);
+
+        // Verify thinking events for both agents
+        const thinkingEvents = mockEventCallback.mock.calls.filter(
+          (call) => call[0].status === "thinking",
+        );
+        expect(thinkingEvents).toHaveLength(2);
+        expect(
+          thinkingEvents.some((call) => call[0].agentName === "Test Agent"),
+        ).toBe(true);
+        expect(
+          thinkingEvents.some((call) => call[0].agentName === "Agent Two"),
+        ).toBe(true);
+
+        // Verify complete events for both agents
+        const completeEvents = mockEventCallback.mock.calls.filter(
+          (call) => call[0].status === "complete",
+        );
+        expect(completeEvents).toHaveLength(2);
+        expect(
+          completeEvents.some((call) => call[0].agentName === "Test Agent"),
+        ).toBe(true);
+        expect(
+          completeEvents.some((call) => call[0].agentName === "Agent Two"),
+        ).toBe(true);
+      });
+
+      it("should map unknown ChatErrorType to 'unknown' in events", async () => {
+        // Mock error mapper to return an unknown error type
+        const unknownError = new Error("Strange error");
+        mockLlmBridge.sendToProvider.mockRejectedValue(unknownError);
+        mockMessageRepository.create.mockResolvedValue({
+          id: "system-msg",
+        } as Message);
+
+        await service.processUserMessage(
+          mockConversationId,
+          mockUserMessageId,
+          mockEventCallback,
+        );
+
+        const errorCall = mockEventCallback.mock.calls.find(
+          (call) => call[0].status === "error",
+        );
+        expect(errorCall[0].errorType).toBe("unknown");
+      });
+    });
   });
 });

@@ -4,9 +4,11 @@ import {
   CHAT_EVENTS,
   type SendToAgentsRequest,
   type AllCompleteEvent,
+  type AgentUpdateEvent,
 } from "../shared/ipc/index";
 import type { MainProcessServices } from "../main/services/MainProcessServices";
 import type { ProcessingResult } from "@fishbowl-ai/shared";
+import type { AgentEventCallback } from "@fishbowl-ai/shared";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 
 const logger = createLoggerSync({
@@ -22,6 +24,37 @@ const emitAllComplete = (eventData: AllCompleteEvent): void => {
       contents.send(CHAT_EVENTS.ALL_COMPLETE, eventData);
     }
   });
+};
+
+/**
+ * Creates an event emission callback for agent updates
+ */
+const createEventEmitter = (conversationId: string): AgentEventCallback => {
+  return (eventData: Parameters<AgentEventCallback>[0]) => {
+    const agentUpdateEvent: AgentUpdateEvent = {
+      conversationAgentId: eventData.conversationAgentId,
+      status: eventData.status,
+      messageId: eventData.messageId,
+      error: eventData.error,
+      agentName: eventData.agentName,
+      errorType: eventData.errorType,
+      retryable: eventData.retryable,
+    };
+
+    logger.debug("Emitting agent update event", {
+      conversationId,
+      conversationAgentId: eventData.conversationAgentId,
+      status: eventData.status,
+      agentName: eventData.agentName,
+      errorType: eventData.errorType,
+    });
+
+    webContents.getAllWebContents().forEach((contents) => {
+      if (!contents.isDestroyed()) {
+        contents.send(CHAT_EVENTS.AGENT_UPDATE, agentUpdateEvent);
+      }
+    });
+  };
 };
 
 /**
@@ -83,8 +116,15 @@ const processUserMessageAsync = (
   services: MainProcessServices,
   request: SendToAgentsRequest,
 ): void => {
+  // Create event emitter callback for agent updates
+  const eventCallback = createEventEmitter(request.conversationId);
+
   services.chatOrchestrationService
-    .processUserMessage(request.conversationId, request.userMessageId)
+    .processUserMessage(
+      request.conversationId,
+      request.userMessageId,
+      eventCallback,
+    )
     .then(
       handleOrchestrationComplete(
         request.conversationId,

@@ -181,7 +181,11 @@ describe("chatHandlers", () => {
 
         expect(
           mockChatOrchestrationService.processUserMessage,
-        ).toHaveBeenCalledWith("conv-123", "user-msg-123");
+        ).toHaveBeenCalledWith(
+          "conv-123",
+          "user-msg-123",
+          expect.any(Function),
+        );
       });
 
       it("should return immediately (fire-and-forget pattern)", async () => {

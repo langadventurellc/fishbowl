@@ -1,13 +1,53 @@
 ---
 id: T-enhance-ipc-chat-events-to
 title: Enhance IPC chat events to emit structured error information
-status: open
+status: done
 priority: medium
 parent: F-multi-agent-error-handling
 prerequisites:
   - T-integrate-error-handling-into
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts:
+    Enhanced AgentUpdateEvent
+    interface with structured error fields including agentName, errorType
+    (network/auth/rate_limit/validation/provider/timeout/unknown), and retryable
+    flag for comprehensive error context
+  packages/shared/src/services/chat/types/AgentEventCallback.ts:
+    Created new type definition for event emission callback with comprehensive
+    event structure including status, error details, and agent context
+  packages/shared/src/services/chat/types/index.ts: Added export for AgentEventCallback type to shared package public API
+  packages/shared/src/services/chat/ChatOrchestrationService.ts:
+    Updated processUserMessage method to accept optional AgentEventCallback
+    parameter and emit real-time agent status events (thinking, complete, error)
+    during processing with structured error information and agent context
+  apps/desktop/src/electron/chatHandlers.ts:
+    Added createEventEmitter function and
+    updated processUserMessageAsync to create and pass event emission callback
+    for broadcasting structured agent updates via IPC to all renderer processes
+    with comprehensive logging
+  packages/shared/src/services/chat/__tests__/ChatOrchestrationService.test.ts:
+    Added comprehensive event callback integration test suite with 8 new test
+    cases covering successful processing events, error event emission, error
+    type mapping, agent name resolution, backward compatibility, multi-agent
+    scenarios, and unknown error handling
+  apps/desktop/src/electron/__tests__/chatHandlers.test.ts:
+    Updated existing test
+    to accommodate new optional event callback parameter in processUserMessage
+    method call
+log:
+  - Successfully implemented structured error information emission in IPC chat
+    events system. Enhanced AgentUpdateEvent interface with comprehensive error
+    context fields including agent names, error types, and retryability flags.
+    Updated ChatOrchestrationService to accept optional event emission callbacks
+    and emit real-time agent status events (thinking, complete, error) during
+    processing. Modified chatHandlers.ts to create event emitter callbacks that
+    broadcast structured agent updates via IPC to all renderer processes. Added
+    comprehensive unit test coverage (8 new test cases) covering event emission
+    for successful processing, error scenarios, multiple agents, error type
+    mapping, and backward compatibility. Fixed existing chatHandlers test to
+    accommodate new callback parameter. All quality checks pass and
+    implementation maintains existing patterns while enabling rich error display
+    in UI.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T23:33:34.914Z

@@ -138,14 +138,18 @@ affectedFiles:
     results with summary statistics and detailed agent results
   packages/shared/src/services/chat/types/index.ts:
     Created barrel exports for all
-    chat service types following established patterns
+    chat service types following established patterns; Added export for
+    AgentEventCallback type to shared package public API
   packages/shared/src/services/chat/ChatOrchestrationService.ts:
     Implemented core ChatOrchestrationService class with parallel agent
     coordination, context assembly, LLM provider integration, and response
     persistence using dependency injection pattern; Enhanced error handling in
     processAgentMessage method with structured ChatError classification, agent
     name resolution helper method, system message persistence for errors, and
-    improved structured logging with error context
+    improved structured logging with error context; Updated processUserMessage
+    method to accept optional AgentEventCallback parameter and emit real-time
+    agent status events (thinking, complete, error) during processing with
+    structured error information and agent context
   packages/shared/src/services/chat/index.ts: Created barrel exports for chat
     service following established service export patterns
   packages/shared/src/services/index.ts: Added chat service exports to main
@@ -156,7 +160,11 @@ affectedFiles:
     parallel coordination, context assembly, and error handling scenarios; Added
     comprehensive test suite covering LlmProviderError handling, generic error
     handling, agent name resolution scenarios, system message persistence, and
-    partial failure scenarios with proper mocking setup
+    partial failure scenarios with proper mocking setup; Added comprehensive
+    event callback integration test suite with 8 new test cases covering
+    successful processing events, error event emission, error type mapping,
+    agent name resolution, backward compatibility, multi-agent scenarios, and
+    unknown error handling
   apps/desktop/src/main/services/chat/MainProcessLlmBridge.ts:
     Created main process implementation of LlmBridgeInterface with
     sendToProvider method, configuration resolution, provider instantiation, and
@@ -187,7 +195,11 @@ affectedFiles:
   apps/desktop/src/shared/ipc/chat/chatEvents.ts: Created chat event constants with AGENT_UPDATE and ALL_COMPLETE events
   apps/desktop/src/shared/ipc/chat/chatChannelType.ts: Created ChatChannel type definition
   apps/desktop/src/shared/ipc/chat/chatEventType.ts: Created ChatEvent type definition
-  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts: Created AgentUpdateEvent interface for agent status updates
+  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts: Created AgentUpdateEvent
+    interface for agent status updates; Enhanced AgentUpdateEvent interface with
+    structured error fields including agentName, errorType
+    (network/auth/rate_limit/validation/provider/timeout/unknown), and retryable
+    flag for comprehensive error context
   apps/desktop/src/shared/ipc/chat/allCompleteEvent.ts: Created AllCompleteEvent interface for completion notifications
   apps/desktop/src/shared/ipc/chat/sendToAgentsRequest.ts: Created SendToAgentsRequest interface for chat triggers
   apps/desktop/src/shared/ipc/chat/index.ts: Created barrel export file for chat IPC module
@@ -202,12 +214,16 @@ affectedFiles:
   apps/desktop/src/electron/chatHandlers.ts:
     Created main process IPC handlers for
     chat operations with sendToAgents method, event emission system, input
-    validation, error handling, and ChatOrchestrationService integration
+    validation, error handling, and ChatOrchestrationService integration; Added
+    createEventEmitter function and updated processUserMessageAsync to create
+    and pass event emission callback for broadcasting structured agent updates
+    via IPC to all renderer processes with comprehensive logging
   apps/desktop/src/electron/__tests__/chatHandlers.test.ts:
     Created comprehensive
     unit test suite with 13 test cases covering handler registration, input
     validation, service integration, event emission, error handling, and edge
-    cases
+    cases; Updated existing test to accommodate new optional event callback
+    parameter in processUserMessage method call
   packages/ui-shared/src/stores/chat/useChatStore.ts: Created core Zustand store
     for managing transient chat UI states during multi-agent processing with
     actions for setSending, setAgentThinking, setAgentError,
@@ -256,6 +272,9 @@ affectedFiles:
     Created extensive unit test suite with 49 tests covering all error
     classifications, security requirements, edge cases, and provider-specific
     error handling
+  packages/shared/src/services/chat/types/AgentEventCallback.ts:
+    Created new type definition for event emission callback with comprehensive
+    event structure including status, error details, and agent context
 log: []
 schema: v1.0
 childrenIds:

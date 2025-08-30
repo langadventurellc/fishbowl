@@ -8,6 +8,19 @@ export interface AgentUpdateEvent {
   status: "thinking" | "complete" | "error";
   /** Message ID when agent completes successfully */
   messageId?: string;
-  /** Error message when agent fails */
+  /** Error message when agent fails (user-friendly) */
   error?: string;
+  /** Agent name for error display */
+  agentName?: string;
+  /** Error type for UI styling/behavior */
+  errorType?:
+    | "network"
+    | "auth"
+    | "rate_limit"
+    | "validation"
+    | "provider"
+    | "timeout"
+    | "unknown";
+  /** Whether error is retryable */
+  retryable?: boolean;
 }

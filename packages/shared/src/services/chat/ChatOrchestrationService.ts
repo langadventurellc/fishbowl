@@ -12,6 +12,7 @@ import type {
 } from "./types";
 import { ChatError, ErrorMapper } from "./errors";
 import { LlmProviderError } from "../llm/errors/LlmProviderError";
+import type { AgentEventCallback } from "./types/AgentEventCallback";
 
 /**
  * Core business logic service that coordinates message processing across multiple AI agents simultaneously.
@@ -52,6 +53,7 @@ export class ChatOrchestrationService {
   async processUserMessage(
     conversationId: string,
     userMessageId: string,
+    eventCallback?: AgentEventCallback,
   ): Promise<ProcessingResult> {
     const startTime = Date.now();
 
@@ -97,6 +99,8 @@ export class ChatOrchestrationService {
           conversationId,
           userMessageId,
           conversationAgent.agent_id,
+          conversationAgent.id,
+          eventCallback,
         ).catch(
           (error) =>
             ({
@@ -282,6 +286,8 @@ export class ChatOrchestrationService {
     conversationId: string,
     userMessageId: string,
     agentId: string,
+    conversationAgentId: string,
+    eventCallback?: AgentEventCallback,
   ): Promise<AgentProcessingResult> {
     const startTime = Date.now();
 
@@ -291,6 +297,16 @@ export class ChatOrchestrationService {
         userMessageId,
         agentId,
       });
+
+      // Emit thinking event
+      if (eventCallback) {
+        const agentName = await this.resolveAgentName(agentId);
+        eventCallback({
+          conversationAgentId,
+          status: "thinking",
+          agentName,
+        });
+      }
 
       // Build agent context
       const context = await this.buildAgentContext(conversationId, agentId);
@@ -330,6 +346,17 @@ export class ChatOrchestrationService {
         messageId: savedMessage.id,
         duration,
       });
+
+      // Emit complete event
+      if (eventCallback) {
+        const agentName = await this.resolveAgentName(agentId);
+        eventCallback({
+          conversationAgentId,
+          status: "complete",
+          messageId: savedMessage.id,
+          agentName,
+        });
+      }
 
       return {
         agentId,
@@ -403,6 +430,38 @@ export class ChatOrchestrationService {
         retryable: chatError.retryable,
         timestamp: chatError.timestamp,
       });
+
+      // Emit error event
+      if (eventCallback) {
+        // Map ChatErrorType to simplified error type for IPC
+        const errorTypeMap: Record<
+          string,
+          | "network"
+          | "auth"
+          | "rate_limit"
+          | "validation"
+          | "provider"
+          | "timeout"
+          | "unknown"
+        > = {
+          network_error: "network",
+          auth_error: "auth",
+          rate_limit_error: "rate_limit",
+          validation_error: "validation",
+          provider_error: "provider",
+          timeout_error: "timeout",
+          unknown_error: "unknown",
+        };
+
+        eventCallback({
+          conversationAgentId,
+          status: "error",
+          error: userFriendlyMessage,
+          agentName,
+          errorType: errorTypeMap[chatError.type] || "unknown",
+          retryable: chatError.retryable,
+        });
+      }
 
       return {
         agentId,

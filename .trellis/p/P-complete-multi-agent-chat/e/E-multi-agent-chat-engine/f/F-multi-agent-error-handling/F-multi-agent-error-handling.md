@@ -32,20 +32,45 @@ affectedFiles:
     Enhanced error handling in processAgentMessage method with structured
     ChatError classification, agent name resolution helper method, system
     message persistence for errors, and improved structured logging with error
-    context
+    context; Updated processUserMessage method to accept optional
+    AgentEventCallback parameter and emit real-time agent status events
+    (thinking, complete, error) during processing with structured error
+    information and agent context
   packages/shared/src/services/chat/__tests__/ChatOrchestrationService.test.ts:
     Added comprehensive test suite covering LlmProviderError handling, generic
     error handling, agent name resolution scenarios, system message persistence,
-    and partial failure scenarios with proper mocking setup
+    and partial failure scenarios with proper mocking setup; Added comprehensive
+    event callback integration test suite with 8 new test cases covering
+    successful processing events, error event emission, error type mapping,
+    agent name resolution, backward compatibility, multi-agent scenarios, and
+    unknown error handling
+  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts:
+    Enhanced AgentUpdateEvent
+    interface with structured error fields including agentName, errorType
+    (network/auth/rate_limit/validation/provider/timeout/unknown), and retryable
+    flag for comprehensive error context
+  packages/shared/src/services/chat/types/AgentEventCallback.ts:
+    Created new type definition for event emission callback with comprehensive
+    event structure including status, error details, and agent context
+  packages/shared/src/services/chat/types/index.ts: Added export for AgentEventCallback type to shared package public API
+  apps/desktop/src/electron/chatHandlers.ts:
+    Added createEventEmitter function and
+    updated processUserMessageAsync to create and pass event emission callback
+    for broadcasting structured agent updates via IPC to all renderer processes
+    with comprehensive logging
+  apps/desktop/src/electron/__tests__/chatHandlers.test.ts:
+    Updated existing test
+    to accommodate new optional event callback parameter in processUserMessage
+    method call
 log: []
 schema: v1.0
 childrenIds:
   - T-enhance-ipc-chat-events-to
   - T-enhance-structured-error
   - T-enhance-system-message
-  - T-integrate-error-handling-into
   - T-update-usechateventintegration
   - T-create-structured-chat-error
+  - T-integrate-error-handling-into
 created: 2025-08-29T19:21:47.001Z
 updated: 2025-08-29T19:21:47.001Z
 ---
