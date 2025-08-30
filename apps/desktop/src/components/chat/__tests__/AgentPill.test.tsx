@@ -3,12 +3,19 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { AgentPill } from "../AgentPill";
 
+// Mock the useChatStore hook
+jest.mock("@fishbowl-ai/ui-shared", () => ({
+  ...jest.requireActual("@fishbowl-ai/ui-shared"),
+  useChatStore: jest.fn(),
+}));
+
 // Mock agent data
 const mockAgent: AgentPillViewModel = {
   name: "Test Agent",
   role: "Assistant",
   color: "#3b82f6",
   isThinking: false,
+  status: "idle",
   enabled: true,
 };
 
@@ -20,14 +27,24 @@ const mockDisabledAgent: AgentPillViewModel = {
 const mockThinkingAgent: AgentPillViewModel = {
   ...mockAgent,
   isThinking: true,
+  status: "thinking",
 };
 
 describe("AgentPill", () => {
   const mockOnClick = jest.fn();
   const mockOnToggleEnabled = jest.fn();
 
+  // Get the mocked useChatStore function
+  const { useChatStore } = require("@fishbowl-ai/ui-shared");
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Default mock implementation
+    useChatStore.mockReturnValue({
+      agentThinking: {},
+      lastError: {},
+    });
   });
 
   it("renders agent name and role", () => {
@@ -229,4 +246,8 @@ describe("AgentPill", () => {
       expect(pill).toHaveClass("hover:opacity-80");
     });
   });
+
+  // TODO: Add status integration tests when Electron mocking is properly configured
+  // The status integration functionality has been implemented but tests are skipped
+  // due to Electron import issues in the test environment
 });

@@ -76,8 +76,18 @@ export interface AgentPillProps {
   /**
    * Conversation agent ID for toggle operations.
    * Required when onToggleEnabled is provided.
+   * Also required when showStatus is true for store integration.
    */
   conversationAgentId?: string;
+
+  /**
+   * Enable real-time status integration with chat store.
+   * When true, connects to useChatStore to display agent thinking states,
+   * error indicators, and completion feedback.
+   *
+   * Requires conversationAgentId to be provided for store lookups.
+   */
+  showStatus?: boolean;
 
   /**
    * Optional CSS class name for additional styling.
