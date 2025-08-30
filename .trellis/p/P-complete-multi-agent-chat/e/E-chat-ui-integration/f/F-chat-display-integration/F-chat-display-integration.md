@@ -1,14 +1,24 @@
 ---
 id: F-chat-display-integration
 title: Chat Display Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-chat-ui-integration
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Connected ChatContainerDisplay to useMessages hook with loading and error
+    states, including message transformation from Message[] to
+    MessageViewModel[] and proper conversation ID handling
+  apps/desktop/src/components/layout/__tests__/MainContentPanelDisplay.test.tsx:
+    Added comprehensive unit tests covering loading states, error states with
+    retry functionality, message transformation, and chat event integration
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-connect-chatcontainerdisplay
+  - T-enhance-empty-states-and
+  - T-implement-auto-scroll
 created: 2025-08-30T03:48:10.040Z
 updated: 2025-08-30T03:48:10.040Z
 ---

@@ -1,12 +1,44 @@
 ---
 id: T-connect-chatcontainerdisplay
 title: Connect ChatContainerDisplay to useMessages hook with loading and error states
-status: open
+status: done
 priority: high
 parent: F-chat-display-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Connected ChatContainerDisplay to useMessages hook with loading and error
+    states, including message transformation from Message[] to
+    MessageViewModel[] and proper conversation ID handling
+  apps/desktop/src/components/layout/__tests__/MainContentPanelDisplay.test.tsx:
+    Added comprehensive unit tests covering loading states, error states with
+    retry functionality, message transformation, and chat event integration
+log:
+  - >-
+    Successfully connected ChatContainerDisplay to useMessages hook with
+    comprehensive loading and error states. The MainContentPanelDisplay now:
+
+
+    1. Integrates useMessages hook to fetch real-time message data
+
+    2. Transforms Message[] to MessageViewModel[] for proper type compatibility
+
+    3. Displays loading spinner with proper accessibility attributes during
+    message fetching
+
+    4. Shows error states with retry functionality when message loading fails
+
+    5. Handles empty conversation states gracefully
+
+    6. Maintains proper conversation ID handling (null/undefined converted to
+    empty string)
+
+    7. Preserves all existing functionality while adding real-time message
+    updates
+
+
+    All acceptance criteria met including loading states, error handling,
+    message transformation, and proper integration with existing components.
 schema: v1.0
 childrenIds: []
 created: 2025-08-30T05:45:40.417Z

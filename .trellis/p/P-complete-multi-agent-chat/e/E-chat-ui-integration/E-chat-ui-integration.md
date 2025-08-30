@@ -70,7 +70,13 @@ affectedFiles:
   apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
     Added useChatEventIntegration hook import and integration to enable
     real-time agent status updates in the main conversation interface. Properly
-    handles null/undefined conversationId values.
+    handles null/undefined conversationId values.; Connected
+    ChatContainerDisplay to useMessages hook with loading and error states,
+    including message transformation from Message[] to MessageViewModel[] and
+    proper conversation ID handling
+  apps/desktop/src/components/layout/__tests__/MainContentPanelDisplay.test.tsx:
+    Added comprehensive unit tests covering loading states, error states with
+    retry functionality, message transformation, and chat event integration
 log: []
 schema: v1.0
 childrenIds:
