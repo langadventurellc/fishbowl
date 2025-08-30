@@ -832,5 +832,208 @@ describe("MessageInputContainer", () => {
         );
       });
     });
+
+    it("should create system message when no agents are enabled", async () => {
+      // Mock scenario with no enabled agents
+      mockUseConversationAgents.mockReturnValue({
+        conversationAgents: [
+          {
+            id: "ca-1",
+            conversationId: mockConversationId,
+            agentId: "agent-1",
+            agent: {
+              id: "agent-1",
+              name: "Test Agent 1",
+              role: "Assistant",
+              personality: "Helpful",
+              model: "gpt-4",
+              systemPrompt: "You are a helpful assistant",
+              createdAt: "2023-01-01T10:00:00.000Z",
+              updatedAt: "2023-01-01T10:00:00.000Z",
+              llmConfigId: "openai-config-1",
+            },
+            addedAt: "2023-01-01T12:00:00.000Z",
+            isActive: true,
+            enabled: false, // Disabled
+            displayOrder: 0,
+          },
+        ],
+        isLoading: false,
+        error: null,
+        addAgent: jest.fn(),
+        removeAgent: jest.fn(),
+        toggleEnabled: jest.fn(),
+        refetch: jest.fn(),
+      });
+
+      mockCreateMessage.mockResolvedValueOnce(mockCreatedMessage);
+
+      render(<MessageInputContainer conversationId={mockConversationId} />);
+      const textarea = screen.getByPlaceholderText("Type your message here...");
+      const sendButton = screen.getByRole("button", { name: /send message/i });
+
+      // Type and send message
+      fireEvent.change(textarea, { target: { value: "Hello world" } });
+
+      await act(async () => {
+        fireEvent.click(sendButton);
+      });
+
+      // Verify user message creation happened
+      expect(mockCreateMessage).toHaveBeenCalledWith({
+        conversation_id: mockConversationId,
+        role: "user",
+        content: "Hello world",
+        included: true,
+      });
+
+      // Verify system message creation was also called
+      await waitFor(() => {
+        expect(mockCreateMessage).toHaveBeenCalledWith({
+          conversation_id: mockConversationId,
+          role: "system",
+          content:
+            "No agents are enabled for this conversation. Enable agents to start receiving responses.",
+          included: true,
+        });
+      });
+
+      // Verify orchestration was NOT triggered
+      expect(mockSendToAgents).not.toHaveBeenCalled();
+    });
+
+    it("should create system message when no agents exist at all", async () => {
+      // Mock scenario with no agents at all
+      mockUseConversationAgents.mockReturnValue({
+        conversationAgents: [],
+        isLoading: false,
+        error: null,
+        addAgent: jest.fn(),
+        removeAgent: jest.fn(),
+        toggleEnabled: jest.fn(),
+        refetch: jest.fn(),
+      });
+
+      mockCreateMessage.mockResolvedValueOnce(mockCreatedMessage);
+
+      render(<MessageInputContainer conversationId={mockConversationId} />);
+      const textarea = screen.getByPlaceholderText("Type your message here...");
+      const sendButton = screen.getByRole("button", { name: /send message/i });
+
+      // Type and send message
+      fireEvent.change(textarea, { target: { value: "Hello world" } });
+
+      await act(async () => {
+        fireEvent.click(sendButton);
+      });
+
+      // Verify user message creation happened
+      expect(mockCreateMessage).toHaveBeenCalledWith({
+        conversation_id: mockConversationId,
+        role: "user",
+        content: "Hello world",
+        included: true,
+      });
+
+      // Verify system message creation was also called
+      await waitFor(() => {
+        expect(mockCreateMessage).toHaveBeenCalledWith({
+          conversation_id: mockConversationId,
+          role: "system",
+          content:
+            "No agents are enabled for this conversation. Enable agents to start receiving responses.",
+          included: true,
+        });
+      });
+
+      // Verify orchestration was NOT triggered
+      expect(mockSendToAgents).not.toHaveBeenCalled();
+    });
+
+    it("should handle system message creation errors gracefully", async () => {
+      const consoleErrorSpy = jest
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+
+      // Mock scenario with no enabled agents
+      mockUseConversationAgents.mockReturnValue({
+        conversationAgents: [
+          {
+            id: "ca-1",
+            conversationId: mockConversationId,
+            agentId: "agent-1",
+            agent: {
+              id: "agent-1",
+              name: "Test Agent 1",
+              role: "Assistant",
+              personality: "Helpful",
+              model: "gpt-4",
+              systemPrompt: "You are a helpful assistant",
+              createdAt: "2023-01-01T10:00:00.000Z",
+              updatedAt: "2023-01-01T10:00:00.000Z",
+              llmConfigId: "openai-config-1",
+            },
+            addedAt: "2023-01-01T12:00:00.000Z",
+            isActive: true,
+            enabled: false, // Disabled
+            displayOrder: 0,
+          },
+        ],
+        isLoading: false,
+        error: null,
+        addAgent: jest.fn(),
+        removeAgent: jest.fn(),
+        toggleEnabled: jest.fn(),
+        refetch: jest.fn(),
+      });
+
+      // Mock successful user message creation but failed system message creation
+      mockCreateMessage
+        .mockResolvedValueOnce(mockCreatedMessage)
+        .mockRejectedValueOnce(new Error("System message creation failed"));
+
+      render(<MessageInputContainer conversationId={mockConversationId} />);
+      const textarea = screen.getByPlaceholderText("Type your message here...");
+      const sendButton = screen.getByRole("button", { name: /send message/i });
+
+      // Type and send message
+      fireEvent.change(textarea, { target: { value: "Hello world" } });
+
+      await act(async () => {
+        fireEvent.click(sendButton);
+      });
+
+      // Verify user message creation happened
+      expect(mockCreateMessage).toHaveBeenCalledWith({
+        conversation_id: mockConversationId,
+        role: "user",
+        content: "Hello world",
+        included: true,
+      });
+
+      // Verify system message creation was attempted
+      await waitFor(() => {
+        expect(mockCreateMessage).toHaveBeenCalledWith({
+          conversation_id: mockConversationId,
+          role: "system",
+          content:
+            "No agents are enabled for this conversation. Enable agents to start receiving responses.",
+          included: true,
+        });
+      });
+
+      // Verify error was logged but didn't break the UI
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          "System message creation failed:",
+          expect.any(Error),
+        );
+      });
+
+      // Verify input was still cleared (user experience unaffected)
+      expect(textarea).toHaveValue("");
+
+      consoleErrorSpy.mockRestore();
+    });
   });
 });

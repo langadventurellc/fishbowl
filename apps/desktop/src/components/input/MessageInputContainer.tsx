@@ -133,6 +133,21 @@ export function MessageInputContainer({
           // Optionally, you could set a non-blocking warning here
           // but the task requirements suggest keeping this transparent
         }
+      } else {
+        // No agents are enabled - create a system message with helpful guidance
+        try {
+          await createMessage({
+            conversation_id: conversationId,
+            role: "system",
+            content:
+              "No agents are enabled for this conversation. Enable agents to start receiving responses.",
+            included: true,
+          });
+        } catch (systemMessageError) {
+          // Log system message creation error but don't affect user experience
+          // The user message was already successfully created
+          console.error("System message creation failed:", systemMessageError);
+        }
       }
     } catch {
       // Error is handled by useCreateMessage hook

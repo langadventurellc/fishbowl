@@ -1,13 +1,29 @@
 ---
 id: T-implement-no-agents-enabled
 title: Implement no agents enabled handling with system message
-status: open
+status: done
 priority: medium
 parent: F-message-input-integration
 prerequisites:
   - T-create-integrated-message
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/input/MessageInputContainer.tsx:
+    Enhanced handleSendMessage function to detect when no agents are enabled and
+    create a helpful system message after successful user message creation, with
+    graceful error handling that doesn't affect user experience
+  apps/desktop/src/components/input/__tests__/MessageInputContainer.test.tsx:
+    "Added comprehensive test coverage for no agents handling scenarios
+    including: system message creation when no agents enabled, system message
+    creation when no agents exist, and graceful error handling for system
+    message creation failures"
+log:
+  - 'Successfully implemented no agents enabled handling with system message
+    creation. When users have disabled all conversation agents, the system now
+    saves their message and displays a helpful system message: "No agents are
+    enabled for this conversation. Enable agents to start receiving responses."
+    The implementation includes proper error handling, comprehensive unit tests
+    (3 new test cases), and maintains excellent user experience by not blocking
+    user messages while providing clear guidance.'
 schema: v1.0
 childrenIds: []
 created: 2025-08-30T03:55:02.260Z
