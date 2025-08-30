@@ -115,6 +115,18 @@ export function MessageItem(props: MessageItemProps) {
     // This is a simple heuristic - could be enhanced with element position detection
     return scrollBottom > document.body.scrollHeight * 0.75;
   };
+
+  // Enhanced error message detection for system messages
+  const isErrorSystemMessage = (content: string): boolean => {
+    return content.startsWith("Agent ");
+  };
+
+  // Extract agent name from error message
+  const extractAgentName = (content: string): string | null => {
+    const match = content.match(/^Agent ([^:]+):/);
+    return match ? match[1] || null : null;
+  };
+
   // Tailwind utility classes for consistent message layout and theming
   const messageClasses = "w-full";
 
@@ -123,8 +135,25 @@ export function MessageItem(props: MessageItemProps) {
     !isActive && "opacity-50",
   );
 
-  const systemMessageClasses =
-    "italic text-muted-foreground text-center text-xs py-2";
+  // Enhanced system message styling with error detection
+  const getSystemMessageClasses = (content: string): string => {
+    const baseClasses =
+      "text-center text-xs py-2 px-3 rounded-md mx-auto max-w-md";
+
+    if (isErrorSystemMessage(content)) {
+      // Error system messages: subtle error indication
+      return cn(
+        baseClasses,
+        "bg-red-50 border border-red-200 text-red-700",
+        "dark:bg-red-950 dark:border-red-800 dark:text-red-300",
+        "flex items-center justify-center gap-2",
+      );
+    }
+
+    // Regular system messages: original styling
+    return cn(baseClasses, "italic text-muted-foreground");
+  };
+
   const userMessageClasses =
     "bg-accent text-accent-foreground py-3 px-4 rounded-xl ml-auto max-w-[70%]";
   const userMessageWrapperClasses = "flex justify-end w-full";
@@ -137,6 +166,40 @@ export function MessageItem(props: MessageItemProps) {
       : "bg-muted text-muted-foreground",
   );
 
+  // Render error system message with enhanced formatting
+  const renderErrorSystemMessage = (content: string) => {
+    const agentName = extractAgentName(content);
+    const errorMessage = content.replace(/^Agent [^:]+: /, "");
+
+    return (
+      <div className={getSystemMessageClasses(content)}>
+        {/* Warning icon for error indication */}
+        <svg
+          className="w-4 h-4 text-red-500 dark:text-red-400 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"
+          />
+        </svg>
+        <div className="text-left">
+          {agentName && (
+            <div className="font-medium text-red-800 dark:text-red-200">
+              {agentName}
+            </div>
+          )}
+          <div className="text-red-700 dark:text-red-300">{errorMessage}</div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       className={cn(messageClasses, className)}
@@ -144,8 +207,14 @@ export function MessageItem(props: MessageItemProps) {
       aria-label={`${message.type} message from ${message.agent}`}
     >
       {message.type === "system" ? (
-        // System messages: Simple centered display
-        <div className={systemMessageClasses}>{message.content}</div>
+        // System messages: Enhanced display with error detection
+        isErrorSystemMessage(message.content) ? (
+          renderErrorSystemMessage(message.content)
+        ) : (
+          <div className={getSystemMessageClasses(message.content)}>
+            {message.content}
+          </div>
+        )
       ) : message.type === "user" ? (
         // User messages: Right-aligned with accent styling
         <div className={messageWrapperClasses}>

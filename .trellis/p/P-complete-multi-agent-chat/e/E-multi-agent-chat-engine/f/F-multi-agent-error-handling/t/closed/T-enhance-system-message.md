@@ -1,13 +1,32 @@
 ---
 id: T-enhance-system-message
 title: Enhance system message display for agent error messages in chat chronology
-status: open
+status: done
 priority: low
 parent: F-multi-agent-error-handling
 prerequisites:
   - T-integrate-error-handling-into
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/chat/MessageItem.tsx: Enhanced system message
+    display with error detection logic, visual styling for agent error messages,
+    and agent name parsing. Added isErrorSystemMessage and extractAgentName
+    helper functions. Implemented getSystemMessageClasses and
+    renderErrorSystemMessage functions for enhanced error formatting with
+    warning icons and structured layout.
+  apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
+    Created comprehensive unit test suite with 25 test cases covering error
+    message detection, parsing, styling, accessibility, context toggle
+    functionality, and edge cases. Tests verify proper agent name extraction,
+    visual distinction for error messages, warning icon display, and graceful
+    handling of malformed error messages.
+log:
+  - 'Enhanced system message display for agent error messages in chat chronology
+    with visual distinction. Implemented error message detection pattern to
+    identify error system messages starting with "Agent [name]: ", added
+    enhanced styling with subtle red background and warning icon, and created
+    comprehensive unit tests with 100% coverage. Error messages now display
+    agent names prominently and error content clearly while maintaining
+    chronological ordering with other messages.'
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T23:35:19.104Z

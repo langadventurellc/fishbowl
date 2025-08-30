@@ -289,6 +289,18 @@ affectedFiles:
   packages/ui-shared/src/stores/chat/AgentError.ts: Created AgentError interface
     for structured error information with message, agentName, errorType, and
     retryable fields
+  apps/desktop/src/components/chat/MessageItem.tsx: Enhanced system message
+    display with error detection logic, visual styling for agent error messages,
+    and agent name parsing. Added isErrorSystemMessage and extractAgentName
+    helper functions. Implemented getSystemMessageClasses and
+    renderErrorSystemMessage functions for enhanced error formatting with
+    warning icons and structured layout.
+  apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
+    Created comprehensive unit test suite with 25 test cases covering error
+    message detection, parsing, styling, accessibility, context toggle
+    functionality, and edge cases. Tests verify proper agent name extraction,
+    visual distinction for error messages, warning icon display, and graceful
+    handling of malformed error messages.
 log: []
 schema: v1.0
 childrenIds:

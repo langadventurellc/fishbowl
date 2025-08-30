@@ -1,17 +1,17 @@
 import { createLoggerSync } from "../../logging/createLoggerSync";
-import type { LlmBridgeInterface } from "./interfaces/LlmBridgeInterface";
-import type { MessageRepository } from "../../repositories/messages/MessageRepository";
-import type { ConversationAgentsRepository } from "../../repositories/conversationAgents/ConversationAgentsRepository";
 import type { SystemPromptFactory } from "../../prompts/system/SystemPromptFactory";
-import type { MessageFormatterService } from "../llm/services/MessageFormatterService";
+import type { ConversationAgentsRepository } from "../../repositories/conversationAgents/ConversationAgentsRepository";
+import type { MessageRepository } from "../../repositories/messages/MessageRepository";
 import type { PersistedAgentData } from "../../types/agents/PersistedAgentData";
+import { LlmProviderError } from "../llm/errors/LlmProviderError";
+import type { MessageFormatterService } from "../llm/services/MessageFormatterService";
+import { ChatError, ErrorMapper } from "./errors";
+import type { LlmBridgeInterface } from "./interfaces/LlmBridgeInterface";
 import type {
   AgentContext,
-  ProcessingResult,
   AgentProcessingResult,
+  ProcessingResult,
 } from "./types";
-import { ChatError, ErrorMapper } from "./errors";
-import { LlmProviderError } from "../llm/errors/LlmProviderError";
 import type { AgentEventCallback } from "./types/AgentEventCallback";
 
 /**
@@ -282,6 +282,7 @@ export class ChatOrchestrationService {
    * @param agentId - Target agent ID
    * @returns Agent processing result
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   private async processAgentMessage(
     conversationId: string,
     userMessageId: string,

@@ -1,7 +1,7 @@
 ---
 id: F-multi-agent-error-handling
 title: Multi-Agent Error Handling
-status: in-progress
+status: done
 priority: medium
 parent: E-multi-agent-chat-engine
 prerequisites:
@@ -83,15 +83,27 @@ affectedFiles:
     Added comprehensive test coverage for structured error handling including
     basic errors, full error information, different error types, retryable
     variations, and missing field handling
-log: []
+  apps/desktop/src/components/chat/MessageItem.tsx: Enhanced system message
+    display with error detection logic, visual styling for agent error messages,
+    and agent name parsing. Added isErrorSystemMessage and extractAgentName
+    helper functions. Implemented getSystemMessageClasses and
+    renderErrorSystemMessage functions for enhanced error formatting with
+    warning icons and structured layout.
+  apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
+    Created comprehensive unit test suite with 25 test cases covering error
+    message detection, parsing, styling, accessibility, context toggle
+    functionality, and edge cases. Tests verify proper agent name extraction,
+    visual distinction for error messages, warning icon display, and graceful
+    handling of malformed error messages.
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-enhance-structured-error
-  - T-enhance-system-message
-  - T-update-usechateventintegration
   - T-create-structured-chat-error
   - T-enhance-ipc-chat-events-to
+  - T-enhance-system-message
   - T-integrate-error-handling-into
+  - T-update-usechateventintegration
 created: 2025-08-29T19:21:47.001Z
 updated: 2025-08-29T19:21:47.001Z
 ---
