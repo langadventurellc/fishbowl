@@ -85,7 +85,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   };
 
   return (
-    <div className={cn("flex flex-1 flex-col", className)}>
+    <div className={cn("flex flex-1 flex-col overflow-hidden", className)}>
       {/* Context statistics - always visible above messages */}
       {messages && messages.length > 0 && (
         <div className="px-6 py-2 border-b border-border/50">
@@ -100,6 +100,8 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
           "flex flex-1 flex-col overflow-y-auto",
           "p-[var(--container-padding)] gap-[var(--message-spacing)]",
           maxHeight && "max-h-[var(--max-height)]",
+          // Hide scrollbar while keeping functionality
+          "[&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]",
         )}
         style={dynamicStyles}
         onScroll={handleScroll}

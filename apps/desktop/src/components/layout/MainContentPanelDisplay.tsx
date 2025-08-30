@@ -139,20 +139,22 @@ export const MainContentPanelDisplay: React.FC<
         selectedConversationId={selectedConversationId}
       />
 
-      {/* Chat Container */}
-      {!selectedConversationId ? (
-        <NoConversationSelected />
-      ) : isLoading ? (
-        <LoadingSkeleton />
-      ) : error ? (
-        <ErrorState error={error} onRetry={refetch} />
-      ) : (
-        <ChatContainerDisplay
-          messages={messages}
-          emptyState={<EmptyConversation />}
-          onContextMenuAction={() => {}}
-        />
-      )}
+      {/* Chat Container - Add overflow constraints */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {!selectedConversationId ? (
+          <NoConversationSelected />
+        ) : isLoading ? (
+          <LoadingSkeleton />
+        ) : error ? (
+          <ErrorState error={error} onRetry={refetch} />
+        ) : (
+          <ChatContainerDisplay
+            messages={messages}
+            emptyState={<EmptyConversation />}
+            onContextMenuAction={() => {}}
+          />
+        )}
+      </div>
 
       {/* Input Container - Only show if conversation is selected */}
       {selectedConversationId && (
