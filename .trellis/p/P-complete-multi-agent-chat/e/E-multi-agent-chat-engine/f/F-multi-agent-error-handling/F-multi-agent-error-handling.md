@@ -28,15 +28,24 @@ affectedFiles:
     Created extensive unit test suite with 49 tests covering all error
     classifications, security requirements, edge cases, and provider-specific
     error handling
+  packages/shared/src/services/chat/ChatOrchestrationService.ts:
+    Enhanced error handling in processAgentMessage method with structured
+    ChatError classification, agent name resolution helper method, system
+    message persistence for errors, and improved structured logging with error
+    context
+  packages/shared/src/services/chat/__tests__/ChatOrchestrationService.test.ts:
+    Added comprehensive test suite covering LlmProviderError handling, generic
+    error handling, agent name resolution scenarios, system message persistence,
+    and partial failure scenarios with proper mocking setup
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-structured-chat-error
   - T-enhance-ipc-chat-events-to
   - T-enhance-structured-error
   - T-enhance-system-message
   - T-integrate-error-handling-into
   - T-update-usechateventintegration
+  - T-create-structured-chat-error
 created: 2025-08-29T19:21:47.001Z
 updated: 2025-08-29T19:21:47.001Z
 ---

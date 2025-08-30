@@ -10,6 +10,8 @@ import type {
   ProcessingResult,
   AgentProcessingResult,
 } from "./types";
+import { ChatError, ErrorMapper } from "./errors";
+import { LlmProviderError } from "../llm/errors/LlmProviderError";
 
 /**
  * Core business logic service that coordinates message processing across multiple AI agents simultaneously.
@@ -256,6 +258,18 @@ export class ChatOrchestrationService {
   }
 
   /**
+   * Resolve agent name for user-friendly error messages
+   */
+  private async resolveAgentName(agentId: string): Promise<string> {
+    try {
+      const agent = await this.agentsResolver(agentId);
+      return agent.name || `Agent ${agentId}`;
+    } catch {
+      return `Agent ${agentId}`;
+    }
+  }
+
+  /**
    * Process a message for a single agent.
    * Builds context, calls LLM provider, and saves response.
    *
@@ -326,20 +340,74 @@ export class ChatOrchestrationService {
       };
     } catch (error) {
       const duration = Date.now() - startTime;
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
 
+      // Convert error to structured ChatError
+      let chatError: ChatError;
+      if (error instanceof LlmProviderError) {
+        chatError = ErrorMapper.fromLlmProviderError(
+          error,
+          conversationId,
+          agentId,
+        );
+      } else if (error instanceof Error) {
+        chatError = ErrorMapper.fromGenericError(
+          error,
+          conversationId,
+          agentId,
+        );
+      } else {
+        chatError = ErrorMapper.fromGenericError(
+          new Error("Unknown error occurred"),
+          conversationId,
+          agentId,
+        );
+      }
+
+      // Resolve agent name for user-friendly error message
+      const agentName = await this.resolveAgentName(agentId);
+      const userFriendlyMessage = chatError.userMessage.replace(
+        `Agent ${agentId}: `,
+        `Agent ${agentName}: `,
+      );
+
+      // Persist error as system message
+      try {
+        await this.messageRepository.create({
+          conversation_id: conversationId,
+          conversation_agent_id: undefined, // System message
+          role: "system",
+          content: userFriendlyMessage,
+          included: true,
+        });
+      } catch (messageError) {
+        this.logger.error(
+          "Failed to persist error system message",
+          messageError as Error,
+          {
+            conversationId,
+            agentId,
+            originalError: chatError.technicalDetails,
+          },
+        );
+      }
+
+      // Enhanced structured logging
       this.logger.error("Agent message processing failed", error as Error, {
         conversationId,
         agentId,
         userMessageId,
         duration,
+        errorType: chatError.type,
+        errorCode: chatError.code,
+        provider: chatError.provider,
+        retryable: chatError.retryable,
+        timestamp: chatError.timestamp,
       });
 
       return {
         agentId,
         success: false,
-        error: errorMessage,
+        error: userFriendlyMessage,
         duration,
       };
     }
