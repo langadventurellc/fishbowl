@@ -1,8 +1,15 @@
-import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
+import {
+  MainContentPanelDisplayProps,
+  MessageViewModel,
+  AgentPillViewModel,
+} from "@fishbowl-ai/ui-shared";
 import { AlertCircle, MessageCircle } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
-import { useMessagesWithAgentData } from "../../hooks/messages/useMessagesWithAgentData";
+import {
+  useMessagesWithAgentData,
+  MessagesRefreshContext,
+} from "../../hooks/messages";
 import { cn } from "../../lib/utils";
 import { MessageInputContainer } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
@@ -17,15 +24,53 @@ import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
 > = ({ selectedConversationId, className, style }) => {
-  const [agents] = useState([]);
-
-  // Initialize chat event integration for real-time agent status updates only if conversation is selected
-  useChatEventIntegration({ conversationId: selectedConversationId || null });
-
   // Use the composite hook for messages with resolved agent names and roles
   const { messages, isLoading, error, refetch } = useMessagesWithAgentData(
     selectedConversationId || null,
   );
+
+  return (
+    <MessagesRefreshContext.Provider value={{ refetch }}>
+      <MainContentPanelContent
+        selectedConversationId={selectedConversationId || null}
+        className={className}
+        style={style}
+        messages={messages}
+        isLoading={isLoading}
+        error={error}
+        refetch={refetch}
+      />
+    </MessagesRefreshContext.Provider>
+  );
+};
+
+/**
+ * Inner component that has access to MessagesRefreshContext
+ */
+interface MainContentPanelContentProps {
+  selectedConversationId: string | null;
+  className?: string;
+  style?: React.CSSProperties;
+  messages: MessageViewModel[];
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
+
+const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
+  selectedConversationId,
+  className,
+  style,
+  messages,
+  isLoading,
+  error,
+  refetch,
+}) => {
+  // Initialize chat event integration for real-time agent status updates - now has access to MessagesRefreshContext
+  useChatEventIntegration({ conversationId: selectedConversationId || null });
+
+  // Empty agents array as placeholder - AgentLabelsContainerDisplay fetches its own data
+  const agents: AgentPillViewModel[] = [];
 
   // Loading skeleton component
   const LoadingSkeleton = () => (

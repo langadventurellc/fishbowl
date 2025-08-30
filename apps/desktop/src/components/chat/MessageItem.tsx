@@ -6,6 +6,7 @@ import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
 import { MessageHeader } from "./MessageHeader";
 import { useUpdateMessage } from "../../hooks/messages/useUpdateMessage";
+import { useMessagesRefresh } from "../../hooks/messages";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.
@@ -87,6 +88,7 @@ export function MessageItem(props: MessageItemProps) {
 
   // Use useUpdateMessage hook for database persistence
   const { updateInclusion, updating, error, reset } = useUpdateMessage();
+  const { refetch } = useMessagesRefresh();
 
   // Optimistic state management - use message.isActive as source of truth
   const [optimisticActive, setOptimisticActive] = useState<boolean | null>(
@@ -107,6 +109,11 @@ export function MessageItem(props: MessageItemProps) {
 
       // Persist to database via useUpdateMessage hook
       await updateInclusion(message.id, newActiveState);
+
+      // Refresh messages to reflect the updated inclusion state
+      if (refetch) {
+        await refetch();
+      }
 
       // Success: clear optimistic state (will use message.isActive from props)
       setOptimisticActive(null);

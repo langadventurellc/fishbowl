@@ -68,13 +68,20 @@ export class OpenAIProvider implements LlmProvider {
 
     // temperature and top_p are not supported in GPT 5 models. Commenting out until allowing
     // optional passing of these values
-    return {
+    const requestBody: Record<string, unknown> = {
       model: params.model,
       input,
       // temperature: params.sampling.temperature,
       // top_p: params.sampling.topP,
       max_output_tokens: params.sampling.maxTokens,
     };
+
+    // Add reasoning.effort for GPT-5 models
+    if (params.model.includes("gpt-5")) {
+      requestBody.reasoning = { effort: "minimal" };
+    }
+
+    return requestBody;
   }
 
   /**

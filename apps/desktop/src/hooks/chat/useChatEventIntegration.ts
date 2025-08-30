@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useChatStore } from "@fishbowl-ai/ui-shared";
 import type { AgentError } from "@fishbowl-ai/ui-shared";
 import type { AgentUpdateEvent } from "../../shared/ipc/chat";
+import { useMessagesRefresh } from "../messages";
 
 interface UseChatEventIntegrationOptions {
   conversationId: string | null;
@@ -31,6 +32,8 @@ export function useChatEventIntegration(
     clearConversationState,
   } = useChatStore();
 
+  const { refetch } = useMessagesRefresh();
+
   // Event handler for IPC events
   const handleAgentUpdate = useCallback(
     (event: AgentUpdateEvent) => {
@@ -57,6 +60,16 @@ export function useChatEventIntegration(
           case "complete":
             setAgentThinking(conversationAgentId, false);
             setAgentError(conversationAgentId, null);
+
+            // Refresh messages to show the new agent response
+            if (refetch) {
+              refetch().catch((error) => {
+                console.error(
+                  "Failed to refresh messages after agent completion:",
+                  error,
+                );
+              });
+            }
             break;
 
           case "error": {
@@ -71,6 +84,16 @@ export function useChatEventIntegration(
             };
 
             setAgentError(conversationAgentId, structuredError);
+
+            // Refresh messages to show any error system messages that were created
+            if (refetch) {
+              refetch().catch((refreshError) => {
+                console.error(
+                  "Failed to refresh messages after agent error:",
+                  refreshError,
+                );
+              });
+            }
             break;
           }
 
@@ -81,7 +104,7 @@ export function useChatEventIntegration(
         console.error("Error processing agent update event:", eventError);
       }
     },
-    [setAgentThinking, setAgentError],
+    [setAgentThinking, setAgentError, refetch],
   );
 
   // Set up IPC event subscription

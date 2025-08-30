@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { useCreateMessage } from "@/hooks/messages";
+import { useCreateMessage, useMessagesRefresh } from "@/hooks/messages";
 import { useChatStore } from "@fishbowl-ai/ui-shared";
 import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
 import {
@@ -65,6 +65,7 @@ export function MessageInputContainer({
     reset,
   } = useCreateMessage();
   const { sendingMessage } = useChatStore();
+  const { refetch } = useMessagesRefresh();
 
   // Hook for conversation agents to check if any are enabled
   const { conversationAgents } = useConversationAgents(conversationId);
@@ -101,6 +102,11 @@ export function MessageInputContainer({
       // Clear input on successful creation
       setContent("");
       setLocalError(null);
+
+      // Refresh messages to show the new message immediately
+      if (refetch) {
+        await refetch();
+      }
 
       // Focus back to textarea for continued interaction
       if (textareaRef.current) {
@@ -143,6 +149,11 @@ export function MessageInputContainer({
               "No agents are enabled for this conversation. Enable agents to start receiving responses.",
             included: true,
           });
+
+          // Refresh messages to show the system message
+          if (refetch) {
+            await refetch();
+          }
         } catch (systemMessageError) {
           // Log system message creation error but don't affect user experience
           // The user message was already successfully created
@@ -153,7 +164,7 @@ export function MessageInputContainer({
       // Error is handled by useCreateMessage hook
       // Keep the input content so user can retry
     }
-  }, [content, conversationId, createMessage, conversationAgents]);
+  }, [content, conversationId, createMessage, conversationAgents, refetch]);
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback(
