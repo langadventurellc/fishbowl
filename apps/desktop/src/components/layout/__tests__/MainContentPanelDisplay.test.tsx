@@ -43,8 +43,8 @@ jest.mock("../ChatContainerDisplay", () => ({
   ),
 }));
 
-jest.mock("../../input/InputContainerDisplay", () => ({
-  InputContainerDisplay: () => (
+jest.mock("../../input/MessageInputContainer", () => ({
+  MessageInputContainer: () => (
     <div data-testid="input-container">Input Container</div>
   ),
 }));

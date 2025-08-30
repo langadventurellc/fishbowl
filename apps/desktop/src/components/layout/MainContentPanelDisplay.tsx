@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
 import { useMessages } from "../../hooks/messages/useMessages";
 import { cn } from "../../lib/utils";
-import { InputContainerDisplay } from "../input";
+import { MessageInputContainer } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
 /**
@@ -17,8 +17,6 @@ import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
 > = ({ selectedConversationId, className, style }) => {
-  const [inputText] = useState("");
-  const [isManualMode] = useState(true);
   const [agents] = useState([]);
 
   // Initialize chat event integration for real-time agent status updates only if conversation is selected
@@ -67,37 +65,6 @@ export const MainContentPanelDisplay: React.FC<
     </div>
   );
 
-  // No conversation selected state
-  const NoConversationSelected = () => (
-    <div className="flex-1 flex items-center justify-center p-8 text-center">
-      <div className="max-w-md">
-        <MessageCircle className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-300 mb-2">
-          No conversation selected
-        </h3>
-        <p className="text-gray-600">
-          Select a conversation from the sidebar or create a new one to get
-          started.
-        </p>
-      </div>
-    </div>
-  );
-
-  // Enhanced empty state component (for when conversation is selected but has no messages)
-  const EmptyConversation = () => (
-    <div className="flex-1 flex items-center justify-center p-8 text-center">
-      <div className="max-w-md">
-        <MessageCircle className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-300 mb-2">
-          Start a conversation
-        </h3>
-        <p className="text-gray-600">
-          Type a message below to begin chatting with your AI agents.
-        </p>
-      </div>
-    </div>
-  );
-
   // Enhanced error state component
   const ErrorState = ({
     error,
@@ -130,6 +97,37 @@ export const MainContentPanelDisplay: React.FC<
     </div>
   );
 
+  // No conversation selected state
+  const NoConversationSelected = () => (
+    <div className="flex-1 flex items-center justify-center p-8 text-center">
+      <div className="max-w-md">
+        <MessageCircle className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+        <h3 className="text-lg font-medium text-gray-300 mb-2">
+          No conversation selected
+        </h3>
+        <p className="text-gray-600">
+          Select a conversation from the sidebar or create a new one to get
+          started.
+        </p>
+      </div>
+    </div>
+  );
+
+  // Enhanced empty state component (for when conversation is selected but has no messages)
+  const EmptyConversation = () => (
+    <div className="flex-1 flex items-center justify-center p-8 text-center">
+      <div className="max-w-md">
+        <MessageCircle className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+        <h3 className="text-lg font-medium text-gray-300 mb-2">
+          Start a conversation
+        </h3>
+        <p className="text-gray-600">
+          Type a message below to begin chatting with your AI agents.
+        </p>
+      </div>
+    </div>
+  );
+
   return (
     <div
       className={cn("flex flex-1 flex-col overflow-hidden", className)}
@@ -158,23 +156,9 @@ export const MainContentPanelDisplay: React.FC<
 
       {/* Input Container - Only show if conversation is selected */}
       {selectedConversationId && (
-        <InputContainerDisplay
+        <MessageInputContainer
+          conversationId={selectedConversationId}
           layoutVariant="default"
-          messageInputProps={{
-            placeholder: "Type your message here...",
-            content: inputText,
-            disabled: false,
-            size: "medium",
-          }}
-          sendButtonProps={{
-            disabled: !inputText.trim(),
-            loading: false,
-            "aria-label": "Send message",
-          }}
-          modeToggleProps={{
-            currentMode: isManualMode ? "manual" : "auto",
-            disabled: false,
-          }}
         />
       )}
     </div>
