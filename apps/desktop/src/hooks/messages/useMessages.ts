@@ -70,6 +70,15 @@ export function useMessages(conversationId: string): UseMessagesResult {
       setIsLoading(true);
       setError(null);
 
+      // Skip loading if no valid conversation ID is provided
+      if (!conversationId || conversationId === "skip") {
+        logger.debug(
+          "No valid conversation ID provided, skipping messages load",
+        );
+        setMessages([]);
+        return;
+      }
+
       // Check if running in Electron environment
       if (
         typeof window === "undefined" ||

@@ -130,7 +130,7 @@ describe("MainContentPanelDisplay", () => {
     it("handles null conversationId correctly", () => {
       render(<MainContentPanelDisplay selectedConversationId={null} />);
 
-      expect(mockUseMessages).toHaveBeenCalledWith("");
+      expect(mockUseMessages).toHaveBeenCalledWith("skip");
     });
 
     it("transforms messages correctly for ChatContainerDisplay", () => {

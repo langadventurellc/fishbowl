@@ -1,9 +1,9 @@
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
+import { AlertCircle, MessageCircle } from "lucide-react";
 import React, { useState } from "react";
-import { MessageCircle, AlertCircle } from "lucide-react";
-import { cn } from "../../lib/utils";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
 import { useMessages } from "../../hooks/messages/useMessages";
+import { cn } from "../../lib/utils";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
@@ -21,16 +21,17 @@ export const MainContentPanelDisplay: React.FC<
   const [isManualMode] = useState(true);
   const [agents] = useState([]);
 
-  // Initialize chat event integration for real-time agent status updates
+  // Initialize chat event integration for real-time agent status updates only if conversation is selected
   useChatEventIntegration({ conversationId: selectedConversationId || null });
 
   // Use the useMessages hook for real-time message data with loading and error states
+  // Only call when we have a valid conversation ID
   const {
     messages: rawMessages,
     isLoading,
     error,
     refetch,
-  } = useMessages(selectedConversationId || "");
+  } = useMessages(selectedConversationId || "skip");
 
   // Transform Message[] to MessageViewModel[] for ChatContainerDisplay
   const messages = React.useMemo(() => {
@@ -66,12 +67,28 @@ export const MainContentPanelDisplay: React.FC<
     </div>
   );
 
-  // Enhanced empty state component
+  // No conversation selected state
+  const NoConversationSelected = () => (
+    <div className="flex-1 flex items-center justify-center p-8 text-center">
+      <div className="max-w-md">
+        <MessageCircle className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+        <h3 className="text-lg font-medium text-gray-300 mb-2">
+          No conversation selected
+        </h3>
+        <p className="text-gray-600">
+          Select a conversation from the sidebar or create a new one to get
+          started.
+        </p>
+      </div>
+    </div>
+  );
+
+  // Enhanced empty state component (for when conversation is selected but has no messages)
   const EmptyConversation = () => (
     <div className="flex-1 flex items-center justify-center p-8 text-center">
       <div className="max-w-md">
         <MessageCircle className="h-16 w-16 mx-auto text-gray-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <h3 className="text-lg font-medium text-gray-300 mb-2">
           Start a conversation
         </h3>
         <p className="text-gray-600">
@@ -125,7 +142,9 @@ export const MainContentPanelDisplay: React.FC<
       />
 
       {/* Chat Container */}
-      {isLoading ? (
+      {!selectedConversationId ? (
+        <NoConversationSelected />
+      ) : isLoading ? (
         <LoadingSkeleton />
       ) : error ? (
         <ErrorState error={error} onRetry={refetch} />
@@ -137,25 +156,27 @@ export const MainContentPanelDisplay: React.FC<
         />
       )}
 
-      {/* Input Container */}
-      <InputContainerDisplay
-        layoutVariant="default"
-        messageInputProps={{
-          placeholder: "Type your message here...",
-          content: inputText,
-          disabled: false,
-          size: "medium",
-        }}
-        sendButtonProps={{
-          disabled: !inputText.trim(),
-          loading: false,
-          "aria-label": "Send message",
-        }}
-        modeToggleProps={{
-          currentMode: isManualMode ? "manual" : "auto",
-          disabled: false,
-        }}
-      />
+      {/* Input Container - Only show if conversation is selected */}
+      {selectedConversationId && (
+        <InputContainerDisplay
+          layoutVariant="default"
+          messageInputProps={{
+            placeholder: "Type your message here...",
+            content: inputText,
+            disabled: false,
+            size: "medium",
+          }}
+          sendButtonProps={{
+            disabled: !inputText.trim(),
+            loading: false,
+            "aria-label": "Send message",
+          }}
+          modeToggleProps={{
+            currentMode: isManualMode ? "manual" : "auto",
+            disabled: false,
+          }}
+        />
+      )}
     </div>
   );
 };

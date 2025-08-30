@@ -7,7 +7,7 @@ import React, { useCallback, useState } from "react";
 import { useConversations } from "../../hooks/conversations/useConversations";
 import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
 import { cn } from "../../lib/utils";
-import { NewConversationButton } from "../conversations/NewConversationButton";
+import { NewConversationButton } from "../chat/NewConversationButton";
 import { RenameConversationModal } from "../modals/RenameConversationModal";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { DeleteConversationModal } from "./DeleteConversationModal";
