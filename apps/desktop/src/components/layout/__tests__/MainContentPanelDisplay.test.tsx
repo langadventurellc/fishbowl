@@ -28,13 +28,17 @@ jest.mock("../AgentLabelsContainerDisplay", () => ({
 }));
 
 jest.mock("../ChatContainerDisplay", () => ({
-  ChatContainerDisplay: ({ messages }: any) => (
+  ChatContainerDisplay: ({ messages, emptyState }: any) => (
     <div data-testid="chat-container">
-      {messages.map((msg: any) => (
-        <div key={msg.id} data-testid={`message-${msg.id}`}>
-          {msg.type}: {msg.content} ({msg.timestamp})
-        </div>
-      ))}
+      {messages && messages.length > 0 ? (
+        messages.map((msg: any) => (
+          <div key={msg.id} data-testid={`message-${msg.id}`}>
+            {msg.type}: {msg.content} ({msg.timestamp})
+          </div>
+        ))
+      ) : emptyState ? (
+        <div data-testid="empty-state">{emptyState}</div>
+      ) : null}
     </div>
   ),
 }));
@@ -155,7 +159,7 @@ describe("MainContentPanelDisplay", () => {
   });
 
   describe("loading state", () => {
-    it("shows loading spinner when isLoading is true", () => {
+    it("shows loading skeleton when isLoading is true", () => {
       mockUseMessages.mockReturnValue({
         messages: [],
         isLoading: true,
@@ -169,7 +173,25 @@ describe("MainContentPanelDisplay", () => {
       );
 
       expect(screen.queryByTestId("chat-container")).not.toBeInTheDocument();
-      expect(screen.getByRole("status")).toBeInTheDocument();
+
+      // Check for loading skeleton elements
+      const skeletonAvatars = screen
+        .getAllByRole("generic")
+        .filter(
+          (el) =>
+            el.className.includes("animate-pulse") &&
+            el.className.includes("rounded-full"),
+        );
+      expect(skeletonAvatars).toHaveLength(3); // 3 skeleton items
+
+      const skeletonLines = screen
+        .getAllByRole("generic")
+        .filter(
+          (el) =>
+            el.className.includes("animate-pulse") &&
+            el.className.includes("bg-gray-300"),
+        );
+      expect(skeletonLines.length).toBeGreaterThan(3); // Multiple skeleton lines
     });
 
     it("hides chat container during loading", () => {
@@ -186,7 +208,12 @@ describe("MainContentPanelDisplay", () => {
       );
 
       expect(screen.queryByTestId("chat-container")).not.toBeInTheDocument();
-      expect(screen.getByRole("status")).toBeInTheDocument();
+
+      // Verify skeleton is showing instead
+      const skeletonElements = screen
+        .getAllByRole("generic")
+        .filter((el) => el.className.includes("animate-pulse"));
+      expect(skeletonElements.length).toBeGreaterThan(0);
     });
 
     it("shows other components while loading", () => {
@@ -210,7 +237,7 @@ describe("MainContentPanelDisplay", () => {
   describe("error state", () => {
     const mockError = new Error("Database connection error");
 
-    it("shows error message when error occurs", () => {
+    it("shows enhanced error message with icon when error occurs", () => {
       mockUseMessages.mockReturnValue({
         messages: [],
         isLoading: false,
@@ -224,10 +251,13 @@ describe("MainContentPanelDisplay", () => {
       );
 
       expect(screen.getByText("Failed to load messages")).toBeInTheDocument();
+      expect(
+        screen.getByText("There was a problem loading the conversation."),
+      ).toBeInTheDocument();
       expect(screen.getByText(mockError.message)).toBeInTheDocument();
     });
 
-    it("shows retry button in error state", () => {
+    it("shows retry button with proper styling in error state", () => {
       mockUseMessages.mockReturnValue({
         messages: [],
         isLoading: false,
@@ -240,11 +270,18 @@ describe("MainContentPanelDisplay", () => {
         <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
       );
 
-      const retryButton = screen.getByRole("button", { name: "Retry" });
+      const retryButton = screen.getByRole("button", { name: "Try Again" });
       expect(retryButton).toBeInTheDocument();
+      expect(retryButton).toHaveClass(
+        "px-4",
+        "py-2",
+        "bg-blue-600",
+        "text-white",
+        "rounded",
+      );
     });
 
-    it("calls refetch when retry button is clicked", async () => {
+    it("calls refetch when Try Again button is clicked", async () => {
       mockUseMessages.mockReturnValue({
         messages: [],
         isLoading: false,
@@ -257,7 +294,7 @@ describe("MainContentPanelDisplay", () => {
         <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
       );
 
-      const retryButton = screen.getByRole("button", { name: "Retry" });
+      const retryButton = screen.getByRole("button", { name: "Try Again" });
       fireEvent.click(retryButton);
 
       expect(mockRefetch).toHaveBeenCalledTimes(1);
@@ -295,6 +332,129 @@ describe("MainContentPanelDisplay", () => {
 
       expect(screen.getByTestId("agent-labels-container")).toBeInTheDocument();
       expect(screen.getByTestId("input-container")).toBeInTheDocument();
+    });
+
+    it("handles errors without message gracefully", () => {
+      const errorWithoutMessage = new Error();
+      errorWithoutMessage.message = "";
+
+      mockUseMessages.mockReturnValue({
+        messages: [],
+        isLoading: false,
+        error: errorWithoutMessage,
+        refetch: mockRefetch,
+        isEmpty: true,
+      });
+
+      render(
+        <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
+      );
+
+      expect(screen.getByText("Failed to load messages")).toBeInTheDocument();
+      expect(
+        screen.getByText("There was a problem loading the conversation."),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Try Again" }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe("empty state", () => {
+    it("shows empty conversation state when no messages and not loading", () => {
+      mockUseMessages.mockReturnValue({
+        messages: [],
+        isLoading: false,
+        error: null,
+        refetch: mockRefetch,
+        isEmpty: true,
+      });
+
+      render(
+        <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
+      );
+
+      expect(screen.getByTestId("chat-container")).toBeInTheDocument();
+      expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+    });
+
+    it("passes empty state component to ChatContainerDisplay", () => {
+      mockUseMessages.mockReturnValue({
+        messages: [],
+        isLoading: false,
+        error: null,
+        refetch: mockRefetch,
+        isEmpty: true,
+      });
+
+      render(
+        <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
+      );
+
+      // The empty state should be rendered through ChatContainerDisplay's emptyState prop
+      const emptyStateElement = screen.getByTestId("empty-state");
+      expect(emptyStateElement).toBeInTheDocument();
+
+      // Check for key empty state text content
+      expect(screen.getByText("Start a conversation")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Type a message below to begin chatting with your AI agents.",
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("does not show empty state when messages exist", () => {
+      render(
+        <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
+      );
+
+      expect(screen.getByTestId("chat-container")).toBeInTheDocument();
+      expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Start a conversation"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("does not show empty state during loading", () => {
+      mockUseMessages.mockReturnValue({
+        messages: [],
+        isLoading: true,
+        error: null,
+        refetch: mockRefetch,
+        isEmpty: true,
+      });
+
+      render(
+        <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
+      );
+
+      expect(screen.queryByTestId("chat-container")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Start a conversation"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("does not show empty state during error state", () => {
+      const mockError = new Error("Database connection error");
+      mockUseMessages.mockReturnValue({
+        messages: [],
+        isLoading: false,
+        error: mockError,
+        refetch: mockRefetch,
+        isEmpty: true,
+      });
+
+      render(
+        <MainContentPanelDisplay selectedConversationId={mockConversationId} />,
+      );
+
+      expect(screen.queryByTestId("chat-container")).not.toBeInTheDocument();
+      expect(screen.queryByTestId("empty-state")).not.toBeInTheDocument();
+      expect(
+        screen.queryByText("Start a conversation"),
+      ).not.toBeInTheDocument();
     });
   });
 
@@ -403,7 +563,7 @@ describe("MainContentPanelDisplay", () => {
       );
     });
 
-    it("handles empty messages array", () => {
+    it("handles empty messages array by showing empty state", () => {
       mockUseMessages.mockReturnValue({
         messages: [],
         isLoading: false,
@@ -418,7 +578,8 @@ describe("MainContentPanelDisplay", () => {
 
       const chatContainer = screen.getByTestId("chat-container");
       expect(chatContainer).toBeInTheDocument();
-      expect(chatContainer).toBeEmptyDOMElement();
+      expect(screen.getByTestId("empty-state")).toBeInTheDocument();
+      expect(screen.getByText("Start a conversation")).toBeInTheDocument();
     });
   });
 });

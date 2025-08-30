@@ -1,5 +1,6 @@
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
 import React, { useState } from "react";
+import { MessageCircle, AlertCircle } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
 import { useMessages } from "../../hooks/messages/useMessages";
@@ -50,6 +51,68 @@ export const MainContentPanelDisplay: React.FC<
     }));
   }, [rawMessages]);
 
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="space-y-4 p-4">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="flex space-x-3">
+          <div className="h-8 w-8 bg-gray-300 rounded-full animate-pulse" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-gray-300 rounded animate-pulse" />
+            <div className="h-4 bg-gray-300 rounded w-3/4 animate-pulse" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Enhanced empty state component
+  const EmptyConversation = () => (
+    <div className="flex-1 flex items-center justify-center p-8 text-center">
+      <div className="max-w-md">
+        <MessageCircle className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          Start a conversation
+        </h3>
+        <p className="text-gray-600">
+          Type a message below to begin chatting with your AI agents.
+        </p>
+      </div>
+    </div>
+  );
+
+  // Enhanced error state component
+  const ErrorState = ({
+    error,
+    onRetry,
+  }: {
+    error: Error | null;
+    onRetry: () => void;
+  }) => (
+    <div className="flex-1 flex items-center justify-center p-8 text-center">
+      <div className="max-w-md">
+        <AlertCircle className="h-16 w-16 mx-auto text-red-400 mb-4" />
+        <h3 className="text-lg font-medium text-gray-900 mb-2">
+          Failed to load messages
+        </h3>
+        <p className="text-gray-600 mb-4">
+          There was a problem loading the conversation.
+          {error?.message && error.message !== "Failed to load messages" && (
+            <span className="block text-sm mt-1 text-gray-500">
+              {error.message}
+            </span>
+          )}
+        </p>
+        <button
+          onClick={onRetry}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div
       className={cn("flex flex-1 flex-col overflow-hidden", className)}
@@ -63,31 +126,13 @@ export const MainContentPanelDisplay: React.FC<
 
       {/* Chat Container */}
       {isLoading ? (
-        <div className="flex flex-1 items-center justify-center">
-          <div
-            className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"
-            role="status"
-            aria-label="Loading messages"
-          ></div>
-        </div>
+        <LoadingSkeleton />
       ) : error ? (
-        <div className="flex flex-1 flex-col items-center justify-center space-y-4">
-          <div className="text-red-600 text-center">
-            <p className="font-medium">Failed to load messages</p>
-            {error.message && error.message !== "Failed to load messages" && (
-              <p className="text-sm text-gray-500">{error.message}</p>
-            )}
-          </div>
-          <button
-            onClick={refetch}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Retry
-          </button>
-        </div>
+        <ErrorState error={error} onRetry={refetch} />
       ) : (
         <ChatContainerDisplay
           messages={messages}
+          emptyState={<EmptyConversation />}
           onContextMenuAction={() => {}}
         />
       )}

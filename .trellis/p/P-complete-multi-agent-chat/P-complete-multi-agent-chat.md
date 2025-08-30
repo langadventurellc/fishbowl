@@ -367,10 +367,28 @@ affectedFiles:
     handles null/undefined conversationId values.; Connected
     ChatContainerDisplay to useMessages hook with loading and error states,
     including message transformation from Message[] to MessageViewModel[] and
-    proper conversation ID handling
+    proper conversation ID handling; Enhanced with loading skeleton, empty
+    state, and improved error state components. Added Lucide React icons
+    (MessageCircle, AlertCircle) and implemented proper state management with
+    conditional rendering based on loading, error, and message states.
   apps/desktop/src/components/layout/__tests__/MainContentPanelDisplay.test.tsx:
     Added comprehensive unit tests covering loading states, error states with
-    retry functionality, message transformation, and chat event integration
+    retry functionality, message transformation, and chat event integration;
+    Added comprehensive unit tests for loading skeleton rendering, empty state
+    display, enhanced error state functionality, and state transition scenarios.
+    Updated existing tests to accommodate new components and improved
+    ChatContainerDisplay mock to handle emptyState prop.
+  apps/desktop/src/components/layout/ChatContainerDisplay.tsx:
+    Enhanced component with intelligent auto-scroll behavior including scroll
+    position tracking (useRef, useState), scroll detection logic with 100px
+    threshold, auto-scroll on new messages with smooth behavior, and scroll
+    position preservation. Added proper React hooks imports and maintained
+    backward compatibility with existing props.
+  apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.test.tsx:
+    Created comprehensive unit test suite with 16 test cases covering basic
+    rendering, scroll behavior detection, auto-scroll on new messages, scroll
+    position preservation, styling integration, and context menu functionality.
+    All tests pass and validate proper scroll behavior in various scenarios.
 log: []
 schema: v1.0
 childrenIds:

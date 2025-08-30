@@ -1,5 +1,5 @@
 import { ChatContainerDisplayProps } from "@fishbowl-ai/ui-shared";
-import React from "react";
+import React, { useRef, useState, useCallback, useEffect } from "react";
 import { cn } from "../../lib/utils";
 import { MessageItem } from "../chat/MessageItem";
 
@@ -21,6 +21,11 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   style,
   onScroll,
 }) => {
+  // Scroll position tracking for auto-scroll behavior
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [isNearBottom, setIsNearBottom] = useState(true);
+  const prevMessageCount = useRef(messages?.length || 0);
+
   // Dynamic styles using CSS custom properties
   const dynamicStyles: React.CSSProperties = {
     "--container-padding": containerPadding,
@@ -29,6 +34,34 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     // Merge custom styles
     ...style,
   } as React.CSSProperties;
+
+  // Scroll detection to determine if user is near bottom
+  const handleScroll = useCallback(() => {
+    const element = scrollRef.current;
+    if (!element) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = element;
+    const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+    setIsNearBottom(isAtBottom);
+
+    // Call external onScroll handler if provided
+    onScroll?.();
+  }, [onScroll]);
+
+  // Auto-scroll to bottom when new messages arrive (only if user is near bottom)
+  useEffect(() => {
+    const currentCount = messages?.length || 0;
+    if (currentCount > prevMessageCount.current && isNearBottom) {
+      const element = scrollRef.current;
+      if (element) {
+        element.scrollTo({
+          top: element.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }
+    prevMessageCount.current = currentCount;
+  }, [messages, isNearBottom]);
 
   // Render messages or children
   const renderContent = () => {
@@ -52,6 +85,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
 
   return (
     <div
+      ref={scrollRef}
       className={cn(
         "flex flex-1 flex-col overflow-y-auto",
         "p-[var(--container-padding)] gap-[var(--message-spacing)]",
@@ -59,7 +93,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
         className,
       )}
       style={dynamicStyles}
-      onScroll={onScroll}
+      onScroll={handleScroll}
     >
       {renderContent()}
     </div>
