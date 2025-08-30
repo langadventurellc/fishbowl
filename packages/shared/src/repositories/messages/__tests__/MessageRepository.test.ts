@@ -109,7 +109,7 @@ describe("MessageRepository", () => {
           null,
           MessageRole.USER,
           "Hello, world!",
-          true,
+          1, // boolean true converted to 1
           mockTimestamp,
         ],
       );
@@ -136,7 +136,7 @@ describe("MessageRepository", () => {
           mockAgentId,
           MessageRole.AGENT,
           "Hello, I'm an AI assistant!",
-          true,
+          1, // boolean true converted to 1
           mockTimestamp,
         ],
       );
@@ -169,7 +169,7 @@ describe("MessageRepository", () => {
       expect(result.included).toBe(false);
       expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
         expect.stringContaining("INSERT INTO messages"),
-        expect.arrayContaining([false]),
+        expect.arrayContaining([0]), // boolean false converted to 0
       );
     });
 
@@ -331,22 +331,35 @@ describe("MessageRepository", () => {
 
   describe("get", () => {
     const mockMessageId = "123e4567-e89b-12d3-a456-426614174000";
-    const mockMessage: Message = {
+
+    // Mock database row (SQLite returns integers for included field)
+    const mockDatabaseRow = {
       id: mockMessageId,
       conversation_id: "111e1111-e89b-12d3-a456-426614174000",
       conversation_agent_id: null,
       role: MessageRole.USER,
       content: "Hello, world!",
-      included: true,
+      included: 1, // SQLite stores boolean as integer
+      created_at: "2023-01-01T00:00:00.000Z",
+    };
+
+    // Expected result after conversion
+    const expectedMessage: Message = {
+      id: mockMessageId,
+      conversation_id: "111e1111-e89b-12d3-a456-426614174000",
+      conversation_agent_id: null,
+      role: MessageRole.USER,
+      content: "Hello, world!",
+      included: true, // Converted to boolean
       created_at: "2023-01-01T00:00:00.000Z",
     };
 
     it("should retrieve message by ID", async () => {
-      mockDatabaseBridge.query.mockResolvedValue([mockMessage]);
+      mockDatabaseBridge.query.mockResolvedValue([mockDatabaseRow]);
 
       const result = await repository.get(mockMessageId);
 
-      expect(result).toEqual(mockMessage);
+      expect(result).toEqual(expectedMessage);
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
         expect.stringContaining("SELECT"),
         [mockMessageId],
@@ -404,14 +417,16 @@ describe("MessageRepository", () => {
 
   describe("getByConversation", () => {
     const mockConversationId = "111e1111-e89b-12d3-a456-426614174000";
-    const mockMessages: Message[] = [
+
+    // Mock database rows (SQLite returns integers for included field)
+    const mockDatabaseRows = [
       {
         id: "123e4567-e89b-12d3-a456-426614174001",
         conversation_id: mockConversationId,
         conversation_agent_id: null,
         role: MessageRole.USER,
         content: "First message",
-        included: true,
+        included: 1, // SQLite stores boolean as integer
         created_at: "2023-01-01T00:00:00.000Z",
       },
       {
@@ -420,17 +435,39 @@ describe("MessageRepository", () => {
         conversation_agent_id: "222e2222-e89b-12d3-a456-426614174000",
         role: MessageRole.AGENT,
         content: "Second message",
-        included: true,
+        included: 1, // SQLite stores boolean as integer
+        created_at: "2023-01-01T00:01:00.000Z",
+      },
+    ];
+
+    // Expected results after conversion
+    const expectedMessages: Message[] = [
+      {
+        id: "123e4567-e89b-12d3-a456-426614174001",
+        conversation_id: mockConversationId,
+        conversation_agent_id: null,
+        role: MessageRole.USER,
+        content: "First message",
+        included: true, // Converted to boolean
+        created_at: "2023-01-01T00:00:00.000Z",
+      },
+      {
+        id: "123e4567-e89b-12d3-a456-426614174002",
+        conversation_id: mockConversationId,
+        conversation_agent_id: "222e2222-e89b-12d3-a456-426614174000",
+        role: MessageRole.AGENT,
+        content: "Second message",
+        included: true, // Converted to boolean
         created_at: "2023-01-01T00:01:00.000Z",
       },
     ];
 
     it("should retrieve messages by conversation ID ordered by created_at and id", async () => {
-      mockDatabaseBridge.query.mockResolvedValue(mockMessages);
+      mockDatabaseBridge.query.mockResolvedValue(mockDatabaseRows);
 
       const result = await repository.getByConversation(mockConversationId);
 
-      expect(result).toEqual(mockMessages);
+      expect(result).toEqual(expectedMessages);
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
         expect.stringContaining("ORDER BY created_at ASC, id ASC"),
         [mockConversationId],
@@ -540,13 +577,26 @@ describe("MessageRepository", () => {
 
   describe("updateInclusion", () => {
     const mockMessageId = "123e4567-e89b-12d3-a456-426614174000";
-    const mockMessage: Message = {
+
+    // Mock database row (SQLite returns integers for included field)
+    const mockDatabaseRow = {
       id: mockMessageId,
       conversation_id: "111e1111-e89b-12d3-a456-426614174000",
       conversation_agent_id: null,
       role: MessageRole.USER,
       content: "Hello, world!",
-      included: true,
+      included: 1, // SQLite stores boolean as integer
+      created_at: "2023-01-01T00:00:00.000Z",
+    };
+
+    // Expected message after conversion
+    const expectedMessage: Message = {
+      id: mockMessageId,
+      conversation_id: "111e1111-e89b-12d3-a456-426614174000",
+      conversation_agent_id: null,
+      role: MessageRole.USER,
+      content: "Hello, world!",
+      included: true, // Converted to boolean
       created_at: "2023-01-01T00:00:00.000Z",
     };
 
@@ -556,8 +606,8 @@ describe("MessageRepository", () => {
         if (sql.includes("SELECT 1")) {
           return Promise.resolve([{ 1: 1 }]);
         }
-        // Mock get method call
-        return Promise.resolve([mockMessage]);
+        // Mock get method call - return database row with integer included field
+        return Promise.resolve([mockDatabaseRow]);
       });
 
       mockDatabaseBridge.execute.mockResolvedValue({
@@ -568,17 +618,18 @@ describe("MessageRepository", () => {
     });
 
     it("should update message inclusion to false", async () => {
-      const updatedMessage = { ...mockMessage, included: false };
+      const updatedDatabaseRow = { ...mockDatabaseRow, included: 0 }; // SQLite stores false as 0
+      const updatedMessage = { ...expectedMessage, included: false }; // Expected result
       mockDatabaseBridge.query
         .mockResolvedValueOnce([{ 1: 1 }]) // exists call
-        .mockResolvedValueOnce([updatedMessage]); // get call
+        .mockResolvedValueOnce([updatedDatabaseRow]); // get call - returns database row with integer
 
       const result = await repository.updateInclusion(mockMessageId, false);
 
       expect(result.included).toBe(false);
       expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
         expect.stringContaining("UPDATE messages"),
-        [false, mockMessageId],
+        [0, mockMessageId], // boolean false converted to 0
       );
     });
 
@@ -587,7 +638,7 @@ describe("MessageRepository", () => {
 
       expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
         expect.stringContaining("UPDATE messages"),
-        [true, mockMessageId],
+        [1, mockMessageId], // boolean true converted to 1
       );
     });
 
@@ -618,10 +669,11 @@ describe("MessageRepository", () => {
     });
 
     it("should return updated message", async () => {
-      const updatedMessage = { ...mockMessage, included: false };
+      const updatedDatabaseRow = { ...mockDatabaseRow, included: 0 }; // SQLite stores false as 0
+      const updatedMessage = { ...expectedMessage, included: false }; // Expected result
       mockDatabaseBridge.query
         .mockResolvedValueOnce([{ 1: 1 }]) // exists call
-        .mockResolvedValueOnce([updatedMessage]); // get call
+        .mockResolvedValueOnce([updatedDatabaseRow]); // get call - returns database row with integer
 
       const result = await repository.updateInclusion(mockMessageId, false);
 

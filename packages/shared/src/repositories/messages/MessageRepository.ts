@@ -66,15 +66,18 @@ export class MessageRepository {
         VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
 
-      await this.databaseBridge.execute(sql, [
+      // Convert boolean to number for SQLite compatibility
+      const sqliteParams = [
         validatedMessage.id,
         validatedMessage.conversation_id,
         validatedMessage.conversation_agent_id,
         validatedMessage.role,
         validatedMessage.content,
-        validatedMessage.included,
+        validatedMessage.included ? 1 : 0, // Convert boolean to integer
         validatedMessage.created_at,
-      ]);
+      ];
+
+      await this.databaseBridge.execute(sql, sqliteParams);
 
       this.logger.info("Created message", {
         id: validatedMessage.id,
@@ -116,8 +119,15 @@ export class MessageRepository {
         throw new MessageNotFoundError(id);
       }
 
+      // Convert SQLite integer to boolean for included field
+      const rawMessage = rows[0]!; // We know it exists because we checked length above
+      const messageWithBooleanIncluded = {
+        ...rawMessage,
+        included: Boolean(rawMessage.included), // Convert 0/1 to false/true
+      };
+
       // Validate and return
-      const message = messageSchema.parse(rows[0]);
+      const message = messageSchema.parse(messageWithBooleanIncluded);
 
       this.logger.debug("Retrieved message", { id: message.id });
 
@@ -154,8 +164,14 @@ export class MessageRepository {
         conversationId,
       ]);
 
-      // Validate each message
-      const messages = rows.map((row) => messageSchema.parse(row));
+      // Convert SQLite integers to booleans for included field and validate each message
+      const messages = rows.map((row) => {
+        const messageWithBooleanIncluded = {
+          ...row,
+          included: Boolean(row.included), // Convert 0/1 to false/true
+        };
+        return messageSchema.parse(messageWithBooleanIncluded);
+      });
 
       this.logger.debug(
         `Retrieved ${messages.length} messages for conversation`,
@@ -201,7 +217,8 @@ export class MessageRepository {
         WHERE id = ?
       `;
 
-      await this.databaseBridge.execute(sql, [included, id]);
+      // Convert boolean to number for SQLite compatibility
+      await this.databaseBridge.execute(sql, [included ? 1 : 0, id]);
 
       // Return updated message
       const updated = await this.get(id);

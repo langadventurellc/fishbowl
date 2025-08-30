@@ -76,7 +76,7 @@ export const MainContentPanelDisplay: React.FC<
     <div className="flex-1 flex items-center justify-center p-8 text-center">
       <div className="max-w-md">
         <AlertCircle className="h-16 w-16 mx-auto text-red-400 mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">
+        <h3 className="text-lg font-medium text-gray-300 mb-2">
           Failed to load messages
         </h3>
         <p className="text-gray-600 mb-4">
