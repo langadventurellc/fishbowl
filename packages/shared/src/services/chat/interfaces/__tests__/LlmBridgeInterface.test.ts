@@ -10,11 +10,11 @@ describe("LlmBridgeInterface", () => {
   // Mock implementation for testing interface compliance
   const createMockBridge = (): LlmBridgeInterface => ({
     async sendToProvider(
-      agentConfig: { llmConfigId: string },
+      agentConfig: { llmConfigId: string; model: string },
       context: { systemPrompt: string; messages: FormattedMessage[] },
     ): Promise<string> {
       // Mock implementation - returns simulated response
-      return `Agent response for ${agentConfig.llmConfigId}: ${context.messages.length} messages processed`;
+      return `Agent response for ${agentConfig.llmConfigId} with model ${agentConfig.model}: ${context.messages.length} messages processed`;
     },
   });
 
@@ -30,7 +30,10 @@ describe("LlmBridgeInterface", () => {
       const bridge = createMockBridge();
 
       // Should accept proper parameter types
-      const agentConfig = { llmConfigId: "test-provider-id" };
+      const agentConfig = {
+        llmConfigId: "test-provider-id",
+        model: "test-model",
+      };
       const context = {
         systemPrompt: "You are a test assistant.",
         messages: [
@@ -56,7 +59,7 @@ describe("LlmBridgeInterface", () => {
 
     it("should accept proper parameter types", async () => {
       // Agent config with llmConfigId
-      const agentConfig = { llmConfigId: "openai-gpt-4" };
+      const agentConfig = { llmConfigId: "openai-gpt-4", model: "gpt-4" };
 
       // Context with system prompt and formatted messages
       const context = {
@@ -81,7 +84,10 @@ describe("LlmBridgeInterface", () => {
 
     it("should return Promise<string> type", async () => {
       const bridge = createMockBridge();
-      const agentConfig = { llmConfigId: "anthropic-claude" };
+      const agentConfig = {
+        llmConfigId: "anthropic-claude",
+        model: "claude-3-5-sonnet",
+      };
       const context = {
         systemPrompt: "You are a creative writing assistant.",
         messages: [],
@@ -102,7 +108,7 @@ describe("LlmBridgeInterface", () => {
         constructor(private llmBridge: LlmBridgeInterface) {}
 
         async processMessage(
-          agentConfig: { llmConfigId: string },
+          agentConfig: { llmConfigId: string; model: string },
           prompt: string,
         ): Promise<string> {
           const context = {
@@ -135,19 +141,25 @@ describe("LlmBridgeInterface", () => {
       };
 
       // Different provider ID formats should be accepted
-      await bridge.sendToProvider({ llmConfigId: "openai-gpt-4" }, contexts);
       await bridge.sendToProvider(
-        { llmConfigId: "anthropic-claude-3-5-sonnet" },
+        { llmConfigId: "openai-gpt-4", model: "gpt-4" },
         contexts,
       );
       await bridge.sendToProvider(
-        { llmConfigId: "custom-provider-123" },
+        {
+          llmConfigId: "anthropic-claude-3-5-sonnet",
+          model: "claude-3-5-sonnet",
+        },
+        contexts,
+      );
+      await bridge.sendToProvider(
+        { llmConfigId: "custom-provider-123", model: "custom-model" },
         contexts,
       );
     });
 
     it("should handle empty and populated message arrays", async () => {
-      const agentConfig = { llmConfigId: "test-provider" };
+      const agentConfig = { llmConfigId: "test-provider", model: "test-model" };
 
       // Empty messages array
       const emptyContext = {
@@ -185,7 +197,7 @@ describe("LlmBridgeInterface", () => {
     });
 
     it("should accept various system prompt formats", async () => {
-      const agentConfig = { llmConfigId: "test-provider" };
+      const agentConfig = { llmConfigId: "test-provider", model: "test-model" };
       const messages = [{ role: "user" as const, content: "Test message" }];
 
       // Different system prompt styles should work
@@ -236,7 +248,7 @@ describe("LlmBridgeInterface", () => {
       const responses = await Promise.all(
         agents.map((agent) =>
           bridge.sendToProvider(
-            { llmConfigId: agent.llmConfigId },
+            { llmConfigId: agent.llmConfigId, model: "test-model" },
             { systemPrompt: agent.systemPrompt, messages: [userMessage] },
           ),
         ),
@@ -251,7 +263,10 @@ describe("LlmBridgeInterface", () => {
 
     it("should support conversation context building", async () => {
       const bridge = createMockBridge();
-      const agentConfig = { llmConfigId: "conversation-agent" };
+      const agentConfig = {
+        llmConfigId: "conversation-agent",
+        model: "conversation-model",
+      };
 
       // Build context from conversation history
       const conversationHistory: FormattedMessage[] = [
@@ -279,7 +294,10 @@ describe("LlmBridgeInterface", () => {
         },
       };
 
-      const agentConfig = { llmConfigId: "failing-provider" };
+      const agentConfig = {
+        llmConfigId: "failing-provider",
+        model: "failing-model",
+      };
       const context = {
         systemPrompt: "Test prompt",
         messages: [{ role: "user" as const, content: "Test" }],

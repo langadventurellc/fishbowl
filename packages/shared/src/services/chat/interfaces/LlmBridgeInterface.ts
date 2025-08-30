@@ -29,6 +29,7 @@ export interface LlmBridgeInterface {
    *
    * @param agentConfig - Agent configuration containing LLM provider reference
    * @param agentConfig.llmConfigId - ID used to resolve LLM provider configuration
+   * @param agentConfig.model - Model identifier to use for the LLM request
    * @param context - Formatted context for the LLM request
    * @param context.systemPrompt - System prompt defining agent behavior and role
    * @param context.messages - Conversation history formatted for LLM consumption
@@ -39,7 +40,10 @@ export interface LlmBridgeInterface {
    * @example
    * ```typescript
    * const response = await bridge.sendToProvider(
-   *   { llmConfigId: "anthropic-claude-3-5-sonnet" },
+   *   {
+   *     llmConfigId: "anthropic-claude-3-5-sonnet",
+   *     model: "claude-3-5-sonnet-20241022"
+   *   },
    *   {
    *     systemPrompt: "You are a creative writing assistant.",
    *     messages: [
@@ -52,7 +56,7 @@ export interface LlmBridgeInterface {
    * ```
    */
   sendToProvider(
-    agentConfig: { llmConfigId: string },
+    agentConfig: { llmConfigId: string; model: string },
     context: { systemPrompt: string; messages: FormattedMessage[] },
   ): Promise<string>;
 }

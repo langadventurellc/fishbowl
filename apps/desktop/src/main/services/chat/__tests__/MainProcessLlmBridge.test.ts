@@ -47,7 +47,10 @@ describe("MainProcessLlmBridge", () => {
   });
 
   describe("sendToProvider", () => {
-    const mockAgentConfig = { llmConfigId: "test-llm-config" };
+    const mockAgentConfig = {
+      llmConfigId: "test-llm-config",
+      model: "test-model",
+    };
     const mockContext = {
       systemPrompt: "You are a helpful assistant",
       messages: [

@@ -16,11 +16,12 @@ export class MainProcessLlmBridge implements LlmBridgeInterface {
   ) {}
 
   async sendToProvider(
-    agentConfig: { llmConfigId: string },
+    agentConfig: { llmConfigId: string; model: string },
     context: { systemPrompt: string; messages: FormattedMessage[] },
   ): Promise<string> {
     this.logger.debug("MainProcessLlmBridge.sendToProvider called", {
       llmConfigId: agentConfig.llmConfigId,
+      model: agentConfig.model,
       messageCount: context.messages.length,
     });
 
@@ -64,7 +65,7 @@ export class MainProcessLlmBridge implements LlmBridgeInterface {
       // Build request parameters with default sampling
       const requestParams: LlmRequestParams = {
         systemPrompt: context.systemPrompt,
-        model: config.id, // Using config ID as model identifier
+        model: agentConfig.model, // Use the model from agent config
         messages: context.messages,
         config: config,
         sampling: {
@@ -76,7 +77,7 @@ export class MainProcessLlmBridge implements LlmBridgeInterface {
 
       this.logger.debug("Sending request to LLM provider", {
         provider: config.provider,
-        model: config.id,
+        model: agentConfig.model,
         llmConfigId: agentConfig.llmConfigId,
       });
 
@@ -97,6 +98,7 @@ export class MainProcessLlmBridge implements LlmBridgeInterface {
         error as Error,
         {
           llmConfigId: agentConfig.llmConfigId,
+          model: agentConfig.model,
           messageCount: context.messages.length,
         },
       );

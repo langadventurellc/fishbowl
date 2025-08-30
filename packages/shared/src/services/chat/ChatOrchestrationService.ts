@@ -317,7 +317,7 @@ export class ChatOrchestrationService {
 
       // Send to LLM provider
       const response = await this.llmBridge.sendToProvider(
-        { llmConfigId: agent.llmConfigId },
+        { llmConfigId: agent.llmConfigId, model: agent.model },
         context,
       );
 
