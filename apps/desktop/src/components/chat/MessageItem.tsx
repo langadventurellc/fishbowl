@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { MessageItemProps } from "@fishbowl-ai/ui-shared";
-import { useState } from "react";
+import React, { useState } from "react";
+import { Check, Loader2 } from "lucide-react";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
 import { MessageHeader } from "./MessageHeader";
@@ -131,6 +132,17 @@ export function MessageItem(props: MessageItemProps) {
     onContextMenuAction("regenerate", message.id);
   };
 
+  // Enhanced keyboard interaction for accessibility
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    // Handle Space and Enter keys to toggle the checkbox
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      if (!updating) {
+        handleToggleContext();
+      }
+    }
+  };
+
   // Context menu positioning logic - show menu above for messages near bottom of viewport
   const shouldShowMenuAbove = () => {
     if (typeof window === "undefined") return false;
@@ -188,13 +200,29 @@ export function MessageItem(props: MessageItemProps) {
   const userMessageWrapperClasses = "flex justify-end w-full";
 
   const contextToggleClasses = cn(
-    "absolute right-2 top-2 w-5 h-5 border-0 rounded cursor-pointer text-xs",
-    "flex items-center justify-center transition-all duration-150 z-[100]",
-    // Show loading state during updates
-    updating && "opacity-50 cursor-not-allowed",
-    displayIsActive
-      ? "bg-primary text-primary-foreground"
-      : "bg-muted text-muted-foreground",
+    "absolute right-2 top-2 w-5 h-5 border rounded-[4px] cursor-pointer",
+    "flex items-center justify-center transition-all duration-200 z-[100]",
+    "shadow-xs outline-none",
+    // Base states
+    "border-input bg-transparent",
+    // Checked state (included)
+    displayIsActive && [
+      "bg-primary border-primary text-primary-foreground",
+      "shadow-sm",
+    ],
+    // Unchecked state (excluded)
+    !displayIsActive && [
+      "bg-muted/30 border-muted-foreground/30 text-muted-foreground",
+      "hover:bg-muted/50 hover:border-muted-foreground/50",
+    ],
+    // Hover state for checked
+    displayIsActive && "hover:bg-primary/90 hover:shadow-md",
+    // Focus state
+    "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+    // Loading state
+    updating && ["opacity-60 cursor-not-allowed", "animate-pulse"],
+    // Disabled state
+    "disabled:cursor-not-allowed disabled:opacity-50",
   );
 
   // Render error system message with enhanced formatting
@@ -236,7 +264,12 @@ export function MessageItem(props: MessageItemProps) {
     if (!error) return null;
 
     return (
-      <div className="absolute top-7 right-2 z-[101] bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 text-xs px-2 py-1 rounded shadow-md max-w-48">
+      <div
+        id={`error-${message.id}`}
+        className="absolute top-7 right-2 z-[101] bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 text-xs px-2 py-1 rounded shadow-md max-w-48"
+        role="alert"
+        aria-live="polite"
+      >
         Failed to update: {error.message}
       </div>
     );
@@ -263,7 +296,11 @@ export function MessageItem(props: MessageItemProps) {
           <button
             className={contextToggleClasses}
             onClick={handleToggleContext}
+            onKeyDown={handleKeyDown}
             disabled={updating}
+            role="checkbox"
+            aria-checked={displayIsActive}
+            tabIndex={0}
             title={
               updating
                 ? "Updating..."
@@ -278,8 +315,13 @@ export function MessageItem(props: MessageItemProps) {
                   ? "Exclude message from conversation context"
                   : "Include message in conversation context"
             }
+            aria-describedby={error ? `error-${message.id}` : undefined}
           >
-            {updating ? "⏳" : displayIsActive ? "✓" : ""}
+            {updating ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : displayIsActive ? (
+              <Check className="w-3 h-3" />
+            ) : null}
           </button>
           {renderInclusionError()}
           <div className={userMessageWrapperClasses}>
@@ -316,7 +358,11 @@ export function MessageItem(props: MessageItemProps) {
           <button
             className={contextToggleClasses}
             onClick={handleToggleContext}
+            onKeyDown={handleKeyDown}
             disabled={updating}
+            role="checkbox"
+            aria-checked={displayIsActive}
+            tabIndex={0}
             title={
               updating
                 ? "Updating..."
@@ -331,8 +377,13 @@ export function MessageItem(props: MessageItemProps) {
                   ? "Exclude message from conversation context"
                   : "Include message in conversation context"
             }
+            aria-describedby={error ? `error-${message.id}` : undefined}
           >
-            {updating ? "⏳" : displayIsActive ? "✓" : ""}
+            {updating ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : displayIsActive ? (
+              <Check className="w-3 h-3" />
+            ) : null}
           </button>
           {renderInclusionError()}
           <div className="flex items-center gap-2">

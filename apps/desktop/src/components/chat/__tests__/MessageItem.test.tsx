@@ -318,11 +318,11 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /exclude message from conversation context/i,
       });
       expect(toggleButton).toBeInTheDocument();
-      expect(toggleButton).toHaveTextContent("✓");
+      expect(toggleButton.querySelector("svg")).toBeInTheDocument(); // Check icon
     });
 
     it("shows inactive state toggle button for agent messages", () => {
@@ -332,11 +332,11 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /include message in conversation context/i,
       });
       expect(toggleButton).toBeInTheDocument();
-      expect(toggleButton).toHaveTextContent("");
+      expect(toggleButton.querySelector("svg")).toBeNull(); // No icon for unchecked state
     });
 
     it("toggles message context state when clicked", () => {
@@ -346,14 +346,14 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /exclude message from conversation context/i,
       });
       fireEvent.click(toggleButton);
 
-      // Button text should change to indicate new state
+      // Checkbox should change to indicate new state
       expect(
-        screen.getByRole("button", {
+        screen.getByRole("checkbox", {
           name: /include message in conversation context/i,
         }),
       ).toBeInTheDocument();
@@ -438,7 +438,7 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /exclude message from conversation context/i,
       });
       expect(toggleButton).toHaveAttribute(
@@ -485,7 +485,7 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /exclude message from conversation context/i,
       });
       fireEvent.click(toggleButton);
@@ -503,7 +503,7 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /include message in conversation context/i,
       });
       fireEvent.click(toggleButton);
@@ -524,12 +524,17 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /updating message inclusion status/i,
       });
       expect(toggleButton).toBeDisabled();
-      expect(toggleButton).toHaveTextContent("⏳");
       expect(toggleButton).toHaveAttribute("title", "Updating...");
+      expect(toggleButton.querySelector("svg")).toBeInTheDocument();
+      expect(toggleButton).toHaveClass(
+        "animate-pulse",
+        "opacity-60",
+        "cursor-not-allowed",
+      );
     });
 
     it("displays error message when inclusion update fails", async () => {
@@ -542,9 +547,138 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      expect(
-        screen.getByText("Failed to update: Update failed"),
-      ).toBeInTheDocument();
+      const errorElement = screen.getByText("Failed to update: Update failed");
+      expect(errorElement).toBeInTheDocument();
+      expect(errorElement).toHaveAttribute("role", "alert");
+      expect(errorElement).toHaveAttribute("aria-live", "polite");
+      expect(errorElement).toHaveAttribute("id", "error-msg-123");
+    });
+
+    it("has proper checkbox role and ARIA attributes", () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      expect(toggleButton).toHaveAttribute("role", "checkbox");
+      expect(toggleButton).toHaveAttribute("aria-checked", "true");
+      expect(toggleButton).toHaveAttribute("tabIndex", "0");
+    });
+
+    it("updates aria-checked when inclusion state changes", () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: false }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      expect(toggleButton).toHaveAttribute("aria-checked", "false");
+    });
+
+    it("handles keyboard navigation with Space key", async () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: false }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      fireEvent.keyDown(toggleButton, { key: " " });
+
+      await waitFor(() => {
+        expect(mockUpdateInclusion).toHaveBeenCalledWith("msg-123", true);
+      });
+    });
+
+    it("handles keyboard navigation with Enter key", async () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      fireEvent.keyDown(toggleButton, { key: "Enter" });
+
+      await waitFor(() => {
+        expect(mockUpdateInclusion).toHaveBeenCalledWith("msg-123", false);
+      });
+    });
+
+    it("does not trigger on other key presses", () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: false }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      fireEvent.keyDown(toggleButton, { key: "Tab" });
+
+      expect(mockUpdateInclusion).not.toHaveBeenCalled();
+    });
+
+    it("prevents keyboard action when updating", () => {
+      mockUseUpdateMessage.updating = true;
+
+      const props = createMockProps({
+        message: createMockMessage({ isActive: false }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      fireEvent.keyDown(toggleButton, { key: " " });
+
+      expect(mockUpdateInclusion).not.toHaveBeenCalled();
+    });
+
+    it("has proper aria-describedby when error exists", () => {
+      const testError = new Error("Update failed");
+      mockUseUpdateMessage.error = testError;
+
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      expect(toggleButton).toHaveAttribute("aria-describedby", "error-msg-123");
+    });
+
+    it("shows checkmark icon when message is included", () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      expect(toggleButton.querySelector("svg")).toBeInTheDocument();
+      expect(toggleButton).toHaveClass(
+        "bg-primary",
+        "border-primary",
+        "text-primary-foreground",
+      );
+    });
+
+    it("applies proper styling for excluded state", () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: false }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("checkbox");
+      expect(toggleButton).toHaveClass(
+        "bg-muted/30",
+        "border-muted-foreground/30",
+        "text-muted-foreground",
+      );
     });
 
     it("shows optimistic updates immediately before database call", async () => {
@@ -554,7 +688,7 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /exclude message from conversation context/i,
       });
 
@@ -563,7 +697,7 @@ describe("MessageItem", () => {
       // Should immediately show the optimistic state (unchecked)
       await waitFor(() => {
         expect(
-          screen.getByRole("button", {
+          screen.getByRole("checkbox", {
             name: /include message in conversation context/i,
           }),
         ).toBeInTheDocument();
@@ -580,7 +714,7 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /exclude message from conversation context/i,
       });
       fireEvent.click(toggleButton);
@@ -588,7 +722,7 @@ describe("MessageItem", () => {
       // Should rollback to original state after error
       await waitFor(() => {
         expect(
-          screen.getByRole("button", {
+          screen.getByRole("checkbox", {
             name: /exclude message from conversation context/i,
           }),
         ).toBeInTheDocument();
@@ -617,7 +751,7 @@ describe("MessageItem", () => {
 
       render(<MessageItem {...props} />);
 
-      const toggleButton = screen.getByRole("button", {
+      const toggleButton = screen.getByRole("checkbox", {
         name: /updating message inclusion status/i,
       });
       expect(toggleButton).toHaveAttribute(
