@@ -289,18 +289,35 @@ affectedFiles:
   packages/ui-shared/src/stores/chat/AgentError.ts: Created AgentError interface
     for structured error information with message, agentName, errorType, and
     retryable fields
-  apps/desktop/src/components/chat/MessageItem.tsx: Enhanced system message
+  apps/desktop/src/components/chat/MessageItem.tsx: "Enhanced system message
     display with error detection logic, visual styling for agent error messages,
     and agent name parsing. Added isErrorSystemMessage and extractAgentName
     helper functions. Implemented getSystemMessageClasses and
     renderErrorSystemMessage functions for enhanced error formatting with
-    warning icons and structured layout.
+    warning icons and structured layout.; Enhanced MessageItem component with
+    complete useUpdateMessage hook integration including: imported
+    useUpdateMessage hook, implemented optimistic state management using
+    useState with boolean|null type, replaced handleToggleContext with async
+    database persistence logic, added loading state visualization (hourglass
+    icon, disabled state), implemented error handling with visual feedback and
+    rollback mechanism, updated checkbox styling to show loading states, added
+    renderInclusionError function for error display, updated accessibility
+    labels for all interaction states, and maintained existing functionality
+    while adding database persistence"
   apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
-    Created comprehensive unit test suite with 25 test cases covering error
+    "Created comprehensive unit test suite with 25 test cases covering error
     message detection, parsing, styling, accessibility, context toggle
     functionality, and edge cases. Tests verify proper agent name extraction,
     visual distinction for error messages, warning icon display, and graceful
-    handling of malformed error messages.
+    handling of malformed error messages.; Added comprehensive unit tests for
+    checkbox integration including: mock setup for useUpdateMessage hook with
+    proper TypeScript typing, test cases for updateInclusion calls with correct
+    parameters, loading state validation (disabled button, hourglass icon,
+    updating labels), error display verification with inline error messages,
+    optimistic update behavior testing, error rollback scenarios, state
+    synchronization validation, and accessibility testing for all interaction
+    states - 8 new test cases covering complete checkbox integration workflow
+    with all 33 tests passing"
   packages/ui-shared/src/types/chat/MessageInputContainerProps.ts:
     Created new interface for MessageInputContainer props with comprehensive
     TypeScript definitions and documentation

@@ -1,7 +1,8 @@
 import type { MessageItemProps } from "@fishbowl-ai/ui-shared";
 import type { MessageViewModel } from "@fishbowl-ai/ui-shared";
+import type { Message } from "@fishbowl-ai/shared";
 import "@testing-library/jest-dom";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MessageItem } from "../MessageItem";
 
 // Mock child components
@@ -43,6 +44,20 @@ jest.mock("../MessageHeader", () => ({
   ),
 }));
 
+// Mock useUpdateMessage hook
+const mockUpdateInclusion = jest.fn();
+const mockReset = jest.fn();
+const mockUseUpdateMessage = {
+  updateInclusion: mockUpdateInclusion,
+  updating: false,
+  error: null as Error | null,
+  reset: mockReset,
+};
+
+jest.mock("../../../hooks/messages/useUpdateMessage", () => ({
+  useUpdateMessage: jest.fn(() => mockUseUpdateMessage),
+}));
+
 // Mock message data
 const createMockMessage = (
   overrides: Partial<MessageViewModel> = {},
@@ -70,8 +85,24 @@ const createMockProps = (
 describe("MessageItem", () => {
   const mockOnContextMenuAction = jest.fn();
 
+  // Mock response message for updateInclusion
+  const mockUpdatedMessage: Message = {
+    id: "msg-123",
+    conversation_id: "conv-123",
+    conversation_agent_id: null,
+    role: "user",
+    content: "Test message",
+    included: false,
+    created_at: "2023-01-01T10:00:00.000Z",
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Reset mock hook state
+    mockUseUpdateMessage.updating = false;
+    mockUseUpdateMessage.error = null;
+    mockUpdateInclusion.mockResolvedValue(mockUpdatedMessage);
   });
 
   describe("Basic Message Rendering", () => {
@@ -443,6 +474,156 @@ describe("MessageItem", () => {
 
       const container = screen.getByRole("article");
       expect(container).toHaveClass("custom-message-class");
+    });
+  });
+
+  describe("Checkbox Integration with useUpdateMessage Hook", () => {
+    it("calls updateInclusion when checkbox is clicked to exclude message", async () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("button", {
+        name: /exclude message from conversation context/i,
+      });
+      fireEvent.click(toggleButton);
+
+      await waitFor(() => {
+        expect(mockUpdateInclusion).toHaveBeenCalledWith("msg-123", false);
+      });
+      expect(mockReset).toHaveBeenCalled();
+    });
+
+    it("calls updateInclusion when checkbox is clicked to include message", async () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: false }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("button", {
+        name: /include message in conversation context/i,
+      });
+      fireEvent.click(toggleButton);
+
+      await waitFor(() => {
+        expect(mockUpdateInclusion).toHaveBeenCalledWith("msg-123", true);
+      });
+      expect(mockReset).toHaveBeenCalled();
+    });
+
+    it("shows loading state during inclusion update", async () => {
+      // Set mock to return loading state
+      mockUseUpdateMessage.updating = true;
+
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("button", {
+        name: /updating message inclusion status/i,
+      });
+      expect(toggleButton).toBeDisabled();
+      expect(toggleButton).toHaveTextContent("⏳");
+      expect(toggleButton).toHaveAttribute("title", "Updating...");
+    });
+
+    it("displays error message when inclusion update fails", async () => {
+      const testError = new Error("Update failed");
+      mockUseUpdateMessage.error = testError;
+
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      expect(
+        screen.getByText("Failed to update: Update failed"),
+      ).toBeInTheDocument();
+    });
+
+    it("shows optimistic updates immediately before database call", async () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("button", {
+        name: /exclude message from conversation context/i,
+      });
+
+      fireEvent.click(toggleButton);
+
+      // Should immediately show the optimistic state (unchecked)
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", {
+            name: /include message in conversation context/i,
+          }),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("handles updateInclusion errors gracefully with rollback", async () => {
+      const testError = new Error("Network error");
+      mockUpdateInclusion.mockRejectedValue(testError);
+
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("button", {
+        name: /exclude message from conversation context/i,
+      });
+      fireEvent.click(toggleButton);
+
+      // Should rollback to original state after error
+      await waitFor(() => {
+        expect(
+          screen.getByRole("button", {
+            name: /exclude message from conversation context/i,
+          }),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("applies correct styling based on displayIsActive state", () => {
+      const props = createMockProps({
+        message: createMockMessage({ isActive: false }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const messageWrapper = screen
+        .getByRole("article")
+        .querySelector(".opacity-50");
+      expect(messageWrapper).toBeInTheDocument();
+    });
+
+    it("shows correct accessibility labels during loading", () => {
+      mockUseUpdateMessage.updating = true;
+
+      const props = createMockProps({
+        message: createMockMessage({ isActive: true }),
+      });
+
+      render(<MessageItem {...props} />);
+
+      const toggleButton = screen.getByRole("button", {
+        name: /updating message inclusion status/i,
+      });
+      expect(toggleButton).toHaveAttribute(
+        "aria-label",
+        "Updating message inclusion status",
+      );
     });
   });
 

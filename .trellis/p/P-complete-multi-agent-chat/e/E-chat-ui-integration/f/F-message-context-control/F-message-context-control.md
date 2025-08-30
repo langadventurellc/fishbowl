@@ -1,14 +1,37 @@
 ---
 id: F-message-context-control
 title: Message Context Control Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-chat-ui-integration
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/chat/MessageItem.tsx: "Enhanced MessageItem
+    component with complete useUpdateMessage hook integration including:
+    imported useUpdateMessage hook, implemented optimistic state management
+    using useState with boolean|null type, replaced handleToggleContext with
+    async database persistence logic, added loading state visualization
+    (hourglass icon, disabled state), implemented error handling with visual
+    feedback and rollback mechanism, updated checkbox styling to show loading
+    states, added renderInclusionError function for error display, updated
+    accessibility labels for all interaction states, and maintained existing
+    functionality while adding database persistence"
+  apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
+    "Added comprehensive unit tests for checkbox integration including: mock
+    setup for useUpdateMessage hook with proper TypeScript typing, test cases
+    for updateInclusion calls with correct parameters, loading state validation
+    (disabled button, hourglass icon, updating labels), error display
+    verification with inline error messages, optimistic update behavior testing,
+    error rollback scenarios, state synchronization validation, and
+    accessibility testing for all interaction states - 8 new test cases covering
+    complete checkbox integration workflow with all 33 tests passing"
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-context-statistics
+  - T-enhance-checkbox-styling-and
+  - T-integrate-context-statistics
+  - T-wire-messageitem-checkboxes
 created: 2025-08-30T03:49:24.640Z
 updated: 2025-08-30T03:49:24.640Z
 ---

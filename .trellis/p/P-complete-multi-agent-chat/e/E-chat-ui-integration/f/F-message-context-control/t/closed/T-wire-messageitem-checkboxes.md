@@ -1,12 +1,44 @@
 ---
 id: T-wire-messageitem-checkboxes
 title: Wire MessageItem checkboxes to useUpdateMessage hook
-status: open
+status: done
 priority: high
 parent: F-message-context-control
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/chat/MessageItem.tsx: "Enhanced MessageItem
+    component with complete useUpdateMessage hook integration including:
+    imported useUpdateMessage hook, implemented optimistic state management
+    using useState with boolean|null type, replaced handleToggleContext with
+    async database persistence logic, added loading state visualization
+    (hourglass icon, disabled state), implemented error handling with visual
+    feedback and rollback mechanism, updated checkbox styling to show loading
+    states, added renderInclusionError function for error display, updated
+    accessibility labels for all interaction states, and maintained existing
+    functionality while adding database persistence"
+  apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
+    "Added comprehensive unit tests for checkbox integration including: mock
+    setup for useUpdateMessage hook with proper TypeScript typing, test cases
+    for updateInclusion calls with correct parameters, loading state validation
+    (disabled button, hourglass icon, updating labels), error display
+    verification with inline error messages, optimistic update behavior testing,
+    error rollback scenarios, state synchronization validation, and
+    accessibility testing for all interaction states - 8 new test cases covering
+    complete checkbox integration workflow with all 33 tests passing"
+log:
+  - Successfully wired MessageItem checkboxes to useUpdateMessage hook with
+    comprehensive integration. Implemented optimistic UI updates that
+    immediately reflect checkbox state changes while persisting to database in
+    background. Added robust error handling with visual feedback - loading
+    states show hourglass icon and disable interaction, while errors display
+    inline messages with rollback to previous state. Replaced local state
+    management with database-backed state synchronization using message.isActive
+    as source of truth. Integration includes proper accessibility support with
+    dynamic ARIA labels and titles. Wrote comprehensive unit tests covering
+    checkbox integration, loading states, error scenarios, optimistic updates,
+    and accessibility features. All quality checks pass (lint, format,
+    type-check) and all 33 tests pass including 8 new checkbox integration
+    tests.
 schema: v1.0
 childrenIds: []
 created: 2025-08-30T06:19:58.386Z

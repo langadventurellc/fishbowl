@@ -4,6 +4,7 @@ import { useState } from "react";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
 import { MessageHeader } from "./MessageHeader";
+import { useUpdateMessage } from "../../hooks/messages/useUpdateMessage";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.
@@ -82,11 +83,39 @@ import { MessageHeader } from "./MessageHeader";
  */
 export function MessageItem(props: MessageItemProps) {
   const { message, className, canRegenerate, onContextMenuAction } = props;
-  const [isActive, setIsActive] = useState(message.isActive);
 
-  const handleToggleContext = () => {
-    const newActiveState = !isActive;
-    setIsActive(newActiveState);
+  // Use useUpdateMessage hook for database persistence
+  const { updateInclusion, updating, error, reset } = useUpdateMessage();
+
+  // Optimistic state management - use message.isActive as source of truth
+  const [optimisticActive, setOptimisticActive] = useState<boolean | null>(
+    null,
+  );
+  const displayIsActive =
+    optimisticActive !== null ? optimisticActive : message.isActive;
+
+  const handleToggleContext = async () => {
+    const newActiveState = !displayIsActive;
+
+    try {
+      // Optimistic update: immediately show new state
+      setOptimisticActive(newActiveState);
+
+      // Clear any previous errors
+      reset();
+
+      // Persist to database via useUpdateMessage hook
+      await updateInclusion(message.id, newActiveState);
+
+      // Success: clear optimistic state (will use message.isActive from props)
+      setOptimisticActive(null);
+    } catch {
+      // Error: rollback optimistic state to original value
+      setOptimisticActive(null);
+
+      // Error is already stored in useUpdateMessage hook's error state
+      // Could add user notification here if needed
+    }
   };
 
   // Context menu handlers
@@ -132,7 +161,7 @@ export function MessageItem(props: MessageItemProps) {
 
   const messageWrapperClasses = cn(
     "relative p-2 rounded-lg border border-transparent bg-transparent",
-    !isActive && "opacity-50",
+    !displayIsActive && "opacity-50",
   );
 
   // Enhanced system message styling with error detection
@@ -161,7 +190,9 @@ export function MessageItem(props: MessageItemProps) {
   const contextToggleClasses = cn(
     "absolute right-2 top-2 w-5 h-5 border-0 rounded cursor-pointer text-xs",
     "flex items-center justify-center transition-all duration-150 z-[100]",
-    isActive
+    // Show loading state during updates
+    updating && "opacity-50 cursor-not-allowed",
+    displayIsActive
       ? "bg-primary text-primary-foreground"
       : "bg-muted text-muted-foreground",
   );
@@ -200,6 +231,17 @@ export function MessageItem(props: MessageItemProps) {
     );
   };
 
+  // Render error message for inclusion update failures
+  const renderInclusionError = () => {
+    if (!error) return null;
+
+    return (
+      <div className="absolute top-7 right-2 z-[101] bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 text-xs px-2 py-1 rounded shadow-md max-w-48">
+        Failed to update: {error.message}
+      </div>
+    );
+  };
+
   return (
     <div
       className={cn(messageClasses, className)}
@@ -221,19 +263,25 @@ export function MessageItem(props: MessageItemProps) {
           <button
             className={contextToggleClasses}
             onClick={handleToggleContext}
+            disabled={updating}
             title={
-              isActive
-                ? "Click to exclude from context"
-                : "Click to include in context"
+              updating
+                ? "Updating..."
+                : displayIsActive
+                  ? "Click to exclude from context"
+                  : "Click to include in context"
             }
             aria-label={
-              isActive
-                ? "Exclude message from conversation context"
-                : "Include message in conversation context"
+              updating
+                ? "Updating message inclusion status"
+                : displayIsActive
+                  ? "Exclude message from conversation context"
+                  : "Include message in conversation context"
             }
           >
-            {isActive ? "✓" : ""}
+            {updating ? "⏳" : displayIsActive ? "✓" : ""}
           </button>
+          {renderInclusionError()}
           <div className={userMessageWrapperClasses}>
             <div className={userMessageClasses}>
               <div className="relative">
@@ -268,19 +316,25 @@ export function MessageItem(props: MessageItemProps) {
           <button
             className={contextToggleClasses}
             onClick={handleToggleContext}
+            disabled={updating}
             title={
-              isActive
-                ? "Click to exclude from context"
-                : "Click to include in context"
+              updating
+                ? "Updating..."
+                : displayIsActive
+                  ? "Click to exclude from context"
+                  : "Click to include in context"
             }
             aria-label={
-              isActive
-                ? "Exclude message from conversation context"
-                : "Include message in conversation context"
+              updating
+                ? "Updating message inclusion status"
+                : displayIsActive
+                  ? "Exclude message from conversation context"
+                  : "Include message in conversation context"
             }
           >
-            {isActive ? "✓" : ""}
+            {updating ? "⏳" : displayIsActive ? "✓" : ""}
           </button>
+          {renderInclusionError()}
           <div className="flex items-center gap-2">
             <MessageHeader
               agentName={message.agent}
