@@ -1,12 +1,36 @@
 ---
 id: T-update-agentpillviewmodel
 title: Update AgentPillViewModel interface to support status states
-status: open
+status: done
 priority: high
 parent: F-agent-status-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/chat/AgentPillViewModel.ts: Created new
+    AgentPillViewModel interface with status and error properties, properly
+    imported AgentError type, and maintained backward compatibility with
+    isThinking property
+  packages/ui-shared/src/types/chat/index.ts:
+    Added export for AgentPillViewModel
+    to make it available through chat types barrel file
+  packages/ui-shared/src/types/index.ts:
+    Removed export of AgentPillViewModel from
+    root types directory to avoid conflicts
+  packages/ui-shared/src/types/chat/AgentLabelsContainerDisplayProps.ts: Updated import path for AgentPillViewModel to use new chat types location
+  packages/ui-shared/src/types/chat/AgentPillProps.ts: Updated import path for AgentPillViewModel to use new chat types location
+  packages/ui-shared/src/types/chat/__tests__/AgentLabelsContainerDisplayProps.test.ts:
+    Updated import path and mock agent object to include new required status and
+    error properties
+log:
+  - Updated AgentPillViewModel interface to support rich status states for
+    real-time agent processing feedback. Extended the existing interface to
+    include a 'status' property with granular states (idle, thinking, complete,
+    error) and an 'error' property for structured agent-specific error
+    information. Maintained backward compatibility with existing 'isThinking'
+    boolean property. Moved interface from root types directory to chat types
+    directory for better organization and updated all imports and barrel
+    exports. All quality checks pass with TypeScript compilation, linting, and
+    formatting.
 schema: v1.0
 childrenIds: []
 created: 2025-08-30T04:59:10.882Z

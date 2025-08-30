@@ -1,14 +1,32 @@
 ---
 id: F-agent-status-integration
 title: Agent Status Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-chat-ui-integration
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/chat/AgentPillViewModel.ts: Created new
+    AgentPillViewModel interface with status and error properties, properly
+    imported AgentError type, and maintained backward compatibility with
+    isThinking property
+  packages/ui-shared/src/types/chat/index.ts:
+    Added export for AgentPillViewModel
+    to make it available through chat types barrel file
+  packages/ui-shared/src/types/index.ts:
+    Removed export of AgentPillViewModel from
+    root types directory to avoid conflicts
+  packages/ui-shared/src/types/chat/AgentLabelsContainerDisplayProps.ts: Updated import path for AgentPillViewModel to use new chat types location
+  packages/ui-shared/src/types/chat/AgentPillProps.ts: Updated import path for AgentPillViewModel to use new chat types location
+  packages/ui-shared/src/types/chat/__tests__/AgentLabelsContainerDisplayProps.test.ts:
+    Updated import path and mock agent object to include new required status and
+    error properties
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-enhance-agentpill-component
+  - T-update-agentpill-component-1
+  - T-update-agentpillviewmodel
 created: 2025-08-30T03:48:48.633Z
 updated: 2025-08-30T03:48:48.633Z
 ---

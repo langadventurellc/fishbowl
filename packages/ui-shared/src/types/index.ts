@@ -4,7 +4,6 @@
  * @module types
  */
 
-export * from "./AgentPillViewModel";
 export * from "./agents";
 export * from "./chat";
 export * from "./components";

@@ -305,7 +305,9 @@ affectedFiles:
     Created new interface for MessageInputContainer props with comprehensive
     TypeScript definitions and documentation
   packages/ui-shared/src/types/chat/index.ts: Added export for
-    MessageInputContainerProps interface to make it available for import
+    MessageInputContainerProps interface to make it available for import; Added
+    export for AgentPillViewModel to make it available through chat types barrel
+    file
   apps/desktop/src/components/input/MessageInputContainer.tsx:
     Implemented integrated message input container component with state
     management, form validation, error handling, keyboard shortcuts, and proper
@@ -332,6 +334,18 @@ affectedFiles:
   apps/desktop/src/components/input/index.ts: Added export for
     MessageInputContainer component to make it available for import from the
     input components barrel file
+  packages/ui-shared/src/types/chat/AgentPillViewModel.ts: Created new
+    AgentPillViewModel interface with status and error properties, properly
+    imported AgentError type, and maintained backward compatibility with
+    isThinking property
+  packages/ui-shared/src/types/index.ts:
+    Removed export of AgentPillViewModel from
+    root types directory to avoid conflicts
+  packages/ui-shared/src/types/chat/AgentLabelsContainerDisplayProps.ts: Updated import path for AgentPillViewModel to use new chat types location
+  packages/ui-shared/src/types/chat/AgentPillProps.ts: Updated import path for AgentPillViewModel to use new chat types location
+  packages/ui-shared/src/types/chat/__tests__/AgentLabelsContainerDisplayProps.test.ts:
+    Updated import path and mock agent object to include new required status and
+    error properties
 log: []
 schema: v1.0
 childrenIds:

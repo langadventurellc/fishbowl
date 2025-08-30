@@ -7,7 +7,7 @@
  * @module types/chat/__tests__/AgentLabelsContainerDisplayProps.test
  */
 
-import type { AgentPillViewModel } from "../../AgentPillViewModel";
+import type { AgentPillViewModel } from "../AgentPillViewModel";
 import type { AgentLabelsContainerDisplayProps } from "../AgentLabelsContainerDisplayProps";
 
 describe("AgentLabelsContainerDisplayProps", () => {
@@ -16,6 +16,8 @@ describe("AgentLabelsContainerDisplayProps", () => {
     role: "Test Role",
     color: "#3b82f6",
     isThinking: false,
+    status: "idle",
+    error: null,
     enabled: true,
   };
 

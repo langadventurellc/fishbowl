@@ -1,3 +1,5 @@
+import type { AgentError } from "../../stores/chat/AgentError";
+
 /**
  * AgentPillViewModel interface for conversation UI system.
  */
@@ -36,8 +38,32 @@ export interface AgentPillViewModel {
    * to provide visual feedback that the agent is active.
    *
    * Used for real-time state indication during agent processing.
+   *
+   * @deprecated Use `status` property instead. Maintained for backward compatibility.
    */
   isThinking: boolean;
+
+  /**
+   * Current agent processing state.
+   * Provides rich status information for real-time UI feedback.
+   * Replaces the simple boolean `isThinking` with more granular states.
+   *
+   * @example
+   * - 'idle': Agent is not processing
+   * - 'thinking': Agent is actively processing a request
+   * - 'complete': Agent has finished processing successfully
+   * - 'error': Agent encountered an error during processing
+   */
+  status: "idle" | "thinking" | "complete" | "error";
+
+  /**
+   * Agent-specific error information when status is 'error'.
+   * Contains structured error data including user-friendly messages,
+   * error types, and retry capabilities.
+   *
+   * Should be null or undefined when status is not 'error'.
+   */
+  error?: AgentError | null;
 
   /**
    * Whether the agent is enabled for new conversations.

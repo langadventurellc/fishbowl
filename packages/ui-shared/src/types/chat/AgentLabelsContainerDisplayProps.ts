@@ -5,7 +5,7 @@
  */
 
 import type React from "react";
-import { AgentPillViewModel } from "../AgentPillViewModel";
+import { AgentPillViewModel } from "./AgentPillViewModel";
 
 export interface AgentLabelsContainerDisplayProps {
   /**
