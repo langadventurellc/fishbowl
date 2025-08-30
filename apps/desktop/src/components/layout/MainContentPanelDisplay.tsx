@@ -2,7 +2,7 @@ import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, MessageCircle } from "lucide-react";
 import React, { useState } from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
-import { useMessages } from "../../hooks/messages/useMessages";
+import { useMessagesWithAgentData } from "../../hooks/messages/useMessagesWithAgentData";
 import { cn } from "../../lib/utils";
 import { MessageInputContainer } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
@@ -22,33 +22,10 @@ export const MainContentPanelDisplay: React.FC<
   // Initialize chat event integration for real-time agent status updates only if conversation is selected
   useChatEventIntegration({ conversationId: selectedConversationId || null });
 
-  // Use the useMessages hook for real-time message data with loading and error states
-  // Only call when we have a valid conversation ID
-  const {
-    messages: rawMessages,
-    isLoading,
-    error,
-    refetch,
-  } = useMessages(selectedConversationId || "skip");
-
-  // Transform Message[] to MessageViewModel[] for ChatContainerDisplay
-  const messages = React.useMemo(() => {
-    return rawMessages.map((message) => ({
-      id: message.id,
-      agent: message.role === "user" ? "User" : "Agent",
-      role: message.role === "user" ? "User" : "Agent",
-      content: message.content,
-      timestamp: new Date(message.created_at).toLocaleTimeString(),
-      type:
-        message.role === "user"
-          ? ("user" as const)
-          : message.role === "system"
-            ? ("system" as const)
-            : ("agent" as const),
-      isActive: message.included,
-      agentColor: message.role === "user" ? "#3b82f6" : "#22c55e",
-    }));
-  }, [rawMessages]);
+  // Use the composite hook for messages with resolved agent names and roles
+  const { messages, isLoading, error, refetch } = useMessagesWithAgentData(
+    selectedConversationId || null,
+  );
 
   // Loading skeleton component
   const LoadingSkeleton = () => (
