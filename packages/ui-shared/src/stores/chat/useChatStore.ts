@@ -9,17 +9,19 @@
 
 import { create } from "zustand";
 
+import type { AgentError } from "./AgentError";
+
 export interface ChatStore {
   // Transient UI state only
   sendingMessage: boolean;
   agentThinking: Record<string, boolean>; // conversationAgentId -> thinking
-  lastError: Record<string, string | null>; // conversationAgentId -> error
+  lastError: Record<string, AgentError | null>; // conversationAgentId -> structured error
   processingConversationId: string | null;
 
   // Actions
   setSending: (sending: boolean) => void;
   setAgentThinking: (agentId: string, thinking: boolean) => void;
-  setAgentError: (agentId: string, error: string | null) => void;
+  setAgentError: (agentId: string, error: AgentError | null) => void;
   setProcessingConversation: (conversationId: string | null) => void;
   clearAgentState: (agentId: string) => void;
   clearAllThinking: () => void;
@@ -47,7 +49,7 @@ export const useChatStore = create<ChatStore>()((set, _get) => ({
     }));
   },
 
-  setAgentError: (agentId: string, error: string | null) => {
+  setAgentError: (agentId: string, error: AgentError | null) => {
     set((state) => ({
       lastError: {
         ...state.lastError,

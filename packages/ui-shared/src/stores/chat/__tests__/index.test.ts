@@ -10,6 +10,15 @@
 import { renderHook } from "@testing-library/react";
 import { useChatStore } from "../index";
 import type { ChatStore } from "../index";
+import type { AgentError } from "../AgentError";
+
+// Helper function to create test AgentError objects
+const createTestError = (message: string, agentName?: string): AgentError => ({
+  message,
+  agentName,
+  errorType: "unknown",
+  retryable: false,
+});
 
 describe("Chat store barrel exports", () => {
   beforeEach(() => {
@@ -90,7 +99,7 @@ describe("Chat store barrel exports", () => {
       // These should all compile with correct types
       const sendingMessage: boolean = store.sendingMessage;
       const agentThinking: Record<string, boolean> = store.agentThinking;
-      const lastError: Record<string, string | null> = store.lastError;
+      const lastError: Record<string, AgentError | null> = store.lastError;
       const processingId: string | null = store.processingConversationId;
 
       expect(typeof sendingMessage).toBe("boolean");
@@ -113,8 +122,9 @@ describe("Chat store barrel exports", () => {
       store.setAgentThinking("agent-123", true);
       expect(useChatStore.getState().agentThinking["agent-123"]).toBe(true);
 
-      store.setAgentError("agent-123", "Test error");
-      expect(useChatStore.getState().lastError["agent-123"]).toBe("Test error");
+      const testError = createTestError("Test error");
+      store.setAgentError("agent-123", testError);
+      expect(useChatStore.getState().lastError["agent-123"]).toEqual(testError);
 
       store.setProcessingConversation("conv-456");
       expect(useChatStore.getState().processingConversationId).toBe("conv-456");
@@ -126,7 +136,8 @@ describe("Chat store barrel exports", () => {
       // Set up some state
       store.setSending(true);
       store.setAgentThinking("agent-123", true);
-      store.setAgentError("agent-456", "Error message");
+      const errorMessage = createTestError("Error message");
+      store.setAgentError("agent-456", errorMessage);
       store.setProcessingConversation("conv-789");
 
       // Clear state

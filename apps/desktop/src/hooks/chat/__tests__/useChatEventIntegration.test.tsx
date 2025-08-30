@@ -8,6 +8,7 @@
  */
 
 import { useChatStore } from "@fishbowl-ai/ui-shared";
+import type { AgentError } from "@fishbowl-ai/ui-shared";
 import { renderHook, act } from "@testing-library/react";
 import { useChatEventIntegration } from "../useChatEventIntegration";
 import type { AgentUpdateEvent } from "../../../shared/ipc/chat";
@@ -189,7 +190,7 @@ describe("useChatEventIntegration", () => {
       expect(mockSetAgentError).toHaveBeenCalledWith("agent-1", null);
     });
 
-    it("should handle 'error' status events", () => {
+    it("should handle 'error' status events with basic error message", () => {
       renderHook(() =>
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
@@ -205,11 +206,15 @@ describe("useChatEventIntegration", () => {
         callback(event);
       });
 
+      const expectedError: AgentError = {
+        message: "Test error message",
+        agentName: undefined,
+        errorType: undefined,
+        retryable: false,
+      };
+
       expect(mockSetAgentThinking).toHaveBeenCalledWith("agent-1", false);
-      expect(mockSetAgentError).toHaveBeenCalledWith(
-        "agent-1",
-        "Test error message",
-      );
+      expect(mockSetAgentError).toHaveBeenCalledWith("agent-1", expectedError);
     });
 
     it("should handle 'error' status events with no error message", () => {
@@ -227,11 +232,163 @@ describe("useChatEventIntegration", () => {
         callback(event);
       });
 
+      const expectedError: AgentError = {
+        message: "An unknown error occurred",
+        agentName: undefined,
+        errorType: undefined,
+        retryable: false,
+      };
+
       expect(mockSetAgentThinking).toHaveBeenCalledWith("agent-1", false);
-      expect(mockSetAgentError).toHaveBeenCalledWith(
-        "agent-1",
-        "An unknown error occurred",
+      expect(mockSetAgentError).toHaveBeenCalledWith("agent-1", expectedError);
+    });
+
+    it("should handle 'error' status events with full structured error information", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
       );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const event: AgentUpdateEvent = {
+        conversationAgentId: "agent-1",
+        status: "error",
+        error: "Network connection failed",
+        agentName: "Assistant Bot",
+        errorType: "network",
+        retryable: true,
+      };
+
+      act(() => {
+        callback(event);
+      });
+
+      const expectedError: AgentError = {
+        message: "Network connection failed",
+        agentName: "Assistant Bot",
+        errorType: "network",
+        retryable: true,
+      };
+
+      expect(mockSetAgentThinking).toHaveBeenCalledWith("agent-1", false);
+      expect(mockSetAgentError).toHaveBeenCalledWith("agent-1", expectedError);
+    });
+
+    it("should handle 'error' status events with different error types", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const errorTypes = [
+        "network",
+        "auth",
+        "rate_limit",
+        "validation",
+        "provider",
+        "timeout",
+        "unknown",
+      ] as const;
+
+      errorTypes.forEach((errorType, index) => {
+        const event: AgentUpdateEvent = {
+          conversationAgentId: `agent-${index}`,
+          status: "error",
+          error: `${errorType} error occurred`,
+          agentName: `Agent ${index}`,
+          errorType,
+          retryable: errorType !== "auth", // Auth errors typically not retryable
+        };
+
+        act(() => {
+          callback(event);
+        });
+
+        const expectedError: AgentError = {
+          message: `${errorType} error occurred`,
+          agentName: `Agent ${index}`,
+          errorType,
+          retryable: errorType !== "auth",
+        };
+
+        expect(mockSetAgentError).toHaveBeenCalledWith(
+          `agent-${index}`,
+          expectedError,
+        );
+      });
+    });
+
+    it("should handle 'error' status events with retryable flag variations", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+
+      // Test explicit retryable: true
+      const retryableEvent: AgentUpdateEvent = {
+        conversationAgentId: "agent-retryable",
+        status: "error",
+        error: "Retryable error",
+        retryable: true,
+      };
+
+      act(() => {
+        callback(retryableEvent);
+      });
+
+      expect(mockSetAgentError).toHaveBeenCalledWith("agent-retryable", {
+        message: "Retryable error",
+        agentName: undefined,
+        errorType: undefined,
+        retryable: true,
+      });
+
+      // Test explicit retryable: false
+      const nonRetryableEvent: AgentUpdateEvent = {
+        conversationAgentId: "agent-non-retryable",
+        status: "error",
+        error: "Non-retryable error",
+        retryable: false,
+      };
+
+      act(() => {
+        callback(nonRetryableEvent);
+      });
+
+      expect(mockSetAgentError).toHaveBeenCalledWith("agent-non-retryable", {
+        message: "Non-retryable error",
+        agentName: undefined,
+        errorType: undefined,
+        retryable: false,
+      });
+    });
+
+    it("should handle 'error' status events with missing optional fields gracefully", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const event: AgentUpdateEvent = {
+        conversationAgentId: "agent-1",
+        status: "error",
+        error: "Error with minimal info",
+        // agentName, errorType, retryable are undefined
+      };
+
+      act(() => {
+        callback(event);
+      });
+
+      const expectedError: AgentError = {
+        message: "Error with minimal info",
+        agentName: undefined,
+        errorType: undefined,
+        retryable: false, // Should default to false when undefined
+      };
+
+      expect(mockSetAgentThinking).toHaveBeenCalledWith("agent-1", false);
+      expect(mockSetAgentError).toHaveBeenCalledWith("agent-1", expectedError);
     });
 
     it("should update lastEventTime when events are received", () => {

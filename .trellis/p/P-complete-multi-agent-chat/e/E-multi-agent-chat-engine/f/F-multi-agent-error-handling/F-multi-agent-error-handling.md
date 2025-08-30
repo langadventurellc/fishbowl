@@ -62,14 +62,35 @@ affectedFiles:
     Updated existing test
     to accommodate new optional event callback parameter in processUserMessage
     method call
+  packages/ui-shared/src/stores/chat/AgentError.ts: Created AgentError interface
+    for structured error information with message, agentName, errorType, and
+    retryable fields
+  packages/ui-shared/src/stores/chat/useChatStore.ts:
+    Updated ChatStore interface
+    and implementation to use AgentError type instead of string for error state
+    management
+  packages/ui-shared/src/stores/chat/index.ts: Added AgentError type export to barrel file for external consumption
+  packages/ui-shared/src/stores/chat/__tests__/useChatStore.test.ts:
+    Updated all test cases to use structured AgentError objects instead of
+    string error messages with helper function
+  packages/ui-shared/src/stores/chat/__tests__/index.test.ts: Updated test cases
+    to use new AgentError interface and fixed type compatibility tests
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts:
+    Enhanced error handling
+    to create structured AgentError objects from IPC events with full error
+    context including agentName, errorType, and retryable flags
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Added comprehensive test coverage for structured error handling including
+    basic errors, full error information, different error types, retryable
+    variations, and missing field handling
 log: []
 schema: v1.0
 childrenIds:
-  - T-enhance-ipc-chat-events-to
   - T-enhance-structured-error
   - T-enhance-system-message
   - T-update-usechateventintegration
   - T-create-structured-chat-error
+  - T-enhance-ipc-chat-events-to
   - T-integrate-error-handling-into
 created: 2025-08-29T19:21:47.001Z
 updated: 2025-08-29T19:21:47.001Z

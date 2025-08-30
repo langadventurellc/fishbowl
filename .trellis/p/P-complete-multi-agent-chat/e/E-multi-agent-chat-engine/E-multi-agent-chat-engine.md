@@ -139,30 +139,41 @@ affectedFiles:
     actions for setSending, setAgentThinking, setAgentError,
     setProcessingConversation, clearAgentState, clearAllThinking, and
     clearConversationState; Added export keyword to ChatStore interface to make
-    it available for barrel export
+    it available for barrel export; Updated ChatStore interface and
+    implementation to use AgentError type instead of string for error state
+    management
   packages/ui-shared/src/stores/chat/__tests__/useChatStore.test.ts:
     Created comprehensive unit test suite with 23 test cases covering store
     initialization, all action methods, concurrent state updates, state
-    immutability, and edge cases with 100% functionality coverage
+    immutability, and edge cases with 100% functionality coverage; Updated all
+    test cases to use structured AgentError objects instead of string error
+    messages with helper function
   packages/ui-shared/src/stores/chat/index.ts: Created chat store barrel export
     file with JSDoc documentation, exporting useChatStore hook and ChatStore
-    type interface
+    type interface; Added AgentError type export to barrel file for external
+    consumption
   packages/ui-shared/src/stores/index.ts:
     Added chat store exports to main stores
     index using barrel export pattern (export * from './chat')
   packages/ui-shared/src/stores/chat/__tests__/index.test.ts: Created
     comprehensive barrel export test suite covering hook exports, React
     integration, TypeScript types, store functionality, and import resolution
-    with 10 passing test cases
+    with 10 passing test cases; Updated test cases to use new AgentError
+    interface and fixed type compatibility tests
   apps/desktop/src/hooks/chat/useChatEventIntegration.ts:
     Created React hook that
     integrates shared useChatStore with IPC chat events from main process,
     subscribes to agent update events, maps event statuses to store actions
-    (thinking/complete/error), handles conversation switching and cleanup
+    (thinking/complete/error), handles conversation switching and cleanup;
+    Enhanced error handling to create structured AgentError objects from IPC
+    events with full error context including agentName, errorType, and retryable
+    flags
   apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
     Created comprehensive unit test suite with 30+ test scenarios covering IPC
     integration, event handling, error conditions, memory management, and
-    non-Electron environment degradation
+    non-Electron environment degradation; Added comprehensive test coverage for
+    structured error handling including basic errors, full error information,
+    different error types, retryable variations, and missing field handling
   packages/shared/src/services/chat/errors/ChatErrorType.ts:
     "Created enum with 7
     error types for classification: network, auth, rate limit, validation,
@@ -185,6 +196,9 @@ affectedFiles:
   packages/shared/src/services/chat/types/AgentEventCallback.ts:
     Created new type definition for event emission callback with comprehensive
     event structure including status, error details, and agent context
+  packages/ui-shared/src/stores/chat/AgentError.ts: Created AgentError interface
+    for structured error information with message, agentName, errorType, and
+    retryable fields
 log: []
 schema: v1.0
 childrenIds:

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useChatStore } from "@fishbowl-ai/ui-shared";
+import type { AgentError } from "@fishbowl-ai/ui-shared";
 import type { AgentUpdateEvent } from "../../shared/ipc/chat";
 
 interface UseChatEventIntegrationOptions {
@@ -39,6 +40,9 @@ export function useChatEventIntegration(
           status,
           messageId: _messageId,
           error,
+          agentName,
+          errorType,
+          retryable,
         } = event;
 
         // Update last event time
@@ -57,8 +61,16 @@ export function useChatEventIntegration(
 
           case "error": {
             setAgentThinking(conversationAgentId, false);
-            const sanitizedError = error || "An unknown error occurred";
-            setAgentError(conversationAgentId, sanitizedError);
+
+            // Create structured error object with rich context
+            const structuredError: AgentError = {
+              message: error || "An unknown error occurred",
+              agentName,
+              errorType,
+              retryable: retryable || false,
+            };
+
+            setAgentError(conversationAgentId, structuredError);
             break;
           }
 

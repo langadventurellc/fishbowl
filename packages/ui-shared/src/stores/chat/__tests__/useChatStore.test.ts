@@ -8,6 +8,15 @@
  */
 
 import { useChatStore } from "../useChatStore";
+import type { AgentError } from "../AgentError";
+
+// Helper function to create test AgentError objects
+const createTestError = (message: string, agentName?: string): AgentError => ({
+  message,
+  agentName,
+  errorType: "unknown",
+  retryable: false,
+});
 
 describe("useChatStore", () => {
   beforeEach(() => {
@@ -122,12 +131,12 @@ describe("useChatStore", () => {
     it("should set error message for an agent", () => {
       const { setAgentError } = useChatStore.getState();
       const agentId = "agent-123";
-      const errorMessage = "API request failed";
+      const errorMessage = createTestError("API request failed");
 
       setAgentError(agentId, errorMessage);
 
       const state = useChatStore.getState();
-      expect(state.lastError[agentId]).toBe(errorMessage);
+      expect(state.lastError[agentId]).toEqual(errorMessage);
     });
 
     it("should clear error by setting null", () => {
@@ -135,8 +144,9 @@ describe("useChatStore", () => {
       const agentId = "agent-123";
 
       // First set an error
-      setAgentError(agentId, "Some error");
-      expect(useChatStore.getState().lastError[agentId]).toBe("Some error");
+      const testError = createTestError("Some error");
+      setAgentError(agentId, testError);
+      expect(useChatStore.getState().lastError[agentId]).toEqual(testError);
 
       // Then clear it
       setAgentError(agentId, null);
@@ -146,14 +156,16 @@ describe("useChatStore", () => {
     it("should handle multiple agent errors independently", () => {
       const { setAgentError } = useChatStore.getState();
 
-      setAgentError("agent-1", "Error 1");
+      const error1 = createTestError("Error 1");
+      const error3 = createTestError("Error 3");
+      setAgentError("agent-1", error1);
       setAgentError("agent-2", null);
-      setAgentError("agent-3", "Error 3");
+      setAgentError("agent-3", error3);
 
       const state = useChatStore.getState();
-      expect(state.lastError["agent-1"]).toBe("Error 1");
+      expect(state.lastError["agent-1"]).toEqual(error1);
       expect(state.lastError["agent-2"]).toBeNull();
-      expect(state.lastError["agent-3"]).toBe("Error 3");
+      expect(state.lastError["agent-3"]).toEqual(error3);
       expect(Object.keys(state.lastError)).toHaveLength(3);
     });
 
@@ -162,7 +174,8 @@ describe("useChatStore", () => {
       const initialState = useChatStore.getState();
       const initialErrors = initialState.lastError;
 
-      setAgentError("agent-123", "Test error");
+      const testError = createTestError("Test error");
+      setAgentError("agent-123", testError);
 
       const newState = useChatStore.getState();
       expect(newState.lastError).not.toBe(initialErrors);
@@ -201,12 +214,13 @@ describe("useChatStore", () => {
 
       // Set initial state
       setAgentThinking(agentId, true);
-      setAgentError(agentId, "Some error");
+      const testError = createTestError("Some error");
+      setAgentError(agentId, testError);
 
       // Verify state is set
       let state = useChatStore.getState();
       expect(state.agentThinking[agentId]).toBe(true);
-      expect(state.lastError[agentId]).toBe("Some error");
+      expect(state.lastError[agentId]).toEqual(testError);
 
       // Clear the agent state
       clearAgentState(agentId);
@@ -224,8 +238,10 @@ describe("useChatStore", () => {
       // Set state for multiple agents
       setAgentThinking("agent-1", true);
       setAgentThinking("agent-2", false);
-      setAgentError("agent-1", "Error 1");
-      setAgentError("agent-2", "Error 2");
+      const error1 = createTestError("Error 1");
+      const error2 = createTestError("Error 2");
+      setAgentError("agent-1", error1);
+      setAgentError("agent-2", error2);
 
       // Clear only agent-1
       clearAgentState("agent-1");
@@ -234,7 +250,7 @@ describe("useChatStore", () => {
       expect(state.agentThinking["agent-1"]).toBeUndefined();
       expect(state.lastError["agent-1"]).toBeUndefined();
       expect(state.agentThinking["agent-2"]).toBe(false);
-      expect(state.lastError["agent-2"]).toBe("Error 2");
+      expect(state.lastError["agent-2"]).toEqual(error2);
     });
 
     it("should handle clearing non-existent agent gracefully", () => {
@@ -276,13 +292,14 @@ describe("useChatStore", () => {
 
       // Set both thinking and error states
       setAgentThinking("agent-1", true);
-      setAgentError("agent-1", "Error message");
+      const testError = createTestError("Error message");
+      setAgentError("agent-1", testError);
 
       clearAllThinking();
 
       const state = useChatStore.getState();
       expect(state.agentThinking).toEqual({});
-      expect(state.lastError["agent-1"]).toBe("Error message");
+      expect(state.lastError["agent-1"]).toEqual(testError);
     });
   });
 
@@ -297,13 +314,14 @@ describe("useChatStore", () => {
 
       // Set all types of state
       setAgentThinking("agent-1", true);
-      setAgentError("agent-1", "Error message");
+      const testError = createTestError("Error message");
+      setAgentError("agent-1", testError);
       setProcessingConversation("conv-123");
 
       // Verify state is set
       let state = useChatStore.getState();
       expect(state.agentThinking["agent-1"]).toBe(true);
-      expect(state.lastError["agent-1"]).toBe("Error message");
+      expect(state.lastError["agent-1"]).toEqual(testError);
       expect(state.processingConversationId).toBe("conv-123");
 
       // Clear conversation state
@@ -350,20 +368,22 @@ describe("useChatStore", () => {
       const { setAgentThinking, setAgentError } = useChatStore.getState();
 
       // Simulate concurrent agent updates
+      const error1 = createTestError("Error 1");
+      const error3 = createTestError("Error 3");
       setAgentThinking("agent-1", true);
-      setAgentError("agent-1", "Error 1");
+      setAgentError("agent-1", error1);
       setAgentThinking("agent-2", false);
       setAgentError("agent-2", null);
       setAgentThinking("agent-3", true);
-      setAgentError("agent-3", "Error 3");
+      setAgentError("agent-3", error3);
 
       const state = useChatStore.getState();
       expect(state.agentThinking["agent-1"]).toBe(true);
-      expect(state.lastError["agent-1"]).toBe("Error 1");
+      expect(state.lastError["agent-1"]).toEqual(error1);
       expect(state.agentThinking["agent-2"]).toBe(false);
       expect(state.lastError["agent-2"]).toBeNull();
       expect(state.agentThinking["agent-3"]).toBe(true);
-      expect(state.lastError["agent-3"]).toBe("Error 3");
+      expect(state.lastError["agent-3"]).toEqual(error3);
     });
 
     it("should maintain state consistency during mixed operations", () => {
@@ -379,14 +399,15 @@ describe("useChatStore", () => {
       setSending(true);
       setAgentThinking("agent-1", true);
       setProcessingConversation("conv-123");
-      setAgentError("agent-2", "Error");
+      const testError = createTestError("Error");
+      setAgentError("agent-2", testError);
       clearAgentState("agent-1"); // Should clear agent-1 but not affect others
 
       const state = useChatStore.getState();
       expect(state.sendingMessage).toBe(true);
       expect(state.agentThinking["agent-1"]).toBeUndefined();
       expect(state.lastError["agent-1"]).toBeUndefined();
-      expect(state.lastError["agent-2"]).toBe("Error");
+      expect(state.lastError["agent-2"]).toEqual(testError);
       expect(state.processingConversationId).toBe("conv-123");
     });
   });
@@ -409,7 +430,8 @@ describe("useChatStore", () => {
       const initialErrors = initialState.lastError;
 
       const { setAgentError } = useChatStore.getState();
-      setAgentError("agent-1", "Test error");
+      const testError = createTestError("Test error");
+      setAgentError("agent-1", testError);
 
       const newState = useChatStore.getState();
       expect(newState.lastError).not.toBe(initialErrors);

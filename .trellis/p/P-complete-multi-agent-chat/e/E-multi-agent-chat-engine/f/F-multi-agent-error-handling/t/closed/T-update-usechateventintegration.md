@@ -1,13 +1,43 @@
 ---
 id: T-update-usechateventintegration
 title: Update useChatEventIntegration to handle error events and state management
-status: open
+status: done
 priority: medium
 parent: F-multi-agent-error-handling
 prerequisites:
   - T-enhance-ipc-chat-events-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/chat/AgentError.ts: Created AgentError interface
+    for structured error information with message, agentName, errorType, and
+    retryable fields
+  packages/ui-shared/src/stores/chat/useChatStore.ts:
+    Updated ChatStore interface
+    and implementation to use AgentError type instead of string for error state
+    management
+  packages/ui-shared/src/stores/chat/index.ts: Added AgentError type export to barrel file for external consumption
+  packages/ui-shared/src/stores/chat/__tests__/useChatStore.test.ts:
+    Updated all test cases to use structured AgentError objects instead of
+    string error messages with helper function
+  packages/ui-shared/src/stores/chat/__tests__/index.test.ts: Updated test cases
+    to use new AgentError interface and fixed type compatibility tests
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts:
+    Enhanced error handling
+    to create structured AgentError objects from IPC events with full error
+    context including agentName, errorType, and retryable flags
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Added comprehensive test coverage for structured error handling including
+    basic errors, full error information, different error types, retryable
+    variations, and missing field handling
+log:
+  - Successfully updated useChatEventIntegration hook to handle enhanced error
+    events with structured AgentError information. Enhanced useChatStore
+    interface to accept structured error objects containing message, agentName,
+    errorType, and retryable properties. Updated all error handling to support
+    rich error context from IPC events while maintaining backward compatibility.
+    Added comprehensive unit tests covering all error scenarios including
+    structured error information, different error types, retryable flags, and
+    edge cases. All quality checks pass with enhanced error state management for
+    better UI error display.
 schema: v1.0
 childrenIds: []
 created: 2025-08-29T23:34:15.913Z
