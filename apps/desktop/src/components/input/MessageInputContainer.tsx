@@ -1,10 +1,12 @@
 import { cn } from "@/lib/utils";
 import { useCreateMessage } from "@/hooks/messages";
 import { useChatStore } from "@fishbowl-ai/ui-shared";
+import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
 import {
   MessageInputDisplayProps,
   SendButtonDisplayProps,
   MessageInputContainerProps,
+  type ConversationAgentViewModel,
 } from "@fishbowl-ai/ui-shared";
 import { cva } from "class-variance-authority";
 import React, { useCallback, useState, useRef, KeyboardEvent } from "react";
@@ -64,6 +66,9 @@ export function MessageInputContainer({
   } = useCreateMessage();
   const { sendingMessage } = useChatStore();
 
+  // Hook for conversation agents to check if any are enabled
+  const { conversationAgents } = useConversationAgents(conversationId);
+
   // Clear local error when user starts typing
   const handleContentChange = useCallback(
     (value: string) => {
@@ -86,7 +91,7 @@ export function MessageInputContainer({
     }
 
     try {
-      await createMessage({
+      const createdMessage = await createMessage({
         conversation_id: conversationId,
         role: "user",
         content: content.trim(),
@@ -101,11 +106,39 @@ export function MessageInputContainer({
       if (textareaRef.current) {
         textareaRef.current.focus();
       }
+
+      // Trigger chat orchestration if agents are enabled
+      const enabledAgents = conversationAgents.filter(
+        (agent: ConversationAgentViewModel) => agent.enabled,
+      );
+
+      if (enabledAgents.length > 0) {
+        try {
+          // Check if running in Electron environment
+          if (
+            typeof window !== "undefined" &&
+            window.electronAPI?.chat?.sendToAgents &&
+            typeof window.electronAPI.chat.sendToAgents === "function"
+          ) {
+            await window.electronAPI.chat.sendToAgents(
+              conversationId,
+              createdMessage.id,
+            );
+          }
+        } catch (orchestrationError) {
+          // Log orchestration error but don't affect user experience
+          // The user message was already successfully created
+          console.error("Chat orchestration failed:", orchestrationError);
+
+          // Optionally, you could set a non-blocking warning here
+          // but the task requirements suggest keeping this transparent
+        }
+      }
     } catch {
       // Error is handled by useCreateMessage hook
       // Keep the input content so user can retry
     }
-  }, [content, conversationId, createMessage]);
+  }, [content, conversationId, createMessage, conversationAgents]);
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback(
