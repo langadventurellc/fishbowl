@@ -1,13 +1,46 @@
 ---
 id: T-add-context-statistics
 title: Add context statistics display component
-status: open
+status: done
 priority: medium
 parent: F-message-context-control
 prerequisites:
   - T-wire-messageitem-checkboxes
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/chat/ContextStatisticsProps.ts:
+    Created new interface for ContextStatistics component props with
+    comprehensive TypeScript definitions including messages array, display
+    variants (default/compact/minimal), optional warning icon display, and
+    styling customization. Includes detailed documentation and examples
+    following project conventions.
+  packages/ui-shared/src/types/chat/index.ts: Added export for
+    ContextStatisticsProps interface to make it available for import through the
+    chat types barrel file.
+  apps/desktop/src/components/chat/ContextStatistics.tsx: Implemented complete
+    ContextStatistics component with message counting logic, warning states,
+    multiple display variants, accessibility features (ARIA labels, role=status,
+    aria-live=polite), responsive design, and theme-aware styling. Uses
+    lucide-react icons (AlertTriangle, MessageCircle) and follows established
+    component patterns.
+  apps/desktop/src/components/chat/index.ts: Added export for ContextStatistics
+    component to make it available for import from the chat components barrel
+    file.
+  apps/desktop/src/components/chat/__tests__/ContextStatistics.test.tsx:
+    "Created comprehensive unit test suite with 24 test cases covering: message
+    counting logic with various scenarios, warning state display and styling,
+    all display variants (default/compact/minimal), component props handling,
+    accessibility features (ARIA labels, screen reader support), and styling
+    integration. All tests pass successfully."
+log:
+  - Implemented ContextStatistics component with comprehensive functionality and
+    testing. The component provides visual feedback about message inclusion in
+    conversation context with accurate counting, warning states for empty
+    context, multiple display variants (default, compact, minimal), and full
+    accessibility support. Created reusable props interface following project
+    conventions. All 24 unit tests pass, covering message counting logic,
+    warning states, display variants, component props handling, accessibility
+    features, and styling integration. Component integrates seamlessly with
+    existing chat UI patterns and design system.
 schema: v1.0
 childrenIds: []
 created: 2025-08-30T06:20:19.202Z

@@ -3,6 +3,7 @@ export * from "./AgentLabelsContainerDisplayProps";
 export * from "./AgentPillProps";
 export * from "./AgentPillViewModel";
 export * from "./ChatContainerDisplayProps";
+export * from "./ContextStatisticsProps";
 export * from "./ConversationContextMenuProps";
 export * from "./ConversationItemDisplayProps";
 export * from "./ConversationItemProps";

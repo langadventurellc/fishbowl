@@ -13,7 +13,8 @@ affectedFiles:
   packages/ui-shared/src/types/chat/index.ts: Added export for
     MessageInputContainerProps interface to make it available for import; Added
     export for AgentPillViewModel to make it available through chat types barrel
-    file
+    file; Added export for ContextStatisticsProps interface to make it available
+    for import through the chat types barrel file.
   apps/desktop/src/components/input/MessageInputContainer.tsx:
     Implemented integrated message input container component with state
     management, form validation, error handling, keyboard shortcuts, and proper
@@ -114,6 +115,27 @@ affectedFiles:
     error rollback scenarios, state synchronization validation, and
     accessibility testing for all interaction states - 8 new test cases covering
     complete checkbox integration workflow with all 33 tests passing"
+  packages/ui-shared/src/types/chat/ContextStatisticsProps.ts:
+    Created new interface for ContextStatistics component props with
+    comprehensive TypeScript definitions including messages array, display
+    variants (default/compact/minimal), optional warning icon display, and
+    styling customization. Includes detailed documentation and examples
+    following project conventions.
+  apps/desktop/src/components/chat/ContextStatistics.tsx: Implemented complete
+    ContextStatistics component with message counting logic, warning states,
+    multiple display variants, accessibility features (ARIA labels, role=status,
+    aria-live=polite), responsive design, and theme-aware styling. Uses
+    lucide-react icons (AlertTriangle, MessageCircle) and follows established
+    component patterns.
+  apps/desktop/src/components/chat/index.ts: Added export for ContextStatistics
+    component to make it available for import from the chat components barrel
+    file.
+  apps/desktop/src/components/chat/__tests__/ContextStatistics.test.tsx:
+    "Created comprehensive unit test suite with 24 test cases covering: message
+    counting logic with various scenarios, warning state display and styling,
+    all display variants (default/compact/minimal), component props handling,
+    accessibility features (ARIA labels, screen reader support), and styling
+    integration. All tests pass successfully."
 log: []
 schema: v1.0
 childrenIds:
