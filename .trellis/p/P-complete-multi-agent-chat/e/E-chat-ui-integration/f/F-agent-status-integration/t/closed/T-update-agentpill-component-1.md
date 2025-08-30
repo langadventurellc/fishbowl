@@ -1,13 +1,26 @@
 ---
 id: T-update-agentpill-component-1
 title: Update AgentPill component usage sites with status integration
-status: open
+status: done
 priority: medium
 parent: F-agent-status-integration
 prerequisites:
   - T-enhance-agentpill-component
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Updated chat-related AgentPill usage to include showStatus={true} prop for
+    real-time status display when selectedConversationId exists. Non-chat usage
+    maintains default showStatus=false behavior.
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Added useChatEventIntegration hook import and integration to enable
+    real-time agent status updates in the main conversation interface. Properly
+    handles null/undefined conversationId values.
+log:
+  - Successfully updated AgentPill component usage sites with real-time status
+    integration. Added `showStatus={true}` prop to chat-related usage in
+    AgentLabelsContainerDisplay and integrated useChatEventIntegration hook in
+    MainContentPanelDisplay for real-time agent status updates. All quality
+    checks and unit tests pass.
 schema: v1.0
 childrenIds: []
 created: 2025-08-30T04:59:57.353Z

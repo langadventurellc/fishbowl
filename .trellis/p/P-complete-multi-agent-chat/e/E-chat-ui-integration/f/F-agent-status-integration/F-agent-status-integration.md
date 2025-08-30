@@ -1,7 +1,7 @@
 ---
 id: F-agent-status-integration
 title: Agent Status Integration
-status: in-progress
+status: done
 priority: medium
 parent: E-chat-ui-integration
 prerequisites: []
@@ -32,8 +32,16 @@ affectedFiles:
     integration tests (temporarily removed due to Electron mocking challenges)
   apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
     Updated AgentPillViewModel mock objects to include required status property
-    for type compatibility
-log: []
+    for type compatibility; Updated chat-related AgentPill usage to include
+    showStatus={true} prop for real-time status display when
+    selectedConversationId exists. Non-chat usage maintains default
+    showStatus=false behavior.
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Added useChatEventIntegration hook import and integration to enable
+    real-time agent status updates in the main conversation interface. Properly
+    handles null/undefined conversationId values.
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-enhance-agentpill-component

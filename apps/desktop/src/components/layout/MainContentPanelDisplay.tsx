@@ -1,6 +1,7 @@
 import { MainContentPanelDisplayProps } from "@fishbowl-ai/ui-shared";
 import React, { useState } from "react";
 import { cn } from "../../lib/utils";
+import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
 import { InputContainerDisplay } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
@@ -18,6 +19,9 @@ export const MainContentPanelDisplay: React.FC<
   const [isManualMode] = useState(true);
   const [agents] = useState([]);
   const [messages] = useState([]);
+
+  // Initialize chat event integration for real-time agent status updates
+  useChatEventIntegration({ conversationId: selectedConversationId || null });
 
   return (
     <div

@@ -114,6 +114,7 @@ export const AgentLabelsContainerDisplay: React.FC<
                     agent={agentViewModel}
                     onToggleEnabled={toggleEnabled}
                     conversationAgentId={conversationAgent.id}
+                    showStatus={true}
                   />
                 );
               })
