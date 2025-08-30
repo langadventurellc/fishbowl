@@ -36,7 +36,7 @@ Use the `logger` utility from `@fishbowl-ai/shared` for consistent logging acros
 **IMPORTANT** Run the following commands to ensure code quality after every change. Fix all issues as soon as possible.
 
 - `pnpm quality` - Run linting, formatting, and type checks
-- `pnpm test` - Run unit tests to ensure functionality
+- `pnpm test` - Run unit tests to ensure functionality (use format `pnpm test <args>`, not `pnpm <args> test`)
 
 Our quality checks will not allow files that have multiple exported types such as functions or classes in a single file. And if you do that, you will have to separate them into their own files. It's much easier if you create separate files to begin with. And where it makes sense, put them in their own folder with a barrel file.
 
@@ -80,16 +80,16 @@ Don't run the `dev` or `start` commands because you lock up processes doing that
 
 #### Testing & Quality
 
-| Command                          | Description                                           |
-| -------------------------------- | ----------------------------------------------------- |
-| `pnpm test`                      | Run tests for all packages                            |
-| `pnpm test:e2e:desktop`          | Run end-to-end tests for desktop app                  |
-| `pnpm test:e2e:desktop:headless` | Run E2E tests in headless mode                        |
-| `pnpm test:e2e:mobile`           | Run mobile E2E tests                                  |
-| `pnpm lint`                      | Run linting for all packages                          |
-| `pnpm format`                    | Format all TypeScript, JavaScript, and Markdown files |
-| `pnpm type-check`                | Run TypeScript type checks for all packages           |
-| `pnpm quality`                   | Run all quality checks (lint, format, type-check)     |
+| Command                          | Description                                                                        |
+| -------------------------------- | ---------------------------------------------------------------------------------- |
+| `pnpm test`                      | Run tests for all packages (use format `pnpm test <args>`, not `pnpm <args> test`) |
+| `pnpm test:e2e:desktop`          | Run end-to-end tests for desktop app                                               |
+| `pnpm test:e2e:desktop:headless` | Run E2E tests in headless mode                                                     |
+| `pnpm test:e2e:mobile`           | Run mobile E2E tests                                                               |
+| `pnpm lint`                      | Run linting for all packages                                                       |
+| `pnpm format`                    | Format all TypeScript, JavaScript, and Markdown files                              |
+| `pnpm type-check`                | Run TypeScript type checks for all packages                                        |
+| `pnpm quality`                   | Run all quality checks (lint, format, type-check)                                  |
 
 #### Utilities
 

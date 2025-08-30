@@ -17,6 +17,7 @@ export * from "./MessageContentProps";
 export * from "./MessageContextMenuProps";
 export * from "./MessageHeaderProps";
 export * from "./MessageInputDisplayProps";
+export * from "./MessageInputContainerProps";
 export * from "./MessageItemProps";
 export * from "./RenameConversationModalProps";
 export * from "./SendButtonDisplayProps";
