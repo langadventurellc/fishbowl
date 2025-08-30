@@ -48,11 +48,15 @@ describe("OpenAIProvider", () => {
 
     it("should make successful API call with correct parameters", async () => {
       const mockResponse = {
-        choices: [
+        output: [
           {
-            message: {
-              content: "Test response from OpenAI",
-            },
+            type: "message",
+            content: [
+              {
+                type: "output_text",
+                text: "Test response from OpenAI",
+              },
+            ],
           },
         ],
       };
@@ -75,14 +79,19 @@ describe("OpenAIProvider", () => {
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: "Response" } }],
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: "Response" }],
+              },
+            ],
           }),
       });
 
       await provider.sendMessage(baseParams);
 
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.openai.com/v1/chat/completions",
+        "https://api.openai.com/v1/responses",
         expect.any(Object),
       );
     });
@@ -92,7 +101,12 @@ describe("OpenAIProvider", () => {
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: "Response" } }],
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: "Response" }],
+              },
+            ],
           }),
       });
 
@@ -105,12 +119,17 @@ describe("OpenAIProvider", () => {
       expect(headers["Content-Type"]).toBe("application/json");
     });
 
-    it("should prepend system message to FormattedMessage array", async () => {
+    it("should prepend system message to input array", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: "Response" } }],
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: "Response" }],
+              },
+            ],
           }),
       });
 
@@ -118,20 +137,25 @@ describe("OpenAIProvider", () => {
 
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
 
-      expect(requestBody.messages).toEqual([
-        { role: "system", content: "Test system prompt" },
-        { role: "user", content: "Hello" },
-        { role: "assistant", content: "Hi there!" },
-        { role: "user", content: "How are you?" },
+      expect(requestBody.input).toEqual([
+        { type: "message", role: "system", content: "Test system prompt" },
+        { type: "message", role: "user", content: "Hello" },
+        { type: "message", role: "assistant", content: "Hi there!" },
+        { type: "message", role: "user", content: "How are you?" },
       ]);
     });
 
-    it("should apply all sampling parameters correctly", async () => {
+    it("should apply sampling parameters correctly (temperature and top_p commented out)", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: "Response" } }],
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: "Response" }],
+              },
+            ],
           }),
       });
 
@@ -139,9 +163,10 @@ describe("OpenAIProvider", () => {
 
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
 
-      expect(requestBody.temperature).toBe(0.7);
-      expect(requestBody.top_p).toBe(0.9);
-      expect(requestBody.max_tokens).toBe(1000);
+      // Temperature and top_p are commented out for GPT-5 compatibility
+      expect(requestBody.temperature).toBeUndefined();
+      expect(requestBody.top_p).toBeUndefined();
+      expect(requestBody.max_output_tokens).toBe(1000);
       expect(requestBody.model).toBe("gpt-4");
     });
 
@@ -150,7 +175,12 @@ describe("OpenAIProvider", () => {
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: "Response" } }],
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: "Response" }],
+              },
+            ],
           }),
       });
 
@@ -163,8 +193,8 @@ describe("OpenAIProvider", () => {
 
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
 
-      expect(requestBody.messages).toEqual([
-        { role: "system", content: "Test system prompt" },
+      expect(requestBody.input).toEqual([
+        { type: "message", role: "system", content: "Test system prompt" },
       ]);
     });
   });
@@ -257,7 +287,7 @@ describe("OpenAIProvider", () => {
       sampling: mockSampling,
     };
 
-    it("should handle missing choices array", async () => {
+    it("should handle missing output array", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () => Promise.resolve({}),
@@ -265,79 +295,149 @@ describe("OpenAIProvider", () => {
 
       await expect(provider.sendMessage(baseParams)).rejects.toThrow(
         new LlmProviderError(
-          "Missing choices array in OpenAI response",
+          "Missing output array in OpenAI response",
           "openai",
         ),
       );
     });
 
-    it("should handle empty choices array", async () => {
+    it("should handle empty output array", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ choices: [] }),
+        json: () => Promise.resolve({ output: [] }),
       });
 
       await expect(provider.sendMessage(baseParams)).rejects.toThrow(
         new LlmProviderError(
-          "Missing choices array in OpenAI response",
+          "Missing output array in OpenAI response",
           "openai",
         ),
       );
     });
 
-    it("should handle invalid choice format", async () => {
+    it("should handle no message type in output", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({ choices: [null] }),
+        json: () => Promise.resolve({ output: [{ type: "other" }] }),
       });
 
       await expect(provider.sendMessage(baseParams)).rejects.toThrow(
         new LlmProviderError(
-          "Invalid choice format in OpenAI response",
+          "No message type found in OpenAI response output",
           "openai",
         ),
       );
     });
 
-    it("should handle missing message in choice", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ choices: [{}] }),
-      });
-
-      await expect(provider.sendMessage(baseParams)).rejects.toThrow(
-        new LlmProviderError(
-          "Missing message in OpenAI response choice",
-          "openai",
-        ),
-      );
-    });
-
-    it("should handle missing content in message", async () => {
+    it("should handle missing content array", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: {} }],
+            output: [{ type: "message" }],
           }),
       });
 
       await expect(provider.sendMessage(baseParams)).rejects.toThrow(
-        new LlmProviderError("No content found in OpenAI response", "openai"),
+        new LlmProviderError(
+          "Missing content array in OpenAI response message",
+          "openai",
+        ),
       );
     });
 
-    it("should handle non-string content", async () => {
+    it("should handle empty content array", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: null } }],
+            output: [{ type: "message", content: [] }],
           }),
       });
 
       await expect(provider.sendMessage(baseParams)).rejects.toThrow(
-        new LlmProviderError("No content found in OpenAI response", "openai"),
+        new LlmProviderError(
+          "Missing content array in OpenAI response message",
+          "openai",
+        ),
+      );
+    });
+
+    it("should handle invalid content format", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            output: [{ type: "message", content: [null] }],
+          }),
+      });
+
+      await expect(provider.sendMessage(baseParams)).rejects.toThrow(
+        new LlmProviderError(
+          "Invalid content format in OpenAI response",
+          "openai",
+        ),
+      );
+    });
+
+    it("should handle non-output_text content type", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            output: [
+              {
+                type: "message",
+                content: [{ type: "other_type", text: "content" }],
+              },
+            ],
+          }),
+      });
+
+      await expect(provider.sendMessage(baseParams)).rejects.toThrow(
+        expect.objectContaining({
+          message: expect.stringContaining(
+            "Expected output_text type in OpenAI response content",
+          ),
+        }),
+      );
+    });
+
+    it("should handle missing text in content", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text" }],
+              },
+            ],
+          }),
+      });
+
+      await expect(provider.sendMessage(baseParams)).rejects.toThrow(
+        new LlmProviderError("No text found in OpenAI response", "openai"),
+      );
+    });
+
+    it("should handle non-string text", async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: null }],
+              },
+            ],
+          }),
+      });
+
+      await expect(provider.sendMessage(baseParams)).rejects.toThrow(
+        new LlmProviderError("No text found in OpenAI response", "openai"),
       );
     });
 
@@ -399,12 +499,17 @@ describe("OpenAIProvider", () => {
   });
 
   describe("Request structure validation", () => {
-    it("should build correct request structure", async () => {
+    it("should build correct request structure (without temperature/top_p)", async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: "Response" } }],
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: "Response" }],
+              },
+            ],
           }),
       });
 
@@ -432,17 +537,24 @@ describe("OpenAIProvider", () => {
 
       expect(requestBody).toEqual({
         model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: "You are a helpful assistant" },
-          { role: "user", content: "What's the weather like?" },
+        input: [
           {
+            type: "message",
+            role: "system",
+            content: "You are a helpful assistant",
+          },
+          {
+            type: "message",
+            role: "user",
+            content: "What's the weather like?",
+          },
+          {
+            type: "message",
             role: "assistant",
             content: "I don't have access to weather data.",
           },
         ],
-        temperature: 0.5,
-        top_p: 0.8,
-        max_tokens: 2000,
+        max_output_tokens: 2000,
       });
     });
 
@@ -451,7 +563,12 @@ describe("OpenAIProvider", () => {
         ok: true,
         json: () =>
           Promise.resolve({
-            choices: [{ message: { content: "Response" } }],
+            output: [
+              {
+                type: "message",
+                content: [{ type: "output_text", text: "Response" }],
+              },
+            ],
           }),
       });
 
@@ -466,7 +583,7 @@ describe("OpenAIProvider", () => {
       await provider.sendMessage(params);
 
       expect(mockFetch).toHaveBeenCalledWith(
-        "https://api.openai.com/v1/chat/completions",
+        "https://api.openai.com/v1/responses",
         {
           method: "POST",
           headers: {

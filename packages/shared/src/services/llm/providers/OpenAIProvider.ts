@@ -1,13 +1,12 @@
-import type { LlmProvider, LlmRequestParams, LlmResponse } from "../interfaces";
 import { LlmProviderError } from "../errors";
+import type { LlmProvider, LlmRequestParams, LlmResponse } from "../interfaces";
 
 /**
  * OpenAI API provider implementation using fetch.
  * Uses fixed endpoint and authorization header format (ignores config options per spec).
  */
 export class OpenAIProvider implements LlmProvider {
-  private static readonly API_ENDPOINT =
-    "https://api.openai.com/v1/chat/completions";
+  private static readonly API_ENDPOINT = "https://api.openai.com/v1/responses";
 
   async sendMessage(params: LlmRequestParams): Promise<LlmResponse> {
     try {
@@ -53,27 +52,33 @@ export class OpenAIProvider implements LlmProvider {
   }
 
   /**
-   * Build the request body for OpenAI API.
-   * Prepends system message to FormattedMessage array.
+   * Build the request body for OpenAI Responses API.
+   * Combines system prompt and formatted messages into input format.
    */
   private buildRequestBody(params: LlmRequestParams): Record<string, unknown> {
-    // Build messages with system prompt first, then formatted messages
-    const messages = [
-      { role: "system", content: params.systemPrompt },
-      ...params.messages,
+    // Build input array with system prompt first, then formatted messages
+    const input = [
+      { type: "message", role: "system", content: params.systemPrompt },
+      ...params.messages.map((msg) => ({
+        type: "message",
+        role: msg.role,
+        content: msg.content,
+      })),
     ];
 
+    // temperature and top_p are not supported in GPT 5 models. Commenting out until allowing
+    // optional passing of these values
     return {
       model: params.model,
-      messages,
-      temperature: params.sampling.temperature,
-      top_p: params.sampling.topP,
-      max_tokens: params.sampling.maxTokens,
+      input,
+      // temperature: params.sampling.temperature,
+      // top_p: params.sampling.topP,
+      max_output_tokens: params.sampling.maxTokens,
     };
   }
 
   /**
-   * Parse OpenAI API response and extract text content.
+   * Parse OpenAI Responses API response and extract text content.
    */
   private parseResponse(data: unknown): LlmResponse {
     if (!data || typeof data !== "object") {
@@ -83,38 +88,74 @@ export class OpenAIProvider implements LlmProvider {
       );
     }
 
-    const response = data as { choices?: unknown };
-    if (!Array.isArray(response.choices) || response.choices.length === 0) {
+    // Add logging for debugging
+    console.log("OpenAI Raw Response:", JSON.stringify(data, null, 2));
+
+    const response = data as { output?: unknown };
+    if (!Array.isArray(response.output) || response.output.length === 0) {
       throw new LlmProviderError(
-        "Missing choices array in OpenAI response",
+        "Missing output array in OpenAI response",
         "openai",
       );
     }
 
-    const firstChoice = response.choices[0];
-    if (!firstChoice || typeof firstChoice !== "object") {
+    // Find the message type in the output array (it might not be the first item)
+    const messageOutput = response.output.find((item: unknown) => {
+      if (!item || typeof item !== "object") return false;
+      const output = item as { type?: string };
+      return output.type === "message";
+    });
+
+    if (!messageOutput) {
+      console.log(
+        "Available output types:",
+        response.output.map((item: unknown) => {
+          if (item && typeof item === "object" && "type" in item) {
+            return (item as { type: string }).type;
+          }
+          return "unknown";
+        }),
+      );
       throw new LlmProviderError(
-        "Invalid choice format in OpenAI response",
+        "No message type found in OpenAI response output",
         "openai",
       );
     }
 
-    const choice = firstChoice as { message?: unknown };
-    if (!choice.message || typeof choice.message !== "object") {
+    console.log(
+      "Message Output Object:",
+      JSON.stringify(messageOutput, null, 2),
+    );
+
+    const output = messageOutput as { type?: string; content?: unknown };
+
+    if (!Array.isArray(output.content) || output.content.length === 0) {
       throw new LlmProviderError(
-        "Missing message in OpenAI response choice",
+        "Missing content array in OpenAI response message",
         "openai",
       );
     }
 
-    const message = choice.message as { content?: unknown };
-    if (typeof message.content !== "string") {
+    const firstContent = output.content[0];
+    if (!firstContent || typeof firstContent !== "object") {
       throw new LlmProviderError(
-        "No content found in OpenAI response",
+        "Invalid content format in OpenAI response",
         "openai",
       );
     }
 
-    return { content: message.content };
+    const content = firstContent as { type?: string; text?: unknown };
+    if (content.type !== "output_text") {
+      throw new LlmProviderError(
+        `Expected output_text type in OpenAI response content, got: ${content.type}`,
+        "openai",
+      );
+    }
+
+    if (typeof content.text !== "string") {
+      throw new LlmProviderError("No text found in OpenAI response", "openai");
+    }
+
+    return { content: content.text };
   }
 }
