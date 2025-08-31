@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -38,6 +38,49 @@ interface SettingsFormModalProps {
   };
 }
 
+/**
+ * Custom hook for keyboard event handling with capture-phase priority.
+ * Uses capture-phase listeners to ensure form modals handle events before parent modals.
+ */
+const useKeyboardHandling = (
+  isOpen: boolean,
+  onClose: () => void,
+  onRequestSave?: () => void,
+) => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Escape key handling
+      if (event.key === "Escape") {
+        event.preventDefault();
+        event.stopPropagation();
+        onClose();
+        return;
+      }
+
+      // Save shortcuts
+      if (
+        onRequestSave &&
+        (event.ctrlKey || event.metaKey) &&
+        event.key === "s"
+      ) {
+        event.preventDefault();
+        event.stopPropagation();
+        onRequestSave();
+        return;
+      }
+    };
+
+    // Use capture phase for priority
+    document.addEventListener("keydown", handleKeyDown, true);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown, true);
+    };
+  }, [isOpen, onClose, onRequestSave]);
+};
+
 export function SettingsFormModal({
   isOpen,
   onOpenChange,
@@ -46,7 +89,15 @@ export function SettingsFormModal({
   description,
   className,
   dataTestId,
+  onRequestSave,
 }: SettingsFormModalProps) {
+  // Handle modal close
+  const handleClose = () => {
+    onOpenChange(false);
+  };
+
+  // Use keyboard handling hook
+  useKeyboardHandling(isOpen, handleClose, onRequestSave);
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent

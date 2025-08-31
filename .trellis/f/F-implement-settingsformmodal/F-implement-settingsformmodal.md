@@ -8,12 +8,14 @@ affectedFiles:
   apps/desktop/src/components/settings/common/SettingsFormModal.tsx:
     Created new SettingsFormModal base component with complete props interface,
     shadcn/ui Dialog integration, accessibility features, and data-form-modal
-    attribute for nested detection
+    attribute for nested detection; Added useEffect import, implemented
+    useKeyboardHandling custom hook with capture-phase event listeners for
+    Escape and Ctrl/Cmd+S handling, integrated hook with SettingsFormModal
+    component, added onRequestSave prop handling
 log: []
 schema: v1.0
 childrenIds:
   - T-create-barrel-export-and
-  - T-create-settingsformmodal-base
   - T-implement-focus-management
   - T-implement-keyboard-event
   - T-implement-unsaved-changes
@@ -21,6 +23,7 @@ childrenIds:
   - T-migrate-llmconfigmodal-to-use
   - T-migrate-personalityformmodal
   - T-migrate-roleformmodal-to-use
+  - T-create-settingsformmodal-base
 created: 2025-08-31T04:46:07.303Z
 updated: 2025-08-31T04:46:07.303Z
 ---

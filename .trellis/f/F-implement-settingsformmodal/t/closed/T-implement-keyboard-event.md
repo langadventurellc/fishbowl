@@ -1,13 +1,25 @@
 ---
 id: T-implement-keyboard-event
 title: Implement keyboard event handling with capture-phase priority
-status: open
+status: done
 priority: high
 parent: F-implement-settingsformmodal
 prerequisites:
   - T-create-settingsformmodal-base
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/common/SettingsFormModal.tsx:
+    Added useEffect import, implemented useKeyboardHandling custom hook with
+    capture-phase event listeners for Escape and Ctrl/Cmd+S handling, integrated
+    hook with SettingsFormModal component, added onRequestSave prop handling
+log:
+  - Implemented keyboard event handling with capture-phase priority for
+    SettingsFormModal. Added custom useKeyboardHandling hook that uses
+    capture-phase document listeners to ensure form modals handle keyboard
+    events before parent modals. Escape key closes form modal with
+    preventDefault and stopPropagation to prevent bubbling to parent
+    SettingsModal. Ctrl/Cmd+S shortcuts delegate to onRequestSave callback when
+    provided. Event listeners are properly managed with cleanup on unmount and
+    conditional activation only when modal is open.
 schema: v1.0
 childrenIds: []
 created: 2025-08-31T04:51:19.122Z
