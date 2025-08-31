@@ -93,8 +93,8 @@ export function useMessagesWithAgentData(
       if (message.role === "user") {
         return {
           id: message.id,
-          agent: "User",
-          role: "User",
+          agent: "you",
+          role: "user",
           content: message.content,
           timestamp: new Date(message.created_at).toLocaleTimeString(),
           type: "user" as const,

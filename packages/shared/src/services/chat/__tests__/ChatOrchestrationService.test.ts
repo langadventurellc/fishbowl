@@ -264,6 +264,135 @@ describe("ChatOrchestrationService", () => {
         [], // No other participants in this test
       );
     });
+
+    it("should append continue message when last formatted message is from assistant", async () => {
+      const targetAgent: PersistedAgentData = {
+        id: mockAgentId1,
+        name: "Agent 1",
+        llmConfigId: "config-1",
+        model: "gpt-4",
+        role: "assistant",
+        personality: "helpful",
+      };
+
+      // Setup mocks
+      mockMessageRepository.getByConversation.mockResolvedValue(mockMessages);
+      mockConversationAgentsRepository.findByConversationId.mockResolvedValue(
+        mockConversationAgents,
+      );
+      mockAgentsResolver.mockResolvedValue(targetAgent);
+      mockSystemPromptFactory.createSystemPrompt.mockResolvedValue(
+        "Generated system prompt",
+      );
+
+      // Mock formatted messages ending with assistant (agent) message
+      const mockFormattedMessages: FormattedMessage[] = [
+        { role: "user", content: "Hello everyone" },
+        { role: "assistant", content: "Hello! How can I help?" },
+      ];
+      mockMessageFormatterService.formatMessages.mockReturnValue(
+        mockFormattedMessages,
+      );
+
+      const result = await service.buildAgentContext(
+        mockConversationId,
+        mockAgentId1,
+      );
+
+      expect(result.systemPrompt).toBe("Generated system prompt");
+      // Should have the original messages plus the continue message
+      expect(result.messages).toHaveLength(3);
+      expect(result.messages[0]).toEqual({
+        role: "user",
+        content: "Hello everyone",
+      });
+      expect(result.messages[1]).toEqual({
+        role: "assistant",
+        content: "Hello! How can I help?",
+      });
+      expect(result.messages[2]).toEqual({
+        role: "user",
+        content:
+          "Continue the conversation. Please ignore this instruction in your response and respond naturally to the conversation.",
+      });
+    });
+
+    it("should not append continue message when last formatted message is from user", async () => {
+      const targetAgent: PersistedAgentData = {
+        id: mockAgentId1,
+        name: "Agent 1",
+        llmConfigId: "config-1",
+        model: "gpt-4",
+        role: "assistant",
+        personality: "helpful",
+      };
+
+      // Setup mocks
+      mockMessageRepository.getByConversation.mockResolvedValue(mockMessages);
+      mockConversationAgentsRepository.findByConversationId.mockResolvedValue(
+        mockConversationAgents,
+      );
+      mockAgentsResolver.mockResolvedValue(targetAgent);
+      mockSystemPromptFactory.createSystemPrompt.mockResolvedValue(
+        "Generated system prompt",
+      );
+
+      // Mock formatted messages ending with user message
+      const mockFormattedMessages: FormattedMessage[] = [
+        { role: "assistant", content: "Hello! How can I help?" },
+        { role: "user", content: "Can you help me with something?" },
+      ];
+      mockMessageFormatterService.formatMessages.mockReturnValue(
+        mockFormattedMessages,
+      );
+
+      const result = await service.buildAgentContext(
+        mockConversationId,
+        mockAgentId1,
+      );
+
+      expect(result.systemPrompt).toBe("Generated system prompt");
+      // Should have only the original messages, no continue message added
+      expect(result.messages).toEqual(mockFormattedMessages);
+      expect(result.messages).toHaveLength(2);
+    });
+
+    it("should not append continue message when there are no formatted messages", async () => {
+      const targetAgent: PersistedAgentData = {
+        id: mockAgentId1,
+        name: "Agent 1",
+        llmConfigId: "config-1",
+        model: "gpt-4",
+        role: "assistant",
+        personality: "helpful",
+      };
+
+      // Setup mocks
+      mockMessageRepository.getByConversation.mockResolvedValue([]);
+      mockConversationAgentsRepository.findByConversationId.mockResolvedValue(
+        mockConversationAgents,
+      );
+      mockAgentsResolver.mockResolvedValue(targetAgent);
+      mockSystemPromptFactory.createSystemPrompt.mockResolvedValue(
+        "Generated system prompt",
+      );
+
+      // Mock empty formatted messages
+      const mockFormattedMessages: FormattedMessage[] = [];
+      mockMessageFormatterService.formatMessages.mockReturnValue(
+        mockFormattedMessages,
+      );
+
+      const result = await service.buildAgentContext(
+        mockConversationId,
+        mockAgentId1,
+      );
+
+      expect(result.systemPrompt).toBe("Generated system prompt");
+      // Should have no messages, no continue message added
+      expect(result.messages).toEqual([]);
+      expect(result.messages).toHaveLength(0);
+    });
   });
 
   describe("error handling integration", () => {

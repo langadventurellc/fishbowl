@@ -179,7 +179,7 @@ export function MessageItem(props: MessageItemProps) {
   const messageClasses = "w-full";
 
   const messageWrapperClasses = cn(
-    "relative p-2 rounded-lg border border-transparent bg-transparent",
+    "relative p-2 rounded-lg border border-transparent bg-transparent group",
     !displayIsActive && "opacity-50",
   );
 
@@ -210,6 +210,8 @@ export function MessageItem(props: MessageItemProps) {
     "absolute right-2 top-2 w-5 h-5 border rounded-[4px] cursor-pointer",
     "flex items-center justify-center transition-all duration-200 z-[10]",
     "shadow-xs outline-none",
+    // Hide by default, show on group hover or focus
+    "opacity-0 group-hover:opacity-100 focus:opacity-100",
     // Base states
     "border-input bg-transparent",
     // Checked state (included)
