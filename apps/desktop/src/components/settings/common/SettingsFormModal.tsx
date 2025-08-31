@@ -7,6 +7,8 @@ import {
   DialogTitle,
 } from "../../ui/dialog";
 import { cn } from "../../../lib/utils";
+import { useFocusTrap } from "../../../hooks/useFocusTrap";
+import { announceToScreenReader } from "../../../utils/announceToScreenReader";
 
 interface SettingsFormModalProps {
   // Required
@@ -88,6 +90,8 @@ export function SettingsFormModal({
   children,
   description,
   className,
+  initialFocusSelector,
+  announceOnOpen,
   dataTestId,
   onRequestSave,
 }: SettingsFormModalProps) {
@@ -96,18 +100,55 @@ export function SettingsFormModal({
     onOpenChange(false);
   };
 
+  // Focus trap integration
+  const { containerRef } = useFocusTrap({
+    isActive: isOpen,
+    restoreFocus: true,
+    initialFocusSelector,
+  });
+
+  // Screen reader announcements
+  useEffect(() => {
+    if (isOpen && announceOnOpen) {
+      // Small delay to ensure modal is rendered before announcing
+      const timeoutId = setTimeout(() => {
+        announceToScreenReader(announceOnOpen, "polite");
+      }, 100);
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isOpen, announceOnOpen]);
+
   // Use keyboard handling hook
   useKeyboardHandling(isOpen, handleClose, onRequestSave);
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
+        ref={containerRef}
         data-form-modal="true"
         className={cn("max-w-2xl", className)}
         data-testid={dataTestId}
+        aria-labelledby={`modal-title-${title.replace(/\s+/g, "-").toLowerCase()}`}
+        aria-describedby={
+          description
+            ? `modal-description-${title.replace(/\s+/g, "-").toLowerCase()}`
+            : undefined
+        }
       >
         <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          {description && <DialogDescription>{description}</DialogDescription>}
+          <DialogTitle
+            id={`modal-title-${title.replace(/\s+/g, "-").toLowerCase()}`}
+          >
+            {title}
+          </DialogTitle>
+          {description && (
+            <DialogDescription
+              id={`modal-description-${title.replace(/\s+/g, "-").toLowerCase()}`}
+            >
+              {description}
+            </DialogDescription>
+          )}
         </DialogHeader>
         {children}
       </DialogContent>

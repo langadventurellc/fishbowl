@@ -1,13 +1,29 @@
 ---
 id: T-implement-focus-management
 title: Implement focus management and accessibility features
-status: open
+status: done
 priority: medium
 parent: F-implement-settingsformmodal
 prerequisites:
   - T-create-settingsformmodal-base
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/common/SettingsFormModal.tsx:
+    Added focus trap integration with useFocusTrap hook including configurable
+    initialFocusSelector prop support; implemented screen reader announcements
+    using announceToScreenReader utility with announceOnOpen prop; added proper
+    ARIA attributes including aria-labelledby and aria-describedby for modal
+    accessibility; containerRef from focus trap attached to DialogContent for
+    focus management
+log:
+  - Successfully implemented comprehensive focus management and accessibility
+    features for SettingsFormModal. The implementation includes focus trap
+    integration using existing useFocusTrap hook with configurable initial focus
+    selector, screen reader announcements with announceToScreenReader utility
+    supporting optional announceOnOpen messages, and proper ARIA attributes for
+    modal labeling and descriptions. Focus restoration, keyboard navigation, and
+    proper tab order are handled by the integrated focus trap. All quality
+    checks pass and the component is ready for use with full accessibility
+    support.
 schema: v1.0
 childrenIds: []
 created: 2025-08-31T04:51:47.313Z

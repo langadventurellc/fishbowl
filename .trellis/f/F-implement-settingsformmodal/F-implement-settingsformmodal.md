@@ -11,7 +11,13 @@ affectedFiles:
     attribute for nested detection; Added useEffect import, implemented
     useKeyboardHandling custom hook with capture-phase event listeners for
     Escape and Ctrl/Cmd+S handling, integrated hook with SettingsFormModal
-    component, added onRequestSave prop handling
+    component, added onRequestSave prop handling; Added focus trap integration
+    with useFocusTrap hook including configurable initialFocusSelector prop
+    support; implemented screen reader announcements using
+    announceToScreenReader utility with announceOnOpen prop; added proper ARIA
+    attributes including aria-labelledby and aria-describedby for modal
+    accessibility; containerRef from focus trap attached to DialogContent for
+    focus management
   apps/desktop/src/components/settings/common/index.ts:
     Created barrel export file
     with SettingsFormModal export and prepared structure for future common
@@ -23,13 +29,13 @@ affectedFiles:
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-barrel-export-and
   - T-implement-focus-management
   - T-implement-unsaved-changes
   - T-migrate-agentformmodal-to-use
   - T-migrate-llmconfigmodal-to-use
   - T-migrate-personalityformmodal
   - T-migrate-roleformmodal-to-use
+  - T-create-barrel-export-and
   - T-create-settingsformmodal-base
   - T-implement-keyboard-event
 created: 2025-08-31T04:46:07.303Z
