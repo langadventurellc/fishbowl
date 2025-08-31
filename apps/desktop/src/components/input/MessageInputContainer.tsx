@@ -1,15 +1,19 @@
-import { cn } from "@/lib/utils";
-import { useCreateMessage, useMessagesRefresh } from "@/hooks/messages";
-import { useChatStore } from "@fishbowl-ai/ui-shared";
-import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
 import {
+  useCreateMessage,
+  useMessages,
+  useMessagesRefresh,
+} from "@/hooks/messages";
+import { cn } from "@/lib/utils";
+import {
+  MessageInputContainerProps,
   MessageInputDisplayProps,
   SendButtonDisplayProps,
-  MessageInputContainerProps,
+  useChatStore,
   type ConversationAgentViewModel,
 } from "@fishbowl-ai/ui-shared";
 import { cva } from "class-variance-authority";
-import React, { useCallback, useState, useRef, KeyboardEvent } from "react";
+import { KeyboardEvent, useCallback, useRef, useState } from "react";
+import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
 import { SendButtonDisplay } from "./SendButtonDisplay";
 
 /**
@@ -70,6 +74,9 @@ export function MessageInputContainer({
   // Hook for conversation agents to check if any are enabled
   const { conversationAgents } = useConversationAgents(conversationId);
 
+  // Hook for checking if this is the first message
+  const { messages } = useMessages(conversationId);
+
   // Clear local error when user starts typing
   const handleContentChange = useCallback(
     (value: string) => {
@@ -85,19 +92,47 @@ export function MessageInputContainer({
   );
 
   // Handle message submission
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   const handleSendMessage = useCallback(async () => {
-    if (!content.trim()) {
+    // Check if this is the first message in the conversation
+    const isFirstMessage = messages.length === 0;
+
+    // Require message content only for the first message
+    if (isFirstMessage && !content.trim()) {
       setLocalError("Message content cannot be empty");
       return;
     }
 
+    // Check if there's at least one enabled agent
+    const enabledAgents = conversationAgents.filter(
+      (agent: ConversationAgentViewModel) => agent.enabled,
+    );
+
+    if (enabledAgents.length === 0) {
+      setLocalError("At least one agent must be enabled");
+      return;
+    }
+
     try {
-      const createdMessage = await createMessage({
-        conversation_id: conversationId,
-        role: "user",
-        content: content.trim(),
-        included: true,
-      });
+      let createdMessage;
+      if (content.trim()) {
+        // Create a regular user message
+        createdMessage = await createMessage({
+          conversation_id: conversationId,
+          role: "user",
+          content: content.trim(),
+          included: true,
+        });
+      } else {
+        // For continuation (empty content), create a placeholder message
+        // This won't be displayed but provides a messageId for orchestration
+        createdMessage = await createMessage({
+          conversation_id: conversationId,
+          role: "system",
+          content: "[Continue conversation]",
+          included: false, // Don't include in API calls to agents
+        });
+      }
 
       // Clear input on successful creation
       setContent("");
@@ -114,10 +149,6 @@ export function MessageInputContainer({
       }
 
       // Trigger chat orchestration if agents are enabled
-      const enabledAgents = conversationAgents.filter(
-        (agent: ConversationAgentViewModel) => agent.enabled,
-      );
-
       if (enabledAgents.length > 0) {
         try {
           // Check if running in Electron environment
@@ -133,7 +164,6 @@ export function MessageInputContainer({
           }
         } catch (orchestrationError) {
           // Log orchestration error but don't affect user experience
-          // The user message was already successfully created
           console.error("Chat orchestration failed:", orchestrationError);
 
           // Optionally, you could set a non-blocking warning here
@@ -164,7 +194,14 @@ export function MessageInputContainer({
       // Error is handled by useCreateMessage hook
       // Keep the input content so user can retry
     }
-  }, [content, conversationId, createMessage, conversationAgents, refetch]);
+  }, [
+    content,
+    conversationId,
+    createMessage,
+    conversationAgents,
+    refetch,
+    messages.length,
+  ]);
 
   // Handle keyboard shortcuts
   const handleKeyDown = useCallback(

@@ -240,9 +240,23 @@ export class ChatOrchestrationService {
         agentNameByConversationAgentId,
       );
 
+      // Check if we need to append a temporary continue message
+      // This ensures the last message is from "user" role for API compliance
+      const finalMessages = [...formattedMessages];
+      if (
+        formattedMessages.length > 0 &&
+        formattedMessages[formattedMessages.length - 1]?.role === "assistant"
+      ) {
+        finalMessages.push({
+          role: "user",
+          content:
+            "Continue the conversation. Please ignore this instruction in your response and respond naturally to the conversation.",
+        });
+      }
+
       const context: AgentContext = {
         systemPrompt,
-        messages: formattedMessages,
+        messages: finalMessages,
       };
 
       this.logger.debug("Agent context built successfully", {

@@ -11,6 +11,11 @@
           "contextLength": 400000
         },
         {
+          "id": "gpt-4o-2024-08-06",
+          "name": "GPT-4o",
+          "contextLength": 128000
+        },
+        {
           "id": "gpt-4.1-nano-2025-04-14",
           "name": "GPT-4.1 Nano",
           "contextLength": 1000000
