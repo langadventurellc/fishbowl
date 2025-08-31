@@ -1,12 +1,19 @@
 ---
 id: T-remove-regenerate-functionalit
 title: Remove regenerate functionality from MessageContextMenu
-status: open
+status: done
 priority: high
 parent: F-implement-message-context
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/chat/MessageContextMenu.tsx:
+    Removed regenerate menu
+    item from context menu while preserving props interface for future
+    functionality
+log:
+  - Removed regenerate menu item from MessageContextMenu component as requested.
+    The UI no longer displays the regenerate option while preserving the
+    underlying functionality for future use.
 schema: v1.0
 childrenIds: []
 created: 2025-08-31T19:26:17.234Z

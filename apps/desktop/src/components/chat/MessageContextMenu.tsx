@@ -35,7 +35,7 @@ import { ContextMenu } from "../menu";
  *   onDelete={() => deleteMessage(message.id)}
  * />
  *
- * // With regeneration option and above positioning
+ * // With above positioning
  * <MessageContextMenu
  *   message={message}
  *   position="above"
@@ -53,17 +53,11 @@ export function MessageContextMenu({
   position = "below",
   onCopy,
   onDelete,
-  onRegenerate,
-  canRegenerate = false,
   className = "",
 }: MessageContextMenuProps) {
   return (
     <ContextMenu position={position} className={className}>
       <DropdownMenuItem onClick={onCopy}>Copy message</DropdownMenuItem>
-
-      {canRegenerate && onRegenerate && (
-        <DropdownMenuItem onClick={onRegenerate}>Regenerate</DropdownMenuItem>
-      )}
 
       <DropdownMenuItem onClick={onDelete} variant="destructive">
         Delete message

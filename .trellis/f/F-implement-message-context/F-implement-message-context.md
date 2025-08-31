@@ -1,13 +1,22 @@
 ---
 id: F-implement-message-context
 title: Implement Message Context Menu Actions
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/chat/MessageContextMenu.tsx:
+    Removed regenerate menu
+    item from context menu while preserving props interface for future
+    functionality
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-clipboard-service-with
+  - T-create-message-deletion
+  - T-implement-copy-functionality
+  - T-implement-delete-functionality
+  - T-remove-regenerate-functionalit
 created: 2025-08-31T19:23:41.799Z
 updated: 2025-08-31T19:23:41.799Z
 ---
