@@ -47,10 +47,17 @@ affectedFiles:
     onRequestSave for Ctrl+S handling, and screen reader announcements;
     maintained all form functionality while eliminating duplicate modal
     infrastructure code
+  apps/desktop/src/components/settings/personalities/PersonalityFormModal.tsx:
+    Migrated component to use SettingsFormModal wrapper; removed custom Dialog
+    components, keyboard event handling, focus trap management, and confirmation
+    dialog logic; replaced with proper prop mapping for title/description,
+    confirmOnClose configuration with hasUnsavedChanges integration,
+    onRequestSave for Ctrl+S handling, and screen reader announcements;
+    maintained all form functionality while eliminating duplicate modal
+    infrastructure code
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-agentformmodal-to-use
   - T-migrate-llmconfigmodal-to-use
   - T-migrate-personalityformmodal
   - T-create-barrel-export-and
@@ -58,6 +65,7 @@ childrenIds:
   - T-implement-focus-management
   - T-implement-keyboard-event
   - T-implement-unsaved-changes
+  - T-migrate-agentformmodal-to-use
   - T-migrate-roleformmodal-to-use
 created: 2025-08-31T04:46:07.303Z
 updated: 2025-08-31T04:46:07.303Z

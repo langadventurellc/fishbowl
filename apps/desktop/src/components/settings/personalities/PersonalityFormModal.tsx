@@ -21,17 +21,7 @@ import {
 import { PersonalitySectionDef, DiscreteValue } from "@fishbowl-ai/shared";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { PersonalityDefinitionsClient } from "../../../renderer/services/personalityDefinitionsClient";
-import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
-import { useFocusTrap } from "../../../hooks/useFocusTrap";
-import { announceToScreenReader } from "../../../utils/announceToScreenReader";
-import { ConfirmationDialog } from "../../ui/confirmation-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../../ui/dialog";
+import { SettingsFormModal } from "../common";
 import { PersonalityForm, type PersonalityFormRef } from "./PersonalityForm";
 
 export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
@@ -42,7 +32,6 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
   onSave,
   isLoading = false,
 }) => {
-  const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
   const { hasUnsavedChanges } = useUnsavedChanges();
   const { personalities } = usePersonalities();
 
@@ -57,14 +46,8 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
   // PersonalityDefinitionsClient instance
   const [client] = useState(() => new PersonalityDefinitionsClient());
 
-  // Focus trap setup
-  const triggerRef = useRef<HTMLElement | null>(null);
+  // Form reference for reset functionality
   const formRef = useRef<PersonalityFormRef>(null);
-  const { containerRef } = useFocusTrap({
-    isActive: isOpen,
-    restoreFocus: true,
-    initialFocusSelector: "[data-personality-modal-initial-focus]",
-  });
 
   // Load personality definitions when modal opens
   useEffect(() => {
@@ -130,65 +113,10 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
     };
   }, [isOpen, client]);
 
-  // Store the trigger element when modal opens and announce to screen readers
-  useEffect(() => {
-    if (isOpen && document.activeElement instanceof HTMLElement) {
-      triggerRef.current = document.activeElement;
-
-      // Announce modal state to screen readers
-      const message =
-        mode === "create"
-          ? "Create personality dialog opened. Press Tab to navigate between fields."
-          : "Edit personality dialog opened. Press Tab to navigate between fields.";
-      announceToScreenReader(message, "polite");
-    }
-  }, [isOpen, mode]);
-
-  // Announce loading and error state changes
-  useEffect(() => {
-    if (!isOpen) return;
-
-    if (defsLoading) {
-      announceToScreenReader("Loading personality definitions...", "polite");
-    } else if (defsError) {
-      announceToScreenReader(
-        "Error loading personality definitions. Some features may be unavailable.",
-        "assertive",
-      );
-    } else if (sections.length > 0) {
-      announceToScreenReader(
-        "Personality definitions loaded successfully.",
-        "polite",
-      );
-    }
-  }, [isOpen, defsLoading, defsError, sections.length]);
-
-  // Handle modal close with unsaved changes protection
-  const handleOpenChange = useCallback(
-    async (open: boolean) => {
-      if (!open && hasUnsavedChanges) {
-        const confirmed = await showConfirmation({
-          title: "Unsaved Changes",
-          message:
-            "You have unsaved changes. Are you sure you want to close without saving?",
-          confirmText: "Close Without Saving",
-          cancelText: "Continue Editing",
-          variant: "destructive",
-        });
-        if (!confirmed) return;
-
-        // Reset form to initial data if user confirmed they want to discard changes
-        formRef.current?.resetToInitialData();
-      }
-      onOpenChange(open);
-    },
-    [hasUnsavedChanges, showConfirmation, onOpenChange],
-  );
-
   // Handle form cancellation
   const handleCancel = useCallback(() => {
-    handleOpenChange(false);
-  }, [handleOpenChange]);
+    onOpenChange(false);
+  }, [onOpenChange]);
 
   // Handle successful save
   const handleSave = useCallback(
@@ -199,79 +127,75 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
     [onSave, onOpenChange],
   );
 
-  // Keyboard shortcuts (Escape handled in DialogContent onKeyDown)
-  useEffect(() => {
-    if (!isOpen) return;
+  // Get modal title based on mode
+  const getModalTitle = () => {
+    return mode === "create" ? "Create Personality" : "Edit Personality";
+  };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl/Cmd + S to save
-      if ((event.ctrlKey || event.metaKey) && event.key === "s") {
-        event.preventDefault();
-        // Trigger form submission
-        const form = document.querySelector(
-          ".personality-form-modal form",
-        ) as HTMLFormElement;
-        if (form) {
-          const submitEvent = new Event("submit", {
-            cancelable: true,
-            bubbles: true,
-          });
-          form.dispatchEvent(submitEvent);
-        }
-      }
-    };
+  const getModalDescription = () => {
+    return mode === "create"
+      ? "Define a new personality with unique traits and characteristics."
+      : "Update the personality name, traits, and custom instructions.";
+  };
 
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, handleOpenChange]);
+  // Get screen reader announcement
+  const getAnnounceOnOpen = () => {
+    const message =
+      mode === "create"
+        ? "Create personality dialog opened. Press Tab to navigate between fields."
+        : "Edit personality dialog opened. Press Tab to navigate between fields.";
+    return message;
+  };
+
+  // Handle Ctrl+S save shortcut
+  const handleRequestSave = useCallback(() => {
+    // Trigger form submission by dispatching submit event
+    const form = document.querySelector(
+      "[data-form-modal] form",
+    ) as HTMLFormElement;
+    if (form) {
+      const submitEvent = new Event("submit", {
+        cancelable: true,
+        bubbles: true,
+      });
+      form.dispatchEvent(submitEvent);
+    }
+  }, []);
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      <DialogContent
-        ref={containerRef}
-        className="personality-form-modal max-w-2xl max-h-[80vh] overflow-y-auto"
-        onOpenAutoFocus={(e) => {
-          // Prevent Radix's default focus behavior
-          e.preventDefault();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Escape") {
-            e.preventDefault();
-            e.stopPropagation();
-            onOpenChange(false);
-          }
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle>
-            {mode === "create" ? "Create Personality" : "Edit Personality"}
-          </DialogTitle>
-          <DialogDescription>
-            {mode === "create"
-              ? "Define a new personality with unique traits and characteristics."
-              : "Update the personality name, traits, and custom instructions."}
-          </DialogDescription>
-        </DialogHeader>
-
-        <PersonalityForm
-          ref={formRef}
-          mode={mode}
-          initialData={personality}
-          onSave={handleSave}
-          onCancel={handleCancel}
-          existingPersonalities={personalities}
-          isLoading={isLoading}
-          dynamicSections={sections}
-          dynamicGetShort={dynamicGetShort}
-          defsLoading={defsLoading}
-          defsError={defsError}
-        />
-      </DialogContent>
-
-      {/* Confirmation Dialog for unsaved changes */}
-      {confirmationDialogProps && (
-        <ConfirmationDialog {...confirmationDialogProps} />
-      )}
-    </Dialog>
+    <SettingsFormModal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      title={getModalTitle()}
+      description={getModalDescription()}
+      className="max-w-2xl max-h-[80vh] overflow-y-auto"
+      initialFocusSelector="[data-personality-modal-initial-focus]"
+      announceOnOpen={getAnnounceOnOpen()}
+      onRequestSave={handleRequestSave}
+      confirmOnClose={{
+        enabled: hasUnsavedChanges && !isLoading,
+        message: {
+          title: "Unsaved Changes",
+          body: "You have unsaved changes. Are you sure you want to close without saving?",
+          confirmText: "Close Without Saving",
+          cancelText: "Continue Editing",
+        },
+        onDiscard: () => formRef.current?.resetToInitialData(),
+      }}
+    >
+      <PersonalityForm
+        ref={formRef}
+        mode={mode}
+        initialData={personality}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        existingPersonalities={personalities}
+        isLoading={isLoading}
+        dynamicSections={sections}
+        dynamicGetShort={dynamicGetShort}
+        defsLoading={defsLoading}
+        defsError={defsError}
+      />
+    </SettingsFormModal>
   );
 };
