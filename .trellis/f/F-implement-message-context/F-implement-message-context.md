@@ -9,6 +9,16 @@ affectedFiles:
     Removed regenerate menu
     item from context menu while preserving props interface for future
     functionality
+  packages/shared/src/services/clipboard/ClipboardBridge.ts: Created clipboard
+    bridge interface with comprehensive documentation and examples
+  packages/shared/src/services/clipboard/index.ts: Added clipboard service exports
+  apps/desktop/src/renderer/services/BrowserClipboardService.ts: Implemented browser clipboard service with modern API and legacy fallback
+  apps/desktop/src/main/services/NodeClipboardService.ts: Implemented Node.js clipboard service using Electron's clipboard API
+  packages/shared/src/services/messaging/MessageActionsService.ts:
+    Created message actions service with dependency injection and content
+    sanitization
+  packages/shared/src/services/messaging/index.ts: Added messaging service exports
+  packages/shared/src/services/index.ts: Updated main service exports to include clipboard and messaging modules
 log: []
 schema: v1.0
 childrenIds:

@@ -3,6 +3,8 @@ export * from "./database";
 export * from "./migrations";
 export * from "./chat";
 export * from "./llm";
+export * from "./clipboard";
+export * from "./messaging";
 export type { PersonalityDefinitionsService } from "./PersonalityDefinitionsService";
 
 // Repositories (for convenience)
