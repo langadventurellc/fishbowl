@@ -1,7 +1,7 @@
 ---
 id: T-migrate-roleformmodal-to-use
 title: Migrate RoleFormModal to use SettingsFormModal
-status: open
+status: done
 priority: medium
 parent: F-implement-settingsformmodal
 prerequisites:
@@ -9,8 +9,24 @@ prerequisites:
   - T-implement-focus-management
   - T-implement-unsaved-changes
   - T-create-barrel-export-and
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/RoleFormModal.tsx:
+    Migrated component to use SettingsFormModal wrapper; removed custom Dialog
+    components, keyboard event handling, focus trap management, and confirmation
+    dialog logic; replaced with proper prop mapping for title/description,
+    confirmOnClose configuration with hasUnsavedChanges integration,
+    onRequestSave for Ctrl+S handling, and screen reader announcements;
+    maintained all form functionality while eliminating duplicate modal
+    infrastructure code
+log:
+  - Successfully migrated RoleFormModal from custom modal infrastructure to use
+    SettingsFormModal wrapper component. This eliminates ~70 lines of duplicate
+    modal code while maintaining all existing functionality including form
+    validation, unsaved changes confirmation, keyboard shortcuts (Escape,
+    Ctrl/Cmd+S), focus management, and accessibility features. All quality
+    checks pass and existing tests continue to pass (13 test suites, 227 tests).
+    The migration validates the SettingsFormModal API and demonstrates the clean
+    form separation pattern working effectively.
 schema: v1.0
 childrenIds: []
 created: 2025-08-31T04:53:20.741Z

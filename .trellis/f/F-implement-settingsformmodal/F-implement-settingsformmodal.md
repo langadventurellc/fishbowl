@@ -31,10 +31,17 @@ affectedFiles:
     detection logic to use [data-form-modal] selector instead of
     .agent-form-modal CSS class, and updated MutationObserver attributeFilter to
     watch for data-form-modal changes instead of class changes
+  apps/desktop/src/components/settings/roles/RoleFormModal.tsx:
+    Migrated component to use SettingsFormModal wrapper; removed custom Dialog
+    components, keyboard event handling, focus trap management, and confirmation
+    dialog logic; replaced with proper prop mapping for title/description,
+    confirmOnClose configuration with hasUnsavedChanges integration,
+    onRequestSave for Ctrl+S handling, and screen reader announcements;
+    maintained all form functionality while eliminating duplicate modal
+    infrastructure code
 log: []
 schema: v1.0
 childrenIds:
-  - T-implement-unsaved-changes
   - T-migrate-agentformmodal-to-use
   - T-migrate-llmconfigmodal-to-use
   - T-migrate-personalityformmodal
@@ -43,6 +50,7 @@ childrenIds:
   - T-create-settingsformmodal-base
   - T-implement-focus-management
   - T-implement-keyboard-event
+  - T-implement-unsaved-changes
 created: 2025-08-31T04:46:07.303Z
 updated: 2025-08-31T04:46:07.303Z
 ---
