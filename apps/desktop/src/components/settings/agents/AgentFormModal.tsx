@@ -2,7 +2,7 @@
  * AgentFormModal component provides modal interface for agent creation and editing.
  *
  * Features:
- * - Modal dialog using shadcn/ui Dialog components
+ * - Modal dialog using SettingsFormModal wrapper
  * - Integration with AgentForm component
  * - Unsaved changes protection with confirmation dialog
  * - Keyboard shortcuts (Ctrl/Cmd+S to save, Escape to close)
@@ -15,18 +15,8 @@
 
 import type { AgentFormModalProps } from "@fishbowl-ai/ui-shared";
 import { useUnsavedChanges, type AgentFormData } from "@fishbowl-ai/ui-shared";
-import React, { useCallback, useEffect, useRef } from "react";
-import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
-import { useFocusTrap } from "../../../hooks/useFocusTrap";
-import { announceToScreenReader } from "../../../utils/announceToScreenReader";
-import { ConfirmationDialog } from "../../ui/confirmation-dialog";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "../../ui/dialog";
+import React, { useCallback, useRef } from "react";
+import { SettingsFormModal } from "../common";
 import { AgentForm, type AgentFormRef } from "./AgentForm";
 
 export const AgentFormModal: React.FC<AgentFormModalProps> = ({
@@ -38,60 +28,8 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
   onSave,
   isLoading = false,
 }) => {
-  const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
   const { hasUnsavedChanges } = useUnsavedChanges();
-
-  // Focus trap setup
-  const triggerRef = useRef<HTMLElement | null>(null);
   const formRef = useRef<AgentFormRef>(null);
-  const { containerRef } = useFocusTrap({
-    isActive: isOpen,
-    restoreFocus: true,
-    initialFocusSelector: "[data-agent-modal-initial-focus]",
-  });
-
-  // Store the trigger element when modal opens and announce to screen readers
-  useEffect(() => {
-    if (isOpen && document.activeElement instanceof HTMLElement) {
-      triggerRef.current = document.activeElement;
-
-      // Announce modal state to screen readers
-      const message =
-        mode === "create"
-          ? "Create agent dialog opened. Press Tab to navigate between fields."
-          : mode === "edit"
-            ? "Edit agent dialog opened. Press Tab to navigate between fields."
-            : "Create agent from template dialog opened. Press Tab to navigate between fields.";
-      announceToScreenReader(message, "polite");
-    }
-  }, [isOpen, mode]);
-
-  // Handle modal close with unsaved changes protection
-  const handleOpenChange = useCallback(
-    async (open: boolean) => {
-      if (!open && hasUnsavedChanges) {
-        const confirmed = await showConfirmation({
-          title: "Unsaved Changes",
-          message:
-            "You have unsaved changes. Are you sure you want to close without saving?",
-          confirmText: "Close Without Saving",
-          cancelText: "Continue Editing",
-          variant: "destructive",
-        });
-        if (!confirmed) return;
-
-        // Reset form to initial data if user confirmed they want to discard changes
-        formRef.current?.resetToInitialData();
-      }
-      onOpenChange(open);
-    },
-    [hasUnsavedChanges, showConfirmation, onOpenChange],
-  );
-
-  // Handle form cancellation
-  const handleCancel = useCallback(() => {
-    handleOpenChange(false);
-  }, [handleOpenChange]);
 
   // Handle successful save
   const handleSave = useCallback(
@@ -102,33 +40,12 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
     [onSave, onOpenChange],
   );
 
-  // Keyboard shortcuts (Escape handled in DialogContent onKeyDown)
-  useEffect(() => {
-    if (!isOpen) return;
+  // Handle form cancellation
+  const handleCancel = useCallback(() => {
+    onOpenChange(false);
+  }, [onOpenChange]);
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Ctrl/Cmd + S to save
-      if ((event.ctrlKey || event.metaKey) && event.key === "s") {
-        event.preventDefault();
-        // Trigger form submission
-        const form = document.querySelector(
-          ".agent-form-modal form",
-        ) as HTMLFormElement;
-        if (form) {
-          const submitEvent = new Event("submit", {
-            cancelable: true,
-            bubbles: true,
-          });
-          form.dispatchEvent(submitEvent);
-        }
-      }
-    };
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, handleOpenChange]);
-
-  // Determine modal content based on mode
+  // Get modal title and description based on mode
   const getModalTitle = () => {
     switch (mode) {
       case "create":
@@ -155,46 +72,68 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
     }
   };
 
+  // Get screen reader announcement
+  const getAnnounceOnOpen = () => {
+    switch (mode) {
+      case "create":
+        return "Create agent dialog opened. Press Tab to navigate between fields.";
+      case "edit":
+        return "Edit agent dialog opened. Press Tab to navigate between fields.";
+      case "template":
+        return "Create agent from template dialog opened. Press Tab to navigate between fields.";
+      default:
+        return "Agent configuration dialog opened. Press Tab to navigate between fields.";
+    }
+  };
+
+  // Handle Ctrl+S save shortcut
+  const handleRequestSave = useCallback(() => {
+    // Trigger form submission by dispatching submit event
+    const form = document.querySelector(
+      "[data-form-modal] form",
+    ) as HTMLFormElement;
+    if (form) {
+      const submitEvent = new Event("submit", {
+        cancelable: true,
+        bubbles: true,
+      });
+      form.dispatchEvent(submitEvent);
+    }
+  }, []);
+
   // Prepare initial data based on mode
   const initialData =
     mode === "edit" ? agent : mode === "template" ? template : undefined;
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleOpenChange} modal={false}>
-      <DialogContent
-        ref={containerRef}
-        className="agent-form-modal max-w-3xl max-h-[85vh] overflow-y-auto"
-        onOpenAutoFocus={(e) => {
-          // Prevent Radix's default focus behavior
-          e.preventDefault();
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Escape") {
-            e.preventDefault();
-            e.stopPropagation();
-            onOpenChange(false);
-          }
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle>{getModalTitle()}</DialogTitle>
-          <DialogDescription>{getModalDescription()}</DialogDescription>
-        </DialogHeader>
-
-        <AgentForm
-          ref={formRef}
-          mode={mode}
-          initialData={initialData}
-          onSave={handleSave}
-          onCancel={handleCancel}
-          isLoading={isLoading}
-        />
-      </DialogContent>
-
-      {/* Confirmation Dialog for unsaved changes */}
-      {confirmationDialogProps && (
-        <ConfirmationDialog {...confirmationDialogProps} />
-      )}
-    </Dialog>
+    <SettingsFormModal
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      title={getModalTitle()}
+      description={getModalDescription()}
+      className="max-w-3xl max-h-[85vh] overflow-y-auto"
+      initialFocusSelector="[data-agent-modal-initial-focus]"
+      announceOnOpen={getAnnounceOnOpen()}
+      onRequestSave={handleRequestSave}
+      confirmOnClose={{
+        enabled: hasUnsavedChanges && !isLoading,
+        message: {
+          title: "Unsaved Changes",
+          body: "You have unsaved changes. Are you sure you want to close without saving?",
+          confirmText: "Close Without Saving",
+          cancelText: "Continue Editing",
+        },
+        onDiscard: () => formRef.current?.resetToInitialData(),
+      }}
+    >
+      <AgentForm
+        ref={formRef}
+        mode={mode}
+        initialData={initialData}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        isLoading={isLoading}
+      />
+    </SettingsFormModal>
   );
 };

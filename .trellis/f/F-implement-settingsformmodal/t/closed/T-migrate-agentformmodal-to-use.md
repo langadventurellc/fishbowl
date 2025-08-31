@@ -1,13 +1,31 @@
 ---
 id: T-migrate-agentformmodal-to-use
 title: Migrate AgentFormModal to use SettingsFormModal
-status: open
+status: done
 priority: medium
 parent: F-implement-settingsformmodal
 prerequisites:
   - T-migrate-roleformmodal-to-use
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/agents/AgentFormModal.tsx:
+    Migrated component to use SettingsFormModal wrapper; removed custom Dialog
+    components, keyboard event handling, focus trap management, and confirmation
+    dialog logic; replaced with proper prop mapping for title/description,
+    confirmOnClose configuration with hasUnsavedChanges integration,
+    onRequestSave for Ctrl+S handling, and screen reader announcements;
+    maintained all form functionality while eliminating duplicate modal
+    infrastructure code
+log:
+  - Successfully migrated AgentFormModal from custom modal infrastructure to use
+    SettingsFormModal wrapper component. This eliminates ~120 lines of duplicate
+    modal code while maintaining all existing functionality including form
+    validation, unsaved changes confirmation, keyboard shortcuts (Escape,
+    Ctrl/Cmd+S), focus management, and accessibility features. The migration
+    follows the established pattern from RoleFormModal and integrates seamlessly
+    with the SettingsFormModal API including loading state prevention of modal
+    closing, proper form reset on discard, and comprehensive screen reader
+    announcements. All quality checks pass (lint, format, type-check) with no
+    regressions.
 schema: v1.0
 childrenIds: []
 created: 2025-08-31T04:54:03.666Z
