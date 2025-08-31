@@ -1,7 +1,7 @@
 ---
 id: F-implement-message-context
 title: Implement Message Context Menu Actions
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -33,17 +33,33 @@ affectedFiles:
     Added clipboard bridge integration with BrowserClipboardService dependency
     injection
   apps/desktop/src/hooks/services/useMessageActions.ts: Created message actions
-    hook with clipboard dependency injection and copy functionality
+    hook with clipboard dependency injection and copy functionality; Enhanced
+    hook to provide real delete functionality via Electron IPC alongside
+    existing copy functionality
   apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
     Updated context menu handler to use real copy implementation with error
-    handling
-log: []
+    handling; Extended context menu handler with delete case, confirmation
+    dialog integration, and automatic message list refresh
+  apps/desktop/src/shared/ipc/messagesConstants.ts: Added DELETE channel constant for message deletion IPC operations
+  apps/desktop/src/shared/ipc/messages/deleteRequest.ts: Created request type interface for message deletion with ID parameter
+  apps/desktop/src/shared/ipc/messages/deleteResponse.ts: Created response type
+    interface for message deletion with boolean success indicator
+  apps/desktop/src/shared/ipc/messages/index.ts: Added exports for new delete request and response types
+  apps/desktop/src/shared/ipc/index.ts: Added message delete types to main IPC types export
+  apps/desktop/src/electron/preload.ts: Added delete method to messages API with
+    proper error handling and IPC communication
+  apps/desktop/src/types/electron.d.ts: Updated ElectronAPI interface to include
+    delete method signature in messages interface
+  apps/desktop/src/electron/messagesHandlers.ts: Added DELETE IPC handler using
+    messagesRepository.delete with proper logging and error handling
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-implement-copy-functionality
-  - T-implement-delete-functionality
   - T-create-clipboard-service-with
   - T-create-message-deletion
+  - T-implement-copy-functionality
+  - T-implement-delete-functionality
   - T-remove-regenerate-functionalit
 created: 2025-08-31T19:23:41.799Z
 updated: 2025-08-31T19:23:41.799Z

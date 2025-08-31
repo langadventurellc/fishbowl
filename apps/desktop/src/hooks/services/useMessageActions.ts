@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useCallback } from "react";
 import {
   MessageActionsService,
   type DatabaseBridge,
@@ -7,13 +7,13 @@ import {
 import { useServices } from "../../contexts/useServices";
 
 /**
- * Hook that provides access to message copy functionality.
+ * Hook that provides access to message actions functionality.
  *
- * Creates and memoizes a copy-only service with clipboard dependency injection.
- * This hook focuses specifically on copy operations, with delete functionality
- * handled separately in other tasks.
+ * Creates and memoizes message actions with clipboard and delete functionality.
+ * Copy operations use the MessageActionsService with clipboard dependency injection.
+ * Delete operations use direct Electron IPC for database communication.
  *
- * @returns Object with copyMessageContent method
+ * @returns Object with copyMessageContent and deleteMessage methods
  *
  * @example
  * ```typescript
@@ -40,41 +40,76 @@ import { useServices } from "../../contexts/useServices";
 export function useMessageActions() {
   const services = useServices();
 
-  // Create stub database bridge for MessageActionsService constructor
-  // Only copy functionality is used in this task, delete is separate
-  const stubDatabaseBridge: DatabaseBridge = useMemo(
+  // Create database bridge wrapper that uses Electron IPC for database operations
+  const electronDatabaseBridge: DatabaseBridge = useMemo(
     () => ({
       async query<T>(): Promise<T[]> {
-        throw new Error("Database operations not implemented in this service");
+        throw new Error("Query operations not needed for message actions");
       },
       async execute(): Promise<DatabaseResult> {
-        throw new Error("Database operations not implemented in this service");
+        throw new Error("Execute operations not needed for message actions");
       },
       async transaction<T>(): Promise<T> {
-        throw new Error("Database operations not implemented in this service");
+        throw new Error(
+          "Transaction operations not needed for message actions",
+        );
       },
       close: async () => {
-        // No-op
+        // No-op - Electron IPC handles connection management
       },
-      isConnected: () => false,
+      isConnected: () => true, // Electron IPC is always "connected"
     }),
     [],
   );
 
-  // Create and memoize MessageActionsService with injected clipboard dependency
+  // Create and memoize MessageActionsService with injected dependencies
   const messageActionsService = useMemo(() => {
     return new MessageActionsService(
       services.clipboardBridge,
-      stubDatabaseBridge,
+      electronDatabaseBridge,
     );
-  }, [services.clipboardBridge, stubDatabaseBridge]);
+  }, [services.clipboardBridge, electronDatabaseBridge]);
 
-  // Return only the copy functionality for this task
+  // Direct delete function using Electron IPC
+  const deleteMessage = useCallback(
+    async (messageId: string): Promise<void> => {
+      // Validate input
+      if (typeof messageId !== "string" || messageId.trim().length === 0) {
+        throw new Error("Message ID must be a valid string");
+      }
+
+      // Check if running in Electron environment
+      if (
+        typeof window === "undefined" ||
+        !window.electronAPI?.messages?.delete ||
+        typeof window.electronAPI.messages.delete !== "function"
+      ) {
+        throw new Error(
+          "Message deletion not available - not running in Electron environment",
+        );
+      }
+
+      try {
+        const success = await window.electronAPI.messages.delete(messageId);
+        if (!success) {
+          throw new Error("Message deletion failed");
+        }
+      } catch (error) {
+        throw new Error(
+          `Failed to delete message: ${error instanceof Error ? error.message : "Unknown error"}`,
+        );
+      }
+    },
+    [],
+  );
+
+  // Return both copy and delete functionality
   return useMemo(
     () => ({
       copyMessageContent: (content: string) =>
         messageActionsService.copyMessageContent(content),
+      deleteMessage,
     }),
-    [messageActionsService],
+    [messageActionsService, deleteMessage],
   );
 }

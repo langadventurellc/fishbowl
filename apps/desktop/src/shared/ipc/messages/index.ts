@@ -15,3 +15,7 @@ export type { MessagesCreateResponse } from "./createResponse";
 // Update inclusion operation types
 export type { MessagesUpdateInclusionRequest } from "./updateInclusionRequest";
 export type { MessagesUpdateInclusionResponse } from "./updateInclusionResponse";
+
+// Delete operation types
+export type { MessagesDeleteRequest } from "./deleteRequest";
+export type { MessagesDeleteResponse } from "./deleteResponse";

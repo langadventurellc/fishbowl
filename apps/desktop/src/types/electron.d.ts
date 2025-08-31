@@ -283,6 +283,12 @@ export interface ElectronAPI {
       id: string,
       included: boolean,
     ): Promise<import("@fishbowl-ai/shared").Message>;
+    /**
+     * Delete a message from the conversation.
+     * @param id - Message ID to delete
+     * @returns Promise resolving to boolean indicating success
+     */
+    delete(id: string): Promise<boolean>;
   };
   /**
    * Chat operations for multi-agent conversation processing.

@@ -8,6 +8,7 @@ export const MESSAGES_CHANNELS = {
   LIST: "messages:list",
   CREATE: "messages:create",
   UPDATE_INCLUSION: "messages:updateInclusion",
+  DELETE: "messages:delete",
 } as const;
 
 /**

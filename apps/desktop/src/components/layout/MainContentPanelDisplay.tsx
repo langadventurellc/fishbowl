@@ -14,6 +14,8 @@ import { useMessageActions } from "../../hooks/services/useMessageActions";
 import { cn } from "../../lib/utils";
 import { MessageInputContainer } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
+import { ConfirmationDialog } from "../ui/confirmation-dialog";
+import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
 
 /**
  * MainContentPanelDisplay - Primary conversation interface layout component
@@ -71,7 +73,8 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
   useChatEventIntegration({ conversationId: selectedConversationId || null });
 
   // Message actions for context menu operations
-  const { copyMessageContent } = useMessageActions();
+  const { copyMessageContent, deleteMessage } = useMessageActions();
+  const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
 
   // Empty agents array as placeholder - AgentLabelsContainerDisplay fetches its own data
   const agents: AgentPillViewModel[] = [];
@@ -87,6 +90,33 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
           // Success feedback could be added here
         } catch (error) {
           console.error("Failed to copy message:", error);
+          // Error feedback could be added here
+        }
+      }
+    } else if (action === "delete") {
+      // Find the message by ID
+      const message = messages.find((m) => m.id === messageId);
+      if (message) {
+        try {
+          // Show confirmation dialog
+          const confirmed = await showConfirmation({
+            title: "Delete Message",
+            message:
+              "Are you sure you want to delete this message? This action cannot be undone.",
+            confirmText: "Delete",
+            cancelText: "Cancel",
+            variant: "destructive",
+          });
+
+          if (confirmed) {
+            // Delete the message
+            await deleteMessage(messageId);
+
+            // Refresh messages list to reflect deletion
+            await refetch();
+          }
+        } catch (error) {
+          console.error("Failed to delete message:", error);
           // Error feedback could be added here
         }
       }
@@ -205,6 +235,11 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
           conversationId={selectedConversationId}
           layoutVariant="default"
         />
+      )}
+
+      {/* Confirmation Dialog */}
+      {confirmationDialogProps && (
+        <ConfirmationDialog {...confirmationDialogProps} />
       )}
     </div>
   );

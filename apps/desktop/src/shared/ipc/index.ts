@@ -108,6 +108,7 @@ export type { ConversationAgentUpdateRequest } from "./conversationAgents/conver
 export type { MessagesListRequest } from "./messages/listRequest";
 export type { MessagesCreateRequest } from "./messages/createRequest";
 export type { MessagesUpdateInclusionRequest } from "./messages/updateInclusionRequest";
+export type { MessagesDeleteRequest } from "./messages/deleteRequest";
 
 // Response types
 export type { SettingsLoadResponse } from "./loadResponse";
@@ -160,6 +161,7 @@ export type { ConversationAgentUpdateResponse } from "./conversationAgents/conve
 export type { MessagesListResponse } from "./messages/listResponse";
 export type { MessagesCreateResponse } from "./messages/createResponse";
 export type { MessagesUpdateInclusionResponse } from "./messages/updateInclusionResponse";
+export type { MessagesDeleteResponse } from "./messages/deleteResponse";
 
 // LLM Models request types
 export type { LlmModelsSaveRequest } from "./llmModels/saveRequest";

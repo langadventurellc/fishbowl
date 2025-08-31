@@ -4,9 +4,11 @@ import {
   type MessagesListRequest,
   type MessagesCreateRequest,
   type MessagesUpdateInclusionRequest,
+  type MessagesDeleteRequest,
   type MessagesListResponse,
   type MessagesCreateResponse,
   type MessagesUpdateInclusionResponse,
+  type MessagesDeleteResponse,
 } from "../shared/ipc/index";
 import { serializeError } from "./utils/errorSerialization";
 import type { MainProcessServices } from "../main/services/MainProcessServices";
@@ -92,6 +94,29 @@ export function setupMessagesHandlers(mainServices: MainProcessServices): void {
         return { success: true, data: message };
       } catch (error) {
         logger.error("Failed to update message inclusion", error as Error);
+        return { success: false, error: serializeError(error) };
+      }
+    },
+  );
+
+  ipcMain.handle(
+    MESSAGES_CHANNELS.DELETE,
+    async (
+      _event,
+      request: MessagesDeleteRequest,
+    ): Promise<MessagesDeleteResponse> => {
+      logger.debug("Deleting message", {
+        id: request.id,
+      });
+
+      try {
+        await mainServices.messagesRepository.delete(request.id);
+        logger.info("Message deleted successfully", {
+          id: request.id,
+        });
+        return { success: true, data: true };
+      } catch (error) {
+        logger.error("Failed to delete message", error as Error);
         return { success: false, error: serializeError(error) };
       }
     },

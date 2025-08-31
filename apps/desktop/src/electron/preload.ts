@@ -71,6 +71,8 @@ import type {
   MessagesCreateResponse,
   MessagesUpdateInclusionRequest,
   MessagesUpdateInclusionResponse,
+  MessagesDeleteRequest,
+  MessagesDeleteResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -911,6 +913,29 @@ const electronAPI: ElectronAPI = {
       } catch (error) {
         logger.error(
           "Error updating message inclusion:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    delete: async (id: string): Promise<boolean> => {
+      try {
+        const request: MessagesDeleteRequest = { id };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.DELETE,
+          request,
+        )) as MessagesDeleteResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to delete message",
+          );
+        }
+        return response.data || false;
+      } catch (error) {
+        logger.error(
+          "Error deleting message:",
           error instanceof Error ? error : new Error(String(error)),
         );
         throw error instanceof Error
