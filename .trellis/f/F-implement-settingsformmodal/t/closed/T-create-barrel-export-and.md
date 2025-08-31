@@ -1,13 +1,27 @@
 ---
 id: T-create-barrel-export-and
 title: Create barrel export and update SettingsModal nested detection
-status: open
+status: done
 priority: medium
 parent: F-implement-settingsformmodal
 prerequisites:
   - T-create-settingsformmodal-base
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/common/index.ts:
+    Created barrel export file
+    with SettingsFormModal export and prepared structure for future common
+    components
+  apps/desktop/src/components/settings/SettingsModal.tsx: Updated nested dialog
+    detection logic to use [data-form-modal] selector instead of
+    .agent-form-modal CSS class, and updated MutationObserver attributeFilter to
+    watch for data-form-modal changes instead of class changes
+log:
+  - Successfully created barrel export file for common settings components and
+    updated SettingsModal nested detection to use data-form-modal attribute
+    instead of CSS class-based detection. The implementation decouples the
+    detection system from specific CSS classes, making it more portable and
+    maintainable. SettingsFormModal already had the data-form-modal="true"
+    attribute set, so detection works immediately.
 schema: v1.0
 childrenIds: []
 created: 2025-08-31T04:52:41.830Z

@@ -12,18 +12,26 @@ affectedFiles:
     useKeyboardHandling custom hook with capture-phase event listeners for
     Escape and Ctrl/Cmd+S handling, integrated hook with SettingsFormModal
     component, added onRequestSave prop handling
+  apps/desktop/src/components/settings/common/index.ts:
+    Created barrel export file
+    with SettingsFormModal export and prepared structure for future common
+    components
+  apps/desktop/src/components/settings/SettingsModal.tsx: Updated nested dialog
+    detection logic to use [data-form-modal] selector instead of
+    .agent-form-modal CSS class, and updated MutationObserver attributeFilter to
+    watch for data-form-modal changes instead of class changes
 log: []
 schema: v1.0
 childrenIds:
   - T-create-barrel-export-and
   - T-implement-focus-management
-  - T-implement-keyboard-event
   - T-implement-unsaved-changes
   - T-migrate-agentformmodal-to-use
   - T-migrate-llmconfigmodal-to-use
   - T-migrate-personalityformmodal
   - T-migrate-roleformmodal-to-use
   - T-create-settingsformmodal-base
+  - T-implement-keyboard-event
 created: 2025-08-31T04:46:07.303Z
 updated: 2025-08-31T04:46:07.303Z
 ---
