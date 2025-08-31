@@ -29,13 +29,21 @@ affectedFiles:
   packages/shared/src/services/messaging/__tests__/MessageActionsService.test.ts:
     Created complete test suite for MessageActionsService with tests for both
     copy and delete functionality, including error scenarios and validation
+  apps/desktop/src/renderer/services/RendererProcessServices.ts:
+    Added clipboard bridge integration with BrowserClipboardService dependency
+    injection
+  apps/desktop/src/hooks/services/useMessageActions.ts: Created message actions
+    hook with clipboard dependency injection and copy functionality
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Updated context menu handler to use real copy implementation with error
+    handling
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-message-deletion
   - T-implement-copy-functionality
   - T-implement-delete-functionality
   - T-create-clipboard-service-with
+  - T-create-message-deletion
   - T-remove-regenerate-functionalit
 created: 2025-08-31T19:23:41.799Z
 updated: 2025-08-31T19:23:41.799Z

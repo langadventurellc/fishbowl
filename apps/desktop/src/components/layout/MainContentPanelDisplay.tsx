@@ -10,6 +10,7 @@ import {
   useMessagesWithAgentData,
   MessagesRefreshContext,
 } from "../../hooks/messages";
+import { useMessageActions } from "../../hooks/services/useMessageActions";
 import { cn } from "../../lib/utils";
 import { MessageInputContainer } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
@@ -69,8 +70,28 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
   // Initialize chat event integration for real-time agent status updates - now has access to MessagesRefreshContext
   useChatEventIntegration({ conversationId: selectedConversationId || null });
 
+  // Message actions for context menu operations
+  const { copyMessageContent } = useMessageActions();
+
   // Empty agents array as placeholder - AgentLabelsContainerDisplay fetches its own data
   const agents: AgentPillViewModel[] = [];
+
+  // Handle context menu actions
+  const handleContextMenuAction = async (action: string, messageId: string) => {
+    if (action === "copy") {
+      // Find the message by ID
+      const message = messages.find((m) => m.id === messageId);
+      if (message) {
+        try {
+          await copyMessageContent(message.content);
+          // Success feedback could be added here
+        } catch (error) {
+          console.error("Failed to copy message:", error);
+          // Error feedback could be added here
+        }
+      }
+    }
+  };
 
   // Loading skeleton component
   const LoadingSkeleton = () => (
@@ -173,7 +194,7 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
           <ChatContainerDisplay
             messages={messages}
             emptyState={<EmptyConversation />}
-            onContextMenuAction={() => {}}
+            onContextMenuAction={handleContextMenuAction}
           />
         )}
       </div>
