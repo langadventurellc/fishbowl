@@ -14,13 +14,7 @@
  */
 
 import type { LlmConfigMetadata, Provider } from "@fishbowl-ai/shared";
-import {
-  Brain,
-  Edit2, // Anthropic
-  Settings,
-  Sparkles,
-  Trash2,
-} from "lucide-react";
+import { Edit2, Trash2 } from "lucide-react";
 import React, { useMemo } from "react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
@@ -43,19 +37,16 @@ const getProviderInfo = (provider: Provider) => {
   switch (provider) {
     case "openai":
       return {
-        icon: <Sparkles className="h-5 w-5" />,
         label: "OpenAI",
         colorClass: "text-green-600 dark:text-green-400",
       };
     case "anthropic":
       return {
-        icon: <Brain className="h-5 w-5" />,
         label: "Anthropic",
         colorClass: "text-orange-600 dark:text-orange-400",
       };
     default:
       return {
-        icon: <Settings className="h-5 w-5" />,
         label: "Unknown",
         colorClass: "text-gray-600 dark:text-gray-400",
       };
@@ -125,9 +116,6 @@ export const LlmProviderCard = React.memo<LlmProviderCardProps>(
         <CardContent className="p-4">
           <div className="flex items-start justify-between">
             <div className="flex items-start gap-3 flex-1 min-w-0">
-              <div className={cn("mt-0.5", providerInfo.colorClass)}>
-                {providerInfo.icon}
-              </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-base font-semibold truncate">
                   {configuration.customName}

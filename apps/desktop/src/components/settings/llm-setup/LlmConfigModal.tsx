@@ -1,18 +1,18 @@
-import type { Provider, LlmConfigInput } from "@fishbowl-ai/shared";
-import { z } from "zod";
+import type { LlmConfigInput, Provider } from "@fishbowl-ai/shared";
 import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
-import { cn } from "../../../lib/utils";
+import { z } from "zod";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
 import { useGlobalKeyboardShortcuts } from "../../../hooks/useGlobalKeyboardShortcuts";
+import { cn } from "../../../lib/utils";
 import {
   generateDialogAriaIds,
-  useAccessibilityAnnouncements,
-  maskApiKey,
   isMaskedApiKey,
+  maskApiKey,
+  useAccessibilityAnnouncements,
 } from "../../../utils";
 import { Button } from "../../ui/button";
 import {
@@ -113,8 +113,8 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
       customName: initialData?.customName || "",
       apiKey: getApiKeyDisplayValue,
       provider,
-      baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-      useAuthHeader: initialData?.useAuthHeader ?? true,
+      baseUrl: initialData?.baseUrl || undefined,
+      useAuthHeader: initialData?.useAuthHeader ?? false,
     },
   });
 
@@ -175,8 +175,8 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         customName: initialData?.customName || "",
         apiKey: getApiKeyDisplayValue,
         provider,
-        baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-        useAuthHeader: initialData?.useAuthHeader ?? true,
+        baseUrl: initialData?.baseUrl || undefined,
+        useAuthHeader: initialData?.useAuthHeader ?? false,
       });
     }
   }, [
