@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +8,7 @@ import {
 } from "../../ui/dialog";
 import { cn } from "../../../lib/utils";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
+import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
 
 interface SettingsFormModalProps {
@@ -94,11 +95,43 @@ export function SettingsFormModal({
   announceOnOpen,
   dataTestId,
   onRequestSave,
+  confirmOnClose,
 }: SettingsFormModalProps) {
-  // Handle modal close
-  const handleClose = () => {
-    onOpenChange(false);
-  };
+  // Confirmation dialog hook
+  const { showConfirmation } = useConfirmationDialog();
+
+  // Handle modal close with confirmation
+  const handleClose = useCallback(async () => {
+    if (confirmOnClose?.enabled) {
+      const confirmed = await showConfirmation({
+        title: confirmOnClose.message.title,
+        message: confirmOnClose.message.body,
+        confirmText: confirmOnClose.message.confirmText || "Discard Changes",
+        cancelText: confirmOnClose.message.cancelText || "Cancel",
+      });
+
+      if (confirmed) {
+        confirmOnClose.onDiscard?.();
+        onOpenChange(false);
+      }
+      // If not confirmed, do nothing (keep modal open)
+    } else {
+      // No confirmation needed, close immediately
+      onOpenChange(false);
+    }
+  }, [confirmOnClose, onOpenChange, showConfirmation]);
+
+  // Handle Dialog onOpenChange (for external close triggers like clicking outside)
+  const handleDialogOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        // Dialog wants to close, trigger our confirmation flow
+        handleClose();
+      }
+      // If open is true, ignore (Dialog is opening)
+    },
+    [handleClose],
+  );
 
   // Focus trap integration
   const { containerRef } = useFocusTrap({
@@ -123,7 +156,7 @@ export function SettingsFormModal({
   useKeyboardHandling(isOpen, handleClose, onRequestSave);
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
+    <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
       <DialogContent
         ref={containerRef}
         data-form-modal="true"

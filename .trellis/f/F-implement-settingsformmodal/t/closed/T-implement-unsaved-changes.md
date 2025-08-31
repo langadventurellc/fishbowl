@@ -1,13 +1,28 @@
 ---
 id: T-implement-unsaved-changes
 title: Implement unsaved changes confirmation dialog
-status: open
+status: done
 priority: medium
 parent: F-implement-settingsformmodal
 prerequisites:
   - T-implement-keyboard-event
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/common/SettingsFormModal.tsx:
+    Added useConfirmationDialog hook integration with conditional confirmation
+    logic, implemented handleClose function that shows confirmation dialog when
+    confirmOnClose.enabled is true, added handleDialogOpenChange to intercept
+    external close triggers, updated Dialog onOpenChange to use confirmation
+    flow, and maintained backward compatibility when no confirmation is needed
+log:
+  - Implemented unsaved changes confirmation dialog functionality in
+    SettingsFormModal component. Added conditional confirmation logic using
+    useConfirmationDialog hook that shows confirmation dialog when
+    confirmOnClose.enabled is true. The implementation includes custom message
+    support with configurable confirm/cancel button text, discard callback
+    handling, and seamless integration with existing keyboard event handling.
+    All external close triggers (Escape key, clicking outside, etc.) now go
+    through the confirmation flow when enabled, preventing accidental data loss
+    while maintaining clean user experience.
 schema: v1.0
 childrenIds: []
 created: 2025-08-31T04:52:11.213Z

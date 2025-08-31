@@ -17,7 +17,12 @@ affectedFiles:
     announceToScreenReader utility with announceOnOpen prop; added proper ARIA
     attributes including aria-labelledby and aria-describedby for modal
     accessibility; containerRef from focus trap attached to DialogContent for
-    focus management
+    focus management; Added useConfirmationDialog hook integration with
+    conditional confirmation logic, implemented handleClose function that shows
+    confirmation dialog when confirmOnClose.enabled is true, added
+    handleDialogOpenChange to intercept external close triggers, updated Dialog
+    onOpenChange to use confirmation flow, and maintained backward compatibility
+    when no confirmation is needed
   apps/desktop/src/components/settings/common/index.ts:
     Created barrel export file
     with SettingsFormModal export and prepared structure for future common
@@ -29,7 +34,6 @@ affectedFiles:
 log: []
 schema: v1.0
 childrenIds:
-  - T-implement-focus-management
   - T-implement-unsaved-changes
   - T-migrate-agentformmodal-to-use
   - T-migrate-llmconfigmodal-to-use
@@ -37,6 +41,7 @@ childrenIds:
   - T-migrate-roleformmodal-to-use
   - T-create-barrel-export-and
   - T-create-settingsformmodal-base
+  - T-implement-focus-management
   - T-implement-keyboard-event
 created: 2025-08-31T04:46:07.303Z
 updated: 2025-08-31T04:46:07.303Z
