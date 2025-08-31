@@ -1,12 +1,12 @@
 import { cn } from "@/lib/utils";
 import { MessageItemProps } from "@fishbowl-ai/ui-shared";
-import React, { useState } from "react";
 import { Check, Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { useMessagesRefresh } from "../../hooks/messages";
+import { useUpdateMessage } from "../../hooks/messages/useUpdateMessage";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
 import { MessageHeader } from "./MessageHeader";
-import { useUpdateMessage } from "../../hooks/messages/useUpdateMessage";
-import { useMessagesRefresh } from "../../hooks/messages";
 
 /**
  * MessageItem component displays individual messages with proper layout and styling.
@@ -208,7 +208,7 @@ export function MessageItem(props: MessageItemProps) {
 
   const contextToggleClasses = cn(
     "absolute right-2 top-2 w-5 h-5 border rounded-[4px] cursor-pointer",
-    "flex items-center justify-center transition-all duration-200 z-[100]",
+    "flex items-center justify-center transition-all duration-200 z-[10]",
     "shadow-xs outline-none",
     // Base states
     "border-input bg-transparent",
