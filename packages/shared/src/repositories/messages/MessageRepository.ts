@@ -238,6 +238,43 @@ export class MessageRepository {
     }
   }
 
+  async delete(id: string): Promise<void> {
+    try {
+      // Validate ID format
+      const idValidation = messageSchema.shape.id.safeParse(id);
+      if (!idValidation.success) {
+        throw new MessageNotFoundError(id);
+      }
+
+      // Check if message exists
+      const exists = await this.exists(id);
+      if (!exists) {
+        throw new MessageNotFoundError(id);
+      }
+
+      // Delete message from database
+      const sql = `
+        DELETE FROM messages
+        WHERE id = ?
+      `;
+
+      const result = await this.databaseBridge.execute(sql, [id]);
+
+      // Verify deletion occurred
+      if (result.changes === 0) {
+        throw new MessageNotFoundError(id);
+      }
+
+      this.logger.info("Deleted message", { id });
+    } catch (error) {
+      if (error instanceof MessageNotFoundError) {
+        throw error;
+      }
+
+      this.handleDatabaseError(error, "delete");
+    }
+  }
+
   async exists(id: string): Promise<boolean> {
     try {
       // Validate ID format

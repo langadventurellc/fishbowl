@@ -16,16 +16,26 @@ affectedFiles:
   apps/desktop/src/main/services/NodeClipboardService.ts: Implemented Node.js clipboard service using Electron's clipboard API
   packages/shared/src/services/messaging/MessageActionsService.ts:
     Created message actions service with dependency injection and content
-    sanitization
+    sanitization; Extended with deleteMessage method using dependency injection
+    for database operations, comprehensive input validation, and error handling
   packages/shared/src/services/messaging/index.ts: Added messaging service exports
   packages/shared/src/services/index.ts: Updated main service exports to include clipboard and messaging modules
+  packages/shared/src/repositories/messages/MessageRepository.ts:
+    Added delete method with validation, existence checking, and proper error
+    handling following existing repository patterns
+  packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
+    Added comprehensive unit tests for delete functionality covering success
+    cases, validation errors, constraint violations, and edge cases
+  packages/shared/src/services/messaging/__tests__/MessageActionsService.test.ts:
+    Created complete test suite for MessageActionsService with tests for both
+    copy and delete functionality, including error scenarios and validation
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-clipboard-service-with
   - T-create-message-deletion
   - T-implement-copy-functionality
   - T-implement-delete-functionality
+  - T-create-clipboard-service-with
   - T-remove-regenerate-functionalit
 created: 2025-08-31T19:23:41.799Z
 updated: 2025-08-31T19:23:41.799Z

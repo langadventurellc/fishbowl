@@ -740,6 +740,133 @@ describe("MessageRepository", () => {
     });
   });
 
+  describe("delete", () => {
+    const mockMessageId = "123e4567-e89b-12d3-a456-426614174000";
+
+    beforeEach(() => {
+      // Mock exists to return true by default
+      mockDatabaseBridge.query.mockResolvedValue([{ 1: 1 }]);
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+    });
+
+    it("should delete message successfully", async () => {
+      await repository.delete(mockMessageId);
+
+      expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
+        expect.stringContaining("SELECT 1"),
+        [mockMessageId],
+      );
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("DELETE FROM messages"),
+        [mockMessageId],
+      );
+    });
+
+    it("should throw MessageNotFoundError when message does not exist", async () => {
+      // Mock exists to return false
+      mockDatabaseBridge.query.mockResolvedValue([]);
+
+      await expect(repository.delete(mockMessageId)).rejects.toThrow(
+        MessageNotFoundError,
+      );
+      expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
+    });
+
+    it("should throw MessageNotFoundError for invalid ID format", async () => {
+      const invalidId = "not-a-uuid";
+
+      await expect(repository.delete(invalidId)).rejects.toThrow(
+        MessageNotFoundError,
+      );
+      expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
+    });
+
+    it("should throw MessageNotFoundError when deletion affects zero rows", async () => {
+      // Mock execute to return 0 changes (concurrent deletion scenario)
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 0,
+        affectedRows: 0,
+        lastInsertRowid: 0,
+      });
+
+      await expect(repository.delete(mockMessageId)).rejects.toThrow(
+        MessageNotFoundError,
+      );
+    });
+
+    it("should handle database errors during deletion", async () => {
+      const connectionError = new ConnectionError("Database connection failed");
+      mockDatabaseBridge.execute.mockRejectedValue(connectionError);
+
+      await expect(repository.delete(mockMessageId)).rejects.toThrow();
+    });
+
+    it("should handle constraint violations during deletion", async () => {
+      const constraintError = new ConstraintViolationError(
+        "Foreign key constraint violation",
+        "foreign_key",
+        "messages",
+        "id",
+      );
+      mockDatabaseBridge.execute.mockRejectedValue(constraintError);
+
+      try {
+        await repository.delete(mockMessageId);
+      } catch (error) {
+        expect(error).toBeInstanceOf(MessageValidationError);
+        expect((error as MessageValidationError).validationErrors[0]).toContain(
+          "constraint",
+        );
+      }
+    });
+
+    it("should validate input parameters", async () => {
+      const invalidInputs = [
+        "", // empty string
+        " ", // whitespace only
+        null as unknown as string,
+        undefined as unknown as string,
+        123 as unknown as string, // number
+        {} as unknown as string, // object
+        [] as unknown as string, // array
+      ];
+
+      for (const invalidInput of invalidInputs) {
+        await expect(repository.delete(invalidInput)).rejects.toThrow();
+        expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
+      }
+    });
+
+    it("should handle database errors during existence check", async () => {
+      const connectionError = new ConnectionError("Database connection failed");
+      mockDatabaseBridge.query.mockRejectedValue(connectionError);
+
+      await expect(repository.delete(mockMessageId)).rejects.toThrow();
+      expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
+    });
+
+    it("should handle malformed UUIDs gracefully", async () => {
+      const malformedIds = [
+        "not-a-uuid",
+        "123",
+        "123e4567-e89b-12d3-a456-42661417400", // too short
+        "123e4567-e89b-12d3-a456-426614174000-extra", // too long
+        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx", // invalid characters
+      ];
+
+      for (const id of malformedIds) {
+        await expect(repository.delete(id)).rejects.toThrow(
+          MessageNotFoundError,
+        );
+        expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
+      }
+    });
+  });
+
   describe("exists", () => {
     const mockMessageId = "123e4567-e89b-12d3-a456-426614174000";
 
