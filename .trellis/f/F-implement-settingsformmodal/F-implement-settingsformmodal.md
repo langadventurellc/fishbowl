@@ -1,13 +1,26 @@
 ---
 id: F-implement-settingsformmodal
 title: Implement SettingsFormModal Component
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/settings/common/SettingsFormModal.tsx:
+    Created new SettingsFormModal base component with complete props interface,
+    shadcn/ui Dialog integration, accessibility features, and data-form-modal
+    attribute for nested detection
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-barrel-export-and
+  - T-create-settingsformmodal-base
+  - T-implement-focus-management
+  - T-implement-keyboard-event
+  - T-implement-unsaved-changes
+  - T-migrate-agentformmodal-to-use
+  - T-migrate-llmconfigmodal-to-use
+  - T-migrate-personalityformmodal
+  - T-migrate-roleformmodal-to-use
 created: 2025-08-31T04:46:07.303Z
 updated: 2025-08-31T04:46:07.303Z
 ---
