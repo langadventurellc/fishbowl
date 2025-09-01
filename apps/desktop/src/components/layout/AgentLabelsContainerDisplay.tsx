@@ -4,7 +4,7 @@ import {
 } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { useConversationAgentsContext } from "../../contexts";
+import { useConversationStore, useAgentsStore } from "@fishbowl-ai/ui-shared";
 import { cn } from "../../lib/utils";
 import { AgentPill } from "../chat";
 import { Button } from "../input";
@@ -36,13 +36,30 @@ export const AgentLabelsContainerDisplay: React.FC<
   // Modal state
   const [addModalOpen, setAddModalOpen] = useState(false);
 
-  // Context integration
-  const { conversationAgents, isLoading, error, refetch, toggleEnabled } =
-    useConversationAgentsContext();
+  // Store integration
+  const { activeConversationAgents, loading, error, toggleAgentEnabled } =
+    useConversationStore();
+  const { agents: agentConfigs } = useAgentsStore();
+
+  // Map store state to component expectations
+  const conversationAgents = activeConversationAgents;
+  const isLoading = loading.agents;
+  const agentsError = error.agents;
 
   // Transform conversation agents to display format
   const displayAgents = selectedConversationId
-    ? conversationAgents.map((ca) => ca.agent)
+    ? conversationAgents.map((conversationAgent) => {
+        const agentConfig = agentConfigs.find(
+          (agent) => agent.id === conversationAgent.agent_id,
+        );
+        return (
+          agentConfig || {
+            id: conversationAgent.agent_id,
+            name: "Unknown Agent",
+            role: "unknown",
+          }
+        );
+      })
     : agents;
 
   // Handler for Add Agent button
@@ -86,22 +103,27 @@ export const AgentLabelsContainerDisplay: React.FC<
         )}
 
         {/* Error state */}
-        {error && selectedConversationId && (
+        {agentsError && selectedConversationId && (
           <div className="flex items-center gap-2 text-sm text-destructive">
             <AlertCircle className="h-4 w-4" />
-            <span>Failed to load agents: {error.message}</span>
+            <span>Failed to load agents: {agentsError.message}</span>
           </div>
         )}
 
         {/* Agent pills */}
         {!isLoading &&
-          !error &&
+          !agentsError &&
           (selectedConversationId
             ? conversationAgents.map((conversationAgent) => {
-                // Transform ConversationAgentViewModel to AgentPillViewModel
+                // Find the agent configuration
+                const agentConfig = agentConfigs.find(
+                  (agent) => agent.id === conversationAgent.agent_id,
+                );
+
+                // Transform ConversationAgent to AgentPillViewModel
                 const agentViewModel: AgentPillViewModel = {
-                  name: conversationAgent.agent.name,
-                  role: conversationAgent.agent.role,
+                  name: agentConfig?.name || "Unknown Agent",
+                  role: agentConfig?.role || "unknown",
                   color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
                   isThinking: false,
                   status: "idle",
@@ -112,7 +134,9 @@ export const AgentLabelsContainerDisplay: React.FC<
                   <AgentPill
                     key={conversationAgent.id}
                     agent={agentViewModel}
-                    onToggleEnabled={toggleEnabled}
+                    onToggleEnabled={() =>
+                      toggleAgentEnabled(conversationAgent.id)
+                    }
                     conversationAgentId={conversationAgent.id}
                     showStatus={true}
                   />
@@ -166,8 +190,7 @@ export const AgentLabelsContainerDisplay: React.FC<
           onOpenChange={setAddModalOpen}
           conversationId={selectedConversationId}
           onAgentAdded={() => {
-            // Context methods already refetch internally, but keeping explicit refetch for UI consistency
-            refetch();
+            // Store handles data consistency automatically - no manual refetch needed
           }}
         />
       )}

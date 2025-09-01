@@ -40,16 +40,27 @@ affectedFiles:
     conversation store actions. Updated MessagesRefreshContext.Provider to use
     store's refreshActiveConversation instead of hook refetch. Updated interface
     types to match ErrorState from store.
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Migrated from useConversationAgentsContext to useConversationStore and
+    useAgentsStore. Updated imports to use @fishbowl-ai/ui-shared stores.
+    Replaced context state mapping with store state (activeConversationAgents ->
+    conversationAgents, loading.agents -> isLoading, error.agents ->
+    agentsError). Added agent configuration lookup logic to transform
+    ConversationAgent objects to AgentPillViewModel using agent_id field.
+    Replaced toggleEnabled action with toggleAgentEnabled store action. Updated
+    error handling to use ErrorState pattern. Removed manual refetch calls in
+    AddAgentToConversationModal onAgentAdded callback. Maintained exact existing
+    functionality while transitioning to centralized domain store pattern.
 log: []
 schema: v1.0
 childrenIds:
   - T-migrate-add-agent-modal-to
   - T-migrate-agent-labels
-  - T-migrate-main-content-panel-to
   - T-migrate-message-input
   - T-remove-obsolete-hooks-and
   - T-update-message-item-to-use
   - T-extend-servicesprovider-for
+  - T-migrate-main-content-panel-to
   - T-migrate-sidebar-conversation
 created: 2025-09-01T02:22:11.606Z
 updated: 2025-09-01T02:22:11.606Z

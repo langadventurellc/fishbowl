@@ -1,13 +1,33 @@
 ---
 id: T-migrate-agent-labels
 title: Migrate agent labels container to domain store
-status: open
+status: done
 priority: medium
 parent: F-ui-migration-and-integration
 prerequisites:
   - T-migrate-main-content-panel-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Migrated from useConversationAgentsContext to useConversationStore and
+    useAgentsStore. Updated imports to use @fishbowl-ai/ui-shared stores.
+    Replaced context state mapping with store state (activeConversationAgents ->
+    conversationAgents, loading.agents -> isLoading, error.agents ->
+    agentsError). Added agent configuration lookup logic to transform
+    ConversationAgent objects to AgentPillViewModel using agent_id field.
+    Replaced toggleEnabled action with toggleAgentEnabled store action. Updated
+    error handling to use ErrorState pattern. Removed manual refetch calls in
+    AddAgentToConversationModal onAgentAdded callback. Maintained exact existing
+    functionality while transitioning to centralized domain store pattern.
+log:
+  - Successfully migrated AgentLabelsContainerDisplay from
+    useConversationAgentsContext to conversation domain store. Replaced context
+    usage with useConversationStore and useAgentsStore imports, mapped
+    activeConversationAgents to component expectations, implemented proper
+    ConversationAgent to AgentPillViewModel transformation using agent_id
+    lookups, replaced toggleEnabled action with store's toggleAgentEnabled,
+    updated error handling to use ErrorState pattern, and eliminated manual
+    refetch calls. All functionality preserved with improved state management
+    through centralized store architecture.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T06:27:27.840Z
