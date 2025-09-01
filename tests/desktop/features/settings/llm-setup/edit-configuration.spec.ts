@@ -27,7 +27,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     const initialConfig = createMockOpenAiConfig({
@@ -52,7 +54,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     await editButton.click();
 
     // Verify modal opens in edit mode
-    const editModal = window.locator('[role="dialog"].llm-config-modal');
+    const editModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(editModal).toBeVisible({ timeout: 5000 });
 
     // Verify existing data is populated (except API key which should show placeholder)
@@ -76,7 +80,7 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
 
     // Save changes
     const editSaveButton = editModal.locator("button").filter({
-      hasText: /Save|Update/,
+      hasText: /Add Configuration|Update Configuration/,
     });
     await expect(editSaveButton).toBeEnabled();
     await editSaveButton.click();
@@ -111,7 +115,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const config = createMockOpenAiConfig();
     await modal.locator('[name="customName"]').fill(config.customName);
     await modal.locator('[name="apiKey"]').fill(config.apiKey);
@@ -127,7 +133,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     const configCard = window.locator('[role="article"]').first();
     await configCard.locator('[aria-label*="Edit"]').click();
 
-    const editModal = window.locator('[role="dialog"].llm-config-modal');
+    const editModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(editModal).toBeVisible({ timeout: 5000 });
 
     // Verify API key field shows masked value, not actual key
@@ -141,7 +149,7 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
 
     // Test leaving field unchanged → existing key should remain
     const saveButton = editModal.locator("button").filter({
-      hasText: /Save|Update/,
+      hasText: /Add Configuration|Update Configuration/,
     });
     await expect(saveButton).toBeEnabled();
     await saveButton.click();
@@ -181,7 +189,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const initialConfig = createMockOpenAiConfig({
       customName: "Config A",
     });
@@ -199,7 +209,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     const configCard = window.locator('[role="article"]').first();
     await configCard.locator('[aria-label*="Edit"]').click();
 
-    const editModal = window.locator('[role="dialog"].llm-config-modal');
+    const editModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(editModal).toBeVisible({ timeout: 5000 });
 
     // Change custom name from "Config A" to "Config B"
@@ -209,7 +221,7 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
 
     // Save and verify UI update
     const saveButton = editModal.locator("button").filter({
-      hasText: /Save|Update/,
+      hasText: /Add Configuration|Update Configuration/,
     });
     await saveButton.click();
     await expect(editModal).not.toBeVisible({ timeout: 5000 });
@@ -253,7 +265,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
       .filter({ hasText: "Set up Anthropic" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const config = createMockAnthropicConfig();
     await modal.locator('[name="customName"]').fill(config.customName);
     await modal.locator('[name="apiKey"]').fill(config.apiKey);
@@ -269,7 +283,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     const configCard = window.locator('[role="article"]').first();
     await configCard.locator('[aria-label*="Edit"]').click();
 
-    const editModal = window.locator('[role="dialog"].llm-config-modal');
+    const editModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(editModal).toBeVisible({ timeout: 5000 });
 
     // Show advanced options to access base URL
@@ -286,7 +302,7 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
 
     // Save changes
     const saveButton = editModal.locator("button").filter({
-      hasText: /Save|Update/,
+      hasText: /Add Configuration|Update Configuration/,
     });
     await saveButton.click();
     await expect(editModal).not.toBeVisible({ timeout: 5000 });
@@ -313,7 +329,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const config = createMockOpenAiConfig();
     await modal.locator('[name="customName"]').fill(config.customName);
     await modal.locator('[name="apiKey"]').fill(config.apiKey);
@@ -329,11 +347,13 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     const configCard = window.locator('[role="article"]').first();
     await configCard.locator('[aria-label*="Edit"]').click();
 
-    const editModal = window.locator('[role="dialog"].llm-config-modal');
+    const editModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(editModal).toBeVisible({ timeout: 5000 });
 
     const saveButton = editModal.locator("button").filter({
-      hasText: /Save|Update/,
+      hasText: /Add Configuration|Update Configuration/,
     });
 
     // Clear required custom name → can't save
@@ -359,7 +379,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const config = createMockOpenAiConfig({
       customName: "Name A",
     });
@@ -378,7 +400,9 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     // Open edit modal
     await configCard.locator('[aria-label*="Edit"]').click();
 
-    const editModal = window.locator('[role="dialog"].llm-config-modal');
+    const editModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(editModal).toBeVisible({ timeout: 5000 });
 
     // Change to "Name B"

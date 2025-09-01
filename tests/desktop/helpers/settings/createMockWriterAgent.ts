@@ -13,6 +13,7 @@ export const createMockWriterAgent = (): AgentFormData => {
   return {
     name: `Content Writer ${agentId}`,
     model: "claude-3-sonnet-20240229",
+    llmConfigId: "test-llm-config-id",
     role: "test-writer-role",
     personality: "test-creative-personality",
     systemPrompt: `You are a content writer agent for automated testing purposes (ID: ${agentId}). Creative writing and content generation specialist. Always provide creative, engaging responses for test scenarios.`,
