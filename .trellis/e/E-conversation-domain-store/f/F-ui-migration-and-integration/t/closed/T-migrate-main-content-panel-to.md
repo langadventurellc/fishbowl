@@ -1,13 +1,28 @@
 ---
 id: T-migrate-main-content-panel-to
 title: Migrate main content panel to use domain store messages
-status: open
+status: done
 priority: high
 parent: F-ui-migration-and-integration
 prerequisites:
   - T-migrate-sidebar-conversation
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Migrated from useMessagesWithAgentData composite hook to conversation domain
+    store. Added useConversationStore, useAgentsStore, and useRolesStore
+    imports. Moved message enrichment logic into component with useMemo for
+    performance. Updated imports to remove useMessagesWithAgentData and use
+    conversation store actions. Updated MessagesRefreshContext.Provider to use
+    store's refreshActiveConversation instead of hook refetch. Updated interface
+    types to match ErrorState from store.
+log:
+  - Successfully migrated MainContentPanelDisplay.tsx from
+    useMessagesWithAgentData hook to conversation domain store. Replaced
+    composite hook usage with direct store integration using activeMessages and
+    activeConversationAgents. Preserved all existing message enrichment logic
+    using agentConfigs and roleConfigs. Updated MessagesRefreshContext to use
+    store's refreshActiveConversation action instead of hook refetch. All
+    quality checks pass and functionality is preserved.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T06:27:05.364Z

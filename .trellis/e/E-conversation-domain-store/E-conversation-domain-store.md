@@ -212,6 +212,14 @@ affectedFiles:
     Added backward compatibility mapping for loading states (isCreating =
     loading.sending). Maintained exact existing UI behavior while transitioning
     to centralized domain store pattern."
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Migrated from useMessagesWithAgentData composite hook to conversation domain
+    store. Added useConversationStore, useAgentsStore, and useRolesStore
+    imports. Moved message enrichment logic into component with useMemo for
+    performance. Updated imports to remove useMessagesWithAgentData and use
+    conversation store actions. Updated MessagesRefreshContext.Provider to use
+    store's refreshActiveConversation instead of hook refetch. Updated interface
+    types to match ErrorState from store.
 log: []
 schema: v1.0
 childrenIds:

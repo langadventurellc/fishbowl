@@ -2,14 +2,24 @@ import {
   MainContentPanelDisplayProps,
   MessageViewModel,
   AgentPillViewModel,
+  useConversationStore,
+  useAgentsStore,
+  useRolesStore,
 } from "@fishbowl-ai/ui-shared";
+
+// ErrorState type interface
+interface ErrorState {
+  message: string | null;
+  operation: "save" | "load" | "sync" | "import" | "reset" | null;
+  isRetryable: boolean;
+  retryCount: number;
+  timestamp: string | null;
+  fieldErrors?: Array<{ field: string; message: string }>;
+}
 import { AlertCircle, MessageCircle } from "lucide-react";
-import React from "react";
+import React, { useMemo } from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
-import {
-  useMessagesWithAgentData,
-  MessagesRefreshContext,
-} from "../../hooks/messages";
+import { MessagesRefreshContext } from "../../hooks/messages";
 import { useMessageActions } from "../../hooks/services/useMessageActions";
 import { cn } from "../../lib/utils";
 import { MessageInputContainer } from "../input";
@@ -28,13 +38,103 @@ import { ConversationAgentsProvider } from "../../contexts";
 export const MainContentPanelDisplay: React.FC<
   MainContentPanelDisplayProps
 > = ({ selectedConversationId, className, style }) => {
-  // Use the composite hook for messages with resolved agent names and roles
-  const { messages, isLoading, error, refetch } = useMessagesWithAgentData(
-    selectedConversationId || null,
-  );
+  // Use conversation store for messages and agents
+  const {
+    activeMessages,
+    activeConversationAgents,
+    loading,
+    error,
+    refreshActiveConversation,
+  } = useConversationStore();
+
+  // Get agent and role configurations from stores for message enrichment
+  const { agents: agentConfigs } = useAgentsStore();
+  const { roles: roleConfigs } = useRolesStore();
+
+  // Transform raw messages to resolved MessageViewModel objects (same logic as useMessagesWithAgentData)
+  const messages = useMemo((): MessageViewModel[] => {
+    // Create lookup map for efficient resolution
+    const agentLookup = new Map<
+      string,
+      { agentName: string; roleName: string; agentColor: string }
+    >();
+
+    activeConversationAgents.forEach((conversationAgent) => {
+      const agentConfig = agentConfigs.find(
+        (agent) => agent.id === conversationAgent.agent_id,
+      );
+      const roleConfig = roleConfigs.find(
+        (role) => role.id === agentConfig?.role,
+      );
+
+      agentLookup.set(conversationAgent.id, {
+        agentName: agentConfig?.name || "Unknown Agent",
+        roleName: roleConfig?.name || agentConfig?.role || "Unknown Role",
+        agentColor:
+          agentConfig?.personality === "helpful"
+            ? "#22c55e"
+            : agentConfig?.personality === "creative"
+              ? "#a855f7"
+              : agentConfig?.personality === "analytical"
+                ? "#3b82f6"
+                : "#22c55e",
+      });
+    });
+
+    return activeMessages.map((message) => {
+      // For user messages, use "you" as agent and "user" as role
+      if (message.role === "user") {
+        return {
+          id: message.id,
+          agent: "you",
+          role: "user",
+          content: message.content,
+          timestamp: new Date(message.created_at).toLocaleTimeString(),
+          type: "user" as const,
+          isActive: message.included,
+          agentColor: "#3b82f6",
+        };
+      }
+
+      // For system messages, use "System" as both agent and role
+      if (message.role === "system") {
+        return {
+          id: message.id,
+          agent: "System",
+          role: "System",
+          content: message.content,
+          timestamp: new Date(message.created_at).toLocaleTimeString(),
+          type: "system" as const,
+          isActive: message.included,
+          agentColor: "#6b7280",
+        };
+      }
+
+      // For agent messages, look up the actual agent name and role
+      const agentInfo = message.conversation_agent_id
+        ? agentLookup.get(message.conversation_agent_id)
+        : null;
+
+      return {
+        id: message.id,
+        agent: agentInfo?.agentName || "Agent",
+        role: agentInfo?.roleName || "Agent",
+        content: message.content,
+        timestamp: new Date(message.created_at).toLocaleTimeString(),
+        type: "agent" as const,
+        isActive: message.included,
+        agentColor: agentInfo?.agentColor || "#22c55e",
+      };
+    });
+  }, [activeMessages, activeConversationAgents, agentConfigs, roleConfigs]);
+
+  const isLoading = loading.messages || loading.agents;
+  const messagesError = error.messages || error.agents;
 
   return (
-    <MessagesRefreshContext.Provider value={{ refetch }}>
+    <MessagesRefreshContext.Provider
+      value={{ refetch: refreshActiveConversation }}
+    >
       <ConversationAgentsProvider
         conversationId={selectedConversationId || null}
       >
@@ -44,8 +144,8 @@ export const MainContentPanelDisplay: React.FC<
           style={style}
           messages={messages}
           isLoading={isLoading}
-          error={error}
-          refetch={refetch}
+          error={messagesError}
+          refetch={refreshActiveConversation}
         />
       </ConversationAgentsProvider>
     </MessagesRefreshContext.Provider>
@@ -61,7 +161,7 @@ interface MainContentPanelContentProps {
   style?: React.CSSProperties;
   messages: MessageViewModel[];
   isLoading: boolean;
-  error: Error | null;
+  error: ErrorState | undefined;
   refetch: () => Promise<void>;
 }
 
@@ -144,11 +244,11 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
   );
 
   // Enhanced error state component
-  const ErrorState = ({
+  const ErrorStateComponent = ({
     error,
     onRetry,
   }: {
-    error: Error | null;
+    error: ErrorState | null;
     onRetry: () => void;
   }) => (
     <div className="flex-1 flex items-center justify-center p-8 text-center">
@@ -224,7 +324,7 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
         ) : isLoading ? (
           <LoadingSkeleton />
         ) : error ? (
-          <ErrorState error={error} onRetry={refetch} />
+          <ErrorStateComponent error={error} onRetry={refetch} />
         ) : (
           <ChatContainerDisplay
             messages={messages}
