@@ -149,4 +149,47 @@ export interface ConversationService {
     conversationAgentId: string,
     updates: Partial<_ConversationAgent>,
   ): Promise<_ConversationAgent>;
+
+  // Message Operations - exact IPC alignment (NO pagination complexity)
+
+  /**
+   * List all messages for a specific conversation
+   * Maps to: window.electronAPI.messages.list(conversationId)
+   *
+   * Retrieves all messages for the conversation in chronological order.
+   * Returns empty array if conversation has no messages.
+   * No pagination - simple client-side capping applies.
+   *
+   * @param conversationId - Conversation UUID to retrieve messages for
+   * @returns Promise resolving to array of messages in chronological order
+   * @throws Error on retrieval failure or invalid conversation ID
+   */
+  listMessages(conversationId: string): Promise<_Message[]>;
+
+  /**
+   * Create a new message in a conversation
+   * Maps to: window.electronAPI.messages.create(input)
+   *
+   * Creates a new message with generated UUID and timestamps.
+   * Validates CreateMessageInput according to existing schema validation.
+   * Handles user, agent, and system message types properly.
+   *
+   * @param input - CreateMessageInput with conversation_id, role, content, etc.
+   * @returns Promise resolving to created message with generated ID and timestamps
+   * @throws Error on creation failure or validation errors
+   */
+  createMessage(input: _CreateMessageInput): Promise<_Message>;
+
+  /**
+   * Delete a message permanently
+   * Maps to: window.electronAPI.messages.delete(id)
+   *
+   * Permanently removes message from conversation.
+   * This operation cannot be undone.
+   *
+   * @param id - Message UUID to delete
+   * @returns Promise resolving to void on successful deletion
+   * @throws Error on deletion failure or message not found
+   */
+  deleteMessage(id: string): Promise<void>;
 }

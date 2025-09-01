@@ -1,13 +1,31 @@
 ---
 id: T-implement-message-operations
 title: Implement message operations in ConversationService interface
-status: open
+status: done
 priority: high
 parent: F-conversationservice-interface
 prerequisites:
   - T-create-conversationservice
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/services/conversations/ConversationService.ts:
+    Added three message operation methods (listMessages, createMessage,
+    deleteMessage) with comprehensive TypeDoc documentation and exact IPC
+    alignment to window.electronAPI.messages surface. Methods use existing
+    _Message and _CreateMessageInput type aliases following established
+    interface patterns.
+  packages/shared/src/services/conversations/__tests__/ConversationService.test.ts:
+    "Added Message and CreateMessageInput imports. Added complete 'Message
+    Operations' test suite with 4 test cases: method definition validation,
+    signature type checking, CreateMessageInput type usage verification, and IPC
+    alignment implementation testing. Updated complete interface implementation
+    test to include message operations."
+log:
+  - Successfully implemented message operations in ConversationService interface
+    with exact IPC alignment. Added listMessages, createMessage, and
+    deleteMessage methods with comprehensive TypeDoc documentation mapping to
+    window.electronAPI.messages.* surface. Updated test suite with 4 new test
+    cases validating type signatures, IPC alignment, and CreateMessageInput
+    usage. All tests pass and quality checks successful.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T03:03:06.172Z

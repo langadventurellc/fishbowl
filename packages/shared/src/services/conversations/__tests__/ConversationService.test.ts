@@ -1,5 +1,10 @@
 import type { ConversationService } from "../ConversationService";
-import type { ConversationAgent, Conversation } from "@fishbowl-ai/shared";
+import type {
+  ConversationAgent,
+  Conversation,
+  Message,
+  CreateMessageInput,
+} from "@fishbowl-ai/shared";
 
 describe("ConversationService Interface", () => {
   it("should be properly typed interface", () => {
@@ -144,6 +149,11 @@ describe("ConversationService Interface", () => {
           id: string,
           updates: Partial<ConversationAgent>,
         ) => ({}) as ConversationAgent,
+
+        // Message operations for complete implementation test
+        listMessages: async (conversationId: string) => [],
+        createMessage: async (input: CreateMessageInput) => ({}) as Message,
+        deleteMessage: async (id: string) => {},
       };
 
       // Verify all conversation methods exist
@@ -210,6 +220,84 @@ describe("ConversationService Interface", () => {
       };
 
       expect(typeof testUpdate).toBe("function");
+    });
+  });
+
+  describe("ConversationService Interface - Message Operations", () => {
+    it("should define all required message methods", () => {
+      // Type checking - these must compile if interface is correct
+      const mockService: Partial<ConversationService> = {
+        listMessages: async (conversationId: string) => [],
+        createMessage: async (input: CreateMessageInput) => ({}) as Message,
+        deleteMessage: async (id: string) => {},
+      };
+
+      expect(typeof mockService.listMessages).toBe("function");
+      expect(typeof mockService.createMessage).toBe("function");
+      expect(typeof mockService.deleteMessage).toBe("function");
+    });
+
+    it("should have correct method signatures for message operations", () => {
+      // Signature validation - if this compiles, signatures are correct
+      const testSignatures = async () => {
+        const service: ConversationService = {} as ConversationService;
+        const mockInput: CreateMessageInput = {} as CreateMessageInput;
+
+        // Test parameter and return types
+        const messages: Message[] =
+          await service.listMessages("conversation-id");
+        const created: Message = await service.createMessage(mockInput);
+        const deleted: void = await service.deleteMessage("message-id");
+      };
+
+      expect(typeof testSignatures).toBe("function");
+    });
+
+    it("should use existing CreateMessageInput type correctly", () => {
+      // Type validation - CreateMessageInput should be properly imported and usable
+      const testCreateMessageInput = async () => {
+        const service: ConversationService = {} as ConversationService;
+        const mockInput: CreateMessageInput = {
+          conversation_id: "test-id",
+          role: "user",
+          content: "test message",
+        } as CreateMessageInput;
+
+        // This should compile if CreateMessageInput type is properly imported
+        const result: Message = await service.createMessage(mockInput);
+      };
+
+      expect(typeof testCreateMessageInput).toBe("function");
+    });
+
+    it("should support implementation with exact IPC alignment", () => {
+      // Mock implementation that matches current IPC surface
+      const mockListMessages: ConversationService["listMessages"] = async (
+        conversationId: string,
+      ): Promise<Message[]> => {
+        // Method should accept conversation ID and return Message array
+        expect(typeof conversationId).toBe("string");
+        return [];
+      };
+
+      const mockCreateMessage: ConversationService["createMessage"] = async (
+        input: CreateMessageInput,
+      ): Promise<Message> => {
+        // Method should accept CreateMessageInput and return Message
+        expect(typeof input).toBe("object");
+        return {} as Message;
+      };
+
+      const mockDeleteMessage: ConversationService["deleteMessage"] = async (
+        id: string,
+      ): Promise<void> => {
+        // Method should accept message ID and return void (abstracts boolean)
+        expect(typeof id).toBe("string");
+      };
+
+      expect(typeof mockListMessages).toBe("function");
+      expect(typeof mockCreateMessage).toBe("function");
+      expect(typeof mockDeleteMessage).toBe("function");
     });
   });
 });
