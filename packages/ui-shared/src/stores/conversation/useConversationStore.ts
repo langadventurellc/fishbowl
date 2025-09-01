@@ -8,7 +8,7 @@
 
 import { create } from "zustand";
 import type { ConversationStore } from "./ConversationStore";
-import type { ConversationService } from "@fishbowl-ai/shared";
+import type { ConversationService, Message } from "@fishbowl-ai/shared";
 import { useChatStore } from "../chat/useChatStore";
 
 /**
@@ -20,6 +20,18 @@ const generateRequestToken = (): string => {
     return crypto.randomUUID();
   }
   return Date.now().toString(36) + Math.random().toString(36).substr(2);
+};
+
+/**
+ * Apply message limit with client-side trimming.
+ * Keeps most recent messages and maintains chronological order.
+ */
+const applyMessageLimit = (messages: Message[], limit: number): Message[] => {
+  if (limit <= 0 || messages.length <= limit) {
+    return messages;
+  }
+  // Keep most recent messages, maintain chronological order
+  return messages.slice(-limit);
 };
 
 // Private service reference for dependency injection
@@ -252,33 +264,39 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       return;
     }
 
-    const messageContent = content?.trim() || "";
-    if (!messageContent) {
-      return; // Don't send empty messages
-    }
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
 
     try {
       set((state) => ({
         ...state,
+        activeRequestToken: requestToken,
         loading: { ...state.loading, sending: true },
         error: { ...state.error, sending: undefined },
       }));
 
-      // Create message
+      // Create message (allow empty content for continuation)
       const userMessage = await conversationService.createMessage({
         conversation_id: activeConversationId,
-        content: messageContent,
+        content: content || "",
         role: "user",
       });
 
-      // Refresh conversation to get latest messages
-      await get().refreshActiveConversation();
+      // Add created message to activeMessages and apply limit
+      const currentState = get();
+      if (currentState.activeRequestToken === requestToken) {
+        const updatedMessages = applyMessageLimit(
+          [...currentState.activeMessages, userMessage],
+          currentState.maximumMessages,
+        );
+        set((state) => ({ ...state, activeMessages: updatedMessages }));
 
-      // Trigger orchestration
-      await conversationService.sendToAgents(
-        activeConversationId,
-        userMessage.id,
-      );
+        // Trigger orchestration
+        await conversationService.sendToAgents(
+          activeConversationId,
+          userMessage.id,
+        );
+      }
 
       set((state) => ({
         ...state,
@@ -293,6 +311,120 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
           sending: {
             message:
               error instanceof Error ? error.message : "Failed to send message",
+            operation: "save",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
+  },
+
+  /**
+   * Load messages for active conversation with memory management.
+   */
+  loadMessages: async (conversationId: string) => {
+    if (!conversationService) {
+      throw new Error("ConversationService not initialized");
+    }
+
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
+
+    try {
+      set((state) => ({
+        ...state,
+        activeRequestToken: requestToken,
+        activeMessages: [], // Clear existing messages
+        loading: { ...state.loading, messages: true },
+        error: { ...state.error, messages: undefined },
+      }));
+
+      // Load messages from service
+      const messages = await conversationService.listMessages(conversationId);
+
+      // Check if this request is still current
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        return; // Ignore stale result
+      }
+
+      // Apply message limit with client-side trimming
+      const trimmedMessages = applyMessageLimit(
+        messages,
+        currentState.maximumMessages,
+      );
+
+      set((state) => ({
+        ...state,
+        activeMessages: trimmedMessages,
+        loading: { ...state.loading, messages: false },
+      }));
+    } catch (error) {
+      // Check if this request is still current before setting error
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        return; // Ignore stale error
+      }
+
+      set((state) => ({
+        ...state,
+        loading: { ...state.loading, messages: false },
+        error: {
+          ...state.error,
+          messages: {
+            message:
+              error instanceof Error
+                ? error.message
+                : "Failed to load messages",
+            operation: "load",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
+  },
+
+  /**
+   * Delete message from conversation.
+   */
+  deleteMessage: async (id: string) => {
+    if (!conversationService) {
+      throw new Error("ConversationService not initialized");
+    }
+
+    try {
+      set((state) => ({
+        ...state,
+        loading: { ...state.loading, messages: true },
+        error: { ...state.error, messages: undefined },
+      }));
+
+      // Delete message from service
+      await conversationService.deleteMessage(id);
+
+      // Remove message from activeMessages array
+      set((state) => ({
+        ...state,
+        activeMessages: state.activeMessages.filter(
+          (message) => message.id !== id,
+        ),
+        loading: { ...state.loading, messages: false },
+      }));
+    } catch (error) {
+      set((state) => ({
+        ...state,
+        loading: { ...state.loading, messages: false },
+        error: {
+          ...state.error,
+          messages: {
+            message:
+              error instanceof Error
+                ? error.message
+                : "Failed to delete message",
             operation: "save",
             isRetryable: true,
             retryCount: 0,

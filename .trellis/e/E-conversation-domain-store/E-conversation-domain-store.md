@@ -110,11 +110,19 @@ affectedFiles:
     Added conversation store exports to main
     stores barrel file following established patterns
   packages/ui-shared/src/stores/conversation/useConversationStore.ts:
-    Created core Zustand conversation store with service injection, race
+    "Created core Zustand conversation store with service injection, race
     condition protection, and complete conversation lifecycle management
     including loadConversations, selectConversation,
     createConversationAndSelect, refreshActiveConversation, sendUserMessage,
-    addAgent, removeAgent, and toggleAgentEnabled actions
+    addAgent, removeAgent, and toggleAgentEnabled actions; Extended conversation
+    store with three new message management actions: loadMessages() for explicit
+    message loading with client-side trimming and race condition protection,
+    updated sendUserMessage() to support continuation messages (empty content
+    allowed) and apply memory limits atomically, deleteMessage() for removing
+    individual messages with proper state synchronization. Added
+    applyMessageLimit() helper function for consistent client-side message
+    trimming that maintains chronological order. All actions follow established
+    ErrorState patterns and include proper loading state management."
 log: []
 schema: v1.0
 childrenIds:
