@@ -1,4 +1,5 @@
-import React, { type ReactNode } from "react";
+import React, { type ReactNode, useEffect, useMemo } from "react";
+import { useConversationStore } from "@fishbowl-ai/ui-shared";
 import { RendererProcessServices } from "../renderer/services";
 import { ServicesContext } from "./ServicesContext";
 
@@ -26,7 +27,33 @@ export function ServicesProvider({
   services,
 }: ServicesProviderProps) {
   // Create services instance if not provided (mainly for testing)
-  const servicesInstance = services || new RendererProcessServices();
+  const servicesInstance = useMemo(
+    () => services || new RendererProcessServices(),
+    [services],
+  );
+
+  useEffect(() => {
+    let mounted = true;
+
+    const initializeConversationStore = async () => {
+      try {
+        if (mounted) {
+          useConversationStore
+            .getState()
+            .initialize(servicesInstance.conversationService);
+        }
+      } catch (error) {
+        // Error handling - prevent app crash but log for debugging
+        console.error("Failed to initialize conversation store:", error);
+      }
+    };
+
+    initializeConversationStore();
+
+    return () => {
+      mounted = false;
+    };
+  }, [servicesInstance]);
 
   return (
     <ServicesContext.Provider value={servicesInstance}>

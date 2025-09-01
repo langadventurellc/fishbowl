@@ -1,15 +1,38 @@
 ---
 id: F-ui-migration-and-integration
 title: UI Migration and Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-conversation-domain-store
 prerequisites:
   - F-conversation-domain-store
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/contexts/ServicesProvider.tsx:
+    Extended existing provider with
+    useConversationStore import and useEffect hook for conversation store
+    initialization. Added useMemo for services instance to prevent unnecessary
+    re-renders, proper error handling with console.error fallback, and race
+    condition protection with mounted flag. Follows established dependency
+    injection patterns from other providers in the codebase.
+  apps/desktop/src/contexts/__tests__/ServicesProvider.test.tsx:
+    "Created comprehensive unit test suite with 7 test cases covering: service
+    provision to child components, conversation store initialization with
+    correct service instance, custom services instance handling, error handling
+    gracefully without app crash, prevention of re-initialization on re-renders
+    with same services, re-initialization when services instance changes, and
+    default RendererProcessServices creation. Includes proper mocking of all
+    dependencies and TypeScript type safety."
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-extend-servicesprovider-for
+  - T-migrate-add-agent-modal-to
+  - T-migrate-agent-labels
+  - T-migrate-main-content-panel-to
+  - T-migrate-message-input
+  - T-migrate-sidebar-conversation
+  - T-remove-obsolete-hooks-and
+  - T-update-message-item-to-use
 created: 2025-09-01T02:22:11.606Z
 updated: 2025-09-01T02:22:11.606Z
 ---
