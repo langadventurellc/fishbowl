@@ -202,6 +202,16 @@ affectedFiles:
     with same services, re-initialization when services instance changes, and
     default RendererProcessServices creation. Includes proper mocking of all
     dependencies and TypeScript type safety."
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    "Migrated from useConversations/useCreateConversation hooks to
+    useConversationStore from @fishbowl-ai/ui-shared. Replaced direct hook usage
+    with store actions: selectConversation() for conversation selection,
+    createConversationAndSelect() for conversation creation, loadConversations()
+    for data refresh. Eliminated all manual refetch() calls in
+    handleDeleteConversation and RenameConversationModal onOpenChange handler.
+    Added backward compatibility mapping for loading states (isCreating =
+    loading.sending). Maintained exact existing UI behavior while transitioning
+    to centralized domain store pattern."
 log: []
 schema: v1.0
 childrenIds:

@@ -1,13 +1,30 @@
 ---
 id: T-migrate-sidebar-conversation
 title: Migrate sidebar conversation list to domain store
-status: open
+status: done
 priority: high
 parent: F-ui-migration-and-integration
 prerequisites:
   - T-extend-servicesprovider-for
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/sidebar/SidebarContainerDisplay.tsx:
+    "Migrated from useConversations/useCreateConversation hooks to
+    useConversationStore from @fishbowl-ai/ui-shared. Replaced direct hook usage
+    with store actions: selectConversation() for conversation selection,
+    createConversationAndSelect() for conversation creation, loadConversations()
+    for data refresh. Eliminated all manual refetch() calls in
+    handleDeleteConversation and RenameConversationModal onOpenChange handler.
+    Added backward compatibility mapping for loading states (isCreating =
+    loading.sending). Maintained exact existing UI behavior while transitioning
+    to centralized domain store pattern."
+log:
+  - Successfully migrated SidebarContainerDisplay component from direct
+    useConversations/useCreateConversation hook usage to unified
+    useConversationStore from domain store. Eliminated all manual refetch()
+    calls and established centralized conversation state management. All
+    existing functionality preserved including conversation selection, creation,
+    deletion, and rename operations. Migration follows established domain store
+    patterns with proper error handling and loading states.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T06:26:34.779Z
