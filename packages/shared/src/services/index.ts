@@ -5,6 +5,7 @@ export * from "./chat";
 export * from "./llm";
 export * from "./clipboard";
 export * from "./messaging";
+export * from "./conversations";
 export type { PersonalityDefinitionsService } from "./PersonalityDefinitionsService";
 
 // Repositories (for convenience)

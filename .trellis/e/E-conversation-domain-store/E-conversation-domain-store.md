@@ -49,6 +49,11 @@ affectedFiles:
     checking, CreateMessageInput type usage verification, and IPC alignment
     implementation testing. Updated complete interface implementation test to
     include message operations."
+  packages/shared/src/services/index.ts: Added export for conversations service
+    following established barrel export patterns
+  packages/shared/src/services/conversations/README.md: Created comprehensive
+    service documentation explaining ConversationService interface usage, import
+    patterns, and available operations
 log: []
 schema: v1.0
 childrenIds:
