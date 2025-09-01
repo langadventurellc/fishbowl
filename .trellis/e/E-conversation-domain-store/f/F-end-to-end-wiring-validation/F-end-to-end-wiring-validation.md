@@ -1,7 +1,7 @@
 ---
 id: F-end-to-end-wiring-validation
 title: End-to-End Wiring Validation
-status: open
+status: wont-do
 priority: medium
 parent: E-conversation-domain-store
 prerequisites:
