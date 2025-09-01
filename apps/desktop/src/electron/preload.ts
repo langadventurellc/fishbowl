@@ -138,6 +138,44 @@ const electronAPI: ElectronAPI = {
       return () => {};
     }
   },
+
+  onNewConversation: (callback: () => void) => {
+    try {
+      // Create a wrapped callback to prevent event object exposure
+      const wrappedCallback = () => {
+        try {
+          callback();
+        } catch (error) {
+          logger.error(
+            "Error in new conversation callback:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
+        }
+      };
+
+      // Register the IPC listener with the wrapped callback
+      ipcRenderer.on("new-conversation", wrappedCallback);
+
+      // Return cleanup function for memory management
+      return () => {
+        try {
+          ipcRenderer.removeListener("new-conversation", wrappedCallback);
+        } catch (error) {
+          logger.error(
+            "Error removing IPC listener:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
+        }
+      };
+    } catch (error) {
+      logger.error(
+        "Error setting up IPC listener:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      // Return no-op cleanup function if setup fails
+      return () => {};
+    }
+  },
   removeAllListeners: (channel: string) => {
     try {
       ipcRenderer.removeAllListeners(channel);

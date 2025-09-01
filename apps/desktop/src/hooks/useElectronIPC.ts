@@ -1,8 +1,8 @@
 /**
  * Hook for integrating Electron IPC events with React components.
  *
- * Manages IPC event listeners for settings modal integration, including
- * proper cleanup to prevent memory leaks and graceful degradation when
+ * Manages IPC event listeners for settings modal and new conversation integration,
+ * including proper cleanup to prevent memory leaks and graceful degradation when
  * not running in Electron environment.
  *
  * @module hooks/useElectronIPC
@@ -11,12 +11,13 @@
 import { useSettingsModal } from "@fishbowl-ai/ui-shared";
 import { useEffect, useRef } from "react";
 import { useServices } from "../contexts";
+import { useCreateConversation } from "./conversations/useCreateConversation";
 
 /**
- * Hook that integrates Electron IPC events with the settings modal store.
+ * Hook that integrates Electron IPC events with React components.
  *
- * Sets up event listener for "open-settings" IPC messages and connects them
- * to the Zustand store's openModal action. Handles cleanup automatically
+ * Sets up event listeners for "open-settings" and "new-conversation" IPC messages
+ * and connects them to their respective actions. Handles cleanup automatically
  * on component unmount.
  *
  * @example
@@ -31,7 +32,9 @@ import { useServices } from "../contexts";
 export function useElectronIPC(): void {
   const { logger } = useServices();
   const { openModal } = useSettingsModal();
+  const { createConversation } = useCreateConversation();
   const cleanupRef = useRef<(() => void) | null>(null);
+  const newConversationCleanupRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     // Check if running in Electron environment
@@ -71,20 +74,67 @@ export function useElectronIPC(): void {
       );
     }
 
+    // Set up new conversation IPC listener
+    if (
+      window.electronAPI?.onNewConversation &&
+      typeof window.electronAPI.onNewConversation === "function"
+    ) {
+      try {
+        const newConversationCleanup = window.electronAPI.onNewConversation(
+          () => {
+            try {
+              // Create a new conversation without a title (uses default)
+              createConversation();
+            } catch (error) {
+              logger.error(
+                "Error creating new conversation via IPC:",
+                error instanceof Error ? error : new Error(String(error)),
+              );
+            }
+          },
+        );
+
+        // Store cleanup function for component unmount
+        newConversationCleanupRef.current = newConversationCleanup;
+
+        logger.debug(
+          "IPC event listener for new conversation registered successfully",
+        );
+      } catch (error) {
+        logger.error(
+          "Failed to set up new conversation IPC event listener:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+      }
+    }
+
     // Cleanup function called on component unmount
     return () => {
       if (cleanupRef.current) {
         try {
           cleanupRef.current();
           cleanupRef.current = null;
-          logger.debug("IPC event listener cleanup completed");
+          logger.debug("Settings IPC event listener cleanup completed");
         } catch (error) {
           logger.error(
-            "Error during IPC cleanup:",
+            "Error during settings IPC cleanup:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
+        }
+      }
+
+      if (newConversationCleanupRef.current) {
+        try {
+          newConversationCleanupRef.current();
+          newConversationCleanupRef.current = null;
+          logger.debug("New conversation IPC event listener cleanup completed");
+        } catch (error) {
+          logger.error(
+            "Error during new conversation IPC cleanup:",
             error instanceof Error ? error : new Error(String(error)),
           );
         }
       }
     };
-  }, [openModal, logger]);
+  }, [openModal, logger, createConversation]);
 }

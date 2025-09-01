@@ -16,6 +16,14 @@ export interface ElectronAPI {
    */
   onOpenSettings: (callback: () => void) => () => void;
   /**
+   * Registers a callback to be invoked when a new conversation should be created.
+   * This is triggered by Electron menu items or keyboard shortcuts (Cmd/Ctrl+N).
+   *
+   * @param callback - Function to execute when a new conversation should be created
+   * @returns Cleanup function to remove the event listener and prevent memory leaks
+   */
+  onNewConversation: (callback: () => void) => () => void;
+  /**
    * Removes all IPC event listeners for the specified channel.
    * Used for cleanup when components unmount to prevent memory leaks.
    *

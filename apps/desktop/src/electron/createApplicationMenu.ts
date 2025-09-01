@@ -10,6 +10,7 @@
 import { Menu, MenuItemConstructorOptions, app } from "electron";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 import { openSettingsModal } from "./main.js";
+import { createNewConversation } from "./createNewConversation.js";
 
 const logger = createLoggerSync({
   config: { name: "createApplicationMenu", level: "info" },
@@ -76,8 +77,7 @@ export function createApplicationMenu(): Menu {
           label: "New Conversation",
           accelerator: isMac ? "Cmd+N" : "Ctrl+N",
           click: () => {
-            // TODO: Implement new conversation functionality
-            logger.info("New conversation requested");
+            createNewConversation();
           },
         },
         { type: "separator" as const },
