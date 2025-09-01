@@ -22,6 +22,7 @@ import { PersonalitySectionDef, DiscreteValue } from "@fishbowl-ai/shared";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { PersonalityDefinitionsClient } from "../../../renderer/services/personalityDefinitionsClient";
 import { SettingsFormModal } from "../common";
+import { SettingsFormModalRef } from "../common/SettingsFormModalRef";
 import { PersonalityForm, type PersonalityFormRef } from "./PersonalityForm";
 
 export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
@@ -48,6 +49,7 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
 
   // Form reference for reset functionality
   const formRef = useRef<PersonalityFormRef>(null);
+  const modalRef = useRef<SettingsFormModalRef>(null);
 
   // Load personality definitions when modal opens
   useEffect(() => {
@@ -113,10 +115,10 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
     };
   }, [isOpen, client]);
 
-  // Handle form cancellation
-  const handleCancel = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+  // Handle form cancellation with confirmation
+  const handleCancel = useCallback(async () => {
+    await modalRef.current?.handleClose();
+  }, []);
 
   // Handle successful save
   const handleSave = useCallback(
@@ -164,6 +166,7 @@ export const PersonalityFormModal: React.FC<PersonalityFormModalProps> = ({
 
   return (
     <SettingsFormModal
+      ref={modalRef}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title={getModalTitle()}

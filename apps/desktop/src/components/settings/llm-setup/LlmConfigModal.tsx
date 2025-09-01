@@ -2,7 +2,7 @@ import type { LlmConfigInput, Provider } from "@fishbowl-ai/shared";
 import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { cn } from "../../../lib/utils";
@@ -19,6 +19,7 @@ import {
 } from "../../ui/form";
 import { Input } from "../../ui/input";
 import { SettingsFormModal } from "../common";
+import { SettingsFormModalRef } from "../common/SettingsFormModalRef";
 import { AnthropicProviderFields } from "./AnthropicProviderFields";
 import { OpenAiProviderFields } from "./OpenAiProviderFields";
 
@@ -57,6 +58,8 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   error = null,
   existingConfigs: _existingConfigs = [],
 }) => {
+  const modalRef = useRef<SettingsFormModalRef>(null);
+
   const getDefaultBaseUrl = useMemo(() => {
     switch (provider) {
       case "openai":
@@ -176,6 +179,7 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
 
   return (
     <SettingsFormModal
+      ref={modalRef}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title={modalTitle}
@@ -261,7 +265,7 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
             <Button
               type="button"
               variant="ghost"
-              onClick={() => onOpenChange(false)}
+              onClick={() => modalRef.current?.handleClose()}
               disabled={isLoading}
             >
               Cancel

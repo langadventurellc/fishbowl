@@ -20,6 +20,7 @@ import {
 } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useRef } from "react";
 import { SettingsFormModal } from "../common";
+import { SettingsFormModalRef } from "../common/SettingsFormModalRef";
 import { CreateRoleForm, type CreateRoleFormRef } from "./CreateRoleForm";
 
 export const RoleFormModal: React.FC<RoleFormModalProps> = ({
@@ -33,6 +34,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
   const { hasUnsavedChanges } = useUnsavedChanges();
   const { roles } = useRoles();
   const formRef = useRef<CreateRoleFormRef>(null);
+  const modalRef = useRef<SettingsFormModalRef>(null);
 
   // Handle successful save
   const handleSave = useCallback(
@@ -43,10 +45,10 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
     [onSave, onOpenChange],
   );
 
-  // Handle form cancellation
-  const handleCancel = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+  // Handle form cancellation with confirmation
+  const handleCancel = useCallback(async () => {
+    await modalRef.current?.handleClose();
+  }, []);
 
   // Get modal title and description based on mode
   const getModalTitle = () => {
@@ -83,6 +85,7 @@ export const RoleFormModal: React.FC<RoleFormModalProps> = ({
 
   return (
     <SettingsFormModal
+      ref={modalRef}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title={getModalTitle()}

@@ -1,4 +1,9 @@
-import React, { useCallback, useEffect } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,6 +15,8 @@ import { cn } from "../../../lib/utils";
 import { useFocusTrap } from "../../../hooks/useFocusTrap";
 import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
 import { announceToScreenReader } from "../../../utils/announceToScreenReader";
+import { ConfirmationDialog } from "../../ui/confirmation-dialog";
+import { SettingsFormModalRef } from "./SettingsFormModalRef";
 
 interface SettingsFormModalProps {
   // Required
@@ -84,107 +91,130 @@ const useKeyboardHandling = (
   }, [isOpen, onClose, onRequestSave]);
 };
 
-export function SettingsFormModal({
-  isOpen,
-  onOpenChange,
-  title,
-  children,
-  description,
-  className,
-  initialFocusSelector,
-  announceOnOpen,
-  dataTestId,
-  onRequestSave,
-  confirmOnClose,
-}: SettingsFormModalProps) {
-  // Confirmation dialog hook
-  const { showConfirmation } = useConfirmationDialog();
+export const SettingsFormModal = forwardRef<
+  SettingsFormModalRef,
+  SettingsFormModalProps
+>(
+  (
+    {
+      isOpen,
+      onOpenChange,
+      title,
+      children,
+      description,
+      className,
+      initialFocusSelector,
+      announceOnOpen,
+      dataTestId,
+      onRequestSave,
+      confirmOnClose,
+    },
+    ref,
+  ) => {
+    // Confirmation dialog hook
+    const { showConfirmation, confirmationDialogProps } =
+      useConfirmationDialog();
 
-  // Handle modal close with confirmation
-  const handleClose = useCallback(async () => {
-    if (confirmOnClose?.enabled) {
-      const confirmed = await showConfirmation({
-        title: confirmOnClose.message.title,
-        message: confirmOnClose.message.body,
-        confirmText: confirmOnClose.message.confirmText || "Discard Changes",
-        cancelText: confirmOnClose.message.cancelText || "Cancel",
-      });
+    // Handle modal close with confirmation
+    const handleClose = useCallback(async () => {
+      if (confirmOnClose?.enabled) {
+        const confirmed = await showConfirmation({
+          title: confirmOnClose.message.title,
+          message: confirmOnClose.message.body,
+          confirmText: confirmOnClose.message.confirmText || "Discard Changes",
+          cancelText: confirmOnClose.message.cancelText || "Cancel",
+        });
 
-      if (confirmed) {
-        confirmOnClose.onDiscard?.();
+        if (confirmed) {
+          confirmOnClose.onDiscard?.();
+          onOpenChange(false);
+        }
+        // If not confirmed, do nothing (keep modal open)
+      } else {
+        // No confirmation needed, close immediately
         onOpenChange(false);
       }
-      // If not confirmed, do nothing (keep modal open)
-    } else {
-      // No confirmation needed, close immediately
-      onOpenChange(false);
-    }
-  }, [confirmOnClose, onOpenChange, showConfirmation]);
+    }, [confirmOnClose, onOpenChange, showConfirmation]);
 
-  // Handle Dialog onOpenChange (for external close triggers like clicking outside)
-  const handleDialogOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) {
-        // Dialog wants to close, trigger our confirmation flow
-        handleClose();
-      }
-      // If open is true, ignore (Dialog is opening)
-    },
-    [handleClose],
-  );
-
-  // Focus trap integration
-  const { containerRef } = useFocusTrap({
-    isActive: isOpen,
-    restoreFocus: true,
-    initialFocusSelector,
-  });
-
-  // Screen reader announcements
-  useEffect(() => {
-    if (isOpen && announceOnOpen) {
-      // Small delay to ensure modal is rendered before announcing
-      const timeoutId = setTimeout(() => {
-        announceToScreenReader(announceOnOpen, "polite");
-      }, 100);
-
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isOpen, announceOnOpen]);
-
-  // Use keyboard handling hook
-  useKeyboardHandling(isOpen, handleClose, onRequestSave);
-
-  return (
-    <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
-      <DialogContent
-        ref={containerRef}
-        data-form-modal="true"
-        className={cn("max-w-2xl", className)}
-        data-testid={dataTestId}
-        aria-labelledby={`modal-title-${title.replace(/\s+/g, "-").toLowerCase()}`}
-        aria-describedby={
-          description
-            ? `modal-description-${title.replace(/\s+/g, "-").toLowerCase()}`
-            : undefined
+    // Handle Dialog onOpenChange (for external close triggers like clicking outside)
+    const handleDialogOpenChange = useCallback(
+      (open: boolean) => {
+        if (!open) {
+          // Dialog wants to close, trigger our confirmation flow
+          handleClose();
         }
-      >
-        <DialogHeader>
-          <DialogTitle
-            id={`modal-title-${title.replace(/\s+/g, "-").toLowerCase()}`}
+        // If open is true, ignore (Dialog is opening)
+      },
+      [handleClose],
+    );
+
+    // Focus trap integration
+    const { containerRef } = useFocusTrap({
+      isActive: isOpen,
+      restoreFocus: true,
+      initialFocusSelector,
+    });
+
+    // Screen reader announcements
+    useEffect(() => {
+      if (isOpen && announceOnOpen) {
+        // Small delay to ensure modal is rendered before announcing
+        const timeoutId = setTimeout(() => {
+          announceToScreenReader(announceOnOpen, "polite");
+        }, 100);
+
+        return () => clearTimeout(timeoutId);
+      }
+    }, [isOpen, announceOnOpen]);
+
+    // Use keyboard handling hook
+    useKeyboardHandling(isOpen, handleClose, onRequestSave);
+
+    // Expose handleClose method via ref
+    useImperativeHandle(
+      ref,
+      () => ({
+        handleClose,
+      }),
+      [handleClose],
+    );
+
+    return (
+      <>
+        <Dialog open={isOpen} onOpenChange={handleDialogOpenChange}>
+          <DialogContent
+            ref={containerRef}
+            data-form-modal="true"
+            className={cn("max-w-2xl", className)}
+            data-testid={dataTestId}
+            aria-labelledby={`modal-title-${title.replace(/\s+/g, "-").toLowerCase()}`}
+            aria-describedby={
+              description
+                ? `modal-description-${title.replace(/\s+/g, "-").toLowerCase()}`
+                : undefined
+            }
           >
-            {title}
-          </DialogTitle>
-          {description && (
-            <DialogDescription
-              id={`modal-description-${title.replace(/\s+/g, "-").toLowerCase()}`}
-            >
-              {description}
-            </DialogDescription>
-          )}
-        </DialogHeader>
-        {children}
-      </DialogContent>
-    </Dialog>
-  );
-}
+            <DialogHeader>
+              <DialogTitle
+                id={`modal-title-${title.replace(/\s+/g, "-").toLowerCase()}`}
+              >
+                {title}
+              </DialogTitle>
+              {description && (
+                <DialogDescription
+                  id={`modal-description-${title.replace(/\s+/g, "-").toLowerCase()}`}
+                >
+                  {description}
+                </DialogDescription>
+              )}
+            </DialogHeader>
+            {children}
+          </DialogContent>
+        </Dialog>
+        {confirmationDialogProps && (
+          <ConfirmationDialog {...confirmationDialogProps} />
+        )}
+      </>
+    );
+  },
+);

@@ -17,6 +17,7 @@ import type { AgentFormModalProps } from "@fishbowl-ai/ui-shared";
 import { useUnsavedChanges, type AgentFormData } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useRef } from "react";
 import { SettingsFormModal } from "../common";
+import { SettingsFormModalRef } from "../common/SettingsFormModalRef";
 import { AgentForm, type AgentFormRef } from "./AgentForm";
 
 export const AgentFormModal: React.FC<AgentFormModalProps> = ({
@@ -30,6 +31,7 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
 }) => {
   const { hasUnsavedChanges } = useUnsavedChanges();
   const formRef = useRef<AgentFormRef>(null);
+  const modalRef = useRef<SettingsFormModalRef>(null);
 
   // Handle successful save
   const handleSave = useCallback(
@@ -40,10 +42,10 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
     [onSave, onOpenChange],
   );
 
-  // Handle form cancellation
-  const handleCancel = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
+  // Handle form cancellation with confirmation
+  const handleCancel = useCallback(async () => {
+    await modalRef.current?.handleClose();
+  }, []);
 
   // Get modal title and description based on mode
   const getModalTitle = () => {
@@ -107,6 +109,7 @@ export const AgentFormModal: React.FC<AgentFormModalProps> = ({
 
   return (
     <SettingsFormModal
+      ref={modalRef}
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       title={getModalTitle()}
