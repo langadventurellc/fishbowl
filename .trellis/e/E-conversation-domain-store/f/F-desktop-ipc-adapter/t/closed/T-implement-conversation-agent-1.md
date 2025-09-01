@@ -1,13 +1,30 @@
 ---
 id: T-implement-conversation-agent-1
 title: Implement conversation agent operations in ConversationIpcAdapter
-status: open
+status: done
 priority: medium
 parent: F-desktop-ipc-adapter
 prerequisites:
   - T-implement-message-operations-1
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/renderer/services/ConversationIpcAdapter.ts:
+    "Replaced 4 placeholder conversation agent methods with actual IPC
+    implementations: listConversationAgents (maps to getByConversation),
+    addAgent (transforms parameters to {conversation_id, agent_id} object),
+    removeAgent (transforms parameters to {conversation_id, agent_id} object),
+    and updateConversationAgent (transforms parameters to {conversationAgentId,
+    updates} object). Updated JSDoc comments to reflect exact IPC mappings and
+    added comprehensive error handling following established patterns. Updated
+    class-level IPC method mapping documentation to include the new conversation
+    agent operations."
+log:
+  - Implemented conversation agent operations in ConversationIpcAdapter by
+    replacing 4 placeholder methods with actual IPC implementations. All methods
+    follow the established error handling patterns and include proper parameter
+    transformation from interface to IPC object format. The implementation maps
+    interface methods to exact window.electronAPI.conversationAgent calls as
+    specified in the task requirements. All quality checks pass and shared
+    libraries build successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T03:54:27.928Z

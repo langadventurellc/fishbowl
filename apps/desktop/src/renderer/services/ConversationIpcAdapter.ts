@@ -27,6 +27,10 @@ import {
  * - listMessages(conversationId) → window.electronAPI.messages.list(conversationId)
  * - createMessage(input) → window.electronAPI.messages.create(input)
  * - deleteMessage(id) → window.electronAPI.messages.delete(id)
+ * - listConversationAgents(conversationId) → window.electronAPI.conversationAgent.getByConversation(conversationId)
+ * - addAgent(conversationId, agentId) → window.electronAPI.conversationAgent.add({conversation_id, agent_id})
+ * - removeAgent(conversationId, agentId) → window.electronAPI.conversationAgent.remove({conversation_id, agent_id})
+ * - updateConversationAgent(conversationAgentId, updates) → window.electronAPI.conversationAgent.update({conversationAgentId, updates})
  */
 export class ConversationIpcAdapter implements ConversationService {
   // Conversation CRUD Operations Implementation
@@ -138,46 +142,81 @@ export class ConversationIpcAdapter implements ConversationService {
 
   /**
    * List all agents assigned to a specific conversation
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.conversationAgent.getByConversation(conversationId)
    */
   async listConversationAgents(
-    _conversationId: string,
+    conversationId: string,
   ): Promise<_ConversationAgent[]> {
-    throw new Error(
-      "listConversationAgents: Not implemented in this adapter version",
-    );
+    try {
+      const result =
+        await window.electronAPI.conversationAgent.getByConversation(
+          conversationId,
+        );
+      return result;
+    } catch (error) {
+      throw new Error(
+        `listConversationAgents: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
   /**
    * Add an agent to a conversation
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.conversationAgent.add({conversation_id, agent_id})
    */
   async addAgent(
-    _conversationId: string,
-    _agentId: string,
+    conversationId: string,
+    agentId: string,
   ): Promise<_ConversationAgent> {
-    throw new Error("addAgent: Not implemented in this adapter version");
+    try {
+      const result = await window.electronAPI.conversationAgent.add({
+        conversation_id: conversationId,
+        agent_id: agentId,
+      });
+      return result;
+    } catch (error) {
+      throw new Error(
+        `addAgent: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
   /**
    * Remove an agent from a conversation
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.conversationAgent.remove({conversation_id, agent_id})
    */
-  async removeAgent(_conversationId: string, _agentId: string): Promise<void> {
-    throw new Error("removeAgent: Not implemented in this adapter version");
+  async removeAgent(conversationId: string, agentId: string): Promise<void> {
+    try {
+      await window.electronAPI.conversationAgent.remove({
+        conversation_id: conversationId,
+        agent_id: agentId,
+      });
+    } catch (error) {
+      throw new Error(
+        `removeAgent: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
   /**
    * Update conversation agent configuration
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.conversationAgent.update({conversationAgentId, updates})
    */
   async updateConversationAgent(
-    _conversationAgentId: string,
-    _updates: Partial<_ConversationAgent>,
+    conversationAgentId: string,
+    updates: Partial<_ConversationAgent>,
   ): Promise<_ConversationAgent> {
-    throw new Error(
-      "updateConversationAgent: Not implemented in this adapter version",
-    );
+    try {
+      const result = await window.electronAPI.conversationAgent.update({
+        conversationAgentId,
+        updates,
+      });
+      return result;
+    } catch (error) {
+      throw new Error(
+        `updateConversationAgent: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
   /**

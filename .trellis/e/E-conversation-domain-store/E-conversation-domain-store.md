@@ -55,7 +55,7 @@ affectedFiles:
     service documentation explaining ConversationService interface usage, import
     patterns, and available operations
   apps/desktop/src/renderer/services/ConversationIpcAdapter.ts:
-    Created ConversationIpcAdapter class implementing ConversationService
+    "Created ConversationIpcAdapter class implementing ConversationService
     interface with conversation CRUD operations mapping to
     window.electronAPI.conversations methods. Includes proper error handling,
     type safety, and placeholder implementations for future operations.;
@@ -64,7 +64,16 @@ affectedFiles:
     listMessages(conversationId), createMessage(input), and deleteMessage(id)
     implementations with proper error handling, type safety, and JSDoc
     documentation. Updated class-level JSDoc comment to include message
-    operations in IPC method mapping section.
+    operations in IPC method mapping section.; Replaced 4 placeholder
+    conversation agent methods with actual IPC implementations:
+    listConversationAgents (maps to getByConversation), addAgent (transforms
+    parameters to {conversation_id, agent_id} object), removeAgent (transforms
+    parameters to {conversation_id, agent_id} object), and
+    updateConversationAgent (transforms parameters to {conversationAgentId,
+    updates} object). Updated JSDoc comments to reflect exact IPC mappings and
+    added comprehensive error handling following established patterns. Updated
+    class-level IPC method mapping documentation to include the new conversation
+    agent operations."
   apps/desktop/src/renderer/services/RendererProcessServices.ts:
     Added ConversationIpcAdapter as conversationService property with proper
     dependency injection in constructor, following established service container
