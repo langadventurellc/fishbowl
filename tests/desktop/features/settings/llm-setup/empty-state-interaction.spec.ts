@@ -134,7 +134,9 @@ test.describe("Feature: LLM Setup Configuration - Empty State Interaction", () =
     await setupButton.click();
 
     // Verify LLM config modal opens
-    const llmConfigModal = window.locator('[role="dialog"].llm-config-modal');
+    const llmConfigModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(llmConfigModal).toBeVisible({ timeout: 5000 });
 
     // Verify modal has correct title
@@ -162,7 +164,9 @@ test.describe("Feature: LLM Setup Configuration - Empty State Interaction", () =
     await anthropicSetupButton.click();
 
     // Verify Anthropic modal opens
-    const anthropicModal = window.locator('[role="dialog"].llm-config-modal');
+    const anthropicModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(anthropicModal).toBeVisible({ timeout: 5000 });
 
     // Verify modal has correct title

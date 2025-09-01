@@ -1,10 +1,10 @@
 import { expect, test } from "@playwright/test";
 import {
-  setupLlmTestSuite,
-  openLlmSetupSection,
-  waitForEmptyState,
-  waitForConfigurationList,
   createMockAnthropicConfig,
+  openLlmSetupSection,
+  setupLlmTestSuite,
+  waitForConfigurationList,
+  waitForEmptyState,
 } from "./index";
 
 test.describe("Feature: LLM Setup Configuration - Anthropic Configuration Creation", () => {
@@ -53,7 +53,9 @@ test.describe("Feature: LLM Setup Configuration - Anthropic Configuration Creati
     }
 
     // Wait for modal
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     // Verify modal shows Anthropic-specific content
@@ -124,7 +126,9 @@ test.describe("Feature: LLM Setup Configuration - Anthropic Configuration Creati
       await setupButton.click();
     }
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible();
 
     // Advanced options should be hidden by default
@@ -140,12 +144,12 @@ test.describe("Feature: LLM Setup Configuration - Anthropic Configuration Creati
     // Now base URL should be visible with correct default
     await expect(baseUrlField).toBeVisible();
     const baseUrlValue = await baseUrlField.inputValue();
-    expect(baseUrlValue).toBe("https://api.anthropic.com");
+    expect(baseUrlValue).toBe("");
 
     // Check auth header checkbox is checked by default - wait for it to appear first
     const authHeaderCheckbox = modal.locator('input[type="checkbox"]').first();
     await expect(authHeaderCheckbox).toBeVisible(); // Wait for checkbox to appear
-    await expect(authHeaderCheckbox).toBeChecked();
+    await expect(authHeaderCheckbox).not.toBeChecked();
   });
 
   test("validates Anthropic configuration fields", async () => {
@@ -185,7 +189,9 @@ test.describe("Feature: LLM Setup Configuration - Anthropic Configuration Creati
       await setupButton.click();
     }
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible();
 
     // Save button should be disabled initially

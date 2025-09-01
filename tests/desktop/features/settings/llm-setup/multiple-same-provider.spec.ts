@@ -26,7 +26,9 @@ test.describe("Feature: LLM Setup Configuration - Multiple Same-Provider Configu
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     const firstConfig = createMockOpenAiConfig({ customName: "GPT-4" });
@@ -57,7 +59,9 @@ test.describe("Feature: LLM Setup Configuration - Multiple Same-Provider Configu
     await addAnotherButton.click();
 
     // Fill second configuration
-    const secondModal = window.locator('[role="dialog"].llm-config-modal');
+    const secondModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(secondModal).toBeVisible({ timeout: 5000 });
 
     const secondConfig = createMockOpenAiConfig({ customName: "GPT-3.5" });
@@ -126,7 +130,9 @@ test.describe("Feature: LLM Setup Configuration - Multiple Same-Provider Configu
       .filter({ hasText: "Set up Anthropic" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     const firstConfig = createMockAnthropicConfig({
@@ -162,7 +168,9 @@ test.describe("Feature: LLM Setup Configuration - Multiple Same-Provider Configu
     await addAnotherButton.click();
 
     // Fill second configuration
-    const secondModal = window.locator('[role="dialog"].llm-config-modal');
+    const secondModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(secondModal).toBeVisible({ timeout: 5000 });
 
     const secondConfig = createMockAnthropicConfig({

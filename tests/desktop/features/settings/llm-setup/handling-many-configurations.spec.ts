@@ -26,7 +26,9 @@ test.describe("Feature: LLM Setup Configuration - Handling Many Configurations",
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    let modal = window.locator('[role="dialog"].llm-config-modal');
+    let modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await modal.locator('[name="customName"]').fill(configs[0]!.customName);
     await modal.locator('[name="apiKey"]').fill(configs[0]!.apiKey);
     await modal
@@ -43,7 +45,9 @@ test.describe("Feature: LLM Setup Configuration - Handling Many Configurations",
     for (let i = 1; i < configs.length; i++) {
       await addAnotherButton.click();
 
-      modal = window.locator('[role="dialog"].llm-config-modal');
+      modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(configs[i]!.customName);
       await modal.locator('[name="apiKey"]').fill(configs[i]!.apiKey);
       await modal

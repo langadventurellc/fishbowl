@@ -20,7 +20,9 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     // Save button should be disabled initially
@@ -54,7 +56,9 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     const customNameInput = modal.locator('[name="customName"]');
@@ -92,7 +96,9 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     const apiKeyInput = modal.locator('[name="apiKey"]');
@@ -142,7 +148,9 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
       .filter({ hasText: "Set up Anthropic" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     // Fill required fields first
@@ -194,7 +202,9 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     const customNameInput = modal.locator('[name="customName"]');
@@ -238,7 +248,9 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     const customNameInput = modal.locator('[name="customName"]');
@@ -284,7 +296,9 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     // Fill form with data
