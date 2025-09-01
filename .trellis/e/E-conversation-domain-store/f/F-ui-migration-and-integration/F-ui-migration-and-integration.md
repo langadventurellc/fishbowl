@@ -51,15 +51,25 @@ affectedFiles:
     error handling to use ErrorState pattern. Removed manual refetch calls in
     AddAgentToConversationModal onAgentAdded callback. Maintained exact existing
     functionality while transitioning to centralized domain store pattern.
+  apps/desktop/src/components/modals/AddAgentToConversationModal.tsx:
+    Migrated from useConversationAgentsContext to useConversationStore from
+    @fishbowl-ai/ui-shared. Removed context import and usage, replaced with
+    store's activeConversationAgents, addAgent action, loading.agents, and
+    error.agents states. Updated addAgent call to pass conversationId parameter
+    as required by store interface. Fixed property mapping from ca.agentId to
+    ca.agent_id to match ConversationAgent interface. Combined local
+    isSubmitting state with store loading state for comprehensive loading
+    management. Maintained all existing functionality while eliminating context
+    dependency.
 log: []
 schema: v1.0
 childrenIds:
   - T-migrate-add-agent-modal-to
-  - T-migrate-agent-labels
   - T-migrate-message-input
   - T-remove-obsolete-hooks-and
   - T-update-message-item-to-use
   - T-extend-servicesprovider-for
+  - T-migrate-agent-labels
   - T-migrate-main-content-panel-to
   - T-migrate-sidebar-conversation
 created: 2025-09-01T02:22:11.606Z

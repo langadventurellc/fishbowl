@@ -16,7 +16,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { AlertCircle, Loader2 } from "lucide-react";
 import type { AddAgentToConversationModalProps } from "@fishbowl-ai/ui-shared";
-import { useAgentsStore } from "@fishbowl-ai/ui-shared";
+import { useAgentsStore, useConversationStore } from "@fishbowl-ai/ui-shared";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useConversationAgentsContext } from "../../contexts";
 
 /**
  * Modal dialog for adding agents to conversations.
@@ -65,12 +64,17 @@ import { useConversationAgentsContext } from "../../contexts";
 export function AddAgentToConversationModal({
   open,
   onOpenChange,
-  conversationId: _conversationId,
+  conversationId,
   onAgentAdded,
 }: AddAgentToConversationModalProps): React.ReactElement {
   const { agents } = useAgentsStore();
-  const { conversationAgents, addAgent, error } =
-    useConversationAgentsContext();
+  const { activeConversationAgents, addAgent, loading, error } =
+    useConversationStore();
+
+  // Map store data to match existing component logic
+  const conversationAgents = activeConversationAgents;
+  const isAdding = loading.agents;
+  const addError = error.agents;
 
   const [selectedAgentId, setSelectedAgentId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -87,7 +91,7 @@ export function AddAgentToConversationModal({
   // Filter available agents (exclude those already in conversation)
   const availableAgents = useMemo(() => {
     const conversationAgentIds = new Set(
-      conversationAgents.map((ca) => ca.agentId),
+      conversationAgents.map((ca) => ca.agent_id),
     );
 
     return agents
@@ -102,7 +106,7 @@ export function AddAgentToConversationModal({
     setLocalError(null);
 
     try {
-      await addAgent(selectedAgentId);
+      await addAgent(conversationId, selectedAgentId);
 
       // Success: close modal and call optional callback
       onOpenChange(false);
@@ -112,7 +116,14 @@ export function AddAgentToConversationModal({
     } finally {
       setIsSubmitting(false);
     }
-  }, [selectedAgentId, addAgent, onOpenChange, onAgentAdded, isSubmitting]);
+  }, [
+    conversationId,
+    selectedAgentId,
+    addAgent,
+    onOpenChange,
+    onAgentAdded,
+    isSubmitting,
+  ]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
@@ -130,8 +141,8 @@ export function AddAgentToConversationModal({
     }
   }, [onOpenChange, isSubmitting]);
 
-  const displayError = localError || error?.message;
-  const isLoading = isSubmitting;
+  const displayError = localError || addError?.message;
+  const isLoading = isSubmitting || isAdding;
   const canAdd = selectedAgentId && !isLoading;
 
   return (

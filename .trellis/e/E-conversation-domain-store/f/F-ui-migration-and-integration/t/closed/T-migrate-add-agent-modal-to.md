@@ -1,13 +1,31 @@
 ---
 id: T-migrate-add-agent-modal-to
 title: Migrate add agent modal to domain store
-status: open
+status: done
 priority: medium
 parent: F-ui-migration-and-integration
 prerequisites:
   - T-migrate-agent-labels
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/modals/AddAgentToConversationModal.tsx:
+    Migrated from useConversationAgentsContext to useConversationStore from
+    @fishbowl-ai/ui-shared. Removed context import and usage, replaced with
+    store's activeConversationAgents, addAgent action, loading.agents, and
+    error.agents states. Updated addAgent call to pass conversationId parameter
+    as required by store interface. Fixed property mapping from ca.agentId to
+    ca.agent_id to match ConversationAgent interface. Combined local
+    isSubmitting state with store loading state for comprehensive loading
+    management. Maintained all existing functionality while eliminating context
+    dependency.
+log:
+  - Successfully migrated AddAgentToConversationModal from
+    useConversationAgentsContext to conversation domain store. Replaced context
+    usage with useConversationStore, updated addAgent action to pass both
+    conversationId and agentId parameters, mapped activeConversationAgents to
+    existing filtering logic, and integrated store loading/error states with
+    existing local state management. Fixed property name from agentId to
+    agent_id to match ConversationAgent interface. All quality checks pass with
+    no functional regressions.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T06:27:50.208Z
