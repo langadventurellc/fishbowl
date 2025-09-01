@@ -1,5 +1,5 @@
 import type { ConversationService } from "../ConversationService";
-import type { ConversationAgent } from "@fishbowl-ai/shared";
+import type { ConversationAgent, Conversation } from "@fishbowl-ai/shared";
 
 describe("ConversationService Interface", () => {
   it("should be properly typed interface", () => {
@@ -63,6 +63,95 @@ describe("ConversationService Interface", () => {
       };
 
       expect(typeof mockImplementation).toBe("function");
+    });
+  });
+
+  describe("ConversationService Interface - Conversation CRUD Operations", () => {
+    it("should define all required conversation CRUD methods", () => {
+      // Type checking - these must compile if interface is correct
+      const mockService: Partial<ConversationService> = {
+        listConversations: async () => [],
+        getConversation: async (id: string) => null,
+        createConversation: async (title?: string) => ({}) as Conversation,
+        renameConversation: async (id: string, title: string) =>
+          ({}) as Conversation,
+        deleteConversation: async (id: string) => {},
+      };
+
+      expect(typeof mockService.listConversations).toBe("function");
+      expect(typeof mockService.getConversation).toBe("function");
+      expect(typeof mockService.createConversation).toBe("function");
+      expect(typeof mockService.renameConversation).toBe("function");
+      expect(typeof mockService.deleteConversation).toBe("function");
+    });
+
+    it("should have correct method signatures for conversation CRUD operations", () => {
+      // Signature validation - if this compiles, signatures are correct
+      const testSignatures = async () => {
+        const service: ConversationService = {} as ConversationService;
+
+        // Test parameter and return types
+        const conversations: Conversation[] = await service.listConversations();
+        const conversation: Conversation | null =
+          await service.getConversation("id");
+        const created: Conversation = await service.createConversation();
+        const createdWithTitle: Conversation =
+          await service.createConversation("title");
+        const renamed: Conversation = await service.renameConversation(
+          "id",
+          "title",
+        );
+        const deleted: void = await service.deleteConversation("id");
+      };
+
+      expect(typeof testSignatures).toBe("function");
+    });
+
+    it("should support optional title parameter in createConversation", () => {
+      // Verify both signatures work (with and without title)
+      const testOptionalTitle = async () => {
+        const service: ConversationService = {} as ConversationService;
+
+        // Both calls should compile correctly
+        await service.createConversation();
+        await service.createConversation("My Conversation");
+      };
+
+      expect(typeof testOptionalTitle).toBe("function");
+    });
+
+    it("should have all CRUD methods in complete interface implementation", () => {
+      // Test that all conversation methods work together in a complete mock
+      const mockService: Partial<ConversationService> = {
+        // Conversation CRUD operations
+        listConversations: async () => [],
+        getConversation: async (id: string) => null,
+        createConversation: async (title?: string) => ({}) as Conversation,
+        renameConversation: async (id: string, title: string) =>
+          ({}) as Conversation,
+        deleteConversation: async (id: string) => {},
+
+        // Existing operations for complete implementation test
+        sendToAgents: async (
+          conversationId: string,
+          userMessageId: string,
+        ) => {},
+        listConversationAgents: async (conversationId: string) => [],
+        addAgent: async (conversationId: string, agentId: string) =>
+          ({}) as ConversationAgent,
+        removeAgent: async (conversationId: string, agentId: string) => {},
+        updateConversationAgent: async (
+          id: string,
+          updates: Partial<ConversationAgent>,
+        ) => ({}) as ConversationAgent,
+      };
+
+      // Verify all conversation methods exist
+      expect(typeof mockService.listConversations).toBe("function");
+      expect(typeof mockService.getConversation).toBe("function");
+      expect(typeof mockService.createConversation).toBe("function");
+      expect(typeof mockService.renameConversation).toBe("function");
+      expect(typeof mockService.deleteConversation).toBe("function");
     });
   });
 

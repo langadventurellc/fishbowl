@@ -36,6 +36,73 @@ export interface ConversationService {
    */
   sendToAgents(conversationId: string, userMessageId: string): Promise<void>;
 
+  // Conversation CRUD Operations - exact IPC alignment
+
+  /**
+   * List all conversations for the current user
+   * Maps to: window.electronAPI.conversations.list()
+   *
+   * Retrieves all conversations ordered by most recent activity.
+   * Returns empty array if no conversations exist.
+   *
+   * @returns Promise resolving to array of conversations
+   * @throws Error on retrieval failure or database connection issues
+   */
+  listConversations(): Promise<_Conversation[]>;
+
+  /**
+   * Get a specific conversation by ID
+   * Maps to: window.electronAPI.conversations.get(id)
+   *
+   * Retrieves conversation details for the specified ID.
+   * Returns null if conversation does not exist or was deleted.
+   *
+   * @param id - Conversation UUID to retrieve
+   * @returns Promise resolving to conversation or null if not found
+   * @throws Error on retrieval failure or invalid ID format
+   */
+  getConversation(id: string): Promise<_Conversation | null>;
+
+  /**
+   * Create a new conversation
+   * Maps to: window.electronAPI.conversations.create(title?)
+   *
+   * Creates a new conversation with generated UUID and timestamps.
+   * If no title provided, generates default title based on creation time.
+   *
+   * @param title - Optional conversation title (defaults to generated title)
+   * @returns Promise resolving to created conversation
+   * @throws Error on creation failure or database constraint violations
+   */
+  createConversation(title?: string): Promise<_Conversation>;
+
+  /**
+   * Update conversation (primarily for renaming)
+   * Maps to: window.electronAPI.conversations.update(id, input)
+   *
+   * Updates conversation properties, primarily used for title changes.
+   * This method provides a simplified interface over the generic update operation.
+   *
+   * @param id - Conversation UUID to update
+   * @param title - New conversation title
+   * @returns Promise resolving to updated conversation
+   * @throws Error on update failure, conversation not found, or invalid parameters
+   */
+  renameConversation(id: string, title: string): Promise<_Conversation>;
+
+  /**
+   * Delete a conversation permanently
+   * Maps to: window.electronAPI.conversations.delete(id)
+   *
+   * Permanently removes conversation and all associated messages and agent relationships.
+   * This operation cannot be undone.
+   *
+   * @param id - Conversation UUID to delete
+   * @returns Promise resolving to void on successful deletion
+   * @throws Error on deletion failure or conversation not found
+   */
+  deleteConversation(id: string): Promise<void>;
+
   // ConversationAgent Operations - exact IPC alignment
 
   /**
