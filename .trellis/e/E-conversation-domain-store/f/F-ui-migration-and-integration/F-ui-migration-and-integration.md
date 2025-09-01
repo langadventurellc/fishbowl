@@ -61,14 +61,24 @@ affectedFiles:
     isSubmitting state with store loading state for comprehensive loading
     management. Maintained all existing functionality while eliminating context
     dependency.
+  apps/desktop/src/components/input/MessageInputContainer.tsx:
+    Migrated from multiple hooks (useCreateMessage, useMessages,
+    useMessagesRefresh, useConversationAgentsContext) to unified
+    useConversationStore. Replaced complex manual orchestration logic (~120
+    lines) with store's sendUserMessage action. Updated imports, removed direct
+    IPC calls to window.electronAPI.chat.sendToAgents, simplified
+    handleSendMessage function, updated loading and error state handling to use
+    store states. Maintained exact existing functionality including input
+    clearing, focus management, keyboard shortcuts, agent validation, and first
+    message detection while eliminating fragmented state management.
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-add-agent-modal-to
   - T-migrate-message-input
   - T-remove-obsolete-hooks-and
   - T-update-message-item-to-use
   - T-extend-servicesprovider-for
+  - T-migrate-add-agent-modal-to
   - T-migrate-agent-labels
   - T-migrate-main-content-panel-to
   - T-migrate-sidebar-conversation

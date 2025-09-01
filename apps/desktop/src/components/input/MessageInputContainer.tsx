@@ -1,19 +1,13 @@
-import {
-  useCreateMessage,
-  useMessages,
-  useMessagesRefresh,
-} from "@/hooks/messages";
 import { cn } from "@/lib/utils";
 import {
   MessageInputContainerProps,
   MessageInputDisplayProps,
   SendButtonDisplayProps,
   useChatStore,
-  type ConversationAgentViewModel,
+  useConversationStore,
 } from "@fishbowl-ai/ui-shared";
 import { cva } from "class-variance-authority";
 import { KeyboardEvent, useCallback, useRef, useState } from "react";
-import { useConversationAgentsContext } from "../../contexts";
 import { SendButtonDisplay } from "./SendButtonDisplay";
 
 /**
@@ -48,7 +42,7 @@ const messageInputContainerVariants = cva(
  * - Proper input clearing and focus management
  */
 export function MessageInputContainer({
-  conversationId,
+  conversationId: _conversationId,
   layoutVariant = "default",
   className = "",
   messageInputProps = {},
@@ -61,21 +55,15 @@ export function MessageInputContainer({
   // Ref for textarea to handle focus and selection
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Hooks for message creation and global chat state
+  // Conversation store for unified state management
   const {
-    createMessage,
-    sending,
-    error: createError,
-    reset,
-  } = useCreateMessage();
+    activeMessages,
+    activeConversationAgents,
+    loading,
+    error,
+    sendUserMessage,
+  } = useConversationStore();
   const { sendingMessage } = useChatStore();
-  const { refetch } = useMessagesRefresh();
-
-  // Context for conversation agents to check if any are enabled
-  const { conversationAgents } = useConversationAgentsContext();
-
-  // Hook for checking if this is the first message
-  const { messages } = useMessages(conversationId);
 
   // Clear local error when user starts typing
   const handleContentChange = useCallback(
@@ -84,18 +72,14 @@ export function MessageInputContainer({
       if (localError) {
         setLocalError(null);
       }
-      if (createError) {
-        reset();
-      }
     },
-    [localError, createError, reset],
+    [localError],
   );
 
   // Handle message submission
-  // eslint-disable-next-line statement-count/function-statement-count-warn
   const handleSendMessage = useCallback(async () => {
     // Check if this is the first message in the conversation
-    const isFirstMessage = messages.length === 0;
+    const isFirstMessage = activeMessages.length === 0;
 
     // Require message content only for the first message
     if (isFirstMessage && !content.trim()) {
@@ -104,8 +88,8 @@ export function MessageInputContainer({
     }
 
     // Check if there's at least one enabled agent
-    const enabledAgents = conversationAgents.filter(
-      (agent: ConversationAgentViewModel) => agent.enabled,
+    const enabledAgents = activeConversationAgents.filter(
+      (agent) => agent.enabled,
     );
 
     if (enabledAgents.length === 0) {
@@ -114,93 +98,26 @@ export function MessageInputContainer({
     }
 
     try {
-      let createdMessage;
-      if (content.trim()) {
-        // Create a regular user message
-        createdMessage = await createMessage({
-          conversation_id: conversationId,
-          role: "user",
-          content: content.trim(),
-          included: true,
-        });
-      } else {
-        // For continuation (empty content), create a placeholder message
-        // This won't be displayed but provides a messageId for orchestration
-        createdMessage = await createMessage({
-          conversation_id: conversationId,
-          role: "system",
-          content: "[Continue conversation]",
-          included: false, // Don't include in API calls to agents
-        });
-      }
+      // Use store's sendUserMessage action for unified orchestration
+      await sendUserMessage(content.trim() || undefined);
 
-      // Clear input on successful creation
+      // Clear input on successful send
       setContent("");
       setLocalError(null);
-
-      // Refresh messages to show the new message immediately
-      if (refetch) {
-        await refetch();
-      }
 
       // Focus back to textarea for continued interaction
       if (textareaRef.current) {
         textareaRef.current.focus();
       }
-
-      // Trigger chat orchestration if agents are enabled
-      if (enabledAgents.length > 0) {
-        try {
-          // Check if running in Electron environment
-          if (
-            typeof window !== "undefined" &&
-            window.electronAPI?.chat?.sendToAgents &&
-            typeof window.electronAPI.chat.sendToAgents === "function"
-          ) {
-            await window.electronAPI.chat.sendToAgents(
-              conversationId,
-              createdMessage.id,
-            );
-          }
-        } catch (orchestrationError) {
-          // Log orchestration error but don't affect user experience
-          console.error("Chat orchestration failed:", orchestrationError);
-
-          // Optionally, you could set a non-blocking warning here
-          // but the task requirements suggest keeping this transparent
-        }
-      } else {
-        // No agents are enabled - create a system message with helpful guidance
-        try {
-          await createMessage({
-            conversation_id: conversationId,
-            role: "system",
-            content:
-              "No agents are enabled for this conversation. Enable agents to start receiving responses.",
-            included: true,
-          });
-
-          // Refresh messages to show the system message
-          if (refetch) {
-            await refetch();
-          }
-        } catch (systemMessageError) {
-          // Log system message creation error but don't affect user experience
-          // The user message was already successfully created
-          console.error("System message creation failed:", systemMessageError);
-        }
-      }
     } catch {
-      // Error is handled by useCreateMessage hook
+      // Error is handled by store error state
       // Keep the input content so user can retry
     }
   }, [
     content,
-    conversationId,
-    createMessage,
-    conversationAgents,
-    refetch,
-    messages.length,
+    activeMessages.length,
+    activeConversationAgents,
+    sendUserMessage,
   ]);
 
   // Handle keyboard shortcuts
@@ -213,24 +130,24 @@ export function MessageInputContainer({
         } else {
           // Enter: Send message
           event.preventDefault();
-          if (!sendingMessage && !sending) {
+          if (!sendingMessage && !loading.sending) {
             handleSendMessage();
           }
         }
       }
     },
-    [sendingMessage, sending, handleSendMessage],
+    [sendingMessage, loading.sending, handleSendMessage],
   );
 
   // Determine if send button should be disabled
   // Only disable when actually sending, not when content is empty (to allow validation)
-  const isSendDisabled = sendingMessage || sending;
+  const isSendDisabled = sendingMessage || loading.sending;
 
   // Determine if input should be disabled
   const isInputDisabled = false; // Allow typing even during sending
 
   // Get current error to display
-  const displayError = localError || createError?.message || null;
+  const displayError = localError || error.sending?.message || null;
 
   // Default props for child components based on layout variant
   const defaultMessageInputProps: MessageInputDisplayProps = {
@@ -243,7 +160,7 @@ export function MessageInputContainer({
 
   const defaultSendButtonProps: SendButtonDisplayProps = {
     disabled: isSendDisabled,
-    loading: sendingMessage || sending,
+    loading: sendingMessage || loading.sending,
     "aria-label": "Send message",
     ...sendButtonProps,
   };

@@ -1,13 +1,32 @@
 ---
 id: T-migrate-message-input
 title: Migrate message input container to use domain store orchestration
-status: open
+status: done
 priority: high
 parent: F-ui-migration-and-integration
 prerequisites:
   - T-migrate-add-agent-modal-to
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/input/MessageInputContainer.tsx:
+    Migrated from multiple hooks (useCreateMessage, useMessages,
+    useMessagesRefresh, useConversationAgentsContext) to unified
+    useConversationStore. Replaced complex manual orchestration logic (~120
+    lines) with store's sendUserMessage action. Updated imports, removed direct
+    IPC calls to window.electronAPI.chat.sendToAgents, simplified
+    handleSendMessage function, updated loading and error state handling to use
+    store states. Maintained exact existing functionality including input
+    clearing, focus management, keyboard shortcuts, agent validation, and first
+    message detection while eliminating fragmented state management.
+log:
+  - Successfully migrated MessageInputContainer from multiple hooks and direct
+    IPC calls to unified conversation domain store integration. Replaced
+    useCreateMessage, useMessages, useMessagesRefresh hooks and direct
+    window.electronAPI.chat.sendToAgents calls with store's sendUserMessage
+    action. Simplified message sending logic from ~120 lines of complex
+    orchestration to streamlined store action call while maintaining exact
+    existing UI behavior including input clearing, focus management, loading
+    states, error handling, and agent validation. All quality checks and tests
+    pass successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T06:28:24.577Z
