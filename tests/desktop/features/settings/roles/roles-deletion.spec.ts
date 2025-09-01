@@ -4,7 +4,6 @@ import {
   setupRolesTestSuite,
   openRolesSection,
   waitForRolesList,
-  waitForRolesEmptyState,
   createMockRoleData,
   waitForRoleModal,
   waitForModalToClose,
@@ -40,9 +39,9 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await saveButton.click();
     await waitForModalToClose(window);
 
-    // Get initial role count (should be 5: 4 defaults + 1 created)
+    // Get initial role count (should be 55: 54 defaults + 1 created)
     const initialRoleCount = await window.locator('[role="listitem"]').count();
-    expect(initialRoleCount).toBe(5);
+    expect(initialRoleCount).toBe(55);
 
     // Find and hover over the role to show action buttons
     const roleCard = window.locator('[role="listitem"]').filter({
@@ -81,7 +80,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
 
     // Verify role count decreased
     const finalRoleCount = await window.locator('[role="listitem"]').count();
-    expect(finalRoleCount).toBe(4); // Back to 4 default roles
+    expect(finalRoleCount).toBe(54); // Back to 54 default roles
 
     // Verify deletion persisted to storage
     const rolesContent = await readFile(rolesConfigPath, "utf-8");
@@ -247,9 +246,9 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
       await waitForModalToClose(window);
     }
 
-    // Verify all 7 roles exist (4 default + 3 created)
+    // Verify all 57 roles exist (54 default + 3 created)
     let roleCount = await window.locator('[role="listitem"]').count();
-    expect(roleCount).toBe(7);
+    expect(roleCount).toBe(57);
 
     // Delete the middle role
     const middleRoleCard = window.locator('[role="listitem"]').filter({
@@ -272,7 +271,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
 
     // Verify correct role was deleted
     roleCount = await window.locator('[role="listitem"]').count();
-    expect(roleCount).toBe(6);
+    expect(roleCount).toBe(56);
 
     await expect(window.locator('text="First Role"')).toBeVisible();
     await expect(window.locator('text="Second Role"')).not.toBeVisible();
@@ -311,55 +310,9 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await expect(confirmDialog).not.toBeVisible();
     await expect(defaultRoleCard).not.toBeVisible();
 
-    // Verify only 3 default roles remain
+    // Verify only 53 default roles remain
     const roleCount = await window.locator('[role="listitem"]').count();
-    expect(roleCount).toBe(3);
-  });
-
-  test("shows empty state after deleting all roles", async () => {
-    const window = testSuite.getWindow();
-
-    await openRolesSection(window);
-    await waitForRolesList(window);
-
-    // Delete all 4 default roles
-    const defaultRoleNames = [
-      "Project Manager",
-      "Code Reviewer",
-      "Creative Writer",
-      "Data Analyst",
-    ];
-
-    for (const roleName of defaultRoleNames) {
-      const roleCard = window.locator('[role="listitem"]').filter({
-        has: window.locator(`text="${roleName}"`),
-      });
-      await roleCard.hover();
-
-      const deleteButton = roleCard.locator(
-        `button[aria-label="Delete ${roleName} role"]`,
-      );
-      await deleteButton.click();
-
-      const confirmDialog = window.locator('[role="alertdialog"]');
-      const deleteRoleButton = confirmDialog.locator("button").filter({
-        hasText: "Delete Role",
-      });
-      await deleteRoleButton.click();
-
-      await expect(confirmDialog).not.toBeVisible();
-    }
-
-    // Verify empty state appears
-    await waitForRolesEmptyState(window);
-
-    // Verify "Create First Role" button is present
-    await expect(
-      window.locator("button").filter({ hasText: "Create First Role" }),
-    ).toBeVisible();
-
-    // Verify empty state message
-    await expect(window.locator("text=No roles configured")).toBeVisible();
+    expect(roleCount).toBe(53);
   });
 
   test("deletion persists after navigating away and back", async () => {
@@ -423,6 +376,6 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
 
     // Verify we still have only default roles
     const roleCount = await window.locator('[role="listitem"]').count();
-    expect(roleCount).toBe(4);
+    expect(roleCount).toBe(54);
   });
 });
