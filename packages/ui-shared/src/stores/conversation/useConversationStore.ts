@@ -8,7 +8,11 @@
 
 import { create } from "zustand";
 import type { ConversationStore } from "./ConversationStore";
-import type { ConversationService, Message } from "@fishbowl-ai/shared";
+import type {
+  ConversationService,
+  Message,
+  ConversationAgent,
+} from "@fishbowl-ai/shared";
 import { useChatStore } from "../chat/useChatStore";
 
 /**
@@ -436,35 +440,120 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   },
 
   /**
-   * Add agent to conversation.
+   * Load agents for active conversation.
    */
-  addAgent: async (conversationId: string, agentId: string) => {
+  loadConversationAgents: async (conversationId: string) => {
     if (!conversationService) {
       throw new Error("ConversationService not initialized");
     }
 
-    try {
-      await conversationService.addAgent(conversationId, agentId);
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
 
-      // Refresh active conversation if it matches
-      if (get().activeConversationId === conversationId) {
-        await get().refreshActiveConversation();
-      }
-    } catch (error) {
+    try {
       set((state) => ({
         ...state,
-        error: {
-          ...state.error,
-          agents: {
-            message:
-              error instanceof Error ? error.message : "Failed to add agent",
-            operation: "save",
-            isRetryable: true,
-            retryCount: 0,
-            timestamp: new Date().toISOString(),
-          },
-        },
+        activeRequestToken: requestToken,
+        activeConversationAgents: [], // Clear existing agents
+        loading: { ...state.loading, agents: true },
+        error: { ...state.error, agents: undefined },
       }));
+
+      // Load agents from service
+      const agents =
+        await conversationService.listConversationAgents(conversationId);
+
+      // Check if request is still current before updating
+      const currentState = get();
+      if (currentState.activeRequestToken === requestToken) {
+        set((state) => ({
+          ...state,
+          activeConversationAgents: agents,
+          loading: { ...state.loading, agents: false },
+        }));
+      }
+    } catch (error) {
+      // Only update error if request is still current
+      const currentState = get();
+      if (currentState.activeRequestToken === requestToken) {
+        set((state) => ({
+          ...state,
+          loading: { ...state.loading, agents: false },
+          error: {
+            ...state.error,
+            agents: {
+              message:
+                error instanceof Error
+                  ? error.message
+                  : "Failed to load agents",
+              operation: "load",
+              isRetryable: true,
+              retryCount: 0,
+              timestamp: new Date().toISOString(),
+            },
+          },
+        }));
+      }
+    }
+  },
+
+  /**
+   * Add agent to conversation.
+   */
+  addAgent: async (conversationId: string, agentId: string) => {
+    if (!conversationService || !get().activeConversationId) {
+      return;
+    }
+
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
+
+    try {
+      set((state) => ({
+        ...state,
+        activeRequestToken: requestToken,
+        loading: { ...state.loading, agents: true },
+        error: { ...state.error, agents: undefined },
+      }));
+
+      // Add agent via service
+      const conversationAgent = await conversationService.addAgent(
+        conversationId,
+        agentId,
+      );
+
+      // Check if request is still current before updating
+      const currentState = get();
+      if (currentState.activeRequestToken === requestToken) {
+        set((state) => ({
+          ...state,
+          activeConversationAgents: [
+            ...state.activeConversationAgents,
+            conversationAgent,
+          ],
+          loading: { ...state.loading, agents: false },
+        }));
+      }
+    } catch (error) {
+      // Only update error if request is still current
+      const currentState = get();
+      if (currentState.activeRequestToken === requestToken) {
+        set((state) => ({
+          ...state,
+          loading: { ...state.loading, agents: false },
+          error: {
+            ...state.error,
+            agents: {
+              message:
+                error instanceof Error ? error.message : "Failed to add agent",
+              operation: "save",
+              isRetryable: true,
+              retryCount: 0,
+              timestamp: new Date().toISOString(),
+            },
+          },
+        }));
+      }
     }
   },
 
@@ -472,20 +561,32 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
    * Remove agent from conversation.
    */
   removeAgent: async (conversationId: string, agentId: string) => {
-    if (!conversationService) {
-      throw new Error("ConversationService not initialized");
+    if (!conversationService || !get().activeConversationId) {
+      return;
     }
 
     try {
+      set((state) => ({
+        ...state,
+        loading: { ...state.loading, agents: true },
+        error: { ...state.error, agents: undefined },
+      }));
+
+      // Remove agent via service
       await conversationService.removeAgent(conversationId, agentId);
 
-      // Refresh active conversation if it matches
-      if (get().activeConversationId === conversationId) {
-        await get().refreshActiveConversation();
-      }
+      // Remove agent from activeConversationAgents array
+      set((state) => ({
+        ...state,
+        activeConversationAgents: state.activeConversationAgents.filter(
+          (agent) => agent.agent_id !== agentId,
+        ),
+        loading: { ...state.loading, agents: false },
+      }));
     } catch (error) {
       set((state) => ({
         ...state,
+        loading: { ...state.loading, agents: false },
         error: {
           ...state.error,
           agents: {
@@ -505,27 +606,42 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
    * Toggle agent enabled state.
    */
   toggleAgentEnabled: async (conversationAgentId: string) => {
-    if (!conversationService) {
-      throw new Error("ConversationService not initialized");
+    if (!conversationService || !get().activeConversationId) {
+      return;
     }
 
     try {
-      // Get current agent state and toggle enabled
+      // Find agent in activeConversationAgents by ID
       const agents = get().activeConversationAgents;
       const agent = agents.find((a) => a.id === conversationAgentId);
       if (!agent) {
         throw new Error("Agent not found in active conversation");
       }
 
-      await conversationService.updateConversationAgent(conversationAgentId, {
-        enabled: !agent.enabled,
-      });
+      set((state) => ({
+        ...state,
+        loading: { ...state.loading, agents: true },
+        error: { ...state.error, agents: undefined },
+      }));
 
-      // Refresh active conversation to get updated agent states
-      await get().refreshActiveConversation();
+      // Toggle enabled property via service
+      const updatedAgent: ConversationAgent =
+        await conversationService.updateConversationAgent(conversationAgentId, {
+          enabled: !agent.enabled,
+        });
+
+      // Update the specific agent in activeConversationAgents array
+      set((state) => ({
+        ...state,
+        activeConversationAgents: state.activeConversationAgents.map((a) =>
+          a.id === conversationAgentId ? updatedAgent : a,
+        ),
+        loading: { ...state.loading, agents: false },
+      }));
     } catch (error) {
       set((state) => ({
         ...state,
+        loading: { ...state.loading, agents: false },
         error: {
           ...state.error,
           agents: {

@@ -1,13 +1,29 @@
 ---
 id: T-implement-conversation-agent-2
 title: Implement conversation agent management actions
-status: open
+status: done
 priority: medium
 parent: F-conversation-domain-store
 prerequisites:
   - T-implement-message-management
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    "Added ConversationAgent import and implemented four agent management
+    actions: loadConversationAgents() for loading agents with race condition
+    protection, addAgent() with optimistic state updates and request token
+    validation, removeAgent() with direct array filtering, and
+    toggleAgentEnabled() with atomic state updates using service response"
+log:
+  - "Successfully implemented conversation agent management actions in the
+    conversation store with robust error handling, loading states, and race
+    condition protection. Added four key methods: loadConversationAgents() for
+    explicit agent loading with race condition protection, improved addAgent()
+    with optimistic state updates and request token validation, enhanced
+    removeAgent() with direct array filtering instead of full refresh, and
+    upgraded toggleAgentEnabled() with atomic state updates using service
+    response. All implementations follow established message action patterns and
+    include proper ErrorState error handling. Quality checks and unit tests all
+    pass successfully."
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T04:38:46.406Z

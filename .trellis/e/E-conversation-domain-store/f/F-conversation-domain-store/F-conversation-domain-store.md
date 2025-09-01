@@ -42,16 +42,21 @@ affectedFiles:
     individual messages with proper state synchronization. Added
     applyMessageLimit() helper function for consistent client-side message
     trimming that maintains chronological order. All actions follow established
-    ErrorState patterns and include proper loading state management."
+    ErrorState patterns and include proper loading state management.; Added
+    ConversationAgent import and implemented four agent management actions:
+    loadConversationAgents() for loading agents with race condition protection,
+    addAgent() with optimistic state updates and request token validation,
+    removeAgent() with direct array filtering, and toggleAgentEnabled() with
+    atomic state updates using service response"
 log: []
 schema: v1.0
 childrenIds:
   - T-create-barrel-exports-and-1
   - T-create-conversation-store-1
   - T-implement-conversation-agent-2
-  - T-implement-message-management
   - T-create-conversation-store
   - T-implement-core-conversation
+  - T-implement-message-management
 created: 2025-09-01T02:21:00.818Z
 updated: 2025-09-01T02:21:00.818Z
 ---
