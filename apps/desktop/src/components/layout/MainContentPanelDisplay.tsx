@@ -51,7 +51,7 @@ export const MainContentPanelDisplay: React.FC<
   const { agents: agentConfigs } = useAgentsStore();
   const { roles: roleConfigs } = useRolesStore();
 
-  // Transform raw messages to resolved MessageViewModel objects (same logic as useMessagesWithAgentData)
+  // Transform raw messages to resolved MessageViewModel objects with agent/role enrichment
   const messages = useMemo((): MessageViewModel[] => {
     // Create lookup map for efficient resolution
     const agentLookup = new Map<

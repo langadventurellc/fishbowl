@@ -1,15 +1,30 @@
 ---
 id: T-remove-usemessageswithagentdat
 title: Remove useMessagesWithAgentData composite hook and migrate usage
-status: open
+status: done
 priority: medium
 parent: F-ui-migration-and-integration
 prerequisites:
   - T-migrate-conversationagentsprov
   - T-migrate-messageitem-component
   - T-migrate-usechateventintegratio
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/messages/useMessagesWithAgentData.ts:
+    Deleted - Composite hook that combined useMessages + useConversationAgents +
+    store data for message enrichment (no longer used)
+  apps/desktop/src/hooks/messages/UseMessagesWithAgentDataResult.ts: Deleted - TypeScript interface for the removed hook's return type
+  apps/desktop/src/hooks/messages/index.ts: Removed barrel export for
+    useMessagesWithAgentData hook to prevent import errors
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Updated comment to remove reference to deleted hook, maintaining
+    documentation of enrichment logic
+log:
+  - Successfully removed useMessagesWithAgentData composite hook and all
+    associated files. The hook was no longer in use as all components (including
+    MainContentPanelDisplay) had already been migrated to the conversation store
+    pattern. Performed clean removal of hook file, result interface, barrel
+    exports, and updated documentation comments. All quality checks pass and no
+    functionality was affected.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T08:37:08.799Z

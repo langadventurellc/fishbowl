@@ -228,7 +228,8 @@ affectedFiles:
     performance. Updated imports to remove useMessagesWithAgentData and use
     conversation store actions. Updated MessagesRefreshContext.Provider to use
     store's refreshActiveConversation instead of hook refetch. Updated interface
-    types to match ErrorState from store.
+    types to match ErrorState from store.; Updated comment to remove reference
+    to deleted hook, maintaining documentation of enrichment logic
   apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
     Migrated from useConversationAgentsContext to useConversationStore and
     useAgentsStore. Updated imports to use @fishbowl-ai/ui-shared stores.
@@ -287,6 +288,12 @@ affectedFiles:
     calls to use refreshActiveConversation(). Maintained all existing
     functionality including async error handling, conditional checks, and
     message refresh timing.
+  apps/desktop/src/hooks/messages/useMessagesWithAgentData.ts:
+    Deleted - Composite hook that combined useMessages + useConversationAgents +
+    store data for message enrichment (no longer used)
+  apps/desktop/src/hooks/messages/UseMessagesWithAgentDataResult.ts: Deleted - TypeScript interface for the removed hook's return type
+  apps/desktop/src/hooks/messages/index.ts: Removed barrel export for
+    useMessagesWithAgentData hook to prevent import errors
 log: []
 schema: v1.0
 childrenIds:

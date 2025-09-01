@@ -24,7 +24,6 @@
 export { useMessages } from "./useMessages";
 export { useCreateMessage } from "./useCreateMessage";
 export { useUpdateMessage } from "./useUpdateMessage";
-export { useMessagesWithAgentData } from "./useMessagesWithAgentData";
 export {
   useMessagesRefresh,
   MessagesRefreshContext,

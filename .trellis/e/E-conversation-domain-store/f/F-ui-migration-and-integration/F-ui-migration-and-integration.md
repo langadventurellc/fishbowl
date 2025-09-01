@@ -39,7 +39,8 @@ affectedFiles:
     performance. Updated imports to remove useMessagesWithAgentData and use
     conversation store actions. Updated MessagesRefreshContext.Provider to use
     store's refreshActiveConversation instead of hook refetch. Updated interface
-    types to match ErrorState from store.
+    types to match ErrorState from store.; Updated comment to remove reference
+    to deleted hook, maintaining documentation of enrichment logic
   apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
     Migrated from useConversationAgentsContext to useConversationStore and
     useAgentsStore. Updated imports to use @fishbowl-ai/ui-shared stores.
@@ -109,11 +110,16 @@ affectedFiles:
     @fishbowl-ai/ui-shared. Added mockRefreshActiveConversation as a resolved
     Promise to prevent 'cannot read properties of undefined' errors when calling
     .catch(). Updated beforeEach to properly reset the conversation store mock.
+  apps/desktop/src/hooks/messages/useMessagesWithAgentData.ts:
+    Deleted - Composite hook that combined useMessages + useConversationAgents +
+    store data for message enrichment (no longer used)
+  apps/desktop/src/hooks/messages/UseMessagesWithAgentDataResult.ts: Deleted - TypeScript interface for the removed hook's return type
+  apps/desktop/src/hooks/messages/index.ts: Removed barrel export for
+    useMessagesWithAgentData hook to prevent import errors
 log: []
 schema: v1.0
 childrenIds:
   - T-complete-cleanup-remove-all
-  - T-migrate-usechateventintegratio
   - T-remove-usemessageswithagentdat
   - T-extend-servicesprovider-for
   - T-migrate-add-agent-modal-to
@@ -123,6 +129,7 @@ childrenIds:
   - T-migrate-message-input
   - T-migrate-messageitem-component
   - T-migrate-sidebar-conversation
+  - T-migrate-usechateventintegratio
   - T-remove-obsolete-hooks-and
   - T-update-message-item-to-use
 created: 2025-09-01T02:22:11.606Z
