@@ -1,13 +1,18 @@
 ---
 id: T-update-event-emission-to
 title: Update event emission to include conversationId in payload
-status: open
+status: done
 priority: high
 parent: F-enhanced-ipc-event-integration
 prerequisites:
   - T-add-conversationid-field-to
 affectedFiles: {}
-log: []
+log:
+  - Task was already completed - the createEventEmitter function in
+    chatHandlers.ts already includes conversationId in the AgentUpdateEvent
+    payload as required. The implementation at line 35 uses the conversationId
+    parameter from the function scope and includes it in the event payload
+    alongside all existing fields. All acceptance criteria were already met.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T05:43:19.505Z
