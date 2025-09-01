@@ -18,7 +18,6 @@ import React from "react";
 import { Button } from "../../ui/button";
 import {
   Card,
-  CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
@@ -53,11 +52,6 @@ export const PersonalityCard: React.FC<PersonalityCardProps> = ({
           {behaviorCount} behaviors • {customInstructionsPreview}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <p className="text-sm text-muted-foreground font-mono">
-          Add something here
-        </p>
-      </CardContent>
       <CardFooter>
         <Button variant="outline" size="sm" onClick={handleEdit}>
           <Edit className="h-4 w-4 mr-2" />
