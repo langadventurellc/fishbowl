@@ -87,6 +87,24 @@ affectedFiles:
     patterns.
   apps/desktop/src/renderer/services/index.ts: Added ConversationIpcAdapter to
     barrel exports for external accessibility and testing.
+  packages/ui-shared/src/stores/conversation/ConversationStoreState.ts:
+    Created main state interface for conversation store with
+    activeConversationId, conversations array, activeMessages array,
+    activeConversationAgents array, activeRequestToken for race conditions,
+    loading states object, error states using ErrorState pattern, and
+    maximumMessages configuration
+  packages/ui-shared/src/stores/conversation/ConversationStoreActions.ts:
+    Created actions interface with all required conversation store operations
+    including initialize, loadConversations, selectConversation,
+    createConversationAndSelect, refreshActiveConversation, sendUserMessage,
+    addAgent, removeAgent, and toggleAgentEnabled methods
+  packages/ui-shared/src/stores/conversation/ConversationStore.ts:
+    Created combined store type merging ConversationStoreState and
+    ConversationStoreActions interfaces
+  packages/ui-shared/src/stores/conversation/index.ts: Created barrel exports file for clean conversation store type imports
+  packages/ui-shared/src/stores/index.ts:
+    Added conversation store exports to main
+    stores barrel file following established patterns
 log: []
 schema: v1.0
 childrenIds:

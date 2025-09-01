@@ -1,15 +1,39 @@
 ---
 id: F-conversation-domain-store
 title: Conversation Domain Store Implementation
-status: open
+status: in-progress
 priority: medium
 parent: E-conversation-domain-store
 prerequisites:
   - F-end-to-end-wiring-validation
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/stores/conversation/ConversationStoreState.ts:
+    Created main state interface for conversation store with
+    activeConversationId, conversations array, activeMessages array,
+    activeConversationAgents array, activeRequestToken for race conditions,
+    loading states object, error states using ErrorState pattern, and
+    maximumMessages configuration
+  packages/ui-shared/src/stores/conversation/ConversationStoreActions.ts:
+    Created actions interface with all required conversation store operations
+    including initialize, loadConversations, selectConversation,
+    createConversationAndSelect, refreshActiveConversation, sendUserMessage,
+    addAgent, removeAgent, and toggleAgentEnabled methods
+  packages/ui-shared/src/stores/conversation/ConversationStore.ts:
+    Created combined store type merging ConversationStoreState and
+    ConversationStoreActions interfaces
+  packages/ui-shared/src/stores/conversation/index.ts: Created barrel exports file for clean conversation store type imports
+  packages/ui-shared/src/stores/index.ts:
+    Added conversation store exports to main
+    stores barrel file following established patterns
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-barrel-exports-and-1
+  - T-create-conversation-store-1
+  - T-create-conversation-store
+  - T-implement-conversation-agent-2
+  - T-implement-core-conversation
+  - T-implement-message-management
 created: 2025-09-01T02:21:00.818Z
 updated: 2025-09-01T02:21:00.818Z
 ---
