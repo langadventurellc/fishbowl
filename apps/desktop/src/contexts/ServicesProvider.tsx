@@ -1,4 +1,4 @@
-import React, { type ReactNode, useEffect, useMemo } from "react";
+import React, { type ReactNode, useEffect, useMemo, useRef } from "react";
 import { useConversationStore } from "@fishbowl-ai/ui-shared";
 import { RendererProcessServices } from "../renderer/services";
 import { ServicesContext } from "./ServicesContext";
@@ -32,23 +32,41 @@ export function ServicesProvider({
     [services],
   );
 
+  // Guard to prevent double initialization in React.StrictMode
+  const initializedRef = useRef(false);
+
   useEffect(() => {
     let mounted = true;
 
-    const initializeConversationStore = async () => {
+    const initializeAndLoadConversations = async () => {
       try {
-        if (mounted) {
+        if (mounted && !initializedRef.current) {
+          initializedRef.current = true;
+
+          // Initialize the store with the conversation service
+          servicesInstance.logger.debug(
+            "boot: initializing conversation store",
+          );
           useConversationStore
             .getState()
             .initialize(servicesInstance.conversationService);
+
+          // Load conversations
+          servicesInstance.logger.debug("boot: loading conversations");
+          await useConversationStore.getState().loadConversations();
+
+          servicesInstance.logger.debug("boot: conversations loaded");
         }
       } catch (error) {
         // Error handling - prevent app crash but log for debugging
-        console.error("Failed to initialize conversation store:", error);
+        servicesInstance.logger.error(
+          "Failed to initialize conversation store",
+          error as Error,
+        );
       }
     };
 
-    initializeConversationStore();
+    initializeAndLoadConversations();
 
     return () => {
       mounted = false;
