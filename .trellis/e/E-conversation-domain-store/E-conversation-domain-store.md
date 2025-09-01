@@ -270,6 +270,14 @@ affectedFiles:
     match expected signatures, and error handling with ErrorState to Error
     conversion. Maintains complete backward compatibility with existing
     consumers."
+  apps/desktop/src/components/chat/MessageItem.tsx: Migrated from
+    useMessagesRefresh hook to useConversationStore. Updated imports to include
+    useConversationStore from @fishbowl-ai/ui-shared, removed useMessagesRefresh
+    import, replaced { refetch } = useMessagesRefresh() with {
+    refreshActiveConversation } = useConversationStore(), and updated refetch()
+    calls to use refreshActiveConversation(). Maintained all existing
+    functionality including async error handling, conditional checks, and
+    message refresh timing.
 log: []
 schema: v1.0
 childrenIds:

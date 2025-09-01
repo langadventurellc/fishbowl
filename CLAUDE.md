@@ -2,6 +2,8 @@
 
 A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.
 
+This is a greenfield project with no users. So it is important that we don't do things to maintain backwards compatibility or maintain deprecated code.
+
 ## Repository Structure
 
 **Applications:**

@@ -1,12 +1,26 @@
 ---
 id: T-migrate-messageitem-component
 title: Migrate MessageItem component from useMessagesRefresh to store
-status: open
+status: done
 priority: high
 parent: F-ui-migration-and-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/chat/MessageItem.tsx: Migrated from
+    useMessagesRefresh hook to useConversationStore. Updated imports to include
+    useConversationStore from @fishbowl-ai/ui-shared, removed useMessagesRefresh
+    import, replaced { refetch } = useMessagesRefresh() with {
+    refreshActiveConversation } = useConversationStore(), and updated refetch()
+    calls to use refreshActiveConversation(). Maintained all existing
+    functionality including async error handling, conditional checks, and
+    message refresh timing.
+log:
+  - Successfully migrated MessageItem component from useMessagesRefresh hook to
+    conversation store. Replaced the obsolete useMessagesRefresh hook with
+    direct useConversationStore access, using refreshActiveConversation() method
+    for message list refreshes. Migration maintains exact same functionality
+    while eliminating dependency on React Context provider and completing the
+    pattern established by other UI migrations.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T08:35:54.889Z

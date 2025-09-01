@@ -1,8 +1,7 @@
 import { cn } from "@/lib/utils";
-import { MessageItemProps } from "@fishbowl-ai/ui-shared";
+import { MessageItemProps, useConversationStore } from "@fishbowl-ai/ui-shared";
 import { Check, Loader2 } from "lucide-react";
 import React, { useState } from "react";
-import { useMessagesRefresh } from "../../hooks/messages";
 import { useUpdateMessage } from "../../hooks/messages/useUpdateMessage";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
@@ -88,7 +87,7 @@ export function MessageItem(props: MessageItemProps) {
 
   // Use useUpdateMessage hook for database persistence
   const { updateInclusion, updating, error, reset } = useUpdateMessage();
-  const { refetch } = useMessagesRefresh();
+  const { refreshActiveConversation } = useConversationStore();
 
   // Optimistic state management - use message.isActive as source of truth
   const [optimisticActive, setOptimisticActive] = useState<boolean | null>(
@@ -111,8 +110,8 @@ export function MessageItem(props: MessageItemProps) {
       await updateInclusion(message.id, newActiveState);
 
       // Refresh messages to reflect the updated inclusion state
-      if (refetch) {
-        await refetch();
+      if (refreshActiveConversation) {
+        await refreshActiveConversation();
       }
 
       // Success: clear optimistic state (will use message.isActive from props)
