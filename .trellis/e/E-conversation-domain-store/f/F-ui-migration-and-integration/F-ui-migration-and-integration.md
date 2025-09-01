@@ -79,17 +79,33 @@ affectedFiles:
     state handling. Tests verify MessageItem component works correctly with
     MessagesRefreshContext backed by conversation store's
     refreshActiveConversation action."
+  apps/desktop/src/contexts/ConversationAgentsContext/ConversationAgentsProvider.tsx:
+    "Completely migrated provider implementation from useConversationAgents hook
+    to useConversationStore and useAgentsStore. Updated imports to use
+    @fishbowl-ai/ui-shared stores and React hooks. Replaced simple hook wrapper
+    with comprehensive store integration including: conversation selection
+    coordination via useEffect, data transformation with exact same
+    transformToViewModel logic, proper interface mapping from store state to
+    UseConversationAgentsResult, wrapper functions for addAgent/removeAgent to
+    match expected signatures, and error handling with ErrorState to Error
+    conversion. Maintains complete backward compatibility with existing
+    consumers."
 log: []
 schema: v1.0
 childrenIds:
-  - T-remove-obsolete-hooks-and
-  - T-update-message-item-to-use
+  - T-complete-cleanup-remove-all
+  - T-migrate-conversationagentsprov
+  - T-migrate-messageitem-component
+  - T-migrate-usechateventintegratio
+  - T-remove-usemessageswithagentdat
   - T-extend-servicesprovider-for
   - T-migrate-add-agent-modal-to
   - T-migrate-agent-labels
   - T-migrate-main-content-panel-to
   - T-migrate-message-input
   - T-migrate-sidebar-conversation
+  - T-remove-obsolete-hooks-and
+  - T-update-message-item-to-use
 created: 2025-09-01T02:22:11.606Z
 updated: 2025-09-01T02:22:11.606Z
 ---

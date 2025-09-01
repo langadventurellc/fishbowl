@@ -1,12 +1,32 @@
 ---
 id: T-migrate-conversationagentsprov
 title: Migrate ConversationAgentsProvider to use conversation store
-status: open
+status: done
 priority: high
 parent: F-ui-migration-and-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/contexts/ConversationAgentsContext/ConversationAgentsProvider.tsx:
+    "Completely migrated provider implementation from useConversationAgents hook
+    to useConversationStore and useAgentsStore. Updated imports to use
+    @fishbowl-ai/ui-shared stores and React hooks. Replaced simple hook wrapper
+    with comprehensive store integration including: conversation selection
+    coordination via useEffect, data transformation with exact same
+    transformToViewModel logic, proper interface mapping from store state to
+    UseConversationAgentsResult, wrapper functions for addAgent/removeAgent to
+    match expected signatures, and error handling with ErrorState to Error
+    conversion. Maintains complete backward compatibility with existing
+    consumers."
+log:
+  - "Successfully migrated ConversationAgentsProvider from using the obsolete
+    useConversationAgents hook to the unified conversation domain store. The
+    provider now uses useConversationStore() and useAgentsStore() directly while
+    maintaining complete interface compatibility with existing consumers. Key
+    achievements: preserved exact same interface (UseConversationAgentsResult),
+    maintained data transformation logic with agent lookup and fallback
+    handling, implemented proper conversation selection coordination, and
+    ensured all quality checks pass. All consuming components continue to work
+    unchanged through the useConversationAgentsContext hook."
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T08:35:19.750Z
