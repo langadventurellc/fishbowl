@@ -159,6 +159,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-1",
         status: "thinking",
       };
@@ -177,6 +178,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-1",
         status: "complete",
         messageId: "message-1",
@@ -197,6 +199,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-1",
         status: "error",
         error: "Test error message",
@@ -224,6 +227,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-1",
         status: "error",
       };
@@ -250,6 +254,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-1",
         status: "error",
         error: "Network connection failed",
@@ -291,6 +296,7 @@ describe("useChatEventIntegration", () => {
 
       errorTypes.forEach((errorType, index) => {
         const event: AgentUpdateEvent = {
+          conversationId: "test-conv-id",
           conversationAgentId: `agent-${index}`,
           status: "error",
           error: `${errorType} error occurred`,
@@ -326,6 +332,7 @@ describe("useChatEventIntegration", () => {
 
       // Test explicit retryable: true
       const retryableEvent: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-retryable",
         status: "error",
         error: "Retryable error",
@@ -345,6 +352,7 @@ describe("useChatEventIntegration", () => {
 
       // Test explicit retryable: false
       const nonRetryableEvent: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-non-retryable",
         status: "error",
         error: "Non-retryable error",
@@ -370,6 +378,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-1",
         status: "error",
         error: "Error with minimal info",
@@ -400,6 +409,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
+        conversationId: "test-conv-id",
         conversationAgentId: "agent-1",
         status: "thinking",
       };

@@ -151,6 +151,21 @@ affectedFiles:
     for Conversation, Message, ConversationAgent, and ErrorState types following
     actual shared package type definitions. All tests pass with 100% coverage of
     selector functionality.
+  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts: "Added conversationId:
+    string field as first property with JSDoc documentation '/** Unique
+    identifier for the conversation */'"
+  apps/desktop/src/shared/ipc/__tests__/chatIPC.test.ts: Updated all
+    AgentUpdateEvent test instances to include conversationId field with
+    appropriate test values
+  apps/desktop/src/electron/__tests__/preload.chat.test.ts: Updated
+    mockAgentUpdateEvent, mockAgentCompleteEvent, and mockAgentErrorEvent to
+    include conversationId field
+  apps/desktop/src/electron/chatHandlers.ts:
+    Updated agentUpdateEvent creation in
+    createEventEmitter to include conversationId from function parameter
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Updated all 10 AgentUpdateEvent instances in test cases to include
+    conversationId field with consistent test values
 log: []
 schema: v1.0
 childrenIds:

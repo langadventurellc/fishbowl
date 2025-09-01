@@ -32,6 +32,7 @@ const emitAllComplete = (eventData: AllCompleteEvent): void => {
 const createEventEmitter = (conversationId: string): AgentEventCallback => {
   return (eventData: Parameters<AgentEventCallback>[0]) => {
     const agentUpdateEvent: AgentUpdateEvent = {
+      conversationId: conversationId,
       conversationAgentId: eventData.conversationAgentId,
       status: eventData.status,
       messageId: eventData.messageId,

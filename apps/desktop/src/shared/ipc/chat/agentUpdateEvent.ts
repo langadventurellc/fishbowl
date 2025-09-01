@@ -2,6 +2,8 @@
  * Event payload for agent status updates
  */
 export interface AgentUpdateEvent {
+  /** Unique identifier for the conversation */
+  conversationId: string;
   /** Unique identifier for the conversation agent */
   conversationAgentId: string;
   /** Current status of the agent */

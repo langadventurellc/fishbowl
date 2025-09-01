@@ -42,17 +42,20 @@ jest.mock("@fishbowl-ai/shared", () => ({
 
 describe("Preload Chat API", () => {
   const mockAgentUpdateEvent: AgentUpdateEvent = {
+    conversationId: "test-conv-123",
     conversationAgentId: "test-agent-id",
     status: "thinking",
   };
 
   const mockAgentCompleteEvent: AgentUpdateEvent = {
+    conversationId: "test-conv-456",
     conversationAgentId: "test-agent-id",
     status: "complete",
     messageId: "test-message-id",
   };
 
   const mockAgentErrorEvent: AgentUpdateEvent = {
+    conversationId: "test-conv-789",
     conversationAgentId: "test-agent-id",
     status: "error",
     error: "Test error message",

@@ -1,15 +1,35 @@
 ---
 id: F-enhanced-ipc-event-integration
 title: Enhanced IPC Event Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-conversation-domain-store
 prerequisites:
   - F-conversation-domain-store
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts: "Added conversationId:
+    string field as first property with JSDoc documentation '/** Unique
+    identifier for the conversation */'"
+  apps/desktop/src/shared/ipc/__tests__/chatIPC.test.ts: Updated all
+    AgentUpdateEvent test instances to include conversationId field with
+    appropriate test values
+  apps/desktop/src/electron/__tests__/preload.chat.test.ts: Updated
+    mockAgentUpdateEvent, mockAgentCompleteEvent, and mockAgentErrorEvent to
+    include conversationId field
+  apps/desktop/src/electron/chatHandlers.ts:
+    Updated agentUpdateEvent creation in
+    createEventEmitter to include conversationId from function parameter
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Updated all 10 AgentUpdateEvent instances in test cases to include
+    conversationId field with consistent test values
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-conversationid-field-to
+  - T-implement-conversation-store
+  - T-update-event-emission-to
+  - T-update-preload-type
+  - T-update-renderer-event
 created: 2025-09-01T02:21:31.736Z
 updated: 2025-09-01T02:21:31.736Z
 ---

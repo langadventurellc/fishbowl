@@ -62,17 +62,20 @@ describe("Chat IPC Types", () => {
 
   it("should compile AgentUpdateEvent interface correctly", () => {
     const thinkingEvent: AgentUpdateEvent = {
+      conversationId: "conv-123",
       conversationAgentId: "agent-123",
       status: "thinking",
     };
 
     const completeEvent: AgentUpdateEvent = {
+      conversationId: "conv-123",
       conversationAgentId: "agent-123",
       status: "complete",
       messageId: "msg-456",
     };
 
     const errorEvent: AgentUpdateEvent = {
+      conversationId: "conv-123",
       conversationAgentId: "agent-123",
       status: "error",
       error: "Processing failed",
@@ -126,6 +129,7 @@ describe("Chat IPC Exports", () => {
     const _channel: ChatChannel = "chat:sendToAgents";
     const _event: ChatEvent = "agent:update";
     const _agentUpdate: AgentUpdateEvent = {
+      conversationId: "test-conv",
       conversationAgentId: "test",
       status: "thinking",
     };
@@ -149,6 +153,7 @@ describe("Type-only Imports", () => {
 
     // Test that we can use the types in type positions
     const testFunction = (_request: SendToAgentsRequest): AgentUpdateEvent => ({
+      conversationId: _request.conversationId,
       conversationAgentId: _request.conversationId + "-agent",
       status: "thinking",
     });

@@ -1,12 +1,32 @@
 ---
 id: T-add-conversationid-field-to
 title: Add conversationId field to AgentUpdateEvent interface
-status: open
+status: done
 priority: high
 parent: F-enhanced-ipc-event-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts: "Added conversationId:
+    string field as first property with JSDoc documentation '/** Unique
+    identifier for the conversation */'"
+  apps/desktop/src/shared/ipc/__tests__/chatIPC.test.ts: Updated all
+    AgentUpdateEvent test instances to include conversationId field with
+    appropriate test values
+  apps/desktop/src/electron/__tests__/preload.chat.test.ts: Updated
+    mockAgentUpdateEvent, mockAgentCompleteEvent, and mockAgentErrorEvent to
+    include conversationId field
+  apps/desktop/src/electron/chatHandlers.ts:
+    Updated agentUpdateEvent creation in
+    createEventEmitter to include conversationId from function parameter
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Updated all 10 AgentUpdateEvent instances in test cases to include
+    conversationId field with consistent test values
+log:
+  - Successfully added conversationId field to AgentUpdateEvent interface as the
+    first property with proper JSDoc documentation. Updated all related files
+    including chatHandlers.ts for event emission and all test files to include
+    the new required field. All quality checks (lint, format, type-check) and
+    unit tests are passing.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T05:43:02.259Z
