@@ -21,5 +21,18 @@ import type {
  * - Dependency injection enables clean testing and platform switching
  */
 export interface ConversationService {
-  // Interface methods will be added in subsequent tasks
+  /**
+   * Trigger agent orchestration for a user message
+   * Maps to: window.electronAPI.chat.sendToAgents(conversationId, userMessageId)
+   *
+   * Initiates the agent response generation process for enabled agents in the conversation.
+   * This method starts the orchestration but does not wait for agent responses - responses
+   * are delivered asynchronously via agent update events.
+   *
+   * @param conversationId - Conversation UUID where orchestration should occur
+   * @param userMessageId - User message UUID that triggered the orchestration
+   * @returns Promise resolving to void when orchestration is successfully initiated
+   * @throws Error on orchestration failure, invalid IDs, or no enabled agents
+   */
+  sendToAgents(conversationId: string, userMessageId: string): Promise<void>;
 }
