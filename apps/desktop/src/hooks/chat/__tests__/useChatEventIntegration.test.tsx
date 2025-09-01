@@ -7,19 +7,24 @@
  * @module hooks/chat/__tests__/useChatEventIntegration.test
  */
 
-import { useChatStore } from "@fishbowl-ai/ui-shared";
+import { useChatStore, useConversationStore } from "@fishbowl-ai/ui-shared";
 import type { AgentError } from "@fishbowl-ai/ui-shared";
 import { renderHook, act } from "@testing-library/react";
 import { useChatEventIntegration } from "../useChatEventIntegration";
 import type { AgentUpdateEvent } from "../../../shared/ipc/chat";
 
-// Mock the shared package store
+// Mock the shared package stores
 jest.mock("@fishbowl-ai/ui-shared", () => ({
   useChatStore: jest.fn(),
+  useConversationStore: jest.fn(),
 }));
 
 const mockUseChatStore = useChatStore as jest.MockedFunction<
   typeof useChatStore
+>;
+
+const mockUseConversationStore = useConversationStore as jest.MockedFunction<
+  typeof useConversationStore
 >;
 
 // Mock store actions
@@ -27,6 +32,9 @@ const mockSetAgentThinking = jest.fn();
 const mockSetAgentError = jest.fn();
 const mockSetProcessingConversation = jest.fn();
 const mockClearConversationState = jest.fn();
+
+// Mock conversation store actions
+const mockRefreshActiveConversation = jest.fn().mockResolvedValue(undefined);
 
 // Mock electron API
 const mockOnAgentUpdate = jest.fn();
@@ -40,6 +48,7 @@ beforeEach(() => {
   mockSetAgentError.mockClear();
   mockSetProcessingConversation.mockClear();
   mockClearConversationState.mockClear();
+  mockRefreshActiveConversation.mockClear().mockResolvedValue(undefined);
 
   // Mock useChatStore return value
   mockUseChatStore.mockReturnValue({
@@ -55,6 +64,11 @@ beforeEach(() => {
     clearAllThinking: jest.fn(),
     clearConversationState: mockClearConversationState,
   });
+
+  // Mock useConversationStore return value
+  mockUseConversationStore.mockReturnValue({
+    refreshActiveConversation: mockRefreshActiveConversation,
+  } as any);
 
   // Mock window.electronAPI.chat
   Object.defineProperty(window, "electronAPI", {

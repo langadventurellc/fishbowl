@@ -1,12 +1,34 @@
 ---
 id: T-migrate-usechateventintegratio
 title: Migrate useChatEventIntegration from useMessagesRefresh to store
-status: open
+status: done
 priority: high
 parent: F-ui-migration-and-integration
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts: Migrated from
+    useMessagesRefresh hook to useConversationStore. Updated import from
+    '../messages' to '@fishbowl-ai/ui-shared', replaced useMessagesRefresh()
+    with useConversationStore(), changed refetch() calls to
+    refreshActiveConversation(), and updated useCallback dependency array.
+    Maintained all existing event handling logic and timing.
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Updated test mocks to include useConversationStore from
+    @fishbowl-ai/ui-shared. Added mockRefreshActiveConversation as a resolved
+    Promise to prevent 'cannot read properties of undefined' errors when calling
+    .catch(). Updated beforeEach to properly reset the conversation store mock.
+log:
+  - Successfully migrated useChatEventIntegration hook from obsolete
+    useMessagesRefresh to useConversationStore. The hook now uses
+    refreshActiveConversation() from the conversation store instead of the local
+    refetch() function from useMessagesRefresh context. This completes another
+    piece of the UI migration away from fragmented state management to the
+    centralized conversation store. All event handling timing and conditions are
+    preserved - the hook still triggers message refreshes after agent completion
+    and error events. Fixed all associated test failures by properly mocking the
+    conversation store's refreshActiveConversation method to return a Promise.
+    Quality checks (lint, format, typecheck) all pass and all 35 tests are
+    passing.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T08:36:26.198Z

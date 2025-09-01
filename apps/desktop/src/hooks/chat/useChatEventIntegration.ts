@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useChatStore } from "@fishbowl-ai/ui-shared";
 import type { AgentError } from "@fishbowl-ai/ui-shared";
 import type { AgentUpdateEvent } from "../../shared/ipc/chat";
-import { useMessagesRefresh } from "../messages";
+import { useConversationStore } from "@fishbowl-ai/ui-shared";
 
 interface UseChatEventIntegrationOptions {
   conversationId: string | null;
@@ -32,7 +32,7 @@ export function useChatEventIntegration(
     clearConversationState,
   } = useChatStore();
 
-  const { refetch } = useMessagesRefresh();
+  const { refreshActiveConversation } = useConversationStore();
 
   // Event handler for IPC events
   const handleAgentUpdate = useCallback(
@@ -74,8 +74,8 @@ export function useChatEventIntegration(
             setAgentError(conversationAgentId, null);
 
             // Refresh messages to show the new agent response
-            if (refetch) {
-              refetch().catch((error) => {
+            if (refreshActiveConversation) {
+              refreshActiveConversation().catch((error) => {
                 console.error(
                   "Failed to refresh messages after agent completion:",
                   error,
@@ -98,8 +98,8 @@ export function useChatEventIntegration(
             setAgentError(conversationAgentId, structuredError);
 
             // Refresh messages to show any error system messages that were created
-            if (refetch) {
-              refetch().catch((refreshError) => {
+            if (refreshActiveConversation) {
+              refreshActiveConversation().catch((refreshError) => {
                 console.error(
                   "Failed to refresh messages after agent error:",
                   refreshError,
@@ -116,7 +116,12 @@ export function useChatEventIntegration(
         console.error("Error processing agent update event:", eventError);
       }
     },
-    [conversationId, setAgentThinking, setAgentError, refetch],
+    [
+      conversationId,
+      setAgentThinking,
+      setAgentError,
+      refreshActiveConversation,
+    ],
   );
 
   // Set up IPC event subscription

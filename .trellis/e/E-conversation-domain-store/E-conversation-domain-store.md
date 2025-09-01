@@ -182,11 +182,20 @@ affectedFiles:
     complete) and lastEventTime behavior. Updated all existing test events to
     use matching conversationId 'conversation-1' instead of 'test-conv-id' to
     prevent filtering in existing tests. Fixed missing conversationId in
-    'unknown status' and 'concurrent events' tests.
+    'unknown status' and 'concurrent events' tests.; Updated test mocks to
+    include useConversationStore from @fishbowl-ai/ui-shared. Added
+    mockRefreshActiveConversation as a resolved Promise to prevent 'cannot read
+    properties of undefined' errors when calling .catch(). Updated beforeEach to
+    properly reset the conversation store mock.
   apps/desktop/src/hooks/chat/useChatEventIntegration.ts: Added conversationId
     filtering logic to handleAgentUpdate function - extracts conversationId from
     event, filters out non-matching conversationIds with optional development
-    logging, and added conversationId to useCallback dependency array
+    logging, and added conversationId to useCallback dependency array; Migrated
+    from useMessagesRefresh hook to useConversationStore. Updated import from
+    '../messages' to '@fishbowl-ai/ui-shared', replaced useMessagesRefresh()
+    with useConversationStore(), changed refetch() calls to
+    refreshActiveConversation(), and updated useCallback dependency array.
+    Maintained all existing event handling logic and timing.
   apps/desktop/src/contexts/ServicesProvider.tsx:
     Extended existing provider with
     useConversationStore import and useEffect hook for conversation store

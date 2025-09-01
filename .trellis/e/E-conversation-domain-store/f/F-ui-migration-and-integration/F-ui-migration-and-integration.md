@@ -98,11 +98,21 @@ affectedFiles:
     calls to use refreshActiveConversation(). Maintained all existing
     functionality including async error handling, conditional checks, and
     message refresh timing.
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts: Migrated from
+    useMessagesRefresh hook to useConversationStore. Updated import from
+    '../messages' to '@fishbowl-ai/ui-shared', replaced useMessagesRefresh()
+    with useConversationStore(), changed refetch() calls to
+    refreshActiveConversation(), and updated useCallback dependency array.
+    Maintained all existing event handling logic and timing.
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Updated test mocks to include useConversationStore from
+    @fishbowl-ai/ui-shared. Added mockRefreshActiveConversation as a resolved
+    Promise to prevent 'cannot read properties of undefined' errors when calling
+    .catch(). Updated beforeEach to properly reset the conversation store mock.
 log: []
 schema: v1.0
 childrenIds:
   - T-complete-cleanup-remove-all
-  - T-migrate-messageitem-component
   - T-migrate-usechateventintegratio
   - T-remove-usemessageswithagentdat
   - T-extend-servicesprovider-for
@@ -111,6 +121,7 @@ childrenIds:
   - T-migrate-conversationagentsprov
   - T-migrate-main-content-panel-to
   - T-migrate-message-input
+  - T-migrate-messageitem-component
   - T-migrate-sidebar-conversation
   - T-remove-obsolete-hooks-and
   - T-update-message-item-to-use
