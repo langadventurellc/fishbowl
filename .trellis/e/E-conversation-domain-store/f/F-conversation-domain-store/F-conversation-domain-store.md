@@ -1,7 +1,7 @@
 ---
 id: F-conversation-domain-store
 title: Conversation Domain Store Implementation
-status: in-progress
+status: done
 priority: medium
 parent: E-conversation-domain-store
 prerequisites:
@@ -71,7 +71,8 @@ affectedFiles:
     for Conversation, Message, ConversationAgent, and ErrorState types following
     actual shared package type definitions. All tests pass with 100% coverage of
     selector functionality.
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-create-barrel-exports-and-1
