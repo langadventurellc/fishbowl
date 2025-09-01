@@ -35,4 +35,51 @@ export interface ConversationService {
    * @throws Error on orchestration failure, invalid IDs, or no enabled agents
    */
   sendToAgents(conversationId: string, userMessageId: string): Promise<void>;
+
+  // ConversationAgent Operations - exact IPC alignment
+
+  /**
+   * List all agents assigned to a specific conversation
+   * Maps to: window.electronAPI.conversationAgent.getByConversation(conversationId)
+   * @param conversationId - Conversation UUID to retrieve agents for
+   * @returns Promise resolving to array of conversation agents with their configurations
+   * @throws Error on retrieval failure or invalid conversation ID
+   */
+  listConversationAgents(conversationId: string): Promise<_ConversationAgent[]>;
+
+  /**
+   * Add an agent to a conversation
+   * Maps to: window.electronAPI.conversationAgent.add({conversation_id, agent_id})
+   * @param conversationId - Conversation UUID to add agent to
+   * @param agentId - Agent UUID to add to the conversation
+   * @returns Promise resolving to created conversation agent relationship
+   * @throws Error on creation failure, duplicate assignment, or invalid IDs
+   */
+  addAgent(
+    conversationId: string,
+    agentId: string,
+  ): Promise<_ConversationAgent>;
+
+  /**
+   * Remove an agent from a conversation
+   * Maps to: window.electronAPI.conversationAgent.remove({conversation_id, agent_id})
+   * @param conversationId - Conversation UUID to remove agent from
+   * @param agentId - Agent UUID to remove from the conversation
+   * @returns Promise resolving to void on successful removal
+   * @throws Error on removal failure or relationship not found
+   */
+  removeAgent(conversationId: string, agentId: string): Promise<void>;
+
+  /**
+   * Update conversation agent configuration (primarily for enabling/disabling)
+   * Maps to: window.electronAPI.conversationAgent.update({conversationAgentId, updates})
+   * @param conversationAgentId - ConversationAgent relationship UUID
+   * @param updates - Partial ConversationAgent updates (typically {enabled: boolean})
+   * @returns Promise resolving to updated conversation agent
+   * @throws Error on update failure or relationship not found
+   */
+  updateConversationAgent(
+    conversationAgentId: string,
+    updates: Partial<_ConversationAgent>,
+  ): Promise<_ConversationAgent>;
 }

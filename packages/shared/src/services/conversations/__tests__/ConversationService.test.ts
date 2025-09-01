@@ -1,4 +1,5 @@
 import type { ConversationService } from "../ConversationService";
+import type { ConversationAgent } from "@fishbowl-ai/shared";
 
 describe("ConversationService Interface", () => {
   it("should be properly typed interface", () => {
@@ -62,6 +63,64 @@ describe("ConversationService Interface", () => {
       };
 
       expect(typeof mockImplementation).toBe("function");
+    });
+  });
+
+  describe("ConversationService Interface - ConversationAgent Operations", () => {
+    it("should define all required conversation agent methods", () => {
+      // Type checking - these must compile if interface is correct
+      const mockService: Partial<ConversationService> = {
+        listConversationAgents: async (conversationId: string) => [],
+        addAgent: async (conversationId: string, agentId: string) =>
+          ({}) as ConversationAgent,
+        removeAgent: async (conversationId: string, agentId: string) => {},
+        updateConversationAgent: async (
+          id: string,
+          updates: Partial<ConversationAgent>,
+        ) => ({}) as ConversationAgent,
+      };
+
+      expect(typeof mockService.listConversationAgents).toBe("function");
+      expect(typeof mockService.addAgent).toBe("function");
+      expect(typeof mockService.removeAgent).toBe("function");
+      expect(typeof mockService.updateConversationAgent).toBe("function");
+    });
+
+    it("should have correct method signatures for conversation agent operations", () => {
+      // Signature validation - if this compiles, signatures are correct
+      const testSignatures = async () => {
+        const service: ConversationService = {} as ConversationService;
+        const updates: Partial<ConversationAgent> = { enabled: false };
+
+        // Test parameter and return types
+        const agents: ConversationAgent[] =
+          await service.listConversationAgents("conv-id");
+        const added: ConversationAgent = await service.addAgent(
+          "conv-id",
+          "agent-id",
+        );
+        const removed: void = await service.removeAgent("conv-id", "agent-id");
+        const updated: ConversationAgent =
+          await service.updateConversationAgent("ca-id", updates);
+      };
+
+      expect(typeof testSignatures).toBe("function");
+    });
+
+    it("should support Partial<ConversationAgent> updates correctly", () => {
+      // Type validation for update operations
+      const validUpdates: Partial<ConversationAgent> = {
+        enabled: true,
+        // Other ConversationAgent properties can be partial
+      };
+
+      const testUpdate = async () => {
+        const service: ConversationService = {} as ConversationService;
+        await service.updateConversationAgent("ca-id", validUpdates);
+        await service.updateConversationAgent("ca-id", { enabled: false });
+      };
+
+      expect(typeof testUpdate).toBe("function");
     });
   });
 });
