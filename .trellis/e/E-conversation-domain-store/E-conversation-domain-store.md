@@ -73,7 +73,14 @@ affectedFiles:
     updates} object). Updated JSDoc comments to reflect exact IPC mappings and
     added comprehensive error handling following established patterns. Updated
     class-level IPC method mapping documentation to include the new conversation
-    agent operations."
+    agent operations.; Replaced placeholder sendToAgents method with functional
+    implementation that maps to
+    window.electronAPI.chat.sendToAgents(conversationId, userMessageId). Added
+    proper try-catch error handling following established adapter patterns with
+    method name prefixes. Updated JSDoc documentation to include IPC mapping
+    information. Updated class header documentation to include sendToAgents in
+    the IPC Method Mapping section. The adapter now fully implements all
+    ConversationService interface methods."
   apps/desktop/src/renderer/services/RendererProcessServices.ts:
     Added ConversationIpcAdapter as conversationService property with proper
     dependency injection in constructor, following established service container

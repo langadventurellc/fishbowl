@@ -31,6 +31,7 @@ import {
  * - addAgent(conversationId, agentId) → window.electronAPI.conversationAgent.add({conversation_id, agent_id})
  * - removeAgent(conversationId, agentId) → window.electronAPI.conversationAgent.remove({conversation_id, agent_id})
  * - updateConversationAgent(conversationAgentId, updates) → window.electronAPI.conversationAgent.update({conversationAgentId, updates})
+ * - sendToAgents(conversationId, userMessageId) → window.electronAPI.chat.sendToAgents(conversationId, userMessageId)
  */
 export class ConversationIpcAdapter implements ConversationService {
   // Conversation CRUD Operations Implementation
@@ -131,13 +132,19 @@ export class ConversationIpcAdapter implements ConversationService {
 
   /**
    * Trigger agent orchestration for a user message
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.chat.sendToAgents(conversationId, userMessageId)
    */
   async sendToAgents(
-    _conversationId: string,
-    _userMessageId: string,
+    conversationId: string,
+    userMessageId: string,
   ): Promise<void> {
-    throw new Error("sendToAgents: Not implemented in this adapter version");
+    try {
+      await window.electronAPI.chat.sendToAgents(conversationId, userMessageId);
+    } catch (error) {
+      throw new Error(
+        `sendToAgents: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
   /**
