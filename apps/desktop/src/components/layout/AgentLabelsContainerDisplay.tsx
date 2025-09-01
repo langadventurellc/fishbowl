@@ -4,7 +4,7 @@ import {
 } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
-import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
+import { useConversationAgentsContext } from "../../contexts";
 import { cn } from "../../lib/utils";
 import { AgentPill } from "../chat";
 import { Button } from "../input";
@@ -36,9 +36,9 @@ export const AgentLabelsContainerDisplay: React.FC<
   // Modal state
   const [addModalOpen, setAddModalOpen] = useState(false);
 
-  // Hook integration
+  // Context integration
   const { conversationAgents, isLoading, error, refetch, toggleEnabled } =
-    useConversationAgents(selectedConversationId || null);
+    useConversationAgentsContext();
 
   // Transform conversation agents to display format
   const displayAgents = selectedConversationId
@@ -166,7 +166,8 @@ export const AgentLabelsContainerDisplay: React.FC<
           onOpenChange={setAddModalOpen}
           conversationId={selectedConversationId}
           onAgentAdded={() => {
-            refetch(); // Explicitly refetch to ensure UI updates
+            // Context methods already refetch internally, but keeping explicit refetch for UI consistency
+            refetch();
           }}
         />
       )}

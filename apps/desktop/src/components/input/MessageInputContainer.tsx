@@ -13,7 +13,7 @@ import {
 } from "@fishbowl-ai/ui-shared";
 import { cva } from "class-variance-authority";
 import { KeyboardEvent, useCallback, useRef, useState } from "react";
-import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
+import { useConversationAgentsContext } from "../../contexts";
 import { SendButtonDisplay } from "./SendButtonDisplay";
 
 /**
@@ -71,8 +71,8 @@ export function MessageInputContainer({
   const { sendingMessage } = useChatStore();
   const { refetch } = useMessagesRefresh();
 
-  // Hook for conversation agents to check if any are enabled
-  const { conversationAgents } = useConversationAgents(conversationId);
+  // Context for conversation agents to check if any are enabled
+  const { conversationAgents } = useConversationAgentsContext();
 
   // Hook for checking if this is the first message
   const { messages } = useMessages(conversationId);

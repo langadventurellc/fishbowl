@@ -34,7 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
+import { useConversationAgentsContext } from "../../contexts";
 
 /**
  * Modal dialog for adding agents to conversations.
@@ -65,12 +65,12 @@ import { useConversationAgents } from "../../hooks/conversationAgents/useConvers
 export function AddAgentToConversationModal({
   open,
   onOpenChange,
-  conversationId,
+  conversationId: _conversationId,
   onAgentAdded,
 }: AddAgentToConversationModalProps): React.ReactElement {
   const { agents } = useAgentsStore();
   const { conversationAgents, addAgent, error } =
-    useConversationAgents(conversationId);
+    useConversationAgentsContext();
 
   const [selectedAgentId, setSelectedAgentId] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);

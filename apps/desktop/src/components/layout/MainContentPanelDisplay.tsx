@@ -16,6 +16,7 @@ import { MessageInputContainer } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 import { ConfirmationDialog } from "../ui/confirmation-dialog";
 import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
+import { ConversationAgentsProvider } from "../../contexts";
 
 /**
  * MainContentPanelDisplay - Primary conversation interface layout component
@@ -34,15 +35,19 @@ export const MainContentPanelDisplay: React.FC<
 
   return (
     <MessagesRefreshContext.Provider value={{ refetch }}>
-      <MainContentPanelContent
-        selectedConversationId={selectedConversationId || null}
-        className={className}
-        style={style}
-        messages={messages}
-        isLoading={isLoading}
-        error={error}
-        refetch={refetch}
-      />
+      <ConversationAgentsProvider
+        conversationId={selectedConversationId || null}
+      >
+        <MainContentPanelContent
+          selectedConversationId={selectedConversationId || null}
+          className={className}
+          style={style}
+          messages={messages}
+          isLoading={isLoading}
+          error={error}
+          refetch={refetch}
+        />
+      </ConversationAgentsProvider>
     </MessagesRefreshContext.Provider>
   );
 };
