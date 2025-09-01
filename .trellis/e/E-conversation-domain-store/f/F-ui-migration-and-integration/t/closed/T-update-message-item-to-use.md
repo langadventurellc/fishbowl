@@ -1,13 +1,29 @@
 ---
 id: T-update-message-item-to-use
 title: Update message item to use MessagesRefreshContext store integration
-status: open
+status: done
 priority: medium
 parent: F-ui-migration-and-integration
 prerequisites:
   - T-migrate-message-input
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
+    "Created comprehensive test suite with 12 test cases covering store
+    integration scenarios: store refresh function calls, null refetch handling,
+    error recovery, optimistic updates, loading state coordination, different
+    message types (user, agent, system), keyboard interactions, and disabled
+    state handling. Tests verify MessageItem component works correctly with
+    MessagesRefreshContext backed by conversation store's
+    refreshActiveConversation action."
+log:
+  - Successfully verified and tested MessageItem component integration with
+    store-backed MessagesRefreshContext. The component works correctly with the
+    migrated context that now uses the conversation store's
+    refreshActiveConversation action instead of direct hook refetch. No code
+    changes were required to MessageItem component as the interface remains
+    unchanged. Created comprehensive test suite covering all integration
+    scenarios including optimistic updates, error handling, loading states, and
+    different message types. All tests pass and quality checks are clean.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T06:28:49.156Z

@@ -71,16 +71,24 @@ affectedFiles:
     store states. Maintained exact existing functionality including input
     clearing, focus management, keyboard shortcuts, agent validation, and first
     message detection while eliminating fragmented state management.
+  apps/desktop/src/components/chat/__tests__/MessageItem.test.tsx:
+    "Created comprehensive test suite with 12 test cases covering store
+    integration scenarios: store refresh function calls, null refetch handling,
+    error recovery, optimistic updates, loading state coordination, different
+    message types (user, agent, system), keyboard interactions, and disabled
+    state handling. Tests verify MessageItem component works correctly with
+    MessagesRefreshContext backed by conversation store's
+    refreshActiveConversation action."
 log: []
 schema: v1.0
 childrenIds:
-  - T-migrate-message-input
   - T-remove-obsolete-hooks-and
   - T-update-message-item-to-use
   - T-extend-servicesprovider-for
   - T-migrate-add-agent-modal-to
   - T-migrate-agent-labels
   - T-migrate-main-content-panel-to
+  - T-migrate-message-input
   - T-migrate-sidebar-conversation
 created: 2025-09-01T02:22:11.606Z
 updated: 2025-09-01T02:22:11.606Z
