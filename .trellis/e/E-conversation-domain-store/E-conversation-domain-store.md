@@ -58,7 +58,13 @@ affectedFiles:
     Created ConversationIpcAdapter class implementing ConversationService
     interface with conversation CRUD operations mapping to
     window.electronAPI.conversations methods. Includes proper error handling,
-    type safety, and placeholder implementations for future operations.
+    type safety, and placeholder implementations for future operations.;
+    Implemented message operations by replacing placeholder methods with actual
+    IPC calls to window.electronAPI.messages.* methods. Added
+    listMessages(conversationId), createMessage(input), and deleteMessage(id)
+    implementations with proper error handling, type safety, and JSDoc
+    documentation. Updated class-level JSDoc comment to include message
+    operations in IPC method mapping section.
   apps/desktop/src/renderer/services/RendererProcessServices.ts:
     Added ConversationIpcAdapter as conversationService property with proper
     dependency injection in constructor, following established service container

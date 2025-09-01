@@ -1,13 +1,29 @@
 ---
 id: T-implement-message-operations-1
 title: Implement message operations in ConversationIpcAdapter
-status: open
+status: done
 priority: high
 parent: F-desktop-ipc-adapter
 prerequisites:
   - T-create-conversationipcadapter
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/renderer/services/ConversationIpcAdapter.ts:
+    Implemented message operations by replacing placeholder methods with actual
+    IPC calls to window.electronAPI.messages.* methods. Added
+    listMessages(conversationId), createMessage(input), and deleteMessage(id)
+    implementations with proper error handling, type safety, and JSDoc
+    documentation. Updated class-level JSDoc comment to include message
+    operations in IPC method mapping section.
+log:
+  - Successfully implemented message operations in ConversationIpcAdapter with
+    proper IPC method alignment. Replaced placeholder implementations for
+    listMessages, createMessage, and deleteMessage with actual
+    window.electronAPI.messages calls. Added comprehensive error handling
+    following existing adapter patterns, proper JSDoc documentation with IPC
+    mappings, and ensured type safety throughout. The deleteMessage method
+    correctly handles boolean return from IPC and converts to void as expected
+    by ConversationService interface. All quality checks pass with no TypeScript
+    errors.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T03:54:05.500Z

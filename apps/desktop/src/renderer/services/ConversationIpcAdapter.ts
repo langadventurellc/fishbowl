@@ -24,6 +24,9 @@ import {
  * - createConversation(title?) → window.electronAPI.conversations.create(title)
  * - renameConversation(id, title) → window.electronAPI.conversations.update(id, {title})
  * - deleteConversation(id) → window.electronAPI.conversations.delete(id)
+ * - listMessages(conversationId) → window.electronAPI.messages.list(conversationId)
+ * - createMessage(input) → window.electronAPI.messages.create(input)
+ * - deleteMessage(id) → window.electronAPI.messages.delete(id)
  */
 export class ConversationIpcAdapter implements ConversationService {
   // Conversation CRUD Operations Implementation
@@ -179,25 +182,50 @@ export class ConversationIpcAdapter implements ConversationService {
 
   /**
    * List all messages for a specific conversation
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.messages.list(conversationId)
    */
-  async listMessages(_conversationId: string): Promise<_Message[]> {
-    throw new Error("listMessages: Not implemented in this adapter version");
+  async listMessages(conversationId: string): Promise<_Message[]> {
+    try {
+      const result = await window.electronAPI.messages.list(conversationId);
+      return result;
+    } catch (error) {
+      throw new Error(
+        `listMessages: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
   /**
    * Create a new message in a conversation
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.messages.create(input)
    */
-  async createMessage(_input: _CreateMessageInput): Promise<_Message> {
-    throw new Error("createMessage: Not implemented in this adapter version");
+  async createMessage(input: _CreateMessageInput): Promise<_Message> {
+    try {
+      const result = await window.electronAPI.messages.create(input);
+      return result;
+    } catch (error) {
+      throw new Error(
+        `createMessage: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 
   /**
    * Delete a message permanently
-   * @throws Error indicating not implemented in this adapter version
+   * Maps to: window.electronAPI.messages.delete(id)
    */
-  async deleteMessage(_id: string): Promise<void> {
-    throw new Error("deleteMessage: Not implemented in this adapter version");
+  async deleteMessage(id: string): Promise<void> {
+    try {
+      const deleteResult = await window.electronAPI.messages.delete(id);
+      // The delete method returns a boolean, but ConversationService expects void
+      // If delete returns false, it means the operation failed
+      if (deleteResult === false) {
+        throw new Error("Delete operation failed");
+      }
+    } catch (error) {
+      throw new Error(
+        `deleteMessage: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
   }
 }
