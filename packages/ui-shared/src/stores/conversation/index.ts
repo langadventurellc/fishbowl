@@ -8,3 +8,4 @@
 export type { ConversationStoreState } from "./ConversationStoreState";
 export type { ConversationStoreActions } from "./ConversationStoreActions";
 export type { ConversationStore } from "./ConversationStore";
+export { useConversationStore } from "./useConversationStore";

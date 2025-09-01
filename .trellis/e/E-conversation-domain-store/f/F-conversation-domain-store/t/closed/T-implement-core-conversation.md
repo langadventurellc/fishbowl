@@ -1,13 +1,32 @@
 ---
 id: T-implement-core-conversation
 title: Implement core conversation store with Zustand and service injection
-status: open
+status: done
 priority: high
 parent: F-conversation-domain-store
 prerequisites:
   - T-create-conversation-store
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Created core Zustand conversation store with service injection, race
+    condition protection, and complete conversation lifecycle management
+    including loadConversations, selectConversation,
+    createConversationAndSelect, refreshActiveConversation, sendUserMessage,
+    addAgent, removeAgent, and toggleAgentEnabled actions
+  packages/ui-shared/src/stores/conversation/index.ts: Added barrel export for
+    useConversationStore to enable clean imports from the conversation store
+    package
+log:
+  - Implemented core conversation store with Zustand and service injection
+    following established patterns. The store provides complete conversation
+    lifecycle management including list operations, active conversation
+    switching with race condition protection, message operations, agent
+    management, and error handling. Key features include dependency injection
+    for ConversationService, plain immutable state updates, request token-based
+    race condition handling, automatic chat state coordination, client-side
+    message capping, and comprehensive error conversion to ErrorState pattern.
+    All quality checks pass and the store follows existing codebase conventions
+    exactly.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T04:38:06.302Z

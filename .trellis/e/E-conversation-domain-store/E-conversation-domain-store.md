@@ -101,10 +101,20 @@ affectedFiles:
   packages/ui-shared/src/stores/conversation/ConversationStore.ts:
     Created combined store type merging ConversationStoreState and
     ConversationStoreActions interfaces
-  packages/ui-shared/src/stores/conversation/index.ts: Created barrel exports file for clean conversation store type imports
+  packages/ui-shared/src/stores/conversation/index.ts:
+    Created barrel exports file
+    for clean conversation store type imports; Added barrel export for
+    useConversationStore to enable clean imports from the conversation store
+    package
   packages/ui-shared/src/stores/index.ts:
     Added conversation store exports to main
     stores barrel file following established patterns
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Created core Zustand conversation store with service injection, race
+    condition protection, and complete conversation lifecycle management
+    including loadConversations, selectConversation,
+    createConversationAndSelect, refreshActiveConversation, sendUserMessage,
+    addAgent, removeAgent, and toggleAgentEnabled actions
 log: []
 schema: v1.0
 childrenIds:
