@@ -159,7 +159,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "thinking",
       };
@@ -178,7 +178,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "complete",
         messageId: "message-1",
@@ -199,7 +199,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "error",
         error: "Test error message",
@@ -227,7 +227,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "error",
       };
@@ -254,7 +254,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "error",
         error: "Network connection failed",
@@ -296,7 +296,7 @@ describe("useChatEventIntegration", () => {
 
       errorTypes.forEach((errorType, index) => {
         const event: AgentUpdateEvent = {
-          conversationId: "test-conv-id",
+          conversationId: "conversation-1",
           conversationAgentId: `agent-${index}`,
           status: "error",
           error: `${errorType} error occurred`,
@@ -332,7 +332,7 @@ describe("useChatEventIntegration", () => {
 
       // Test explicit retryable: true
       const retryableEvent: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-retryable",
         status: "error",
         error: "Retryable error",
@@ -352,7 +352,7 @@ describe("useChatEventIntegration", () => {
 
       // Test explicit retryable: false
       const nonRetryableEvent: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-non-retryable",
         status: "error",
         error: "Non-retryable error",
@@ -378,7 +378,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "error",
         error: "Error with minimal info",
@@ -409,7 +409,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event: AgentUpdateEvent = {
-        conversationId: "test-conv-id",
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "thinking",
       };
@@ -431,6 +431,7 @@ describe("useChatEventIntegration", () => {
 
       const callback = mockOnAgentUpdate.mock.calls[0][0];
       const event = {
+        conversationId: "conversation-1",
         conversationAgentId: "agent-1",
         status: "unknown",
       } as any;
@@ -464,6 +465,132 @@ describe("useChatEventIntegration", () => {
       );
 
       consoleSpy.mockRestore();
+    });
+  });
+
+  describe("ConversationId Filtering", () => {
+    it("should filter out events for different conversationId", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const event: AgentUpdateEvent = {
+        conversationId: "different-conversation-id", // Different from hook's conversationId
+        conversationAgentId: "agent-1",
+        status: "thinking",
+      };
+
+      act(() => {
+        callback(event);
+      });
+
+      // Verify that store actions were NOT called
+      expect(mockSetAgentThinking).not.toHaveBeenCalled();
+      expect(mockSetAgentError).not.toHaveBeenCalled();
+    });
+
+    it("should process events when conversationId matches", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const event: AgentUpdateEvent = {
+        conversationId: "conversation-1", // Matches hook's conversationId
+        conversationAgentId: "agent-1",
+        status: "thinking",
+      };
+
+      act(() => {
+        callback(event);
+      });
+
+      // Verify that store actions WERE called
+      expect(mockSetAgentThinking).toHaveBeenCalledWith("agent-1", true);
+    });
+
+    it("should filter error events for different conversationId", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const event: AgentUpdateEvent = {
+        conversationId: "other-conversation",
+        conversationAgentId: "agent-1",
+        status: "error",
+        error: "Test error",
+      };
+
+      act(() => {
+        callback(event);
+      });
+
+      // Verify that error handling was NOT triggered
+      expect(mockSetAgentThinking).not.toHaveBeenCalled();
+      expect(mockSetAgentError).not.toHaveBeenCalled();
+    });
+
+    it("should filter complete events for different conversationId", () => {
+      renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const event: AgentUpdateEvent = {
+        conversationId: "other-conversation",
+        conversationAgentId: "agent-1",
+        status: "complete",
+        messageId: "message-1",
+      };
+
+      act(() => {
+        callback(event);
+      });
+
+      // Verify that completion handling was NOT triggered
+      expect(mockSetAgentThinking).not.toHaveBeenCalled();
+      expect(mockSetAgentError).not.toHaveBeenCalled();
+    });
+
+    it("should update lastEventTime only for matching conversationId", () => {
+      const { result } = renderHook(() =>
+        useChatEventIntegration({ conversationId: "conversation-1" }),
+      );
+
+      expect(result.current.lastEventTime).toBeNull();
+
+      const callback = mockOnAgentUpdate.mock.calls[0][0];
+
+      // First event with different conversationId - should be filtered
+      const filteredEvent: AgentUpdateEvent = {
+        conversationId: "other-conversation",
+        conversationAgentId: "agent-1",
+        status: "thinking",
+      };
+
+      act(() => {
+        callback(filteredEvent);
+      });
+
+      // lastEventTime should still be null
+      expect(result.current.lastEventTime).toBeNull();
+
+      // Second event with matching conversationId - should be processed
+      const processedEvent: AgentUpdateEvent = {
+        conversationId: "conversation-1",
+        conversationAgentId: "agent-1",
+        status: "thinking",
+      };
+
+      act(() => {
+        callback(processedEvent);
+      });
+
+      // Now lastEventTime should be updated
+      expect(result.current.lastEventTime).toBeTruthy();
+      expect(typeof result.current.lastEventTime).toBe("string");
     });
   });
 
@@ -639,14 +766,17 @@ describe("useChatEventIntegration", () => {
       act(() => {
         // Simulate rapid events
         callback({
+          conversationId: "conversation-1",
           conversationAgentId: "agent-1",
           status: "thinking",
         });
         callback({
+          conversationId: "conversation-1",
           conversationAgentId: "agent-2",
           status: "thinking",
         });
         callback({
+          conversationId: "conversation-1",
           conversationAgentId: "agent-1",
           status: "complete",
         });

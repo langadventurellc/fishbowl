@@ -39,6 +39,7 @@ export function useChatEventIntegration(
     (event: AgentUpdateEvent) => {
       try {
         const {
+          conversationId: eventConversationId,
           conversationAgentId,
           status,
           messageId: _messageId,
@@ -47,6 +48,17 @@ export function useChatEventIntegration(
           errorType,
           retryable,
         } = event;
+
+        // Filter events that don't match current conversation
+        if (eventConversationId !== conversationId) {
+          // Optional: Log filtered events in development
+          if (process.env.NODE_ENV === "development") {
+            console.debug(
+              `Filtered AgentUpdateEvent for conversation ${eventConversationId}, expected ${conversationId}`,
+            );
+          }
+          return;
+        }
 
         // Update last event time
         setLastEventTime(new Date().toISOString());
@@ -104,7 +116,7 @@ export function useChatEventIntegration(
         console.error("Error processing agent update event:", eventError);
       }
     },
-    [setAgentThinking, setAgentError, refetch],
+    [conversationId, setAgentThinking, setAgentError, refetch],
   );
 
   // Set up IPC event subscription

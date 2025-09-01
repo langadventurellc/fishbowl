@@ -1,13 +1,32 @@
 ---
 id: T-update-renderer-event
 title: Update renderer event handlers and tests for enhanced AgentUpdateEvent
-status: open
+status: done
 priority: medium
 parent: F-enhanced-ipc-event-integration
 prerequisites:
   - T-update-preload-type
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts: Added conversationId
+    filtering logic to handleAgentUpdate function - extracts conversationId from
+    event, filters out non-matching conversationIds with optional development
+    logging, and added conversationId to useCallback dependency array
+  apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
+    Added comprehensive conversationId filtering test suite with 5 new test
+    cases covering positive/negative filtering scenarios for all event types
+    (thinking, error, complete) and lastEventTime behavior. Updated all existing
+    test events to use matching conversationId 'conversation-1' instead of
+    'test-conv-id' to prevent filtering in existing tests. Fixed missing
+    conversationId in 'unknown status' and 'concurrent events' tests.
+log:
+  - Successfully implemented conversationId filtering in renderer event handlers
+    and updated all tests to handle the enhanced AgentUpdateEvent structure.
+    Added comprehensive conversationId filtering logic to
+    useChatEventIntegration hook to prevent cross-conversation event pollution,
+    ensuring only events matching the active conversation are processed. Added 5
+    new test cases specifically for conversationId filtering validation and
+    updated all existing tests to use matching conversationIds. All tests pass
+    (35/35) and quality checks pass clean.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T05:44:32.075Z

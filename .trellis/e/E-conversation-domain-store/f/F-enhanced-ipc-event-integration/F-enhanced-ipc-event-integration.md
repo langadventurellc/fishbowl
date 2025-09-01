@@ -1,7 +1,7 @@
 ---
 id: F-enhanced-ipc-event-integration
 title: Enhanced IPC Event Integration
-status: in-progress
+status: done
 priority: medium
 parent: E-conversation-domain-store
 prerequisites:
@@ -21,7 +21,13 @@ affectedFiles:
     createEventEmitter to include conversationId from function parameter
   apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
     Updated all 10 AgentUpdateEvent instances in test cases to include
-    conversationId field with consistent test values
+    conversationId field with consistent test values; Added comprehensive
+    conversationId filtering test suite with 5 new test cases covering
+    positive/negative filtering scenarios for all event types (thinking, error,
+    complete) and lastEventTime behavior. Updated all existing test events to
+    use matching conversationId 'conversation-1' instead of 'test-conv-id' to
+    prevent filtering in existing tests. Fixed missing conversationId in
+    'unknown status' and 'concurrent events' tests.
   packages/ui-shared/src/stores/conversation/ConversationStoreState.ts:
     Added eventSubscription state tracking with isSubscribed boolean and
     lastEventTime string for debugging event subscription status and last
@@ -39,14 +45,19 @@ affectedFiles:
   packages/ui-shared/src/stores/conversation/__tests__/selectors.test.ts:
     Updated createMockState factory function to include eventSubscription state
     field for proper test compatibility with new store state interface
-log: []
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts: Added conversationId
+    filtering logic to handleAgentUpdate function - extracts conversationId from
+    event, filters out non-matching conversationIds with optional development
+    logging, and added conversationId to useCallback dependency array
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-implement-conversation-store
-  - T-update-renderer-event
   - T-add-conversationid-field-to
+  - T-implement-conversation-store
   - T-update-event-emission-to
   - T-update-preload-type
+  - T-update-renderer-event
 created: 2025-09-01T02:21:31.736Z
 updated: 2025-09-01T02:21:31.736Z
 ---

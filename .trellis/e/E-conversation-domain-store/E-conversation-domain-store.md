@@ -176,7 +176,17 @@ affectedFiles:
     createEventEmitter to include conversationId from function parameter
   apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
     Updated all 10 AgentUpdateEvent instances in test cases to include
-    conversationId field with consistent test values
+    conversationId field with consistent test values; Added comprehensive
+    conversationId filtering test suite with 5 new test cases covering
+    positive/negative filtering scenarios for all event types (thinking, error,
+    complete) and lastEventTime behavior. Updated all existing test events to
+    use matching conversationId 'conversation-1' instead of 'test-conv-id' to
+    prevent filtering in existing tests. Fixed missing conversationId in
+    'unknown status' and 'concurrent events' tests.
+  apps/desktop/src/hooks/chat/useChatEventIntegration.ts: Added conversationId
+    filtering logic to handleAgentUpdate function - extracts conversationId from
+    event, filters out non-matching conversationIds with optional development
+    logging, and added conversationId to useCallback dependency array
 log: []
 schema: v1.0
 childrenIds:
