@@ -19,14 +19,12 @@ interface ErrorState {
 import { AlertCircle, MessageCircle } from "lucide-react";
 import React, { useMemo } from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
-import { MessagesRefreshContext } from "../../hooks/messages";
 import { useMessageActions } from "../../hooks/services/useMessageActions";
 import { cn } from "../../lib/utils";
 import { MessageInputContainer } from "../input";
 import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 import { ConfirmationDialog } from "../ui/confirmation-dialog";
 import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
-import { ConversationAgentsProvider } from "../../contexts";
 
 /**
  * MainContentPanelDisplay - Primary conversation interface layout component
@@ -132,28 +130,20 @@ export const MainContentPanelDisplay: React.FC<
   const messagesError = error.messages || error.agents;
 
   return (
-    <MessagesRefreshContext.Provider
-      value={{ refetch: refreshActiveConversation }}
-    >
-      <ConversationAgentsProvider
-        conversationId={selectedConversationId || null}
-      >
-        <MainContentPanelContent
-          selectedConversationId={selectedConversationId || null}
-          className={className}
-          style={style}
-          messages={messages}
-          isLoading={isLoading}
-          error={messagesError}
-          refetch={refreshActiveConversation}
-        />
-      </ConversationAgentsProvider>
-    </MessagesRefreshContext.Provider>
+    <MainContentPanelContent
+      selectedConversationId={selectedConversationId || null}
+      className={className}
+      style={style}
+      messages={messages}
+      isLoading={isLoading}
+      error={messagesError}
+      refetch={refreshActiveConversation}
+    />
   );
 };
 
 /**
- * Inner component that has access to MessagesRefreshContext
+ * Inner component that handles the main content panel content
  */
 interface MainContentPanelContentProps {
   selectedConversationId: string | null;
@@ -174,7 +164,7 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
   error,
   refetch,
 }) => {
-  // Initialize chat event integration for real-time agent status updates - now has access to MessagesRefreshContext
+  // Initialize chat event integration for real-time agent status updates
   useChatEventIntegration({ conversationId: selectedConversationId || null });
 
   // Message actions for context menu operations

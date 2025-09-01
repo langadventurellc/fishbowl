@@ -1,7 +1,7 @@
 ---
 id: F-ui-migration-and-integration
 title: UI Migration and Integration
-status: in-progress
+status: done
 priority: medium
 parent: E-conversation-domain-store
 prerequisites:
@@ -40,7 +40,9 @@ affectedFiles:
     conversation store actions. Updated MessagesRefreshContext.Provider to use
     store's refreshActiveConversation instead of hook refetch. Updated interface
     types to match ErrorState from store.; Updated comment to remove reference
-    to deleted hook, maintaining documentation of enrichment logic
+    to deleted hook, maintaining documentation of enrichment logic; updated -
+    removed imports and usage of obsolete MessagesRefreshContext and
+    ConversationAgentsProvider, updated comments
   apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
     Migrated from useConversationAgentsContext to useConversationStore and
     useAgentsStore. Updated imports to use @fishbowl-ai/ui-shared stores.
@@ -115,12 +117,24 @@ affectedFiles:
     store data for message enrichment (no longer used)
   apps/desktop/src/hooks/messages/UseMessagesWithAgentDataResult.ts: Deleted - TypeScript interface for the removed hook's return type
   apps/desktop/src/hooks/messages/index.ts: Removed barrel export for
-    useMessagesWithAgentData hook to prevent import errors
-log: []
+    useMessagesWithAgentData hook to prevent import errors; updated - removed
+    useMessages and useMessagesRefresh exports
+  apps/desktop/src/hooks/conversations/useConversations.ts: removed - obsolete hook replaced by conversation store
+  apps/desktop/src/hooks/conversations/__tests__/useConversations.test.tsx: removed - test file for obsolete hook
+  apps/desktop/src/hooks/messages/useMessages.ts: removed - obsolete hook replaced by conversation store
+  apps/desktop/src/hooks/messages/__tests__/useMessages.test.tsx: removed - test file for obsolete hook
+  apps/desktop/src/hooks/messages/useMessagesRefresh.ts: removed - obsolete hook replaced by conversation store
+  apps/desktop/src/hooks/conversationAgents/useConversationAgents.ts: removed - obsolete hook replaced by conversation store
+  apps/desktop/src/hooks/conversationAgents/__tests__/useConversationAgents.test.tsx: removed - test file for obsolete hook
+  apps/desktop/src/hooks/conversationAgents/UseConversationAgentsResult.ts: removed - type interface for obsolete hook
+  apps/desktop/src/contexts/ConversationAgentsContext/: removed - entire directory with all context components
+  apps/desktop/src/hooks/conversations/index.ts: updated - removed useConversations export
+  apps/desktop/src/contexts/index.ts: updated - removed ConversationAgentsContext exports
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-complete-cleanup-remove-all
-  - T-remove-usemessageswithagentdat
   - T-extend-servicesprovider-for
   - T-migrate-add-agent-modal-to
   - T-migrate-agent-labels
@@ -131,6 +145,7 @@ childrenIds:
   - T-migrate-sidebar-conversation
   - T-migrate-usechateventintegratio
   - T-remove-obsolete-hooks-and
+  - T-remove-usemessageswithagentdat
   - T-update-message-item-to-use
 created: 2025-09-01T02:22:11.606Z
 updated: 2025-09-01T02:22:11.606Z
