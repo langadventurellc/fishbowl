@@ -318,12 +318,27 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         error: { ...state.error, sending: undefined },
       }));
 
-      // Create message (allow empty content for continuation)
-      const userMessage = await conversationService.createMessage({
-        conversation_id: activeConversationId,
-        content: content || "",
-        role: "user",
-      });
+      // Create message - handle continuation vs regular user message
+      let messageToCreate;
+      if (content?.trim()) {
+        // Regular user message
+        messageToCreate = {
+          conversation_id: activeConversationId,
+          content: content.trim(),
+          role: "user" as const,
+        };
+      } else {
+        // Continuation system message (not included in API calls)
+        messageToCreate = {
+          conversation_id: activeConversationId,
+          content: "[Continue conversation]",
+          role: "system" as const,
+          included: false,
+        };
+      }
+
+      const userMessage =
+        await conversationService.createMessage(messageToCreate);
 
       // Add created message to activeMessages and apply limit
       const currentState = get();
