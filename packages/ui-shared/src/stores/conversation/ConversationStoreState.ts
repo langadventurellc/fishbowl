@@ -64,4 +64,14 @@ export interface ConversationStoreState {
    * Enables client-side message trimming for memory management.
    */
   maximumMessages: number;
+  /**
+   * Event subscription state for real-time updates and debugging.
+   * Tracks connection status and last event timestamp for debugging purposes.
+   */
+  eventSubscription: {
+    /** Whether event subscription is currently active */
+    isSubscribed: boolean;
+    /** Timestamp of last received event for debugging */
+    lastEventTime: string | null;
+  };
 }

@@ -92,12 +92,17 @@ affectedFiles:
     activeConversationId, conversations array, activeMessages array,
     activeConversationAgents array, activeRequestToken for race conditions,
     loading states object, error states using ErrorState pattern, and
-    maximumMessages configuration
+    maximumMessages configuration; Added eventSubscription state tracking with
+    isSubscribed boolean and lastEventTime string for debugging event
+    subscription status and last received event timestamp
   packages/ui-shared/src/stores/conversation/ConversationStoreActions.ts:
     Created actions interface with all required conversation store operations
     including initialize, loadConversations, selectConversation,
     createConversationAndSelect, refreshActiveConversation, sendUserMessage,
-    addAgent, removeAgent, and toggleAgentEnabled methods
+    addAgent, removeAgent, and toggleAgentEnabled methods; Added
+    subscribeToAgentUpdates action interface with AgentUpdateEvent type
+    definition for platform-specific event subscription returning cleanup
+    function or null
   packages/ui-shared/src/stores/conversation/ConversationStore.ts:
     Created combined store type merging ConversationStoreState and
     ConversationStoreActions interfaces
@@ -129,7 +134,11 @@ affectedFiles:
     loadConversationAgents() for loading agents with race condition protection,
     addAgent() with optimistic state updates and request token validation,
     removeAgent() with direct array filtering, and toggleAgentEnabled() with
-    atomic state updates using service response"
+    atomic state updates using service response; Implemented comprehensive event
+    subscription logic including handleAgentUpdate function with direct
+    conversationId filtering, subscribeToAgentUpdates method with desktop
+    platform detection, event cleanup in selectConversation method, and proper
+    TypeScript typing for electron API"
   packages/ui-shared/src/stores/conversation/selectors.ts:
     "Created comprehensive
     selector functions file with 22 individual selectors: basic state selectors
@@ -150,7 +159,9 @@ affectedFiles:
     and TypeScript type safety validation. Includes mock data factory functions
     for Conversation, Message, ConversationAgent, and ErrorState types following
     actual shared package type definitions. All tests pass with 100% coverage of
-    selector functionality.
+    selector functionality.; Updated createMockState factory function to include
+    eventSubscription state field for proper test compatibility with new store
+    state interface
   apps/desktop/src/shared/ipc/chat/agentUpdateEvent.ts: "Added conversationId:
     string field as first property with JSDoc documentation '/** Unique
     identifier for the conversation */'"

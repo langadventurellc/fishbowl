@@ -8,6 +8,25 @@
 
 import type { ConversationService } from "@fishbowl-ai/shared";
 
+// Platform-specific imports with conditional typing
+type AgentUpdateEvent = {
+  conversationId: string;
+  conversationAgentId: string;
+  status: "thinking" | "complete" | "error";
+  messageId?: string;
+  error?: string;
+  agentName?: string;
+  errorType?:
+    | "network"
+    | "auth"
+    | "rate_limit"
+    | "validation"
+    | "provider"
+    | "timeout"
+    | "unknown";
+  retryable?: boolean;
+};
+
 export interface ConversationStoreActions {
   /**
    * Initialize the store with a ConversationService implementation.
@@ -65,4 +84,13 @@ export interface ConversationStoreActions {
    * Enables or disables agent participation in the conversation.
    */
   toggleAgentEnabled(conversationAgentId: string): Promise<void>;
+
+  /**
+   * Subscribe to real-time agent update events for the active conversation.
+   * Platform-specific implementation - returns cleanup function for desktop, null for unsupported platforms.
+   * Enables direct conversationId filtering and real-time activeMessages updates.
+   */
+  subscribeToAgentUpdates(
+    callback?: (event: AgentUpdateEvent) => void,
+  ): (() => void) | null;
 }

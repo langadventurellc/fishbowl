@@ -1,14 +1,39 @@
 ---
 id: T-implement-conversation-store
 title: Implement conversation store event integration with conversationId filtering
-status: open
+status: done
 priority: high
 parent: F-enhanced-ipc-event-integration
 prerequisites:
   - T-update-event-emission-to
   - T-update-preload-type
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/conversation/ConversationStoreState.ts:
+    Added eventSubscription state tracking with isSubscribed boolean and
+    lastEventTime string for debugging event subscription status and last
+    received event timestamp
+  packages/ui-shared/src/stores/conversation/ConversationStoreActions.ts:
+    Added subscribeToAgentUpdates action interface with AgentUpdateEvent type
+    definition for platform-specific event subscription returning cleanup
+    function or null
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Implemented comprehensive event subscription logic including
+    handleAgentUpdate function with direct conversationId filtering,
+    subscribeToAgentUpdates method with desktop platform detection, event
+    cleanup in selectConversation method, and proper TypeScript typing for
+    electron API
+  packages/ui-shared/src/stores/conversation/__tests__/selectors.test.ts:
+    Updated createMockState factory function to include eventSubscription state
+    field for proper test compatibility with new store state interface
+log:
+  - Successfully implemented conversation store event integration with
+    conversationId filtering. The store now subscribes to enhanced
+    AgentUpdateEvents and filters them directly using conversationId,
+    eliminating reverse mapping overhead. Added comprehensive race condition
+    protection using activeRequestToken validation and proper cleanup when
+    conversations change. Event subscription state is tracked for debugging, and
+    the implementation follows existing patterns for platform detection and
+    error handling.
 schema: v1.0
 childrenIds: []
 created: 2025-09-01T05:44:10.292Z

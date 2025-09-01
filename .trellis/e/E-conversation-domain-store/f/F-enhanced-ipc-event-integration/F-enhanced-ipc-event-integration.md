@@ -22,14 +22,31 @@ affectedFiles:
   apps/desktop/src/hooks/chat/__tests__/useChatEventIntegration.test.tsx:
     Updated all 10 AgentUpdateEvent instances in test cases to include
     conversationId field with consistent test values
+  packages/ui-shared/src/stores/conversation/ConversationStoreState.ts:
+    Added eventSubscription state tracking with isSubscribed boolean and
+    lastEventTime string for debugging event subscription status and last
+    received event timestamp
+  packages/ui-shared/src/stores/conversation/ConversationStoreActions.ts:
+    Added subscribeToAgentUpdates action interface with AgentUpdateEvent type
+    definition for platform-specific event subscription returning cleanup
+    function or null
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Implemented comprehensive event subscription logic including
+    handleAgentUpdate function with direct conversationId filtering,
+    subscribeToAgentUpdates method with desktop platform detection, event
+    cleanup in selectConversation method, and proper TypeScript typing for
+    electron API
+  packages/ui-shared/src/stores/conversation/__tests__/selectors.test.ts:
+    Updated createMockState factory function to include eventSubscription state
+    field for proper test compatibility with new store state interface
 log: []
 schema: v1.0
 childrenIds:
   - T-implement-conversation-store
-  - T-update-event-emission-to
-  - T-update-preload-type
   - T-update-renderer-event
   - T-add-conversationid-field-to
+  - T-update-event-emission-to
+  - T-update-preload-type
 created: 2025-09-01T02:21:31.736Z
 updated: 2025-09-01T02:21:31.736Z
 ---

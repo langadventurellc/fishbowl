@@ -15,6 +15,25 @@ import type {
 } from "@fishbowl-ai/shared";
 import { useChatStore } from "../chat/useChatStore";
 
+// Platform-specific event type for desktop integration
+type AgentUpdateEvent = {
+  conversationId: string;
+  conversationAgentId: string;
+  status: "thinking" | "complete" | "error";
+  messageId?: string;
+  error?: string;
+  agentName?: string;
+  errorType?:
+    | "network"
+    | "auth"
+    | "rate_limit"
+    | "validation"
+    | "provider"
+    | "timeout"
+    | "unknown";
+  retryable?: boolean;
+};
+
 /**
  * Generate unique request token for race condition protection.
  * Uses crypto.randomUUID() when available, falls back to timestamp + random.
@@ -40,6 +59,8 @@ const applyMessageLimit = (messages: Message[], limit: number): Message[] => {
 
 // Private service reference for dependency injection
 let conversationService: ConversationService | null = null;
+// Event subscription cleanup reference
+let eventCleanupRef: (() => void) | null = null;
 
 export const useConversationStore = create<ConversationStore>()((set, get) => ({
   // Initial state - all arrays empty, loading states false
@@ -49,6 +70,11 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   activeConversationAgents: [],
   activeRequestToken: null,
   maximumMessages: 100,
+  // Event subscription state
+  eventSubscription: {
+    isSubscribed: false,
+    lastEventTime: null,
+  },
 
   // Loading states
   loading: {
@@ -128,6 +154,19 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
 
     // Generate request token for race condition protection
     const requestToken = generateRequestToken();
+
+    // Clean up previous event subscription when switching conversations
+    if (eventCleanupRef) {
+      eventCleanupRef();
+      eventCleanupRef = null;
+      set((state) => ({
+        ...state,
+        eventSubscription: {
+          ...state.eventSubscription,
+          isSubscribed: false,
+        },
+      }));
+    }
 
     try {
       set((state) => ({
@@ -654,6 +693,91 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
           },
         },
       }));
+    }
+  },
+
+  /**
+   * Subscribe to real-time agent update events for the active conversation.
+   */
+  subscribeToAgentUpdates: (callback?: (event: AgentUpdateEvent) => void) => {
+    // Platform detection - desktop only
+    const electronWindow = window as unknown as {
+      electronAPI?: {
+        chat?: {
+          onAgentUpdate?: (
+            handler: (event: AgentUpdateEvent) => void,
+          ) => () => void;
+        };
+      };
+    };
+    if (
+      typeof window === "undefined" ||
+      !electronWindow.electronAPI?.chat?.onAgentUpdate
+    ) {
+      return null; // Not available on this platform
+    }
+
+    // Handle agent update events with conversationId filtering
+    const handleAgentUpdate = (event: AgentUpdateEvent) => {
+      const { activeConversationId, activeRequestToken } = get();
+
+      // Direct filtering using new conversationId field - NO REVERSE MAPPING
+      if (event.conversationId !== activeConversationId) {
+        return; // Ignore events for inactive conversations
+      }
+
+      // Race condition safety using active request token
+      if (get().activeRequestToken !== activeRequestToken) {
+        return; // Ignore stale events from previous conversation selections
+      }
+
+      // Update event subscription state
+      set((state) => ({
+        ...state,
+        eventSubscription: {
+          ...state.eventSubscription,
+          lastEventTime: new Date().toISOString(),
+        },
+      }));
+
+      // Process event for active conversation (minimal processing for v1)
+      // Most event processing is handled by chat store, this is for future message updates
+      if (callback) {
+        callback(event);
+      }
+    };
+
+    // Clean up previous subscription
+    if (eventCleanupRef) {
+      eventCleanupRef();
+      eventCleanupRef = null;
+    }
+
+    try {
+      // Subscribe to events
+      eventCleanupRef =
+        electronWindow.electronAPI.chat.onAgentUpdate(handleAgentUpdate);
+
+      // Update subscription state
+      set((state) => ({
+        ...state,
+        eventSubscription: {
+          ...state.eventSubscription,
+          isSubscribed: true,
+        },
+      }));
+
+      return eventCleanupRef;
+    } catch {
+      // Failed to subscribe, return null
+      set((state) => ({
+        ...state,
+        eventSubscription: {
+          ...state.eventSubscription,
+          isSubscribed: false,
+        },
+      }));
+      return null;
     }
   },
 }));

@@ -93,6 +93,10 @@ const createMockState = (
   activeConversationAgents: [],
   activeRequestToken: null,
   maximumMessages: 100,
+  eventSubscription: {
+    isSubscribed: false,
+    lastEventTime: null,
+  },
   loading: {
     conversations: false,
     messages: false,
