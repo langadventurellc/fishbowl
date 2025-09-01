@@ -105,7 +105,9 @@ affectedFiles:
     Created barrel exports file
     for clean conversation store type imports; Added barrel export for
     useConversationStore to enable clean imports from the conversation store
-    package
+    package; Updated barrel exports file to include selectors via 'export * from
+    "./selectors"' enabling clean imports of all selector functions alongside
+    existing store types and hooks.
   packages/ui-shared/src/stores/index.ts:
     Added conversation store exports to main
     stores barrel file following established patterns
@@ -128,6 +130,27 @@ affectedFiles:
     addAgent() with optimistic state updates and request token validation,
     removeAgent() with direct array filtering, and toggleAgentEnabled() with
     atomic state updates using service response"
+  packages/ui-shared/src/stores/conversation/selectors.ts:
+    "Created comprehensive
+    selector functions file with 22 individual selectors: basic state selectors
+    (selectActiveConversationId, selectConversations, selectActiveMessages,
+    selectActiveConversationAgents, selectLoadingStates, selectErrorStates),
+    computed selectors (selectActiveConversation, selectHasActiveConversation,
+    selectMessageCount, selectEnabledAgents, selectIsLoading), specific loading
+    state selectors (selectIsLoadingConversations, selectIsLoadingMessages,
+    selectIsLoadingAgents, selectIsSending), specific error state selectors
+    (selectConversationsError, selectMessagesError, selectAgentsError,
+    selectSendingError), and configuration selectors (selectMaximumMessages,
+    selectActiveRequestToken). All selectors include comprehensive TypeScript
+    typing and JSDoc documentation following established codebase patterns."
+  packages/ui-shared/src/stores/conversation/__tests__/selectors.test.ts:
+    Created comprehensive test suite with 40 test cases covering all selector
+    functionality including basic state selectors, computed selectors, loading
+    state selectors, error state selectors, configuration selectors, edge cases,
+    and TypeScript type safety validation. Includes mock data factory functions
+    for Conversation, Message, ConversationAgent, and ErrorState types following
+    actual shared package type definitions. All tests pass with 100% coverage of
+    selector functionality.
 log: []
 schema: v1.0
 childrenIds:
