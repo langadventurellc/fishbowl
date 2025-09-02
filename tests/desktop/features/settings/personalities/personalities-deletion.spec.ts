@@ -56,7 +56,9 @@ test.describe("Feature: Personalities Section - Personality Deletion", () => {
     });
 
     // Click delete button (always visible, no hover needed)
-    const deleteButton = personalityCard.locator('button:has-text("Delete")');
+    const deleteButton = personalityCard.getByRole("button", {
+      name: /^delete /i,
+    });
     await expect(deleteButton).toBeVisible();
     await deleteButton.click();
 
@@ -150,7 +152,9 @@ test.describe("Feature: Personalities Section - Personality Deletion", () => {
       has: window.locator(`text="${testPersonality.name}"`),
     });
 
-    const deleteButton = personalityCard.locator('button:has-text("Delete")');
+    const deleteButton = personalityCard.getByRole("button", {
+      name: /^delete /i,
+    });
     await deleteButton.click();
 
     // Wait for confirmation dialog
@@ -207,7 +211,9 @@ test.describe("Feature: Personalities Section - Personality Deletion", () => {
       has: window.locator(`text="${testPersonality.name}"`),
     });
 
-    const deleteButton = personalityCard.locator('button:has-text("Delete")');
+    const deleteButton = personalityCard.getByRole("button", {
+      name: /^delete /i,
+    });
     await deleteButton.click();
 
     // Verify dialog appears with correct content
@@ -283,9 +289,9 @@ test.describe("Feature: Personalities Section - Personality Deletion", () => {
       has: window.locator(`text="Second Personality"`),
     });
 
-    const deleteButton = middlePersonalityCard.locator(
-      'button:has-text("Delete")',
-    );
+    const deleteButton = middlePersonalityCard.getByRole("button", {
+      name: /delete/i,
+    });
     await deleteButton.click();
 
     const confirmDialog = window.locator('[role="alertdialog"]');
@@ -320,9 +326,9 @@ test.describe("Feature: Personalities Section - Personality Deletion", () => {
     });
 
     // Click delete button
-    const deleteButton = defaultPersonalityCard.locator(
-      'button:has-text("Delete")',
-    );
+    const deleteButton = defaultPersonalityCard.getByRole("button", {
+      name: /delete/i,
+    });
     await expect(deleteButton).toBeVisible();
     await deleteButton.click();
 
@@ -380,7 +386,9 @@ test.describe("Feature: Personalities Section - Personality Deletion", () => {
       has: window.locator(`text="${testPersonality.name}"`),
     });
 
-    const deleteButton = personalityCard.locator('button:has-text("Delete")');
+    const deleteButton = personalityCard.getByRole("button", {
+      name: /^delete /i,
+    });
     await deleteButton.click();
 
     const confirmDialog = window.locator('[role="alertdialog"]');

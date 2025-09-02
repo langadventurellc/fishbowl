@@ -69,6 +69,7 @@ export {
 } from "./waitForRoleModal";
 export {
   waitForRole,
+  waitForRoleCount,
   waitForRolesEmptyState,
   waitForRolesList,
 } from "./waitForRolesList";

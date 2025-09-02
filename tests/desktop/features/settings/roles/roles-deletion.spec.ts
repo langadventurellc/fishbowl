@@ -8,6 +8,7 @@ import {
   waitForRoleModal,
   waitForModalToClose,
   waitForRole,
+  waitForRoleCount,
 } from "../../../helpers";
 
 test.describe("Feature: Roles Section - Role Deletion", () => {
@@ -251,8 +252,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     }
 
     // Verify all 57 roles exist (54 default + 3 created)
-    let roleCount = await window.locator('[role="listitem"]').count();
-    expect(roleCount).toBe(57);
+    await waitForRoleCount(window, 57);
 
     // Delete the middle role
     const middleRoleCard = window.locator('[role="listitem"]').filter({
@@ -274,8 +274,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await expect(confirmDialog).not.toBeVisible();
 
     // Verify correct role was deleted
-    roleCount = await window.locator('[role="listitem"]').count();
-    expect(roleCount).toBe(56);
+    await waitForRoleCount(window, 56);
 
     await expect(window.locator('text="First Role"')).toBeVisible();
     await expect(window.locator('text="Second Role"')).not.toBeVisible();
