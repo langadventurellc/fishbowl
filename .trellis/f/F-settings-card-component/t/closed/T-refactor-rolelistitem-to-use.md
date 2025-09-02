@@ -1,13 +1,28 @@
 ---
 id: T-refactor-rolelistitem-to-use
 title: Replace RoleListItem with SettingsCard implementation
-status: open
+status: done
 priority: medium
 parent: F-settings-card-component
 prerequisites:
   - T-create-settingscard-component
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/roles/RoleListItem.tsx:
+    Completely replaced 123-line complex implementation with simple 28-line
+    SettingsCard wrapper - removed all loading state logic (isEditLoading,
+    isDeleteLoading), eliminated async handlers, removed complex Card structure
+    and styling, simplified imports to only necessary ones (SettingsCard,
+    truncateDescription), maintained memo wrapper and RoleListItemProps
+    interface for external compatibility
+log:
+  - "Successfully refactored RoleListItem component to use SettingsCard,
+    eliminating all loading state complexity and reducing component from 123
+    lines to 28 lines. The component now uses SettingsCard for consistent
+    styling and interaction patterns while maintaining the same external API.
+    All acceptance criteria met: title displays role.name, content displays
+    truncated description (120 chars), edit/delete handlers work directly
+    without loading states, and component integrates seamlessly with existing
+    role settings page."
 schema: v1.0
 childrenIds: []
 created: 2025-09-02T02:47:11.084Z
