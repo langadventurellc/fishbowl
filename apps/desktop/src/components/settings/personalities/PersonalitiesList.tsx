@@ -17,7 +17,7 @@ import { Plus } from "lucide-react";
 import { memo, useMemo } from "react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
-import { PersonalityCard } from "./PersonalityCard";
+import { SettingsCard } from "../../ui/SettingsCard";
 
 interface PersonalitiesListProps {
   personalities: readonly PersonalityViewModel[];
@@ -60,15 +60,25 @@ export const PersonalitiesList = memo<PersonalitiesListProps>(
               buttons.
             </div>
 
-            {sortedPersonalities.map((personality) => (
-              <div key={personality.id} role="listitem">
-                <PersonalityCard
-                  personality={personality}
-                  onEdit={onEdit}
-                  onDelete={onDelete}
-                />
-              </div>
-            ))}
+            {sortedPersonalities.map((personality) => {
+              const behaviorCount = Object.keys(personality.behaviors).length;
+              const customInstructionsPreview = personality.customInstructions
+                ? personality.customInstructions.slice(0, 50) +
+                  (personality.customInstructions.length > 50 ? "..." : "")
+                : "No custom instructions";
+              const content = `${behaviorCount} behaviors • ${customInstructionsPreview}`;
+
+              return (
+                <div key={personality.id} role="listitem">
+                  <SettingsCard
+                    title={personality.name}
+                    content={content}
+                    onEdit={() => onEdit(personality)}
+                    onDelete={() => onDelete(personality)}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
 

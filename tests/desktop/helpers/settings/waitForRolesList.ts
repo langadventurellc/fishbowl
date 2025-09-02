@@ -92,3 +92,25 @@ export const waitForRole = async (window: TestWindow, roleName: string) => {
 
   await expect(roleCard).toBeVisible({ timeout: 5000 });
 };
+
+/**
+ * Wait for a specific number of roles to be present in the list.
+ * Useful for verifying role creation or deletion.
+ */
+export const waitForRoleCount = async (
+  window: TestWindow,
+  expectedCount: number,
+) => {
+  // First ensure the list is loaded
+  await waitForRolesList(window);
+
+  // Wait for the expected count with timeout and retries
+  await expect(async () => {
+    const roleItems = window.locator('[role="listitem"]');
+    const currentCount = await roleItems.count();
+    expect(currentCount).toBe(expectedCount);
+  }).toPass({
+    timeout: 10000,
+    intervals: [100, 250, 500], // Start with quick checks, then slower ones
+  });
+};

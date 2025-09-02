@@ -72,16 +72,24 @@ test.describe("Feature: Personalities Section - Default Personalities Loading", 
     const firstPersonalityCard = window.locator('[role="listitem"]').first();
 
     // Verify Edit button exists and is accessible
-    const editButton = firstPersonalityCard.locator('button:has-text("Edit")');
+    const editButton = firstPersonalityCard.getByRole("button", {
+      name: /^edit /i,
+    });
     await expect(editButton).toBeVisible();
-    await expect(editButton).toContainText("Edit");
+    await expect(editButton).toHaveAttribute(
+      "aria-label",
+      expect.stringMatching(/^Edit /),
+    );
 
     // Verify Delete button exists and is accessible
-    const deleteButton = firstPersonalityCard.locator(
-      'button:has-text("Delete")',
-    );
+    const deleteButton = firstPersonalityCard.getByRole("button", {
+      name: /^delete /i,
+    });
     await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toContainText("Delete");
+    await expect(deleteButton).toHaveAttribute(
+      "aria-label",
+      expect.stringMatching(/^Delete /),
+    );
 
     // Verify card uses Card component structure
     const card = firstPersonalityCard.locator("[class*='hover:shadow-md']");

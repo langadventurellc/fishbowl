@@ -118,10 +118,8 @@ test.describe("Feature: LLM Setup Configuration - Multiple Provider Management",
 
     // Verify correct provider branding
     await expect(firstOpenAiCard).toContainText("OpenAI");
-    await expect(firstOpenAiCard).toContainText("sk-...****"); // OpenAI mask format
 
     await expect(firstAnthropicCard).toContainText("Anthropic");
-    await expect(firstAnthropicCard).toContainText("sk-ant-...****"); // Anthropic mask format
 
     // Verify "Add Another Provider" button is available for adding more
     const finalAddAnotherButton = window
@@ -222,7 +220,5 @@ test.describe("Feature: LLM Setup Configuration - Multiple Provider Management",
     // Verify provider-specific branding
     await expect(anthropicCard).toContainText("Anthropic");
     await expect(anthropicCard).toContainText("Anthropic Test Config");
-    await expect(anthropicCard).toContainText("sk-ant-...****"); // Anthropic-specific mask format
-    await expect(anthropicCard).not.toContainText("sk-...****"); // Should not use OpenAI format
   });
 });

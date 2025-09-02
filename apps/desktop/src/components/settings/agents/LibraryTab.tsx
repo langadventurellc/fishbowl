@@ -15,6 +15,7 @@
 import {
   type AgentSettingsViewModel,
   useAgentsStore,
+  getRoleById,
 } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, Loader2, Plus, RefreshCw } from "lucide-react";
 import React, { useCallback, useRef, useState } from "react";
@@ -25,7 +26,9 @@ import { Button } from "../../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
 import { ConfirmationDialog } from "../../ui/confirmation-dialog";
 import { useConfirmationDialog } from "../../../hooks/useConfirmationDialog";
-import { AgentCard, EmptyLibraryState } from "./";
+import { useLlmModels } from "../../../hooks/useLlmModels";
+import { EmptyLibraryState } from "./";
+import { SettingsCard } from "../../ui/SettingsCard";
 import { useServices } from "../../../contexts";
 
 /**
@@ -40,6 +43,7 @@ const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
   const { logger } = useServices();
   const { deleteAgent } = useAgentsStore();
   const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
+  const { models } = useLlmModels();
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const [isDeleting, setIsDeleting] = useState<string | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -152,17 +156,36 @@ const AgentGrid: React.FC<AgentGridProps> = ({ agents, openEditModal }) => {
           aria-rowindex={Math.floor(index / columns) + 1}
           aria-colindex={(index % columns) + 1}
         >
-          <AgentCard
-            agent={agent}
-            onEdit={() => {
-              openEditModal(agent);
-              announceToScreenReader(
-                `Opening edit dialog for ${agent.name}`,
-                "polite",
-              );
-            }}
-            onDelete={handleDeleteAgent}
-          />
+          {(() => {
+            // Get display names with business logic from AgentCard
+            const roleDisplayName = getRoleById(agent.role)?.name || agent.role;
+
+            // Find model using both configId and model id for accurate resolution
+            const resolvedModel = models.find(
+              (m) => m.configId === agent.llmConfigId && m.id === agent.model,
+            );
+
+            // Fallback to stored model string if not found
+            const modelDisplayName = resolvedModel?.name || agent.model;
+
+            // Combine model and role for content
+            const content = `${modelDisplayName} • ${roleDisplayName}`;
+
+            return (
+              <SettingsCard
+                title={agent.name}
+                content={content}
+                onEdit={() => {
+                  openEditModal(agent);
+                  announceToScreenReader(
+                    `Opening edit dialog for ${agent.name}`,
+                    "polite",
+                  );
+                }}
+                onDelete={() => handleDeleteAgent(agent.id)}
+              />
+            );
+          })()}
         </div>
       ))}
       {confirmationDialogProps && (

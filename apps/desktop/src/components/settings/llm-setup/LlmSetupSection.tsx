@@ -17,12 +17,7 @@ import type {
 } from "@fishbowl-ai/shared";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useCallback, useState } from "react";
-import {
-  EmptyLlmState,
-  LlmConfigModal,
-  LlmProviderCard,
-  ProviderSelector,
-} from ".";
+import { EmptyLlmState, LlmConfigModal, ProviderSelector } from ".";
 import { useLlmConfig } from "../../../hooks/useLlmConfig";
 import { cn } from "../../../lib/utils";
 import {
@@ -36,6 +31,7 @@ import {
   AlertDialogTitle,
 } from "../../ui/alert-dialog";
 import { Button } from "../../ui/button";
+import { SettingsCard } from "../../ui/SettingsCard";
 
 /**
  * LLM Setup section component that manages LLM configurations.
@@ -227,14 +223,29 @@ export function LlmSetupSection({ className }: { className?: string }) {
       ) : (
         <>
           <div className="space-y-4">
-            {configurations.map((config) => (
-              <LlmProviderCard
-                key={config.id}
-                configuration={config}
-                onEdit={handleEdit}
-                onDelete={handleDeleteClick}
-              />
-            ))}
+            {configurations.map((config) => {
+              const getProviderInfo = (provider: Provider) => {
+                switch (provider) {
+                  case "openai":
+                    return { label: "OpenAI" };
+                  case "anthropic":
+                    return { label: "Anthropic" };
+                  default:
+                    return { label: "Unknown" };
+                }
+              };
+              const providerInfo = getProviderInfo(config.provider);
+
+              return (
+                <SettingsCard
+                  key={config.id}
+                  title={config.customName}
+                  content={providerInfo.label}
+                  onEdit={() => handleEdit(config)}
+                  onDelete={() => handleDeleteClick(config.id)}
+                />
+              );
+            })}
           </div>
           <div className="flex justify-center pt-4">
             <ProviderSelector

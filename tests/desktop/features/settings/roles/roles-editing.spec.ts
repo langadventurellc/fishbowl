@@ -51,7 +51,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
 
     // Click edit button
     const editButton = roleCard.locator(
-      `button[aria-label="Edit ${originalData.name} role"]`,
+      `button[aria-label="Edit ${originalData.name}"]`,
     );
     await expect(editButton).toBeVisible();
     await editButton.click();
@@ -91,7 +91,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
       has: window.locator(`text="${updatedData.name}"`),
     });
     await expect(
-      updatedRoleCard.locator("p.text-muted-foreground"),
+      updatedRoleCard.locator(".text-muted-foreground"),
     ).toContainText(updatedData.description);
 
     // Verify persistence with retry logic (due to flaky test environment)
@@ -160,7 +160,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
     await roleCard.hover();
 
     const editButton = roleCard.locator(
-      `button[aria-label="Edit ${testData.name} role"]`,
+      `button[aria-label="Edit ${testData.name}"]`,
     );
     await editButton.click();
 
@@ -219,7 +219,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
     });
     await roleCard.hover();
     const editButton = roleCard.locator(
-      `button[aria-label="Edit ${secondRole.name} role"]`,
+      `button[aria-label="Edit ${secondRole.name}"]`,
     );
     await editButton.click();
 
@@ -289,7 +289,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
     });
     await roleCard.hover();
     const editButton = roleCard.locator(
-      `button[aria-label="Edit ${originalData.name} role"]`,
+      `button[aria-label="Edit ${originalData.name}"]`,
     );
     await editButton.click();
 
@@ -338,7 +338,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
       has: window.locator(`text="${originalData.name}"`),
     });
     await expect(
-      originalRoleCard.locator("p.text-muted-foreground"),
+      originalRoleCard.locator(".text-muted-foreground"),
     ).toContainText(originalData.description);
 
     // Verify persistence - original data should remain unchanged with retry logic
@@ -393,7 +393,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
     });
     await roleCard.hover();
     const editButton = roleCard.locator(
-      `button[aria-label="Edit ${originalData.name} role"]`,
+      `button[aria-label="Edit ${originalData.name}"]`,
     );
     await editButton.click();
 
@@ -436,7 +436,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
       has: window.locator(`text="${updatedData.name}"`),
     });
     await expect(
-      updatedRoleCard.locator("p.text-muted-foreground"),
+      updatedRoleCard.locator(".text-muted-foreground"),
     ).toContainText(updatedData.description);
   });
 
@@ -453,7 +453,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
     await defaultRoleCard.hover();
 
     const defaultEditButton = defaultRoleCard.locator(
-      'button[aria-label="Edit Project Manager role"]',
+      'button[aria-label="Edit Project Manager"]',
     );
     await expect(defaultEditButton).toBeVisible();
     await defaultEditButton.click();
@@ -483,7 +483,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
 
     // Verify default role was updated
     await expect(
-      defaultRoleCard.locator("p.text-muted-foreground"),
+      defaultRoleCard.locator(".text-muted-foreground"),
     ).toContainText("Modified project manager description");
 
     // Test that custom roles work the same way
@@ -514,7 +514,7 @@ test.describe("Feature: Roles Section - Role Editing", () => {
     });
     await customRoleCard.hover();
     const customEditButton = customRoleCard.locator(
-      `button[aria-label="Edit ${customRole.name} role"]`,
+      `button[aria-label="Edit ${customRole.name}"]`,
     );
     await customEditButton.click();
 

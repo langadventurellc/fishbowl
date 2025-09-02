@@ -60,7 +60,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
     await personalityCard.hover();
 
     // Click edit button
-    const editButton = personalityCard.locator('button:has-text("Edit")');
+    const editButton = personalityCard.getByRole("button", { name: /^edit /i });
     await expect(editButton).toBeVisible();
     await editButton.click();
 
@@ -112,7 +112,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
       has: window.locator(`text=${updatedData.name}`),
     });
     await expect(
-      updatedPersonalityCard.locator('[data-slot="card-description"]'),
+      updatedPersonalityCard.locator('[data-slot="card-content"]'),
     ).toContainText(updatedData.customInstructions.substring(0, 50)); // May be truncated
 
     // Verify persistence with retry logic (due to flaky test environment)
@@ -213,7 +213,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
     });
     await personalityCard.hover();
 
-    const editButton = personalityCard.locator('button:has-text("Edit")');
+    const editButton = personalityCard.getByRole("button", { name: /^edit /i });
     await editButton.click();
 
     await waitForPersonalityModal(window, "edit");
@@ -290,7 +290,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
       has: window.locator(`text=${secondPersonality.name}`),
     });
     await personalityCard.hover();
-    const editButton = personalityCard.locator('button:has-text("Edit")');
+    const editButton = personalityCard.getByRole("button", { name: /^edit /i });
     await editButton.click();
 
     await waitForPersonalityModal(window, "edit");
@@ -371,7 +371,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
       has: window.locator(`text="${originalData.name}"`),
     });
     await personalityCard.hover();
-    const editButton = personalityCard.locator('button:has-text("Edit")');
+    const editButton = personalityCard.getByRole("button", { name: /^edit /i });
     await editButton.click();
 
     await waitForPersonalityModal(window, "edit");
@@ -437,7 +437,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
       has: window.locator(`text="${originalData.name}"`),
     });
     await expect(
-      originalPersonalityCard.locator('[data-slot="card-description"]'),
+      originalPersonalityCard.locator('[data-slot="card-content"]'),
     ).toContainText(originalData.customInstructions.substring(0, 50));
 
     // Verify persistence - original data should remain unchanged with retry logic
@@ -503,7 +503,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
       has: window.locator(`text="${originalData.name}"`),
     });
     await personalityCard.hover();
-    const editButton = personalityCard.locator('button:has-text("Edit")');
+    const editButton = personalityCard.getByRole("button", { name: /^edit /i });
     await editButton.click();
 
     await waitForPersonalityModal(window, "edit");
@@ -548,7 +548,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
       has: window.locator(`text="${updatedData.name}"`),
     });
     await expect(
-      updatedPersonalityCard.locator('[data-slot="card-description"]'),
+      updatedPersonalityCard.locator('[data-slot="card-content"]'),
     ).toContainText(updatedData.customInstructions.substring(0, 50));
   });
 
@@ -564,9 +564,9 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
     });
     await defaultPersonalityCard.hover();
 
-    const defaultEditButton = defaultPersonalityCard.locator(
-      'button:has-text("Edit")',
-    );
+    const defaultEditButton = defaultPersonalityCard.getByRole("button", {
+      name: /^edit /i,
+    });
     await expect(defaultEditButton).toBeVisible();
     await defaultEditButton.click();
 
@@ -595,7 +595,7 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
 
     // Verify default personality was updated
     await expect(
-      defaultPersonalityCard.locator('[data-slot="card-description"]'),
+      defaultPersonalityCard.locator('[data-slot="card-content"]'),
     ).toContainText("Modified analytical strategist instructions");
 
     // Test that custom personalities work the same way
@@ -626,9 +626,9 @@ test.describe("Feature: Personalities Section - Personality Editing", () => {
       has: window.locator(`text=${customPersonality.name}`),
     });
     await customPersonalityCard.hover();
-    const customEditButton = customPersonalityCard.locator(
-      'button:has-text("Edit")',
-    );
+    const customEditButton = customPersonalityCard.getByRole("button", {
+      name: /^edit /i,
+    });
     await customEditButton.click();
 
     await waitForPersonalityModal(window, "edit");

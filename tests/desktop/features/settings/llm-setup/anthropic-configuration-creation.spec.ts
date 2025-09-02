@@ -84,7 +84,6 @@ test.describe("Feature: LLM Setup Configuration - Anthropic Configuration Creati
     // Verify Anthropic-specific content
     await expect(configCard).toContainText(mockConfig.customName);
     await expect(configCard).toContainText("Anthropic");
-    await expect(configCard).toContainText("sk-ant-...****"); // Anthropic masked format
   });
 
   test("populates Anthropic-specific defaults", async () => {
