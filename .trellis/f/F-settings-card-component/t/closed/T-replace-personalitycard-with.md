@@ -1,13 +1,28 @@
 ---
 id: T-replace-personalitycard-with
 title: Replace PersonalityCard with SettingsCard implementation
-status: open
+status: done
 priority: medium
 parent: F-settings-card-component
 prerequisites:
   - T-create-settingscard-component
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/settings/personalities/PersonalitiesList.tsx:
+    Updated to use SettingsCard directly instead of PersonalityCard - moved
+    behavior count calculation and custom instructions preview logic inline,
+    updated imports, maintained all existing functionality
+  apps/desktop/src/components/settings/personalities/index.ts: Removed PersonalityCard export from barrel file since component was deleted
+  apps/desktop/src/components/settings/personalities/PersonalityCard.tsx:
+    Deleted - completely replaced with SettingsCard usage in PersonalitiesList
+    component
+log:
+  - Successfully replaced PersonalityCard component with SettingsCard
+    implementation. Completely removed the PersonalityCard.tsx file and updated
+    PersonalitiesList to use SettingsCard directly with the same behavior count
+    calculation and custom instructions preview logic. All functionality
+    preserved - edit and delete handlers work correctly, content displays
+    "{count} behaviors • {preview}" format, and visual consistency maintained
+    with the unified design system.
 schema: v1.0
 childrenIds: []
 created: 2025-09-02T02:46:49.118Z

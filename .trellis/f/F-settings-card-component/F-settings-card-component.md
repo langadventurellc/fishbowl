@@ -1,7 +1,7 @@
 ---
 id: F-settings-card-component
 title: Settings Card Component
-status: in-progress
+status: done
 priority: medium
 prerequisites: []
 affectedFiles:
@@ -39,15 +39,24 @@ affectedFiles:
     and styling, simplified imports to only necessary ones (SettingsCard,
     truncateDescription), maintained memo wrapper and RoleListItemProps
     interface for external compatibility
-log: []
+  apps/desktop/src/components/settings/personalities/PersonalitiesList.tsx:
+    Updated to use SettingsCard directly instead of PersonalityCard - moved
+    behavior count calculation and custom instructions preview logic inline,
+    updated imports, maintained all existing functionality
+  apps/desktop/src/components/settings/personalities/index.ts: Removed PersonalityCard export from barrel file since component was deleted
+  apps/desktop/src/components/settings/personalities/PersonalityCard.tsx:
+    Deleted - completely replaced with SettingsCard usage in PersonalitiesList
+    component
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-refactor-rolelistitem-to-use
-  - T-replace-personalitycard-with
   - T-create-settingscard-component
   - T-create-settingscardprops
   - T-refactor-agentcard-to-use
   - T-refactor-llmprovidercard-to
+  - T-refactor-rolelistitem-to-use
+  - T-replace-personalitycard-with
 created: 2025-09-02T02:41:57.955Z
 updated: 2025-09-02T02:41:57.955Z
 ---

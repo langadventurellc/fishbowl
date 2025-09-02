@@ -16,8 +16,9 @@ import type { RoleViewModel } from "@fishbowl-ai/ui-shared";
 import { Plus } from "lucide-react";
 import { memo, useMemo } from "react";
 import { cn } from "../../../lib/utils";
+import { truncateDescription } from "../../../utils";
 import { Button } from "../../ui/button";
-import { RoleListItem } from "./RoleListItem";
+import { SettingsCard } from "../../ui/SettingsCard";
 
 interface RolesListProps {
   roles: readonly RoleViewModel[];
@@ -60,10 +61,11 @@ export const RolesList = memo<RolesListProps>(function RolesList({
 
           {sortedRoles.map((role) => (
             <div key={role.id} role="listitem">
-              <RoleListItem
-                role={role}
-                onEdit={onEditRole}
-                onDelete={onDeleteRole}
+              <SettingsCard
+                title={role.name}
+                content={truncateDescription(role.description, 120)}
+                onEdit={() => onEditRole(role)}
+                onDelete={() => onDeleteRole(role)}
               />
             </div>
           ))}

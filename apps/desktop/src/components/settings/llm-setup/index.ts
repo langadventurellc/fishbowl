@@ -7,6 +7,5 @@
 
 export { EmptyLlmState } from "./EmptyLlmState";
 export { LlmConfigModal } from "./LlmConfigModal";
-export { LlmProviderCard } from "./LlmProviderCard";
 export { LlmSetupSection } from "./LlmSetupSection";
 export { ProviderSelector } from "./ProviderSelector";
