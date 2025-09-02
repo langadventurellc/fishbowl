@@ -26,15 +26,21 @@ affectedFiles:
     intermediate component no longer needed after refactoring LibraryTab to use
     SettingsCard directly
   apps/desktop/src/components/settings/agents/index.ts: Removed AgentCard export from barrel file since component was deleted
+  apps/desktop/src/components/settings/llm-setup/LlmProviderCard.tsx:
+    Completely replaced complex 178-line implementation with simplified 37-line
+    SettingsCard-based version - removed maskApiKey and formatRelativeTime
+    helper functions, eliminated complex Card layout with API key display and
+    timestamps, simplified getProviderInfo to return only labels, integrated
+    with SettingsCard component for consistent styling and interaction patterns
 log: []
 schema: v1.0
 childrenIds:
-  - T-refactor-agentcard-to-use
   - T-refactor-llmprovidercard-to
   - T-refactor-rolelistitem-to-use
   - T-replace-personalitycard-with
   - T-create-settingscard-component
   - T-create-settingscardprops
+  - T-refactor-agentcard-to-use
 created: 2025-09-02T02:41:57.955Z
 updated: 2025-09-02T02:41:57.955Z
 ---

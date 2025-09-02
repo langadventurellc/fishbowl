@@ -1,6 +1,6 @@
 ---
 id: T-refactor-rolelistitem-to-use
-title: Refactor RoleListItem to use SettingsCard removing loading states
+title: Replace RoleListItem with SettingsCard implementation
 status: open
 priority: medium
 parent: F-settings-card-component
@@ -16,24 +16,36 @@ updated: 2025-09-02T02:47:11.084Z
 
 ## Context
 
-Refactor RoleListItem component to use SettingsCard while removing loading state complexity as specified in the feature requirements. This simplification removes async loading patterns to keep the component straightforward.
+Completely replace the RoleListItem component by deleting the existing implementation and using the SettingsCard component while removing loading state complexity as specified in the feature requirements.
 
 Reference the feature specification: F-settings-card-component
 Reference existing component: `apps/desktop/src/components/settings/roles/RoleListItem.tsx`
+Reference SettingsCard: `/Users/zach/code/fishbowl/apps/desktop/src/components/ui/SettingsCard.tsx`
 Depends on: T-create-settingscard-component
 
 ## Implementation Requirements
 
-Simplify RoleListItem by removing loading states and using SettingsCard for consistent layout.
+Replace the entire RoleListItem implementation with SettingsCard usage, removing all loading states and complex functionality.
 
 **File to modify**: `apps/desktop/src/components/settings/roles/RoleListItem.tsx`
 
+### Complete Implementation Replacement
+
+Delete the existing component implementation and replace with:
+
+- **Title**: `role.name`
+- **Content**: `truncateDescription(role.description, 120)` (keep truncation utility)
+- **Handlers**: Direct SettingsCard integration
+- **Remove**: All loading states, complex styling, and async patterns
+
 ### Content Transformation
 
-Transform existing content to SettingsCard format:
+Replace complex Card structure with simple SettingsCard usage:
 
-- **Title**: `role.name` (unchanged)
-- **Content**: `truncateDescription(role.description, 120)` (keep existing truncation)
+- Use role.name for title
+- Use truncated description for content (preserve existing truncation logic)
+- Remove all loading state indicators and complex hover effects
+- Simplify to basic role information display
 
 ### Handler Simplification
 
@@ -41,23 +53,32 @@ Remove loading states and async patterns:
 
 - `onEdit: () => onEdit(role)` (direct handler, no loading state)
 - `onDelete: () => onDelete(role)` (direct handler, no loading state)
+- Remove all useState, loading states, and async/await patterns
 
-### Remove Loading Complexity
+### Remove All Complex Features
 
-- Remove isEditLoading and isDeleteLoading state variables
-- Remove async/await patterns from handlers
-- Remove loading spinners and disabled states
-- Remove complex focus styling and loading indicators
-- Simplify component to synchronous operation
+Delete the following entirely:
 
-### Preserve Essential Features
-
-- Keep truncateDescription utility usage
-- Maintain RoleListItemProps interface compatibility
-- Preserve memo optimization
-- Keep existing accessibility patterns where applicable
+- `isEditLoading` and `isDeleteLoading` state variables
+- `useState` import and state management
+- `Loader2` icon and loading spinners
+- Complex focus management and styling utilities
+- Async `handleEdit` and `handleDelete` functions
+- `try/finally` blocks and error handling
+- Complex Card styling with group hover effects
+- Custom button styling and loading states
+- `cn` utility usage for complex styling
+- `memo` wrapper with complex logic
 
 ## Detailed Acceptance Criteria
+
+### Replacement Requirements
+
+- ✅ Entire component implementation replaced with SettingsCard usage
+- ✅ All loading state logic removed completely
+- ✅ Complex Card structure deleted and replaced
+- ✅ Component file significantly simplified (under 40 lines)
+- ✅ Only essential role display logic kept
 
 ### Functional Requirements
 
@@ -66,67 +87,88 @@ Remove loading states and async patterns:
 - ✅ Displays truncated description (120 chars) as content
 - ✅ Edit button triggers onEdit with role object directly
 - ✅ Delete button triggers onDelete with role object directly
-- ✅ Maintains existing prop interface (RoleListItemProps)
+- ✅ Maintains RoleListItemProps interface externally
 
-### Simplification Requirements
+### Code Simplification
 
-- ✅ Removes isEditLoading and isDeleteLoading state variables
-- ✅ Removes useState import and loading state management
-- ✅ Removes async/await patterns from event handlers
-- ✅ Removes Loader2 icon import and loading spinners
-- ✅ Removes disabled button states and loading opacity
-- ✅ Removes complex focus styling related to loading states
-- ✅ Eliminates try/finally blocks and error handling
-
-### Code Quality Requirements
-
-- ✅ Uses SettingsCard import from ui components
-- ✅ Maintains React.memo optimization
-- ✅ Updates JSDoc comments to reflect simplified functionality
-- ✅ Removes unused imports (Loader2, complex styling utilities)
-- ✅ Clean, readable code following project conventions
-- ✅ Preserves truncateDescription utility usage
+- ✅ Removes all loading state imports and logic
+- ✅ Removes complex styling utilities and focus management
+- ✅ Removes async patterns and error handling
+- ✅ Adds SettingsCard import from ui components
+- ✅ Keeps only truncateDescription utility import
+- ✅ Simplifies JSDoc to reflect basic functionality
+- ✅ Eliminates memo wrapper and complex optimizations
 
 ### Integration Requirements
 
 - ✅ Works with existing roles settings page without changes
 - ✅ Maintains same external API (props interface unchanged)
 - ✅ Visual consistency with other SettingsCard implementations
-- ✅ Preserves role description truncation functionality
+- ✅ No functionality regressions for edit/delete operations
 
 ## Technical Approach
 
-1. **State Removal**:
-   - Remove useState import and loading state variables
-   - Remove async patterns from event handlers
-   - Simplify handlers to direct callback invocation
-   - Remove loading-related conditional logic
+1. **Complete Implementation Replacement**:
+   - Delete entire existing component implementation
+   - Replace with simple SettingsCard wrapper
+   - Keep only role display and truncation logic
+   - Remove all loading states and complex patterns
 
-2. **Component Structure Refactor**:
-   - Replace complex Card structure with SettingsCard
-   - Remove manual Button implementation with loading states
-   - Simplify to basic title/content pattern
-   - Remove complex styling and focus management
+2. **Minimal Code Retention**:
+   - Keep truncateDescription utility import and usage
+   - Keep RoleListItemProps interface
+   - Keep basic component structure and exports
+   - Remove everything else
 
-3. **Handler Simplification**:
-   - Convert handleEdit and handleDelete to direct callbacks
-   - Remove try/finally blocks and error handling
-   - Remove loading state management
-   - Pass role object directly to parent handlers
+3. **SettingsCard Integration**:
+   - Import SettingsCard from ui components
+   - Pass role.name as title
+   - Pass truncated description as content
+   - Use direct handlers without async patterns
 
-4. **Import Cleanup**:
-   - Add SettingsCard import from ui components
-   - Remove Loader2 icon import
-   - Remove complex styling utilities if unused
-   - Remove useState import
-   - Keep truncateDescription import
+4. **Cleanup**:
+   - Remove all unused imports and dependencies
+   - Delete loading state logic and error handling
+   - Simplify JSDoc documentation
+   - Remove performance optimizations and memo
+
+## New Implementation Structure
+
+```typescript
+/**
+ * RoleListItem component displays basic role information.
+ * Uses SettingsCard for consistent styling and interaction patterns.
+ */
+
+import type { RoleListItemProps } from "@fishbowl-ai/ui-shared";
+import React from "react";
+import { SettingsCard } from "../../ui/SettingsCard";
+import { truncateDescription } from "../../../utils";
+
+export const RoleListItem: React.FC<RoleListItemProps> = ({
+  role,
+  onEdit,
+  onDelete,
+  className,
+}) => {
+  return (
+    <SettingsCard
+      title={role.name}
+      content={truncateDescription(role.description, 120)}
+      onEdit={() => onEdit(role)}
+      onDelete={() => onDelete(role)}
+      className={className}
+    />
+  );
+};
+```
 
 ## Dependencies
 
 - T-create-settingscard-component (must complete first)
-- Existing truncateDescription utility (preserve usage)
+- SettingsCard component must be available
+- Existing truncateDescription utility (preserved)
 - RoleListItemProps interface (unchanged)
-- Parent component contracts remain unchanged
 
 ## Testing Requirements
 
@@ -139,7 +181,6 @@ Remove loading states and async patterns:
 - ✅ Delete handler passes role object to onDelete directly
 - ✅ truncateDescription utility called with correct parameters
 - ✅ Custom className prop works correctly
-- ✅ Memoization prevents unnecessary re-renders
 
 ### Integration Testing
 
