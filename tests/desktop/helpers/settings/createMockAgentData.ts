@@ -14,7 +14,7 @@ export const createMockAgentData = (
 
   return {
     name: `Test Agent ${agentId}`,
-    model: "claude-3-sonnet",
+    model: "claude-3-haiku-20240307",
     llmConfigId: "test-llm-config-id",
     role: "test-analyst-role",
     personality: "test-professional-personality",

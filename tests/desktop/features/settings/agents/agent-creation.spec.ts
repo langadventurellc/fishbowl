@@ -37,11 +37,14 @@ test.describe("Feature: Agent Management - Creation", () => {
       // Click create new agent button
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
 
-      // Wait for create modal to open
-      await waitForAgentModal(window, true);
+      // Wait for create modal to open (using title-based pattern like roles tests)
+      const modal = window.locator('[role="dialog"]').filter({
+        has: window.locator('h2:has-text("Create New Agent")'),
+      });
+      await expect(modal).toBeVisible({ timeout: 5000 });
 
       // Fill form with valid agent data
       const mockAgent = createMockAgentData();
@@ -50,7 +53,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       // Submit form
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await expect(saveButton).toBeEnabled();
       await saveButton.click();
 
@@ -61,9 +64,9 @@ test.describe("Feature: Agent Management - Creation", () => {
       const agentCards = window.locator('[role="article"]');
       await expect(agentCards.first()).toBeVisible({ timeout: 2000 });
 
-      // Verify an agent card contains our agent name (at least partial match)
+      // Verify an agent card contains our exact agent name
       const agentCard = agentCards.filter({
-        hasText: actualAgent.name.substring(0, 10),
+        hasText: actualAgent.name,
       });
       await expect(agentCard).toBeVisible({ timeout: 2000 });
 
@@ -79,7 +82,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -88,7 +91,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await saveButton.click();
 
       // Wait for success indication (modal closing is a success signal)
@@ -108,7 +111,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -117,7 +120,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await saveButton.click();
 
       await waitForAgentModal(window, false);
@@ -133,7 +136,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -142,7 +145,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await saveButton.click();
 
       await waitForAgentModal(window, false);
@@ -160,18 +163,18 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
       // Initially save button should be disabled (required fields empty)
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await expect(saveButton).toBeDisabled();
 
       // Fill required fields one by one and check save button state
-      const nameInput = window.locator("#agent-name");
+      const nameInput = window.locator('input[name="name"]');
       await nameInput.fill("Test Agent Name");
       await expect(saveButton).toBeDisabled(); // Still disabled, more required fields
 
@@ -206,7 +209,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -215,7 +218,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await saveButton.click();
       await waitForAgentModal(window, false);
 
@@ -267,7 +270,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       // Create first agent
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -276,7 +279,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await saveButton.click();
       await waitForAgentModal(window, false);
 
@@ -309,7 +312,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /create.*agent/i });
+        .filter({ hasText: /Create New Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -322,7 +325,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /create agent/i });
+        .filter({ hasText: /Create Agent/i });
       await saveButton.click();
       await waitForAgentModal(window, false);
 

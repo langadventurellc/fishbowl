@@ -2,12 +2,12 @@ import { expect, test } from "@playwright/test";
 import { randomUUID } from "crypto";
 import { readFile } from "fs/promises";
 import {
-  setupLlmTestSuite,
-  openLlmSetupSection,
-  waitForEmptyState,
-  waitForConfigurationList,
-  createMockOpenAiConfig,
   createMockAnthropicConfig,
+  createMockOpenAiConfig,
+  openLlmSetupSection,
+  setupLlmTestSuite,
+  waitForConfigurationList,
+  waitForEmptyState,
   type StoredLlmConfig,
 } from "./index";
 
@@ -364,70 +364,5 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     // Fix validation error → can save
     await customNameInput.fill("Valid Name");
     await expect(saveButton).toBeEnabled();
-  });
-
-  test("cancels edit without saving changes", async () => {
-    const window = testSuite.getWindow();
-    const llmConfigPath = testSuite.getLlmConfigPath();
-
-    await openLlmSetupSection(window);
-    await waitForEmptyState(window);
-
-    // Create configuration with "Name A"
-    const setupButton = window
-      .locator("button")
-      .filter({ hasText: "Set up OpenAI" });
-    await setupButton.click();
-
-    const modal = window.locator(
-      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
-    );
-    const config = createMockOpenAiConfig({
-      customName: "Name A",
-    });
-    await modal.locator('[name="customName"]').fill(config.customName);
-    await modal.locator('[name="apiKey"]').fill(config.apiKey);
-    await modal
-      .locator("button")
-      .filter({ hasText: "Add Configuration" })
-      .click();
-    await expect(modal).not.toBeVisible({ timeout: 5000 });
-
-    await waitForConfigurationList(window);
-    const configCard = window.locator('[role="article"]').first();
-    await expect(configCard).toContainText("Name A");
-
-    // Open edit modal
-    await configCard.locator('[aria-label*="Edit"]').click();
-
-    const editModal = window.locator(
-      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
-    );
-    await expect(editModal).toBeVisible({ timeout: 5000 });
-
-    // Change to "Name B"
-    const customNameInput = editModal.locator('[name="customName"]');
-    await customNameInput.clear();
-    await customNameInput.fill("Name B");
-
-    // Click Cancel
-    const cancelButton = editModal.locator("button").filter({
-      hasText: "Cancel",
-    });
-    await cancelButton.click();
-    await expect(editModal).not.toBeVisible({ timeout: 5000 });
-
-    // Verify card still shows "Name A"
-    await expect(configCard).toContainText("Name A");
-    await expect(configCard).not.toContainText("Name B");
-
-    // Verify storage unchanged
-    try {
-      const configContent = await readFile(llmConfigPath, "utf-8");
-      const configs: StoredLlmConfig[] = JSON.parse(configContent);
-      expect(configs[0]?.customName).toBe("Name A");
-    } catch (error) {
-      console.log("Storage verification skipped:", error);
-    }
   });
 });

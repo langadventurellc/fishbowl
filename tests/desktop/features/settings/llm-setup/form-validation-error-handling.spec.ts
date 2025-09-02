@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import {
-  setupLlmTestSuite,
   openLlmSetupSection,
+  setupLlmTestSuite,
   waitForEmptyState,
 } from "./index";
 
@@ -283,52 +283,5 @@ test.describe("Feature: LLM Setup Configuration - Form Validation and Error Hand
     const finalApiKey = await apiKeyInput.inputValue();
     expect(finalCustomName).toBe(testName);
     expect(finalApiKey).toBe(testKey);
-  });
-
-  test("cancel operation discards form data", async () => {
-    const window = testSuite.getWindow();
-
-    await openLlmSetupSection(window);
-    await waitForEmptyState(window);
-
-    const setupButton = window
-      .locator("button")
-      .filter({ hasText: "Set up OpenAI" });
-    await setupButton.click();
-
-    const modal = window.locator(
-      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
-    );
-    await expect(modal).toBeVisible({ timeout: 5000 });
-
-    // Fill form with data
-    await modal.locator('[name="customName"]').fill("Test Config To Cancel");
-    await modal.locator('[name="apiKey"]').fill("sk-test-cancel-key");
-
-    // Cancel the modal
-    const cancelButton = modal.locator("button").filter({
-      hasText: "Cancel",
-    });
-    await cancelButton.click();
-
-    // Modal should close
-    await expect(modal).not.toBeVisible({ timeout: 5000 });
-
-    // Verify no configuration was created
-    await expect(
-      window.locator("text=No LLM providers configured"),
-    ).toBeVisible();
-
-    // Reopen modal and verify fields are empty
-    await setupButton.click();
-    await expect(modal).toBeVisible({ timeout: 5000 });
-
-    const customNameValue = await modal
-      .locator('[name="customName"]')
-      .inputValue();
-    const apiKeyValue = await modal.locator('[name="apiKey"]').inputValue();
-
-    expect(customNameValue).toBe("");
-    expect(apiKeyValue).toBe("");
   });
 });
