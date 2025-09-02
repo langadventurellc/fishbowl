@@ -6,6 +6,8 @@
  * @module stores
  */
 
+export * from "./chat";
+export * from "./conversation";
 export * from "./settings";
 export { useAgentsStore } from "./useAgentsStore";
 export { usePersonalitiesStore } from "./usePersonalitiesStore";

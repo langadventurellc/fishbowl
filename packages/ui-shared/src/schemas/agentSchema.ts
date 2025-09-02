@@ -18,6 +18,14 @@ export const agentSchema = z.object({
     )
     .refine((val) => val.trim().length > 0, "Name cannot be only whitespace"),
   model: z.string().min(1, "Model is required"),
+  // LLM configuration identifier - OPTIONAL initially for gradual migration
+  llmConfigId: z
+    .string({ message: "LLM Configuration ID must be a string" })
+    .min(1, "LLM Configuration is required")
+    .refine(
+      (val) => val.trim().length > 0,
+      "LLM Configuration ID cannot be only whitespace",
+    ),
   role: z.string().min(1, "Role is required"),
   personality: z.string().min(1, "Personality is required"),
   systemPrompt: z

@@ -2,8 +2,10 @@ import {
   ConversationAgentsRepository,
   ConversationsRepository,
   FileStorageService,
+  MessageRepository,
   SettingsRepository,
   createLoggerSync,
+  type ChatOrchestrationService,
   type ConversationsRepositoryInterface,
   type DatabaseBridge,
   type StructuredLogger,
@@ -16,6 +18,7 @@ import { NodePathUtils } from "../utils/NodePathUtils";
 import { MainDatabaseService } from "./MainDatabaseService";
 import { NodeDatabaseBridge } from "./NodeDatabaseBridge";
 import { NodeFileSystemBridge } from "./NodeFileSystemBridge";
+import { ChatOrchestrationServiceFactory } from "./chat/ChatOrchestrationServiceFactory";
 
 /**
  * Service container for Electron main process dependencies.
@@ -56,6 +59,17 @@ export class MainProcessServices {
    */
   readonly conversationAgentsRepository: ConversationAgentsRepository;
 
+  /**
+   * Repository for managing message persistence.
+   */
+  readonly messagesRepository: MessageRepository;
+
+  /**
+   * Chat orchestration service for multi-agent message processing.
+   */
+  readonly chatOrchestrationService: ChatOrchestrationService;
+
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   constructor() {
     // Initialize Node.js implementations
     this.fileSystemBridge = new NodeFileSystemBridge();
@@ -108,12 +122,41 @@ export class MainProcessServices {
       throw new Error("ConversationAgentsRepository initialization failed");
     }
 
+    // Initialize messages repository
+    try {
+      this.messagesRepository = new MessageRepository(
+        this.databaseBridge,
+        this.cryptoUtils,
+      );
+
+      this.logger.info("MessageRepository initialized successfully");
+    } catch (error) {
+      this.logger.error(
+        "Failed to initialize MessageRepository",
+        error instanceof Error ? error : undefined,
+      );
+      throw new Error("MessageRepository initialization failed");
+    }
+
     this.databaseService = new MainDatabaseService(
       this.databaseBridge,
       this.fileSystemBridge,
       this.logger,
       pathUtils,
     );
+
+    // Initialize chat orchestration service
+    try {
+      this.chatOrchestrationService =
+        ChatOrchestrationServiceFactory.create(this);
+      this.logger.info("ChatOrchestrationService initialized successfully");
+    } catch (error) {
+      this.logger.error(
+        "Failed to initialize ChatOrchestrationService",
+        error instanceof Error ? error : undefined,
+      );
+      throw new Error("ChatOrchestrationService initialization failed");
+    }
   }
 
   /**

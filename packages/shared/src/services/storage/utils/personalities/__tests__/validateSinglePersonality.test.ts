@@ -4,13 +4,6 @@ describe("validateSinglePersonality", () => {
   const validPersonality = {
     id: "test-personality",
     name: "Test Personality",
-    bigFive: {
-      openness: 75,
-      conscientiousness: 80,
-      extraversion: 60,
-      agreeableness: 85,
-      neuroticism: 40,
-    },
     behaviors: {
       analytical: 70,
       creative: 80,
@@ -34,34 +27,11 @@ describe("validateSinglePersonality", () => {
       const minimal = {
         id: "minimal",
         name: "M",
-        bigFive: {
-          openness: 0,
-          conscientiousness: 0,
-          extraversion: 0,
-          agreeableness: 0,
-          neuroticism: 0,
-        },
         behaviors: {},
         customInstructions: "",
       };
 
       const result = validateSinglePersonality(minimal);
-      expect(result.isValid).toBe(true);
-    });
-
-    it("should accept decimal values for Big Five traits", () => {
-      const withDecimals = {
-        ...validPersonality,
-        bigFive: {
-          openness: 75.5,
-          conscientiousness: 80.2,
-          extraversion: 60.8,
-          agreeableness: 85.1,
-          neuroticism: 40.9,
-        },
-      };
-
-      const result = validateSinglePersonality(withDecimals);
       expect(result.isValid).toBe(true);
     });
 
@@ -158,82 +128,6 @@ describe("validateSinglePersonality", () => {
       expect(result.isValid).toBe(false);
       expect(result.error).toContain("name:");
       expect(result.error).toContain("must be a string");
-    });
-  });
-
-  describe("Big Five traits validation", () => {
-    it("should reject missing Big Five object", () => {
-      const { bigFive, ...invalid } = validPersonality;
-      const result = validateSinglePersonality(invalid);
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toContain("bigFive");
-    });
-
-    it("should reject incomplete Big Five traits", () => {
-      const invalid = {
-        ...validPersonality,
-        bigFive: {
-          openness: 75,
-          conscientiousness: 80,
-          // Missing extraversion, agreeableness, neuroticism
-        },
-      };
-      const result = validateSinglePersonality(invalid);
-
-      expect(result.isValid).toBe(false);
-    });
-
-    it("should reject Big Five values below 0", () => {
-      const invalid = {
-        ...validPersonality,
-        bigFive: { ...validPersonality.bigFive, openness: -1 },
-      };
-      const result = validateSinglePersonality(invalid);
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toContain("openness");
-      expect(result.error).toContain("at least 0");
-    });
-
-    it("should reject Big Five values above 100", () => {
-      const invalid = {
-        ...validPersonality,
-        bigFive: { ...validPersonality.bigFive, extraversion: 101 },
-      };
-      const result = validateSinglePersonality(invalid);
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toContain("extraversion");
-      expect(result.error).toContain("cannot exceed 100");
-    });
-
-    it("should reject non-numeric Big Five values", () => {
-      const invalid = {
-        ...validPersonality,
-        bigFive: { ...validPersonality.bigFive, conscientiousness: "high" },
-      };
-      const result = validateSinglePersonality(invalid);
-
-      expect(result.isValid).toBe(false);
-      expect(result.error).toContain("conscientiousness");
-      expect(result.error).toContain("must be a number");
-    });
-
-    it("should accept Big Five values at boundaries (0 and 100)", () => {
-      const boundary = {
-        ...validPersonality,
-        bigFive: {
-          openness: 0,
-          conscientiousness: 100,
-          extraversion: 0,
-          agreeableness: 100,
-          neuroticism: 50,
-        },
-      };
-      const result = validateSinglePersonality(boundary);
-
-      expect(result.isValid).toBe(true);
     });
   });
 
@@ -374,13 +268,6 @@ describe("validateSinglePersonality", () => {
       const invalid = {
         id: "",
         name: "",
-        bigFive: {
-          openness: -1,
-          conscientiousness: 101,
-          extraversion: "invalid",
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {
           analytical: -5,
           creative: 105,

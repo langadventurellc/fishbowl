@@ -29,7 +29,9 @@ test.describe("Feature: LLM Setup Configuration - Configuration List Ordering", 
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    let modal = window.locator('[role="dialog"].llm-config-modal');
+    let modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await modal.locator('[name="customName"]').fill(configs[0]!.customName);
     await modal.locator('[name="apiKey"]').fill(configs[0]!.apiKey);
     await modal
@@ -54,7 +56,9 @@ test.describe("Feature: LLM Setup Configuration - Configuration List Ordering", 
     await anthropicOption.click();
     await addAnotherButton.click();
 
-    modal = window.locator('[role="dialog"].llm-config-modal');
+    modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await modal.locator('[name="customName"]').fill(configs[1]!.customName);
     await modal.locator('[name="apiKey"]').fill(configs[1]!.apiKey);
     await modal
@@ -66,7 +70,9 @@ test.describe("Feature: LLM Setup Configuration - Configuration List Ordering", 
     // Create third config (OpenAI)
     await addAnotherButton.click();
 
-    modal = window.locator('[role="dialog"].llm-config-modal');
+    modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await modal.locator('[name="customName"]').fill(configs[2]!.customName);
     await modal.locator('[name="apiKey"]').fill(configs[2]!.apiKey);
     await modal
@@ -100,7 +106,9 @@ test.describe("Feature: LLM Setup Configuration - Configuration List Ordering", 
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    let modal = window.locator('[role="dialog"].llm-config-modal');
+    let modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await modal.locator('[name="customName"]').fill(firstConfig.customName);
     await modal.locator('[name="apiKey"]').fill(firstConfig.apiKey);
     await modal
@@ -115,7 +123,9 @@ test.describe("Feature: LLM Setup Configuration - Configuration List Ordering", 
       .filter({ hasText: "Add Another Provider" });
     await addAnotherButton.click();
 
-    modal = window.locator('[role="dialog"].llm-config-modal');
+    modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await modal.locator('[name="customName"]').fill(secondConfig.customName);
     await modal.locator('[name="apiKey"]').fill(secondConfig.apiKey);
     await modal
@@ -134,7 +144,9 @@ test.describe("Feature: LLM Setup Configuration - Configuration List Ordering", 
     const editButton = firstCard.locator('[aria-label*="Edit"]');
     await editButton.click();
 
-    modal = window.locator('[role="dialog"].llm-config-modal');
+    modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
     await modal.locator('[name="customName"]').clear();
     await modal.locator('[name="customName"]').fill("First Edited");

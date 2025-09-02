@@ -80,13 +80,15 @@ export function MessageHeader({
       role="banner"
       aria-label={`Message from ${agentName}, ${agentRole} at ${timestamp}`}
     >
-      {/* MessageAvatar for visual identification */}
-      <MessageAvatar
-        agentColor={agentColor}
-        agentName={agentName}
-        role={agentRole}
-        size="large"
-      />
+      {/* MessageAvatar for visual identification - hidden for user messages */}
+      {messageType !== "user" && (
+        <MessageAvatar
+          agentColor={agentColor}
+          agentName={agentName}
+          role={agentRole}
+          size="large"
+        />
+      )}
 
       {/* Agent information with color coding */}
       <span style={{ color: agentColor }}>{getAgentDisplayText()}</span>

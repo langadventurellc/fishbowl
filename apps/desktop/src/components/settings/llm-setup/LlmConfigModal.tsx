@@ -1,28 +1,13 @@
-import type { Provider, LlmConfigInput } from "@fishbowl-ai/shared";
-import { z } from "zod";
+import type { LlmConfigInput, Provider } from "@fishbowl-ai/shared";
 import { LlmConfigModalProps } from "@fishbowl-ai/ui-shared/src/types/settings/LlmConfigModalProps";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Loader2 } from "lucide-react";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { cn } from "../../../lib/utils";
-import { useFocusTrap } from "../../../hooks/useFocusTrap";
-import { useGlobalKeyboardShortcuts } from "../../../hooks/useGlobalKeyboardShortcuts";
-import {
-  generateDialogAriaIds,
-  useAccessibilityAnnouncements,
-  maskApiKey,
-  isMaskedApiKey,
-} from "../../../utils";
+import { isMaskedApiKey, maskApiKey } from "../../../utils";
 import { Button } from "../../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "../../ui/dialog";
 import {
   Form,
   FormControl,
@@ -33,6 +18,8 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import { SettingsFormModal } from "../common";
+import { SettingsFormModalRef } from "../common/SettingsFormModalRef";
 import { AnthropicProviderFields } from "./AnthropicProviderFields";
 import { OpenAiProviderFields } from "./OpenAiProviderFields";
 
@@ -71,18 +58,7 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
   error = null,
   existingConfigs: _existingConfigs = [],
 }) => {
-  // Generate consistent ARIA IDs
-  const ariaIds = generateDialogAriaIds(`llm-config-modal-${provider}`);
-
-  // Accessibility announcements
-  const { announceStateChange } = useAccessibilityAnnouncements();
-
-  // Focus management
-  const { containerRef } = useFocusTrap({
-    isActive: isOpen,
-    restoreFocus: true,
-    initialFocusSelector: '[name="customName"]',
-  });
+  const modalRef = useRef<SettingsFormModalRef>(null);
 
   const getDefaultBaseUrl = useMemo(() => {
     switch (provider) {
@@ -113,8 +89,8 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
       customName: initialData?.customName || "",
       apiKey: getApiKeyDisplayValue,
       provider,
-      baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-      useAuthHeader: initialData?.useAuthHeader ?? true,
+      baseUrl: initialData?.baseUrl || undefined,
+      useAuthHeader: initialData?.useAuthHeader ?? false,
     },
   });
 
@@ -154,20 +130,6 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
     [onSave, onOpenChange, mode, initialData?.id, originalApiKey],
   );
 
-  const handleCancel = useCallback(() => {
-    onOpenChange(false);
-  }, [onOpenChange]);
-
-  // Keyboard shortcuts (Escape handled in DialogContent onKeyDown)
-  useGlobalKeyboardShortcuts({
-    shortcuts: {
-      "Ctrl+S": () => form.handleSubmit(handleSave)(),
-      "Meta+S": () => form.handleSubmit(handleSave)(),
-    },
-    enabled: isOpen,
-    preventDefault: true,
-  });
-
   // Reset form when modal opens/closes or provider changes
   useEffect(() => {
     if (isOpen) {
@@ -175,8 +137,8 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
         customName: initialData?.customName || "",
         apiKey: getApiKeyDisplayValue,
         provider,
-        baseUrl: initialData?.baseUrl || getDefaultBaseUrl,
-        useAuthHeader: initialData?.useAuthHeader ?? true,
+        baseUrl: initialData?.baseUrl || undefined,
+        useAuthHeader: initialData?.useAuthHeader ?? false,
       });
     }
   }, [
@@ -207,140 +169,126 @@ export const LlmConfigModal: React.FC<LlmConfigModalProps> = ({
       ? `Edit ${initialData.customName}`
       : "Setup LLM API";
 
-  // Announce modal open to screen readers
-  useEffect(() => {
-    if (isOpen) {
-      const action = mode === "edit" ? "Edit" : "Configure";
-      announceStateChange(
-        `${action} ${providerName} dialog opened. Fill in the form fields and press Control S to save or Escape to cancel.`,
-      );
-    }
-  }, [isOpen, providerName, mode, announceStateChange]);
+  const modalDescription = `Set up your ${providerName} API configuration. Press Escape to cancel or Ctrl+S (Cmd+S on Mac) to save.`;
+
+  // Generate accessibility announcement
+  const announceOnOpen = () => {
+    const action = mode === "edit" ? "Edit" : "Configure";
+    return `${action} ${providerName} dialog opened. Fill in the form fields and press Control S to save or Escape to cancel.`;
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent
-        ref={containerRef}
-        className="llm-config-modal max-w-lg z-[60] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 duration-200"
-        aria-labelledby={ariaIds.titleId}
-        aria-describedby={ariaIds.descriptionId}
-        role="dialog"
-        aria-modal="true"
-        onKeyDown={(e) => {
-          if (e.key === "Escape") {
-            e.preventDefault();
-            e.stopPropagation();
-            handleCancel();
-          }
-        }}
-      >
-        <DialogHeader>
-          <DialogTitle id={ariaIds.titleId}>{modalTitle}</DialogTitle>
-          <DialogDescription id={ariaIds.descriptionId}>
-            Set up your {providerName} API configuration. Press Escape to cancel
-            or Ctrl+S (Cmd+S on Mac) to save.
-          </DialogDescription>
-        </DialogHeader>
-
-        {/* Error Display */}
-        {error && (
-          <div className="p-3 mb-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
-            <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
-            <div className="flex-1">
-              <p className="text-sm font-medium text-red-800">
-                Configuration Error
-              </p>
-              <p className="text-sm text-red-600 mt-1">{error}</p>
-            </div>
+    <SettingsFormModal
+      ref={modalRef}
+      isOpen={isOpen}
+      onOpenChange={onOpenChange}
+      title={modalTitle}
+      description={modalDescription}
+      className="max-w-lg"
+      initialFocusSelector='[name="customName"]'
+      announceOnOpen={announceOnOpen()}
+      onRequestSave={() => form.handleSubmit(handleSave)()}
+      confirmOnClose={{
+        enabled: form.formState.isDirty && !isLoading,
+        message: {
+          title: "Unsaved Changes",
+          body: "You have unsaved LLM configuration changes. Discard them?",
+          confirmText: "Discard Changes",
+          cancelText: "Continue Editing",
+        },
+        onDiscard: () => form.reset(),
+      }}
+    >
+      {/* Error Display */}
+      {error && (
+        <div className="p-3 mb-4 bg-red-50 border border-red-200 rounded-md flex items-start gap-2">
+          <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-sm font-medium text-red-800">
+              Configuration Error
+            </p>
+            <p className="text-sm text-red-600 mt-1">{error}</p>
           </div>
-        )}
+        </div>
+      )}
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSave)} className="space-y-4">
-            {/* Custom Name Field */}
-            <FormField
-              control={form.control}
-              name="customName"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>
-                    Custom Name <span className="text-red-500">*</span>
-                  </FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder={`e.g., My ${providerName} API`}
-                      className={cn(fieldState.error ? "border-red-500" : "")}
-                      autoComplete="off"
-                      maxLength={100}
-                    />
-                  </FormControl>
-                  <FormDescription className="flex justify-between">
-                    <span className="text-muted-foreground">
-                      A unique name to identify this configuration
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xs",
-                        field.value?.length > 90
-                          ? "text-yellow-600"
-                          : "text-muted-foreground",
-                      )}
-                    >
-                      {field.value?.length || 0}/100
-                    </span>
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {/* Provider-specific fields */}
-            {provider === "openai" ? (
-              <OpenAiProviderFields control={form.control} />
-            ) : provider === "anthropic" ? (
-              <AnthropicProviderFields control={form.control} />
-            ) : (
-              <p>Unsupported provider: {provider}</p>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSave)} className="space-y-4">
+          {/* Custom Name Field */}
+          <FormField
+            control={form.control}
+            name="customName"
+            render={({ field, fieldState }) => (
+              <FormItem>
+                <FormLabel>
+                  Custom Name <span className="text-red-500">*</span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    placeholder={`e.g., My ${providerName} API`}
+                    className={cn(fieldState.error ? "border-red-500" : "")}
+                    autoComplete="off"
+                    maxLength={100}
+                  />
+                </FormControl>
+                <FormDescription className="flex justify-between">
+                  <span className="text-muted-foreground">
+                    A unique name to identify this configuration
+                  </span>
+                  <span
+                    className={cn(
+                      "text-xs",
+                      field.value?.length > 90
+                        ? "text-yellow-600"
+                        : "text-muted-foreground",
+                    )}
+                  >
+                    {field.value?.length || 0}/100
+                  </span>
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
             )}
+          />
 
-            <DialogFooter>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={handleCancel}
-                disabled={isLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                disabled={isLoading || !form.formState.isValid}
-                className="gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Saving...
-                  </>
-                ) : mode === "add" ? (
-                  "Add Configuration"
-                ) : (
-                  "Update Configuration"
-                )}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
+          {/* Provider-specific fields */}
+          {provider === "openai" ? (
+            <OpenAiProviderFields control={form.control} />
+          ) : provider === "anthropic" ? (
+            <AnthropicProviderFields control={form.control} />
+          ) : (
+            <p>Unsupported provider: {provider}</p>
+          )}
 
-        {/* Live region for form announcements */}
-        <div
-          id={ariaIds.announcementId}
-          aria-live="polite"
-          aria-atomic="true"
-          className="sr-only"
-        />
-      </DialogContent>
-    </Dialog>
+          <div className="flex justify-end gap-2 pt-4">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => modalRef.current?.handleClose()}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={isLoading || !form.formState.isValid}
+              className="gap-2"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Saving...
+                </>
+              ) : mode === "add" ? (
+                "Add Configuration"
+              ) : (
+                "Update Configuration"
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
+    </SettingsFormModal>
   );
 };

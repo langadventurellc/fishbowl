@@ -2,9 +2,14 @@ import {
   createLoggerSync,
   type StructuredLogger as IStructuredLogger,
   ConsoleLogger,
+  type ClipboardBridge,
+  type ConversationService,
 } from "@fishbowl-ai/shared";
 import { BrowserCryptoUtils } from "../utils/BrowserCryptoUtils";
 import { BrowserDeviceInfo } from "../utils/BrowserDeviceInfo";
+import { PersonalityDefinitionsClient } from "./personalityDefinitionsClient";
+import { BrowserClipboardService } from "./BrowserClipboardService";
+import { ConversationIpcAdapter } from "./ConversationIpcAdapter";
 
 /**
  * Service container for Electron renderer process dependencies.
@@ -27,6 +32,13 @@ export class RendererProcessServices {
   // Browser implementations
   readonly cryptoUtils: BrowserCryptoUtils;
   readonly deviceInfo: BrowserDeviceInfo;
+  readonly clipboardBridge: ClipboardBridge;
+
+  // Renderer-specific services
+  readonly personalityDefinitionsClient: PersonalityDefinitionsClient;
+
+  // IPC adapters for desktop-specific services
+  readonly conversationService: ConversationService;
 
   // Configured shared services
   readonly logger: IStructuredLogger;
@@ -35,6 +47,13 @@ export class RendererProcessServices {
     // Initialize browser implementations
     this.cryptoUtils = new BrowserCryptoUtils();
     this.deviceInfo = new BrowserDeviceInfo();
+    this.clipboardBridge = new BrowserClipboardService();
+
+    // Initialize renderer-specific services
+    this.personalityDefinitionsClient = new PersonalityDefinitionsClient();
+
+    // Initialize IPC adapters
+    this.conversationService = new ConversationIpcAdapter();
 
     // Create logger with browser implementations
     // Using createLoggerSync for consistent configuration

@@ -16,6 +16,14 @@ export interface ElectronAPI {
    */
   onOpenSettings: (callback: () => void) => () => void;
   /**
+   * Registers a callback to be invoked when a new conversation should be created.
+   * This is triggered by Electron menu items or keyboard shortcuts (Cmd/Ctrl+N).
+   *
+   * @param callback - Function to execute when a new conversation should be created
+   * @returns Cleanup function to remove the event listener and prevent memory leaks
+   */
+  onNewConversation: (callback: () => void) => () => void;
+  /**
    * Removes all IPC event listeners for the specified channel.
    * Used for cleanup when components unmount to prevent memory leaks.
    *
@@ -197,6 +205,19 @@ export interface ElectronAPI {
    */
   conversations: ConversationsAPI;
   /**
+   * Personality definitions operations for loading personality metadata.
+   * Provides access to personality trait definitions and values from JSON resources.
+   */
+  personalityDefinitions: {
+    /**
+     * Load personality definitions from persistent storage.
+     * @returns Promise resolving to personality definitions data
+     */
+    getDefinitions(): Promise<
+      import("@fishbowl-ai/shared").PersonalityDefinitions
+    >;
+  };
+  /**
    * Conversation agents operations for managing agent-conversation associations.
    * Provides operations for adding, removing, and querying agents within conversations.
    */
@@ -226,10 +247,79 @@ export interface ElectronAPI {
       input: import("@fishbowl-ai/shared").RemoveAgentFromConversationInput,
     ): Promise<boolean>;
     /**
+     * Update a conversation agent's properties.
+     * @param request - Request data containing conversation agent ID and updates
+     * @returns Promise resolving to the updated conversation agent
+     */
+    update(
+      request: import("../shared/ipc/index").ConversationAgentUpdateRequest,
+    ): Promise<import("@fishbowl-ai/shared").ConversationAgent>;
+    /**
      * List all conversation agents (for debugging).
      * @returns Promise resolving to array of all conversation agents
      */
     list(): Promise<import("@fishbowl-ai/shared").ConversationAgent[]>;
+  };
+  /**
+   * Messages operations for managing conversation messages.
+   * Provides CRUD operations for messages through IPC handlers.
+   */
+  messages: {
+    /**
+     * List all messages for a specific conversation.
+     * @param conversationId - ID of the conversation
+     * @returns Promise resolving to array of messages
+     */
+    list(
+      conversationId: string,
+    ): Promise<import("@fishbowl-ai/shared").Message[]>;
+    /**
+     * Create a new message in a conversation.
+     * @param input - Input data for creating the message
+     * @returns Promise resolving to the created message
+     */
+    create(
+      input: import("@fishbowl-ai/shared").CreateMessageInput,
+    ): Promise<import("@fishbowl-ai/shared").Message>;
+    /**
+     * Update a message's inclusion flag for context control.
+     * @param id - Message ID
+     * @param included - Whether the message should be included
+     * @returns Promise resolving to the updated message
+     */
+    updateInclusion(
+      id: string,
+      included: boolean,
+    ): Promise<import("@fishbowl-ai/shared").Message>;
+    /**
+     * Delete a message from the conversation.
+     * @param id - Message ID to delete
+     * @returns Promise resolving to boolean indicating success
+     */
+    delete(id: string): Promise<boolean>;
+  };
+  /**
+   * Chat operations for multi-agent conversation processing.
+   * Provides secure interface for triggering agent responses and receiving real-time updates.
+   */
+  chat: {
+    /**
+     * Trigger multi-agent responses for a user message in a conversation.
+     * Initiates parallel processing by all agents in the conversation.
+     * @param conversationId - Unique identifier for the conversation
+     * @param userMessageId - Unique identifier for the user message triggering responses
+     * @returns Promise resolving when agent processing is initiated (fire-and-forget)
+     */
+    sendToAgents(conversationId: string, userMessageId: string): Promise<void>;
+    /**
+     * Register a callback to receive real-time agent status updates.
+     * Updates are emitted as agents transition between thinking, complete, and error states.
+     * @param callback - Function to execute when agent status changes
+     * @returns Cleanup function to remove the event listener and prevent memory leaks
+     */
+    onAgentUpdate(
+      callback: (event: import("../shared/ipc/chat").AgentUpdateEvent) => void,
+    ): () => void;
   };
 }
 

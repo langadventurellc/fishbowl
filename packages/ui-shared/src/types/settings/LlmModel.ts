@@ -12,6 +12,12 @@ export interface LlmModel {
   /** Provider that offers this model (OpenAI, Anthropic, etc.) */
   provider: string;
 
+  /** Configuration identifier for lookup */
+  configId: string;
+
+  /** Display label for this configuration (customName || provider) */
+  configLabel: string;
+
   /** Context window size in tokens */
   contextLength: number;
 }

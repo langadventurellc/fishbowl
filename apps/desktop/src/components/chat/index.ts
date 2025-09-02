@@ -1,4 +1,5 @@
 export { AgentPill } from "./AgentPill";
+export { ContextStatistics } from "./ContextStatistics";
 export { MessageAvatar } from "./MessageAvatar";
 export { MessageContent } from "./MessageContent";
 export { MessageHeader } from "./MessageHeader";

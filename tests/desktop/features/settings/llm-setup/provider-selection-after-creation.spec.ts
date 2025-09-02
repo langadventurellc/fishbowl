@@ -23,7 +23,9 @@ test.describe("Feature: LLM Setup Configuration - Provider Selection After Creat
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const firstConfig = createMockOpenAiConfig({
       customName: "First OpenAI",
     });
@@ -66,7 +68,9 @@ test.describe("Feature: LLM Setup Configuration - Provider Selection After Creat
     await addAnotherButton.click();
 
     // Fill second OpenAI configuration
-    const secondModal = window.locator('[role="dialog"].llm-config-modal');
+    const secondModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(secondModal).toBeVisible({ timeout: 5000 });
 
     const secondConfig = createMockOpenAiConfig({
@@ -102,7 +106,9 @@ test.describe("Feature: LLM Setup Configuration - Provider Selection After Creat
     await anthropicOption.click();
     await addAnotherButton.click();
 
-    const thirdModal = window.locator('[role="dialog"].llm-config-modal');
+    const thirdModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const anthropicConfig = createMockAnthropicConfig({
       customName: "Test Anthropic",
     });

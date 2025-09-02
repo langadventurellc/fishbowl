@@ -6,7 +6,7 @@ export const fillAgentForm = async (
   agentData: AgentFormData,
 ): Promise<AgentFormData> => {
   // Fill name field
-  const nameInput = window.locator("#agent-name");
+  const nameInput = window.locator('input[name="name"]');
   await nameInput.fill(agentData.name);
 
   // Select model dropdown
@@ -15,7 +15,8 @@ export const fillAgentForm = async (
   // Select the first available model (since we created an Anthropic config)
   const firstModelOption = window.locator('[role="option"]').first();
   const selectedModel =
-    (await firstModelOption.getAttribute("data-value")) || "claude-3-opus";
+    (await firstModelOption.getAttribute("data-value")) ||
+    "claude-3-haiku-20240307";
   await firstModelOption.click();
 
   // Select role dropdown
@@ -24,8 +25,7 @@ export const fillAgentForm = async (
   // Select the first available role
   const firstRoleOption = window.locator('[role="option"]').first();
   await firstRoleOption.click();
-  // The first role in defaultRoles.json is "project-manager"
-  const selectedRole = "project-manager";
+  const selectedRole = "software-engineer";
 
   // Select personality dropdown
   const personalitySelect = window.locator('[role="combobox"]').nth(2);
@@ -33,8 +33,8 @@ export const fillAgentForm = async (
   // Select the first available personality
   const firstPersonalityOption = window.locator('[role="option"]').first();
   await firstPersonalityOption.click();
-  // The first personality in defaultPersonalities.json is "creative-thinker"
-  const selectedPersonality = "creative-thinker";
+  // The first personality in defaultPersonalities.json is "the-enthusiast"
+  const selectedPersonality = "the-enthusiast";
 
   // Fill system prompt if provided
   if (agentData.systemPrompt) {

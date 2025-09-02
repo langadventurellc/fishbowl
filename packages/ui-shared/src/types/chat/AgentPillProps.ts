@@ -7,7 +7,7 @@
  * @module types/ui/components/AgentPillProps
  */
 
-import { AgentViewModel } from "../AgentViewModel";
+import { AgentPillViewModel } from "./AgentPillViewModel";
 
 /**
  * Props interface for the AgentPill component.
@@ -52,7 +52,7 @@ export interface AgentPillProps {
    * and the isThinking property controls the display of the pulsing
    * thinking indicator animation.
    */
-  agent: AgentViewModel;
+  agent: AgentPillViewModel;
 
   /**
    * Optional click handler for agent pill interactions.
@@ -65,6 +65,29 @@ export interface AgentPillProps {
    * @param agentName - The name of the clicked agent
    */
   onClick?: (agentName: string) => void;
+
+  /**
+   * Optional handler for toggling agent enabled state.
+   * Called when user clicks the pill to toggle enabled/disabled.
+   * Receives the conversation agent ID for identification.
+   */
+  onToggleEnabled?: (conversationAgentId: string) => void;
+
+  /**
+   * Conversation agent ID for toggle operations.
+   * Required when onToggleEnabled is provided.
+   * Also required when showStatus is true for store integration.
+   */
+  conversationAgentId?: string;
+
+  /**
+   * Enable real-time status integration with chat store.
+   * When true, connects to useChatStore to display agent thinking states,
+   * error indicators, and completion feedback.
+   *
+   * Requires conversationAgentId to be provided for store lookups.
+   */
+  showStatus?: boolean;
 
   /**
    * Optional CSS class name for additional styling.

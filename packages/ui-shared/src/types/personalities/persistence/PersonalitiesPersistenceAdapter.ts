@@ -38,13 +38,6 @@ export interface PersonalitiesPersistenceAdapter {
    *       {
    *         id: "personality-1",
    *         name: "Creative Thinker",
-   *         bigFive: {
-   *           openness: 85,
-   *           conscientiousness: 60,
-   *           extraversion: 75,
-   *           agreeableness: 70,
-   *           neuroticism: 30
-   *         },
    *         behaviors: {
    *           creativity: 90,
    *           analytical: 65,

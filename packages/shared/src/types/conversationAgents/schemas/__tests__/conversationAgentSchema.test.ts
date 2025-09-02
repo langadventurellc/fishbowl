@@ -7,6 +7,7 @@ describe("conversationAgentSchema", () => {
     agent_id: "agent-config-123",
     added_at: "2023-01-01T00:00:00.000Z",
     is_active: true,
+    enabled: true,
     display_order: 0,
   };
 

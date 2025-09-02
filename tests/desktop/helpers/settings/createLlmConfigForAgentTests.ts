@@ -43,7 +43,9 @@ export const createLlmConfigForAgentTests = async (window: TestWindow) => {
   await setupButton.click();
 
   // Wait for modal
-  const modal = window.locator('[role="dialog"].llm-config-modal');
+  const modal = window.locator(
+    '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+  );
   await expect(modal).toBeVisible({ timeout: 5000 });
 
   // Fill configuration

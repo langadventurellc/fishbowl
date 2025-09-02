@@ -1,15 +1,15 @@
+import { PersistedAgentsSettingsData } from "@fishbowl-ai/shared";
 import { ipcMain } from "electron";
-import { setupAgentsHandlers } from "../agentsHandlers";
+import { agentsRepositoryManager } from "../../data/repositories/agentsRepositoryManager";
 import {
   AGENTS_CHANNELS,
   type AgentsLoadResponse,
+  type AgentsResetResponse,
   type AgentsSaveRequest,
   type AgentsSaveResponse,
-  type AgentsResetResponse,
 } from "../../shared/ipc/index";
+import { setupAgentsHandlers } from "../agentsHandlers";
 import { serializeError } from "../utils/errorSerialization";
-import { agentsRepositoryManager } from "../../data/repositories/agentsRepositoryManager";
-import { PersistedAgentsSettingsData } from "@fishbowl-ai/shared";
 
 // Mock electron
 jest.mock("electron", () => ({
@@ -89,6 +89,7 @@ describe("agentsHandlers", () => {
             systemPrompt: "Test system prompt",
             createdAt: "2025-01-01T00:00:00.000Z",
             updatedAt: "2025-01-01T00:00:00.000Z",
+            llmConfigId: "openai-config-1",
           },
         ],
         defaults: {
@@ -128,6 +129,7 @@ describe("agentsHandlers", () => {
             systemPrompt: "Default system prompt",
             createdAt: null,
             updatedAt: null,
+            llmConfigId: "openai-config-1",
           },
         ],
         defaults: {
@@ -206,6 +208,7 @@ describe("agentsHandlers", () => {
             systemPrompt: "Test system prompt",
             createdAt: "2025-01-01T00:00:00.000Z",
             updatedAt: "2025-01-01T00:00:00.000Z",
+            llmConfigId: "openai-config-1",
           },
         ],
         defaults: {

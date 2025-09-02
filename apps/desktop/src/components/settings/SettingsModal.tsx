@@ -140,9 +140,8 @@ export function SettingsModal({
 
   React.useEffect(() => {
     const checkForNestedDialogs = () => {
-      // Check if any Radix dialog content is present in the DOM
-      // Look for the agent-form-modal class specifically
-      const hasDialog = document.querySelector(".agent-form-modal") !== null;
+      // Check if any form modal is present in the DOM using data attribute
+      const hasDialog = document.querySelector("[data-form-modal]") !== null;
       setHasNestedDialog(hasDialog);
     };
 
@@ -155,7 +154,7 @@ export function SettingsModal({
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ["class"],
+      attributeFilter: ["data-form-modal"],
     });
 
     return () => observer.disconnect();

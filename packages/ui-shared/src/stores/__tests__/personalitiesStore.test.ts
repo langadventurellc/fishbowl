@@ -84,16 +84,9 @@ describe("personalitiesStore", () => {
   describe("createPersonality action", () => {
     const validPersonalityData: PersonalityFormData = {
       name: "Test Personality",
-      bigFive: {
-        openness: 75,
-        conscientiousness: 80,
-        extraversion: 60,
-        agreeableness: 90,
-        neuroticism: 25,
-      },
       behaviors: {
-        creativity: 85,
-        humor: 70,
+        creativity: 80,
+        humor: 60,
         formality: 40,
       },
       customInstructions: "Test custom instructions for this personality",
@@ -111,9 +104,6 @@ describe("personalitiesStore", () => {
       expect(state.personalities).toHaveLength(1);
       expect(state.personalities[0]).toBeTruthy();
       expect(state.personalities[0]!.name).toBe(validPersonalityData.name);
-      expect(state.personalities[0]!.bigFive).toEqual(
-        validPersonalityData.bigFive,
-      );
       expect(state.personalities[0]!.behaviors).toEqual(
         validPersonalityData.behaviors,
       );
@@ -138,13 +128,6 @@ describe("personalitiesStore", () => {
       // Try to create personality with same name (different case)
       const duplicateData: PersonalityFormData = {
         name: "TEST PERSONALITY",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Different instructions",
       };
@@ -164,13 +147,6 @@ describe("personalitiesStore", () => {
 
       const invalidData = {
         name: "", // Invalid: empty name
-        bigFive: {
-          openness: 75,
-          conscientiousness: 80,
-          extraversion: 60,
-          agreeableness: 90,
-          neuroticism: 25,
-        },
         behaviors: {},
         customInstructions: "",
       } as PersonalityFormData;
@@ -183,42 +159,11 @@ describe("personalitiesStore", () => {
       expect(state.error?.message).toBeTruthy();
     });
 
-    it("should handle invalid Big Five values", () => {
-      const store = usePersonalitiesStore.getState();
-
-      const invalidBigFiveData = {
-        name: "Test Personality",
-        bigFive: {
-          openness: 150, // Invalid: > 100
-          conscientiousness: -10, // Invalid: < 0
-          extraversion: 60,
-          agreeableness: 90,
-          neuroticism: 25,
-        },
-        behaviors: {},
-        customInstructions: "",
-      } as PersonalityFormData;
-
-      const personalityId = store.createPersonality(invalidBigFiveData);
-
-      expect(personalityId).toBe("");
-      const state = usePersonalitiesStore.getState();
-      expect(state.personalities).toHaveLength(0);
-      expect(state.error?.message).toBeTruthy();
-    });
-
     it("should handle invalid name characters", () => {
       const store = usePersonalitiesStore.getState();
 
       const invalidNameData = {
         name: "Test@Personality!", // Invalid: contains special characters
-        bigFive: {
-          openness: 75,
-          conscientiousness: 80,
-          extraversion: 60,
-          agreeableness: 90,
-          neuroticism: 25,
-        },
         behaviors: {},
         customInstructions: "",
       } as PersonalityFormData;
@@ -236,16 +181,9 @@ describe("personalitiesStore", () => {
     const existingPersonality: PersonalityViewModel = {
       id: "existing-1",
       name: "Original Personality",
-      bigFive: {
-        openness: 70,
-        conscientiousness: 75,
-        extraversion: 55,
-        agreeableness: 85,
-        neuroticism: 30,
-      },
       behaviors: {
         creativity: 80,
-        humor: 65,
+        humor: 60,
       },
       customInstructions: "Original custom instructions",
       createdAt: "2024-01-01T00:00:00.000Z",
@@ -277,17 +215,10 @@ describe("personalitiesStore", () => {
 
       const updateData: PersonalityFormData = {
         name: "Updated Personality",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 85,
-          extraversion: 70,
-          agreeableness: 95,
-          neuroticism: 20,
-        },
         behaviors: {
-          creativity: 95,
+          creativity: 100,
           humor: 80,
-          formality: 30,
+          formality: 20,
         },
         customInstructions: "Updated custom instructions",
       };
@@ -298,7 +229,6 @@ describe("personalitiesStore", () => {
       expect(state.personalities).toHaveLength(1);
       expect(state.personalities[0]!.id).toBe(existingPersonality.id);
       expect(state.personalities[0]!.name).toBe(updateData.name);
-      expect(state.personalities[0]!.bigFive).toEqual(updateData.bigFive);
       expect(state.personalities[0]!.behaviors).toEqual(updateData.behaviors);
       expect(state.personalities[0]!.customInstructions).toBe(
         updateData.customInstructions,
@@ -322,13 +252,6 @@ describe("personalitiesStore", () => {
 
       const updateData: PersonalityFormData = {
         name: "Updated Personality",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 85,
-          extraversion: 70,
-          agreeableness: 95,
-          neuroticism: 20,
-        },
         behaviors: {},
         customInstructions: "Updated instructions",
       };
@@ -344,13 +267,6 @@ describe("personalitiesStore", () => {
       const secondPersonality: PersonalityViewModel = {
         id: "existing-2",
         name: "Second Personality",
-        bigFive: {
-          openness: 60,
-          conscientiousness: 70,
-          extraversion: 80,
-          agreeableness: 75,
-          neuroticism: 40,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -379,13 +295,6 @@ describe("personalitiesStore", () => {
 
       const updateData: PersonalityFormData = {
         name: "Second Personality", // Conflicts with existing personality
-        bigFive: {
-          openness: 90,
-          conscientiousness: 85,
-          extraversion: 70,
-          agreeableness: 95,
-          neuroticism: 20,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -404,15 +313,8 @@ describe("personalitiesStore", () => {
 
       const updateData: PersonalityFormData = {
         name: "Original Personality", // Same name
-        bigFive: {
-          openness: 90,
-          conscientiousness: 85,
-          extraversion: 70,
-          agreeableness: 95,
-          neuroticism: 20,
-        },
         behaviors: {
-          creativity: 95,
+          creativity: 100,
         },
         customInstructions: "Updated instructions with same name",
       };
@@ -433,16 +335,9 @@ describe("personalitiesStore", () => {
     const existingPersonality: PersonalityViewModel = {
       id: "existing-1",
       name: "Test Personality",
-      bigFive: {
-        openness: 70,
-        conscientiousness: 75,
-        extraversion: 55,
-        agreeableness: 85,
-        neuroticism: 30,
-      },
       behaviors: {
         creativity: 80,
-        humor: 65,
+        humor: 60,
       },
       customInstructions: "Test instructions",
       createdAt: "2024-01-01T00:00:00.000Z",
@@ -501,13 +396,6 @@ describe("personalitiesStore", () => {
       {
         id: "personality-1",
         name: "First Personality",
-        bigFive: {
-          openness: 70,
-          conscientiousness: 75,
-          extraversion: 55,
-          agreeableness: 85,
-          neuroticism: 30,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -516,13 +404,6 @@ describe("personalitiesStore", () => {
       {
         id: "personality-2",
         name: "Second Personality",
-        bigFive: {
-          openness: 80,
-          conscientiousness: 65,
-          extraversion: 75,
-          agreeableness: 70,
-          neuroticism: 45,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -580,13 +461,6 @@ describe("personalitiesStore", () => {
       {
         id: "personality-1",
         name: "Creative Thinker",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 70,
-          extraversion: 60,
-          agreeableness: 80,
-          neuroticism: 30,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -595,13 +469,6 @@ describe("personalitiesStore", () => {
       {
         id: "personality-2",
         name: "Analytical Mind",
-        bigFive: {
-          openness: 70,
-          conscientiousness: 95,
-          extraversion: 40,
-          agreeableness: 60,
-          neuroticism: 20,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -708,13 +575,6 @@ describe("personalitiesStore", () => {
 
       const validPersonalityData: PersonalityFormData = {
         name: "Test Personality",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 80,
-          extraversion: 60,
-          agreeableness: 90,
-          neuroticism: 25,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -732,13 +592,6 @@ describe("personalitiesStore", () => {
       const existingPersonality: PersonalityViewModel = {
         id: "existing-1",
         name: "Original",
-        bigFive: {
-          openness: 70,
-          conscientiousness: 75,
-          extraversion: 55,
-          agreeableness: 85,
-          neuroticism: 30,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -767,13 +620,6 @@ describe("personalitiesStore", () => {
 
       const updateData: PersonalityFormData = {
         name: "Updated",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 85,
-          extraversion: 70,
-          agreeableness: 95,
-          neuroticism: 20,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -792,13 +638,6 @@ describe("personalitiesStore", () => {
       const existingPersonality: PersonalityViewModel = {
         id: "existing-1",
         name: "To Delete",
-        bigFive: {
-          openness: 70,
-          conscientiousness: 75,
-          extraversion: 55,
-          agreeableness: 85,
-          neuroticism: 30,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -844,13 +683,6 @@ describe("personalitiesStore", () => {
 
       const validPersonalityData: PersonalityFormData = {
         name: "Test Personality",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 80,
-          extraversion: 60,
-          agreeableness: 90,
-          neuroticism: 25,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -879,13 +711,6 @@ describe("personalitiesStore", () => {
       const existingPersonality: PersonalityViewModel = {
         id: "existing-1",
         name: "Original",
-        bigFive: {
-          openness: 70,
-          conscientiousness: 75,
-          extraversion: 55,
-          agreeableness: 85,
-          neuroticism: 30,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2024-01-01T00:00:00.000Z",
@@ -914,13 +739,6 @@ describe("personalitiesStore", () => {
 
       const updateData: PersonalityFormData = {
         name: "Updated",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 85,
-          extraversion: 70,
-          agreeableness: 95,
-          neuroticism: 20,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -1045,13 +863,6 @@ describe("personalitiesStore", () => {
           {
             id: "existing-1",
             name: "Original",
-            bigFive: {
-              openness: 70,
-              conscientiousness: 75,
-              extraversion: 55,
-              agreeableness: 85,
-              neuroticism: 30,
-            },
             behaviors: {},
             customInstructions: "",
             createdAt: "2024-01-01T00:00:00.000Z",
@@ -1129,7 +940,6 @@ describe("personalitiesStore", () => {
           expect(state.personalities).toHaveLength(1);
           expect(state.personalities[0]?.id).toBe("test-1");
           expect(state.personalities[0]?.name).toBe("Test");
-          expect(state.personalities[0]?.bigFive).toBeDefined();
           expect(state.personalities[0]?.behaviors).toBeDefined();
           expect(mockAdapter.load).toHaveBeenCalled();
         });
@@ -1171,13 +981,6 @@ describe("personalitiesStore", () => {
             {
               id: "test-1",
               name: "Test Personality",
-              bigFive: {
-                openness: 70,
-                conscientiousness: 75,
-                extraversion: 55,
-                agreeableness: 85,
-                neuroticism: 30,
-              },
               behaviors: {},
               customInstructions: "",
               createdAt: "2024-01-01T00:00:00.000Z",
@@ -1241,13 +1044,6 @@ describe("personalitiesStore", () => {
             {
               id: "test-1",
               name: "Test",
-              bigFive: {
-                openness: 70,
-                conscientiousness: 75,
-                extraversion: 55,
-                agreeableness: 85,
-                neuroticism: 30,
-              },
               behaviors: {},
               customInstructions: "",
               createdAt: "2024-01-01T00:00:00.000Z",
@@ -1280,13 +1076,6 @@ describe("personalitiesStore", () => {
               {
                 id: "imported-1",
                 name: "Imported",
-                bigFive: {
-                  openness: 70,
-                  conscientiousness: 75,
-                  extraversion: 55,
-                  agreeableness: 85,
-                  neuroticism: 30,
-                },
                 behaviors: {},
                 customInstructions: "",
                 createdAt: "2024-01-01T00:00:00.000Z",
@@ -1308,9 +1097,6 @@ describe("personalitiesStore", () => {
           expect(state.personalities).toHaveLength(1);
           expect(state.personalities[0]?.id).toBe("imported-1");
           expect(state.personalities[0]?.name).toBe("Imported");
-          expect(state.personalities[0]?.bigFive).toEqual(
-            importData.personalities[0]?.bigFive,
-          );
           expect(state.pendingOperations).toEqual([]);
           expect(mockAdapter.save).toHaveBeenCalled();
         });
@@ -1340,13 +1126,6 @@ describe("personalitiesStore", () => {
           const testPersonality: PersonalityViewModel = {
             id: "test-1",
             name: "Test",
-            bigFive: {
-              openness: 70,
-              conscientiousness: 75,
-              extraversion: 55,
-              agreeableness: 85,
-              neuroticism: 30,
-            },
             behaviors: {},
             customInstructions: "",
             createdAt: "2024-01-01T00:00:00.000Z",

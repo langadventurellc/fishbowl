@@ -77,7 +77,7 @@ test.describe("Feature: Agent Management - Editing", () => {
       // Save changes
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /Save Changes|Create Agent/i });
+        .filter({ hasText: /Save Changes/i });
       await expect(saveButton).toBeEnabled();
       await saveButton.click();
       await waitForAgentModal(window, false);
@@ -159,7 +159,7 @@ test.describe("Feature: Agent Management - Editing", () => {
       // Save changes
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /Save Changes|Create Agent/i });
+        .filter({ hasText: /Save Changes/i });
       await saveButton.click();
       await waitForAgentModal(window, false);
 
@@ -191,10 +191,10 @@ test.describe("Feature: Agent Management - Editing", () => {
 
       const saveButton = window
         .locator("button")
-        .filter({ hasText: /Save Changes|Create Agent/i });
+        .filter({ hasText: /Save Changes/i });
 
       // Clear required name field → can't save
-      const nameInput = window.locator("#agent-name");
+      const nameInput = window.locator('input[name="name"]');
       await nameInput.clear();
       await expect(saveButton).toBeDisabled();
 
@@ -295,7 +295,7 @@ const verifyFormPopulation = async (
   expectedData: AgentFormData,
 ) => {
   // Verify name field shows expected value
-  const nameInput = window.locator("#agent-name");
+  const nameInput = window.locator('input[name="name"]');
   await expect(nameInput).toHaveValue(expectedData.name);
 
   // Verify system prompt if provided
@@ -316,7 +316,7 @@ const updateAgentData = async (
 ) => {
   // Helper to update specific fields in edit form
   if (updates.name) {
-    const nameInput = window.locator("#agent-name");
+    const nameInput = window.locator('input[name="name"]');
     await nameInput.clear();
     await nameInput.fill(updates.name);
   }

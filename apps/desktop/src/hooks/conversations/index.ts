@@ -22,7 +22,6 @@
  */
 
 // Conversation management hooks
-export { useConversations } from "./useConversations";
 export { useCreateConversation } from "./useCreateConversation";
 export { useDeleteConversation } from "./useDeleteConversation";
 export { useConversation } from "./useConversation";

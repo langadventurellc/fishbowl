@@ -1,10 +1,10 @@
 import { z } from "zod";
-import {
-  persistedPersonalitySchema,
-  persistedPersonalitiesSettingsSchema,
-} from "../personalitiesSettingsSchema";
-import { PersistedPersonalityData } from "../PersistedPersonalityData";
 import { PersistedPersonalitiesSettingsData } from "../PersistedPersonalitiesSettingsData";
+import { PersistedPersonalityData } from "../PersistedPersonalityData";
+import {
+  persistedPersonalitiesSettingsSchema,
+  persistedPersonalitySchema,
+} from "../personalitiesSettingsSchema";
 
 describe("Personality Type Definitions", () => {
   describe("PersistedPersonalityData", () => {
@@ -13,13 +13,6 @@ describe("Personality Type Definitions", () => {
       const validPersonality: PersistedPersonalityData = {
         id: "personality-123",
         name: "Creative Thinker",
-        bigFive: {
-          openness: 85,
-          conscientiousness: 65,
-          extraversion: 70,
-          agreeableness: 80,
-          neuroticism: 30,
-        },
         behaviors: {
           creativity: 90,
           analytical: 70,
@@ -44,13 +37,6 @@ describe("Personality Type Definitions", () => {
       const personalityWithNullTimestamps: PersistedPersonalityData = {
         id: "personality-456",
         name: "Analytical Mind",
-        bigFive: {
-          openness: 60,
-          conscientiousness: 95,
-          extraversion: 40,
-          agreeableness: 70,
-          neuroticism: 20,
-        },
         behaviors: {
           analytical: 95,
           methodical: 90,
@@ -70,13 +56,6 @@ describe("Personality Type Definitions", () => {
       const personalityWithoutTimestamps: PersistedPersonalityData = {
         id: "personality-789",
         name: "Social Connector",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 70,
-          extraversion: 95,
-          agreeableness: 90,
-          neuroticism: 25,
-        },
         behaviors: {
           social: 95,
           empathetic: 90,
@@ -95,13 +74,6 @@ describe("Personality Type Definitions", () => {
       const personalityWithEmptyBehaviors: PersistedPersonalityData = {
         id: "personality-empty",
         name: "Minimal Personality",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "",
         createdAt: "2025-01-15T10:30:00.000Z",
@@ -123,13 +95,6 @@ describe("Personality Type Definitions", () => {
           {
             id: "personality-1",
             name: "Creative",
-            bigFive: {
-              openness: 90,
-              conscientiousness: 60,
-              extraversion: 70,
-              agreeableness: 80,
-              neuroticism: 30,
-            },
             behaviors: {
               creative: 95,
               innovative: 90,
@@ -141,13 +106,6 @@ describe("Personality Type Definitions", () => {
           {
             id: "personality-2",
             name: "Analytical",
-            bigFive: {
-              openness: 70,
-              conscientiousness: 95,
-              extraversion: 40,
-              agreeableness: 60,
-              neuroticism: 20,
-            },
             behaviors: {
               analytical: 95,
               systematic: 90,
@@ -191,13 +149,6 @@ describe("Personality Type Definitions", () => {
           {
             id: "test-personality",
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {},
             customInstructions: "",
           },
@@ -221,13 +172,6 @@ describe("Personality Type Definitions", () => {
       const personality: PersistedPersonalityData = {
         id: "test-personality",
         name: "Test Personality",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 80,
-          extraversion: 60,
-          agreeableness: 85,
-          neuroticism: 35,
-        },
         behaviors: {
           helpful: 90,
           patient: 85,
@@ -255,13 +199,6 @@ describe("Personality Type Definitions", () => {
       const personality: PersistedPersonalityData = {
         id: "test",
         name: "Test",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "",
       };
@@ -269,12 +206,6 @@ describe("Personality Type Definitions", () => {
       // Verify all required fields are present
       expect(personality.id).toBeDefined();
       expect(personality.name).toBeDefined();
-      expect(personality.bigFive).toBeDefined();
-      expect(personality.bigFive.openness).toBeDefined();
-      expect(personality.bigFive.conscientiousness).toBeDefined();
-      expect(personality.bigFive.extraversion).toBeDefined();
-      expect(personality.bigFive.agreeableness).toBeDefined();
-      expect(personality.bigFive.neuroticism).toBeDefined();
       expect(personality.behaviors).toBeDefined();
       expect(personality.customInstructions).toBeDefined();
     });
@@ -290,13 +221,6 @@ describe("Personality Type Definitions", () => {
       const personalityData: PersistedPersonalityData = {
         id: "export-test",
         name: "Export Test",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "",
       };

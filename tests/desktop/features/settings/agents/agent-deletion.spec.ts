@@ -386,7 +386,7 @@ test.describe("Feature: Agent Management - Deletion", () => {
       await expect(
         window
           .locator("button")
-          .filter({ hasText: /create.*agent/i })
+          .filter({ hasText: /Create New Agent/i })
           .first(),
       ).toBeVisible();
     });

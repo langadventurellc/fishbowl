@@ -22,6 +22,7 @@ describe("Conversation Agents IPC Constants", () => {
     );
     expect(CONVERSATION_AGENT_CHANNELS.ADD).toBe("conversationAgent:add");
     expect(CONVERSATION_AGENT_CHANNELS.REMOVE).toBe("conversationAgent:remove");
+    expect(CONVERSATION_AGENT_CHANNELS.UPDATE).toBe("conversationAgent:update");
     expect(CONVERSATION_AGENT_CHANNELS.LIST).toBe("conversationAgent:list");
   });
 
@@ -29,8 +30,9 @@ describe("Conversation Agents IPC Constants", () => {
     expect(CONVERSATION_AGENT_CHANNELS).toHaveProperty("GET_BY_CONVERSATION");
     expect(CONVERSATION_AGENT_CHANNELS).toHaveProperty("ADD");
     expect(CONVERSATION_AGENT_CHANNELS).toHaveProperty("REMOVE");
+    expect(CONVERSATION_AGENT_CHANNELS).toHaveProperty("UPDATE");
     expect(CONVERSATION_AGENT_CHANNELS).toHaveProperty("LIST");
-    expect(Object.keys(CONVERSATION_AGENT_CHANNELS)).toHaveLength(4);
+    expect(Object.keys(CONVERSATION_AGENT_CHANNELS)).toHaveLength(5);
   });
 
   it("should have no duplicate channel names", () => {
@@ -57,6 +59,8 @@ describe("Conversation Agents IPC Types", () => {
     const addChannel: ConversationAgentChannelType = "conversationAgent:add";
     const removeChannel: ConversationAgentChannelType =
       "conversationAgent:remove";
+    const updateChannel: ConversationAgentChannelType =
+      "conversationAgent:update";
     const listChannel: ConversationAgentChannelType = "conversationAgent:list";
 
     expect(getByConversationChannel).toBe(
@@ -64,6 +68,7 @@ describe("Conversation Agents IPC Types", () => {
     );
     expect(addChannel).toBe(CONVERSATION_AGENT_CHANNELS.ADD);
     expect(removeChannel).toBe(CONVERSATION_AGENT_CHANNELS.REMOVE);
+    expect(updateChannel).toBe(CONVERSATION_AGENT_CHANNELS.UPDATE);
     expect(listChannel).toBe(CONVERSATION_AGENT_CHANNELS.LIST);
   });
 
@@ -118,6 +123,7 @@ describe("Conversation Agents IPC Types", () => {
       agent_id: "agent-456",
       added_at: new Date().toISOString(),
       is_active: true,
+      enabled: true,
       display_order: 0,
     };
 
@@ -281,6 +287,7 @@ describe("Type-only Imports", () => {
         agent_id: _request.agent_id,
         added_at: new Date().toISOString(),
         is_active: true,
+        enabled: true,
         display_order: _request.display_order || 0,
       },
     });

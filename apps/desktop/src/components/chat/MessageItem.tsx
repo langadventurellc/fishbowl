@@ -1,6 +1,8 @@
 import { cn } from "@/lib/utils";
-import { MessageItemProps } from "@fishbowl-ai/ui-shared";
-import { useState } from "react";
+import { MessageItemProps, useConversationStore } from "@fishbowl-ai/ui-shared";
+import { Check, Loader2 } from "lucide-react";
+import React, { useState } from "react";
+import { useUpdateMessage } from "../../hooks/messages/useUpdateMessage";
 import { MessageContent } from "./MessageContent";
 import { MessageContextMenu } from "./MessageContextMenu";
 import { MessageHeader } from "./MessageHeader";
@@ -82,11 +84,45 @@ import { MessageHeader } from "./MessageHeader";
  */
 export function MessageItem(props: MessageItemProps) {
   const { message, className, canRegenerate, onContextMenuAction } = props;
-  const [isActive, setIsActive] = useState(message.isActive);
 
-  const handleToggleContext = () => {
-    const newActiveState = !isActive;
-    setIsActive(newActiveState);
+  // Use useUpdateMessage hook for database persistence
+  const { updateInclusion, updating, error, reset } = useUpdateMessage();
+  const { refreshActiveConversation } = useConversationStore();
+
+  // Optimistic state management - use message.isActive as source of truth
+  const [optimisticActive, setOptimisticActive] = useState<boolean | null>(
+    null,
+  );
+  const displayIsActive =
+    optimisticActive !== null ? optimisticActive : message.isActive;
+
+  const handleToggleContext = async () => {
+    const newActiveState = !displayIsActive;
+
+    try {
+      // Optimistic update: immediately show new state
+      setOptimisticActive(newActiveState);
+
+      // Clear any previous errors
+      reset();
+
+      // Persist to database via useUpdateMessage hook
+      await updateInclusion(message.id, newActiveState);
+
+      // Refresh messages to reflect the updated inclusion state
+      if (refreshActiveConversation) {
+        await refreshActiveConversation();
+      }
+
+      // Success: clear optimistic state (will use message.isActive from props)
+      setOptimisticActive(null);
+    } catch {
+      // Error: rollback optimistic state to original value
+      setOptimisticActive(null);
+
+      // Error is already stored in useUpdateMessage hook's error state
+      // Could add user notification here if needed
+    }
   };
 
   // Context menu handlers
@@ -102,6 +138,17 @@ export function MessageItem(props: MessageItemProps) {
     onContextMenuAction("regenerate", message.id);
   };
 
+  // Enhanced keyboard interaction for accessibility
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+    // Handle Space and Enter keys to toggle the checkbox
+    if (event.key === " " || event.key === "Enter") {
+      event.preventDefault();
+      if (!updating) {
+        handleToggleContext();
+      }
+    }
+  };
+
   // Context menu positioning logic - show menu above for messages near bottom of viewport
   const shouldShowMenuAbove = () => {
     if (typeof window === "undefined") return false;
@@ -115,27 +162,126 @@ export function MessageItem(props: MessageItemProps) {
     // This is a simple heuristic - could be enhanced with element position detection
     return scrollBottom > document.body.scrollHeight * 0.75;
   };
+
+  // Enhanced error message detection for system messages
+  const isErrorSystemMessage = (content: string): boolean => {
+    return content.startsWith("Agent ");
+  };
+
+  // Extract agent name from error message
+  const extractAgentName = (content: string): string | null => {
+    const match = content.match(/^Agent ([^:]+):/);
+    return match ? match[1] || null : null;
+  };
+
   // Tailwind utility classes for consistent message layout and theming
   const messageClasses = "w-full";
 
   const messageWrapperClasses = cn(
-    "relative p-2 rounded-lg border border-transparent bg-transparent",
-    !isActive && "opacity-50",
+    "relative p-2 rounded-lg border border-transparent bg-transparent group",
+    !displayIsActive && "opacity-50",
   );
 
-  const systemMessageClasses =
-    "italic text-muted-foreground text-center text-xs py-2";
+  // Enhanced system message styling with error detection
+  const getSystemMessageClasses = (content: string): string => {
+    const baseClasses =
+      "text-center text-xs py-2 px-3 rounded-md mx-auto max-w-md";
+
+    if (isErrorSystemMessage(content)) {
+      // Error system messages: subtle error indication
+      return cn(
+        baseClasses,
+        "bg-red-50 border border-red-200 text-red-700",
+        "dark:bg-red-950 dark:border-red-800 dark:text-red-300",
+        "flex items-center justify-center gap-2",
+      );
+    }
+
+    // Regular system messages: original styling
+    return cn(baseClasses, "italic text-muted-foreground");
+  };
+
   const userMessageClasses =
     "bg-accent text-accent-foreground py-3 px-4 rounded-xl ml-auto max-w-[70%]";
   const userMessageWrapperClasses = "flex justify-end w-full";
 
   const contextToggleClasses = cn(
-    "absolute right-2 top-2 w-5 h-5 border-0 rounded cursor-pointer text-xs",
-    "flex items-center justify-center transition-all duration-150 z-[100]",
-    isActive
-      ? "bg-primary text-primary-foreground"
-      : "bg-muted text-muted-foreground",
+    "absolute right-2 top-2 w-5 h-5 border rounded-[4px] cursor-pointer",
+    "flex items-center justify-center transition-all duration-200 z-[10]",
+    "shadow-xs outline-none",
+    // Hide by default, show on group hover or focus
+    "opacity-0 group-hover:opacity-100 focus:opacity-100",
+    // Base states
+    "border-input bg-transparent",
+    // Checked state (included)
+    displayIsActive && [
+      "bg-primary border-primary text-primary-foreground",
+      "shadow-sm",
+    ],
+    // Unchecked state (excluded)
+    !displayIsActive && [
+      "bg-muted/30 border-muted-foreground/30 text-muted-foreground",
+      "hover:bg-muted/50 hover:border-muted-foreground/50",
+    ],
+    // Hover state for checked
+    displayIsActive && "hover:bg-primary/90 hover:shadow-md",
+    // Focus state
+    "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+    // Loading state
+    updating && ["opacity-60 cursor-not-allowed", "animate-pulse"],
+    // Disabled state
+    "disabled:cursor-not-allowed disabled:opacity-50",
   );
+
+  // Render error system message with enhanced formatting
+  const renderErrorSystemMessage = (content: string) => {
+    const agentName = extractAgentName(content);
+    const errorMessage = content.replace(/^Agent [^:]+: /, "");
+
+    return (
+      <div className={getSystemMessageClasses(content)}>
+        {/* Warning icon for error indication */}
+        <svg
+          className="w-4 h-4 text-red-500 dark:text-red-400 flex-shrink-0"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z"
+          />
+        </svg>
+        <div className="text-left">
+          {agentName && (
+            <div className="font-medium text-red-800 dark:text-red-200">
+              {agentName}
+            </div>
+          )}
+          <div className="text-red-700 dark:text-red-300">{errorMessage}</div>
+        </div>
+      </div>
+    );
+  };
+
+  // Render error message for inclusion update failures
+  const renderInclusionError = () => {
+    if (!error) return null;
+
+    return (
+      <div
+        id={`error-${message.id}`}
+        className="absolute top-7 right-2 z-[101] bg-red-100 dark:bg-red-950 border border-red-300 dark:border-red-800 text-red-700 dark:text-red-300 text-xs px-2 py-1 rounded shadow-md max-w-48"
+        role="alert"
+        aria-live="polite"
+      >
+        Failed to update: {error.message}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -144,27 +290,48 @@ export function MessageItem(props: MessageItemProps) {
       aria-label={`${message.type} message from ${message.agent}`}
     >
       {message.type === "system" ? (
-        // System messages: Simple centered display
-        <div className={systemMessageClasses}>{message.content}</div>
+        // System messages: Enhanced display with error detection
+        isErrorSystemMessage(message.content) ? (
+          renderErrorSystemMessage(message.content)
+        ) : (
+          <div className={getSystemMessageClasses(message.content)}>
+            {message.content}
+          </div>
+        )
       ) : message.type === "user" ? (
         // User messages: Right-aligned with accent styling
         <div className={messageWrapperClasses}>
           <button
             className={contextToggleClasses}
             onClick={handleToggleContext}
+            onKeyDown={handleKeyDown}
+            disabled={updating}
+            role="checkbox"
+            aria-checked={displayIsActive}
+            tabIndex={0}
             title={
-              isActive
-                ? "Click to exclude from context"
-                : "Click to include in context"
+              updating
+                ? "Updating..."
+                : displayIsActive
+                  ? "Click to exclude from context"
+                  : "Click to include in context"
             }
             aria-label={
-              isActive
-                ? "Exclude message from conversation context"
-                : "Include message in conversation context"
+              updating
+                ? "Updating message inclusion status"
+                : displayIsActive
+                  ? "Exclude message from conversation context"
+                  : "Include message in conversation context"
             }
+            aria-describedby={error ? `error-${message.id}` : undefined}
           >
-            {isActive ? "✓" : ""}
+            {updating ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : displayIsActive ? (
+              <Check className="w-3 h-3" />
+            ) : null}
           </button>
+          {renderInclusionError()}
           <div className={userMessageWrapperClasses}>
             <div className={userMessageClasses}>
               <div className="relative">
@@ -199,19 +366,34 @@ export function MessageItem(props: MessageItemProps) {
           <button
             className={contextToggleClasses}
             onClick={handleToggleContext}
+            onKeyDown={handleKeyDown}
+            disabled={updating}
+            role="checkbox"
+            aria-checked={displayIsActive}
+            tabIndex={0}
             title={
-              isActive
-                ? "Click to exclude from context"
-                : "Click to include in context"
+              updating
+                ? "Updating..."
+                : displayIsActive
+                  ? "Click to exclude from context"
+                  : "Click to include in context"
             }
             aria-label={
-              isActive
-                ? "Exclude message from conversation context"
-                : "Include message in conversation context"
+              updating
+                ? "Updating message inclusion status"
+                : displayIsActive
+                  ? "Exclude message from conversation context"
+                  : "Include message in conversation context"
             }
+            aria-describedby={error ? `error-${message.id}` : undefined}
           >
-            {isActive ? "✓" : ""}
+            {updating ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : displayIsActive ? (
+              <Check className="w-3 h-3" />
+            ) : null}
           </button>
+          {renderInclusionError()}
           <div className="flex items-center gap-2">
             <MessageHeader
               agentName={message.agent}

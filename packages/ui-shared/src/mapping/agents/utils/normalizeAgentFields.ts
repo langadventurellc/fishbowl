@@ -10,6 +10,7 @@ import { clampString } from "../../utils/transformers/clampString";
  * - role: trimmed string
  * - personality: trimmed string
  * - systemPrompt: 0-5000 characters after trimming (optional)
+ * - llmConfigId: trimmed string (optional)
  *
  * @param agent - Agent data to normalize
  * @returns Normalized agent data with guaranteed field constraints
@@ -39,6 +40,7 @@ export function normalizeAgentFields(agent: {
   role: string;
   personality: string;
   systemPrompt?: string | null;
+  llmConfigId: string;
 }): {
   id: string;
   name: string;
@@ -46,6 +48,7 @@ export function normalizeAgentFields(agent: {
   role: string;
   personality: string;
   systemPrompt?: string;
+  llmConfigId: string;
 } {
   return {
     id: agent.id?.trim() || "",
@@ -56,5 +59,6 @@ export function normalizeAgentFields(agent: {
     systemPrompt: agent.systemPrompt?.trim()
       ? clampString(agent.systemPrompt.trim(), 0, 5000)
       : undefined,
+    llmConfigId: agent.llmConfigId?.trim() || "",
   };
 }

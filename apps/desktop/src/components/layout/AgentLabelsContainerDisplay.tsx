@@ -1,14 +1,14 @@
 import {
   AgentLabelsContainerDisplayProps,
-  AgentViewModel,
+  AgentPillViewModel,
 } from "@fishbowl-ai/ui-shared";
-import React, { useState, useCallback } from "react";
+import { AlertCircle, Loader2 } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { useConversationStore, useAgentsStore } from "@fishbowl-ai/ui-shared";
 import { cn } from "../../lib/utils";
 import { AgentPill } from "../chat";
 import { Button } from "../input";
-import { useConversationAgents } from "../../hooks/conversationAgents/useConversationAgents";
 import { AddAgentToConversationModal } from "../modals/AddAgentToConversationModal";
-import { AlertCircle, Loader2 } from "lucide-react";
 
 /**
  * AgentLabelsContainerDisplay - Horizontal agent labels bar layout component
@@ -36,13 +36,30 @@ export const AgentLabelsContainerDisplay: React.FC<
   // Modal state
   const [addModalOpen, setAddModalOpen] = useState(false);
 
-  // Hook integration
-  const { conversationAgents, isLoading, error, refetch } =
-    useConversationAgents(selectedConversationId || null);
+  // Store integration
+  const { activeConversationAgents, loading, error, toggleAgentEnabled } =
+    useConversationStore();
+  const { agents: agentConfigs } = useAgentsStore();
+
+  // Map store state to component expectations
+  const conversationAgents = activeConversationAgents;
+  const isLoading = loading.agents;
+  const agentsError = error.agents;
 
   // Transform conversation agents to display format
   const displayAgents = selectedConversationId
-    ? conversationAgents.map((ca) => ca.agent)
+    ? conversationAgents.map((conversationAgent) => {
+        const agentConfig = agentConfigs.find(
+          (agent) => agent.id === conversationAgent.agent_id,
+        );
+        return (
+          agentConfig || {
+            id: conversationAgent.agent_id,
+            name: "Unknown Agent",
+            role: "unknown",
+          }
+        );
+      })
     : agents;
 
   // Handler for Add Agent button
@@ -86,35 +103,66 @@ export const AgentLabelsContainerDisplay: React.FC<
         )}
 
         {/* Error state */}
-        {error && selectedConversationId && (
+        {agentsError && selectedConversationId && (
           <div className="flex items-center gap-2 text-sm text-destructive">
             <AlertCircle className="h-4 w-4" />
-            <span>Failed to load agents: {error.message}</span>
+            <span>Failed to load agents: {agentsError.message}</span>
           </div>
         )}
 
         {/* Agent pills */}
         {!isLoading &&
-          !error &&
-          displayAgents.map((agent, index) => {
-            // Transform AgentSettingsViewModel to AgentViewModel if needed
-            const agentViewModel: AgentViewModel =
-              "id" in agent
-                ? {
-                    name: agent.name,
-                    role: agent.role,
-                    color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
-                    isThinking: false,
-                  }
-                : agent;
+          !agentsError &&
+          (selectedConversationId
+            ? conversationAgents.map((conversationAgent) => {
+                // Find the agent configuration
+                const agentConfig = agentConfigs.find(
+                  (agent) => agent.id === conversationAgent.agent_id,
+                );
 
-            return (
-              <AgentPill
-                key={"id" in agent ? agent.id : `agent-${index}`}
-                agent={agentViewModel}
-              />
-            );
-          })}
+                // Transform ConversationAgent to AgentPillViewModel
+                const agentViewModel: AgentPillViewModel = {
+                  name: agentConfig?.name || "Unknown Agent",
+                  role: agentConfig?.role || "unknown",
+                  color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
+                  isThinking: false,
+                  status: "idle",
+                  enabled: conversationAgent.enabled, // Use actual enabled state from conversation agent
+                };
+
+                return (
+                  <AgentPill
+                    key={conversationAgent.id}
+                    agent={agentViewModel}
+                    onToggleEnabled={() =>
+                      toggleAgentEnabled(conversationAgent.id)
+                    }
+                    conversationAgentId={conversationAgent.id}
+                    showStatus={true}
+                  />
+                );
+              })
+            : displayAgents.map((agent, index) => {
+                // Transform AgentSettingsViewModel to AgentPillViewModel for non-conversation view
+                const agentViewModel: AgentPillViewModel =
+                  "id" in agent
+                    ? {
+                        name: agent.name,
+                        role: agent.role,
+                        color: "#3b82f6",
+                        isThinking: false,
+                        status: "idle",
+                        enabled: true, // Default to enabled for settings view agents
+                      }
+                    : agent;
+
+                return (
+                  <AgentPill
+                    key={"id" in agent ? agent.id : `agent-${index}`}
+                    agent={agentViewModel}
+                  />
+                );
+              }))}
 
         {/* Add Agent button */}
         {(onAddAgent || selectedConversationId) && (
@@ -142,7 +190,7 @@ export const AgentLabelsContainerDisplay: React.FC<
           onOpenChange={setAddModalOpen}
           conversationId={selectedConversationId}
           onAgentAdded={() => {
-            refetch(); // Explicitly refetch to ensure UI updates
+            // Store handles data consistency automatically - no manual refetch needed
           }}
         />
       )}

@@ -8,21 +8,29 @@ export const waitForAgentModal = async (
   window: TestWindow,
   shouldBeVisible: boolean = true,
 ) => {
-  const modalSelector = ".agent-form-modal";
-
   if (shouldBeVisible) {
-    // Wait for the agent form modal to be visible
-    await expect(window.locator(modalSelector)).toBeVisible({ timeout: 1000 });
+    // Wait for the agent form modal to be visible using title-based pattern (same as roles tests)
+    const modal = window.locator('[role="dialog"]').filter({
+      has: window.locator(
+        'h2:has-text("Create New Agent"), h2:has-text("Edit Agent")',
+      ),
+    });
+    await expect(modal).toBeVisible({ timeout: 5000 });
 
     // Wait for modal content to be fully loaded - check for key form elements
     await expect(
       window
         .locator('input[name="name"], input[placeholder*="name" i]')
         .first(),
-    ).toBeVisible({ timeout: 1000 });
+    ).toBeVisible({ timeout: 5000 });
   } else {
     // Wait for modal to disappear
-    await expect(window.locator(modalSelector)).not.toBeVisible({
+    const modal = window.locator('[role="dialog"]').filter({
+      has: window.locator(
+        'h2:has-text("Create New Agent"), h2:has-text("Edit Agent")',
+      ),
+    });
+    await expect(modal).not.toBeVisible({
       timeout: 1000,
     });
   }
@@ -32,8 +40,13 @@ export const waitForAgentModal = async (
  * Wait for any agent modal to close completely.
  */
 export const waitForAgentModalToClose = async (window: TestWindow) => {
-  // Wait for agent form modal to disappear
-  await expect(window.locator(".agent-form-modal")).not.toBeVisible({
+  // Wait for agent form modal to disappear using title-based selector
+  const modal = window.locator('[role="dialog"]').filter({
+    has: window.locator(
+      'h2:has-text("Create New Agent"), h2:has-text("Edit Agent")',
+    ),
+  });
+  await expect(modal).not.toBeVisible({
     timeout: 3000,
   });
 

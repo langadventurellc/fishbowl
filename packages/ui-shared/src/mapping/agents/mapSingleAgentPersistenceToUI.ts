@@ -1,5 +1,5 @@
 import type { PersistedAgentData } from "@fishbowl-ai/shared";
-import type { AgentSettingsViewModel } from "../../types/settings/AgentViewModel";
+import type { AgentSettingsViewModel } from "../../types/settings/AgentSettingsViewModel";
 import { handleNullTimestamps } from "../utils/transformers/handleNullTimestamps";
 import { normalizeAgentFields } from "./utils/normalizeAgentFields";
 
@@ -46,6 +46,7 @@ export function mapSingleAgentPersistenceToUI(
     id: normalizedFields.id,
     name: normalizedFields.name,
     model: normalizedFields.model,
+    llmConfigId: normalizedFields.llmConfigId,
     role: normalizedFields.role,
     personality: normalizedFields.personality,
     systemPrompt: normalizedFields.systemPrompt,

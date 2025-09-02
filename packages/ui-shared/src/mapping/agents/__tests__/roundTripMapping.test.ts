@@ -9,7 +9,8 @@ describe("Agent Mapping Round Trip", () => {
         {
           id: "test-id-1",
           name: "Test Agent 1",
-          model: "Claude 3.5 Sonnet",
+          model: "claude-3-5-sonnet",
+          llmConfigId: "test-config-id-1",
           role: "role-id-1",
           personality: "personality-id-1",
           systemPrompt: "Test prompt 1",
@@ -19,7 +20,8 @@ describe("Agent Mapping Round Trip", () => {
         {
           id: "test-id-2",
           name: "Test Agent 2",
-          model: "Claude 3.5 Haiku",
+          model: "claude-3-haiku",
+          llmConfigId: "test-config-id-2",
           role: "role-id-2",
           personality: "personality-id-2",
           systemPrompt: "Test prompt 2",
@@ -45,6 +47,7 @@ describe("Agent Mapping Round Trip", () => {
       expect(roundTripAgent1.id).toBe(originalAgent1.id);
       expect(roundTripAgent1.name).toBe(originalAgent1.name);
       expect(roundTripAgent1.model).toBe(originalAgent1.model);
+      expect(roundTripAgent1.llmConfigId).toBe(originalAgent1.llmConfigId);
       expect(roundTripAgent1.role).toBe(originalAgent1.role);
       expect(roundTripAgent1.personality).toBe(originalAgent1.personality);
       expect(roundTripAgent1.systemPrompt).toBe(originalAgent1.systemPrompt);
@@ -61,6 +64,7 @@ describe("Agent Mapping Round Trip", () => {
       expect(roundTripAgent2.id).toBe(originalAgent2.id);
       expect(roundTripAgent2.name).toBe(originalAgent2.name);
       expect(roundTripAgent2.model).toBe(originalAgent2.model);
+      expect(roundTripAgent2.llmConfigId).toBe(originalAgent2.llmConfigId);
       expect(roundTripAgent2.role).toBe(originalAgent2.role);
       expect(roundTripAgent2.personality).toBe(originalAgent2.personality);
       expect(roundTripAgent2.systemPrompt).toBe(originalAgent2.systemPrompt);

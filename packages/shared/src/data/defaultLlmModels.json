@@ -6,19 +6,59 @@
       "name": "OpenAI",
       "models": [
         {
-          "id": "gpt-4-turbo",
-          "name": "GPT-4 Turbo",
+          "id": "gpt-5-nano-2025-08-07",
+          "name": "GPT-5 Nano",
+          "contextLength": 400000
+        },
+        {
+          "id": "gpt-4o-2024-08-06",
+          "name": "GPT-4o",
           "contextLength": 128000
         },
         {
-          "id": "gpt-4",
-          "name": "GPT-4",
-          "contextLength": 8192
+          "id": "gpt-4.1-nano-2025-04-14",
+          "name": "GPT-4.1 Nano",
+          "contextLength": 1000000
         },
         {
-          "id": "gpt-3.5-turbo",
-          "name": "GPT-3.5 Turbo",
-          "contextLength": 16385
+          "id": "gpt-5-mini-2025-08-07",
+          "name": "GPT-5 Mini",
+          "contextLength": 400000
+        },
+        {
+          "id": "gpt-4.1-mini-2025-04-14",
+          "name": "GPT-4.1 Mini",
+          "contextLength": 1000000
+        },
+        {
+          "id": "o4-mini-2025-04-16",
+          "name": "O4 Mini",
+          "contextLength": 200000
+        },
+        {
+          "id": "gpt-5-2025-08-07",
+          "name": "GPT-5",
+          "contextLength": 400000
+        },
+        {
+          "id": "gpt-4.1-2025-04-14",
+          "name": "GPT-4.1",
+          "contextLength": 1000000
+        },
+        {
+          "id": "o3-2025-04-16",
+          "name": "o3",
+          "contextLength": 200000
+        },
+        {
+          "id": "o1-2024-12-17",
+          "name": "o1",
+          "contextLength": 200000
+        },
+        {
+          "id": "o3-pro-2025-06-10",
+          "name": "o3 Pro",
+          "contextLength": 200000
         }
       ]
     },
@@ -27,22 +67,32 @@
       "name": "Anthropic",
       "models": [
         {
-          "id": "claude-3-opus",
-          "name": "Claude 3 Opus",
-          "contextLength": 200000
-        },
-        {
-          "id": "claude-3-sonnet",
-          "name": "Claude 3 Sonnet",
-          "contextLength": 200000
-        },
-        {
-          "id": "claude-3-haiku",
+          "id": "claude-3-haiku-20240307",
           "name": "Claude 3 Haiku",
+          "contextLength": 200000
+        },
+        {
+          "id": "claude-3-5-haiku-latest",
+          "name": "Claude 3.5 Haiku",
+          "contextLength": 200000
+        },
+        {
+          "id": "claude-sonnet-4-20250514",
+          "name": "Claude Sonnet 4",
+          "contextLength": 200000
+        },
+        {
+          "id": "claude-opus-4-20250514",
+          "name": "Claude Opus 4",
+          "contextLength": 200000
+        },
+        {
+          "id": "claude-opus-4-1-20250805",
+          "name": "Claude Opus 4.1",
           "contextLength": 200000
         }
       ]
     }
   ],
-  "lastUpdated": "2025-08-21T19:30:00.000Z"
+  "lastUpdated": "2025-08-30T00:00:00.000Z"
 }

@@ -50,6 +50,9 @@ export function useLlmModels() {
             name: model.name,
             provider: provider.name,
             contextLength: model.contextLength,
+            // These will be populated when expanding models per configuration
+            configId: "",
+            configLabel: "",
           });
         }
       }
@@ -98,7 +101,11 @@ export function useLlmModels() {
           )
           .map((model) => ({
             ...model,
-            provider: config.customName || config.provider, // Use custom name if available
+            // Keep provider as canonical provider id/name for grouping/filtering
+            provider: config.provider,
+            // Add configuration-specific fields
+            configId: config.id,
+            configLabel: config.customName || config.provider,
           }));
       });
 

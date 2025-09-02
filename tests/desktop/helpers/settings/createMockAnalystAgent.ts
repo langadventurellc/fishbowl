@@ -13,6 +13,7 @@ export const createMockAnalystAgent = (): AgentFormData => {
   return {
     name: `Research Analyst ${agentId}`,
     model: "claude-3-sonnet-20240229",
+    llmConfigId: "test-llm-config-id",
     role: "test-analyst-role",
     personality: "test-analytical-personality",
     systemPrompt: `You are a research analyst agent for automated testing purposes (ID: ${agentId}). Specialized in data analysis and research. Always provide clear, analytical responses for test scenarios.`,

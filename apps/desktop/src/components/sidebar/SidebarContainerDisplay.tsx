@@ -2,12 +2,11 @@ import { createLoggerSync, type Conversation } from "@fishbowl-ai/shared";
 import {
   ConversationViewModel,
   SidebarContainerDisplayProps,
+  useConversationStore,
 } from "@fishbowl-ai/ui-shared";
 import React, { useCallback, useState } from "react";
-import { useConversations } from "../../hooks/conversations/useConversations";
-import { useCreateConversation } from "../../hooks/conversations/useCreateConversation";
 import { cn } from "../../lib/utils";
-import { NewConversationButton } from "../conversations/NewConversationButton";
+import { NewConversationButton } from "../chat/NewConversationButton";
 import { RenameConversationModal } from "../modals/RenameConversationModal";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { DeleteConversationModal } from "./DeleteConversationModal";
@@ -39,20 +38,20 @@ export function SidebarContainerDisplay({
   const [conversationToRename, setConversationToRename] =
     useState<Conversation | null>(null);
 
-  // Initialize hooks for conversation management
+  // Initialize store for conversation management
   const {
-    conversations: conversations,
-    isLoading: _listLoading,
-    error: _listError,
-    refetch,
-  } = useConversations();
+    conversations,
+    loading,
+    error,
+    selectConversation,
+    createConversationAndSelect,
+    loadConversations,
+  } = useConversationStore();
 
-  const {
-    createConversation,
-    isCreating,
-    error: _error,
-    reset: _reset,
-  } = useCreateConversation();
+  // Backward compatibility mapping
+  const isCreating = loading.sending; // Store uses 'sending' for creation operations
+  const _isLoading = loading.conversations;
+  const _listError = error.conversations;
 
   // Format timestamp as relative time
   const formatRelativeTime = (dateString: string): string => {
@@ -89,9 +88,10 @@ export function SidebarContainerDisplay({
   // Handle conversation selection
   const handleConversationSelect = useCallback(
     (conversation: ConversationViewModel) => {
+      selectConversation(conversation.id);
       onConversationSelect?.(conversation.id);
     },
-    [onConversationSelect],
+    [selectConversation, onConversationSelect],
   );
 
   // Handle delete conversation with modal
@@ -132,8 +132,8 @@ export function SidebarContainerDisplay({
 
         await window.electronAPI.conversations.delete(conversationId);
 
-        // Refresh conversations list
-        await refetch();
+        // Use store action instead of manual refetch
+        await loadConversations();
 
         logger.debug("Conversation deleted successfully", { conversationId });
       } catch (error) {
@@ -141,18 +141,14 @@ export function SidebarContainerDisplay({
         throw error;
       }
     },
-    [refetch],
+    [loadConversations], // Replace refetch dependency
   );
 
   // Handle new conversation creation
   const handleNewConversation = async () => {
     try {
-      const result = await createConversation();
-      console.log("Created conversation:", result);
-      // Refresh the list to show new conversation
-      await refetch();
-      // Automatically select the newly created conversation
-      onConversationSelect?.(result.id);
+      await createConversationAndSelect();
+      // Store automatically handles list refresh and selection - no manual refetch needed
     } catch (err) {
       console.error("Failed to create conversation:", err);
       // Error handling will be improved in Feature 2
@@ -224,8 +220,8 @@ export function SidebarContainerDisplay({
           setRenameModalOpen(open);
           if (!open) {
             setConversationToRename(null);
-            // Refresh conversations list to show updated title
-            void refetch();
+            // Use store action instead of manual refetch
+            void loadConversations();
           }
         }}
       />

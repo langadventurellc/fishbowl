@@ -30,7 +30,9 @@ test.describe("Feature: LLM Setup Configuration - OpenAI Configuration Creation"
     await setupButton.click();
 
     // Wait for modal to open
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible({ timeout: 5000 });
 
     // Verify modal title
@@ -97,7 +99,9 @@ test.describe("Feature: LLM Setup Configuration - OpenAI Configuration Creation"
       await setupButton.click();
     }
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     await expect(modal).toBeVisible();
 
     // Save button should be disabled initially
@@ -150,7 +154,9 @@ test.describe("Feature: LLM Setup Configuration - OpenAI Configuration Creation"
       await setupButton.click();
     }
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const mockConfig = createMockOpenAiConfig();
 
     await modal.locator('[name="customName"]').fill(mockConfig.customName);

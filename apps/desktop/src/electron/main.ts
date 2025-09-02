@@ -10,14 +10,19 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { StructuredLogger } from "@fishbowl-ai/shared";
 import { MainProcessServices } from "../main/services/MainProcessServices.js";
+import { ensurePersonalityDefinitions } from "./startup/ensurePersonalityDefinitions.js";
+import { ensureSystemPromptTemplate } from "./startup/ensureSystemPromptTemplate.js";
 import { setupAgentsHandlers } from "./agentsHandlers.js";
 import { setupConversationAgentHandlers } from "./conversationAgentHandlers.js";
 import { setupConversationsHandlers } from "./conversationsHandlers.js";
+import { setupMessagesHandlers } from "./messagesHandlers.js";
+import { setupChatHandlers } from "./chatHandlers.js";
 import { llmConfigServiceManager } from "./getLlmConfigService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
 import { setupLlmModelsHandlers } from "./handlers/llmModelsHandlers.js";
+import { setupPersonalityDefinitionsHandlers } from "./handlers/personalityDefinitionsHandlers.js";
 import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
 import { setupRolesHandlers } from "./rolesHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
@@ -342,6 +347,8 @@ function setupIpcHandlers(
   if (services) {
     setupConversationsIpcHandlers(services);
     setupConversationAgentsIpcHandlers(services);
+    setupMessagesIpcHandlers(services);
+    setupChatHandlers(services);
   }
 }
 
@@ -409,6 +416,7 @@ function setupRolesIpcHandlers(logger?: StructuredLogger): void {
 function setupPersonalitiesIpcHandlers(logger?: StructuredLogger): void {
   try {
     setupPersonalitiesHandlers();
+    setupPersonalityDefinitionsHandlers();
     logger?.debug("Personalities IPC handlers registered successfully");
   } catch (error) {
     logger?.error(
@@ -478,6 +486,26 @@ function setupConversationAgentsIpcHandlers(
     );
     throw new Error(
       "Conversation agents IPC handlers are required for application functionality",
+    );
+  }
+}
+
+/**
+ * Setup messages IPC handlers with proper error handling
+ * @param services - Main process services container
+ * @throws {Error} If handler setup fails
+ */
+function setupMessagesIpcHandlers(services: MainProcessServices): void {
+  try {
+    setupMessagesHandlers(services);
+    services.logger.debug("Messages IPC handlers registered successfully");
+  } catch (error) {
+    services.logger.error(
+      "Failed to register messages IPC handlers",
+      error as Error,
+    );
+    throw new Error(
+      "Messages IPC handlers are required for application functionality",
     );
   }
 }
@@ -585,6 +613,12 @@ The application will now exit.`,
  * Orchestrates the startup sequence in a clean, maintainable way
  */
 async function initializeApplication(): Promise<void> {
+  // Ensure personality definitions are copied to userData on first run
+  await ensurePersonalityDefinitions();
+
+  // Ensure system prompt template is copied to userData on startup
+  await ensureSystemPromptTemplate();
+
   // Initialize main process services container
   mainProcessServices = initializeMainProcessServices();
 

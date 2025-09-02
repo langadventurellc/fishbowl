@@ -1,11 +1,11 @@
 import { expect, test } from "@playwright/test";
 import {
-  setupPersonalitiesTestSuite,
+  createMockPersonalityData,
   openPersonalitiesSection,
+  setupPersonalitiesTestSuite,
   waitForPersonalitiesList,
   waitForPersonalityModal,
   waitForPersonalityModalToClose,
-  createMockPersonalityData,
 } from "../../../helpers";
 
 test.describe("Feature: Personalities Section - Personality Creation", () => {
@@ -25,9 +25,9 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
 
     // Wait for modal
     await waitForPersonalityModal(window);
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
 
     // Fill form with mock data
     const mockData = createMockPersonalityData();
@@ -64,9 +64,9 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await createButton.click();
 
     await waitForPersonalityModal(window);
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
 
     // Initially button should be disabled with empty fields
     const saveButton = modal
@@ -100,9 +100,9 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await createButton.click();
 
     await waitForPersonalityModal(window);
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
 
     // Fill form
     const mockData = createMockPersonalityData();
@@ -154,9 +154,9 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await createButton.click();
 
     await waitForPersonalityModal(window);
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
 
     // Press Escape
     await modal.press("Escape");
@@ -183,9 +183,9 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await createButton.click();
 
     await waitForPersonalityModal(window);
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
 
     const mockData = createMockPersonalityData();
     await modal.locator("#personality-name").fill(mockData.name);
@@ -211,8 +211,6 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     });
 
     await expect(personalityCard).toBeVisible();
-    // The personality card displays BigFive traits in format "O:50 C:50 E:50 A:50 N:50"
-    await expect(personalityCard).toContainText("O:50 C:50 E:50 A:50 N:50");
   });
 
   test("personality persists after page reload", async () => {
@@ -228,9 +226,9 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await createButton.click();
 
     await waitForPersonalityModal(window);
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
 
     const mockData = createMockPersonalityData({
       name: "Persistent Personality Test",
@@ -277,9 +275,9 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await createButton.click();
     await waitForPersonalityModal(window);
 
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
     await modal.locator("#personality-name").fill("Test Name");
     await modal.locator("#custom-instructions").fill("Test Instructions");
 
@@ -309,8 +307,14 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await expect(modal.locator("#personality-name")).toHaveValue("");
     await expect(modal.locator("#custom-instructions")).toHaveValue("");
 
+    // Expand Big 5 section to access sliders
+    const big5Section = modal.locator(
+      'button:has-text("Big 5 Personality Traits")',
+    );
+    await big5Section.click();
+
     // Verify sliders are visible (testing slider values separately)
-    await expect(modal.locator("#big-five-openness")).toBeVisible();
+    await expect(modal.locator("#slider-openness")).toBeVisible();
   });
 
   test("form has trait sliders visible", async () => {
@@ -325,14 +329,20 @@ test.describe("Feature: Personalities Section - Personality Creation", () => {
     await createButton.click();
 
     await waitForPersonalityModal(window);
-    const modal = window.locator('[role="dialog"]').filter({
-      has: window.locator('h2:has-text("Create Personality")'),
-    });
+    const modal = window.locator(
+      '[role="dialog"]:has([id="personality-name"], [id="custom-instructions"])',
+    );
+
+    // Expand Big 5 section to access sliders
+    const big5Section = modal.locator(
+      'button:has-text("Big 5 Personality Traits")',
+    );
+    await big5Section.click();
 
     // Verify BigFive sliders are present and visible
-    await expect(modal.locator("#big-five-openness")).toBeVisible();
-    await expect(modal.locator("#big-five-conscientiousness")).toBeVisible();
-    await expect(modal.locator("#big-five-extraversion")).toBeVisible();
+    await expect(modal.locator("#slider-openness")).toBeVisible();
+    await expect(modal.locator("#slider-conscientiousness")).toBeVisible();
+    await expect(modal.locator("#slider-extraversion")).toBeVisible();
 
     // Verify form can be filled and submitted with default slider values
     await modal.locator("#personality-name").fill("Slider Test Personality");

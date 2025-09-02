@@ -19,7 +19,8 @@ describe("mapAgentsPersistenceToUI", () => {
         {
           id: "test-id",
           name: "Test Agent",
-          model: "Claude 3.5 Sonnet",
+          model: "claude-3-5-sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           systemPrompt: "Test prompt",
@@ -36,7 +37,8 @@ describe("mapAgentsPersistenceToUI", () => {
     expect(result[0]).toEqual({
       id: "test-id",
       name: "Test Agent",
-      model: "Claude 3.5 Sonnet",
+      model: "claude-3-5-sonnet",
+      llmConfigId: "test-config-id",
       role: "role-id",
       personality: "personality-id",
       systemPrompt: "Test prompt",
@@ -51,7 +53,8 @@ describe("mapAgentsPersistenceToUI", () => {
         {
           id: "test-id",
           name: "Test Agent",
-          model: "Claude 3.5 Sonnet",
+          model: "claude-3-5-sonnet",
+          llmConfigId: "test-config-id",
           role: "role-id",
           personality: "personality-id",
           // No systemPrompt

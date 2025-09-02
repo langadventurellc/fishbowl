@@ -111,12 +111,21 @@ describe("ConversationAgentsRepository", () => {
         agent_id: input.agent_id,
         added_at: mockTimestamp,
         is_active: true,
+        enabled: true,
         display_order: 1,
       });
 
       expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
         expect.stringContaining("INSERT INTO conversation_agents"),
-        [validId, input.conversation_id, input.agent_id, mockTimestamp, 1, 1],
+        [
+          validId,
+          input.conversation_id,
+          input.agent_id,
+          mockTimestamp,
+          1,
+          1,
+          1,
+        ],
       );
     });
 
@@ -154,6 +163,7 @@ describe("ConversationAgentsRepository", () => {
         agent_id: validAgentId,
         added_at: "2023-01-01T00:00:00.000Z",
         is_active: 1,
+        enabled: 0,
         display_order: 0,
       };
 
@@ -164,6 +174,7 @@ describe("ConversationAgentsRepository", () => {
       expect(result).toEqual({
         ...mockRow,
         is_active: true, // Converted from 1 to boolean
+        enabled: false, // Converted from 0 to boolean
       });
 
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
@@ -208,6 +219,7 @@ describe("ConversationAgentsRepository", () => {
           agent_id: "523e4567-e89b-12d3-a456-426614174005",
           added_at: "2023-01-01T00:00:00.000Z",
           is_active: 1,
+          enabled: 1,
           display_order: 0,
         },
         {
@@ -216,6 +228,7 @@ describe("ConversationAgentsRepository", () => {
           agent_id: "723e4567-e89b-12d3-a456-426614174007",
           added_at: "2023-01-02T00:00:00.000Z",
           is_active: 1,
+          enabled: 1,
           display_order: 1,
         },
       ];

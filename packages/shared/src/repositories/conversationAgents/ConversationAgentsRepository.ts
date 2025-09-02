@@ -29,6 +29,7 @@ interface ConversationAgentRow {
   agent_id: string;
   added_at: string;
   is_active: number; // SQLite stores boolean as 0/1
+  enabled: number; // SQLite stores boolean as 0/1
   display_order: number;
 }
 
@@ -93,6 +94,7 @@ export class ConversationAgentsRepository {
         agent_id: validatedInput.agent_id,
         added_at: timestamp,
         is_active: true,
+        enabled: true,
         display_order: validatedInput.display_order ?? 0,
       };
 
@@ -102,8 +104,8 @@ export class ConversationAgentsRepository {
 
       // Insert into database
       const sql = `
-        INSERT INTO conversation_agents (id, conversation_id, agent_id, added_at, is_active, display_order)
-        VALUES (?, ?, ?, ?, ?, ?)
+        INSERT INTO conversation_agents (id, conversation_id, agent_id, added_at, is_active, enabled, display_order)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
       `;
 
       await this.databaseBridge.execute(sql, [
@@ -112,6 +114,7 @@ export class ConversationAgentsRepository {
         validatedConversationAgent.agent_id,
         validatedConversationAgent.added_at,
         validatedConversationAgent.is_active ? 1 : 0,
+        validatedConversationAgent.enabled ? 1 : 0,
         validatedConversationAgent.display_order,
       ]);
 
@@ -157,7 +160,7 @@ export class ConversationAgentsRepository {
 
       // Query database
       const sql = `
-        SELECT id, conversation_id, agent_id, added_at, is_active, display_order
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
         FROM conversation_agents
         WHERE id = ?
       `;
@@ -335,7 +338,7 @@ export class ConversationAgentsRepository {
       }
 
       const sql = `
-        SELECT id, conversation_id, agent_id, added_at, is_active, display_order
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
         FROM conversation_agents
         WHERE conversation_id = ?
         ORDER BY display_order ASC, added_at ASC
@@ -379,7 +382,7 @@ export class ConversationAgentsRepository {
       }
 
       const sql = `
-        SELECT id, conversation_id, agent_id, added_at, is_active, display_order
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
         FROM conversation_agents
         WHERE agent_id = ?
         ORDER BY added_at DESC
@@ -461,6 +464,53 @@ export class ConversationAgentsRepository {
   async getOrderedAgents(conversationId: string): Promise<ConversationAgent[]> {
     // This is an alias for findByConversationId which already orders properly
     return this.findByConversationId(conversationId);
+  }
+
+  /**
+   * Get only enabled agents for a conversation ordered by display_order.
+   * This is a critical method for ChatOrchestrationService to find agents that should process messages.
+   *
+   * @param conversationId - Conversation ID to get enabled agents for
+   * @returns Array of enabled conversation agents in display order
+   */
+  async getEnabledByConversationId(
+    conversationId: string,
+  ): Promise<ConversationAgent[]> {
+    try {
+      // Validate conversation ID format
+      const idValidation =
+        conversationAgentSchema.shape.conversation_id.safeParse(conversationId);
+      if (!idValidation.success) {
+        return [];
+      }
+
+      const sql = `
+        SELECT id, conversation_id, agent_id, added_at, is_active, enabled, display_order
+        FROM conversation_agents
+        WHERE conversation_id = ? AND enabled = 1
+        ORDER BY display_order ASC, added_at ASC
+      `;
+
+      const rows = await this.databaseBridge.query<ConversationAgentRow>(sql, [
+        conversationId,
+      ]);
+
+      // Transform database rows and validate
+      const conversationAgents = rows
+        .map((row) => this.transformFromDatabase(row))
+        .map((row) => conversationAgentSchema.parse(row));
+
+      this.logger.debug(
+        `Found ${conversationAgents.length} enabled agents for conversation`,
+        {
+          conversationId,
+        },
+      );
+
+      return conversationAgents;
+    } catch (error) {
+      this.handleDatabaseError(error, "getEnabledByConversationId");
+    }
   }
 
   /**
@@ -559,6 +609,11 @@ export class ConversationAgentsRepository {
       params.push(input.display_order);
     }
 
+    if (input.enabled !== undefined) {
+      updates.push("enabled = ?");
+      params.push(input.enabled ? 1 : 0);
+    }
+
     if (updates.length === 0) {
       return false; // No updates to perform
     }
@@ -584,6 +639,7 @@ export class ConversationAgentsRepository {
     return {
       ...row,
       is_active: Boolean(row.is_active),
+      enabled: Boolean(row.enabled),
     };
   }
 

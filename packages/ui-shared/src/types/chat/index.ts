@@ -1,7 +1,9 @@
 export * from "./AddAgentToConversationModalProps";
 export * from "./AgentLabelsContainerDisplayProps";
 export * from "./AgentPillProps";
+export * from "./AgentPillViewModel";
 export * from "./ChatContainerDisplayProps";
+export * from "./ContextStatisticsProps";
 export * from "./ConversationContextMenuProps";
 export * from "./ConversationItemDisplayProps";
 export * from "./ConversationItemProps";
@@ -17,6 +19,7 @@ export * from "./MessageContentProps";
 export * from "./MessageContextMenuProps";
 export * from "./MessageHeaderProps";
 export * from "./MessageInputDisplayProps";
+export * from "./MessageInputContainerProps";
 export * from "./MessageItemProps";
 export * from "./RenameConversationModalProps";
 export * from "./SendButtonDisplayProps";

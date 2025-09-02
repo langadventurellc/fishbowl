@@ -7,12 +7,12 @@
  * @module data/repositories/__tests__/PersonalitiesRepository.test
  */
 
-import { PersonalitiesRepository } from "../PersonalitiesRepository";
 import {
-  PersistedPersonalitiesSettingsData,
-  FileStorageService,
   FileStorageError,
+  FileStorageService,
+  PersistedPersonalitiesSettingsData,
 } from "@fishbowl-ai/shared";
+import { PersonalitiesRepository } from "../PersonalitiesRepository";
 
 // Mock FileStorageService and createDefaultPersonalitiesSettings
 jest.mock("@fishbowl-ai/shared", () => ({
@@ -45,13 +45,6 @@ describe("PersonalitiesRepository", () => {
       {
         id: "test-personality-1",
         name: "Test Personality 1",
-        bigFive: {
-          openness: 75,
-          conscientiousness: 80,
-          extraversion: 60,
-          agreeableness: 85,
-          neuroticism: 25,
-        },
         behaviors: {
           analytical: 80,
           creative: 75,
@@ -66,13 +59,6 @@ describe("PersonalitiesRepository", () => {
       {
         id: "test-personality-2",
         name: "Test Personality 2",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 90,
-          extraversion: 30,
-          agreeableness: 70,
-          neuroticism: 15,
-        },
         behaviors: {
           focused: 95,
           methodical: 90,
@@ -94,13 +80,6 @@ describe("PersonalitiesRepository", () => {
       {
         id: "default-personality-1",
         name: "Creative Writer",
-        bigFive: {
-          openness: 95,
-          conscientiousness: 60,
-          extraversion: 70,
-          agreeableness: 80,
-          neuroticism: 20,
-        },
         behaviors: {
           creative: 95,
           imaginative: 90,
@@ -115,13 +94,6 @@ describe("PersonalitiesRepository", () => {
       {
         id: "default-personality-2",
         name: "Data Analyst",
-        bigFive: {
-          openness: 70,
-          conscientiousness: 95,
-          extraversion: 40,
-          agreeableness: 60,
-          neuroticism: 10,
-        },
         behaviors: {
           analytical: 95,
           methodical: 90,
@@ -271,13 +243,6 @@ describe("PersonalitiesRepository", () => {
           {
             id: "", // Invalid - empty ID
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               test: 50,
             },
@@ -325,13 +290,6 @@ describe("PersonalitiesRepository", () => {
           {
             id: "", // Invalid - empty ID
             name: "Test",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               test: 50,
             },
@@ -520,13 +478,6 @@ describe("PersonalitiesRepository", () => {
           {
             id: "test-personality",
             name: "Test Personality",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               test: 50,
             },
@@ -553,13 +504,6 @@ describe("PersonalitiesRepository", () => {
           {
             id: "test-personality",
             name: "Test Personality",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               test: 50,
             },

@@ -1,15 +1,15 @@
+import { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
 import { ipcMain } from "electron";
-import { setupPersonalitiesHandlers } from "../personalitiesHandlers";
+import { personalitiesRepositoryManager } from "../../data/repositories/personalitiesRepositoryManager";
 import {
   PERSONALITIES_CHANNELS,
   type PersonalitiesLoadResponse,
+  type PersonalitiesResetResponse,
   type PersonalitiesSaveRequest,
   type PersonalitiesSaveResponse,
-  type PersonalitiesResetResponse,
 } from "../../shared/ipc/index";
+import { setupPersonalitiesHandlers } from "../personalitiesHandlers";
 import { serializeError } from "../utils/errorSerialization";
-import { personalitiesRepositoryManager } from "../../data/repositories/personalitiesRepositoryManager";
-import { PersistedPersonalitiesSettingsData } from "@fishbowl-ai/shared";
 
 // Mock electron
 jest.mock("electron", () => ({
@@ -82,13 +82,6 @@ describe("personalitiesHandlers", () => {
           {
             id: "personality-1",
             name: "Test Personality",
-            bigFive: {
-              openness: 75,
-              conscientiousness: 80,
-              extraversion: 60,
-              agreeableness: 85,
-              neuroticism: 30,
-            },
             behaviors: {
               creativity: 80,
               analytical: 70,
@@ -121,13 +114,6 @@ describe("personalitiesHandlers", () => {
           {
             id: "default-personality",
             name: "Default Personality",
-            bigFive: {
-              openness: 50,
-              conscientiousness: 50,
-              extraversion: 50,
-              agreeableness: 50,
-              neuroticism: 50,
-            },
             behaviors: {
               creativity: 50,
               analytical: 50,
@@ -203,13 +189,6 @@ describe("personalitiesHandlers", () => {
           {
             id: "personality-1",
             name: "Updated Personality",
-            bigFive: {
-              openness: 85,
-              conscientiousness: 90,
-              extraversion: 70,
-              agreeableness: 95,
-              neuroticism: 20,
-            },
             behaviors: {
               creativity: 90,
               analytical: 80,

@@ -42,7 +42,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
       await setupButton.click();
 
       // Fill configuration form
-      const modal = window.locator('[role="dialog"].llm-config-modal');
+      const modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await expect(modal).toBeVisible({ timeout: 5000 });
 
       await modal.locator('[name="customName"]').fill(mockConfig.customName);
@@ -119,7 +121,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .filter({ hasText: "Set up OpenAI" });
       await setupButton.click();
 
-      const modal = window.locator('[role="dialog"].llm-config-modal');
+      const modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await expect(modal).toBeVisible();
 
       await modal.locator('[name="customName"]').fill(mockConfig.customName);
@@ -187,7 +191,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .filter({ hasText: "Set up Anthropic" });
       await setupButton.click();
 
-      const modal = window.locator('[role="dialog"].llm-config-modal');
+      const modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(mockConfig.customName);
       await modal.locator('[name="apiKey"]').fill(mockConfig.apiKey);
 
@@ -256,7 +262,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .filter({ hasText: "Set up OpenAI" });
       await setupButton.click();
 
-      const modal = window.locator('[role="dialog"].llm-config-modal');
+      const modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(mockConfig.customName);
       await modal.locator('[name="apiKey"]').fill(mockConfig.apiKey);
 
@@ -340,7 +348,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .filter({ hasText: "Set up OpenAI" });
       await setupButton.click();
 
-      let modal = window.locator('[role="dialog"].llm-config-modal');
+      let modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(config1.customName);
       await modal.locator('[name="apiKey"]').fill(config1.apiKey);
 
@@ -364,7 +374,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .click();
       await addAnotherButton.click();
 
-      modal = window.locator('[role="dialog"].llm-config-modal');
+      modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(config2.customName);
       await modal.locator('[name="apiKey"]').fill(config2.apiKey);
 
@@ -384,7 +396,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .click();
       await addAnotherButton.click();
 
-      modal = window.locator('[role="dialog"].llm-config-modal');
+      modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(config3.customName);
       await modal.locator('[name="apiKey"]').fill(config3.apiKey);
 
@@ -460,7 +474,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .filter({ hasText: "Set up OpenAI" });
       await setupButton.click();
 
-      let modal = window.locator('[role="dialog"].llm-config-modal');
+      let modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(configs[0]!.customName);
       await modal.locator('[name="apiKey"]').fill(configs[0]!.apiKey);
 
@@ -484,7 +500,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
         .click();
       await addAnotherButton.click();
 
-      modal = window.locator('[role="dialog"].llm-config-modal');
+      modal = window.locator(
+        '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+      );
       await modal.locator('[name="customName"]').fill(configs[1]!.customName);
       await modal.locator('[name="apiKey"]').fill(configs[1]!.apiKey);
 
@@ -604,7 +622,9 @@ test.describe("Feature: LLM Setup Configuration - Delete Configuration", () => {
           await addAnotherButton.click();
         }
 
-        const modal = window.locator('[role="dialog"].llm-config-modal');
+        const modal = window.locator(
+          '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+        );
         await modal.locator('[name="customName"]').fill(configs[i]!.customName);
         await modal.locator('[name="apiKey"]').fill(configs[i]!.apiKey);
 

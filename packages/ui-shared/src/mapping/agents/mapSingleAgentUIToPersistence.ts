@@ -1,5 +1,5 @@
-import type { AgentSettingsViewModel } from "../../types/settings/AgentViewModel";
 import type { PersistedAgentData } from "@fishbowl-ai/shared";
+import type { AgentSettingsViewModel } from "../../types/settings/AgentSettingsViewModel";
 import { normalizeAgentFields } from "./utils/normalizeAgentFields";
 
 /**
@@ -41,6 +41,7 @@ export function mapSingleAgentUIToPersistence(
     id: normalizedAgent.id,
     name: normalizedAgent.name,
     model: normalizedAgent.model,
+    llmConfigId: normalizedAgent.llmConfigId,
     role: normalizedAgent.role,
     personality: normalizedAgent.personality,
     systemPrompt: normalizedAgent.systemPrompt,

@@ -1,4 +1,4 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 import { createLoggerSync } from "@fishbowl-ai/shared";
 import type { ElectronAPI } from "../types/electron";
 
@@ -11,6 +11,14 @@ import { PERSONALITIES_CHANNELS } from "../shared/ipc/personalitiesConstants";
 import { AGENTS_CHANNELS } from "../shared/ipc/agentsConstants";
 import { CONVERSATION_CHANNELS } from "../shared/ipc/conversationsConstants";
 import { CONVERSATION_AGENT_CHANNELS } from "../shared/ipc/conversationAgentsConstants";
+import { PERSONALITY_DEFINITIONS_CHANNELS } from "../shared/ipc/personalityDefinitionsConstants";
+import { MESSAGES_CHANNELS } from "../shared/ipc/messagesConstants";
+import {
+  CHAT_CHANNELS,
+  CHAT_EVENTS,
+  SendToAgentsRequest,
+  AgentUpdateEvent,
+} from "../shared/ipc/chat";
 import type {
   SettingsLoadResponse,
   SettingsSaveRequest,
@@ -53,6 +61,18 @@ import type {
   ConversationAgentAddResponse,
   ConversationAgentRemoveResponse,
   ConversationAgentListResponse,
+  ConversationAgentUpdateRequest,
+  ConversationAgentUpdateResponse,
+  GetDefinitionsRequest,
+  GetDefinitionsResponse,
+  MessagesListRequest,
+  MessagesListResponse,
+  MessagesCreateRequest,
+  MessagesCreateResponse,
+  MessagesUpdateInclusionRequest,
+  MessagesUpdateInclusionResponse,
+  MessagesDeleteRequest,
+  MessagesDeleteResponse,
 } from "../shared/ipc/index";
 import type {
   PersistedSettingsData,
@@ -68,6 +88,9 @@ import type {
   ConversationAgent,
   AddAgentToConversationInput,
   RemoveAgentFromConversationInput,
+  PersonalityDefinitions,
+  CreateMessageInput,
+  Message,
 } from "@fishbowl-ai/shared";
 import type { SettingsCategory } from "@fishbowl-ai/ui-shared";
 
@@ -99,6 +122,44 @@ const electronAPI: ElectronAPI = {
       return () => {
         try {
           ipcRenderer.removeListener("open-settings", wrappedCallback);
+        } catch (error) {
+          logger.error(
+            "Error removing IPC listener:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
+        }
+      };
+    } catch (error) {
+      logger.error(
+        "Error setting up IPC listener:",
+        error instanceof Error ? error : new Error(String(error)),
+      );
+      // Return no-op cleanup function if setup fails
+      return () => {};
+    }
+  },
+
+  onNewConversation: (callback: () => void) => {
+    try {
+      // Create a wrapped callback to prevent event object exposure
+      const wrappedCallback = () => {
+        try {
+          callback();
+        } catch (error) {
+          logger.error(
+            "Error in new conversation callback:",
+            error instanceof Error ? error : new Error(String(error)),
+          );
+        }
+      };
+
+      // Register the IPC listener with the wrapped callback
+      ipcRenderer.on("new-conversation", wrappedCallback);
+
+      // Return cleanup function for memory management
+      return () => {
+        try {
+          ipcRenderer.removeListener("new-conversation", wrappedCallback);
         } catch (error) {
           logger.error(
             "Error removing IPC listener:",
@@ -478,6 +539,31 @@ const electronAPI: ElectronAPI = {
       }
     },
   },
+  personalityDefinitions: {
+    getDefinitions: async (): Promise<PersonalityDefinitions> => {
+      try {
+        const request: GetDefinitionsRequest = {};
+        const response = (await ipcRenderer.invoke(
+          PERSONALITY_DEFINITIONS_CHANNELS.GET_DEFINITIONS,
+          request,
+        )) as GetDefinitionsResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to load personality definitions",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error loading personality definitions:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
   llmModels: {
     load: async (): Promise<PersistedLlmModelsSettingsData> => {
       try {
@@ -754,6 +840,30 @@ const electronAPI: ElectronAPI = {
           : new Error("Failed to communicate with main process");
       }
     },
+    update: async (
+      request: ConversationAgentUpdateRequest,
+    ): Promise<ConversationAgent> => {
+      try {
+        const response = (await ipcRenderer.invoke(
+          CONVERSATION_AGENT_CHANNELS.UPDATE,
+          request,
+        )) as ConversationAgentUpdateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to update conversation agent",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error updating conversation agent:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
     list: async (): Promise<ConversationAgent[]> => {
       try {
         const response = (await ipcRenderer.invoke(
@@ -774,6 +884,165 @@ const electronAPI: ElectronAPI = {
         throw error instanceof Error
           ? error
           : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  messages: {
+    list: async (conversationId: string): Promise<Message[]> => {
+      try {
+        const request: MessagesListRequest = { conversationId };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.LIST,
+          request,
+        )) as MessagesListResponse;
+        if (!response.success) {
+          throw new Error(response.error?.message || "Failed to list messages");
+        }
+        return response.data || [];
+      } catch (error) {
+        logger.error(
+          "Error listing messages:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    create: async (input: CreateMessageInput): Promise<Message> => {
+      try {
+        const request: MessagesCreateRequest = { input };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.CREATE,
+          request,
+        )) as MessagesCreateResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to create message",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error creating message:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    updateInclusion: async (
+      id: string,
+      included: boolean,
+    ): Promise<Message> => {
+      try {
+        const request: MessagesUpdateInclusionRequest = { id, included };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.UPDATE_INCLUSION,
+          request,
+        )) as MessagesUpdateInclusionResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to update message inclusion",
+          );
+        }
+        return response.data!;
+      } catch (error) {
+        logger.error(
+          "Error updating message inclusion:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+    delete: async (id: string): Promise<boolean> => {
+      try {
+        const request: MessagesDeleteRequest = { id };
+        const response = (await ipcRenderer.invoke(
+          MESSAGES_CHANNELS.DELETE,
+          request,
+        )) as MessagesDeleteResponse;
+        if (!response.success) {
+          throw new Error(
+            response.error?.message || "Failed to delete message",
+          );
+        }
+        return response.data || false;
+      } catch (error) {
+        logger.error(
+          "Error deleting message:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+  },
+  chat: {
+    sendToAgents: async (
+      conversationId: string,
+      userMessageId: string,
+    ): Promise<void> => {
+      try {
+        const request: SendToAgentsRequest = { conversationId, userMessageId };
+        await ipcRenderer.invoke(CHAT_CHANNELS.SEND_TO_AGENTS, request);
+      } catch (error) {
+        logger.error(
+          "Error sending to agents:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        throw error instanceof Error
+          ? error
+          : new Error("Failed to communicate with main process");
+      }
+    },
+
+    onAgentUpdate: (
+      callback: (event: AgentUpdateEvent) => void,
+    ): (() => void) => {
+      try {
+        // Create wrapped callback to prevent event object exposure
+        const wrappedCallback = (
+          _: IpcRendererEvent,
+          eventData: AgentUpdateEvent,
+        ) => {
+          try {
+            callback(eventData);
+          } catch (error) {
+            logger.error(
+              "Error in agent update callback:",
+              error instanceof Error ? error : new Error(String(error)),
+            );
+          }
+        };
+
+        // Register the IPC listener
+        ipcRenderer.on(CHAT_EVENTS.AGENT_UPDATE, wrappedCallback);
+
+        // Return cleanup function
+        return () => {
+          try {
+            ipcRenderer.removeListener(
+              CHAT_EVENTS.AGENT_UPDATE,
+              wrappedCallback,
+            );
+          } catch (error) {
+            logger.error(
+              "Error removing agent update listener:",
+              error instanceof Error ? error : new Error(String(error)),
+            );
+          }
+        };
+      } catch (error) {
+        logger.error(
+          "Error setting up agent update listener:",
+          error instanceof Error ? error : new Error(String(error)),
+        );
+        return () => {}; // Return no-op cleanup function if setup fails
       }
     },
   },

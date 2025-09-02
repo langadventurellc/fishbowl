@@ -13,6 +13,8 @@ export interface ConversationAgent {
   added_at: string;
   /** Whether this agent association is currently active */
   is_active: boolean;
+  /** Whether this agent participates in new messages */
+  enabled: boolean;
   /** Display ordering for UI presentation (future enhancement) */
   display_order: number;
 }

@@ -14,7 +14,8 @@ export const createMockAgentData = (
 
   return {
     name: `Test Agent ${agentId}`,
-    model: "claude-3-sonnet",
+    model: "claude-3-haiku-20240307",
+    llmConfigId: "test-llm-config-id",
     role: "test-analyst-role",
     personality: "test-professional-personality",
     systemPrompt: `You are a test agent for automated testing purposes (ID: ${agentId}). Help with testing and verification tasks. Always provide clear, actionable responses for test scenarios. Remember you are part of an automated test suite.`,

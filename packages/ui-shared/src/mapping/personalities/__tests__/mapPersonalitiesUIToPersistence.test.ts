@@ -2,8 +2,8 @@
  * Unit tests for mapPersonalitiesUIToPersistence mapping function
  */
 
-import { mapPersonalitiesUIToPersistence } from "../mapPersonalitiesUIToPersistence";
 import type { PersonalityViewModel } from "../../../types/settings/PersonalityViewModel";
+import { mapPersonalitiesUIToPersistence } from "../mapPersonalitiesUIToPersistence";
 
 describe("mapPersonalitiesUIToPersistence", () => {
   const mockDate = "2025-01-15T10:00:00.000Z";
@@ -23,13 +23,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "personality-1",
           name: "Creative Thinker",
-          bigFive: {
-            openness: 90,
-            conscientiousness: 70,
-            extraversion: 60,
-            agreeableness: 80,
-            neuroticism: 30,
-          },
           behaviors: { creativity: 85, empathy: 75, leadership: 65 },
           customInstructions: "Focus on creative and innovative solutions",
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -38,13 +31,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "personality-2",
           name: "Analytical Mind",
-          bigFive: {
-            openness: 70,
-            conscientiousness: 90,
-            extraversion: 40,
-            agreeableness: 60,
-            neuroticism: 20,
-          },
           behaviors: { analytical: 95, precision: 90, methodical: 85 },
           customInstructions:
             "Focus on data-driven analysis and logical reasoning",
@@ -61,13 +47,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
       expect(result.personalities[0]).toEqual({
         id: "personality-1",
         name: "Creative Thinker",
-        bigFive: {
-          openness: 90,
-          conscientiousness: 70,
-          extraversion: 60,
-          agreeableness: 80,
-          neuroticism: 30,
-        },
         behaviors: { creativity: 85, empathy: 75, leadership: 65 },
         customInstructions: "Focus on creative and innovative solutions",
         createdAt: "2025-01-10T09:00:00.000Z",
@@ -76,13 +55,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
       expect(result.personalities[1]).toEqual({
         id: "personality-2",
         name: "Analytical Mind",
-        bigFive: {
-          openness: 70,
-          conscientiousness: 90,
-          extraversion: 40,
-          agreeableness: 60,
-          neuroticism: 20,
-        },
         behaviors: { analytical: 95, precision: 90, methodical: 85 },
         customInstructions:
           "Focus on data-driven analysis and logical reasoning",
@@ -106,13 +78,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "single-personality",
           name: "Solo Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: { balance: 50 },
           customInstructions: "Balanced personality for testing",
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -127,7 +92,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
       expect(result.personalities).toHaveLength(1);
       expect(result.personalities[0]!.id).toBe("single-personality");
       expect(result.personalities[0]!.name).toBe("Solo Test");
-      expect(result.personalities[0]!.bigFive.openness).toBe(50);
     });
 
     it("should generate schema version and timestamp", () => {
@@ -135,13 +99,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "test-personality",
           name: "Test Personality",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "Test personality for schema validation",
         },
@@ -155,48 +112,11 @@ describe("mapPersonalitiesUIToPersistence", () => {
       expect(new Date(result.lastUpdated).toISOString()).toBe(mockDate);
     });
 
-    it("should preserve Big Five traits accurately", () => {
-      const uiPersonalities: PersonalityViewModel[] = [
-        {
-          id: "big-five-test",
-          name: "Big Five Test",
-          bigFive: {
-            openness: 95,
-            conscientiousness: 85,
-            extraversion: 75,
-            agreeableness: 65,
-            neuroticism: 25,
-          },
-          behaviors: {},
-          customInstructions: "Test Big Five preservation",
-          createdAt: "2025-01-10T09:00:00.000Z",
-          updatedAt: "2025-01-14T15:30:00.000Z",
-        },
-      ];
-
-      const result = mapPersonalitiesUIToPersistence(uiPersonalities);
-
-      expect(result.personalities[0]!.bigFive).toEqual({
-        openness: 95,
-        conscientiousness: 85,
-        extraversion: 75,
-        agreeableness: 65,
-        neuroticism: 25,
-      });
-    });
-
     it("should preserve complex behaviors structure", () => {
       const uiPersonalities: PersonalityViewModel[] = [
         {
           id: "behaviors-test",
           name: "Behaviors Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {
             creativity: 90,
             analytical: 85,
@@ -230,13 +150,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "valid-personality",
           name: "Valid Personality",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "Valid personality for testing",
         },
@@ -251,13 +164,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
       const personalityWithSpaces = {
         id: "   spaced-id   ",
         name: "   Spaced Name   ",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
         behaviors: {},
         customInstructions: "Valid instructions",
       } as PersonalityViewModel;
@@ -270,46 +176,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
       expect(result.personalities[0]!.id).toBe("   spaced-id   ");
       expect(result.personalities[0]!.name).toBe("   Spaced Name   ");
     });
-
-    it("should throw on invalid Big Five values", () => {
-      const invalidPersonality = {
-        id: "valid-id",
-        name: "Valid Name",
-        bigFive: {
-          openness: 150, // Invalid: over 100
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          neuroticism: 50,
-        },
-        behaviors: {},
-        customInstructions: "Valid instructions",
-      } as PersonalityViewModel;
-
-      expect(() =>
-        mapPersonalitiesUIToPersistence([invalidPersonality]),
-      ).toThrow("Invalid personalities persistence data");
-    });
-
-    it("should throw on missing required Big Five traits", () => {
-      const invalidPersonality = {
-        id: "valid-id",
-        name: "Valid Name",
-        bigFive: {
-          openness: 50,
-          conscientiousness: 50,
-          extraversion: 50,
-          agreeableness: 50,
-          // missing neuroticism
-        },
-        behaviors: {},
-        customInstructions: "Valid instructions",
-      } as PersonalityViewModel;
-
-      expect(() =>
-        mapPersonalitiesUIToPersistence([invalidPersonality]),
-      ).toThrow("Invalid personalities persistence data");
-    });
   });
 
   describe("field normalization and processing", () => {
@@ -318,13 +184,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "field-test",
           name: "Field Test Personality",
-          bigFive: {
-            openness: 80,
-            conscientiousness: 70,
-            extraversion: 60,
-            agreeableness: 90,
-            neuroticism: 40,
-          },
           behaviors: { creativity: 85, analytical: 75 },
           customInstructions: "Comprehensive field testing",
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -336,11 +195,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
 
       expect(result.personalities[0]!.id).toBe("field-test");
       expect(result.personalities[0]!.name).toBe("Field Test Personality");
-      expect(result.personalities[0]!.bigFive.openness).toBe(80);
-      expect(result.personalities[0]!.bigFive.conscientiousness).toBe(70);
-      expect(result.personalities[0]!.bigFive.extraversion).toBe(60);
-      expect(result.personalities[0]!.bigFive.agreeableness).toBe(90);
-      expect(result.personalities[0]!.bigFive.neuroticism).toBe(40);
       expect(result.personalities[0]!.behaviors).toEqual({
         creativity: 85,
         analytical: 75,
@@ -359,13 +213,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "  preserve-test  ",
           name: "  Preserve Spaces  ",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "  Instructions with spaces  ",
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -387,13 +234,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "timestamp-test",
           name: "Timestamp Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "Test timestamp handling",
           // Missing createdAt and updatedAt
@@ -411,13 +251,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "partial-timestamp",
           name: "Partial Timestamp Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "Test partial timestamp handling",
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -441,13 +274,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         (_, i) => ({
           id: `personality-${i}`,
           name: `Personality ${i}`,
-          bigFive: {
-            openness: 50 + (i % 50),
-            conscientiousness: 50 + (i % 50),
-            extraversion: 50 + (i % 50),
-            agreeableness: 50 + (i % 50),
-            neuroticism: 50 + (i % 50),
-          },
           behaviors: { trait: 50 + (i % 50) },
           customInstructions: `Instructions for personality ${i}`,
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -479,13 +305,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         (_, i) => ({
           id: `personality-${String(i).padStart(3, "0")}`,
           name: `Personality ${i}`,
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: `Instructions ${i}`,
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -510,13 +329,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "unicode-personality",
           name: "Personnalité Française 🇫🇷",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: { créativité: 85 },
           customInstructions: "Tu es un assistant très compétent! 🤖✨",
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -532,38 +344,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         "Tu es un assistant très compétent! 🤖✨",
       );
     });
-
-    it("should preserve emoji characters in behaviors", () => {
-      const uiPersonalities: PersonalityViewModel[] = [
-        {
-          id: "emoji-behaviors",
-          name: "Emoji Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
-          behaviors: {
-            "🎯": 85,
-            "💡": 90,
-            "🤝": 75,
-          },
-          customInstructions: "Testing emoji preservation",
-          createdAt: "2025-01-10T09:00:00.000Z",
-          updatedAt: "2025-01-14T15:30:00.000Z",
-        },
-      ];
-
-      const result = mapPersonalitiesUIToPersistence(uiPersonalities);
-
-      expect(result.personalities[0]!.behaviors).toEqual({
-        "🎯": 85,
-        "💡": 90,
-        "🤝": 75,
-      });
-    });
   });
 
   describe("return type and structure", () => {
@@ -572,13 +352,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "structure-test",
           name: "Structure Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "Test structure",
           createdAt: "2025-01-10T09:00:00.000Z",
@@ -602,18 +375,10 @@ describe("mapPersonalitiesUIToPersistence", () => {
       const personality = result.personalities[0]!;
       expect(personality).toHaveProperty("id");
       expect(personality).toHaveProperty("name");
-      expect(personality).toHaveProperty("bigFive");
       expect(personality).toHaveProperty("behaviors");
       expect(personality).toHaveProperty("customInstructions");
       expect(personality).toHaveProperty("createdAt");
       expect(personality).toHaveProperty("updatedAt");
-
-      // Check Big Five structure
-      expect(personality.bigFive).toHaveProperty("openness");
-      expect(personality.bigFive).toHaveProperty("conscientiousness");
-      expect(personality.bigFive).toHaveProperty("extraversion");
-      expect(personality.bigFive).toHaveProperty("agreeableness");
-      expect(personality.bigFive).toHaveProperty("neuroticism");
     });
 
     it("should return valid PersistedPersonalitiesSettingsData", () => {
@@ -621,13 +386,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "type-test",
           name: "Type Test",
-          bigFive: {
-            openness: 50,
-            conscientiousness: 50,
-            extraversion: 50,
-            agreeableness: 50,
-            neuroticism: 50,
-          },
           behaviors: {},
           customInstructions: "Type testing",
         },
@@ -649,13 +407,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "integrity-test-1",
           name: "Data Integrity Test 1",
-          bigFive: {
-            openness: 85,
-            conscientiousness: 75,
-            extraversion: 65,
-            agreeableness: 90,
-            neuroticism: 25,
-          },
           behaviors: {
             creativity: 90,
             analytical: 80,
@@ -670,13 +421,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
         {
           id: "integrity-test-2",
           name: "Data Integrity Test 2",
-          bigFive: {
-            openness: 70,
-            conscientiousness: 90,
-            extraversion: 40,
-            agreeableness: 60,
-            neuroticism: 30,
-          },
           behaviors: {
             methodical: 95,
             precision: 90,
@@ -696,9 +440,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
       expect(result.personalities[0]!.name).toBe(
         originalPersonalities[0]!.name,
       );
-      expect(result.personalities[0]!.bigFive).toEqual(
-        originalPersonalities[0]!.bigFive,
-      );
       expect(result.personalities[0]!.behaviors).toEqual(
         originalPersonalities[0]!.behaviors,
       );
@@ -713,9 +454,6 @@ describe("mapPersonalitiesUIToPersistence", () => {
       expect(result.personalities[1]!.id).toBe(originalPersonalities[1]!.id);
       expect(result.personalities[1]!.name).toBe(
         originalPersonalities[1]!.name,
-      );
-      expect(result.personalities[1]!.bigFive).toEqual(
-        originalPersonalities[1]!.bigFive,
       );
       expect(result.personalities[1]!.behaviors).toEqual(
         originalPersonalities[1]!.behaviors,

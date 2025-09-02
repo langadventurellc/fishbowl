@@ -27,7 +27,9 @@ test.describe("Feature: LLM Setup Configuration - Add Another Provider Button Be
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const config = createMockOpenAiConfig();
     await modal.locator('[name="customName"]').fill(config.customName);
     await modal.locator('[name="apiKey"]').fill(config.apiKey);
@@ -54,7 +56,9 @@ test.describe("Feature: LLM Setup Configuration - Add Another Provider Button Be
       .filter({ hasText: "Set up OpenAI" });
     await setupButton.click();
 
-    const modal = window.locator('[role="dialog"].llm-config-modal');
+    const modal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const firstConfig = createMockOpenAiConfig();
     await modal.locator('[name="customName"]').fill(firstConfig.customName);
     await modal.locator('[name="apiKey"]').fill(firstConfig.apiKey);
@@ -73,7 +77,9 @@ test.describe("Feature: LLM Setup Configuration - Add Another Provider Button Be
     // Create second configuration
     await addAnotherButton.click();
 
-    const secondModal = window.locator('[role="dialog"].llm-config-modal');
+    const secondModal = window.locator(
+      '[role="dialog"]:has([name="customName"], [name="apiKey"])',
+    );
     const secondConfig = createMockOpenAiConfig();
     await secondModal
       .locator('[name="customName"]')

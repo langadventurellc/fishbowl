@@ -24,6 +24,8 @@ export const conversationAgentSchema = z.object({
 
   is_active: z.boolean({ message: "Active status must be a boolean" }),
 
+  enabled: z.boolean({ message: "Enabled status must be a boolean" }),
+
   display_order: z
     .number({ message: "Display order must be a number" })
     .int("Display order must be an integer")

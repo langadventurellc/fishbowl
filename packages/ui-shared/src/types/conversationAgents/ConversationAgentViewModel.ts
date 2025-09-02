@@ -8,7 +8,7 @@
  * @module types/conversationAgents/ConversationAgentViewModel
  */
 
-import type { AgentSettingsViewModel } from "../settings/AgentViewModel";
+import type { AgentSettingsViewModel } from "../settings/AgentSettingsViewModel";
 
 /**
  * Represents a conversation agent association with populated agent data in the UI system.
@@ -79,6 +79,13 @@ export interface ConversationAgentViewModel {
    * Inactive agents may be hidden or displayed differently in the UI.
    */
   isActive: boolean;
+
+  /**
+   * Whether this agent participates in new messages.
+   * Controls whether the agent will receive and respond to new messages
+   * in the conversation. Can be toggled independently of isActive.
+   */
+  enabled: boolean;
 
   /**
    * Display ordering for UI presentation.

@@ -1,4 +1,4 @@
-import { AgentSettingsViewModel } from "../settings/AgentViewModel";
+import { AgentSettingsViewModel } from "../settings/AgentSettingsViewModel";
 
 export interface PendingOperation {
   id: string; // Unique operation ID for tracking
