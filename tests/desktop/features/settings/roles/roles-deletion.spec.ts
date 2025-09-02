@@ -7,6 +7,7 @@ import {
   createMockRoleData,
   waitForRoleModal,
   waitForModalToClose,
+  waitForRole,
 } from "../../../helpers";
 
 test.describe("Feature: Roles Section - Role Deletion", () => {
@@ -39,6 +40,9 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await saveButton.click();
     await waitForModalToClose(window);
 
+    // Wait for the new role to appear in the list before counting
+    await waitForRole(window, testRole.name);
+
     // Get initial role count (should be 55: 54 defaults + 1 created)
     const initialRoleCount = await window.locator('[role="listitem"]').count();
     expect(initialRoleCount).toBe(55);
@@ -51,7 +55,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
 
     // Click delete button
     const deleteButton = roleCard.locator(
-      `button[aria-label="Delete ${testRole.name} role"]`,
+      `button[aria-label="Delete ${testRole.name}"]`,
     );
     await expect(deleteButton).toBeVisible();
     await deleteButton.click();
@@ -123,7 +127,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await roleCard.hover();
 
     const deleteButton = roleCard.locator(
-      `button[aria-label="Delete ${testRole.name} role"]`,
+      `button[aria-label="Delete ${testRole.name}"]`,
     );
     await deleteButton.click();
 
@@ -178,7 +182,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await roleCard.hover();
 
     const deleteButton = roleCard.locator(
-      `button[aria-label="Delete ${testRole.name} role"]`,
+      `button[aria-label="Delete ${testRole.name}"]`,
     );
     await deleteButton.click();
 
@@ -257,7 +261,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await middleRoleCard.hover();
 
     const deleteButton = middleRoleCard.locator(
-      'button[aria-label="Delete Second Role role"]',
+      'button[aria-label="Delete Second Role"]',
     );
     await deleteButton.click();
 
@@ -292,7 +296,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
 
     // Click delete button
     const deleteButton = defaultRoleCard.locator(
-      'button[aria-label="Delete Project Manager role"]',
+      'button[aria-label="Delete Project Manager"]',
     );
     await expect(deleteButton).toBeVisible();
     await deleteButton.click();
@@ -348,7 +352,7 @@ test.describe("Feature: Roles Section - Role Deletion", () => {
     await roleCard.hover();
 
     const deleteButton = roleCard.locator(
-      `button[aria-label="Delete ${testRole.name} role"]`,
+      `button[aria-label="Delete ${testRole.name}"]`,
     );
     await deleteButton.click();
 

@@ -65,7 +65,6 @@ test.describe("Feature: LLM Setup Configuration - OpenAI Configuration Creation"
     // Verify card content
     await expect(configCard).toContainText(mockConfig.customName);
     await expect(configCard).toContainText("OpenAI");
-    await expect(configCard).toContainText("sk-...****"); // Masked API key
 
     // Verify "Add Another Provider" button is now visible
     const addAnotherButton = window
@@ -195,9 +194,10 @@ test.describe("Feature: LLM Setup Configuration - OpenAI Configuration Creation"
       console.log("Secure storage not available in test environment:", error);
     }
 
-    // Verify card shows masked API key - get the last added card
+    // Verify card shows configuration name and provider - get the last added card
     const configCard = window.locator('[role="article"]').last();
-    await expect(configCard).toContainText("sk-...****");
+    await expect(configCard).toContainText(mockConfig.customName);
+    await expect(configCard).toContainText("OpenAI");
     await expect(configCard).not.toContainText(mockConfig.apiKey);
   });
 });

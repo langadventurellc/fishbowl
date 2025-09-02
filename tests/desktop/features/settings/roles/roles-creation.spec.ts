@@ -199,7 +199,7 @@ test.describe("Feature: Roles Section - Role Creation", () => {
     });
 
     await expect(roleCard).toBeVisible();
-    await expect(roleCard.locator("p.text-muted-foreground")).toContainText(
+    await expect(roleCard.locator(".text-muted-foreground")).toContainText(
       mockData.description,
     );
   });

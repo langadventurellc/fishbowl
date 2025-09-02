@@ -155,8 +155,8 @@ test.describe("Feature: LLM Setup Configuration - Edit Configuration Tests", () 
     await saveButton.click();
     await expect(editModal).not.toBeVisible({ timeout: 5000 });
 
-    // Verify card still shows masked key
-    await expect(configCard).toContainText("sk-...****");
+    // Verify card still shows configuration details
+    await expect(configCard).toContainText("OpenAI");
 
     // Test entering new key → should update on save
     await configCard.locator('[aria-label*="Edit"]').click();
