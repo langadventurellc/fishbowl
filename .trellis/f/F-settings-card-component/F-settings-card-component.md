@@ -1,13 +1,27 @@
 ---
 id: F-settings-card-component
 title: Settings Card Component
-status: open
+status: in-progress
 priority: medium
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/components/SettingsCardProps.ts:
+    Created new TypeScript interface file with comprehensive JSDoc documentation
+    defining props for the unified SettingsCard component - includes title
+    (string), content (ReactNode), onEdit/onDelete callbacks, and optional
+    className prop
+  packages/ui-shared/src/types/components/index.ts: Added export for
+    SettingsCardProps interface in alphabetical order after FormHeaderProps to
+    maintain consistent barrel export pattern
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-settingscard-component
+  - T-create-settingscardprops
+  - T-refactor-agentcard-to-use
+  - T-refactor-llmprovidercard-to
+  - T-refactor-rolelistitem-to-use
+  - T-replace-personalitycard-with
 created: 2025-09-02T02:41:57.955Z
 updated: 2025-09-02T02:41:57.955Z
 ---
