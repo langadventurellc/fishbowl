@@ -18,14 +18,22 @@ affectedFiles:
     accessibility features, and shadcn Card component integration
   apps/desktop/src/components/ui/index.ts: Created barrel export file to
     centralize UI component exports following project conventions
+  apps/desktop/src/components/settings/agents/LibraryTab.tsx: Replaced AgentCard
+    usage with SettingsCard, moved model and role resolution business logic from
+    AgentCard into AgentGrid component, updated imports to include getRoleById
+    and useLlmModels, combined model and role names into content string format
+  apps/desktop/src/components/settings/agents/AgentCard.tsx: Deleted -
+    intermediate component no longer needed after refactoring LibraryTab to use
+    SettingsCard directly
+  apps/desktop/src/components/settings/agents/index.ts: Removed AgentCard export from barrel file since component was deleted
 log: []
 schema: v1.0
 childrenIds:
-  - T-create-settingscard-component
   - T-refactor-agentcard-to-use
   - T-refactor-llmprovidercard-to
   - T-refactor-rolelistitem-to-use
   - T-replace-personalitycard-with
+  - T-create-settingscard-component
   - T-create-settingscardprops
 created: 2025-09-02T02:41:57.955Z
 updated: 2025-09-02T02:41:57.955Z
