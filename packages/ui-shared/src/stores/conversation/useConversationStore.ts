@@ -244,6 +244,22 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   },
 
   /**
+   * Get the chat mode of the currently active conversation.
+   * Returns 'manual' or 'round-robin' if there is an active conversation,
+   * or null if no conversation is selected or the conversation is not found.
+   * Provides reactive updates when conversation selection changes.
+   */
+  getActiveChatMode: (): "manual" | "round-robin" | null => {
+    const { activeConversationId, conversations } = get();
+    if (!activeConversationId) return null;
+
+    const conversation = conversations.find(
+      (c) => c.id === activeConversationId,
+    );
+    return conversation?.chat_mode || null;
+  },
+
+  /**
    * Atomic create and select operation.
    */
   createConversationAndSelect: async (title?: string) => {

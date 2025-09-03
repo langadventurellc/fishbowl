@@ -48,6 +48,14 @@ export interface ConversationStoreActions {
   selectConversation(id: string | null): Promise<void>;
 
   /**
+   * Get the chat mode of the currently active conversation.
+   * Returns the chat mode ('manual' | 'round-robin') if there is an active conversation,
+   * or null if no conversation is selected or the conversation is not found.
+   * Provides reactive updates when conversation selection changes.
+   */
+  getActiveChatMode(): "manual" | "round-robin" | null;
+
+  /**
    * Create a new conversation and immediately select it as active.
    * Atomic operation that handles creation, list refresh, and selection.
    */
