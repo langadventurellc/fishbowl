@@ -4,6 +4,7 @@
  * @module ui-shared
  */
 
+export * from "./chat-modes";
 export * from "./constants";
 export * from "./data";
 export * from "./hooks";
