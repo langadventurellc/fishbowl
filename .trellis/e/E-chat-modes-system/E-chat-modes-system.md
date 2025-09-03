@@ -205,6 +205,15 @@ affectedFiles:
     edge cases, and TypeScript type safety
   apps/desktop/src/setupTests.ts: Added scrollIntoView mock for Radix UI
     components to fix test environment compatibility
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Integrated ChatModeSelector component with useConversationStore methods
+    (getActiveChatMode, setChatMode), error filtering for chat mode save
+    operations, conditional rendering when selectedConversationId exists, and
+    proper positioning with ml-auto class
+  apps/desktop/src/components/layout/__tests__/AgentLabelsContainerDisplay.test.tsx:
+    Created comprehensive test suite with 15 test cases covering
+    ChatModeSelector integration scenarios, error handling, layout preservation,
+    and existing functionality verification
 log: []
 schema: v1.0
 childrenIds:

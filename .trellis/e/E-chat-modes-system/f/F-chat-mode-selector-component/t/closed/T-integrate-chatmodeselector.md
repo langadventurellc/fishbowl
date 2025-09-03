@@ -1,13 +1,27 @@
 ---
 id: T-integrate-chatmodeselector
 title: Integrate ChatModeSelector into AgentLabelsContainerDisplay component
-status: open
+status: done
 priority: high
 parent: F-chat-mode-selector-component
 prerequisites:
   - T-create-chatmodeselector
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
+    Integrated ChatModeSelector component with useConversationStore methods
+    (getActiveChatMode, setChatMode), error filtering for chat mode save
+    operations, conditional rendering when selectedConversationId exists, and
+    proper positioning with ml-auto class
+  apps/desktop/src/components/layout/__tests__/AgentLabelsContainerDisplay.test.tsx:
+    Created comprehensive test suite with 15 test cases covering
+    ChatModeSelector integration scenarios, error handling, layout preservation,
+    and existing functionality verification
+log:
+  - Successfully integrated ChatModeSelector into AgentLabelsContainerDisplay
+    component with full store integration, error handling, and comprehensive
+    test coverage. The selector is positioned at the far right of the container
+    using ml-auto class and only appears when a conversation is selected. All
+    existing functionality for agent pills and add button remains preserved.
 schema: v1.0
 childrenIds: []
 created: 2025-09-03T22:27:19.783Z

@@ -6,7 +6,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import React, { useCallback, useState } from "react";
 import { useConversationStore, useAgentsStore } from "@fishbowl-ai/ui-shared";
 import { cn } from "../../lib/utils";
-import { AgentPill } from "../chat";
+import { AgentPill, ChatModeSelector } from "../chat";
 import { Button } from "../input";
 import { AddAgentToConversationModal } from "../modals/AddAgentToConversationModal";
 
@@ -37,14 +37,24 @@ export const AgentLabelsContainerDisplay: React.FC<
   const [addModalOpen, setAddModalOpen] = useState(false);
 
   // Store integration
-  const { activeConversationAgents, loading, error, toggleAgentEnabled } =
-    useConversationStore();
+  const {
+    activeConversationAgents,
+    loading,
+    error,
+    toggleAgentEnabled,
+    getActiveChatMode,
+    setChatMode,
+  } = useConversationStore();
   const { agents: agentConfigs } = useAgentsStore();
 
   // Map store state to component expectations
   const conversationAgents = activeConversationAgents;
   const isLoading = loading.agents;
   const agentsError = error.agents;
+
+  // Chat mode integration
+  const activeChatMode = getActiveChatMode();
+  const chatModeError = agentsError?.operation === "save" ? agentsError : null;
 
   // Transform conversation agents to display format
   const displayAgents = selectedConversationId
@@ -180,6 +190,18 @@ export const AgentLabelsContainerDisplay: React.FC<
           >
             +
           </Button>
+        )}
+
+        {/* Chat mode selector - only when conversation is selected */}
+        {selectedConversationId && (
+          <div className="ml-auto">
+            <ChatModeSelector
+              value={activeChatMode}
+              onValueChange={setChatMode}
+              disabled={isLoading}
+              error={chatModeError?.message || undefined}
+            />
+          </div>
         )}
       </div>
 
