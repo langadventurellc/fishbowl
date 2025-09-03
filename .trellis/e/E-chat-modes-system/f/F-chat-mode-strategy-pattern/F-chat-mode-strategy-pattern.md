@@ -1,15 +1,35 @@
 ---
 id: F-chat-mode-strategy-pattern
 title: Chat Mode Strategy Pattern
-status: open
+status: in-progress
 priority: medium
 parent: E-chat-modes-system
 prerequisites:
   - F-database-schema-and-core-types
-affectedFiles: {}
+affectedFiles:
+  packages/ui-shared/src/types/chat-modes/ChatModeIntent.ts:
+    Created comprehensive
+    ChatModeIntent interface with toEnable and toDisable string arrays,
+    extensive JSDoc documentation with examples for different scenarios (first
+    agent, round robin, disable all, no-op)
+  packages/ui-shared/src/types/chat-modes/ChatModeHandler.ts: Created
+    ChatModeHandler interface with readonly name property and three core methods
+    (handleAgentAdded, handleAgentToggle, handleConversationProgression),
+    comprehensive JSDoc with detailed examples for manual and round-robin modes,
+    proper imports from @fishbowl-ai/shared
+  packages/ui-shared/src/types/chat-modes/index.ts:
+    Created barrel file exporting
+    ChatModeHandler and ChatModeIntent types with JSDoc module description
+  packages/ui-shared/src/types/index.ts: Added export for chat-modes module to
+    main types barrel file, maintaining alphabetical order
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-chat-modes-directory
+  - T-create-chatmodehandler
+  - T-create-factory-function-and
+  - T-implement-manualchatmode
+  - T-implement-roundrobinchatmode
 created: 2025-09-03T18:34:12.709Z
 updated: 2025-09-03T18:34:12.709Z
 ---

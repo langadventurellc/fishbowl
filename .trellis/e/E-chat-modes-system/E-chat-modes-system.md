@@ -87,6 +87,21 @@ affectedFiles:
     handling, IPC availability checks, type safety validation, and edge cases.
     Tests include proper Electron API mocking and complete coverage of
     success/failure scenarios.
+  packages/ui-shared/src/types/chat-modes/ChatModeIntent.ts:
+    Created comprehensive
+    ChatModeIntent interface with toEnable and toDisable string arrays,
+    extensive JSDoc documentation with examples for different scenarios (first
+    agent, round robin, disable all, no-op)
+  packages/ui-shared/src/types/chat-modes/ChatModeHandler.ts: Created
+    ChatModeHandler interface with readonly name property and three core methods
+    (handleAgentAdded, handleAgentToggle, handleConversationProgression),
+    comprehensive JSDoc with detailed examples for manual and round-robin modes,
+    proper imports from @fishbowl-ai/shared
+  packages/ui-shared/src/types/chat-modes/index.ts:
+    Created barrel file exporting
+    ChatModeHandler and ChatModeIntent types with JSDoc module description
+  packages/ui-shared/src/types/index.ts: Added export for chat-modes module to
+    main types barrel file, maintaining alphabetical order
 log: []
 schema: v1.0
 childrenIds:
