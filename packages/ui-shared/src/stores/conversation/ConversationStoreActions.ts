@@ -57,6 +57,16 @@ export interface ConversationStoreActions {
   getActiveChatMode(): "manual" | "round-robin" | null;
 
   /**
+   * Update the chat mode of the currently active conversation.
+   * Handles the complete workflow of updating the conversation via the service layer
+   * and enforcing mode rules. For Round Robin mode, immediately enforces the
+   * single-enabled invariant by disabling all but the first enabled agent.
+   *
+   * @param chatMode - The new chat mode to set ('manual' | 'round-robin')
+   */
+  setChatMode(chatMode: "manual" | "round-robin"): Promise<void>;
+
+  /**
    * Create a new conversation and immediately select it as active.
    * Atomic operation that handles creation, list refresh, and selection.
    */
@@ -104,6 +114,13 @@ export interface ConversationStoreActions {
    * @param intent - Intent object specifying which agents to enable/disable
    */
   processAgentIntent(intent: ChatModeIntent): Promise<void>;
+
+  /**
+   * Private helper for enforcing Round Robin invariant.
+   * Ensures only one agent is enabled at a time by keeping the first enabled agent
+   * by rotation order and disabling all others.
+   */
+  enforceRoundRobinInvariant(): Promise<void>;
 
   /**
    * Subscribe to real-time agent update events for the active conversation.

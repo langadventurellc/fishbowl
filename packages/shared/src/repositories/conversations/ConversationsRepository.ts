@@ -1,21 +1,21 @@
-import type { ConversationsRepositoryInterface } from "./ConversationsRepositoryInterface";
+import { ZodError } from "zod";
+import { createLoggerSync } from "../../logging/createLoggerSync";
 import type { DatabaseBridge } from "../../services/database";
-import type { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
+import { DatabaseError } from "../../services/database";
 import type {
   Conversation,
   CreateConversationInput,
   UpdateConversationInput,
 } from "../../types/conversations";
 import {
-  ConversationValidationError,
   ConversationNotFoundError,
   conversationSchema,
+  ConversationValidationError,
   createConversationInputSchema,
   updateConversationInputSchema,
 } from "../../types/conversations";
-import { ZodError } from "zod";
-import { createLoggerSync } from "../../logging/createLoggerSync";
-import { DatabaseError } from "../../services/database";
+import type { CryptoUtilsInterface } from "../../utils/CryptoUtilsInterface";
+import type { ConversationsRepositoryInterface } from "./ConversationsRepositoryInterface";
 
 /**
  * Repository for conversation persistence operations.
@@ -157,6 +157,7 @@ export class ConversationsRepository
     }
   }
 
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   async update(
     id: string,
     input: UpdateConversationInput,

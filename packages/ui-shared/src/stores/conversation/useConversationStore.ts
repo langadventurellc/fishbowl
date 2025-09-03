@@ -12,6 +12,7 @@ import type {
   ConversationService,
   Message,
   ConversationAgent,
+  UpdateConversationInput,
 } from "@fishbowl-ai/shared";
 import { useChatStore } from "../chat/useChatStore";
 import { createChatModeHandler } from "../../chat-modes";
@@ -259,6 +260,81 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       (c) => c.id === activeConversationId,
     );
     return conversation?.chat_mode || null;
+  },
+
+  setChatMode: async (chatMode: "manual" | "round-robin") => {
+    const { activeConversationId } = get();
+    if (!activeConversationId || !conversationService) return;
+
+    try {
+      // Update via service layer using UpdateConversationInput
+      const updatedConversation = await conversationService.updateConversation(
+        activeConversationId,
+        { chat_mode: chatMode } as UpdateConversationInput,
+      );
+
+      // Update local state
+      set((state) => ({
+        ...state,
+        conversations: state.conversations.map((c) =>
+          c.id === activeConversationId ? updatedConversation : c,
+        ),
+      }));
+
+      // Immediately enforce mode rules
+      if (chatMode === "round-robin") {
+        await get().enforceRoundRobinInvariant();
+      }
+    } catch (error) {
+      // Handle errors with proper error state
+      set((state) => ({
+        ...state,
+        error: {
+          ...state.error,
+          agents: {
+            message: `Failed to change chat mode: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`,
+            operation: "save",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
+  },
+
+  /**
+   * Private helper for enforcing Round Robin invariant.
+   * Ensures only one agent is enabled at a time by keeping the first enabled agent
+   * by rotation order and disabling all others.
+   */
+  enforceRoundRobinInvariant: async () => {
+    const { activeConversationAgents } = get();
+    const enabledAgents = activeConversationAgents.filter((a) => a.enabled);
+
+    if (enabledAgents.length <= 1) return; // Already compliant
+
+    // Keep first enabled agent by rotation order
+    const sortedAgents = activeConversationAgents.sort(
+      (a, b) =>
+        a.display_order - b.display_order ||
+        new Date(a.added_at).getTime() - new Date(b.added_at).getTime(),
+    );
+    const firstEnabled = sortedAgents.find((a) => a.enabled);
+
+    if (!firstEnabled) return;
+
+    // Disable all others (no need to enable the already enabled agent)
+    const intent: ChatModeIntent = {
+      toEnable: [], // First enabled agent is already enabled
+      toDisable: enabledAgents
+        .filter((a) => a.id !== firstEnabled.id)
+        .map((a) => a.id),
+    };
+
+    await get().processAgentIntent(intent);
   },
 
   /**

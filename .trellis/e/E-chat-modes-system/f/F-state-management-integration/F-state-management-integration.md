@@ -13,14 +13,19 @@ affectedFiles:
     documentation specifying return type and reactive behavior; Added
     ChatModeIntent import and processAgentIntent method signature to the
     interface with proper documentation for the new helper method that processes
-    chat mode handler intents.
+    chat mode handler intents.; Added setChatMode method signature with
+    comprehensive JSDoc documentation for updating conversation chat modes
   packages/ui-shared/src/stores/conversation/useConversationStore.ts:
     Implemented getActiveChatMode function that derives chat mode from active
     conversation using efficient array.find operation with null safety via
     optional chaining; Added chat mode imports and implemented
     processAgentIntent helper method for processing handler intents into agent
     state updates. Modified toggleAgentEnabled method to delegate to chat mode
-    handlers using createChatModeHandler factory and getActiveChatMode function.
+    handlers using createChatModeHandler factory and getActiveChatMode
+    function.; Implemented setChatMode action with service integration, state
+    updates, Round Robin enforcement, and error handling. Added
+    enforceRoundRobinInvariant helper method with optimized logic. Added
+    UpdateConversationInput import.
   packages/ui-shared/src/stores/conversation/__tests__/getActiveChatMode.test.ts:
     Created comprehensive unit test suite with 20+ test cases covering basic
     functionality, reactive behavior, performance requirements (<1ms), type
@@ -30,14 +35,18 @@ affectedFiles:
     processAgentIntent helper method, enhanced toggleAgentEnabled delegation,
     error handling, loading states, and integration scenarios for both manual
     and round-robin modes.
+  packages/ui-shared/src/stores/conversation/__tests__/setChatMode.test.ts:
+    Created comprehensive unit test suite with 12 test cases covering successful
+    updates, Round Robin invariant enforcement, error handling, edge cases, and
+    state management scenarios
 log: []
 schema: v1.0
 childrenIds:
-  - T-add-chat-mode-delegation-to
   - T-add-enforceroundrobininvariant
   - T-enhance-addagent-with-chat
   - T-implement-conversation-1
   - T-implement-setchatmode-action
+  - T-add-chat-mode-delegation-to
   - T-add-getactivechatmode
 created: 2025-09-03T18:35:27.428Z
 updated: 2025-09-03T18:35:27.428Z
