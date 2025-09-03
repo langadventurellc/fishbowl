@@ -10,3 +10,4 @@
  */
 
 export { ManualChatMode } from "./ManualChatMode";
+export { RoundRobinChatMode } from "./RoundRobinChatMode";

@@ -33,17 +33,31 @@ affectedFiles:
     immutability, error handling, edge cases, and consistency validation.
     Includes helper functions for creating mock ConversationAgent objects
   packages/ui-shared/src/chat-modes/index.ts: Created barrel export file for
-    chat-modes directory with module documentation and ManualChatMode export
+    chat-modes directory with module documentation and ManualChatMode export;
+    Added barrel export for RoundRobinChatMode class to enable import from
+    @fishbowl-ai/ui-shared package
   packages/ui-shared/src/index.ts: Added export for chat-modes module to main
     ui-shared package exports, maintaining alphabetical order
+  packages/ui-shared/src/chat-modes/RoundRobinChatMode.ts: "Created
+    RoundRobinChatMode class implementing ChatModeHandler interface with
+    single-agent-enabled rotation logic. Features: deterministic agent ordering
+    by display_order then added_at, wrap-around rotation, manual override
+    support, <10ms performance for 50 agents, and comprehensive JSDoc
+    documentation with examples."
+  packages/ui-shared/src/chat-modes/__tests__/RoundRobinChatMode.test.ts:
+    "Created comprehensive unit test suite with 38 tests covering all
+    functionality: constructor, handleAgentAdded, handleAgentToggle,
+    handleConversationProgression, edge cases, performance requirements,
+    immutability verification, consistency checks, and integration scenarios.
+    Includes helper functions for creating mock ConversationAgent objects."
 log: []
 schema: v1.0
 childrenIds:
   - T-create-chat-modes-directory
   - T-create-factory-function-and
-  - T-implement-manualchatmode
   - T-implement-roundrobinchatmode
   - T-create-chatmodehandler
+  - T-implement-manualchatmode
 created: 2025-09-03T18:34:12.709Z
 updated: 2025-09-03T18:34:12.709Z
 ---
