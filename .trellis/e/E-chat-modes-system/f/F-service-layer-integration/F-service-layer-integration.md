@@ -1,7 +1,7 @@
 ---
 id: F-service-layer-integration
 title: Service Layer Integration
-status: open
+status: in-progress
 priority: medium
 parent: E-chat-modes-system
 prerequisites:
@@ -9,7 +9,10 @@ prerequisites:
 affectedFiles: {}
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-updateconversation-method
+  - T-implement-updateconversation
+  - T-update-conversationsrepository-1
 created: 2025-09-03T18:34:45.412Z
 updated: 2025-09-03T18:34:45.412Z
 ---
