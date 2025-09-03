@@ -144,15 +144,26 @@ affectedFiles:
     documentation.
   packages/ui-shared/src/stores/conversation/ConversationStoreActions.ts:
     Added getActiveChatMode method signature to interface with proper JSDoc
-    documentation specifying return type and reactive behavior
+    documentation specifying return type and reactive behavior; Added
+    ChatModeIntent import and processAgentIntent method signature to the
+    interface with proper documentation for the new helper method that processes
+    chat mode handler intents.
   packages/ui-shared/src/stores/conversation/useConversationStore.ts:
     Implemented getActiveChatMode function that derives chat mode from active
     conversation using efficient array.find operation with null safety via
-    optional chaining
+    optional chaining; Added chat mode imports and implemented
+    processAgentIntent helper method for processing handler intents into agent
+    state updates. Modified toggleAgentEnabled method to delegate to chat mode
+    handlers using createChatModeHandler factory and getActiveChatMode function.
   packages/ui-shared/src/stores/conversation/__tests__/getActiveChatMode.test.ts:
     Created comprehensive unit test suite with 20+ test cases covering basic
     functionality, reactive behavior, performance requirements (<1ms), type
     safety, edge cases, and store integration
+  packages/ui-shared/src/stores/conversation/__tests__/chatModeDelegation.test.ts:
+    Created comprehensive unit test suite with 15+ test cases covering
+    processAgentIntent helper method, enhanced toggleAgentEnabled delegation,
+    error handling, loading states, and integration scenarios for both manual
+    and round-robin modes.
 log: []
 schema: v1.0
 childrenIds:

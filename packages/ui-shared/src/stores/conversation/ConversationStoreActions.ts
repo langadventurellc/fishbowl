@@ -7,6 +7,7 @@
  */
 
 import type { ConversationService } from "@fishbowl-ai/shared";
+import type { ChatModeIntent } from "../../types/chat-modes/ChatModeIntent";
 
 // Platform-specific imports with conditional typing
 type AgentUpdateEvent = {
@@ -92,6 +93,17 @@ export interface ConversationStoreActions {
    * Enables or disables agent participation in the conversation.
    */
   toggleAgentEnabled(conversationAgentId: string): Promise<void>;
+
+  /**
+   * Process chat mode handler intents into actual agent state updates.
+   *
+   * Takes an intent object from a chat mode handler and executes the
+   * necessary service calls to enable/disable agents as specified.
+   * Updates the store state in-place using the returned agent payloads.
+   *
+   * @param intent - Intent object specifying which agents to enable/disable
+   */
+  processAgentIntent(intent: ChatModeIntent): Promise<void>;
 
   /**
    * Subscribe to real-time agent update events for the active conversation.

@@ -14,6 +14,8 @@ import type {
   ConversationAgent,
 } from "@fishbowl-ai/shared";
 import { useChatStore } from "../chat/useChatStore";
+import { createChatModeHandler } from "../../chat-modes";
+import type { ChatModeIntent } from "../../types/chat-modes/ChatModeIntent";
 
 // Platform-specific event type for desktop integration
 type AgentUpdateEvent = {
@@ -681,31 +683,28 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
     }
 
     try {
-      // Find agent in activeConversationAgents by ID
-      const agents = get().activeConversationAgents;
-      const agent = agents.find((a) => a.id === conversationAgentId);
-      if (!agent) {
-        throw new Error("Agent not found in active conversation");
-      }
-
       set((state) => ({
         ...state,
         loading: { ...state.loading, agents: true },
         error: { ...state.error, agents: undefined },
       }));
 
-      // Toggle enabled property via service
-      const updatedAgent: ConversationAgent =
-        await conversationService.updateConversationAgent(conversationAgentId, {
-          enabled: !agent.enabled,
-        });
+      // Get active chat mode and create handler
+      const activeChatMode = get().getActiveChatMode();
+      const { activeConversationAgents } = get();
+      const chatModeHandler = createChatModeHandler(activeChatMode || "manual");
 
-      // Update the specific agent in activeConversationAgents array
+      // Get intent from handler
+      const intent = chatModeHandler.handleAgentToggle(
+        activeConversationAgents,
+        conversationAgentId,
+      );
+
+      // Process intent into actual updates
+      await get().processAgentIntent(intent);
+
       set((state) => ({
         ...state,
-        activeConversationAgents: state.activeConversationAgents.map((a) =>
-          a.id === conversationAgentId ? updatedAgent : a,
-        ),
         loading: { ...state.loading, agents: false },
       }));
     } catch (error) {
@@ -717,6 +716,68 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
           agents: {
             message:
               error instanceof Error ? error.message : "Failed to toggle agent",
+            operation: "save",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
+  },
+
+  /**
+   * Process chat mode handler intents into actual agent state updates.
+   *
+   * Takes an intent object from a chat mode handler and executes the
+   * necessary service calls to enable/disable agents as specified.
+   * Updates the store state in-place using the returned agent payloads.
+   *
+   * @param intent - Intent object specifying which agents to enable/disable
+   */
+  processAgentIntent: async (intent: ChatModeIntent) => {
+    if (!conversationService) return;
+
+    try {
+      // Process all disables first, then enables
+      const updatedAgents: ConversationAgent[] = [];
+
+      for (const agentId of intent.toDisable) {
+        const updatedAgent = await conversationService.updateConversationAgent(
+          agentId,
+          { enabled: false },
+        );
+        updatedAgents.push(updatedAgent);
+      }
+
+      for (const agentId of intent.toEnable) {
+        const updatedAgent = await conversationService.updateConversationAgent(
+          agentId,
+          { enabled: true },
+        );
+        updatedAgents.push(updatedAgent);
+      }
+
+      // Update store state in-place using returned agent payloads
+      set((state) => ({
+        ...state,
+        activeConversationAgents: state.activeConversationAgents.map(
+          (agent) => {
+            const updated = updatedAgents.find((ua) => ua.id === agent.id);
+            return updated || agent;
+          },
+        ),
+      }));
+    } catch (error) {
+      // Handle errors with proper error state
+      set((state) => ({
+        ...state,
+        error: {
+          ...state.error,
+          agents: {
+            message: `Failed to apply chat mode changes: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`,
             operation: "save",
             isRetryable: true,
             retryCount: 0,
