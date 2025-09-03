@@ -45,9 +45,9 @@ childrenIds:
   - T-add-enforceroundrobininvariant
   - T-enhance-addagent-with-chat
   - T-implement-conversation-1
-  - T-implement-setchatmode-action
   - T-add-chat-mode-delegation-to
   - T-add-getactivechatmode
+  - T-implement-setchatmode-action
 created: 2025-09-03T18:35:27.428Z
 updated: 2025-09-03T18:35:27.428Z
 ---
