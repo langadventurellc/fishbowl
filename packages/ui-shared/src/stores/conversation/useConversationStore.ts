@@ -908,6 +908,29 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   },
 
   /**
+   * Handle conversation progression for automatic agent rotation in Round Robin mode.
+   *
+   * Only processes Round Robin mode conversations, performing no-op for manual mode.
+   * Delegates to the appropriate chat mode handler to determine next agent rotation
+   * and processes the returned intent through the existing processAgentIntent helper.
+   * Handles edge cases like single agent, no enabled agents, and empty conversations.
+   *
+   * @returns Promise<void>
+   */
+  handleConversationProgression: async () => {
+    const activeChatMode = get().getActiveChatMode();
+    if (activeChatMode !== "round-robin") return; // No-op for manual mode
+
+    const { activeConversationAgents } = get();
+    const chatModeHandler = createChatModeHandler(activeChatMode);
+    const intent = chatModeHandler.handleConversationProgression(
+      activeConversationAgents,
+    );
+
+    await get().processAgentIntent(intent);
+  },
+
+  /**
    * Subscribe to real-time agent update events for the active conversation.
    */
   subscribeToAgentUpdates: (callback?: (event: AgentUpdateEvent) => void) => {
@@ -950,6 +973,11 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
           lastEventTime: new Date().toISOString(),
         },
       }));
+
+      // Trigger conversation progression after agent responses
+      if (event.status === "complete") {
+        get().handleConversationProgression();
+      }
 
       // Process event for active conversation (minimal processing for v1)
       // Most event processing is handled by chat store, this is for future message updates

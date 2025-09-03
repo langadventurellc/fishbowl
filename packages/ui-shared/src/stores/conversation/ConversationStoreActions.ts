@@ -123,6 +123,16 @@ export interface ConversationStoreActions {
   enforceRoundRobinInvariant(): Promise<void>;
 
   /**
+   * Handle conversation progression for automatic agent rotation in Round Robin mode.
+   *
+   * Only processes Round Robin mode conversations, performing no-op for manual mode.
+   * Delegates to the appropriate chat mode handler to determine next agent rotation
+   * and processes the returned intent through the existing processAgentIntent helper.
+   * Handles edge cases like single agent, no enabled agents, and empty conversations.
+   */
+  handleConversationProgression(): Promise<void>;
+
+  /**
    * Subscribe to real-time agent update events for the active conversation.
    * Platform-specific implementation - returns cleanup function for desktop, null for unsupported platforms.
    * Enables direct conversationId filtering and real-time activeMessages updates.
