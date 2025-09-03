@@ -6,7 +6,31 @@ priority: medium
 parent: E-chat-modes-system
 prerequisites:
   - F-database-schema-and-core-types
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/services/conversations/ConversationService.ts:
+    Added updateConversation method signature with comprehensive JSDoc
+    documentation, supporting both title and chat_mode updates via
+    UpdateConversationInput parameter
+  packages/shared/src/services/conversations/__tests__/ConversationService.test.ts:
+    Added comprehensive test coverage for updateConversation method including
+    parameter validation, type safety checks, and interface compliance tests
+  apps/desktop/src/renderer/services/ConversationIpcAdapter.ts:
+    Implemented updateConversation method in IPC adapter with proper error
+    handling and validation, following existing patterns for consistency
+  apps/desktop/src/electron/__tests__/conversationsHandlers.test.ts:
+    Added chat_mode field to mock conversation objects to maintain compatibility
+    with updated Conversation type
+  apps/desktop/src/electron/__tests__/preload.conversations.test.ts:
+    Updated conversation mocks to include required chat_mode field for type
+    compatibility
+  apps/desktop/src/hooks/conversations/__tests__/useConversation.test.tsx: Fixed mock conversation object to include chat_mode field for type safety
+  apps/desktop/src/hooks/conversations/__tests__/useCreateConversation.test.tsx:
+    Added chat_mode field to mock conversation for compatibility with updated
+    type definitions
+  apps/desktop/src/hooks/conversations/__tests__/useUpdateConversation.test.tsx: Updated mock conversation to include required chat_mode field
+  apps/desktop/src/shared/ipc/__tests__/conversationsIPC.test.ts:
+    Fixed all conversation mock objects to include chat_mode field for type
+    compliance across multiple test cases
 log: []
 schema: v1.0
 childrenIds:

@@ -4,6 +4,7 @@ import {
   type ConversationAgent as _ConversationAgent,
   type Message as _Message,
   type CreateMessageInput as _CreateMessageInput,
+  type UpdateConversationInput as _UpdateConversationInput,
 } from "@fishbowl-ai/shared";
 
 /**
@@ -99,6 +100,29 @@ export class ConversationIpcAdapter implements ConversationService {
     } catch (error) {
       throw new Error(
         `renameConversation: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
+    }
+  }
+
+  /**
+   * Update conversation properties including chat_mode and title
+   * Maps to: window.electronAPI.conversations.update(id, updates)
+   */
+  async updateConversation(
+    id: string,
+    updates: _UpdateConversationInput,
+  ): Promise<_Conversation> {
+    try {
+      if (!window.electronAPI.conversations.update) {
+        throw new Error(
+          "Update operation is not available in this environment",
+        );
+      }
+      const result = await window.electronAPI.conversations.update(id, updates);
+      return result;
+    } catch (error) {
+      throw new Error(
+        `updateConversation: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     }
   }

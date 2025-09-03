@@ -91,6 +91,7 @@ describe("Conversations IPC Types", () => {
       data: {
         id: "conv-123",
         title: "Test Conversation",
+        chat_mode: "round-robin",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
@@ -102,6 +103,7 @@ describe("Conversations IPC Types", () => {
         {
           id: "conv-123",
           title: "Test Conversation",
+          chat_mode: "manual",
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         },
@@ -113,6 +115,7 @@ describe("Conversations IPC Types", () => {
       data: {
         id: "conv-123",
         title: "Test Conversation",
+        chat_mode: "round-robin",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
@@ -128,6 +131,7 @@ describe("Conversations IPC Types", () => {
       data: {
         id: "conv-123",
         title: "Updated Conversation",
+        chat_mode: "manual",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
@@ -275,6 +279,7 @@ describe("Type-only Imports", () => {
       data: {
         id: "test-conv",
         title: "Test Conversation",
+        chat_mode: "round-robin",
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       },
