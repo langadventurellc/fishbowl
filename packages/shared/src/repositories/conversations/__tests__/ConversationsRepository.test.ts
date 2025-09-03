@@ -108,7 +108,13 @@ describe("ConversationsRepository", () => {
 
       expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
         expect.stringContaining("INSERT INTO conversations"),
-        [mockUUID, "Test Conversation", mockTimestamp, mockTimestamp],
+        [
+          mockUUID,
+          "Test Conversation",
+          "round-robin",
+          mockTimestamp,
+          mockTimestamp,
+        ],
       );
       expect(mockCryptoUtils.generateId).toHaveBeenCalled();
     });
@@ -125,7 +131,13 @@ describe("ConversationsRepository", () => {
       expect(result.title).toBe("New Conversation");
       expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
         expect.stringContaining("INSERT INTO conversations"),
-        [mockUUID, "New Conversation", mockTimestamp, mockTimestamp],
+        [
+          mockUUID,
+          "New Conversation",
+          "round-robin",
+          mockTimestamp,
+          mockTimestamp,
+        ],
       );
     });
 
@@ -191,7 +203,9 @@ describe("ConversationsRepository", () => {
 
       expect(result).toEqual(mockConversation);
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
-        expect.stringContaining("SELECT id, title, created_at, updated_at"),
+        expect.stringContaining(
+          "SELECT id, title, chat_mode, created_at, updated_at",
+        ),
         [mockUUID],
       );
     });
@@ -272,12 +286,14 @@ describe("ConversationsRepository", () => {
         {
           id: "123e4567-e89b-12d3-a456-426614174000",
           title: "Conversation 1",
+          chat_mode: "manual",
           created_at: "2023-01-01T00:00:00.000Z",
           updated_at: "2023-01-01T00:00:00.000Z",
         },
         {
           id: "123e4567-e89b-12d3-a456-426614174001",
           title: "Conversation 2",
+          chat_mode: "manual",
           created_at: "2023-01-02T00:00:00.000Z",
           updated_at: "2023-01-02T00:00:00.000Z",
         },
@@ -306,7 +322,9 @@ describe("ConversationsRepository", () => {
 
       expect(result).toEqual(expectedConversations);
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
-        expect.stringContaining("SELECT id, title, created_at, updated_at"),
+        expect.stringContaining(
+          "SELECT id, title, chat_mode, created_at, updated_at",
+        ),
       );
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
         expect.stringContaining("ORDER BY created_at DESC"),
@@ -327,6 +345,7 @@ describe("ConversationsRepository", () => {
         {
           id: "123e4567-e89b-12d3-a456-426614174000",
           title: "Valid Conversation",
+          chat_mode: "manual",
           created_at: "2023-01-01T00:00:00.000Z",
           updated_at: "2023-01-01T00:00:00.000Z",
         },
@@ -375,6 +394,7 @@ describe("ConversationsRepository", () => {
       const updatedConversationFromDB = {
         id: mockUUID,
         title: "Updated Title",
+        chat_mode: "manual",
         created_at: "2023-01-01T00:00:00.000Z",
         updated_at: mockTimestamp,
       };
@@ -439,6 +459,7 @@ describe("ConversationsRepository", () => {
       const updatedConversationFromDB = {
         id: mockUUID,
         title: "Partial Update",
+        chat_mode: "manual",
         created_at: "2023-01-01T00:00:00.000Z",
         updated_at: mockTimestamp,
       };
@@ -464,6 +485,67 @@ describe("ConversationsRepository", () => {
       const result = await repository.update(mockUUID, input);
 
       expect(result).toEqual(expectedConversation);
+    });
+
+    it("should update chat_mode", async () => {
+      const input: UpdateConversationInput = { chat_mode: "round-robin" };
+      const updatedConversationFromDB = {
+        id: mockUUID,
+        title: "Existing Title",
+        chat_mode: "round-robin",
+        created_at: "2023-01-01T00:00:00.000Z",
+        updated_at: mockTimestamp,
+      };
+
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+
+      mockDatabaseBridge.query
+        .mockResolvedValueOnce([{ 1: 1 }]) // exists check
+        .mockResolvedValueOnce([updatedConversationFromDB]); // get call
+
+      const result = await repository.update(mockUUID, input);
+
+      expect(result).toEqual(updatedConversationFromDB);
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("UPDATE conversations"),
+        ["round-robin", mockTimestamp, mockUUID],
+      );
+    });
+
+    it("should update both title and chat_mode", async () => {
+      const input: UpdateConversationInput = {
+        title: "Updated Title",
+        chat_mode: "round-robin",
+      };
+      const updatedConversationFromDB = {
+        id: mockUUID,
+        title: "Updated Title",
+        chat_mode: "round-robin",
+        created_at: "2023-01-01T00:00:00.000Z",
+        updated_at: mockTimestamp,
+      };
+
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 1,
+        affectedRows: 1,
+        lastInsertRowid: 1,
+      });
+
+      mockDatabaseBridge.query
+        .mockResolvedValueOnce([{ 1: 1 }]) // exists check
+        .mockResolvedValueOnce([updatedConversationFromDB]); // get call
+
+      const result = await repository.update(mockUUID, input);
+
+      expect(result).toEqual(updatedConversationFromDB);
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("UPDATE conversations"),
+        ["Updated Title", "round-robin", mockTimestamp, mockUUID],
+      );
     });
 
     it("should throw ConversationNotFoundError if conversation does not exist", async () => {

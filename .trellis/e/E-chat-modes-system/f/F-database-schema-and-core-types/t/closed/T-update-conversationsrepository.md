@@ -1,15 +1,51 @@
 ---
 id: T-update-conversationsrepository
 title: Update ConversationsRepository for chat_mode CRUD operations
-status: open
+status: done
 priority: medium
 parent: F-database-schema-and-core-types
 prerequisites:
   - T-create-database-migration-for
   - T-update-conversation-interface
   - T-update-zod-schemas-for-chat
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/repositories/conversations/ConversationsRepository.ts:
+    "Updated all CRUD methods to properly handle chat_mode field: CREATE method
+    includes chat_mode in INSERT SQL with 'round-robin' default, GET and LIST
+    methods include chat_mode in SELECT queries, UPDATE method handles chat_mode
+    parameter in dynamic SQL generation"
+  packages/shared/src/repositories/conversations/__tests__/ConversationsRepository.test.ts:
+    Updated all test cases to include chat_mode field in mock data and
+    expectations, added comprehensive test cases for chat_mode-specific
+    operations including chat_mode-only updates and combined title+chat_mode
+    updates, fixed SQL query expectations to include chat_mode column
+log:
+  - >-
+    Successfully updated ConversationsRepository for complete chat_mode CRUD
+    operations. All repository methods now properly handle the chat_mode field:
+
+
+    ✅ CREATE method: Sets 'round-robin' as default for new conversations and
+    includes chat_mode in INSERT SQL
+
+    ✅ GET method: Includes chat_mode in SELECT query and returns it in results  
+
+    ✅ LIST method: Includes chat_mode in SELECT query and returns it in results
+
+    ✅ UPDATE method: Accepts chat_mode in UpdateConversationInput and includes
+    it in UPDATE SQL when provided
+
+    ✅ Comprehensive test coverage: Added specific test cases for chat_mode
+    updates, combined updates, and validation
+
+    ✅ All tests passing (43/43) with proper mock data including chat_mode fields
+
+    ✅ Quality checks passing: lint, type-check, and format all successful
+
+
+    The repository now fully integrates with the database migration and type
+    system updates, providing complete CRUD support for chat modes while
+    maintaining backward compatibility.
 schema: v1.0
 childrenIds: []
 created: 2025-09-03T18:55:48.601Z

@@ -1,7 +1,7 @@
 ---
 id: F-database-schema-and-core-types
 title: Database Schema and Core Types
-status: in-progress
+status: done
 priority: medium
 parent: E-chat-modes-system
 prerequisites: []
@@ -22,13 +22,21 @@ affectedFiles:
     including type safety, field requirements, literal type constraints, and
     UpdateConversationInput tests
   packages/shared/src/repositories/conversations/ConversationsRepository.ts:
-    Updated repository to handle new required chat_mode field with temporary
+    "Updated repository to handle new required chat_mode field with temporary
     manual construction until schema validation is updated, added default values
-    for backward compatibility
+    for backward compatibility; Updated all CRUD methods to properly handle
+    chat_mode field: CREATE method includes chat_mode in INSERT SQL with
+    'round-robin' default, GET and LIST methods include chat_mode in SELECT
+    queries, UPDATE method handles chat_mode parameter in dynamic SQL
+    generation"
   packages/shared/src/repositories/conversations/__tests__/ConversationsRepository.test.ts:
     Fixed mock conversation objects and test expectations to include required
     chat_mode field, separated database row mocks from expected results to
-    account for repository adding chat_mode field
+    account for repository adding chat_mode field; Updated all test cases to
+    include chat_mode field in mock data and expectations, added comprehensive
+    test cases for chat_mode-specific operations including chat_mode-only
+    updates and combined title+chat_mode updates, fixed SQL query expectations
+    to include chat_mode column
   packages/shared/src/repositories/conversations/__tests__/ConversationsRepositoryInterface.test.ts:
     Updated all mock conversation objects in interface compliance tests to
     include chat_mode field
@@ -49,13 +57,14 @@ affectedFiles:
   packages/shared/src/types/conversations/schemas/__tests__/updateConversationInputSchema.test.ts:
     Added comprehensive chat_mode tests for optional field validation, partial
     updates, and error handling
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
-  - T-update-conversationsrepository
-  - T-update-zod-schemas-for-chat
   - T-create-database-migration-for
   - T-update-conversation-interface
+  - T-update-conversationsrepository
+  - T-update-zod-schemas-for-chat
 created: 2025-09-03T18:33:40.238Z
 updated: 2025-09-03T18:33:40.238Z
 ---

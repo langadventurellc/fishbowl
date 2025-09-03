@@ -22,13 +22,21 @@ affectedFiles:
     including type safety, field requirements, literal type constraints, and
     UpdateConversationInput tests
   packages/shared/src/repositories/conversations/ConversationsRepository.ts:
-    Updated repository to handle new required chat_mode field with temporary
+    "Updated repository to handle new required chat_mode field with temporary
     manual construction until schema validation is updated, added default values
-    for backward compatibility
+    for backward compatibility; Updated all CRUD methods to properly handle
+    chat_mode field: CREATE method includes chat_mode in INSERT SQL with
+    'round-robin' default, GET and LIST methods include chat_mode in SELECT
+    queries, UPDATE method handles chat_mode parameter in dynamic SQL
+    generation"
   packages/shared/src/repositories/conversations/__tests__/ConversationsRepository.test.ts:
     Fixed mock conversation objects and test expectations to include required
     chat_mode field, separated database row mocks from expected results to
-    account for repository adding chat_mode field
+    account for repository adding chat_mode field; Updated all test cases to
+    include chat_mode field in mock data and expectations, added comprehensive
+    test cases for chat_mode-specific operations including chat_mode-only
+    updates and combined title+chat_mode updates, fixed SQL query expectations
+    to include chat_mode column
   packages/shared/src/repositories/conversations/__tests__/ConversationsRepositoryInterface.test.ts:
     Updated all mock conversation objects in interface compliance tests to
     include chat_mode field

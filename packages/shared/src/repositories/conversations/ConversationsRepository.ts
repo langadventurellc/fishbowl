@@ -67,15 +67,16 @@ export class ConversationsRepository
       // const validatedConversation = conversationSchema.parse(conversation);
       const validatedConversation = conversation;
 
-      // Insert into database
+      // Insert into database with chat_mode column
       const sql = `
-        INSERT INTO conversations (id, title, created_at, updated_at)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO conversations (id, title, chat_mode, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?)
       `;
 
       await this.databaseBridge.execute(sql, [
         validatedConversation.id,
         validatedConversation.title,
+        validatedConversation.chat_mode,
         validatedConversation.created_at,
         validatedConversation.updated_at,
       ]);
@@ -109,7 +110,7 @@ export class ConversationsRepository
 
       // Query database
       const sql = `
-        SELECT id, title, created_at, updated_at
+        SELECT id, title, chat_mode, created_at, updated_at
         FROM conversations
         WHERE id = ?
       `;
@@ -120,17 +121,7 @@ export class ConversationsRepository
         throw new ConversationNotFoundError(id);
       }
 
-      // TODO: Validate with updated schema in separate task
-      // Manually construct conversation with chat_mode until migration runs
-      const conversation: Conversation = {
-        ...(rows[0] as {
-          id: string;
-          title: string;
-          created_at: string;
-          updated_at: string;
-        }),
-        chat_mode: "manual", // Default for existing conversations
-      };
+      const conversation: Conversation = rows[0] as Conversation;
 
       this.logger.debug("Retrieved conversation", { id: conversation.id });
 
@@ -147,24 +138,16 @@ export class ConversationsRepository
   async list(): Promise<Conversation[]> {
     try {
       const sql = `
-        SELECT id, title, created_at, updated_at
+        SELECT id, title, chat_mode, created_at, updated_at
         FROM conversations
         ORDER BY created_at DESC
       `;
 
       const rows = await this.databaseBridge.query<Conversation>(sql);
 
-      // TODO: Validate with updated schema in separate task
-      // Manually construct conversations with chat_mode until migration runs
-      const conversations: Conversation[] = rows.map((row) => ({
-        ...(row as {
-          id: string;
-          title: string;
-          created_at: string;
-          updated_at: string;
-        }),
-        chat_mode: "manual" as const, // Default for existing conversations
-      }));
+      const conversations: Conversation[] = rows.map(
+        (row) => row as Conversation,
+      );
 
       this.logger.debug(`Listed ${conversations.length} conversations`);
 
@@ -195,6 +178,11 @@ export class ConversationsRepository
       if (validatedInput.title !== undefined) {
         updates.push("title = ?");
         params.push(validatedInput.title);
+      }
+
+      if (validatedInput.chat_mode !== undefined) {
+        updates.push("chat_mode = ?");
+        params.push(validatedInput.chat_mode);
       }
 
       // Always update timestamp
