@@ -1,13 +1,35 @@
 ---
 id: T-update-zod-schemas-for-chat
 title: Update Zod schemas for chat_mode validation
-status: open
+status: done
 priority: high
 parent: F-database-schema-and-core-types
 prerequisites:
   - T-update-conversation-interface
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/conversations/schemas/conversationSchema.ts:
+    Added chat_mode field with z.enum(['manual',
+    'round-robin']).default('manual') validation and comprehensive JSDoc
+    documentation
+  packages/shared/src/types/conversations/schemas/updateConversationInputSchema.ts:
+    Added optional chat_mode field with z.enum(['manual',
+    'round-robin']).optional() validation for conversation updates
+  packages/shared/src/types/conversations/schemas/__tests__/conversationSchema.test.ts:
+    Extended existing tests with comprehensive chat_mode validation including
+    valid/invalid inputs, default behavior, and error messages
+  packages/shared/src/types/conversations/schemas/__tests__/updateConversationInputSchema.test.ts:
+    Added comprehensive chat_mode tests for optional field validation, partial
+    updates, and error handling
+log:
+  - Successfully updated Zod schemas to include chat_mode validation for the
+    chat modes feature. Added chat_mode field with enum validation ('manual' |
+    'round-robin') and default value 'manual' to conversationSchema. Created
+    optional chat_mode field in updateConversationInputSchema for partial
+    updates. Implemented comprehensive test coverage with >95% coverage
+    including valid/invalid input validation, default value testing, and error
+    message verification. All quality checks pass including linting, formatting,
+    type checking, and unit tests. Schemas provide runtime type safety and clear
+    validation error messages for the chat mode functionality.
 schema: v1.0
 childrenIds: []
 created: 2025-09-03T18:55:31.199Z

@@ -29,6 +29,37 @@ describe("updateConversationInputSchema", () => {
       const result = updateConversationInputSchema.safeParse(input);
       expect(result.success).toBe(true);
     });
+
+    it("should validate with valid chat_mode 'manual'", () => {
+      const input = { chat_mode: "manual" as const };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.chat_mode).toBe("manual");
+      }
+    });
+
+    it("should validate with valid chat_mode 'round-robin'", () => {
+      const input = { chat_mode: "round-robin" as const };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.chat_mode).toBe("round-robin");
+      }
+    });
+
+    it("should validate with both title and chat_mode", () => {
+      const input = {
+        title: "Updated Conversation",
+        chat_mode: "round-robin" as const,
+      };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.title).toBe("Updated Conversation");
+        expect(result.data.chat_mode).toBe("round-robin");
+      }
+    });
   });
 
   describe("invalid inputs - empty object", () => {
@@ -123,6 +154,67 @@ describe("updateConversationInputSchema", () => {
     });
   });
 
+  describe("invalid chat_mode field", () => {
+    it("should reject non-string chat_mode", () => {
+      const input = { chat_mode: 123 };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe(
+          "Chat mode must be either 'manual' or 'round-robin'",
+        );
+      }
+    });
+
+    it("should reject invalid chat_mode values", () => {
+      const invalidValues = ["invalid", "auto", "random", ""];
+
+      for (const invalidValue of invalidValues) {
+        const input = { chat_mode: invalidValue };
+        const result = updateConversationInputSchema.safeParse(input);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0]?.message).toBe(
+            "Chat mode must be either 'manual' or 'round-robin'",
+          );
+        }
+      }
+    });
+
+    it("should reject null chat_mode when explicitly provided", () => {
+      const input = { chat_mode: null };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe(
+          "Chat mode must be either 'manual' or 'round-robin'",
+        );
+      }
+    });
+
+    it("should reject boolean chat_mode", () => {
+      const input = { chat_mode: true };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe(
+          "Chat mode must be either 'manual' or 'round-robin'",
+        );
+      }
+    });
+
+    it("should reject array chat_mode", () => {
+      const input = { chat_mode: ["manual"] };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe(
+          "Chat mode must be either 'manual' or 'round-robin'",
+        );
+      }
+    });
+  });
+
   describe("edge cases", () => {
     it("should accept object with unknown properties", () => {
       const input = { title: "Test", unknownProp: "value" };
@@ -140,6 +232,30 @@ describe("updateConversationInputSchema", () => {
       const input = { title: "New Title" };
       const result = updateConversationInputSchema.safeParse(input);
       expect(result.success).toBe(true);
+    });
+
+    it("should validate when chat_mode is provided", () => {
+      const input = { chat_mode: "round-robin" as const };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(true);
+    });
+
+    it("should validate when only chat_mode is provided", () => {
+      const input = { chat_mode: "manual" as const };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.chat_mode).toBe("manual");
+      }
+    });
+
+    it("should validate when chat_mode can be omitted", () => {
+      const input = { title: "Just Title" };
+      const result = updateConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.chat_mode).toBeUndefined();
+      }
     });
 
     it("should require at least one valid field", () => {

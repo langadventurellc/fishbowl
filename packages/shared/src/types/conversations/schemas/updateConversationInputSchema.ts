@@ -12,6 +12,13 @@ export const updateConversationInputSchema = z
       .min(1, "Title cannot be empty")
       .max(255, "Title cannot exceed 255 characters")
       .optional(),
+
+    /** Optional chat mode update: manual (user control) or round-robin (automatic rotation) */
+    chat_mode: z
+      .enum(["manual", "round-robin"], {
+        message: "Chat mode must be either 'manual' or 'round-robin'",
+      })
+      .optional(),
   })
   .refine((data) => Object.values(data).some((value) => value !== undefined), {
     message: "At least one field must be provided for update",

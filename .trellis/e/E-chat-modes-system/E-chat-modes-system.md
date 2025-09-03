@@ -36,6 +36,19 @@ affectedFiles:
   packages/ui-shared/src/stores/conversation/__tests__/selectors.test.ts:
     Updated createMockConversation factory function to include chat_mode field
     for test compatibility
+  packages/shared/src/types/conversations/schemas/conversationSchema.ts:
+    Added chat_mode field with z.enum(['manual',
+    'round-robin']).default('manual') validation and comprehensive JSDoc
+    documentation
+  packages/shared/src/types/conversations/schemas/updateConversationInputSchema.ts:
+    Added optional chat_mode field with z.enum(['manual',
+    'round-robin']).optional() validation for conversation updates
+  packages/shared/src/types/conversations/schemas/__tests__/conversationSchema.test.ts:
+    Extended existing tests with comprehensive chat_mode validation including
+    valid/invalid inputs, default behavior, and error messages
+  packages/shared/src/types/conversations/schemas/__tests__/updateConversationInputSchema.test.ts:
+    Added comprehensive chat_mode tests for optional field validation, partial
+    updates, and error handling
 log: []
 schema: v1.0
 childrenIds:
