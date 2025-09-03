@@ -673,14 +673,57 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       // Check if request is still current before updating
       const currentState = get();
       if (currentState.activeRequestToken === requestToken) {
+        // Update store with new agent
         set((state) => ({
           ...state,
           activeConversationAgents: [
             ...state.activeConversationAgents,
             conversationAgent,
           ],
-          loading: { ...state.loading, agents: false },
         }));
+
+        // Apply chat mode rules to new agent
+        try {
+          const activeChatMode = get().getActiveChatMode();
+          const { activeConversationAgents } = get();
+          const chatModeHandler = createChatModeHandler(
+            activeChatMode || "manual",
+          );
+
+          const intent = chatModeHandler.handleAgentAdded(
+            activeConversationAgents,
+            conversationAgent.id,
+          );
+
+          // Process intent for chat mode compliance
+          await get().processAgentIntent(intent);
+        } catch (chatModeError) {
+          // Chat mode processing error should not prevent successful agent addition
+          console.error("Chat mode processing failed:", chatModeError);
+          set((state) => ({
+            ...state,
+            error: {
+              ...state.error,
+              agents: {
+                message: `Agent added but chat mode processing failed: ${
+                  chatModeError instanceof Error
+                    ? chatModeError.message
+                    : "Unknown error"
+                }`,
+                operation: "save",
+                isRetryable: false,
+                retryCount: 0,
+                timestamp: new Date().toISOString(),
+              },
+            },
+          }));
+        } finally {
+          // Clear loading state after all processing is complete
+          set((state) => ({
+            ...state,
+            loading: { ...state.loading, agents: false },
+          }));
+        }
       }
     } catch (error) {
       // Only update error if request is still current
