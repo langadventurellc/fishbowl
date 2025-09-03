@@ -44,6 +44,9 @@ Object.defineProperty(window, "innerWidth", {
   writable: true,
 });
 
+// Mock scrollIntoView for Radix UI components
+Element.prototype.scrollIntoView = () => {};
+
 // Suppress React 19 act warnings in tests
 // These warnings are known issues with React 19 + Testing Library for async hook state updates
 // See: https://github.com/testing-library/react-testing-library/issues/1051

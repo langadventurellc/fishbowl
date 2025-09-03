@@ -1,4 +1,5 @@
 export { AgentPill } from "./AgentPill";
+export { ChatModeSelector } from "./ChatModeSelector";
 export { ContextStatistics } from "./ContextStatistics";
 export { MessageAvatar } from "./MessageAvatar";
 export { MessageContent } from "./MessageContent";

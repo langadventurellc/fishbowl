@@ -1,15 +1,29 @@
 ---
 id: F-chat-mode-selector-component
 title: Chat Mode Selector Component
-status: open
+status: in-progress
 priority: medium
 parent: E-chat-modes-system
 prerequisites:
   - F-state-management-integration
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/components/chat/ChatModeSelector.tsx: New React component
+    implementing chat mode selector dropdown with shadcn/ui Select components,
+    TypeScript interface, accessibility features, error handling prop, and
+    comprehensive JSDoc documentation
+  apps/desktop/src/components/chat/index.ts: Added ChatModeSelector export to barrel file for consistent import patterns
+  apps/desktop/src/components/chat/__tests__/ChatModeSelector.test.tsx:
+    Comprehensive test suite with 25 test cases covering component rendering,
+    user interactions, keyboard navigation, null value handling, accessibility,
+    edge cases, and TypeScript type safety
+  apps/desktop/src/setupTests.ts: Added scrollIntoView mock for Radix UI
+    components to fix test environment compatibility
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-chatmodeselector
+  - T-implement-error-handling-and
+  - T-integrate-chatmodeselector
 created: 2025-09-03T18:36:06.399Z
 updated: 2025-09-03T18:36:06.399Z
 ---
