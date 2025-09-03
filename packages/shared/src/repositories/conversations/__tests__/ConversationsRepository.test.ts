@@ -101,6 +101,7 @@ describe("ConversationsRepository", () => {
       expect(result).toEqual({
         id: mockUUID,
         title: "Test Conversation",
+        chat_mode: "round-robin",
         created_at: mockTimestamp,
         updated_at: mockTimestamp,
       });
@@ -178,6 +179,7 @@ describe("ConversationsRepository", () => {
     const mockConversation: Conversation = {
       id: mockUUID,
       title: "Test Conversation",
+      chat_mode: "manual",
       created_at: "2023-01-01T00:00:00.000Z",
       updated_at: "2023-01-01T00:00:00.000Z",
     };
@@ -266,7 +268,7 @@ describe("ConversationsRepository", () => {
 
   describe("list", () => {
     it("should return all conversations", async () => {
-      const mockConversations = [
+      const mockDatabaseRows = [
         {
           id: "123e4567-e89b-12d3-a456-426614174000",
           title: "Conversation 1",
@@ -281,11 +283,28 @@ describe("ConversationsRepository", () => {
         },
       ];
 
-      mockDatabaseBridge.query.mockResolvedValue(mockConversations);
+      const expectedConversations = [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          title: "Conversation 1",
+          chat_mode: "manual",
+          created_at: "2023-01-01T00:00:00.000Z",
+          updated_at: "2023-01-01T00:00:00.000Z",
+        },
+        {
+          id: "123e4567-e89b-12d3-a456-426614174001",
+          title: "Conversation 2",
+          chat_mode: "manual",
+          created_at: "2023-01-02T00:00:00.000Z",
+          updated_at: "2023-01-02T00:00:00.000Z",
+        },
+      ];
+
+      mockDatabaseBridge.query.mockResolvedValue(mockDatabaseRows);
 
       const result = await repository.list();
 
-      expect(result).toEqual(mockConversations);
+      expect(result).toEqual(expectedConversations);
       expect(mockDatabaseBridge.query).toHaveBeenCalledWith(
         expect.stringContaining("SELECT id, title, created_at, updated_at"),
       );
@@ -304,7 +323,7 @@ describe("ConversationsRepository", () => {
     });
 
     it("should validate each conversation", async () => {
-      const mockConversations = [
+      const mockDatabaseRows = [
         {
           id: "123e4567-e89b-12d3-a456-426614174000",
           title: "Valid Conversation",
@@ -313,11 +332,21 @@ describe("ConversationsRepository", () => {
         },
       ];
 
-      mockDatabaseBridge.query.mockResolvedValue(mockConversations);
+      const expectedConversations = [
+        {
+          id: "123e4567-e89b-12d3-a456-426614174000",
+          title: "Valid Conversation",
+          chat_mode: "manual",
+          created_at: "2023-01-01T00:00:00.000Z",
+          updated_at: "2023-01-01T00:00:00.000Z",
+        },
+      ];
+
+      mockDatabaseBridge.query.mockResolvedValue(mockDatabaseRows);
 
       const result = await repository.list();
 
-      expect(result).toEqual(mockConversations);
+      expect(result).toEqual(expectedConversations);
     });
 
     it("should handle database errors", async () => {
@@ -343,9 +372,17 @@ describe("ConversationsRepository", () => {
 
     it("should update title", async () => {
       const input: UpdateConversationInput = { title: "Updated Title" };
-      const updatedConversation = {
+      const updatedConversationFromDB = {
         id: mockUUID,
         title: "Updated Title",
+        created_at: "2023-01-01T00:00:00.000Z",
+        updated_at: mockTimestamp,
+      };
+
+      const expectedConversation = {
+        id: mockUUID,
+        title: "Updated Title",
+        chat_mode: "manual",
         created_at: "2023-01-01T00:00:00.000Z",
         updated_at: mockTimestamp,
       };
@@ -359,11 +396,11 @@ describe("ConversationsRepository", () => {
       // Mock the get call that happens after update
       mockDatabaseBridge.query
         .mockResolvedValueOnce([{ 1: 1 }]) // exists check
-        .mockResolvedValueOnce([updatedConversation]); // get call
+        .mockResolvedValueOnce([updatedConversationFromDB]); // get call
 
       const result = await repository.update(mockUUID, input);
 
-      expect(result).toEqual(updatedConversation);
+      expect(result).toEqual(expectedConversation);
       expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
         expect.stringContaining("UPDATE conversations"),
         ["Updated Title", mockTimestamp, mockUUID],
@@ -399,9 +436,17 @@ describe("ConversationsRepository", () => {
 
     it("should handle partial updates", async () => {
       const input: UpdateConversationInput = { title: "Partial Update" };
-      const updatedConversation = {
+      const updatedConversationFromDB = {
         id: mockUUID,
         title: "Partial Update",
+        created_at: "2023-01-01T00:00:00.000Z",
+        updated_at: mockTimestamp,
+      };
+
+      const expectedConversation = {
+        id: mockUUID,
+        title: "Partial Update",
+        chat_mode: "manual",
         created_at: "2023-01-01T00:00:00.000Z",
         updated_at: mockTimestamp,
       };
@@ -414,11 +459,11 @@ describe("ConversationsRepository", () => {
 
       mockDatabaseBridge.query
         .mockResolvedValueOnce([{ 1: 1 }]) // exists check
-        .mockResolvedValueOnce([updatedConversation]); // get call
+        .mockResolvedValueOnce([updatedConversationFromDB]); // get call
 
       const result = await repository.update(mockUUID, input);
 
-      expect(result).toEqual(updatedConversation);
+      expect(result).toEqual(expectedConversation);
     });
 
     it("should throw ConversationNotFoundError if conversation does not exist", async () => {

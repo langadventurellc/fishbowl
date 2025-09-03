@@ -1,12 +1,50 @@
 ---
 id: T-update-conversation-interface
 title: Update Conversation interface and core type definitions
-status: open
+status: done
 priority: high
 parent: F-database-schema-and-core-types
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/types/conversations/Conversation.ts: Added required
+    chat_mode field with 'manual' | 'round-robin' literal union type and
+    comprehensive JSDoc documentation explaining manual vs round-robin behavior
+  packages/shared/src/types/conversations/UpdateConversationInput.ts:
+    Added optional chat_mode field with same literal union type to support
+    conversation chat mode updates via repository/service layer
+  packages/shared/src/types/conversations/__tests__/types.test.ts:
+    Extended existing tests with comprehensive chat_mode field validation
+    including type safety, field requirements, literal type constraints, and
+    UpdateConversationInput tests
+  packages/shared/src/repositories/conversations/ConversationsRepository.ts:
+    Updated repository to handle new required chat_mode field with temporary
+    manual construction until schema validation is updated, added default values
+    for backward compatibility
+  packages/shared/src/repositories/conversations/__tests__/ConversationsRepository.test.ts:
+    Fixed mock conversation objects and test expectations to include required
+    chat_mode field, separated database row mocks from expected results to
+    account for repository adding chat_mode field
+  packages/shared/src/repositories/conversations/__tests__/ConversationsRepositoryInterface.test.ts:
+    Updated all mock conversation objects in interface compliance tests to
+    include chat_mode field
+  packages/shared/src/repositories/conversations/__tests__/exports.test.ts: Fixed mock conversation object to include required chat_mode field
+  packages/ui-shared/src/stores/conversation/__tests__/selectors.test.ts:
+    Updated createMockConversation factory function to include chat_mode field
+    for test compatibility
+log:
+  - 'Successfully updated the core Conversation interface and
+    UpdateConversationInput type definitions to include chat_mode field,
+    establishing TypeScript foundation for chat modes functionality. Added
+    required `chat_mode: "manual" | "round-robin"` field to Conversation
+    interface with comprehensive JSDoc documentation. Created optional
+    `chat_mode?: "manual" | "round-robin"` field in UpdateConversationInput
+    interface. Added comprehensive unit tests validating type safety, field
+    requirements, and literal types. Fixed all compilation errors across
+    repository and test files by updating mock objects and temporarily handling
+    schema validation until Zod schemas are updated by separate task. Updated
+    all failing repository tests to account for new chat_mode field
+    expectations. All quality checks pass including linting, formatting, type
+    checking, and unit tests.'
 schema: v1.0
 childrenIds: []
 created: 2025-09-03T18:55:14.507Z

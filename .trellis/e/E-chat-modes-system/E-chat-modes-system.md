@@ -11,6 +11,31 @@ affectedFiles:
     chat_mode VARCHAR column to conversations table with DEFAULT 'manual' NOT
     NULL for backward compatibility, includes comprehensive documentation and
     rollback instructions
+  packages/shared/src/types/conversations/Conversation.ts: Added required
+    chat_mode field with 'manual' | 'round-robin' literal union type and
+    comprehensive JSDoc documentation explaining manual vs round-robin behavior
+  packages/shared/src/types/conversations/UpdateConversationInput.ts:
+    Added optional chat_mode field with same literal union type to support
+    conversation chat mode updates via repository/service layer
+  packages/shared/src/types/conversations/__tests__/types.test.ts:
+    Extended existing tests with comprehensive chat_mode field validation
+    including type safety, field requirements, literal type constraints, and
+    UpdateConversationInput tests
+  packages/shared/src/repositories/conversations/ConversationsRepository.ts:
+    Updated repository to handle new required chat_mode field with temporary
+    manual construction until schema validation is updated, added default values
+    for backward compatibility
+  packages/shared/src/repositories/conversations/__tests__/ConversationsRepository.test.ts:
+    Fixed mock conversation objects and test expectations to include required
+    chat_mode field, separated database row mocks from expected results to
+    account for repository adding chat_mode field
+  packages/shared/src/repositories/conversations/__tests__/ConversationsRepositoryInterface.test.ts:
+    Updated all mock conversation objects in interface compliance tests to
+    include chat_mode field
+  packages/shared/src/repositories/conversations/__tests__/exports.test.ts: Fixed mock conversation object to include required chat_mode field
+  packages/ui-shared/src/stores/conversation/__tests__/selectors.test.ts:
+    Updated createMockConversation factory function to include chat_mode field
+    for test compatibility
 log: []
 schema: v1.0
 childrenIds:

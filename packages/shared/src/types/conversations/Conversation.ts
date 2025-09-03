@@ -6,6 +6,8 @@ export interface Conversation {
   id: string;
   /** Display title for the conversation */
   title: string;
+  /** Chat mode controlling agent behavior: manual (user control) or round-robin (automatic rotation) */
+  chat_mode: "manual" | "round-robin";
   /** ISO 8601 timestamp of creation */
   created_at: string;
   /** ISO 8601 timestamp of last update */
