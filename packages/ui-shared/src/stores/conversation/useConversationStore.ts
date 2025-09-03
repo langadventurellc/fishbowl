@@ -292,7 +292,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         error: {
           ...state.error,
           agents: {
-            message: `Failed to change chat mode: ${
+            message: `Failed to update chat mode: ${
               error instanceof Error ? error.message : "Unknown error"
             }`,
             operation: "save",

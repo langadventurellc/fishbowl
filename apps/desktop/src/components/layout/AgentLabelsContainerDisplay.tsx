@@ -54,7 +54,11 @@ export const AgentLabelsContainerDisplay: React.FC<
 
   // Chat mode integration
   const activeChatMode = getActiveChatMode();
-  const chatModeError = agentsError?.operation === "save" ? agentsError : null;
+  const chatModeError =
+    agentsError?.operation === "save" &&
+    agentsError.message?.includes("chat mode")
+      ? agentsError
+      : null;
 
   // Transform conversation agents to display format
   const displayAgents = selectedConversationId

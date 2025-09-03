@@ -5,9 +5,21 @@
  * - Dropdown interface using shadcn/ui Select components
  * - Two-line layout with descriptive subtitles
  * - Graceful null/undefined value handling (defaults to "manual")
- * - Error display support for validation feedback
- * - Full accessibility with ARIA labels and keyboard navigation
+ * - Error display support for validation feedback with proper accessibility
+ * - Loading state integration (disables selector during updates)
+ * - Full accessibility with ARIA labels, keyboard navigation, and error announcements
  * - Consistent styling with existing components
+ *
+ * Error Handling:
+ * - Displays inline error messages below selector with role="alert"
+ * - Error messages are properly announced to screen readers
+ * - Errors are filtered to show only chat mode related errors
+ * - Automatic error clearing when mode changes succeed
+ *
+ * Loading States:
+ * - Selector disabled during loading operations
+ * - Visual feedback for disabled state
+ * - Prevents race conditions in rapid mode changes
  *
  * @module components/chat/ChatModeSelector
  */
@@ -39,6 +51,9 @@ export interface ChatModeSelectorProps {
  * ChatModeSelector provides a dropdown interface for selecting chat modes.
  * Supports "manual" (full user control) and "round-robin" (automatic agent rotation).
  * Handles null values gracefully by defaulting to "manual".
+ *
+ * Integrates with conversation store error and loading states for comprehensive
+ * error handling and user feedback during chat mode operations.
  */
 export const ChatModeSelector: React.FC<ChatModeSelectorProps> = ({
   value,
@@ -47,6 +62,9 @@ export const ChatModeSelector: React.FC<ChatModeSelectorProps> = ({
   className,
   error,
 }) => {
+  const errorId = "chat-mode-error";
+  const hasError = Boolean(error);
+
   return (
     <div className="flex flex-col">
       <Select
@@ -55,8 +73,14 @@ export const ChatModeSelector: React.FC<ChatModeSelectorProps> = ({
         disabled={disabled}
       >
         <SelectTrigger
-          className={cn("w-40", className)}
+          className={cn(
+            "w-40",
+            hasError && "border-destructive focus:ring-destructive",
+            className,
+          )}
           aria-label="Chat mode selection"
+          aria-describedby={hasError ? errorId : undefined}
+          aria-invalid={hasError}
         >
           <SelectValue placeholder="Select mode" />
         </SelectTrigger>
@@ -81,7 +105,12 @@ export const ChatModeSelector: React.FC<ChatModeSelectorProps> = ({
       </Select>
 
       {error && (
-        <div className="text-sm text-destructive mt-1" role="alert">
+        <div
+          className="text-sm text-destructive mt-1"
+          role="alert"
+          id={errorId}
+          aria-live="polite"
+        >
           {error}
         </div>
       )}

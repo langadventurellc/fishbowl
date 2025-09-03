@@ -255,7 +255,7 @@ describe("setChatMode", () => {
       // Verify error state was set
       const { error } = useConversationStore.getState();
       expect(error.agents).toEqual({
-        message: "Failed to change chat mode: Network connection failed",
+        message: "Failed to update chat mode: Network connection failed",
         operation: "save",
         isRetryable: true,
         retryCount: 0,
@@ -282,7 +282,7 @@ describe("setChatMode", () => {
 
       const { error } = useConversationStore.getState();
       expect(error.agents?.message).toBe(
-        "Failed to change chat mode: Unknown error",
+        "Failed to update chat mode: Unknown error",
       );
     });
   });
@@ -401,7 +401,7 @@ describe("setChatMode", () => {
       const { error } = useConversationStore.getState();
       expect(error.conversations?.message).toBe("Previous error");
       expect(error.agents?.message).toBe(
-        "Failed to change chat mode: New error",
+        "Failed to update chat mode: New error",
       );
     });
   });

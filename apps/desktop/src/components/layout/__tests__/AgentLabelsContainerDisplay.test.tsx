@@ -174,9 +174,9 @@ describe("AgentLabelsContainerDisplay", () => {
       expect(screen.getByTestId("chat-mode-select")).toBeDisabled();
     });
 
-    it("displays error message for chat mode save errors", () => {
-      const saveError = {
-        message: "Failed to change chat mode",
+    it("displays error message for chat mode update errors", () => {
+      const chatModeError = {
+        message: "Failed to update chat mode: Network error",
         operation: "save" as const,
         isRetryable: true,
         retryCount: 0,
@@ -185,7 +185,7 @@ describe("AgentLabelsContainerDisplay", () => {
 
       mockUseConversationStore.mockReturnValue({
         ...defaultConversationStore,
-        error: { agents: saveError },
+        error: { agents: chatModeError },
       });
 
       render(
@@ -196,7 +196,7 @@ describe("AgentLabelsContainerDisplay", () => {
       );
 
       expect(screen.getByTestId("chat-mode-error")).toHaveTextContent(
-        "Failed to change chat mode",
+        "Failed to update chat mode: Network error",
       );
     });
 
@@ -221,6 +221,31 @@ describe("AgentLabelsContainerDisplay", () => {
         />,
       );
 
+      expect(screen.queryByTestId("chat-mode-error")).not.toBeInTheDocument();
+    });
+
+    it("does not display error message for save operations that are not chat mode related", () => {
+      const generalSaveError = {
+        message: "Failed to save agent settings",
+        operation: "save" as const,
+        isRetryable: true,
+        retryCount: 0,
+        timestamp: "2025-01-01T00:00:00Z",
+      };
+
+      mockUseConversationStore.mockReturnValue({
+        ...defaultConversationStore,
+        error: { agents: generalSaveError },
+      });
+
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      // Should not show in chat mode error display
       expect(screen.queryByTestId("chat-mode-error")).not.toBeInTheDocument();
     });
 

@@ -169,7 +169,9 @@ affectedFiles:
     method with comprehensive JSDoc documentation, integrated event trigger in
     subscribeToAgentUpdates handleAgentUpdate function to call
     handleConversationProgression when event.status === 'complete', used
-    existing getActiveChatMode and processAgentIntent methods for delegation
+    existing getActiveChatMode and processAgentIntent methods for delegation;
+    Updated error message in setChatMode method to 'Failed to update chat mode:'
+    for better identification and consistency
   packages/ui-shared/src/stores/conversation/__tests__/getActiveChatMode.test.ts:
     Created comprehensive unit test suite with 20+ test cases covering basic
     functionality, reactive behavior, performance requirements (<1ms), type
@@ -182,7 +184,9 @@ affectedFiles:
   packages/ui-shared/src/stores/conversation/__tests__/setChatMode.test.ts:
     Created comprehensive unit test suite with 12 test cases covering successful
     updates, Round Robin invariant enforcement, error handling, edge cases, and
-    state management scenarios
+    state management scenarios; Updated test expectations to match new error
+    message format ('Failed to update chat mode:' instead of 'Failed to change
+    chat mode:')
   packages/ui-shared/src/stores/conversation/__tests__/addAgent.test.ts:
     Created comprehensive unit test suite with 27 test cases covering manual
     mode behavior, round-robin mode integration, error handling scenarios, race
@@ -194,26 +198,39 @@ affectedFiles:
     Round Robin delegation, empty intents, service errors, edge cases) and event
     integration testing (progression on complete status, filtering, race
     condition behavior, callback processing)
-  apps/desktop/src/components/chat/ChatModeSelector.tsx: New React component
+  apps/desktop/src/components/chat/ChatModeSelector.tsx: "New React component
     implementing chat mode selector dropdown with shadcn/ui Select components,
     TypeScript interface, accessibility features, error handling prop, and
-    comprehensive JSDoc documentation
+    comprehensive JSDoc documentation; Enhanced with comprehensive accessibility
+    features: proper aria-describedby linkage, aria-invalid attributes, error
+    styling, aria-live regions, and improved JSDoc documentation covering error
+    handling and loading state integration"
   apps/desktop/src/components/chat/index.ts: Added ChatModeSelector export to barrel file for consistent import patterns
   apps/desktop/src/components/chat/__tests__/ChatModeSelector.test.tsx:
     Comprehensive test suite with 25 test cases covering component rendering,
     user interactions, keyboard navigation, null value handling, accessibility,
-    edge cases, and TypeScript type safety
+    edge cases, and TypeScript type safety; Added comprehensive test suite (12
+    new tests) covering error handling, loading states, accessibility
+    attributes, race condition protection, and visual feedback scenarios
   apps/desktop/src/setupTests.ts: Added scrollIntoView mock for Radix UI
     components to fix test environment compatibility
   apps/desktop/src/components/layout/AgentLabelsContainerDisplay.tsx:
     Integrated ChatModeSelector component with useConversationStore methods
     (getActiveChatMode, setChatMode), error filtering for chat mode save
     operations, conditional rendering when selectedConversationId exists, and
-    proper positioning with ml-auto class
+    proper positioning with ml-auto class; Updated error filtering logic to use
+    message-based filtering (checking for 'chat mode' text) instead of
+    operation-only filtering for better error specificity
   apps/desktop/src/components/layout/__tests__/AgentLabelsContainerDisplay.test.tsx:
     Created comprehensive test suite with 15 test cases covering
     ChatModeSelector integration scenarios, error handling, layout preservation,
-    and existing functionality verification
+    and existing functionality verification; Updated and enhanced tests to cover
+    message-based error filtering, ensuring proper distinction between chat mode
+    errors and other save operation errors
+  packages/ui-shared/src/stores/index.ts: Added ErrorState type export to fix import issues in desktop app components
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Fixed ErrorState import to use shared type instead of duplicate interface
+    definition
 log: []
 schema: v1.0
 childrenIds:

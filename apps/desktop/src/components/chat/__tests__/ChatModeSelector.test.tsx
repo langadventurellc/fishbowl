@@ -348,6 +348,239 @@ describe("ChatModeSelector", () => {
     });
   });
 
+  describe("Error Handling and Loading States", () => {
+    describe("Error Display", () => {
+      it("displays error message with proper accessibility attributes", () => {
+        const errorMessage = "Failed to update chat mode: Network error";
+
+        render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error={errorMessage}
+          />,
+        );
+
+        const errorElement = screen.getByRole("alert");
+        expect(errorElement).toBeInTheDocument();
+        expect(errorElement).toHaveTextContent(errorMessage);
+        expect(errorElement).toHaveAttribute("id", "chat-mode-error");
+        expect(errorElement).toHaveAttribute("aria-live", "polite");
+      });
+
+      it("links error message to selector with aria-describedby", () => {
+        const errorMessage = "Failed to update chat mode: Invalid mode";
+
+        render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error={errorMessage}
+          />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        const errorElement = screen.getByRole("alert");
+
+        expect(selector).toHaveAttribute("aria-describedby", "chat-mode-error");
+        expect(selector).toHaveAttribute("aria-invalid", "true");
+        expect(errorElement).toHaveAttribute("id", "chat-mode-error");
+      });
+
+      it("applies error styling when error is present", () => {
+        render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error="Error message"
+          />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        expect(selector).toHaveClass(
+          "border-destructive",
+          "focus:ring-destructive",
+        );
+      });
+
+      it("removes accessibility attributes when no error", () => {
+        render(
+          <ChatModeSelector value="manual" onValueChange={mockOnValueChange} />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        expect(selector).not.toHaveAttribute("aria-describedby");
+        expect(selector).toHaveAttribute("aria-invalid", "false");
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      });
+
+      it("updates error display when error prop changes", () => {
+        const initialError = "Initial error";
+        const updatedError = "Updated error";
+
+        const { rerender } = render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error={initialError}
+          />,
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent(initialError);
+
+        rerender(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error={updatedError}
+          />,
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent(updatedError);
+      });
+
+      it("removes error display when error is cleared", () => {
+        const { rerender } = render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error="Error message"
+          />,
+        );
+
+        expect(screen.getByRole("alert")).toBeInTheDocument();
+
+        rerender(
+          <ChatModeSelector value="manual" onValueChange={mockOnValueChange} />,
+        );
+
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      });
+    });
+
+    describe("Loading States", () => {
+      it("disables selector during loading", () => {
+        render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            disabled={true}
+          />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        expect(selector).toBeDisabled();
+      });
+
+      it("provides visual feedback for disabled state", () => {
+        render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            disabled={true}
+          />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        expect(selector).toHaveAttribute("data-disabled", "");
+      });
+
+      it("prevents interaction when disabled", async () => {
+        render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            disabled={true}
+          />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        fireEvent.click(selector);
+
+        // Wait a bit to ensure no dropdown appears
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
+        expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+        expect(mockOnValueChange).not.toHaveBeenCalled();
+      });
+
+      it("can be both disabled and show error simultaneously", () => {
+        render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            disabled={true}
+            error="Failed to update chat mode"
+          />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        const errorElement = screen.getByRole("alert");
+
+        expect(selector).toBeDisabled();
+        expect(errorElement).toBeInTheDocument();
+        expect(selector).toHaveAttribute("aria-describedby", "chat-mode-error");
+      });
+    });
+
+    describe("Race Condition Protection", () => {
+      it("maintains state consistency during rapid interactions", async () => {
+        const { rerender } = render(
+          <ChatModeSelector value="manual" onValueChange={mockOnValueChange} />,
+        );
+
+        // Simulate rapid state changes
+        rerender(
+          <ChatModeSelector
+            value="round-robin"
+            onValueChange={mockOnValueChange}
+            disabled={true}
+          />,
+        );
+
+        rerender(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            disabled={false}
+          />,
+        );
+
+        const selector = screen.getByRole("combobox");
+        expect(selector).not.toBeDisabled();
+        expect(selector).toHaveAttribute("data-state", "closed");
+      });
+
+      it("handles error state changes correctly", () => {
+        const { rerender } = render(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error="Error 1"
+          />,
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent("Error 1");
+
+        rerender(
+          <ChatModeSelector
+            value="manual"
+            onValueChange={mockOnValueChange}
+            error="Error 2"
+          />,
+        );
+
+        expect(screen.getByRole("alert")).toHaveTextContent("Error 2");
+
+        rerender(
+          <ChatModeSelector value="manual" onValueChange={mockOnValueChange} />,
+        );
+
+        expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+      });
+    });
+  });
+
   describe("TypeScript Type Safety", () => {
     it("only accepts valid chat mode values", () => {
       // This test verifies the TypeScript interface at compile time
