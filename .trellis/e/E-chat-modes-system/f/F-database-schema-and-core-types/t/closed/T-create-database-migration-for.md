@@ -1,12 +1,24 @@
 ---
 id: T-create-database-migration-for
 title: Create database migration for chat_mode column
-status: open
+status: done
 priority: high
 parent: F-database-schema-and-core-types
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  migrations/004_add_chat_mode_to_conversations.sql:
+    New migration file that adds
+    chat_mode VARCHAR column to conversations table with DEFAULT 'manual' NOT
+    NULL for backward compatibility, includes comprehensive documentation and
+    rollback instructions
+log:
+  - Created database migration 004_add_chat_mode_to_conversations.sql that adds
+    chat_mode VARCHAR column to conversations table. Migration includes
+    comprehensive header comments explaining purpose, rollback instructions, and
+    design decisions. Uses DEFAULT 'manual' NOT NULL for backward compatibility,
+    ensuring existing conversations retain current behavior while enabling
+    future chat modes functionality. Follows established migration patterns from
+    existing files 001-003.
 schema: v1.0
 childrenIds: []
 created: 2025-09-03T18:54:57.953Z

@@ -1,14 +1,23 @@
 ---
 id: F-database-schema-and-core-types
 title: Database Schema and Core Types
-status: open
+status: in-progress
 priority: medium
 parent: E-chat-modes-system
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  migrations/004_add_chat_mode_to_conversations.sql:
+    New migration file that adds
+    chat_mode VARCHAR column to conversations table with DEFAULT 'manual' NOT
+    NULL for backward compatibility, includes comprehensive documentation and
+    rollback instructions
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-create-database-migration-for
+  - T-update-conversation-interface
+  - T-update-conversationsrepository
+  - T-update-zod-schemas-for-chat
 created: 2025-09-03T18:33:40.238Z
 updated: 2025-09-03T18:33:40.238Z
 ---

@@ -1,14 +1,25 @@
 ---
 id: E-chat-modes-system
 title: Chat Modes System
-status: open
+status: in-progress
 priority: medium
 parent: none
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  migrations/004_add_chat_mode_to_conversations.sql:
+    New migration file that adds
+    chat_mode VARCHAR column to conversations table with DEFAULT 'manual' NOT
+    NULL for backward compatibility, includes comprehensive documentation and
+    rollback instructions
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - F-chat-mode-selector-component
+  - F-chat-mode-strategy-pattern
+  - F-database-schema-and-core-types
+  - F-round-robin-behavior
+  - F-service-layer-integration
+  - F-state-management-integration
 created: 2025-09-03T18:13:59.788Z
 updated: 2025-09-03T18:13:59.788Z
 ---
