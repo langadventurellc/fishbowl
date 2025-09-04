@@ -171,7 +171,11 @@ affectedFiles:
     handleConversationProgression when event.status === 'complete', used
     existing getActiveChatMode and processAgentIntent methods for delegation;
     Updated error message in setChatMode method to 'Failed to update chat mode:'
-    for better identification and consistency
+    for better identification and consistency; Enhanced subscribeToAgentUpdates
+    method with Round Robin mode filtering and error handling. Added
+    getActiveChatMode() check before triggering progression and wrapped
+    handleConversationProgression() in try-catch block with console.error
+    logging.
   packages/ui-shared/src/stores/conversation/__tests__/getActiveChatMode.test.ts:
     Created comprehensive unit test suite with 20+ test cases covering basic
     functionality, reactive behavior, performance requirements (<1ms), type
@@ -197,7 +201,10 @@ affectedFiles:
     handleConversationProgression method functionality (no-op for manual mode,
     Round Robin delegation, empty intents, service errors, edge cases) and event
     integration testing (progression on complete status, filtering, race
-    condition behavior, callback processing)
+    condition behavior, callback processing); Added comprehensive test coverage
+    for enhanced progression functionality including mode filtering tests, error
+    handling validation, and callback preservation verification. Updated
+    existing tests to work with immediate progression calls.
   apps/desktop/src/components/chat/ChatModeSelector.tsx: "New React component
     implementing chat mode selector dropdown with shadcn/ui Select components,
     TypeScript interface, accessibility features, error handling prop, and

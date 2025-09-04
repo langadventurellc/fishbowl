@@ -393,8 +393,143 @@ describe("Conversation Progression", () => {
 
       eventHandler(completeEvent);
 
-      // Assert: progression triggered
+      // Assert: progression triggered immediately
       expect(mockProgression).toHaveBeenCalled();
+    });
+
+    it("should only trigger progression in round-robin mode", () => {
+      // Setup: manual mode conversation
+      const agents = [
+        createMockAgent("agent-1", true),
+        createMockAgent("agent-2", false),
+      ];
+
+      const mockHandler = createMockHandler();
+      mockCreateChatModeHandler.mockReturnValue(mockHandler as ChatModeHandler);
+
+      useConversationStore.setState(createMockState("manual", agents));
+
+      const store = useConversationStore.getState();
+      store.initialize(mockConversationService as ConversationService);
+
+      // Mock handleConversationProgression to track calls
+      const mockProgression = jest.fn();
+      store.handleConversationProgression = mockProgression;
+
+      // Act: subscribe to updates
+      store.subscribeToAgentUpdates();
+
+      const mockOnAgentUpdate = (window as unknown as MockedWindow).electronAPI
+        .chat.onAgentUpdate;
+      const eventHandler = mockOnAgentUpdate.mock.calls[0][0];
+
+      // Simulate complete event in manual mode
+      const completeEvent = {
+        conversationId: "conv-1",
+        conversationAgentId: "agent-1",
+        status: "complete" as const,
+        messageId: "msg-1",
+      };
+
+      eventHandler(completeEvent);
+
+      // Assert: progression NOT triggered in manual mode
+      expect(mockProgression).not.toHaveBeenCalled();
+    });
+
+    it("should handle progression errors gracefully", () => {
+      // Mock console.error to verify error logging
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+      // Setup: round-robin mode conversation
+      const agents = [createMockAgent("agent-1", true)];
+      const mockHandler = createMockHandler();
+      mockCreateChatModeHandler.mockReturnValue(mockHandler as ChatModeHandler);
+
+      useConversationStore.setState(createMockState("round-robin", agents));
+
+      const store = useConversationStore.getState();
+      store.initialize(mockConversationService as ConversationService);
+
+      // Mock handleConversationProgression to throw error
+      const testError = new Error("Progression failed");
+      store.handleConversationProgression = jest.fn().mockImplementation(() => {
+        throw testError;
+      });
+
+      // Act: subscribe to updates
+      store.subscribeToAgentUpdates();
+
+      const mockOnAgentUpdate = (window as unknown as MockedWindow).electronAPI
+        .chat.onAgentUpdate;
+      const eventHandler = mockOnAgentUpdate.mock.calls[0][0];
+
+      // Simulate complete event that will trigger error
+      const completeEvent = {
+        conversationId: "conv-1",
+        conversationAgentId: "agent-1",
+        status: "complete" as const,
+        messageId: "msg-1",
+      };
+
+      // This should not throw - error should be caught and logged
+      expect(() => {
+        eventHandler(completeEvent);
+      }).not.toThrow();
+
+      // Assert: error was logged
+      expect(consoleSpy).toHaveBeenCalledWith(
+        "Failed to progress conversation:",
+        testError,
+      );
+
+      // Cleanup
+      consoleSpy.mockRestore();
+    });
+
+    it("should preserve callback functionality during error scenarios", () => {
+      // Mock console.error to suppress output
+      const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+
+      // Setup: round-robin mode conversation with callback
+      const agents = [createMockAgent("agent-1", true)];
+      const mockHandler = createMockHandler();
+      mockCreateChatModeHandler.mockReturnValue(mockHandler as ChatModeHandler);
+
+      useConversationStore.setState(createMockState("round-robin", agents));
+
+      const store = useConversationStore.getState();
+      store.initialize(mockConversationService as ConversationService);
+
+      const mockCallback = jest.fn();
+
+      // Mock handleConversationProgression to throw error
+      store.handleConversationProgression = jest.fn().mockImplementation(() => {
+        throw new Error("Progression failed");
+      });
+
+      // Act: subscribe with callback
+      store.subscribeToAgentUpdates(mockCallback);
+
+      const mockOnAgentUpdate = (window as unknown as MockedWindow).electronAPI
+        .chat.onAgentUpdate;
+      const eventHandler = mockOnAgentUpdate.mock.calls[0][0];
+
+      // Simulate complete event
+      const completeEvent = {
+        conversationId: "conv-1",
+        conversationAgentId: "agent-1",
+        status: "complete" as const,
+        messageId: "msg-1",
+      };
+
+      eventHandler(completeEvent);
+
+      // Assert: callback still called even with progression error
+      expect(mockCallback).toHaveBeenCalledWith(completeEvent);
+
+      // Cleanup
+      consoleSpy.mockRestore();
     });
 
     it("should not trigger progression on non-complete status", () => {

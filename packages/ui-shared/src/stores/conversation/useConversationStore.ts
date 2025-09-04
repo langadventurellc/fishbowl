@@ -976,7 +976,15 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
 
       // Trigger conversation progression after agent responses
       if (event.status === "complete") {
-        get().handleConversationProgression();
+        const activeChatMode = get().getActiveChatMode();
+        if (activeChatMode === "round-robin") {
+          try {
+            get().handleConversationProgression();
+          } catch (error) {
+            console.error("Failed to progress conversation:", error);
+            // Continue execution - don't disrupt user experience
+          }
+        }
       }
 
       // Process event for active conversation (minimal processing for v1)
