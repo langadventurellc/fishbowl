@@ -36,7 +36,9 @@ export const waitForAddAgentModal = async (
 
     // Wait for modal content to be fully loaded - check for agent select trigger
     await expect(
-      window.locator('[data-slot="select-trigger"]').first(),
+      window.locator(
+        '[data-slot="select-trigger"][aria-label="Select agent to add"]',
+      ),
     ).toBeVisible({ timeout: 1000 });
 
     // Verify modal title is present
@@ -62,8 +64,10 @@ export const selectAgentInModal = async (
   // First ensure the modal is visible
   await expect(window.locator('[role="dialog"]')).toBeVisible();
 
-  // Click the select trigger to open dropdown
-  const selectTrigger = window.locator('[data-slot="select-trigger"]');
+  // Click the select trigger to open dropdown (specifically the agent selection dropdown)
+  const selectTrigger = window.locator(
+    '[data-slot="select-trigger"][aria-label="Select agent to add"]',
+  );
   await expect(selectTrigger).toBeVisible({ timeout: 1000 });
   await selectTrigger.click();
 
