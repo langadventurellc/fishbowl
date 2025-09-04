@@ -6,18 +6,18 @@
  * condition protection and dependency injection.
  */
 
-import { create } from "zustand";
-import type { ConversationStore } from "./ConversationStore";
 import type {
+  ConversationAgent,
   ConversationService,
   Message,
-  ConversationAgent,
   UpdateConversationInput,
 } from "@fishbowl-ai/shared";
 import { createLoggerSync } from "@fishbowl-ai/shared";
-import { useChatStore } from "../chat/useChatStore";
+import { create } from "zustand";
 import { createChatModeHandler } from "../../chat-modes";
 import type { ChatModeIntent } from "../../types/chat-modes/ChatModeIntent";
+import { useChatStore } from "../chat/useChatStore";
+import type { ConversationStore } from "./ConversationStore";
 
 // Platform-specific event type for desktop integration
 type AgentUpdateEvent = {
@@ -664,6 +664,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   /**
    * Add agent to conversation.
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   addAgent: async (conversationId: string, agentId: string) => {
     if (!conversationService || !get().activeConversationId) {
       return;
