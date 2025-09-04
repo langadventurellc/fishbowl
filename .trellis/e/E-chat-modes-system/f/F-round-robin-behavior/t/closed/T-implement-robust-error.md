@@ -1,7 +1,7 @@
 ---
 id: T-implement-robust-error
 title: Implement robust error handling and recovery for Round Robin operations
-status: open
+status: wont-do
 priority: medium
 parent: F-round-robin-behavior
 prerequisites:
