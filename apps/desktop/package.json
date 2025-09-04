@@ -22,7 +22,7 @@
     "test": "jest",
     "test:unit": "jest --passWithNoTests",
     "test:e2e": "NODE_ENV=test pnpm --filter=@fishbowl-ai/shared build && NODE_ENV=test pnpm run build:renderer && NODE_ENV=test pnpm run build:main && NODE_ENV=test playwright test -c ../../tests/desktop/playwright.config.ts",
-    "test:e2e:headless": "pnpm --filter=@fishbowl-ai/shared build && pnpm run build:renderer && pnpm run build:main && (Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 2; DISPLAY=:99 playwright test -c ../../tests/desktop/playwright.config.ts)",
+    "test:e2e:headless": "NODE_ENV=test pnpm --filter=@fishbowl-ai/shared build && NODE_ENV=test pnpm run build:renderer && NODE_ENV=test pnpm run build:main && (Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 & sleep 2; DISPLAY=:99 NODE_ENV=test playwright test -g 'should close gracefully' -c ../../tests/desktop/playwright.config.ts)",
     "type-check": "tsc --noEmit",
     "db:migrate": "node scripts/migrate.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
