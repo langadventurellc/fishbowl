@@ -81,6 +81,17 @@ export const setupPersonalitiesTestSuite = () => {
         console.warn("Could not close Electron app:", error);
       }
     }
+
+    // Delete the personalities.json file from user data path
+    if (personalitiesConfigPath) {
+      try {
+        const fs = await import("fs/promises");
+        await fs.unlink(personalitiesConfigPath);
+      } catch (error) {
+        // File might not exist, which is fine
+        console.warn("Could not delete personalities.json file:", error);
+      }
+    }
   });
 
   return {
