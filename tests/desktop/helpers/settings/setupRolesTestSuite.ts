@@ -74,6 +74,17 @@ export const setupRolesTestSuite = () => {
         console.warn("Could not close Electron app:", error);
       }
     }
+
+    // Delete the roles.json file from user data path
+    if (rolesConfigPath) {
+      try {
+        const fs = await import("fs/promises");
+        await fs.unlink(rolesConfigPath);
+      } catch (error) {
+        // File might not exist, which is fine
+        console.warn("Could not delete roles.json file:", error);
+      }
+    }
   });
 
   return {

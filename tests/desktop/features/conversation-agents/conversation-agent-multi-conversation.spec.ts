@@ -207,7 +207,9 @@ test.describe("Feature: Multi-Conversation Agent Management", () => {
       await expect(noAgentsMessage).toBeVisible();
 
       // Verify there is no select dropdown (no agents available)
-      const selectTrigger = window.locator('[data-slot="select-trigger"]');
+      const selectTrigger = window.locator(
+        '[data-slot="select-trigger"][aria-label="Select agent to add"]',
+      );
       await expect(selectTrigger).not.toBeVisible();
 
       // Verify no role="option" elements exist

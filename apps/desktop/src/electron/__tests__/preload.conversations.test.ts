@@ -54,6 +54,7 @@ describe("Preload Conversations API", () => {
   const mockConversation: Conversation = {
     id: "test-conversation-id",
     title: "Test Conversation",
+    chat_mode: "manual",
     created_at: "2025-01-01T00:00:00.000Z",
     updated_at: "2025-01-01T00:00:00.000Z",
   };
@@ -63,6 +64,7 @@ describe("Preload Conversations API", () => {
     {
       id: "test-conversation-2",
       title: "Another Conversation",
+      chat_mode: "round-robin",
       created_at: "2025-01-01T01:00:00.000Z",
       updated_at: "2025-01-01T01:00:00.000Z",
     },

@@ -8,11 +8,9 @@
  * @example
  * ```typescript
  * // Import hooks
- * import { useConversations, useCreateConversation, useDeleteConversation, useConversation } from '@/hooks/conversations';
+ * import { useDeleteConversation, useConversation } from '@/hooks/conversations';
  *
  * function ConversationComponent() {
- *   const { conversations, isLoading } = useConversations();
- *   const { createConversation, isCreating } = useCreateConversation();
  *   const { deleteConversation, isDeleting } = useDeleteConversation();
  *   const { conversation } = useConversation(conversationId);
  *
@@ -22,6 +20,5 @@
  */
 
 // Conversation management hooks
-export { useCreateConversation } from "./useCreateConversation";
 export { useDeleteConversation } from "./useDeleteConversation";
 export { useConversation } from "./useConversation";

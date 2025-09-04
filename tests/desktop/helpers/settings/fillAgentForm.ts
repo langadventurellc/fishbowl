@@ -10,7 +10,9 @@ export const fillAgentForm = async (
   await nameInput.fill(agentData.name);
 
   // Select model dropdown
-  const modelSelect = window.locator('[role="combobox"]').first();
+  const modelSelect = window.locator(
+    '[role="combobox"][aria-label="Select model"]',
+  );
   await modelSelect.click();
   // Select the first available model (since we created an Anthropic config)
   const firstModelOption = window.locator('[role="option"]').first();
@@ -20,7 +22,9 @@ export const fillAgentForm = async (
   await firstModelOption.click();
 
   // Select role dropdown
-  const roleSelect = window.locator('[role="combobox"]').nth(1);
+  const roleSelect = window.locator(
+    '[role="combobox"][aria-label="Select role"]',
+  );
   await roleSelect.click();
   // Select the first available role
   const firstRoleOption = window.locator('[role="option"]').first();
@@ -28,7 +32,9 @@ export const fillAgentForm = async (
   const selectedRole = "software-engineer";
 
   // Select personality dropdown
-  const personalitySelect = window.locator('[role="combobox"]').nth(2);
+  const personalitySelect = window.locator(
+    '[role="combobox"][aria-label="Select personality"]',
+  );
   await personalitySelect.click();
   // Select the first available personality
   const firstPersonalityOption = window.locator('[role="option"]').first();

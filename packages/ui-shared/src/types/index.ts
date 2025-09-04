@@ -6,6 +6,7 @@
 
 export * from "./agents";
 export * from "./chat";
+export * from "./chat-modes";
 export * from "./components";
 export * from "./conversationAgents";
 export * from "./ConversationViewModel";

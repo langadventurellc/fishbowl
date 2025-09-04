@@ -3,6 +3,7 @@ import type {
   Message as _Message,
   ConversationAgent as _ConversationAgent,
   CreateMessageInput as _CreateMessageInput,
+  UpdateConversationInput as _UpdateConversationInput,
 } from "@fishbowl-ai/shared";
 
 /**
@@ -89,6 +90,24 @@ export interface ConversationService {
    * @throws Error on update failure, conversation not found, or invalid parameters
    */
   renameConversation(id: string, title: string): Promise<_Conversation>;
+
+  /**
+   * Update conversation properties including chat_mode and title
+   * Maps to: window.electronAPI.conversations.update(id, updates)
+   *
+   * Updates conversation properties including title and chat_mode fields.
+   * Supports updating either field independently or both together in a single operation.
+   * All updates are validated using updateConversationInputSchema before processing.
+   *
+   * @param id - Conversation UUID to update
+   * @param updates - UpdateConversationInput with optional title and chat_mode fields
+   * @returns Promise resolving to updated conversation with all fields
+   * @throws Error on update failure, conversation not found, or invalid parameters
+   */
+  updateConversation(
+    id: string,
+    updates: _UpdateConversationInput,
+  ): Promise<_Conversation>;
 
   /**
    * Delete a conversation permanently

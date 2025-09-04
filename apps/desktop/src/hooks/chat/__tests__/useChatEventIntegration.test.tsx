@@ -35,14 +35,14 @@ const mockClearConversationState = jest.fn();
 
 // Mock conversation store actions
 const mockRefreshActiveConversation = jest.fn().mockResolvedValue(undefined);
+const mockSubscribeToAgentUpdates = jest.fn();
 
-// Mock electron API
-const mockOnAgentUpdate = jest.fn();
+// Mock unsubscribe function
 const mockUnsubscribe = jest.fn();
 
 beforeEach(() => {
   // Reset mocks
-  mockOnAgentUpdate.mockClear();
+  mockSubscribeToAgentUpdates.mockClear();
   mockUnsubscribe.mockClear();
   mockSetAgentThinking.mockClear();
   mockSetAgentError.mockClear();
@@ -68,27 +68,17 @@ beforeEach(() => {
   // Mock useConversationStore return value
   mockUseConversationStore.mockReturnValue({
     refreshActiveConversation: mockRefreshActiveConversation,
+    subscribeToAgentUpdates:
+      mockSubscribeToAgentUpdates.mockReturnValue(mockUnsubscribe),
   } as any);
-
-  // Mock window.electronAPI.chat
-  Object.defineProperty(window, "electronAPI", {
-    value: {
-      chat: {
-        onAgentUpdate: mockOnAgentUpdate.mockReturnValue(mockUnsubscribe),
-      },
-    },
-    writable: true,
-    configurable: true,
-  });
 });
 
 afterEach(() => {
   jest.restoreAllMocks();
-  delete (window as any).electronAPI;
 });
 
 describe("useChatEventIntegration", () => {
-  describe("Electron Environment", () => {
+  describe("Store Integration", () => {
     it("should render without errors", () => {
       expect(() => {
         renderHook(() =>
@@ -97,25 +87,27 @@ describe("useChatEventIntegration", () => {
       }).not.toThrow();
     });
 
-    it("should register IPC listener when conversationId is provided", () => {
+    it("should register store subscription when conversationId is provided", () => {
       renderHook(() =>
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      expect(mockOnAgentUpdate).toHaveBeenCalledTimes(1);
-      expect(mockOnAgentUpdate).toHaveBeenCalledWith(expect.any(Function));
+      expect(mockSubscribeToAgentUpdates).toHaveBeenCalledTimes(1);
+      expect(mockSubscribeToAgentUpdates).toHaveBeenCalledWith(
+        expect.any(Function),
+      );
       expect(mockClearConversationState).toHaveBeenCalledTimes(1);
       expect(mockSetProcessingConversation).toHaveBeenCalledWith(
         "conversation-1",
       );
     });
 
-    it("should not register IPC listener when conversationId is null", () => {
+    it("should not register store subscription when conversationId is null", () => {
       const { result } = renderHook(() =>
         useChatEventIntegration({ conversationId: null }),
       );
 
-      expect(mockOnAgentUpdate).not.toHaveBeenCalled();
+      expect(mockSubscribeToAgentUpdates).not.toHaveBeenCalled();
       expect(mockClearConversationState).toHaveBeenCalledTimes(1);
       expect(result.current.isConnected).toBe(false);
     });
@@ -149,15 +141,15 @@ describe("useChatEventIntegration", () => {
         },
       );
 
-      expect(mockOnAgentUpdate).toHaveBeenCalledTimes(1);
+      expect(mockSubscribeToAgentUpdates).toHaveBeenCalledTimes(1);
       expect(mockUnsubscribe).not.toHaveBeenCalled();
 
       // Switch to different conversation
       rerender({ conversationId: "conversation-2" });
 
-      // Should cleanup old listener and register new one
+      // Should cleanup old subscription and register new one
       expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
-      expect(mockOnAgentUpdate).toHaveBeenCalledTimes(2);
+      expect(mockSubscribeToAgentUpdates).toHaveBeenCalledTimes(2);
       expect(mockClearConversationState).toHaveBeenCalledTimes(2);
       expect(mockSetProcessingConversation).toHaveBeenCalledWith(
         "conversation-2",
@@ -171,7 +163,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -190,7 +182,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -211,7 +203,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -239,7 +231,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -266,7 +258,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -297,7 +289,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const errorTypes = [
         "network",
         "auth",
@@ -342,7 +334,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
 
       // Test explicit retryable: true
       const retryableEvent: AgentUpdateEvent = {
@@ -390,7 +382,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -421,7 +413,7 @@ describe("useChatEventIntegration", () => {
 
       expect(result.current.lastEventTime).toBeNull();
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -443,7 +435,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event = {
         conversationId: "conversation-1",
         conversationAgentId: "agent-1",
@@ -466,7 +458,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
 
       // Test with malformed event that will throw during destructuring
       act(() => {
@@ -488,7 +480,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "different-conversation-id", // Different from hook's conversationId
         conversationAgentId: "agent-1",
@@ -509,7 +501,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "conversation-1", // Matches hook's conversationId
         conversationAgentId: "agent-1",
@@ -529,7 +521,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "other-conversation",
         conversationAgentId: "agent-1",
@@ -551,7 +543,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
       const event: AgentUpdateEvent = {
         conversationId: "other-conversation",
         conversationAgentId: "agent-1",
@@ -575,7 +567,7 @@ describe("useChatEventIntegration", () => {
 
       expect(result.current.lastEventTime).toBeNull();
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
 
       // First event with different conversationId - should be filtered
       const filteredEvent: AgentUpdateEvent = {
@@ -608,31 +600,32 @@ describe("useChatEventIntegration", () => {
     });
   });
 
-  describe("Non-Electron Environment", () => {
+  describe("Non-Platform Environment", () => {
     beforeEach(() => {
-      delete (window as any).electronAPI;
+      // Mock store to return null (no subscription available)
+      mockSubscribeToAgentUpdates.mockReturnValue(null);
     });
 
-    it("should handle missing electronAPI gracefully", () => {
+    it("should handle missing subscription gracefully", () => {
       expect(() => {
         renderHook(() =>
           useChatEventIntegration({ conversationId: "conversation-1" }),
         );
       }).not.toThrow();
 
-      expect(mockOnAgentUpdate).not.toHaveBeenCalled();
+      expect(mockSubscribeToAgentUpdates).toHaveBeenCalled();
     });
 
-    it("should return disconnected state when electronAPI is missing", () => {
+    it("should return disconnected state when subscription is not available", () => {
       const { result } = renderHook(() =>
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
       expect(result.current.isConnected).toBe(false);
-      expect(mockOnAgentUpdate).not.toHaveBeenCalled();
+      expect(mockSubscribeToAgentUpdates).toHaveBeenCalled();
     });
 
-    it("should handle unmount gracefully in non-Electron environment", () => {
+    it("should handle unmount gracefully when no subscription", () => {
       const { unmount } = renderHook(() =>
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
@@ -642,58 +635,12 @@ describe("useChatEventIntegration", () => {
     });
   });
 
-  describe("Window Object Edge Cases", () => {
-    it("should handle electronAPI without chat property", () => {
-      Object.defineProperty(window, "electronAPI", {
-        value: {}, // Empty object without chat
-        writable: true,
-        configurable: true,
-      });
-
-      const { result } = renderHook(() =>
-        useChatEventIntegration({ conversationId: "conversation-1" }),
-      );
-
-      expect(result.current.isConnected).toBe(false);
-      expect(mockOnAgentUpdate).not.toHaveBeenCalled();
-    });
-
-    it("should handle chat without onAgentUpdate method", () => {
-      Object.defineProperty(window, "electronAPI", {
-        value: { chat: {} },
-        writable: true,
-        configurable: true,
-      });
-
-      const { result } = renderHook(() =>
-        useChatEventIntegration({ conversationId: "conversation-1" }),
-      );
-
-      expect(result.current.isConnected).toBe(false);
-      expect(mockOnAgentUpdate).not.toHaveBeenCalled();
-    });
-
-    it("should handle onAgentUpdate that is not a function", () => {
-      Object.defineProperty(window, "electronAPI", {
-        value: { chat: { onAgentUpdate: "not a function" } },
-        writable: true,
-        configurable: true,
-      });
-
-      const { result } = renderHook(() =>
-        useChatEventIntegration({ conversationId: "conversation-1" }),
-      );
-
-      expect(result.current.isConnected).toBe(false);
-    });
-  });
-
   describe("Error Handling", () => {
-    it("should handle IPC setup errors gracefully", () => {
+    it("should handle subscription setup errors gracefully", () => {
       const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-      mockOnAgentUpdate.mockImplementation(() => {
-        throw new Error("IPC setup error");
+      mockSubscribeToAgentUpdates.mockImplementation(() => {
+        throw new Error("Subscription setup error");
       });
 
       const { result } = renderHook(() =>
@@ -702,7 +649,7 @@ describe("useChatEventIntegration", () => {
 
       expect(result.current.isConnected).toBe(false);
       expect(consoleSpy).toHaveBeenCalledWith(
-        "Failed to set up IPC event listener:",
+        "Failed to set up event subscription:",
         expect.any(Error),
       );
 
@@ -722,7 +669,7 @@ describe("useChatEventIntegration", () => {
 
       expect(() => unmount()).not.toThrow();
       expect(consoleSpy).toHaveBeenCalledWith(
-        "Error during IPC cleanup:",
+        "Error during subscription cleanup:",
         expect.any(Error),
       );
 
@@ -749,7 +696,7 @@ describe("useChatEventIntegration", () => {
     });
 
     it("should handle null cleanup function gracefully", () => {
-      mockOnAgentUpdate.mockReturnValue(null as any);
+      mockSubscribeToAgentUpdates.mockReturnValue(null as any);
 
       const { unmount } = renderHook(() =>
         useChatEventIntegration({ conversationId: "conversation-1" }),
@@ -759,7 +706,7 @@ describe("useChatEventIntegration", () => {
     });
 
     it("should handle undefined cleanup function gracefully", () => {
-      mockOnAgentUpdate.mockReturnValue(undefined as any);
+      mockSubscribeToAgentUpdates.mockReturnValue(undefined as any);
 
       const { unmount } = renderHook(() =>
         useChatEventIntegration({ conversationId: "conversation-1" }),
@@ -775,7 +722,7 @@ describe("useChatEventIntegration", () => {
         useChatEventIntegration({ conversationId: "conversation-1" }),
       );
 
-      const callback = mockOnAgentUpdate.mock.calls[0][0];
+      const callback = mockSubscribeToAgentUpdates.mock.calls[0][0];
 
       act(() => {
         // Simulate rapid events
@@ -814,8 +761,8 @@ describe("useChatEventIntegration", () => {
       // Trigger re-render without changing conversationId
       rerender();
 
-      // Should not have called onAgentUpdate again if callback is stable
-      expect(mockOnAgentUpdate).toHaveBeenCalledTimes(1);
+      // Should not have called subscribeToAgentUpdates again if callback is stable
+      expect(mockSubscribeToAgentUpdates).toHaveBeenCalledTimes(1);
     });
   });
 });

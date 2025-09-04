@@ -11,6 +11,7 @@ class MockConversationsRepository implements ConversationsRepositoryInterface {
     return {
       id: "550e8400-e29b-41d4-a716-446655440000",
       title: input.title ?? "New Conversation",
+      chat_mode: "manual",
       created_at: "2023-01-01T00:00:00.000Z",
       updated_at: "2023-01-01T00:00:00.000Z",
     };
@@ -20,6 +21,7 @@ class MockConversationsRepository implements ConversationsRepositoryInterface {
     return {
       id,
       title: "Test Conversation",
+      chat_mode: "manual",
       created_at: "2023-01-01T00:00:00.000Z",
       updated_at: "2023-01-01T00:00:00.000Z",
     };
@@ -30,6 +32,7 @@ class MockConversationsRepository implements ConversationsRepositoryInterface {
       {
         id: "550e8400-e29b-41d4-a716-446655440000",
         title: "First Conversation",
+        chat_mode: "manual",
         created_at: "2023-01-01T00:00:00.000Z",
         updated_at: "2023-01-01T00:00:00.000Z",
       },
@@ -43,6 +46,7 @@ class MockConversationsRepository implements ConversationsRepositoryInterface {
     return {
       id,
       title: input.title ?? "Updated Conversation",
+      chat_mode: "manual",
       created_at: "2023-01-01T00:00:00.000Z",
       updated_at: "2023-01-01T01:00:00.000Z",
     };

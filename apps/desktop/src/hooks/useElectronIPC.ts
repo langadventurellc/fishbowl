@@ -8,10 +8,9 @@
  * @module hooks/useElectronIPC
  */
 
-import { useSettingsModal } from "@fishbowl-ai/ui-shared";
+import { useSettingsModal, useConversationStore } from "@fishbowl-ai/ui-shared";
 import { useEffect, useRef } from "react";
 import { useServices } from "../contexts";
-import { useCreateConversation } from "./conversations/useCreateConversation";
 
 /**
  * Hook that integrates Electron IPC events with React components.
@@ -32,7 +31,6 @@ import { useCreateConversation } from "./conversations/useCreateConversation";
 export function useElectronIPC(): void {
   const { logger } = useServices();
   const { openModal } = useSettingsModal();
-  const { createConversation } = useCreateConversation();
   const cleanupRef = useRef<(() => void) | null>(null);
   const newConversationCleanupRef = useRef<(() => void) | null>(null);
 
@@ -81,10 +79,12 @@ export function useElectronIPC(): void {
     ) {
       try {
         const newConversationCleanup = window.electronAPI.onNewConversation(
-          () => {
+          async () => {
             try {
-              // Create a new conversation without a title (uses default)
-              createConversation();
+              // Create a new conversation without a title (uses default) and update UI immediately
+              await useConversationStore
+                .getState()
+                .createConversationAndSelect();
             } catch (error) {
               logger.error(
                 "Error creating new conversation via IPC:",
@@ -136,5 +136,5 @@ export function useElectronIPC(): void {
         }
       }
     };
-  }, [openModal, logger, createConversation]);
+  }, [openModal, logger]);
 }

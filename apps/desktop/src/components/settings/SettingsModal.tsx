@@ -139,25 +139,41 @@ export function SettingsModal({
   const [hasNestedDialog, setHasNestedDialog] = React.useState(false);
 
   React.useEffect(() => {
-    const checkForNestedDialogs = () => {
-      // Check if any form modal is present in the DOM using data attribute
-      const hasDialog = document.querySelector("[data-form-modal]") !== null;
-      setHasNestedDialog(hasDialog);
+    // Listen for custom events from SettingsFormModal
+    const handleFormModalOpened = () => {
+      setHasNestedDialog(true);
     };
 
-    // Check immediately and set up observer
+    const handleFormModalClosed = () => {
+      setHasNestedDialog(false);
+    };
+
+    // Initial check in case a form modal is already open
+    const checkForNestedDialogs = () => {
+      try {
+        const hasDialog = document.querySelector("[data-form-modal]") !== null;
+        setHasNestedDialog(hasDialog);
+      } catch {
+        setHasNestedDialog(false);
+      }
+    };
+
     checkForNestedDialogs();
 
-    // Use MutationObserver to detect when dialogs are added/removed
-    const observer = new MutationObserver(checkForNestedDialogs);
-    observer.observe(document.body, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ["data-form-modal"],
-    });
+    // Listen for custom events for immediate state updates
+    document.addEventListener("settingsFormModalOpened", handleFormModalOpened);
+    document.addEventListener("settingsFormModalClosed", handleFormModalClosed);
 
-    return () => observer.disconnect();
+    return () => {
+      document.removeEventListener(
+        "settingsFormModalOpened",
+        handleFormModalOpened,
+      );
+      document.removeEventListener(
+        "settingsFormModalClosed",
+        handleFormModalClosed,
+      );
+    };
   }, []);
 
   // Focus trap integration for modal-level focus management
@@ -172,7 +188,17 @@ export function SettingsModal({
   // Disable when nested dialogs are open to let them handle their own shortcuts
   useGlobalKeyboardShortcuts({
     shortcuts: {
-      Escape: () => onOpenChange(false),
+      Escape: () => {
+        // CRITICAL: Always check DOM synchronously before closing
+        // The hasNestedDialog state may lag behind due to React rendering/MutationObserver timing
+        const hasActiveNestedDialog =
+          document.querySelector("[data-form-modal]") !== null;
+        if (hasActiveNestedDialog) {
+          // Early return if nested form modal exists - let it handle the Escape
+          return;
+        }
+        onOpenChange(false);
+      },
       "Ctrl+S": () => {
         // TODO: Implement save functionality when Save button logic is added
         logger.info("Save shortcut triggered", { shortcut: "Ctrl+S" });

@@ -6,14 +6,18 @@
  * condition protection and dependency injection.
  */
 
-import { create } from "zustand";
-import type { ConversationStore } from "./ConversationStore";
 import type {
+  ConversationAgent,
   ConversationService,
   Message,
-  ConversationAgent,
+  UpdateConversationInput,
 } from "@fishbowl-ai/shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
+import { create } from "zustand";
+import { createChatModeHandler } from "../../chat-modes";
+import type { ChatModeIntent } from "../../types/chat-modes/ChatModeIntent";
 import { useChatStore } from "../chat/useChatStore";
+import type { ConversationStore } from "./ConversationStore";
 
 // Platform-specific event type for desktop integration
 type AgentUpdateEvent = {
@@ -61,6 +65,16 @@ const applyMessageLimit = (messages: Message[], limit: number): Message[] => {
 let conversationService: ConversationService | null = null;
 // Event subscription cleanup reference
 let eventCleanupRef: (() => void) | null = null;
+
+// Logger for debugging edge cases
+const logger = createLoggerSync({
+  context: {
+    metadata: {
+      component: "useConversationStore",
+      module: "edge-case-handling",
+    },
+  },
+});
 
 export const useConversationStore = create<ConversationStore>()((set, get) => ({
   // Initial state - all arrays empty, loading states false
@@ -146,6 +160,8 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
 
   /**
    * Switch active conversation with race condition protection and chat state clearing.
+   * Unsubscribes only when switching to a different conversation or clearing selection;
+   * preserves subscription when reloading the same conversation.
    */
   selectConversation: async (id: string | null) => {
     if (!conversationService) {
@@ -155,8 +171,9 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
     // Generate request token for race condition protection
     const requestToken = generateRequestToken();
 
-    // Clean up previous event subscription when switching conversations
-    if (eventCleanupRef) {
+    // Clean up previous event subscription only when switching conversations or clearing selection
+    const currentActiveId = get().activeConversationId;
+    if (eventCleanupRef && (id !== currentActiveId || id === null)) {
       eventCleanupRef();
       eventCleanupRef = null;
       set((state) => ({
@@ -241,6 +258,99 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         },
       }));
     }
+  },
+
+  /**
+   * Get the chat mode of the currently active conversation.
+   * Returns 'manual' or 'round-robin' if there is an active conversation,
+   * or null if no conversation is selected or the conversation is not found.
+   * Provides reactive updates when conversation selection changes.
+   */
+  getActiveChatMode: (): "manual" | "round-robin" | null => {
+    const { activeConversationId, conversations } = get();
+    if (!activeConversationId) return null;
+
+    const conversation = conversations.find(
+      (c) => c.id === activeConversationId,
+    );
+    return conversation?.chat_mode || null;
+  },
+
+  setChatMode: async (chatMode: "manual" | "round-robin") => {
+    const { activeConversationId } = get();
+    if (!activeConversationId || !conversationService) return;
+
+    try {
+      // Update via service layer using UpdateConversationInput
+      const updatedConversation = await conversationService.updateConversation(
+        activeConversationId,
+        { chat_mode: chatMode } as UpdateConversationInput,
+      );
+
+      // Update local state
+      set((state) => ({
+        ...state,
+        conversations: state.conversations.map((c) =>
+          c.id === activeConversationId ? updatedConversation : c,
+        ),
+      }));
+
+      // Immediately enforce mode rules
+      if (chatMode === "round-robin") {
+        await get().enforceRoundRobinInvariant();
+      }
+    } catch (error) {
+      // Handle errors with proper error state
+      set((state) => ({
+        ...state,
+        error: {
+          ...state.error,
+          agents: {
+            message: `Failed to update chat mode: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`,
+            operation: "save",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
+  },
+
+  /**
+   * Private helper for enforcing Round Robin invariant.
+   * Ensures only one agent is enabled at a time by keeping the first enabled agent
+   * by rotation order and disabling all others.
+   */
+  enforceRoundRobinInvariant: async () => {
+    const { activeConversationAgents } = get();
+    const enabledAgents = activeConversationAgents.filter((a) => a.enabled);
+
+    if (enabledAgents.length <= 1) return; // Already compliant
+
+    // Keep first enabled agent by rotation order
+    const sortedAgents = activeConversationAgents
+      .slice()
+      .sort(
+        (a, b) =>
+          a.display_order - b.display_order ||
+          new Date(a.added_at).getTime() - new Date(b.added_at).getTime(),
+      );
+    const firstEnabled = sortedAgents.find((a) => a.enabled);
+
+    if (!firstEnabled) return;
+
+    // Disable all others (no need to enable the already enabled agent)
+    const intent: ChatModeIntent = {
+      toEnable: [], // First enabled agent is already enabled
+      toDisable: enabledAgents
+        .filter((a) => a.id !== firstEnabled.id)
+        .map((a) => a.id),
+    };
+
+    await get().processAgentIntent(intent);
   },
 
   /**
@@ -554,6 +664,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   /**
    * Add agent to conversation.
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   addAgent: async (conversationId: string, agentId: string) => {
     if (!conversationService || !get().activeConversationId) {
       return;
@@ -579,14 +690,81 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       // Check if request is still current before updating
       const currentState = get();
       if (currentState.activeRequestToken === requestToken) {
+        // Update store with new agent
         set((state) => ({
           ...state,
           activeConversationAgents: [
             ...state.activeConversationAgents,
             conversationAgent,
           ],
-          loading: { ...state.loading, agents: false },
         }));
+
+        // Apply chat mode rules to new agent
+        try {
+          const activeChatMode = get().getActiveChatMode();
+          const { activeConversationAgents } = get();
+          const chatModeHandler = createChatModeHandler(
+            activeChatMode || "manual",
+          );
+
+          const intent = chatModeHandler.handleAgentAdded(
+            activeConversationAgents,
+            conversationAgent.id,
+          );
+
+          // Process intent for chat mode compliance
+          await get().processAgentIntent(intent);
+
+          // Safety-net: ensure round-robin invariant after adding agent
+          if (activeChatMode === "round-robin") {
+            try {
+              logger.debug(
+                "Enforcing round-robin invariant after agent addition",
+                {
+                  conversationId,
+                  newAgentId: conversationAgent.id,
+                },
+              );
+              await get().enforceRoundRobinInvariant();
+            } catch (invariantError) {
+              // Log but don't fail the add operation
+              logger.error(
+                "Round-robin invariant enforcement failed",
+                invariantError instanceof Error ? invariantError : undefined,
+                {
+                  conversationId,
+                  newAgentId: conversationAgent.id,
+                },
+              );
+            }
+          }
+        } catch (chatModeError) {
+          // Chat mode processing error should not prevent successful agent addition
+          console.error("Chat mode processing failed:", chatModeError);
+          set((state) => ({
+            ...state,
+            error: {
+              ...state.error,
+              agents: {
+                message: `Agent added but chat mode processing failed: ${
+                  chatModeError instanceof Error
+                    ? chatModeError.message
+                    : "Unknown error"
+                }`,
+                operation: "save",
+                isRetryable: false,
+                retryCount: 0,
+                timestamp: new Date().toISOString(),
+              },
+            },
+          }));
+        } finally {
+          // Clear loading state after all processing is complete
+          set((state) => ({
+            ...state,
+            loading: { ...state.loading, agents: false },
+          }));
+        }
       }
     } catch (error) {
       // Only update error if request is still current
@@ -619,6 +797,18 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       return;
     }
 
+    const { activeConversationAgents } = get();
+    const removedAgent = activeConversationAgents.find(
+      (agent) => agent.agent_id === agentId,
+    );
+    const wasRemovedAgentEnabled = removedAgent?.enabled ?? false;
+
+    logger.debug("Removing agent", {
+      agentId,
+      wasEnabled: wasRemovedAgentEnabled,
+      totalAgents: activeConversationAgents.length,
+    });
+
     try {
       set((state) => ({
         ...state,
@@ -637,7 +827,48 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         ),
         loading: { ...state.loading, agents: false },
       }));
+
+      // Round Robin integration: handle agent removal during rotation
+      const activeChatMode = get().getActiveChatMode();
+      if (activeChatMode === "round-robin" && wasRemovedAgentEnabled) {
+        const remainingAgents = get().activeConversationAgents;
+
+        logger.debug("Handling Round Robin agent removal", {
+          remainingAgents: remainingAgents.length,
+          removedAgentId: agentId,
+        });
+
+        if (remainingAgents.length > 0) {
+          try {
+            const chatModeHandler = createChatModeHandler("round-robin");
+
+            // Use handleAgentRemoved if available, otherwise fallback to progression
+            if (chatModeHandler.handleAgentRemoved) {
+              const intent = chatModeHandler.handleAgentRemoved(
+                remainingAgents,
+                agentId,
+              );
+              await get().processAgentIntent(intent);
+            } else {
+              // Fallback: use regular progression to select next agent
+              await get().handleConversationProgression();
+            }
+          } catch (roundRobinError) {
+            logger.error(
+              "Failed to handle Round Robin agent removal",
+              roundRobinError instanceof Error ? roundRobinError : undefined,
+              { agentId },
+            );
+            // Continue execution - agent was successfully removed
+          }
+        }
+      }
     } catch (error) {
+      logger.error(
+        "Failed to remove agent",
+        error instanceof Error ? error : undefined,
+        { agentId },
+      );
       set((state) => ({
         ...state,
         loading: { ...state.loading, agents: false },
@@ -665,31 +896,28 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
     }
 
     try {
-      // Find agent in activeConversationAgents by ID
-      const agents = get().activeConversationAgents;
-      const agent = agents.find((a) => a.id === conversationAgentId);
-      if (!agent) {
-        throw new Error("Agent not found in active conversation");
-      }
-
       set((state) => ({
         ...state,
         loading: { ...state.loading, agents: true },
         error: { ...state.error, agents: undefined },
       }));
 
-      // Toggle enabled property via service
-      const updatedAgent: ConversationAgent =
-        await conversationService.updateConversationAgent(conversationAgentId, {
-          enabled: !agent.enabled,
-        });
+      // Get active chat mode and create handler
+      const activeChatMode = get().getActiveChatMode();
+      const { activeConversationAgents } = get();
+      const chatModeHandler = createChatModeHandler(activeChatMode || "manual");
 
-      // Update the specific agent in activeConversationAgents array
+      // Get intent from handler
+      const intent = chatModeHandler.handleAgentToggle(
+        activeConversationAgents,
+        conversationAgentId,
+      );
+
+      // Process intent into actual updates
+      await get().processAgentIntent(intent);
+
       set((state) => ({
         ...state,
-        activeConversationAgents: state.activeConversationAgents.map((a) =>
-          a.id === conversationAgentId ? updatedAgent : a,
-        ),
         loading: { ...state.loading, agents: false },
       }));
     } catch (error) {
@@ -708,6 +936,145 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
           },
         },
       }));
+    }
+  },
+
+  /**
+   * Process chat mode handler intents into actual agent state updates.
+   *
+   * Takes an intent object from a chat mode handler and executes the
+   * necessary service calls to enable/disable agents as specified.
+   * Updates the store state in-place using the returned agent payloads.
+   *
+   * @param intent - Intent object specifying which agents to enable/disable
+   */
+  processAgentIntent: async (intent: ChatModeIntent) => {
+    if (!conversationService) return;
+
+    try {
+      // Process all disables first, then enables
+      const updatedAgents: ConversationAgent[] = [];
+
+      for (const agentId of intent.toDisable) {
+        const updatedAgent = await conversationService.updateConversationAgent(
+          agentId,
+          { enabled: false },
+        );
+        updatedAgents.push(updatedAgent);
+      }
+
+      for (const agentId of intent.toEnable) {
+        const updatedAgent = await conversationService.updateConversationAgent(
+          agentId,
+          { enabled: true },
+        );
+        updatedAgents.push(updatedAgent);
+      }
+
+      // Update store state in-place using returned agent payloads
+      set((state) => ({
+        ...state,
+        activeConversationAgents: state.activeConversationAgents.map(
+          (agent) => {
+            const updated = updatedAgents.find((ua) => ua.id === agent.id);
+            return updated || agent;
+          },
+        ),
+      }));
+    } catch (error) {
+      // Handle errors with proper error state
+      set((state) => ({
+        ...state,
+        error: {
+          ...state.error,
+          agents: {
+            message: `Failed to apply chat mode changes: ${
+              error instanceof Error ? error.message : "Unknown error"
+            }`,
+            operation: "save",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
+  },
+
+  /**
+   * Handle conversation progression for automatic agent rotation in Round Robin mode.
+   *
+   * Only processes Round Robin mode conversations, performing no-op for manual mode.
+   * Delegates to the appropriate chat mode handler to determine next agent rotation
+   * and processes the returned intent through the existing processAgentIntent helper.
+   * Handles edge cases like single agent, no enabled agents, and empty conversations.
+   *
+   * @returns Promise<void>
+   */
+  handleProgressionRecovery: async (error: unknown) => {
+    logger.error(
+      "Round Robin progression failed",
+      error instanceof Error ? error : undefined,
+    );
+
+    // Attempt recovery for invalid states
+    if (error instanceof Error && error.message?.includes("invalid state")) {
+      logger.warn("Attempting recovery from invalid state");
+      try {
+        await get().enforceRoundRobinInvariant();
+      } catch (recoveryError) {
+        logger.error(
+          "Recovery attempt failed",
+          recoveryError instanceof Error ? recoveryError : undefined,
+        );
+      }
+    }
+  },
+
+  handleConversationProgression: async () => {
+    try {
+      const activeChatMode = get().getActiveChatMode();
+      if (activeChatMode !== "round-robin") {
+        logger.debug("Skipping progression for non-round-robin mode", {
+          activeChatMode,
+        });
+        return; // No-op for manual mode
+      }
+
+      const { activeConversationAgents, activeRequestToken } = get();
+
+      // Race condition protection: ensure we're still the active request
+      if (get().activeRequestToken !== activeRequestToken) {
+        logger.debug("Ignoring progression due to race condition", {
+          expectedToken: activeRequestToken,
+          currentToken: get().activeRequestToken,
+        });
+        return;
+      }
+
+      logger.debug("Starting conversation progression", {
+        totalAgents: activeConversationAgents.length,
+        enabledAgents: activeConversationAgents.filter((a) => a.enabled).length,
+        currentEnabled: activeConversationAgents
+          .filter((a) => a.enabled)
+          .map((a) => a.id),
+      });
+
+      const chatModeHandler = createChatModeHandler(activeChatMode);
+      const intent = chatModeHandler.handleConversationProgression(
+        activeConversationAgents,
+      );
+
+      // Edge case: Empty intent (no changes needed)
+      if (intent.toEnable.length === 0 && intent.toDisable.length === 0) {
+        logger.debug("No progression changes needed", { intent });
+        return;
+      }
+
+      await get().processAgentIntent(intent);
+    } catch (error) {
+      await get().handleProgressionRecovery(error);
+      // Don't re-throw - prevent cascading failures
     }
   },
 
@@ -741,8 +1108,13 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         return; // Ignore events for inactive conversations
       }
 
-      // Race condition safety using active request token
-      if (get().activeRequestToken !== activeRequestToken) {
+      // Race condition safety using stored request token (fix race condition)
+      if (activeRequestToken !== get().activeRequestToken) {
+        logger.debug("Ignoring event due to race condition", {
+          eventToken: activeRequestToken,
+          currentToken: get().activeRequestToken,
+          eventStatus: event.status,
+        });
         return; // Ignore stale events from previous conversation selections
       }
 
@@ -754,6 +1126,19 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
           lastEventTime: new Date().toISOString(),
         },
       }));
+
+      // Trigger conversation progression after agent responses
+      if (event.status === "complete") {
+        const activeChatMode = get().getActiveChatMode();
+        if (activeChatMode === "round-robin") {
+          try {
+            get().handleConversationProgression();
+          } catch (error) {
+            console.error("Failed to progress conversation:", error);
+            // Continue execution - don't disrupt user experience
+          }
+        }
+      }
 
       // Process event for active conversation (minimal processing for v1)
       // Most event processing is handled by chat store, this is for future message updates

@@ -5,17 +5,8 @@ import {
   useConversationStore,
   useAgentsStore,
   useRolesStore,
+  type ErrorState,
 } from "@fishbowl-ai/ui-shared";
-
-// ErrorState type interface
-interface ErrorState {
-  message: string | null;
-  operation: "save" | "load" | "sync" | "import" | "reset" | null;
-  isRetryable: boolean;
-  retryCount: number;
-  timestamp: string | null;
-  fieldErrors?: Array<{ field: string; message: string }>;
-}
 import { AlertCircle, MessageCircle } from "lucide-react";
 import React, { useMemo } from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";

@@ -32,6 +32,7 @@ jest.mock("../../../contexts", () => ({
 const mockConversation: Conversation = {
   id: "conversation-123",
   title: "Updated Test Conversation",
+  chat_mode: "manual",
   created_at: "2023-01-01T10:00:00.000Z",
   updated_at: "2023-01-01T11:00:00.000Z",
 };

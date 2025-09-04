@@ -7,6 +7,7 @@
  */
 
 import type { ConversationService } from "@fishbowl-ai/shared";
+import type { ChatModeIntent } from "../../types/chat-modes/ChatModeIntent";
 
 // Platform-specific imports with conditional typing
 type AgentUpdateEvent = {
@@ -48,6 +49,24 @@ export interface ConversationStoreActions {
   selectConversation(id: string | null): Promise<void>;
 
   /**
+   * Get the chat mode of the currently active conversation.
+   * Returns the chat mode ('manual' | 'round-robin') if there is an active conversation,
+   * or null if no conversation is selected or the conversation is not found.
+   * Provides reactive updates when conversation selection changes.
+   */
+  getActiveChatMode(): "manual" | "round-robin" | null;
+
+  /**
+   * Update the chat mode of the currently active conversation.
+   * Handles the complete workflow of updating the conversation via the service layer
+   * and enforcing mode rules. For Round Robin mode, immediately enforces the
+   * single-enabled invariant by disabling all but the first enabled agent.
+   *
+   * @param chatMode - The new chat mode to set ('manual' | 'round-robin')
+   */
+  setChatMode(chatMode: "manual" | "round-robin"): Promise<void>;
+
+  /**
    * Create a new conversation and immediately select it as active.
    * Atomic operation that handles creation, list refresh, and selection.
    */
@@ -84,6 +103,40 @@ export interface ConversationStoreActions {
    * Enables or disables agent participation in the conversation.
    */
   toggleAgentEnabled(conversationAgentId: string): Promise<void>;
+
+  /**
+   * Process chat mode handler intents into actual agent state updates.
+   *
+   * Takes an intent object from a chat mode handler and executes the
+   * necessary service calls to enable/disable agents as specified.
+   * Updates the store state in-place using the returned agent payloads.
+   *
+   * @param intent - Intent object specifying which agents to enable/disable
+   */
+  processAgentIntent(intent: ChatModeIntent): Promise<void>;
+
+  /**
+   * Private helper for enforcing Round Robin invariant.
+   * Ensures only one agent is enabled at a time by keeping the first enabled agent
+   * by rotation order and disabling all others.
+   */
+  enforceRoundRobinInvariant(): Promise<void>;
+
+  /**
+   * Handle conversation progression for automatic agent rotation in Round Robin mode.
+   *
+   * Only processes Round Robin mode conversations, performing no-op for manual mode.
+   * Delegates to the appropriate chat mode handler to determine next agent rotation
+   * and processes the returned intent through the existing processAgentIntent helper.
+   * Handles edge cases like single agent, no enabled agents, and empty conversations.
+   */
+  handleConversationProgression(): Promise<void>;
+
+  /**
+   * Handle recovery from progression errors.
+   * Attempts invalid state recovery and logs errors appropriately.
+   */
+  handleProgressionRecovery(error: unknown): Promise<void>;
 
   /**
    * Subscribe to real-time agent update events for the active conversation.

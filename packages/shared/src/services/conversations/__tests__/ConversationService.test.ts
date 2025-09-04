@@ -4,6 +4,7 @@ import type {
   Conversation,
   Message,
   CreateMessageInput,
+  UpdateConversationInput,
 } from "@fishbowl-ai/shared";
 
 describe("ConversationService Interface", () => {
@@ -80,6 +81,10 @@ describe("ConversationService Interface", () => {
         createConversation: async (title?: string) => ({}) as Conversation,
         renameConversation: async (id: string, title: string) =>
           ({}) as Conversation,
+        updateConversation: async (
+          id: string,
+          updates: UpdateConversationInput,
+        ) => ({}) as Conversation,
         deleteConversation: async (id: string) => {},
       };
 
@@ -87,6 +92,7 @@ describe("ConversationService Interface", () => {
       expect(typeof mockService.getConversation).toBe("function");
       expect(typeof mockService.createConversation).toBe("function");
       expect(typeof mockService.renameConversation).toBe("function");
+      expect(typeof mockService.updateConversation).toBe("function");
       expect(typeof mockService.deleteConversation).toBe("function");
     });
 
@@ -106,6 +112,9 @@ describe("ConversationService Interface", () => {
           "id",
           "title",
         );
+        const updated: Conversation = await service.updateConversation("id", {
+          title: "new title",
+        });
         const deleted: void = await service.deleteConversation("id");
       };
 
@@ -125,6 +134,24 @@ describe("ConversationService Interface", () => {
       expect(typeof testOptionalTitle).toBe("function");
     });
 
+    it("should support UpdateConversationInput parameter in updateConversation", () => {
+      // Verify UpdateConversationInput parameter works with title and/or chat_mode
+      const testUpdateConversationInput = async () => {
+        const service: ConversationService = {} as ConversationService;
+
+        // All update combinations should compile correctly
+        await service.updateConversation("id", { title: "New Title" });
+        await service.updateConversation("id", { chat_mode: "manual" });
+        await service.updateConversation("id", { chat_mode: "round-robin" });
+        await service.updateConversation("id", {
+          title: "New Title",
+          chat_mode: "round-robin",
+        });
+      };
+
+      expect(typeof testUpdateConversationInput).toBe("function");
+    });
+
     it("should have all CRUD methods in complete interface implementation", () => {
       // Test that all conversation methods work together in a complete mock
       const mockService: Partial<ConversationService> = {
@@ -134,6 +161,10 @@ describe("ConversationService Interface", () => {
         createConversation: async (title?: string) => ({}) as Conversation,
         renameConversation: async (id: string, title: string) =>
           ({}) as Conversation,
+        updateConversation: async (
+          id: string,
+          updates: UpdateConversationInput,
+        ) => ({}) as Conversation,
         deleteConversation: async (id: string) => {},
 
         // Existing operations for complete implementation test
@@ -161,6 +192,7 @@ describe("ConversationService Interface", () => {
       expect(typeof mockService.getConversation).toBe("function");
       expect(typeof mockService.createConversation).toBe("function");
       expect(typeof mockService.renameConversation).toBe("function");
+      expect(typeof mockService.updateConversation).toBe("function");
       expect(typeof mockService.deleteConversation).toBe("function");
     });
   });
