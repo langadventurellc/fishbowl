@@ -165,4 +165,43 @@ export interface ChatModeHandler {
    * ```
    */
   handleConversationProgression(agents: ConversationAgent[]): ChatModeIntent;
+
+  /**
+   * Handle removal of an agent from the conversation.
+   *
+   * Called when an agent is removed from the conversation. The handler
+   * determines what state changes are needed to maintain mode-specific
+   * behavior after the removal, such as selecting a new enabled agent
+   * if the removed agent was currently enabled.
+   *
+   * Different modes handle this differently:
+   * - Manual mode: No automatic changes, preserves current state
+   * - Round robin mode: Selects next agent in rotation if removed agent was enabled
+   *
+   * @param agents - Current conversation agents array after removal (immutable reference)
+   * @param removedAgentId - ID of the agent that was removed
+   * @returns Intent specifying which agents to enable/disable after removal
+   *
+   * @example
+   * ```typescript
+   * // Manual mode - no automatic changes after removal
+   * const manualIntent = handler.handleAgentRemoved?.(
+   *   [{ id: "agent-2", enabled: false }], // agent-1 was removed
+   *   "agent-1"
+   * );
+   * // Returns: { toEnable: [], toDisable: [] }
+   *
+   * // Round robin mode - select next agent if removed agent was enabled
+   * const remainingAgents = [
+   *   { id: "agent-2", enabled: false, display_order: 1 },
+   *   { id: "agent-3", enabled: false, display_order: 2 }
+   * ];
+   * const roundRobinIntent = handler.handleAgentRemoved?.(remainingAgents, "agent-1");
+   * // Returns: { toEnable: ["agent-2"], toDisable: [] }
+   * ```
+   */
+  handleAgentRemoved?(
+    agents: ConversationAgent[],
+    removedAgentId: string,
+  ): ChatModeIntent;
 }

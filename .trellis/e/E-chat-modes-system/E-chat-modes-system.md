@@ -96,7 +96,10 @@ affectedFiles:
     ChatModeHandler interface with readonly name property and three core methods
     (handleAgentAdded, handleAgentToggle, handleConversationProgression),
     comprehensive JSDoc with detailed examples for manual and round-robin modes,
-    proper imports from @fishbowl-ai/shared
+    proper imports from @fishbowl-ai/shared; Extended interface with optional
+    handleAgentRemoved method for agent removal handling. Added comprehensive
+    JSDoc documentation with usage examples showing Manual mode no-op behavior
+    and Round Robin automatic selection.
   packages/ui-shared/src/types/chat-modes/index.ts:
     Created barrel file exporting
     ChatModeHandler and ChatModeIntent types with JSDoc module description
@@ -106,7 +109,10 @@ affectedFiles:
     class implementing ChatModeHandler interface with no-op behavior for all
     three methods (handleAgentAdded, handleAgentToggle,
     handleConversationProgression), comprehensive JSDoc documentation with
-    examples, and proper TypeScript typing with unused parameter prefixes
+    examples, and proper TypeScript typing with unused parameter prefixes;
+    Implemented no-op handleAgentRemoved method for interface consistency. Added
+    comprehensive JSDoc documentation explaining Manual mode preserves user
+    control during agent removal.
   packages/ui-shared/src/chat-modes/__tests__/ManualChatMode.test.ts:
     Created comprehensive unit test suite with 32 tests covering constructor,
     all handler methods, performance requirements (<1ms for 50 agents),
@@ -128,7 +134,11 @@ affectedFiles:
     single-agent-enabled rotation logic. Features: deterministic agent ordering
     by display_order then added_at, wrap-around rotation, manual override
     support, <10ms performance for 50 agents, and comprehensive JSDoc
-    documentation with examples."
+    documentation with examples.; Added comprehensive debugging logging
+    throughout all methods. Implemented handleAgentRemoved method for proper
+    agent state management during removal with support for single agent, no
+    agents, and multiple agents scenarios. Added validateInvariant method for
+    proactive Round Robin state validation with detailed logging."
   packages/ui-shared/src/chat-modes/__tests__/RoundRobinChatMode.test.ts:
     "Created comprehensive unit test suite with 38 tests covering all
     functionality: constructor, handleAgentAdded, handleAgentToggle,
@@ -151,7 +161,9 @@ affectedFiles:
     comprehensive JSDoc documentation for updating conversation chat modes;
     Added handleConversationProgression method signature to the interface with
     comprehensive JSDoc documentation specifying Round Robin mode processing,
-    manual mode no-op behavior, and edge case handling
+    manual mode no-op behavior, and edge case handling; Added
+    handleProgressionRecovery method to interface for error recovery
+    capabilities with invalid state detection and logging support.
   packages/ui-shared/src/stores/conversation/useConversationStore.ts:
     Implemented getActiveChatMode function that derives chat mode from active
     conversation using efficient array.find operation with null safety via
@@ -177,7 +189,12 @@ affectedFiles:
     handleConversationProgression() in try-catch block with console.error
     logging.; No changes needed - setChatMode method (lines 264-305) already
     enhanced with Round Robin enforcement and enforceRoundRobinInvariant helper
-    (lines 312-337) fully implemented
+    (lines 312-337) fully implemented; Enhanced edge case handling in
+    handleConversationProgression with comprehensive logging, race condition
+    protection, and error recovery. Integrated Round Robin agent removal logic
+    in removeAgent method for automatic next agent selection. Added
+    handleProgressionRecovery method for invalid state detection and recovery.
+    Fixed race condition in subscribeToAgentUpdates event handling.
   packages/ui-shared/src/stores/conversation/__tests__/getActiveChatMode.test.ts:
     Created comprehensive unit test suite with 20+ test cases covering basic
     functionality, reactive behavior, performance requirements (<1ms), type

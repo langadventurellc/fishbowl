@@ -133,6 +133,12 @@ export interface ConversationStoreActions {
   handleConversationProgression(): Promise<void>;
 
   /**
+   * Handle recovery from progression errors.
+   * Attempts invalid state recovery and logs errors appropriately.
+   */
+  handleProgressionRecovery(error: unknown): Promise<void>;
+
+  /**
    * Subscribe to real-time agent update events for the active conversation.
    * Platform-specific implementation - returns cleanup function for desktop, null for unsupported platforms.
    * Enables direct conversationId filtering and real-time activeMessages updates.

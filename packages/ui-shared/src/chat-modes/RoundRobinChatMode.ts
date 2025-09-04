@@ -9,8 +9,19 @@
  */
 
 import type { ConversationAgent } from "@fishbowl-ai/shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import type { ChatModeHandler } from "../types/chat-modes/ChatModeHandler";
 import type { ChatModeIntent } from "../types/chat-modes/ChatModeIntent";
+
+// Logger for debugging Round Robin behavior
+const logger = createLoggerSync({
+  context: {
+    metadata: {
+      component: "RoundRobinChatMode",
+      module: "chat-mode-handler",
+    },
+  },
+});
 
 /**
  * Round Robin chat mode implementation.
@@ -196,8 +207,14 @@ export class RoundRobinChatMode implements ChatModeHandler {
    * ```
    */
   handleConversationProgression(agents: ConversationAgent[]): ChatModeIntent {
+    logger.debug("Starting conversation progression", {
+      totalAgents: agents.length,
+      enabledCount: agents.filter((a) => a.enabled).length,
+    });
+
     if (agents.length <= 1) {
       // Single agent or empty - no rotation needed
+      logger.debug("No rotation needed", { reason: "single-agent-or-empty" });
       return { toEnable: [], toDisable: [] };
     }
 
@@ -214,6 +231,7 @@ export class RoundRobinChatMode implements ChatModeHandler {
     );
     if (currentEnabledIndex === -1) {
       // No enabled agents - no rotation
+      logger.debug("No rotation needed", { reason: "no-enabled-agents" });
       return { toEnable: [], toDisable: [] };
     }
 
@@ -222,9 +240,114 @@ export class RoundRobinChatMode implements ChatModeHandler {
     const currentAgent = sortedAgents[currentEnabledIndex]!;
     const nextAgent = sortedAgents[nextIndex]!;
 
+    logger.debug("Rotating to next agent", {
+      currentAgent: currentAgent.id,
+      nextAgent: nextAgent.id,
+      currentIndex: currentEnabledIndex,
+      nextIndex,
+    });
+
     return {
       toEnable: [nextAgent.id],
       toDisable: [currentAgent.id],
     };
+  }
+
+  /**
+   * Handle removal of an agent from the conversation.
+   *
+   * When an agent is removed in Round Robin mode, this method determines
+   * what state changes are needed. If the removed agent was enabled,
+   * it selects the next agent in rotation order to maintain the
+   * single-enabled-agent invariant.
+   *
+   * @param agents - Current conversation agents after removal
+   * @param removedAgentId - ID of the agent that was removed
+   * @returns Intent specifying which agents to enable/disable
+   */
+  handleAgentRemoved(
+    agents: ConversationAgent[],
+    removedAgentId: string,
+  ): ChatModeIntent {
+    logger.debug("Handling agent removal", {
+      removedAgentId,
+      remainingAgents: agents.length,
+    });
+
+    // Edge case: No remaining agents
+    if (agents.length === 0) {
+      logger.debug("No remaining agents after removal");
+      return { toEnable: [], toDisable: [] };
+    }
+
+    // Edge case: Single remaining agent - ensure it's enabled
+    if (agents.length === 1) {
+      const singleAgent = agents[0]!;
+      if (singleAgent.enabled) {
+        logger.debug("Single agent already enabled after removal");
+        return { toEnable: [], toDisable: [] };
+      } else {
+        logger.debug("Enabling single remaining agent", {
+          agentId: singleAgent.id,
+        });
+        return { toEnable: [singleAgent.id], toDisable: [] };
+      }
+    }
+
+    // Multiple agents remaining - check if any are enabled
+    const enabledAgents = agents.filter((a) => a.enabled);
+    if (enabledAgents.length > 0) {
+      // At least one agent is still enabled, maintain current state
+      logger.debug("Other agents still enabled after removal", {
+        enabledCount: enabledAgents.length,
+      });
+      return { toEnable: [], toDisable: [] };
+    }
+
+    // No agents enabled after removal - select first in rotation order
+    const sortedAgents = agents.slice().sort((a, b) => {
+      const orderDiff = a.display_order - b.display_order;
+      if (orderDiff !== 0) return orderDiff;
+      return new Date(a.added_at).getTime() - new Date(b.added_at).getTime();
+    });
+
+    const firstAgent = sortedAgents[0]!;
+    logger.debug("Enabling first agent after removal", {
+      selectedAgent: firstAgent.id,
+      totalRemaining: sortedAgents.length,
+    });
+
+    return { toEnable: [firstAgent.id], toDisable: [] };
+  }
+
+  /**
+   * Validate the Round Robin invariant.
+   *
+   * Checks that exactly 0 or 1 agents are enabled in the conversation.
+   * Used for proactive state validation and debugging.
+   *
+   * @param agents - Current conversation agents
+   * @returns Validation result with violation details
+   */
+  validateInvariant(agents: ConversationAgent[]): {
+    isValid: boolean;
+    enabledCount: number;
+    violationDetails?: string;
+  } {
+    const enabledAgents = agents.filter((a) => a.enabled);
+    const enabledCount = enabledAgents.length;
+    const isValid = enabledCount <= 1;
+
+    if (!isValid) {
+      const violationDetails = `Multiple agents enabled: ${enabledAgents.map((a) => a.id).join(", ")}`;
+      logger.warn("Round Robin invariant violation detected", {
+        enabledCount,
+        enabledAgents: enabledAgents.map((a) => a.id),
+      });
+      return { isValid, enabledCount, violationDetails };
+    }
+
+    logger.debug("Round Robin invariant validation passed", { enabledCount });
+    return { isValid, enabledCount };
   }
 }

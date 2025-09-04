@@ -14,6 +14,7 @@ import type {
   ConversationAgent,
   UpdateConversationInput,
 } from "@fishbowl-ai/shared";
+import { createLoggerSync } from "@fishbowl-ai/shared";
 import { useChatStore } from "../chat/useChatStore";
 import { createChatModeHandler } from "../../chat-modes";
 import type { ChatModeIntent } from "../../types/chat-modes/ChatModeIntent";
@@ -64,6 +65,16 @@ const applyMessageLimit = (messages: Message[], limit: number): Message[] => {
 let conversationService: ConversationService | null = null;
 // Event subscription cleanup reference
 let eventCleanupRef: (() => void) | null = null;
+
+// Logger for debugging edge cases
+const logger = createLoggerSync({
+  context: {
+    metadata: {
+      component: "useConversationStore",
+      module: "edge-case-handling",
+    },
+  },
+});
 
 export const useConversationStore = create<ConversationStore>()((set, get) => ({
   // Initial state - all arrays empty, loading states false
@@ -756,6 +767,18 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       return;
     }
 
+    const { activeConversationAgents } = get();
+    const removedAgent = activeConversationAgents.find(
+      (agent) => agent.agent_id === agentId,
+    );
+    const wasRemovedAgentEnabled = removedAgent?.enabled ?? false;
+
+    logger.debug("Removing agent", {
+      agentId,
+      wasEnabled: wasRemovedAgentEnabled,
+      totalAgents: activeConversationAgents.length,
+    });
+
     try {
       set((state) => ({
         ...state,
@@ -774,7 +797,48 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         ),
         loading: { ...state.loading, agents: false },
       }));
+
+      // Round Robin integration: handle agent removal during rotation
+      const activeChatMode = get().getActiveChatMode();
+      if (activeChatMode === "round-robin" && wasRemovedAgentEnabled) {
+        const remainingAgents = get().activeConversationAgents;
+
+        logger.debug("Handling Round Robin agent removal", {
+          remainingAgents: remainingAgents.length,
+          removedAgentId: agentId,
+        });
+
+        if (remainingAgents.length > 0) {
+          try {
+            const chatModeHandler = createChatModeHandler("round-robin");
+
+            // Use handleAgentRemoved if available, otherwise fallback to progression
+            if (chatModeHandler.handleAgentRemoved) {
+              const intent = chatModeHandler.handleAgentRemoved(
+                remainingAgents,
+                agentId,
+              );
+              await get().processAgentIntent(intent);
+            } else {
+              // Fallback: use regular progression to select next agent
+              await get().handleConversationProgression();
+            }
+          } catch (roundRobinError) {
+            logger.error(
+              "Failed to handle Round Robin agent removal",
+              roundRobinError instanceof Error ? roundRobinError : undefined,
+              { agentId },
+            );
+            // Continue execution - agent was successfully removed
+          }
+        }
+      }
     } catch (error) {
+      logger.error(
+        "Failed to remove agent",
+        error instanceof Error ? error : undefined,
+        { agentId },
+      );
       set((state) => ({
         ...state,
         loading: { ...state.loading, agents: false },
@@ -917,17 +981,71 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
    *
    * @returns Promise<void>
    */
-  handleConversationProgression: async () => {
-    const activeChatMode = get().getActiveChatMode();
-    if (activeChatMode !== "round-robin") return; // No-op for manual mode
-
-    const { activeConversationAgents } = get();
-    const chatModeHandler = createChatModeHandler(activeChatMode);
-    const intent = chatModeHandler.handleConversationProgression(
-      activeConversationAgents,
+  handleProgressionRecovery: async (error: unknown) => {
+    logger.error(
+      "Round Robin progression failed",
+      error instanceof Error ? error : undefined,
     );
 
-    await get().processAgentIntent(intent);
+    // Attempt recovery for invalid states
+    if (error instanceof Error && error.message?.includes("invalid state")) {
+      logger.warn("Attempting recovery from invalid state");
+      try {
+        await get().enforceRoundRobinInvariant();
+      } catch (recoveryError) {
+        logger.error(
+          "Recovery attempt failed",
+          recoveryError instanceof Error ? recoveryError : undefined,
+        );
+      }
+    }
+  },
+
+  handleConversationProgression: async () => {
+    try {
+      const activeChatMode = get().getActiveChatMode();
+      if (activeChatMode !== "round-robin") {
+        logger.debug("Skipping progression for non-round-robin mode", {
+          activeChatMode,
+        });
+        return; // No-op for manual mode
+      }
+
+      const { activeConversationAgents, activeRequestToken } = get();
+
+      // Race condition protection: ensure we're still the active request
+      if (get().activeRequestToken !== activeRequestToken) {
+        logger.debug("Ignoring progression due to race condition", {
+          expectedToken: activeRequestToken,
+          currentToken: get().activeRequestToken,
+        });
+        return;
+      }
+
+      logger.debug("Starting conversation progression", {
+        totalAgents: activeConversationAgents.length,
+        enabledAgents: activeConversationAgents.filter((a) => a.enabled).length,
+        currentEnabled: activeConversationAgents
+          .filter((a) => a.enabled)
+          .map((a) => a.id),
+      });
+
+      const chatModeHandler = createChatModeHandler(activeChatMode);
+      const intent = chatModeHandler.handleConversationProgression(
+        activeConversationAgents,
+      );
+
+      // Edge case: Empty intent (no changes needed)
+      if (intent.toEnable.length === 0 && intent.toDisable.length === 0) {
+        logger.debug("No progression changes needed", { intent });
+        return;
+      }
+
+      await get().processAgentIntent(intent);
+    } catch (error) {
+      await get().handleProgressionRecovery(error);
+      // Don't re-throw - prevent cascading failures
+    }
   },
 
   /**
@@ -960,8 +1078,13 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         return; // Ignore events for inactive conversations
       }
 
-      // Race condition safety using active request token
-      if (get().activeRequestToken !== activeRequestToken) {
+      // Race condition safety using stored request token (fix race condition)
+      if (activeRequestToken !== get().activeRequestToken) {
+        logger.debug("Ignoring event due to race condition", {
+          eventToken: activeRequestToken,
+          currentToken: get().activeRequestToken,
+          eventStatus: event.status,
+        });
         return; // Ignore stale events from previous conversation selections
       }
 

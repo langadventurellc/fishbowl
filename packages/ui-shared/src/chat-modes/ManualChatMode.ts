@@ -142,4 +142,34 @@ export class ManualChatMode implements ChatModeHandler {
   handleConversationProgression(_agents: ConversationAgent[]): ChatModeIntent {
     return { toEnable: [], toDisable: [] };
   }
+
+  /**
+   * Handle removal of an agent from the conversation.
+   *
+   * In Manual mode, agent removal does not trigger automatic state changes.
+   * Users maintain full control over which agents are enabled or disabled,
+   * so removing an agent simply preserves the current state of remaining agents.
+   *
+   * @param _agents - Current conversation agents after removal (unused in manual mode)
+   * @param _removedAgentId - ID of the agent that was removed (unused in manual mode)
+   * @returns Empty intent indicating no automatic changes
+   *
+   * @example
+   * ```typescript
+   * const mode = new ManualChatMode();
+   * const remainingAgents = [
+   *   { id: "agent-2", enabled: false },
+   *   { id: "agent-3", enabled: true }
+   * ];
+   * const intent = mode.handleAgentRemoved(remainingAgents, "agent-1");
+   * // Returns: { toEnable: [], toDisable: [] }
+   * // No automatic changes - user maintains control
+   * ```
+   */
+  handleAgentRemoved(
+    _agents: ConversationAgent[],
+    _removedAgentId: string,
+  ): ChatModeIntent {
+    return { toEnable: [], toDisable: [] };
+  }
 }
