@@ -68,12 +68,18 @@ export interface ChatModeHandler {
    * whether any existing agents should be disabled to maintain mode-specific
    * constraints.
    *
+   * IMPORTANT: The agents parameter represents the current conversation agents
+   * AFTER the new agent has been added to the state, meaning newAgentId is
+   * present in the array. The handler must handle post-add semantics and
+   * account for the new agent's current enabled state.
+   *
    * Different modes handle this differently:
    * - Manual mode: No automatic changes, preserves current state
-   * - Round robin mode: Enables new agent if no agents currently enabled
+   * - Round robin mode: Enables only the first agent and disables subsequent
+   *   additions by default if any agent is already enabled
    *
-   * @param agents - Current conversation agents array (immutable reference)
-   * @param newAgentId - ID of the newly added agent
+   * @param agents - Current conversation agents array AFTER the new agent has been added
+   * @param newAgentId - ID of the newly added agent (present in the agents array)
    * @returns Intent specifying which agents to enable/disable
    *
    * @example
@@ -89,6 +95,14 @@ export interface ChatModeHandler {
    * const emptyConversation: ConversationAgent[] = [];
    * const roundRobinIntent = handler.handleAgentAdded(emptyConversation, "agent-1");
    * // Returns: { toEnable: ["agent-1"], toDisable: [] }
+   *
+   * // Round robin mode - disable new agent when another is already enabled (post-add)
+   * const agentsPostAdd = [
+   *   { id: "agent-1", enabled: true, display_order: 0 },
+   *   { id: "agent-2", enabled: true, display_order: 1 } // new agent arrives enabled
+   * ];
+   * const disableIntent = handler.handleAgentAdded(agentsPostAdd, "agent-2");
+   * // Returns: { toEnable: [], toDisable: ["agent-2"] }
    * ```
    */
   handleAgentAdded(

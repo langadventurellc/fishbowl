@@ -713,6 +713,30 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
 
           // Process intent for chat mode compliance
           await get().processAgentIntent(intent);
+
+          // Safety-net: ensure round-robin invariant after adding agent
+          if (activeChatMode === "round-robin") {
+            try {
+              logger.debug(
+                "Enforcing round-robin invariant after agent addition",
+                {
+                  conversationId,
+                  newAgentId: conversationAgent.id,
+                },
+              );
+              await get().enforceRoundRobinInvariant();
+            } catch (invariantError) {
+              // Log but don't fail the add operation
+              logger.error(
+                "Round-robin invariant enforcement failed",
+                invariantError instanceof Error ? invariantError : undefined,
+                {
+                  conversationId,
+                  newAgentId: conversationAgent.id,
+                },
+              );
+            }
+          }
         } catch (chatModeError) {
           // Chat mode processing error should not prevent successful agent addition
           console.error("Chat mode processing failed:", chatModeError);

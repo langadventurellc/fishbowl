@@ -71,16 +71,17 @@ export class RoundRobinChatMode implements ChatModeHandler {
   readonly name = "round-robin";
 
   /**
-   * Handle agent addition - enable first agent, preserve current for others.
+   * Handle agent addition - enable first agent, disable subsequent when another enabled.
    *
-   * When the first agent is added to an empty conversation, it is automatically
-   * enabled to ensure at least one agent is ready to participate. For subsequent
-   * agent additions, the current enabled agent is preserved to maintain the
-   * single-enabled invariant without disrupting ongoing conversations.
+   * This method operates on the post-add state where the newly-added agent is already
+   * present in the agents array. When the first agent is added to an empty conversation,
+   * it is automatically enabled to ensure at least one agent is ready to participate.
+   * For subsequent agent additions, if any other agent is already enabled, the new
+   * agent must be disabled by default to maintain the single-enabled invariant.
    *
-   * @param agents - Current conversation agents array
-   * @param newAgentId - ID of newly added agent
-   * @returns Intent to enable first agent or maintain current state
+   * @param agents - Current conversation agents array AFTER the new agent has been added
+   * @param newAgentId - ID of newly added agent (present in the agents array)
+   * @returns Intent to enable first agent, disable subsequent additions, or maintain state
    *
    * @example
    * ```typescript
@@ -90,27 +91,39 @@ export class RoundRobinChatMode implements ChatModeHandler {
    * const emptyIntent = mode.handleAgentAdded([], "agent-1");
    * // Returns: { toEnable: ["agent-1"], toDisable: [] }
    *
-   * // Existing agents - preserve current enabled
+   * // Post-add: new agent enabled but another agent already enabled - disable new agent
    * const agents = [
    *   { id: "agent-1", enabled: true, display_order: 0 },
-   *   { id: "agent-2", enabled: false, display_order: 1 }
+   *   { id: "agent-2", enabled: true, display_order: 1 } // new agent arrives enabled
    * ];
-   * const addIntent = mode.handleAgentAdded(agents, "agent-3");
-   * // Returns: { toEnable: [], toDisable: [] }
+   * const addIntent = mode.handleAgentAdded(agents, "agent-2");
+   * // Returns: { toEnable: [], toDisable: ["agent-2"] }
    * ```
    */
   handleAgentAdded(
     agents: ConversationAgent[],
     newAgentId: string,
   ): ChatModeIntent {
-    const enabledAgents = agents.filter((agent) => agent.enabled);
+    const newAgent = agents.find((agent) => agent.id === newAgentId);
+    const existingEnabledExcludingNew = agents.filter(
+      (agent) => agent.enabled && agent.id !== newAgentId,
+    );
 
-    // First agent: enable it
-    if (enabledAgents.length === 0) {
-      return { toEnable: [newAgentId], toDisable: [] };
+    // If no other agents are enabled, enable the new agent if it's disabled
+    if (existingEnabledExcludingNew.length === 0) {
+      if (!newAgent?.enabled) {
+        return { toEnable: [newAgentId], toDisable: [] };
+      }
+      // New agent is already enabled and no others are enabled - maintain state
+      return { toEnable: [], toDisable: [] };
     }
 
-    // Subsequent agents: preserve current enabled agent
+    // Other agents are enabled - if new agent is enabled, disable it to maintain invariant
+    if (newAgent?.enabled) {
+      return { toEnable: [], toDisable: [newAgentId] };
+    }
+
+    // New agent is disabled and others are enabled - maintain state
     return { toEnable: [], toDisable: [] };
   }
 

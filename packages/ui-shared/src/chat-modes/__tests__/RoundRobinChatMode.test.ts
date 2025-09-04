@@ -67,6 +67,36 @@ describe("RoundRobinChatMode", () => {
         expect(intent).toEqual({ toEnable: [id], toDisable: [] });
       });
     });
+
+    it("should disable newly added agent when another agent is already enabled (post-add state)", () => {
+      // Post-add state: both agents are present, including the newly added one
+      const agents: ConversationAgent[] = [
+        createMockAgent("agent-1", true, 0), // existing enabled agent
+        createMockAgent("agent-2", true, 1), // newly added agent arrives enabled
+      ];
+      const intent = mode.handleAgentAdded(agents, "agent-2");
+      expect(intent).toEqual({ toEnable: [], toDisable: ["agent-2"] });
+    });
+
+    it("should preserve the first added agent as enabled when it is the only enabled agent", () => {
+      // Post-add state: new agent is enabled and no others are enabled
+      const agents: ConversationAgent[] = [
+        createMockAgent("agent-1", false, 0), // disabled
+        createMockAgent("agent-2", true, 1), // newly added agent, only enabled one
+      ];
+      const intent = mode.handleAgentAdded(agents, "agent-2");
+      expect(intent).toEqual({ toEnable: [], toDisable: [] });
+    });
+
+    it("should enable new agent when no agents are enabled and new agent arrives disabled", () => {
+      // Post-add state: all agents disabled, including new one
+      const agents: ConversationAgent[] = [
+        createMockAgent("agent-1", false, 0),
+        createMockAgent("agent-2", false, 1), // newly added agent arrives disabled
+      ];
+      const intent = mode.handleAgentAdded(agents, "agent-2");
+      expect(intent).toEqual({ toEnable: ["agent-2"], toDisable: [] });
+    });
   });
 
   describe("handleAgentToggle", () => {
