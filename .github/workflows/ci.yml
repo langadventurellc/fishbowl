@@ -140,6 +140,9 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm --filter=@fishbowl-ai/desktop-e2e-tests exec playwright install --with-deps
 
+      - name: Rebuild better-sqlite3 for Electron
+        run: pnpm --filter=@fishbowl-ai/desktop exec npx electron-rebuild -f -w better-sqlite3
+
       - name: Reinstall Electron to ensure clean binary
         run: |
           pnpm --filter=@fishbowl-ai/desktop exec npm rebuild electron
