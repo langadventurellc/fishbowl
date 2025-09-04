@@ -1,8 +1,26 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useChatStore } from "@fishbowl-ai/ui-shared";
 import type { AgentError } from "@fishbowl-ai/ui-shared";
-import type { AgentUpdateEvent } from "../../shared/ipc/chat";
 import { useConversationStore } from "@fishbowl-ai/ui-shared";
+
+// Type for agent update events (matches store's internal type)
+type AgentUpdateEvent = {
+  conversationId: string;
+  conversationAgentId: string;
+  status: "thinking" | "complete" | "error";
+  messageId?: string;
+  error?: string;
+  agentName?: string;
+  errorType?:
+    | "network"
+    | "auth"
+    | "rate_limit"
+    | "validation"
+    | "provider"
+    | "timeout"
+    | "unknown";
+  retryable?: boolean;
+};
 
 interface UseChatEventIntegrationOptions {
   conversationId: string | null;
@@ -32,7 +50,8 @@ export function useChatEventIntegration(
     clearConversationState,
   } = useChatStore();
 
-  const { refreshActiveConversation } = useConversationStore();
+  const { refreshActiveConversation, subscribeToAgentUpdates } =
+    useConversationStore();
 
   // Event handler for IPC events
   const handleAgentUpdate = useCallback(
@@ -124,18 +143,8 @@ export function useChatEventIntegration(
     ],
   );
 
-  // Set up IPC event subscription
+  // Set up event subscription via store
   useEffect(() => {
-    // Check if running in Electron environment
-    if (
-      typeof window === "undefined" ||
-      !window.electronAPI?.chat?.onAgentUpdate ||
-      typeof window.electronAPI.chat.onAgentUpdate !== "function"
-    ) {
-      setIsConnected(false);
-      return;
-    }
-
     // Clear previous conversation state if conversationId is changing
     if (conversationId) {
       clearConversationState();
@@ -147,15 +156,19 @@ export function useChatEventIntegration(
     }
 
     try {
-      // Set up IPC event listener
-      const unsubscribe =
-        window.electronAPI.chat.onAgentUpdate(handleAgentUpdate);
+      // Subscribe through the store
+      const unsubscribe = subscribeToAgentUpdates(handleAgentUpdate);
 
-      // Store cleanup function for component unmount
-      cleanupRef.current = unsubscribe;
-      setIsConnected(true);
+      if (unsubscribe) {
+        // Store cleanup function for component unmount
+        cleanupRef.current = unsubscribe;
+        setIsConnected(true);
+      } else {
+        // Not available on this platform (e.g., non-Electron)
+        setIsConnected(false);
+      }
     } catch (error) {
-      console.error("Failed to set up IPC event listener:", error);
+      console.error("Failed to set up event subscription:", error);
       setIsConnected(false);
     }
 
@@ -166,7 +179,7 @@ export function useChatEventIntegration(
           cleanupRef.current();
           cleanupRef.current = null;
         } catch (error) {
-          console.error("Error during IPC cleanup:", error);
+          console.error("Error during subscription cleanup:", error);
         }
       }
       setIsConnected(false);
@@ -176,6 +189,7 @@ export function useChatEventIntegration(
     handleAgentUpdate,
     clearConversationState,
     setProcessingConversation,
+    subscribeToAgentUpdates,
   ]);
 
   return {

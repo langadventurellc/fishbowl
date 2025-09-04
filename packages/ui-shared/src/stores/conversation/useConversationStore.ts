@@ -160,6 +160,8 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
 
   /**
    * Switch active conversation with race condition protection and chat state clearing.
+   * Unsubscribes only when switching to a different conversation or clearing selection;
+   * preserves subscription when reloading the same conversation.
    */
   selectConversation: async (id: string | null) => {
     if (!conversationService) {
@@ -169,8 +171,9 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
     // Generate request token for race condition protection
     const requestToken = generateRequestToken();
 
-    // Clean up previous event subscription when switching conversations
-    if (eventCleanupRef) {
+    // Clean up previous event subscription only when switching conversations or clearing selection
+    const currentActiveId = get().activeConversationId;
+    if (eventCleanupRef && (id !== currentActiveId || id === null)) {
       eventCleanupRef();
       eventCleanupRef = null;
       set((state) => ({
@@ -328,11 +331,13 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
     if (enabledAgents.length <= 1) return; // Already compliant
 
     // Keep first enabled agent by rotation order
-    const sortedAgents = activeConversationAgents.sort(
-      (a, b) =>
-        a.display_order - b.display_order ||
-        new Date(a.added_at).getTime() - new Date(b.added_at).getTime(),
-    );
+    const sortedAgents = activeConversationAgents
+      .slice()
+      .sort(
+        (a, b) =>
+          a.display_order - b.display_order ||
+          new Date(a.added_at).getTime() - new Date(b.added_at).getTime(),
+      );
     const firstEnabled = sortedAgents.find((a) => a.enabled);
 
     if (!firstEnabled) return;

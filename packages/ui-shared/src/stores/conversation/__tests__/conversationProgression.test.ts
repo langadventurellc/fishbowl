@@ -691,4 +691,148 @@ describe("Conversation Progression", () => {
       expect(mockCallback).toHaveBeenCalledWith(completeEvent);
     });
   });
+
+  describe("Event Subscription Preservation", () => {
+    beforeEach(() => {
+      // Mock the electron API for desktop platform
+      const mockElectronAPI = {
+        chat: {
+          onAgentUpdate: jest.fn().mockReturnValue(jest.fn()),
+        },
+      };
+      Object.defineProperty(window, "electronAPI", {
+        value: mockElectronAPI,
+        configurable: true,
+        writable: true,
+      });
+    });
+
+    it("should preserve subscription when re-selecting the same conversation", async () => {
+      // Setup: Initialize store with conversation service and subscribe to events
+      const store = useConversationStore.getState();
+      store.initialize(mockConversationService as ConversationService);
+
+      // Select a conversation first
+      await store.selectConversation("conv-1");
+
+      // Subscribe to agent updates
+      const cleanupSpy = jest.fn();
+      const mockOnAgentUpdate = (window as unknown as MockedWindow).electronAPI
+        .chat.onAgentUpdate;
+      mockOnAgentUpdate.mockReturnValue(cleanupSpy);
+
+      store.subscribeToAgentUpdates();
+
+      // Verify subscription is active
+      let state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(true);
+      expect(mockOnAgentUpdate).toHaveBeenCalledTimes(1);
+
+      // Act: Re-select the same conversation
+      await store.selectConversation("conv-1");
+
+      // Assert: Cleanup spy was NOT called, subscription remains active
+      expect(cleanupSpy).not.toHaveBeenCalled();
+      state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(true);
+    });
+
+    it("should unsubscribe when selecting a different conversation", async () => {
+      // Setup: Initialize store with conversation service and subscribe to events
+      const store = useConversationStore.getState();
+      store.initialize(mockConversationService as ConversationService);
+
+      // Select a conversation first
+      await store.selectConversation("conv-1");
+
+      // Subscribe to agent updates
+      const cleanupSpy = jest.fn();
+      const mockOnAgentUpdate = (window as unknown as MockedWindow).electronAPI
+        .chat.onAgentUpdate;
+      mockOnAgentUpdate.mockReturnValue(cleanupSpy);
+
+      store.subscribeToAgentUpdates();
+
+      // Verify subscription is active
+      let state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(true);
+
+      // Act: Select a different conversation
+      await store.selectConversation("conv-2");
+
+      // Assert: Cleanup spy was called, subscription becomes inactive
+      expect(cleanupSpy).toHaveBeenCalledTimes(1);
+      state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(false);
+    });
+
+    it("should unsubscribe when clearing conversation selection", async () => {
+      // Setup: Initialize store with conversation service and subscribe to events
+      const store = useConversationStore.getState();
+      store.initialize(mockConversationService as ConversationService);
+
+      // Select a conversation first
+      await store.selectConversation("conv-1");
+
+      // Subscribe to agent updates
+      const cleanupSpy = jest.fn();
+      const mockOnAgentUpdate = (window as unknown as MockedWindow).electronAPI
+        .chat.onAgentUpdate;
+      mockOnAgentUpdate.mockReturnValue(cleanupSpy);
+
+      store.subscribeToAgentUpdates();
+
+      // Verify subscription is active
+      let state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(true);
+
+      // Act: Clear conversation selection (select null)
+      await store.selectConversation(null);
+
+      // Assert: Cleanup spy was called, subscription becomes inactive
+      expect(cleanupSpy).toHaveBeenCalledTimes(1);
+      state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(false);
+    });
+
+    it("should not unsubscribe when refreshActiveConversation is called", async () => {
+      // Setup: Initialize store with conversation service
+      const store = useConversationStore.getState();
+      store.initialize(mockConversationService as ConversationService);
+
+      // Mock conversation service methods
+      (mockConversationService.listMessages as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue([]);
+      (mockConversationService.listConversationAgents as jest.Mock) = jest
+        .fn()
+        .mockResolvedValue([]);
+
+      // Select a conversation first
+      useConversationStore.setState({
+        ...useConversationStore.getState(),
+        activeConversationId: "conv-1",
+      });
+
+      // Subscribe to agent updates
+      const cleanupSpy = jest.fn();
+      const mockOnAgentUpdate = (window as unknown as MockedWindow).electronAPI
+        .chat.onAgentUpdate;
+      mockOnAgentUpdate.mockReturnValue(cleanupSpy);
+
+      store.subscribeToAgentUpdates();
+
+      // Verify subscription is active
+      let state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(true);
+
+      // Act: Call refreshActiveConversation (which internally calls selectConversation with same ID)
+      await store.refreshActiveConversation();
+
+      // Assert: Cleanup spy was NOT called, subscription remains active
+      expect(cleanupSpy).not.toHaveBeenCalled();
+      state = useConversationStore.getState();
+      expect(state.eventSubscription.isSubscribed).toBe(true);
+    });
+  });
 });
