@@ -13,7 +13,6 @@ COMMAND=$(echo "$HOOK_INPUT" | jq -r '.tool_input.command // empty')
 # Only process Bash tool calls
 if [[ "$TOOL_NAME" != "Bash" ]] || [[ -z "$COMMAND" ]]; then
     # Allow execution for non-Bash tools or missing commands
-    echo '{"permissionDecision": "allow"}'
     exit 0
 fi
 
@@ -34,13 +33,12 @@ for pattern_entry in "${PATTERN_MAP[@]}"; do
     
     # Check if command matches the regex pattern
     if [[ $COMMAND =~ $pattern ]]; then
-        # Deny execution and provide reason
-        jq -n --arg reason "Error: $message. Blocked command: $COMMAND" \
-            '{"permissionDecision": "deny", "permissionDecisionReason": $reason}'
+        # Output error message to stderr and exit with code 2 to block execution
+        echo "Error: $message" >&2
+        echo "Blocked command: $COMMAND" >&2
         exit 2
     fi
 done
 
 # If no patterns matched, allow the tool to execute
-echo '{"permissionDecision": "allow"}'
 exit 0
