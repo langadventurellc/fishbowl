@@ -51,6 +51,11 @@ interface SettingsFormModalProps {
 /**
  * Custom hook for keyboard event handling with capture-phase priority.
  * Uses capture-phase listeners to ensure form modals handle events before parent modals.
+ *
+ * Key behavior:
+ * - Uses stopImmediatePropagation() to prevent other capture-phase listeners from executing
+ * - Critical for nested modals where parent modal also has keyboard handlers
+ * - Ensures escape key only closes the topmost (form) modal, not parent modals
  */
 const useKeyboardHandling = (
   isOpen: boolean,
@@ -58,12 +63,23 @@ const useKeyboardHandling = (
   onRequestSave?: () => void,
 ) => {
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      // Dispatch event when form modal closes to notify parent modal
+      document.dispatchEvent(new CustomEvent("settingsFormModalClosed"));
+      return;
+    }
+
+    // Dispatch event when form modal opens to notify parent modal
+    document.dispatchEvent(new CustomEvent("settingsFormModalOpened"));
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Escape key handling
       if (event.key === "Escape") {
         event.preventDefault();
+        // Use stopImmediatePropagation() to prevent other capture-phase listeners
+        // from executing, ensuring parent modals don't also receive this event
+        event.stopImmediatePropagation();
+        // Also prevent bubble-phase listeners on parent targets (document)
         event.stopPropagation();
         onClose();
         return;
@@ -76,7 +92,8 @@ const useKeyboardHandling = (
         event.key === "s"
       ) {
         event.preventDefault();
-        event.stopPropagation();
+        // Also prevent other handlers from receiving save shortcuts
+        event.stopImmediatePropagation();
         onRequestSave();
         return;
       }
@@ -193,6 +210,15 @@ export const SettingsFormModal = forwardRef<
                 ? `modal-description-${title.replace(/\s+/g, "-").toLowerCase()}`
                 : undefined
             }
+            onEscapeKeyDown={(event) => {
+              // Prevent Radix from closing without our confirmation flow
+              event.preventDefault();
+              // Ensure neither parent nor any other listeners receive the Escape
+              event.stopPropagation();
+              event.stopImmediatePropagation();
+              // Invoke our confirmation flow
+              handleClose();
+            }}
           >
             <DialogHeader>
               <DialogTitle
