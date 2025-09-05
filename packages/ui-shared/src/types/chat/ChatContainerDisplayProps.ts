@@ -78,4 +78,12 @@ export interface ChatContainerDisplayProps {
    * Useful for implementing scroll-based features.
    */
   onScroll?: () => void;
+
+  /**
+   * Callback to receive imperative scroll methods from the container.
+   * Provides access to scrollToBottomIfPinned method for deterministic scrolling.
+   */
+  onScrollMethods?: (methods: {
+    scrollToBottomIfPinned: (threshold?: number) => boolean;
+  }) => void;
 }

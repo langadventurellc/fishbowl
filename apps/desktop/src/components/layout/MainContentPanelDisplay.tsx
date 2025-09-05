@@ -8,7 +8,7 @@ import {
   type ErrorState,
 } from "@fishbowl-ai/ui-shared";
 import { AlertCircle, MessageCircle } from "lucide-react";
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
 import { useMessageActions } from "../../hooks/services/useMessageActions";
 import { cn } from "../../lib/utils";
@@ -162,6 +162,14 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
   const { copyMessageContent, deleteMessage } = useMessageActions();
   const { showConfirmation, confirmationDialogProps } = useConfirmationDialog();
 
+  // Ref to store scroll methods from ChatContainerDisplay
+  const scrollMethodsRef = useRef<
+    | {
+        scrollToBottomIfPinned: (threshold?: number) => boolean;
+      }
+    | undefined
+  >(undefined);
+
   // Empty agents array as placeholder - AgentLabelsContainerDisplay fetches its own data
   const agents: AgentPillViewModel[] = [];
 
@@ -311,6 +319,9 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
             messages={messages}
             emptyState={<EmptyConversation />}
             onContextMenuAction={handleContextMenuAction}
+            onScrollMethods={(methods) => {
+              scrollMethodsRef.current = methods;
+            }}
           />
         )}
       </div>
@@ -320,6 +331,7 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
         <MessageInputContainer
           conversationId={selectedConversationId}
           layoutVariant="default"
+          scrollMethods={scrollMethodsRef.current}
         />
       )}
 

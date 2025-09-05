@@ -17,14 +17,31 @@ affectedFiles:
     Modified to use scroll math as primary pinned detection method. Updated
     handleScroll to use isScrolledToBottom synchronously. Enhanced
     IntersectionObserver to work as cache/verification rather than primary
-    source. Added real-time scroll math fallback in auto-scroll logic.
+    source. Added real-time scroll math fallback in auto-scroll logic.;
+    Implemented scrollToBottom and scrollToBottomIfPinned imperative methods,
+    exposed via onScrollMethods callback
+  packages/ui-shared/src/types/chat/ChatContainerDisplayProps.ts:
+    Added onScrollMethods callback prop to expose imperative scroll methods for
+    deterministic scrolling
+  packages/ui-shared/src/types/chat/MessageInputContainerProps.ts:
+    Added scrollMethods prop to receive scroll methods for user message
+    auto-scroll integration
+  apps/desktop/src/components/input/MessageInputContainer.tsx:
+    Integrated scroll methods to call scrollToBottomIfPinned after successful
+    user message send for deterministic auto-scroll
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Wired scroll methods between ChatContainerDisplay and MessageInputContainer
+    using callback prop pattern
+  apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.test.tsx: Added comprehensive unit tests for imperative scroll methods functionality
+  apps/desktop/src/components/input/__tests__/MessageInputContainer.test.tsx: Added tests for scroll methods integration in message input workflow
+  apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.scroll-methods.test.tsx: Added focused unit tests for scroll method business logic
 log: []
 schema: v1.0
 childrenIds:
   - T-handle-message-trimming-edge
   - T-implement-deterministic-user
-  - T-implement-robust-scroll
   - T-preserve-scroll-state-during
+  - T-implement-robust-scroll
 created: 2025-09-05T19:15:41.555Z
 updated: 2025-09-05T19:15:41.555Z
 ---

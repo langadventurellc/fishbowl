@@ -1,13 +1,72 @@
 ---
 id: T-implement-deterministic-user
 title: Implement deterministic user message auto-scroll
-status: open
+status: done
 priority: high
 parent: F-fix-chat-auto-scroll-behavior
 prerequisites:
   - T-implement-robust-scroll
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/chat/ChatContainerDisplayProps.ts:
+    Added onScrollMethods callback prop to expose imperative scroll methods for
+    deterministic scrolling
+  packages/ui-shared/src/types/chat/MessageInputContainerProps.ts:
+    Added scrollMethods prop to receive scroll methods for user message
+    auto-scroll integration
+  apps/desktop/src/components/layout/ChatContainerDisplay.tsx:
+    Implemented scrollToBottom and scrollToBottomIfPinned imperative methods,
+    exposed via onScrollMethods callback
+  apps/desktop/src/components/input/MessageInputContainer.tsx:
+    Integrated scroll methods to call scrollToBottomIfPinned after successful
+    user message send for deterministic auto-scroll
+  apps/desktop/src/components/layout/MainContentPanelDisplay.tsx:
+    Wired scroll methods between ChatContainerDisplay and MessageInputContainer
+    using callback prop pattern
+  apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.test.tsx: Added comprehensive unit tests for imperative scroll methods functionality
+  apps/desktop/src/components/input/__tests__/MessageInputContainer.test.tsx: Added tests for scroll methods integration in message input workflow
+  apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.scroll-methods.test.tsx: Added focused unit tests for scroll method business logic
+log:
+  - >-
+    Implemented deterministic user message auto-scroll to fix timing issues
+    where user messages failed to auto-scroll when the user is pinned to bottom.
+    The implementation provides imperative scroll control for user messages to
+    ensure reliable auto-scroll behavior.
+
+
+    Key Features Implemented:
+
+    - Added imperative scrollToBottom() and scrollToBottomIfPinned() methods to
+    ChatContainerDisplay
+
+    - Exposed scroll methods via onScrollMethods callback prop (following
+    project's callback pattern)
+
+    - Integrated scroll methods in MessageInputContainer to call
+    scrollToBottomIfPinned after successful user message send
+
+    - Captures pinned state deterministically using isScrolledToBottom utility
+    from prerequisite task
+
+    - Uses smooth scrolling behavior for better UX
+
+    - Maintains backward compatibility with existing auto-scroll functionality
+
+
+    Technical Implementation:
+
+    - scrollToBottomIfPinned method checks if user is pinned (within 100px
+    threshold) before scrolling
+
+    - Returns boolean indicating whether scroll occurred for feedback
+
+    - Fails gracefully when scroll methods unavailable or message send fails
+
+    - No interference with existing reactive scroll logic (maintains as
+    fallback)
+
+
+    All quality checks pass (lint, format, type-check) and the implementation
+    follows clean code principles with single export per file.
 schema: v1.0
 childrenIds: []
 created: 2025-09-05T19:26:22.566Z

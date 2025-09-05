@@ -47,6 +47,7 @@ export function MessageInputContainer({
   className = "",
   messageInputProps = {},
   sendButtonProps = {},
+  scrollMethods,
 }: MessageInputContainerProps) {
   // Local form state
   const [content, setContent] = useState("");
@@ -101,6 +102,9 @@ export function MessageInputContainer({
       // Use store's sendUserMessage action for unified orchestration
       await sendUserMessage(content.trim() || undefined);
 
+      // Deterministic scroll after successful send
+      scrollMethods?.scrollToBottomIfPinned();
+
       // Clear input on successful send
       setContent("");
       setLocalError(null);
@@ -118,6 +122,7 @@ export function MessageInputContainer({
     activeMessages.length,
     activeConversationAgents,
     sendUserMessage,
+    scrollMethods,
   ]);
 
   // Handle keyboard shortcuts

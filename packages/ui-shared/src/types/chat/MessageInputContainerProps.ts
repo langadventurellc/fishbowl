@@ -88,4 +88,12 @@ export interface MessageInputContainerProps {
    * @example { "aria-label": "Send question to agents" }
    */
   sendButtonProps?: Partial<SendButtonDisplayProps>;
+
+  /**
+   * Scroll methods for controlling chat container auto-scroll behavior.
+   * Used for deterministic scrolling after user message send.
+   */
+  scrollMethods?: {
+    scrollToBottomIfPinned: (threshold?: number) => boolean;
+  };
 }

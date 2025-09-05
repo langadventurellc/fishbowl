@@ -23,6 +23,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   className,
   style,
   onScroll,
+  onScrollMethods,
 }) => {
   // Refs for pinning functionality
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -67,6 +68,38 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     io.observe(bottomSentinelRef.current);
     return () => io.disconnect();
   }, []);
+
+  // Imperative scroll methods for external control
+  const scrollToBottom = useCallback(
+    (behavior: "auto" | "smooth" = "smooth") => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior,
+        });
+      }
+    },
+    [],
+  );
+
+  const scrollToBottomIfPinned = useCallback(
+    (threshold = 100) => {
+      if (
+        scrollRef.current &&
+        isScrolledToBottom(scrollRef.current, threshold)
+      ) {
+        scrollToBottom();
+        return true; // scrolled
+      }
+      return false; // not scrolled
+    },
+    [scrollToBottom],
+  );
+
+  // Expose methods via callback prop
+  useEffect(() => {
+    onScrollMethods?.({ scrollToBottomIfPinned });
+  }, [onScrollMethods, scrollToBottomIfPinned]);
 
   // Scroll handler - use scroll math as primary pinned detection
   const handleScroll = useCallback(() => {
