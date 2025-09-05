@@ -1,13 +1,30 @@
 ---
 id: T-update-ipc-handler-for
 title: Update IPC handler for conversation agent deletion with message cleanup
-status: open
+status: done
 priority: high
 parent: F-delete-conversation-agent
 prerequisites:
   - T-add-message-deletion-method
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/electron/conversationAgentHandlers.ts:
+    Modified REMOVE handler
+    to wrap deletion in database transaction, first calling
+    MessageRepository.deleteByConversationAgentId() then
+    ConversationAgentsRepository.delete(), with enhanced logging and error
+    handling
+  apps/desktop/src/electron/__tests__/conversationAgentHandlers.test.ts:
+    Created comprehensive unit test suite with 14 test cases covering all IPC
+    handlers, focusing on the updated REMOVE handler transaction behavior, error
+    scenarios, and rollback cases
+log:
+  - "Updated IPC handler for conversation agent deletion to include atomic
+    message cleanup using database transactions. The handler now performs a
+    two-step deletion process: first deletes all messages associated with the
+    conversation agent, then deletes the conversation agent itself. Added
+    comprehensive unit test coverage with 14 test cases covering all success and
+    failure scenarios including transaction rollbacks. All quality checks pass
+    and tests run successfully."
 schema: v1.0
 childrenIds: []
 created: 2025-09-05T17:04:21.903Z

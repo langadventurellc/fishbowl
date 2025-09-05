@@ -12,15 +12,25 @@ affectedFiles:
   packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
     Added comprehensive unit test suite for deleteByConversationAgentId method
     and updated constructor test to include new method
+  apps/desktop/src/electron/conversationAgentHandlers.ts:
+    Modified REMOVE handler
+    to wrap deletion in database transaction, first calling
+    MessageRepository.deleteByConversationAgentId() then
+    ConversationAgentsRepository.delete(), with enhanced logging and error
+    handling
+  apps/desktop/src/electron/__tests__/conversationAgentHandlers.test.ts:
+    Created comprehensive unit test suite with 14 test cases covering all IPC
+    handlers, focusing on the updated REMOVE handler transaction behavior, error
+    scenarios, and rollback cases
 log: []
 schema: v1.0
 childrenIds:
   - T-add-delete-confirmation
   - T-add-explicit-message-refresh
-  - T-add-message-deletion-method
   - T-add-ondelete-prop-to
   - T-implement-x-button-and-delete
   - T-update-ipc-handler-for
+  - T-add-message-deletion-method
 created: 2025-09-05T16:52:11.785Z
 updated: 2025-09-05T16:52:11.785Z
 ---

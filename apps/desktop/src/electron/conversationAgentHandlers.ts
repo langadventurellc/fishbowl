@@ -110,7 +110,7 @@ export function setupConversationAgentHandlers(
       _event,
       request: ConversationAgentRemoveRequest,
     ): Promise<ConversationAgentRemoveResponse> => {
-      logger.debug("Removing agent from conversation", {
+      logger.debug("Removing agent from conversation with message cleanup", {
         conversationId: request.conversation_id,
         agentId: request.agent_id,
       });
@@ -132,13 +132,39 @@ export function setupConversationAgentHandlers(
           return { success: true, data: false };
         }
 
-        // Delete the conversation agent
-        await mainServices.conversationAgentsRepository.delete(targetAgent.id);
-        logger.debug("Agent removed from conversation successfully", {
-          conversationAgentId: targetAgent.id,
-          conversationId: request.conversation_id,
-          agentId: request.agent_id,
-        });
+        // Perform atomic deletion of messages and conversation agent
+        await mainServices.databaseBridge.transaction(
+          async (_transactionDb) => {
+            // First, delete all messages associated with this conversation agent
+            const deletedMessageCount =
+              await mainServices.messagesRepository.deleteByConversationAgentId(
+                targetAgent.id,
+              );
+
+            logger.debug("Messages deleted for conversation agent", {
+              conversationAgentId: targetAgent.id,
+              deletedMessageCount,
+            });
+
+            // Then, delete the conversation agent
+            await mainServices.conversationAgentsRepository.delete(
+              targetAgent.id,
+            );
+
+            logger.debug("Conversation agent deleted", {
+              conversationAgentId: targetAgent.id,
+            });
+          },
+        );
+
+        logger.debug(
+          "Agent and messages removed from conversation successfully",
+          {
+            conversationAgentId: targetAgent.id,
+            conversationId: request.conversation_id,
+            agentId: request.agent_id,
+          },
+        );
         return { success: true, data: true };
       } catch (error) {
         logger.error(
