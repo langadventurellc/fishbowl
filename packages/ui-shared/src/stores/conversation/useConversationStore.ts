@@ -397,11 +397,72 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
    */
   refreshActiveConversation: async () => {
     const { activeConversationId } = get();
-    if (!activeConversationId) {
-      return; // No-op when no active conversation
+    if (!activeConversationId || !conversationService) {
+      return; // No-op when no active conversation or service not initialized
     }
 
-    await get().selectConversation(activeConversationId);
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
+
+    try {
+      set((state) => ({
+        ...state,
+        activeRequestToken: requestToken,
+        loading: { ...state.loading, messages: true, agents: true },
+        error: { ...state.error, messages: undefined, agents: undefined },
+      }));
+
+      // Load fresh conversation data without clearing current messages
+      const [messages, agents] = await Promise.all([
+        conversationService.listMessages(activeConversationId),
+        conversationService.listConversationAgents(activeConversationId),
+      ]);
+
+      // Check if this request is still current
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        return; // Ignore stale result
+      }
+
+      // Apply message limit if configured
+      const trimmedMessages =
+        currentState.maximumMessages > 0 &&
+        messages.length > currentState.maximumMessages
+          ? messages.slice(-currentState.maximumMessages)
+          : messages;
+
+      // Atomic update: replace messages and agents in single operation
+      set((state) => ({
+        ...state,
+        activeMessages: trimmedMessages,
+        activeConversationAgents: agents,
+        loading: { ...state.loading, messages: false, agents: false },
+      }));
+    } catch (error) {
+      // Check if this request is still current before setting error
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        return; // Ignore stale error
+      }
+
+      set((state) => ({
+        ...state,
+        loading: { ...state.loading, messages: false, agents: false },
+        error: {
+          ...state.error,
+          messages: {
+            message:
+              error instanceof Error
+                ? error.message
+                : "Failed to refresh conversation data",
+            operation: "load",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
   },
 
   /**

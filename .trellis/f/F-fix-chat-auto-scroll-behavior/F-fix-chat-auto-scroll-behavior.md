@@ -35,12 +35,16 @@ affectedFiles:
   apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.test.tsx: Added comprehensive unit tests for imperative scroll methods functionality
   apps/desktop/src/components/input/__tests__/MessageInputContainer.test.tsx: Added tests for scroll methods integration in message input workflow
   apps/desktop/src/components/layout/__tests__/ChatContainerDisplay.scroll-methods.test.tsx: Added focused unit tests for scroll method business logic
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Modified refreshActiveConversation method to load fresh data without
+    clearing activeMessages array. Implemented atomic message updates using race
+    condition protection and proper error handling with 'load' operation type.
 log: []
 schema: v1.0
 childrenIds:
   - T-handle-message-trimming-edge
-  - T-implement-deterministic-user
   - T-preserve-scroll-state-during
+  - T-implement-deterministic-user
   - T-implement-robust-scroll
 created: 2025-09-05T19:15:41.555Z
 updated: 2025-09-05T19:15:41.555Z

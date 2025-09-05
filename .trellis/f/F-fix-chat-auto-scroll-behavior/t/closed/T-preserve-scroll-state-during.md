@@ -1,13 +1,23 @@
 ---
 id: T-preserve-scroll-state-during
 title: Preserve scroll state during conversation refreshes
-status: open
+status: done
 priority: high
 parent: F-fix-chat-auto-scroll-behavior
 prerequisites:
   - T-implement-robust-scroll
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Modified refreshActiveConversation method to load fresh data without
+    clearing activeMessages array. Implemented atomic message updates using race
+    condition protection and proper error handling with 'load' operation type.
+log:
+  - Implemented minimal fix to preserve scroll state during conversation
+    refreshes. Modified refreshActiveConversation() to avoid clearing
+    activeMessages array during refresh, preventing unwanted scroll resets. The
+    fix maintains the same loading states and error handling while ensuring
+    atomic message updates without intermediate empty states that trigger
+    ChatContainerDisplay to reset scroll position.
 schema: v1.0
 childrenIds: []
 created: 2025-09-05T19:25:55.916Z
