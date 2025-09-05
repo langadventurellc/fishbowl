@@ -1,7 +1,7 @@
 ---
 id: F-fix-chat-auto-scroll-behavior
 title: Fix Chat Auto-Scroll Behavior
-status: in-progress
+status: done
 priority: medium
 parent: none
 prerequisites: []
@@ -19,7 +19,11 @@ affectedFiles:
     IntersectionObserver to work as cache/verification rather than primary
     source. Added real-time scroll math fallback in auto-scroll logic.;
     Implemented scrollToBottom and scrollToBottomIfPinned imperative methods,
-    exposed via onScrollMethods callback
+    exposed via onScrollMethods callback; Enhanced message change detection by
+    adding prevLastMessageId ref tracking and detectNewMessages callback.
+    Updated auto-scroll effect to detect content changes even with constant
+    array length during message trimming. Added proper reset logic for message
+    ID tracking when conversation becomes empty.
   packages/ui-shared/src/types/chat/ChatContainerDisplayProps.ts:
     Added onScrollMethods callback prop to expose imperative scroll methods for
     deterministic scrolling
@@ -39,13 +43,14 @@ affectedFiles:
     Modified refreshActiveConversation method to load fresh data without
     clearing activeMessages array. Implemented atomic message updates using race
     condition protection and proper error handling with 'load' operation type.
-log: []
+log:
+  - "Auto-completed: All child tasks are complete"
 schema: v1.0
 childrenIds:
   - T-handle-message-trimming-edge
-  - T-preserve-scroll-state-during
   - T-implement-deterministic-user
   - T-implement-robust-scroll
+  - T-preserve-scroll-state-during
 created: 2025-09-05T19:15:41.555Z
 updated: 2025-09-05T19:15:41.555Z
 ---

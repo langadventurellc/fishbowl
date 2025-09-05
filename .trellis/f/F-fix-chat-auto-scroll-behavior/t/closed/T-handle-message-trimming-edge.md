@@ -1,13 +1,26 @@
 ---
 id: T-handle-message-trimming-edge
 title: Handle message trimming edge cases in auto-scroll detection
-status: open
+status: done
 priority: medium
 parent: F-fix-chat-auto-scroll-behavior
 prerequisites:
   - T-implement-robust-scroll
-affectedFiles: {}
-log: []
+affectedFiles:
+  apps/desktop/src/components/layout/ChatContainerDisplay.tsx:
+    Enhanced message change detection by adding prevLastMessageId ref tracking
+    and detectNewMessages callback. Updated auto-scroll effect to detect content
+    changes even with constant array length during message trimming. Added
+    proper reset logic for message ID tracking when conversation becomes empty.
+log:
+  - Implemented enhanced message change detection for auto-scroll behavior that
+    handles edge cases where message arrays stay constant length due to
+    trimming. Added detectNewMessages callback that tracks both message count
+    changes and last message ID changes to detect new content even when old
+    messages are trimmed. Updated auto-scroll effect to use the new detection
+    logic with O(1) performance. The solution maintains backward compatibility
+    and handles all specified edge cases including empty arrays, rapid trimming,
+    and component remounts. All quality checks passed successfully.
 schema: v1.0
 childrenIds: []
 created: 2025-09-05T19:26:49.113Z

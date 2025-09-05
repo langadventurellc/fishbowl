@@ -1,4 +1,7 @@
-import { ChatContainerDisplayProps } from "@fishbowl-ai/ui-shared";
+import {
+  ChatContainerDisplayProps,
+  MessageViewModel,
+} from "@fishbowl-ai/ui-shared";
 import React, { useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { cn } from "../../lib/utils";
 import { MessageItem } from "../chat/MessageItem";
@@ -31,6 +34,8 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
   const bottomSentinelRef = useRef<HTMLDivElement>(null);
   // Track previous message count; start at 0 so first non-empty render treats as initial load
   const prevMessageCount = useRef(0);
+  // Enhanced tracking for message trimming edge cases
+  const prevLastMessageId = useRef<string | null>(null);
   const shouldScrollToBottom = useRef(true);
 
   // Dynamic styles using CSS custom properties
@@ -41,6 +46,35 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     // Merge custom styles
     ...style,
   } as React.CSSProperties;
+
+  // Enhanced message change detection for trimming edge cases
+  const detectNewMessages = useCallback(
+    (messages: MessageViewModel[] | undefined) => {
+      const currentCount = messages?.length || 0;
+      const currentLastId = messages?.[currentCount - 1]?.id || null;
+
+      // Count increase = definitely new messages
+      const countIncreased = currentCount > prevMessageCount.current;
+
+      // Same count but different last message = trimming occurred
+      const contentChanged =
+        currentCount > 0 &&
+        currentCount === prevMessageCount.current &&
+        currentLastId !== prevLastMessageId.current;
+
+      const hasNewContent = countIncreased || contentChanged;
+
+      // Update tracking refs
+      prevMessageCount.current = currentCount;
+      prevLastMessageId.current = currentLastId;
+
+      return {
+        hasNewContent,
+        isInitialLoad: currentCount > 0 && prevMessageCount.current === 0,
+      };
+    },
+    [],
+  );
 
   // IntersectionObserver as performance enhancement for pinned detection
   useEffect(() => {
@@ -127,26 +161,23 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     }
   }, [autoScroll, messages?.length]);
 
-  // Auto-scroll on new messages
+  // Enhanced auto-scroll on new messages with trimming detection
   useEffect(() => {
     if (!autoScroll) return;
 
-    const currentCount = messages?.length || 0;
     const element = scrollRef.current;
-
     if (!element) return;
 
-    const hasNewMessages = currentCount > prevMessageCount.current;
-    const isInitialLoad = currentCount > 0 && prevMessageCount.current === 0;
+    const { hasNewContent, isInitialLoad } = detectNewMessages(messages);
 
     // Scroll to bottom only if:
     // - Initial non-empty load, or
-    // - New messages arrived and the user is pinned to bottom
+    // - New content arrived (including trimming) and the user is pinned to bottom
     // Use real-time scroll math as fallback if shouldScrollToBottom hasn't been set yet
     const currentlyPinned =
       shouldScrollToBottom.current || isScrolledToBottom(element, 100);
 
-    if (isInitialLoad || (hasNewMessages && currentlyPinned)) {
+    if (isInitialLoad || (hasNewContent && currentlyPinned)) {
       requestAnimationFrame(() => {
         if (element) {
           element.scrollTo({
@@ -156,9 +187,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
         }
       });
     }
-
-    prevMessageCount.current = currentCount;
-  }, [autoScroll, messages]);
+  }, [autoScroll, messages, detectNewMessages]);
 
   // ResizeObserver to stay pinned during dynamic content growth
   useEffect(() => {
@@ -193,6 +222,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     if (isEmpty) {
       shouldScrollToBottom.current = true;
       prevMessageCount.current = 0;
+      prevLastMessageId.current = null; // Reset message ID tracking
     }
   }, [isEmpty]);
 
