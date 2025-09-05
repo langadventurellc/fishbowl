@@ -67,6 +67,19 @@ export interface AgentPillProps {
   onClick?: (agentName: string) => void;
 
   /**
+   * Optional handler for deleting agent from conversation.
+   * Called when user clicks the delete (X) button on the agent pill.
+   * Receives the conversation agent ID for precise agent identification.
+   *
+   * When provided, an X button will appear on the right side of the pill
+   * when the user hovers over it. Clicking this button will trigger
+   * this callback with the conversationAgentId parameter.
+   *
+   * @param conversationAgentId - The unique ID of the conversation agent to delete
+   */
+  onDelete?: (conversationAgentId: string) => void;
+
+  /**
    * Optional handler for toggling agent enabled state.
    * Called when user clicks the pill to toggle enabled/disabled.
    * Receives the conversation agent ID for identification.

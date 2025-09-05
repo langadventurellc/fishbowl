@@ -31,13 +31,18 @@ affectedFiles:
     Created comprehensive unit test suite with 15 test cases covering successful
     refresh scenarios, error handling, round-robin integration, edge cases, and
     race condition protection for the message refresh functionality
+  packages/ui-shared/src/types/chat/AgentPillProps.ts: "Added optional onDelete
+    prop with comprehensive JSDoc documentation following existing patterns.
+    Prop signature: onDelete?: (conversationAgentId: string) => void. Maintains
+    backward compatibility and alphabetical ordering between onClick and
+    onToggleEnabled props."
 log: []
 schema: v1.0
 childrenIds:
   - T-add-delete-confirmation
-  - T-add-explicit-message-refresh
   - T-add-ondelete-prop-to
   - T-implement-x-button-and-delete
+  - T-add-explicit-message-refresh
   - T-add-message-deletion-method
   - T-update-ipc-handler-for
 created: 2025-09-05T16:52:11.785Z

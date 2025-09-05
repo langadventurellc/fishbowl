@@ -1,12 +1,25 @@
 ---
 id: T-add-ondelete-prop-to
 title: Add onDelete prop to AgentPillProps interface
-status: open
+status: done
 priority: medium
 parent: F-delete-conversation-agent
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/types/chat/AgentPillProps.ts: "Added optional onDelete
+    prop with comprehensive JSDoc documentation following existing patterns.
+    Prop signature: onDelete?: (conversationAgentId: string) => void. Maintains
+    backward compatibility and alphabetical ordering between onClick and
+    onToggleEnabled props."
+log:
+  - "Successfully added optional onDelete prop to AgentPillProps interface with
+    comprehensive JSDoc documentation. The prop follows the exact signature
+    pattern (conversationAgentId: string) => void and maintains backward
+    compatibility with existing implementations. Added detailed documentation
+    explaining when the callback is triggered (delete button clicks on agent
+    pills) and includes parameter documentation. The interface maintains
+    alphabetical ordering and follows all existing patterns. All quality checks
+    pass and shared packages have been rebuilt."
 schema: v1.0
 childrenIds: []
 created: 2025-09-05T17:04:51.525Z
