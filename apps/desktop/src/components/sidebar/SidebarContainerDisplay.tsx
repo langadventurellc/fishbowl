@@ -121,7 +121,10 @@ export function SidebarContainerDisplay({
   const handleDeleteConversation = useCallback(
     async (conversationId: string) => {
       try {
-        logger.debug("Deleting conversation", { conversationId });
+        logger.debug("Deleting conversation", {
+          conversationId,
+          isActive: conversationId === selectedConversationId,
+        });
 
         // Check if running in Electron environment
         if (!window.electronAPI?.conversations?.delete) {
@@ -132,6 +135,15 @@ export function SidebarContainerDisplay({
 
         await window.electronAPI.conversations.delete(conversationId);
 
+        // Clear active conversation selection if deleting the currently selected conversation
+        if (conversationId === selectedConversationId) {
+          logger.debug(
+            "Clearing active conversation selection after deletion",
+            { conversationId },
+          );
+          selectConversation(null);
+        }
+
         // Use store action instead of manual refetch
         await loadConversations();
 
@@ -141,7 +153,7 @@ export function SidebarContainerDisplay({
         throw error;
       }
     },
-    [loadConversations], // Replace refetch dependency
+    [loadConversations, selectedConversationId, selectConversation], // Add selectConversation to dependencies
   );
 
   // Handle new conversation creation
