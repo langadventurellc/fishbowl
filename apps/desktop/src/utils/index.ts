@@ -7,6 +7,7 @@ export { announceToScreenReader } from "./announceToScreenReader";
 export { applyTheme } from "./applyTheme";
 export { generateDialogAriaIds } from "./generateDialogAriaIds";
 export { getAccessibleDescription } from "./getAccessibleDescription";
+export { isScrolledToBottom } from "./isScrolledToBottom";
 export { maskApiKey, isMaskedApiKey } from "./maskApiKey";
 export { useAccessibilityAnnouncements } from "./useAccessibilityAnnouncements";
 export { truncateDescription } from "./truncateDescription";

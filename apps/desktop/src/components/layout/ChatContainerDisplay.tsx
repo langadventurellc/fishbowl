@@ -3,6 +3,7 @@ import React, { useRef, useCallback, useEffect, useLayoutEffect } from "react";
 import { cn } from "../../lib/utils";
 import { MessageItem } from "../chat/MessageItem";
 import { ContextStatistics } from "../chat/ContextStatistics";
+import { isScrolledToBottom } from "../../utils";
 
 /**
  * ChatContainerDisplay - Scrollable messages area layout component
@@ -40,16 +41,20 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     ...style,
   } as React.CSSProperties;
 
-  // IntersectionObserver for pinned detection
+  // IntersectionObserver as performance enhancement for pinned detection
   useEffect(() => {
     if (!scrollRef.current || !bottomSentinelRef.current) return;
 
     const io = new IntersectionObserver(
       (entries) => {
         const entry = entries[0];
-        if (entry) {
-          const pinned = entry.isIntersecting;
-          shouldScrollToBottom.current = pinned;
+        if (entry && scrollRef.current) {
+          // Use IntersectionObserver as cache update, but verify with scroll math
+          const _observerPinned = entry.isIntersecting;
+          const actuallyPinned = isScrolledToBottom(scrollRef.current, 100);
+
+          // Trust scroll math over observer for accuracy
+          shouldScrollToBottom.current = actuallyPinned;
         }
       },
       {
@@ -63,9 +68,13 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     return () => io.disconnect();
   }, []);
 
-  // Scroll handler - detect when user manually scrolls away from bottom
+  // Scroll handler - use scroll math as primary pinned detection
   const handleScroll = useCallback(() => {
-    // IntersectionObserver controls the pinned state; we just forward the event
+    if (scrollRef.current) {
+      // Primary detection: use synchronous scroll math
+      const pinnedToBottom = isScrolledToBottom(scrollRef.current, 100);
+      shouldScrollToBottom.current = pinnedToBottom;
+    }
     onScroll?.();
   }, [onScroll]);
 
@@ -100,7 +109,11 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     // Scroll to bottom only if:
     // - Initial non-empty load, or
     // - New messages arrived and the user is pinned to bottom
-    if (isInitialLoad || (hasNewMessages && shouldScrollToBottom.current)) {
+    // Use real-time scroll math as fallback if shouldScrollToBottom hasn't been set yet
+    const currentlyPinned =
+      shouldScrollToBottom.current || isScrolledToBottom(element, 100);
+
+    if (isInitialLoad || (hasNewMessages && currentlyPinned)) {
       requestAnimationFrame(() => {
         if (element) {
           element.scrollTo({

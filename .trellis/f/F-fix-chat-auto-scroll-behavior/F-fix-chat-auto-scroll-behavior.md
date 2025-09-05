@@ -1,14 +1,30 @@
 ---
 id: F-fix-chat-auto-scroll-behavior
 title: Fix Chat Auto-Scroll Behavior
-status: open
+status: in-progress
 priority: medium
 parent: none
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  apps/desktop/src/utils/isScrolledToBottom.ts: Created new utility function for
+    synchronous scroll position detection using scroll math with configurable
+    threshold (default 100px)
+  apps/desktop/src/utils/index.ts: Added barrel export for isScrolledToBottom utility function
+  apps/desktop/src/utils/__tests__/isScrolledToBottom.test.ts:
+    Added comprehensive unit tests with 12 test cases covering default/custom
+    thresholds, edge cases, and boundary conditions
+  apps/desktop/src/components/layout/ChatContainerDisplay.tsx:
+    Modified to use scroll math as primary pinned detection method. Updated
+    handleScroll to use isScrolledToBottom synchronously. Enhanced
+    IntersectionObserver to work as cache/verification rather than primary
+    source. Added real-time scroll math fallback in auto-scroll logic.
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-handle-message-trimming-edge
+  - T-implement-deterministic-user
+  - T-implement-robust-scroll
+  - T-preserve-scroll-state-during
 created: 2025-09-05T19:15:41.555Z
 updated: 2025-09-05T19:15:41.555Z
 ---
