@@ -64,19 +64,22 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
 
       const hasNewContent = countIncreased || contentChanged;
 
+      // Compute isInitialLoad BEFORE updating refs
+      const isInitialLoad = currentCount > 0 && prevMessageCount.current === 0;
+
       // Update tracking refs
       prevMessageCount.current = currentCount;
       prevLastMessageId.current = currentLastId;
 
       return {
         hasNewContent,
-        isInitialLoad: currentCount > 0 && prevMessageCount.current === 0,
+        isInitialLoad,
       };
     },
     [],
   );
 
-  // IntersectionObserver as performance enhancement for pinned detection
+  // IntersectionObserver for diagnostics only - do not overwrite pinned snapshot
   useEffect(() => {
     if (!scrollRef.current || !bottomSentinelRef.current) return;
 
@@ -84,12 +87,12 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
       (entries) => {
         const entry = entries[0];
         if (entry && scrollRef.current) {
-          // Use IntersectionObserver as cache update, but verify with scroll math
+          // Use IntersectionObserver for diagnostics only
           const _observerPinned = entry.isIntersecting;
-          const actuallyPinned = isScrolledToBottom(scrollRef.current, 100);
+          const _actuallyPinned = isScrolledToBottom(scrollRef.current, 100);
 
-          // Trust scroll math over observer for accuracy
-          shouldScrollToBottom.current = actuallyPinned;
+          // DO NOT overwrite shouldScrollToBottom.current here
+          // Only user scroll should change the snapshot
         }
       },
       {
@@ -130,10 +133,15 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
     [scrollToBottom],
   );
 
+  const wasPinned = useCallback(
+    () => shouldScrollToBottom.current === true,
+    [],
+  );
+
   // Expose methods via callback prop
   useEffect(() => {
-    onScrollMethods?.({ scrollToBottomIfPinned });
-  }, [onScrollMethods, scrollToBottomIfPinned]);
+    onScrollMethods?.({ scrollToBottomIfPinned, scrollToBottom, wasPinned });
+  }, [onScrollMethods, scrollToBottomIfPinned, scrollToBottom, wasPinned]);
 
   // Scroll handler - use scroll math as primary pinned detection
   const handleScroll = useCallback(() => {
@@ -156,12 +164,22 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
 
     const initialLoad = count > 0 && prevMessageCount.current === 0;
     if (initialLoad) {
-      el.scrollTop = el.scrollHeight;
-      shouldScrollToBottom.current = true;
+      // Check if user was already pinned on mount to avoid unexpected jumps
+      const wasPinnedOnMount = isScrolledToBottom(el, 100);
+      if (wasPinnedOnMount) {
+        el.scrollTop = el.scrollHeight;
+        shouldScrollToBottom.current = true;
+      } else {
+        // Initialize snapshot based on current position
+        shouldScrollToBottom.current = wasPinnedOnMount;
+      }
+    } else if (prevMessageCount.current === 0) {
+      // Initialize cached pinned state from reality at mount for non-initial loads
+      shouldScrollToBottom.current = isScrolledToBottom(el, 100);
     }
   }, [autoScroll, messages?.length]);
 
-  // Enhanced auto-scroll on new messages with trimming detection
+  // Enhanced auto-scroll on new messages using cached pinned snapshot
   useEffect(() => {
     if (!autoScroll) return;
 
@@ -170,14 +188,13 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
 
     const { hasNewContent, isInitialLoad } = detectNewMessages(messages);
 
+    // Use the cached snapshot exclusively for auto-scroll decisions
+    const pinnedBefore = shouldScrollToBottom.current;
+
     // Scroll to bottom only if:
     // - Initial non-empty load, or
-    // - New content arrived (including trimming) and the user is pinned to bottom
-    // Use real-time scroll math as fallback if shouldScrollToBottom hasn't been set yet
-    const currentlyPinned =
-      shouldScrollToBottom.current || isScrolledToBottom(element, 100);
-
-    if (isInitialLoad || (hasNewContent && currentlyPinned)) {
+    // - New content arrived (including trimming) and user was pinned before the update
+    if (isInitialLoad || (hasNewContent && pinnedBefore)) {
       requestAnimationFrame(() => {
         if (element) {
           element.scrollTo({
@@ -202,7 +219,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
       const grew = nextScrollHeight > lastScrollHeight;
       lastScrollHeight = nextScrollHeight;
 
-      // Be more aggressive - if content grew, scroll to bottom
+      // Use cached snapshot for growth decisions
       if (grew && shouldScrollToBottom.current) {
         requestAnimationFrame(() => {
           if (el) {
@@ -210,6 +227,7 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
           }
         });
       }
+      // Do not update shouldScrollToBottom.current in this callback
     });
 
     ro.observe(contentRef.current);

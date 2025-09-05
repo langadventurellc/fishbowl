@@ -81,9 +81,11 @@ export interface ChatContainerDisplayProps {
 
   /**
    * Callback to receive imperative scroll methods from the container.
-   * Provides access to scrollToBottomIfPinned method for deterministic scrolling.
+   * Provides access to scroll methods for deterministic scrolling.
    */
   onScrollMethods?: (methods: {
     scrollToBottomIfPinned: (threshold?: number) => boolean;
+    scrollToBottom: (behavior?: "auto" | "smooth") => void;
+    wasPinned: () => boolean;
   }) => void;
 }

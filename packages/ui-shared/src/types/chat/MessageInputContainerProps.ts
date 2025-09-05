@@ -95,5 +95,7 @@ export interface MessageInputContainerProps {
    */
   scrollMethods?: {
     scrollToBottomIfPinned: (threshold?: number) => boolean;
+    scrollToBottom: (behavior?: "auto" | "smooth") => void;
+    wasPinned: () => boolean;
   };
 }

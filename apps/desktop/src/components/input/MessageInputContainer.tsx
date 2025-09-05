@@ -99,11 +99,16 @@ export function MessageInputContainer({
     }
 
     try {
+      // Snapshot pinned state before sending to ensure deterministic scroll
+      const wasPinnedBeforeSend = scrollMethods?.wasPinned();
+
       // Use store's sendUserMessage action for unified orchestration
       await sendUserMessage(content.trim() || undefined);
 
-      // Deterministic scroll after successful send
-      scrollMethods?.scrollToBottomIfPinned();
+      // Deterministic scroll based on pre-send pinned state
+      if (wasPinnedBeforeSend) {
+        scrollMethods?.scrollToBottom();
+      }
 
       // Clear input on successful send
       setContent("");

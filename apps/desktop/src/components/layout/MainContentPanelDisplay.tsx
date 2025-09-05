@@ -117,8 +117,15 @@ export const MainContentPanelDisplay: React.FC<
     });
   }, [activeMessages, activeConversationAgents, agentConfigs, roleConfigs]);
 
-  const isLoading = loading.messages || loading.agents;
   const messagesError = error.messages || error.agents;
+
+  // Determine loading states to preserve chat list during background operations
+  const showInitialSkeleton =
+    !!selectedConversationId && messages.length === 0 && loading.messages;
+  const showBackgroundOverlay =
+    !!selectedConversationId &&
+    (loading.messages || loading.agents) &&
+    messages.length > 0;
 
   return (
     <MainContentPanelContent
@@ -126,7 +133,8 @@ export const MainContentPanelDisplay: React.FC<
       className={className}
       style={style}
       messages={messages}
-      isLoading={isLoading}
+      showInitialSkeleton={showInitialSkeleton}
+      showBackgroundOverlay={showBackgroundOverlay}
       error={messagesError}
       refetch={refreshActiveConversation}
     />
@@ -141,7 +149,8 @@ interface MainContentPanelContentProps {
   className?: string;
   style?: React.CSSProperties;
   messages: MessageViewModel[];
-  isLoading: boolean;
+  showInitialSkeleton: boolean;
+  showBackgroundOverlay: boolean;
   error: ErrorState | undefined;
   refetch: () => Promise<void>;
 }
@@ -151,7 +160,8 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
   className,
   style,
   messages,
-  isLoading,
+  showInitialSkeleton,
+  showBackgroundOverlay,
   error,
   refetch,
 }) => {
@@ -166,6 +176,8 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
   const scrollMethodsRef = useRef<
     | {
         scrollToBottomIfPinned: (threshold?: number) => boolean;
+        scrollToBottom: (behavior?: "auto" | "smooth") => void;
+        wasPinned: () => boolean;
       }
     | undefined
   >(undefined);
@@ -307,22 +319,51 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
       />
 
       {/* Chat Container - Add overflow constraints */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden relative">
         {!selectedConversationId ? (
           <NoConversationSelected />
-        ) : isLoading ? (
+        ) : showInitialSkeleton ? (
           <LoadingSkeleton />
-        ) : error ? (
+        ) : error && messages.length === 0 ? (
           <ErrorStateComponent error={error} onRetry={refetch} />
         ) : (
-          <ChatContainerDisplay
-            messages={messages}
-            emptyState={<EmptyConversation />}
-            onContextMenuAction={handleContextMenuAction}
-            onScrollMethods={(methods) => {
-              scrollMethodsRef.current = methods;
-            }}
-          />
+          <>
+            <ChatContainerDisplay
+              messages={messages}
+              emptyState={<EmptyConversation />}
+              onContextMenuAction={handleContextMenuAction}
+              onScrollMethods={(methods) => {
+                scrollMethodsRef.current = methods;
+              }}
+            />
+            {/* Background loading overlay */}
+            {showBackgroundOverlay && (
+              <div
+                className="absolute inset-0 bg-black/5 flex items-start justify-center pt-4 pointer-events-none z-10"
+                style={{ pointerEvents: "none" }}
+              >
+                <div className="bg-background/90 backdrop-blur-sm border rounded-full px-3 py-1 text-sm text-muted-foreground flex items-center gap-2">
+                  <div className="h-3 w-3 animate-spin rounded-full border-2 border-current border-t-transparent" />
+                  Syncing...
+                </div>
+              </div>
+            )}
+            {/* Inline error banner when messages exist */}
+            {error && messages.length > 0 && (
+              <div className="absolute top-0 left-0 right-0 bg-destructive/10 border-b border-destructive/20 p-2 z-20">
+                <div className="flex items-center gap-2 text-sm text-destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <span>Failed to sync: {error.message}</span>
+                  <button
+                    onClick={refetch}
+                    className="ml-auto text-xs underline hover:no-underline"
+                  >
+                    Retry
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
