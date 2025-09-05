@@ -792,6 +792,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   /**
    * Remove agent from conversation.
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   removeAgent: async (conversationId: string, agentId: string) => {
     if (!conversationService || !get().activeConversationId) {
       return;
@@ -827,6 +828,28 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         ),
         loading: { ...state.loading, agents: false },
       }));
+
+      // Explicitly refresh messages to reflect deleted agent messages
+      try {
+        // Only refresh if we still have the same active conversation
+        const currentActiveConversationId = get().activeConversationId;
+        if (currentActiveConversationId === conversationId) {
+          logger.debug("Refreshing conversation after agent deletion", {
+            conversationId,
+            agentId,
+          });
+          await get().refreshActiveConversation();
+        }
+      } catch (messageRefreshError) {
+        // Log error but don't fail the operation - agent deletion was successful
+        logger.error(
+          "Failed to refresh conversation after agent deletion",
+          messageRefreshError instanceof Error
+            ? messageRefreshError
+            : undefined,
+          { conversationId, agentId },
+        );
+      }
 
       // Round Robin integration: handle agent removal during rotation
       const activeChatMode = get().getActiveChatMode();

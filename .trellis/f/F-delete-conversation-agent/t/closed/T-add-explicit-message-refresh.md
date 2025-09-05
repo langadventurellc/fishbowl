@@ -1,13 +1,28 @@
 ---
 id: T-add-explicit-message-refresh
 title: Add explicit message refresh after agent deletion in useConversationStore
-status: open
+status: done
 priority: medium
 parent: F-delete-conversation-agent
 prerequisites:
   - T-update-ipc-handler-for
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Added explicit message refresh after successful agent deletion using
+    refreshActiveConversation() with race condition protection, conversation ID
+    validation, and graceful error handling that logs failures without affecting
+    main operation
+  packages/ui-shared/src/stores/conversation/__tests__/removeAgent.test.ts:
+    Created comprehensive unit test suite with 15 test cases covering successful
+    refresh scenarios, error handling, round-robin integration, edge cases, and
+    race condition protection for the message refresh functionality
+log:
+  - Successfully implemented explicit message refresh functionality after agent
+    deletion in useConversationStore. Added comprehensive error handling, race
+    condition protection, and extensive unit test coverage. The implementation
+    ensures the UI immediately reflects that deleted agent messages have been
+    removed from the database while maintaining backward compatibility and
+    robust error handling.
 schema: v1.0
 childrenIds: []
 created: 2025-09-05T17:06:31.492Z

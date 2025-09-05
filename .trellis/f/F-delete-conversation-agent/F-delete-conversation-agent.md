@@ -22,6 +22,15 @@ affectedFiles:
     Created comprehensive unit test suite with 14 test cases covering all IPC
     handlers, focusing on the updated REMOVE handler transaction behavior, error
     scenarios, and rollback cases
+  packages/ui-shared/src/stores/conversation/useConversationStore.ts:
+    Added explicit message refresh after successful agent deletion using
+    refreshActiveConversation() with race condition protection, conversation ID
+    validation, and graceful error handling that logs failures without affecting
+    main operation
+  packages/ui-shared/src/stores/conversation/__tests__/removeAgent.test.ts:
+    Created comprehensive unit test suite with 15 test cases covering successful
+    refresh scenarios, error handling, round-robin integration, edge cases, and
+    race condition protection for the message refresh functionality
 log: []
 schema: v1.0
 childrenIds:
@@ -29,8 +38,8 @@ childrenIds:
   - T-add-explicit-message-refresh
   - T-add-ondelete-prop-to
   - T-implement-x-button-and-delete
-  - T-update-ipc-handler-for
   - T-add-message-deletion-method
+  - T-update-ipc-handler-for
 created: 2025-09-05T16:52:11.785Z
 updated: 2025-09-05T16:52:11.785Z
 ---
