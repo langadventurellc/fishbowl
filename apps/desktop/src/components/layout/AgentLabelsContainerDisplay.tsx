@@ -8,6 +8,7 @@ import { useConversationStore, useAgentsStore } from "@fishbowl-ai/ui-shared";
 import { cn } from "../../lib/utils";
 import { AgentPill, ChatModeSelector } from "../chat";
 import { Button } from "../input";
+import { ConfirmationDialog } from "../ui/confirmation-dialog";
 import { AddAgentToConversationModal } from "../modals/AddAgentToConversationModal";
 
 /**
@@ -36,6 +37,16 @@ export const AgentLabelsContainerDisplay: React.FC<
   // Modal state
   const [addModalOpen, setAddModalOpen] = useState(false);
 
+  // Delete confirmation dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [agentToDelete, setAgentToDelete] = useState<{
+    conversationAgentId: string;
+    name: string;
+    conversationId: string;
+    agentId: string;
+  } | null>(null);
+  const [deletionLoading, setDeletionLoading] = useState(false);
+
   // Store integration
   const {
     activeConversationAgents,
@@ -44,6 +55,8 @@ export const AgentLabelsContainerDisplay: React.FC<
     toggleAgentEnabled,
     getActiveChatMode,
     setChatMode,
+    removeAgent,
+    refreshActiveConversation,
   } = useConversationStore();
   const { agents: agentConfigs } = useAgentsStore();
 
@@ -87,6 +100,51 @@ export const AgentLabelsContainerDisplay: React.FC<
 
   // Add Agent button should be disabled when no conversation selected
   const canAddAgent = !!selectedConversationId;
+
+  // Delete agent handler
+  const handleDeleteAgent = useCallback(
+    (conversationAgentId: string) => {
+      // Find agent info for confirmation
+      const conversationAgent = activeConversationAgents.find(
+        (ca) => ca.id === conversationAgentId,
+      );
+      const agentConfig = agentConfigs.find(
+        (ac) => ac.id === conversationAgent?.agent_id,
+      );
+
+      if (conversationAgent && agentConfig && selectedConversationId) {
+        setAgentToDelete({
+          conversationAgentId,
+          name: agentConfig.name,
+          conversationId: selectedConversationId,
+          agentId: conversationAgent.agent_id,
+        });
+        setDeleteDialogOpen(true);
+      }
+    },
+    [activeConversationAgents, agentConfigs, selectedConversationId],
+  );
+
+  // Confirm delete handler
+  const handleConfirmDelete = useCallback(async () => {
+    if (!agentToDelete) return;
+
+    try {
+      setDeletionLoading(true);
+      await removeAgent(agentToDelete.conversationId, agentToDelete.agentId);
+
+      // Refresh conversation data to reflect deletion
+      await refreshActiveConversation();
+
+      setDeleteDialogOpen(false);
+      setAgentToDelete(null);
+    } catch (error) {
+      // Error handling is managed by the store - it will set error state
+      console.error("Failed to delete agent:", error);
+    } finally {
+      setDeletionLoading(false);
+    }
+  }, [agentToDelete, removeAgent, refreshActiveConversation]);
   // Dynamic styles that can't be converted to Tailwind utilities
   const dynamicStyles: React.CSSProperties = {
     height: barHeight,
@@ -151,6 +209,7 @@ export const AgentLabelsContainerDisplay: React.FC<
                     onToggleEnabled={() =>
                       toggleAgentEnabled(conversationAgent.id)
                     }
+                    onDelete={handleDeleteAgent}
                     conversationAgentId={conversationAgent.id}
                     showStatus={true}
                   />
@@ -220,6 +279,19 @@ export const AgentLabelsContainerDisplay: React.FC<
           }}
         />
       )}
+
+      {/* Delete confirmation dialog */}
+      <ConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Delete Agent from Conversation"
+        message={`This will remove ${agentToDelete?.name} from this conversation and delete all of their messages. This action cannot be undone.`}
+        confirmText={deletionLoading ? "Deleting..." : "Delete Agent"}
+        cancelText="Cancel"
+        variant="destructive"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setDeleteDialogOpen(false)}
+      />
     </>
   );
 };

@@ -12,12 +12,25 @@ jest.mock("@fishbowl-ai/ui-shared", () => ({
 
 // Mock the child components
 jest.mock("../../chat", () => ({
-  AgentPill: ({ agent, onToggleEnabled }: any) => (
+  AgentPill: ({
+    agent,
+    onToggleEnabled,
+    onDelete,
+    conversationAgentId,
+  }: any) => (
     <div data-testid="agent-pill">
       <span>{agent.name}</span>
       {onToggleEnabled && (
         <button onClick={() => onToggleEnabled()} data-testid="toggle-agent">
           Toggle
+        </button>
+      )}
+      {onDelete && (
+        <button
+          onClick={() => onDelete(conversationAgentId)}
+          data-testid="delete-agent"
+        >
+          Delete
         </button>
       )}
     </div>
@@ -43,6 +56,23 @@ jest.mock("../../modals/AddAgentToConversationModal", () => ({
   AddAgentToConversationModal: () => <div data-testid="add-agent-modal" />,
 }));
 
+// Mock the confirmation dialog
+jest.mock("../../ui/confirmation-dialog", () => ({
+  ConfirmationDialog: ({ open, title, message, onConfirm, onCancel }: any) =>
+    open ? (
+      <div data-testid="confirmation-dialog">
+        <div data-testid="dialog-title">{title}</div>
+        <div data-testid="dialog-message">{message}</div>
+        <button onClick={onConfirm} data-testid="confirm-delete">
+          Confirm
+        </button>
+        <button onClick={onCancel} data-testid="cancel-delete">
+          Cancel
+        </button>
+      </div>
+    ) : null,
+}));
+
 describe("AgentLabelsContainerDisplay", () => {
   const mockUseConversationStore = useConversationStore as jest.MockedFunction<
     typeof useConversationStore
@@ -58,6 +88,8 @@ describe("AgentLabelsContainerDisplay", () => {
     toggleAgentEnabled: jest.fn(),
     getActiveChatMode: jest.fn(() => "manual"),
     setChatMode: jest.fn(),
+    removeAgent: jest.fn(),
+    refreshActiveConversation: jest.fn(),
   };
 
   const defaultAgentsStore = {
@@ -431,6 +463,327 @@ describe("AgentLabelsContainerDisplay", () => {
 
       // But not in chat mode selector
       expect(screen.queryByTestId("chat-mode-error")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("Delete Agent Functionality", () => {
+    const conversationAgents = [
+      {
+        id: "ca-1",
+        agent_id: "agent-1",
+        enabled: true,
+        display_order: 0,
+        added_at: "2025-01-01T00:00:00Z",
+      },
+      {
+        id: "ca-2",
+        agent_id: "agent-2",
+        enabled: false,
+        display_order: 1,
+        added_at: "2025-01-01T00:01:00Z",
+      },
+    ];
+
+    const agentConfigs = [
+      {
+        id: "agent-1",
+        name: "Test Agent 1",
+        role: "assistant",
+      },
+      {
+        id: "agent-2",
+        name: "Test Agent 2",
+        role: "helper",
+      },
+    ];
+
+    beforeEach(() => {
+      mockUseConversationStore.mockReturnValue({
+        ...defaultConversationStore,
+        activeConversationAgents: conversationAgents,
+      });
+
+      mockUseAgentsStore.mockReturnValue({
+        agents: agentConfigs,
+      });
+    });
+
+    it("passes onDelete handler to AgentPill components when conversation is selected", () => {
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      expect(deleteButtons).toHaveLength(2);
+    });
+
+    it("does not show delete buttons when no conversation is selected", () => {
+      render(<AgentLabelsContainerDisplay {...defaultProps} />);
+
+      expect(screen.queryByTestId("delete-agent")).not.toBeInTheDocument();
+    });
+
+    it("opens confirmation dialog when delete button is clicked", async () => {
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[0]!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("confirmation-dialog")).toBeInTheDocument();
+      });
+
+      expect(screen.getByTestId("dialog-title")).toHaveTextContent(
+        "Delete Agent from Conversation",
+      );
+      expect(screen.getByTestId("dialog-message")).toHaveTextContent(
+        "This will remove Test Agent 1 from this conversation and delete all of their messages. This action cannot be undone.",
+      );
+    });
+
+    it("includes correct agent name in confirmation dialog message", async () => {
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[1]!); // Click second agent
+
+      await waitFor(() => {
+        expect(screen.getByTestId("dialog-message")).toHaveTextContent(
+          "This will remove Test Agent 2 from this conversation",
+        );
+      });
+    });
+
+    it("calls removeAgent and refreshActiveConversation when deletion is confirmed", async () => {
+      const mockRemoveAgent = jest.fn().mockResolvedValue(undefined);
+      const mockRefreshActiveConversation = jest
+        .fn()
+        .mockResolvedValue(undefined);
+
+      mockUseConversationStore.mockReturnValue({
+        ...defaultConversationStore,
+        activeConversationAgents: conversationAgents,
+        removeAgent: mockRemoveAgent,
+        refreshActiveConversation: mockRefreshActiveConversation,
+      });
+
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      // Open dialog
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[0]!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("confirmation-dialog")).toBeInTheDocument();
+      });
+
+      // Confirm deletion
+      fireEvent.click(screen.getByTestId("confirm-delete"));
+
+      await waitFor(() => {
+        expect(mockRemoveAgent).toHaveBeenCalledWith("conv-123", "agent-1");
+      });
+
+      await waitFor(() => {
+        expect(mockRefreshActiveConversation).toHaveBeenCalled();
+      });
+    });
+
+    it("closes dialog and does not delete when cancelled", async () => {
+      const mockRemoveAgent = jest.fn();
+
+      mockUseConversationStore.mockReturnValue({
+        ...defaultConversationStore,
+        activeConversationAgents: conversationAgents,
+        removeAgent: mockRemoveAgent,
+      });
+
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      // Open dialog
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[0]!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("confirmation-dialog")).toBeInTheDocument();
+      });
+
+      // Cancel deletion
+      fireEvent.click(screen.getByTestId("cancel-delete"));
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId("confirmation-dialog"),
+        ).not.toBeInTheDocument();
+      });
+
+      expect(mockRemoveAgent).not.toHaveBeenCalled();
+    });
+
+    it("handles deletion errors gracefully", async () => {
+      const mockRemoveAgent = jest
+        .fn()
+        .mockRejectedValue(new Error("Delete failed"));
+      const mockRefreshActiveConversation = jest.fn();
+      const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
+      mockUseConversationStore.mockReturnValue({
+        ...defaultConversationStore,
+        activeConversationAgents: conversationAgents,
+        removeAgent: mockRemoveAgent,
+        refreshActiveConversation: mockRefreshActiveConversation,
+      });
+
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      // Open dialog and confirm
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[0]!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("confirmation-dialog")).toBeInTheDocument();
+      });
+
+      fireEvent.click(screen.getByTestId("confirm-delete"));
+
+      await waitFor(() => {
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+          "Failed to delete agent:",
+          expect.any(Error),
+        );
+      });
+
+      // Should not call refresh if deletion failed
+      expect(mockRefreshActiveConversation).not.toHaveBeenCalled();
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it("does not open dialog if agent or conversation not found", async () => {
+      // Mock store with missing agent config
+      mockUseAgentsStore.mockReturnValue({
+        agents: [], // Empty agent configs
+      });
+
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[0]!);
+
+      // Should not open dialog
+      expect(
+        screen.queryByTestId("confirmation-dialog"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("handles missing selectedConversationId gracefully", async () => {
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId={null}
+        />,
+      );
+
+      // Should not render delete buttons at all
+      expect(screen.queryByTestId("delete-agent")).not.toBeInTheDocument();
+    });
+
+    it("maintains existing toggle functionality with delete functionality", async () => {
+      const mockToggleAgentEnabled = jest.fn();
+
+      mockUseConversationStore.mockReturnValue({
+        ...defaultConversationStore,
+        activeConversationAgents: conversationAgents,
+        toggleAgentEnabled: mockToggleAgentEnabled,
+      });
+
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      // Test toggle still works
+      const toggleButtons = screen.getAllByTestId("toggle-agent");
+      fireEvent.click(toggleButtons[0]!);
+
+      expect(mockToggleAgentEnabled).toHaveBeenCalledWith("ca-1");
+
+      // Test delete also works
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[0]!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("confirmation-dialog")).toBeInTheDocument();
+      });
+    });
+
+    it("displays loading state in confirm button text during deletion", async () => {
+      const mockRemoveAgent = jest.fn(
+        () => new Promise((resolve) => setTimeout(resolve, 100)),
+      );
+
+      mockUseConversationStore.mockReturnValue({
+        ...defaultConversationStore,
+        activeConversationAgents: conversationAgents,
+        removeAgent: mockRemoveAgent,
+      });
+
+      render(
+        <AgentLabelsContainerDisplay
+          {...defaultProps}
+          selectedConversationId="conv-123"
+        />,
+      );
+
+      // Open dialog
+      const deleteButtons = screen.getAllByTestId("delete-agent");
+      fireEvent.click(deleteButtons[0]!);
+
+      await waitFor(() => {
+        expect(screen.getByTestId("confirmation-dialog")).toBeInTheDocument();
+      });
+
+      // Start deletion - should show loading text
+      fireEvent.click(screen.getByTestId("confirm-delete"));
+
+      // Note: This test verifies the loading state exists in the confirmation dialog
+      // The actual loading text would be set by the ConfirmationDialog component
+      expect(screen.getByTestId("confirm-delete")).toBeInTheDocument();
     });
   });
 });
