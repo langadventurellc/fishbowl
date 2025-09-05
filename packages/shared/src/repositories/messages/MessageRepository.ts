@@ -275,6 +275,50 @@ export class MessageRepository {
     }
   }
 
+  /**
+   * Delete all messages associated with a specific conversation agent.
+   * Used when removing an agent from a conversation to clean up their messages.
+   *
+   * @param conversationAgentId - The UUID of the conversation agent whose messages should be deleted
+   * @returns Promise<number> - The number of messages deleted
+   * @throws DatabaseError when database operations fail
+   */
+  async deleteByConversationAgentId(
+    conversationAgentId: string,
+  ): Promise<number> {
+    try {
+      // Validate conversation agent ID format
+      const idValidation =
+        messageSchema.shape.conversation_agent_id.safeParse(
+          conversationAgentId,
+        );
+      if (!idValidation.success) {
+        return 0;
+      }
+
+      const sql = `
+        DELETE FROM messages
+        WHERE conversation_agent_id = ?
+      `;
+
+      const result = await this.databaseBridge.execute(sql, [
+        conversationAgentId,
+      ]);
+
+      this.logger.info(
+        `Deleted ${result.changes} messages for conversation agent`,
+        {
+          conversationAgentId,
+          deletedCount: result.changes,
+        },
+      );
+
+      return result.changes || 0;
+    } catch (error) {
+      this.handleDatabaseError(error, "deleteByConversationAgentId");
+    }
+  }
+
   async exists(id: string): Promise<boolean> {
     try {
       // Validate ID format

@@ -58,6 +58,8 @@ describe("MessageRepository", () => {
       expect(typeof repository.get).toBe("function");
       expect(typeof repository.getByConversation).toBe("function");
       expect(typeof repository.updateInclusion).toBe("function");
+      expect(typeof repository.delete).toBe("function");
+      expect(typeof repository.deleteByConversationAgentId).toBe("function");
       expect(typeof repository.exists).toBe("function");
     });
   });
@@ -937,6 +939,180 @@ describe("MessageRepository", () => {
         const result = await repository.exists(input);
         expect(result).toBe(false);
       }
+    });
+  });
+
+  describe("deleteByConversationAgentId", () => {
+    const mockConversationAgentId = "123e4567-e89b-12d3-a456-426614174000";
+
+    it("should delete messages and return count for valid conversation agent ID", async () => {
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 3,
+        affectedRows: 3,
+        lastInsertRowid: 0,
+      });
+
+      const result = await repository.deleteByConversationAgentId(
+        mockConversationAgentId,
+      );
+
+      expect(result).toBe(3);
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("DELETE FROM messages"),
+        [mockConversationAgentId],
+      );
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("WHERE conversation_agent_id = ?"),
+        [mockConversationAgentId],
+      );
+    });
+
+    it("should return 0 when no messages match conversation agent ID", async () => {
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 0,
+        affectedRows: 0,
+        lastInsertRowid: 0,
+      });
+
+      const result = await repository.deleteByConversationAgentId(
+        mockConversationAgentId,
+      );
+
+      expect(result).toBe(0);
+    });
+
+    it("should return 0 for invalid UUID format", async () => {
+      const invalidUuid = "not-a-valid-uuid";
+
+      const result = await repository.deleteByConversationAgentId(invalidUuid);
+
+      expect(result).toBe(0);
+      expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
+    });
+
+    it("should return 0 for malformed UUID formats", async () => {
+      const malformedUuids = [
+        "123e4567-e89b-12d3-a456-42661417400", // Missing one character
+        "123e4567-e89b-12d3-a456-42661417400g", // Extra character
+        "123e4567-e89b-12d3-a456-4266141740000", // Extra character
+        "123e4567e89b12d3a456426614174000", // Missing hyphens
+        "", // Empty string
+        "null", // String "null"
+        "undefined", // String "undefined"
+      ];
+
+      for (const uuid of malformedUuids) {
+        const result = await repository.deleteByConversationAgentId(uuid);
+        expect(result).toBe(0);
+      }
+
+      expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
+    });
+
+    it("should handle null and undefined input", async () => {
+      // TypeScript prevents this but test runtime behavior
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 0,
+        affectedRows: 0,
+        lastInsertRowid: 0,
+      });
+
+      const result1 = await repository.deleteByConversationAgentId(
+        null as unknown as string,
+      );
+      const result2 = await repository.deleteByConversationAgentId(
+        undefined as unknown as string,
+      );
+
+      expect(result1).toBe(0);
+      expect(result2).toBe(0);
+      // null passes validation since conversation_agent_id is nullable
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledWith(
+        expect.stringContaining("DELETE FROM messages"),
+        [null],
+      );
+      // undefined fails validation so no execute call for it
+      expect(mockDatabaseBridge.execute).toHaveBeenCalledTimes(1);
+    });
+
+    it("should handle database connection error", async () => {
+      mockDatabaseBridge.execute.mockRejectedValue(
+        new ConnectionError("Database connection failed"),
+      );
+
+      await expect(
+        repository.deleteByConversationAgentId(mockConversationAgentId),
+      ).rejects.toThrow(MessageValidationError);
+    });
+
+    it("should handle constraint violation error", async () => {
+      mockDatabaseBridge.execute.mockRejectedValue(
+        new ConstraintViolationError("Constraint violation", "foreign_key"),
+      );
+
+      await expect(
+        repository.deleteByConversationAgentId(mockConversationAgentId),
+      ).rejects.toThrow(MessageValidationError);
+    });
+
+    it("should handle generic database errors", async () => {
+      mockDatabaseBridge.execute.mockRejectedValue(
+        new Error("Generic database error"),
+      );
+
+      await expect(
+        repository.deleteByConversationAgentId(mockConversationAgentId),
+      ).rejects.toThrow();
+    });
+
+    it("should return changes || 0 when changes is undefined", async () => {
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: undefined as unknown as number,
+        affectedRows: 0,
+        lastInsertRowid: 0,
+      });
+
+      const result = await repository.deleteByConversationAgentId(
+        mockConversationAgentId,
+      );
+
+      expect(result).toBe(0);
+    });
+
+    it("should log successful deletion with correct details", async () => {
+      const mockLogger = repository["logger"];
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 2,
+        affectedRows: 2,
+        lastInsertRowid: 0,
+      });
+
+      await repository.deleteByConversationAgentId(mockConversationAgentId);
+
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        "Deleted 2 messages for conversation agent",
+        {
+          conversationAgentId: mockConversationAgentId,
+          deletedCount: 2,
+        },
+      );
+    });
+
+    it("should use parameterized query to prevent SQL injection", async () => {
+      const maliciousInput =
+        "123e4567-e89b-12d3-a456-426614174000'; DROP TABLE messages; --";
+      mockDatabaseBridge.execute.mockResolvedValue({
+        changes: 0,
+        affectedRows: 0,
+        lastInsertRowid: 0,
+      });
+
+      // This should return 0 due to UUID validation, not execute SQL
+      const result =
+        await repository.deleteByConversationAgentId(maliciousInput);
+
+      expect(result).toBe(0);
+      expect(mockDatabaseBridge.execute).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,12 +1,26 @@
 ---
 id: T-add-message-deletion-method
 title: Add message deletion method to MessageRepository
-status: open
+status: done
 priority: high
 parent: F-delete-conversation-agent
 prerequisites: []
-affectedFiles: {}
-log: []
+affectedFiles:
+  packages/shared/src/repositories/messages/MessageRepository.ts:
+    Added deleteByConversationAgentId method with UUID validation, parameterized
+    SQL DELETE query, error handling, and logging
+  packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
+    Added comprehensive unit test suite for deleteByConversationAgentId method
+    and updated constructor test to include new method
+log:
+  - Successfully implemented deleteByConversationAgentId method in
+    MessageRepository for bulk deletion of messages associated with a
+    conversation agent. The method validates input using UUID v4 format,
+    executes parameterized SQL DELETE query, returns count of deleted messages,
+    and includes comprehensive error handling and logging. Added 11
+    comprehensive unit tests covering success cases, validation, error handling,
+    edge cases, and SQL injection prevention. All tests pass and code follows
+    established repository patterns.
 schema: v1.0
 childrenIds: []
 created: 2025-09-05T17:03:53.898Z

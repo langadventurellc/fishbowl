@@ -1,14 +1,26 @@
 ---
 id: F-delete-conversation-agent
 title: Delete Conversation Agent with Confirmation
-status: open
+status: in-progress
 priority: medium
 parent: none
 prerequisites: []
-affectedFiles: {}
+affectedFiles:
+  packages/shared/src/repositories/messages/MessageRepository.ts:
+    Added deleteByConversationAgentId method with UUID validation, parameterized
+    SQL DELETE query, error handling, and logging
+  packages/shared/src/repositories/messages/__tests__/MessageRepository.test.ts:
+    Added comprehensive unit test suite for deleteByConversationAgentId method
+    and updated constructor test to include new method
 log: []
 schema: v1.0
-childrenIds: []
+childrenIds:
+  - T-add-delete-confirmation
+  - T-add-explicit-message-refresh
+  - T-add-message-deletion-method
+  - T-add-ondelete-prop-to
+  - T-implement-x-button-and-delete
+  - T-update-ipc-handler-for
 created: 2025-09-05T16:52:11.785Z
 updated: 2025-09-05T16:52:11.785Z
 ---
