@@ -12,7 +12,6 @@
  */
 
 import type { EmptyStateProps } from "@fishbowl-ai/ui-shared";
-import { UserPlus } from "lucide-react";
 import React from "react";
 import { cn } from "../../../lib/utils";
 
@@ -27,9 +26,6 @@ export const EmptyLibraryState: React.FC<EmptyStateProps> = ({
         className,
       )}
     >
-      <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
-        <UserPlus className="h-8 w-8 text-muted-foreground" />
-      </div>
       <h3 className="text-xl font-semibold mb-2 text-center">
         No agents configured
       </h3>

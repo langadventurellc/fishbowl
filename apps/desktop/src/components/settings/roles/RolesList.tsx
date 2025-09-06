@@ -45,6 +45,18 @@ export const RolesList = memo<RolesListProps>(function RolesList({
       {/* Accessible heading for screen readers */}
       <h2 className="sr-only">All Roles List</h2>
 
+      <div className="my-[16px]">
+        <Button
+          onClick={onCreateRole}
+          className="w-full gap-2"
+          size="lg"
+          aria-label="Create a new role"
+        >
+          <Plus className="h-4 w-4" />
+          Create Role
+        </Button>
+      </div>
+
       {/* Role list area */}
       <div className="flex-1">
         <div
@@ -70,19 +82,6 @@ export const RolesList = memo<RolesListProps>(function RolesList({
             </div>
           ))}
         </div>
-      </div>
-
-      {/* Create button container - always visible at bottom */}
-      <div className="pt-6 border-t border-border mt-6">
-        <Button
-          onClick={onCreateRole}
-          className="w-full gap-2"
-          size="lg"
-          aria-label="Create a new role"
-        >
-          <Plus className="h-4 w-4" />
-          Create Role
-        </Button>
       </div>
     </div>
   );

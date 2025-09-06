@@ -13,7 +13,6 @@
  */
 
 import type { Provider } from "@fishbowl-ai/shared";
-import { Key } from "lucide-react";
 import React from "react";
 import { cn } from "../../../lib/utils";
 import { ProviderSelector } from "./ProviderSelector";
@@ -34,9 +33,6 @@ export const EmptyLlmState: React.FC<EmptyLlmStateProps> = ({
         className,
       )}
     >
-      <div className="w-16 h-16 bg-muted rounded-full mx-auto mb-6 flex items-center justify-center">
-        <Key className="h-8 w-8 text-muted-foreground" />
-      </div>
       <h3 className="text-xl font-semibold mb-2 text-center">
         No LLM providers configured
       </h3>
