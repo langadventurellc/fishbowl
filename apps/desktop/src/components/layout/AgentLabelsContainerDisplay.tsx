@@ -10,6 +10,18 @@ import { AgentPill, ChatModeSelector } from "../chat";
 import { Button } from "../input";
 import { ConfirmationDialog } from "../ui/confirmation-dialog";
 import { AddAgentToConversationModal } from "../modals/AddAgentToConversationModal";
+import {
+  DndContext,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { SortableAgentPill } from "../chat/SortableAgentPill";
 
 /**
  * AgentLabelsContainerDisplay - Horizontal agent labels bar layout component
@@ -57,6 +69,7 @@ export const AgentLabelsContainerDisplay: React.FC<
     setChatMode,
     removeAgent,
     refreshActiveConversation,
+    reorderAgents,
   } = useConversationStore();
   const { agents: agentConfigs } = useAgentsStore();
 
@@ -72,6 +85,52 @@ export const AgentLabelsContainerDisplay: React.FC<
     agentsError.message?.includes("chat mode")
       ? agentsError
       : null;
+
+  // Drag and drop configuration
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+  );
+
+  // Agent IDs for sortable context
+  const agentIds = conversationAgents.map((agent) => agent.id);
+
+  // Handle drag end
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      // Early return if conditions aren't met for reordering
+      if (!over || active.id === over.id) {
+        return;
+      }
+
+      // Ensure we have a valid conversation ID
+      if (!selectedConversationId) {
+        return;
+      }
+
+      const activeId = String(active.id);
+      const overId = String(over.id);
+
+      const oldIndex = agentIds.indexOf(activeId);
+      const newIndex = agentIds.indexOf(overId);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const reorderedIds = [...agentIds];
+        const [moved] = reorderedIds.splice(oldIndex, 1);
+
+        if (moved) {
+          reorderedIds.splice(newIndex, 0, moved);
+          reorderAgents(selectedConversationId, reorderedIds);
+        }
+      }
+    },
+    [agentIds, selectedConversationId, reorderAgents],
+  );
 
   // Transform conversation agents to display format
   const displayAgents = selectedConversationId
@@ -185,57 +244,67 @@ export const AgentLabelsContainerDisplay: React.FC<
         {/* Agent pills */}
         {!isLoading &&
           !agentsError &&
-          (selectedConversationId
-            ? conversationAgents.map((conversationAgent) => {
-                // Find the agent configuration
-                const agentConfig = agentConfigs.find(
-                  (agent) => agent.id === conversationAgent.agent_id,
-                );
+          (selectedConversationId ? (
+            <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+              <SortableContext
+                items={agentIds}
+                strategy={verticalListSortingStrategy}
+              >
+                {conversationAgents.map((conversationAgent) => {
+                  // Find the agent configuration
+                  const agentConfig = agentConfigs.find(
+                    (agent) => agent.id === conversationAgent.agent_id,
+                  );
 
-                // Transform ConversationAgent to AgentPillViewModel
-                const agentViewModel: AgentPillViewModel = {
-                  name: agentConfig?.name || "Unknown Agent",
-                  role: agentConfig?.role || "unknown",
-                  color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
-                  isThinking: false,
-                  status: "idle",
-                  enabled: conversationAgent.enabled, // Use actual enabled state from conversation agent
-                };
+                  // Transform ConversationAgent to AgentPillViewModel
+                  const agentViewModel: AgentPillViewModel = {
+                    name: agentConfig?.name || "Unknown Agent",
+                    role: agentConfig?.role || "unknown",
+                    color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
+                    isThinking: false,
+                    status: "idle",
+                    enabled: conversationAgent.enabled, // Use actual enabled state from conversation agent
+                  };
 
-                return (
-                  <AgentPill
-                    key={conversationAgent.id}
-                    agent={agentViewModel}
-                    onToggleEnabled={() =>
-                      toggleAgentEnabled(conversationAgent.id)
-                    }
-                    onDelete={handleDeleteAgent}
-                    conversationAgentId={conversationAgent.id}
-                    showStatus={true}
-                  />
-                );
-              })
-            : displayAgents.map((agent, index) => {
-                // Transform AgentSettingsViewModel to AgentPillViewModel for non-conversation view
-                const agentViewModel: AgentPillViewModel =
-                  "id" in agent
-                    ? {
-                        name: agent.name,
-                        role: agent.role,
-                        color: "#3b82f6",
-                        isThinking: false,
-                        status: "idle",
-                        enabled: true, // Default to enabled for settings view agents
+                  return (
+                    <SortableAgentPill
+                      key={conversationAgent.id}
+                      id={conversationAgent.id}
+                      agent={agentViewModel}
+                      onToggleEnabled={() =>
+                        toggleAgentEnabled(conversationAgent.id)
                       }
-                    : agent;
+                      onDelete={handleDeleteAgent}
+                      conversationAgentId={conversationAgent.id}
+                      showStatus={true}
+                    />
+                  );
+                })}
+              </SortableContext>
+            </DndContext>
+          ) : (
+            displayAgents.map((agent, index) => {
+              // Transform AgentSettingsViewModel to AgentPillViewModel for non-conversation view
+              const agentViewModel: AgentPillViewModel =
+                "id" in agent
+                  ? {
+                      name: agent.name,
+                      role: agent.role,
+                      color: "#3b82f6",
+                      isThinking: false,
+                      status: "idle",
+                      enabled: true, // Default to enabled for settings view agents
+                    }
+                  : agent;
 
-                return (
-                  <AgentPill
-                    key={"id" in agent ? agent.id : `agent-${index}`}
-                    agent={agentViewModel}
-                  />
-                );
-              }))}
+              return (
+                <AgentPill
+                  key={"id" in agent ? agent.id : `agent-${index}`}
+                  agent={agentViewModel}
+                />
+              );
+            })
+          ))}
 
         {/* Add Agent button */}
         {(onAddAgent || selectedConversationId) && (

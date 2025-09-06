@@ -905,6 +905,137 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   },
 
   /**
+   * Reorder conversation agents by updating their display_order values.
+   * Uses optimistic UI updates with rollback on failure and handles race conditions.
+   */
+  reorderAgents: async (conversationId: string, agentIds: string[]) => {
+    if (!conversationService || !get().activeConversationId) {
+      return;
+    }
+
+    // Early return if conversationId doesn't match active conversation
+    if (get().activeConversationId !== conversationId) {
+      return;
+    }
+
+    const { activeConversationAgents } = get();
+
+    // Validate that all agentIds exist in current activeConversationAgents
+    const existingAgentIds = new Set(
+      activeConversationAgents.map((agent) => agent.id),
+    );
+    const missingAgentIds = agentIds.filter((id) => !existingAgentIds.has(id));
+
+    if (missingAgentIds.length > 0) {
+      throw new Error(
+        `Cannot reorder: agents not found: ${missingAgentIds.join(", ")}`,
+      );
+    }
+
+    // Store original order for rollback (needs to be accessible in catch block)
+    const originalAgents = [...activeConversationAgents];
+
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
+
+    try {
+      // Set loading state and clear any previous errors
+      set((state) => ({
+        ...state,
+        activeRequestToken: requestToken,
+        loading: { ...state.loading, agents: true },
+        error: { ...state.error, agents: undefined },
+      }));
+
+      // Optimistic UI update: reorder agents immediately
+      const reorderedAgents = agentIds
+        .map((agentId) =>
+          activeConversationAgents.find((agent) => agent.id === agentId),
+        )
+        .filter(Boolean) as ConversationAgent[];
+
+      set((state) => ({
+        ...state,
+        activeConversationAgents: reorderedAgents,
+      }));
+
+      // Update display_order for each agent via service calls
+      const updatedAgents: ConversationAgent[] = [];
+
+      for (let i = 0; i < agentIds.length; i++) {
+        const agentId = agentIds[i];
+        if (!agentId) {
+          throw new Error(`Invalid agent ID at index ${i}`);
+        }
+        const updatedAgent = await conversationService.updateConversationAgent(
+          agentId,
+          { display_order: i },
+        );
+        updatedAgents.push(updatedAgent);
+      }
+
+      // Check for race conditions before final state update
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        logger.debug("Reorder operation superseded by newer request", {
+          currentToken: currentState.activeRequestToken,
+          requestToken,
+        });
+        return;
+      }
+
+      // Apply final state update using service data
+      set((state) => ({
+        ...state,
+        activeConversationAgents: state.activeConversationAgents.map(
+          (agent) => {
+            const updated = updatedAgents.find((ua) => ua.id === agent.id);
+            return updated || agent;
+          },
+        ),
+        loading: { ...state.loading, agents: false },
+        activeRequestToken: null,
+      }));
+
+      logger.debug("Successfully reordered agents", {
+        conversationId,
+        agentCount: agentIds.length,
+      });
+    } catch (error) {
+      logger.error(
+        "Failed to reorder agents",
+        error instanceof Error ? error : undefined,
+        { conversationId, agentCount: agentIds.length },
+      );
+
+      // Check for race conditions before rollback
+      const currentState = get();
+      if (currentState.activeRequestToken === requestToken) {
+        // Rollback to original order on failure
+        set((state) => ({
+          ...state,
+          activeConversationAgents: originalAgents,
+          loading: { ...state.loading, agents: false },
+          activeRequestToken: null,
+          error: {
+            ...state.error,
+            agents: {
+              message:
+                error instanceof Error
+                  ? error.message
+                  : "Failed to reorder agents",
+              operation: "save",
+              isRetryable: true,
+              retryCount: 0,
+              timestamp: new Date().toISOString(),
+            },
+          },
+        }));
+      }
+    }
+  },
+
+  /**
    * Toggle agent enabled state.
    */
   toggleAgentEnabled: async (conversationAgentId: string) => {

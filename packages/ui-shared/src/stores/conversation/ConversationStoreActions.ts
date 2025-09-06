@@ -99,6 +99,15 @@ export interface ConversationStoreActions {
   removeAgent(conversationId: string, agentId: string): Promise<void>;
 
   /**
+   * Reorder conversation agents by updating their display_order values.
+   * Uses optimistic UI updates with rollback on failure and handles race conditions.
+   *
+   * @param conversationId - ID of the conversation containing the agents
+   * @param agentIds - Array of ConversationAgent IDs in desired display order
+   */
+  reorderAgents(conversationId: string, agentIds: string[]): Promise<void>;
+
+  /**
    * Toggle the enabled state of a conversation agent.
    * Enables or disables agent participation in the conversation.
    */
