@@ -74,7 +74,6 @@ export const ChatModeSelector: React.FC<ChatModeSelectorProps> = ({
       >
         <SelectTrigger
           className={cn(
-            "w-40",
             hasError && "border-destructive focus:ring-destructive",
             className,
           )}

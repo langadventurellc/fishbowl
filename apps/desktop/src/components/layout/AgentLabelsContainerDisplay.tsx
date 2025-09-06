@@ -1,16 +1,4 @@
 import {
-  AgentLabelsContainerDisplayProps,
-  AgentPillViewModel,
-} from "@fishbowl-ai/ui-shared";
-import { AlertCircle, Loader2 } from "lucide-react";
-import React, { useCallback, useState } from "react";
-import { useConversationStore, useAgentsStore } from "@fishbowl-ai/ui-shared";
-import { cn } from "../../lib/utils";
-import { AgentPill, ChatModeSelector } from "../chat";
-import { Button } from "../input";
-import { ConfirmationDialog } from "../ui/confirmation-dialog";
-import { AddAgentToConversationModal } from "../modals/AddAgentToConversationModal";
-import {
   DndContext,
   PointerSensor,
   useSensor,
@@ -21,7 +9,20 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import {
+  AgentLabelsContainerDisplayProps,
+  AgentPillViewModel,
+  useAgentsStore,
+  useConversationStore,
+} from "@fishbowl-ai/ui-shared";
+import { AlertCircle, Loader2 } from "lucide-react";
+import React, { useCallback, useState } from "react";
+import { cn } from "../../lib/utils";
+import { AgentPill, ChatModeSelector } from "../chat";
 import { SortableAgentPill } from "../chat/SortableAgentPill";
+import { Button } from "../input";
+import { AddAgentToConversationModal } from "../modals/AddAgentToConversationModal";
+import { ConfirmationDialog } from "../ui/confirmation-dialog";
 
 /**
  * AgentLabelsContainerDisplay - Horizontal agent labels bar layout component
@@ -33,19 +34,7 @@ import { SortableAgentPill } from "../chat/SortableAgentPill";
  */
 export const AgentLabelsContainerDisplay: React.FC<
   AgentLabelsContainerDisplayProps
-> = ({
-  agents,
-  onAddAgent,
-  selectedConversationId,
-  barHeight = "56px",
-  agentSpacing = "8px",
-  containerPadding = "0 16px",
-  horizontalScroll = true,
-  showBottomBorder = true,
-  backgroundVariant = "card",
-  className,
-  style,
-}) => {
+> = ({ agents, onAddAgent, selectedConversationId, className }) => {
   // Modal state
   const [addModalOpen, setAddModalOpen] = useState(false);
 
@@ -204,26 +193,14 @@ export const AgentLabelsContainerDisplay: React.FC<
       setDeletionLoading(false);
     }
   }, [agentToDelete, removeAgent, refreshActiveConversation]);
-  // Dynamic styles that can't be converted to Tailwind utilities
-  const dynamicStyles: React.CSSProperties = {
-    height: barHeight,
-    backgroundColor: `var(--${backgroundVariant})`,
-    padding: containerPadding,
-    gap: agentSpacing,
-    // Merge custom styles
-    ...style,
-  };
 
   return (
     <>
       <div
         className={cn(
-          "flex items-center overflow-y-hidden",
-          showBottomBorder && "border-b border-border",
-          horizontalScroll ? "overflow-x-auto" : "overflow-x-visible",
+          "flex items-center overflow-y-hidden border-b border-border overflow-x-auto bg-card gap-[8px] p-[16px]",
           className,
         )}
-        style={dynamicStyles}
       >
         {/* Loading state */}
         {isLoading && selectedConversationId && (

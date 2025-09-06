@@ -10,7 +10,6 @@ import { NewConversationButton } from "../chat/NewConversationButton";
 import { RenameConversationModal } from "../modals/RenameConversationModal";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { DeleteConversationModal } from "./DeleteConversationModal";
-import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
@@ -173,18 +172,14 @@ export function SidebarContainerDisplay({
     backgroundColor: "var(--sidebar)",
     borderRight: showBorder ? `1px solid var(--border)` : "none",
     padding: collapsed ? "0" : "16px",
+    height: "100vh",
+    paddingTop: !collapsed ? "48px" : "0",
     ...style, // Custom styles take precedence
   };
 
   // Render self-contained sidebar when conversations are provided
   const renderSelfContainedContent = () => (
     <>
-      <SidebarHeaderDisplay
-        title="Conversations"
-        showControls={true}
-        collapsed={collapsed}
-      />
-
       {/* Conversation items with interactive behavior */}
       <div className="flex flex-1 flex-col gap-1 min-h-[120px]">
         {conversationsToDisplay.length === 0 ? (

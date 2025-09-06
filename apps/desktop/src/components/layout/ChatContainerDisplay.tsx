@@ -287,7 +287,13 @@ export const ChatContainerDisplay: React.FC<ChatContainerDisplayProps> = ({
       >
         <div
           ref={contentRef}
-          className="flex flex-col p-[var(--container-padding)] gap-[var(--message-spacing)]"
+          className={cn(
+            "flex flex-col gap-[var(--message-spacing)]",
+            // Use full height when showing empty state, otherwise just padding
+            messages && messages.length > 0
+              ? "p-[var(--container-padding)]"
+              : "flex-1 p-[var(--container-padding)]",
+          )}
         >
           {renderContent()}
           <div

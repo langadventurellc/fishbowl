@@ -1,7 +1,7 @@
 import { ConversationLayoutDisplayProps } from "@fishbowl-ai/ui-shared";
-import React, { useState } from "react";
+import React from "react";
 import { cn } from "../../lib/utils";
-import { SidebarContainerDisplay, SidebarToggleDisplay } from "../sidebar";
+import { SidebarContainerDisplay } from "../sidebar";
 import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
 
 /**
@@ -20,27 +20,10 @@ export const ConversationLayoutDisplay: React.FC<
   className,
   style,
 }) => {
-  // Internal state management for sidebar collapse
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(
-    defaultSidebarCollapsed,
-  );
-
-  const handleSidebarToggle = () => {
-    setIsSidebarCollapsed(!isSidebarCollapsed);
-  };
-
   return (
     <div className={cn("flex flex-1 overflow-hidden", className)} style={style}>
-      {/* Sidebar Toggle Button */}
-      <div onClick={handleSidebarToggle} className="cursor-pointer">
-        <SidebarToggleDisplay
-          isCollapsed={isSidebarCollapsed}
-          showHoverState={false}
-        />
-      </div>
-
       <SidebarContainerDisplay
-        collapsed={isSidebarCollapsed}
+        collapsed={defaultSidebarCollapsed}
         showBorder={true}
         selectedConversationId={selectedConversationId}
         onConversationSelect={onConversationSelect}

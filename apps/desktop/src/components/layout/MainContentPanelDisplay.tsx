@@ -1,9 +1,9 @@
 import {
+  AgentPillViewModel,
   MainContentPanelDisplayProps,
   MessageViewModel,
-  AgentPillViewModel,
-  useConversationStore,
   useAgentsStore,
+  useConversationStore,
   useRolesStore,
   type ErrorState,
 } from "@fishbowl-ai/ui-shared";
@@ -11,11 +11,11 @@ import { AlertCircle, MessageCircle } from "lucide-react";
 import React, { useMemo, useRef } from "react";
 import { useChatEventIntegration } from "../../hooks/chat/useChatEventIntegration";
 import { useMessageActions } from "../../hooks/services/useMessageActions";
+import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
 import { cn } from "../../lib/utils";
 import { MessageInputContainer } from "../input";
-import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 import { ConfirmationDialog } from "../ui/confirmation-dialog";
-import { useConfirmationDialog } from "../../hooks/useConfirmationDialog";
+import { AgentLabelsContainerDisplay, ChatContainerDisplay } from "./";
 
 /**
  * MainContentPanelDisplay - Primary conversation interface layout component
@@ -316,6 +316,7 @@ const MainContentPanelContent: React.FC<MainContentPanelContentProps> = ({
       <AgentLabelsContainerDisplay
         agents={agents}
         selectedConversationId={selectedConversationId}
+        className="pt-[48px]"
       />
 
       {/* Chat Container - Add overflow constraints */}

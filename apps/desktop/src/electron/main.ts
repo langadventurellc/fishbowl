@@ -60,6 +60,22 @@ let mainWindow: BrowserWindow | null = null;
 let mainProcessServices: MainProcessServices | null = null;
 
 function createMainWindow(): void {
+  // Platform-specific title bar configuration
+  const titleBarConfig =
+    process.platform === "darwin"
+      ? {
+          titleBarStyle: "hiddenInset" as const,
+          trafficLightPosition: { x: 10, y: 10 },
+        }
+      : {
+          titleBarStyle: "hidden" as const,
+          titleBarOverlay: {
+            color: "#e7e5e4", // Match theme background
+            symbolColor: "#1e293b", // Match theme foreground
+            height: 32,
+          },
+        };
+
   mainWindow = new BrowserWindow({
     title: "Fishbowl",
     icon: path.join(__dirname, "..", "assets", "icon.png"),
@@ -69,6 +85,7 @@ function createMainWindow(): void {
     minHeight: 600,
     show: false,
     autoHideMenuBar: true,
+    ...titleBarConfig,
     webPreferences: {
       preload: path.join(MAIN_DIST, "preload.js"),
       nodeIntegration: false,
