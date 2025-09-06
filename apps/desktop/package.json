@@ -1,7 +1,7 @@
 {
-  "name": "@fishbowl-ai/desktop",
-  "version": "0.0.0",
-  "description": "Fishbowl AI Desktop Application",
+  "name": "roomful-ai",
+  "version": "0.0.1",
+  "description": "Roomful AI Desktop Application",
   "author": "LangAdventure LLC",
   "private": true,
   "type": "module",

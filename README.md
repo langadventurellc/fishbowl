@@ -1,4 +1,4 @@
-# Fishbowl AI
+# Roomful AI
 
 A desktop and mobile application for creating conversations with multiple AI agents simultaneously. Configure agents with unique personalities, roles, and AI models to enable dynamic brainstorming, problem-solving, and creative exploration.
 
@@ -52,7 +52,7 @@ A desktop and mobile application for creating conversations with multiple AI age
 
 ## Mobile App Development
 
-The Fishbowl mobile app is built with React Native and Expo, supporting both managed (EAS Build) and local build workflows.
+The Roomful AI mobile app is built with React Native and Expo, supporting both managed (EAS Build) and local build workflows.
 
 ### Prerequisites
 
