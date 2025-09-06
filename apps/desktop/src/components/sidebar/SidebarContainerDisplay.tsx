@@ -21,7 +21,6 @@ const logger = createLoggerSync({
 
 export function SidebarContainerDisplay({
   collapsed = false,
-  showBorder = true,
   selectedConversationId,
   onConversationSelect,
   className = "",
@@ -169,10 +168,7 @@ export function SidebarContainerDisplay({
   // Dynamic styles that need to remain as CSS properties
   const dynamicStyles: React.CSSProperties = {
     width: collapsed ? "0px" : "200px",
-    backgroundColor: "var(--sidebar)",
-    borderRight: showBorder ? `1px solid var(--border)` : "none",
     padding: collapsed ? "0" : "16px",
-    height: "100vh",
     paddingTop: !collapsed ? "48px" : "0",
     ...style, // Custom styles take precedence
   };
@@ -238,7 +234,7 @@ export function SidebarContainerDisplay({
   return (
     <div
       className={cn(
-        "flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+        "flex flex-col overflow-hidden transition-all duration-300 ease-in-out bg-sidebar h-full",
         className,
       )}
       style={dynamicStyles}

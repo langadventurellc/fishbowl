@@ -13,22 +13,14 @@ import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
  */
 export const ConversationLayoutDisplay: React.FC<
   ConversationLayoutDisplayProps
-> = ({
-  defaultSidebarCollapsed = false,
-  selectedConversationId,
-  onConversationSelect,
-  className,
-  style,
-}) => {
+> = ({ selectedConversationId, onConversationSelect, className, style }) => {
   return (
     <div className={cn("flex flex-1 overflow-hidden", className)} style={style}>
       <SidebarContainerDisplay
-        collapsed={defaultSidebarCollapsed}
-        showBorder={true}
+        collapsed={false}
         selectedConversationId={selectedConversationId}
         onConversationSelect={onConversationSelect}
       />
-
       <MainContentPanelDisplay
         selectedConversationId={selectedConversationId}
       />

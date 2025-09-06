@@ -11,12 +11,6 @@ export interface SidebarContainerDisplayProps {
   collapsed?: boolean;
 
   /**
-   * Whether to show the right border
-   * @default true
-   */
-  showBorder?: boolean;
-
-  /**
    * Currently selected conversation ID.
    * Used to track which conversation is active for agent management.
    */

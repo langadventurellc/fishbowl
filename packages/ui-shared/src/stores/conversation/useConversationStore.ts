@@ -908,6 +908,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
    * Reorder conversation agents by updating their display_order values.
    * Uses optimistic UI updates with rollback on failure and handles race conditions.
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   reorderAgents: async (conversationId: string, agentIds: string[]) => {
     if (!conversationService || !get().activeConversationId) {
       return;
