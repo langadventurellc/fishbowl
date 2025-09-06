@@ -46,8 +46,8 @@ export function CustomTitleBar({
       data-testid="custom-title-bar"
     >
       {/* Title text */}
-      <div className="flex items-center justify-center flex-1">
-        <span className="text-sm font-medium text-foreground/80 truncate">
+      <div className="flex items-center justify-center flex-1 pt-4">
+        <span className="text-md font-bold text-foreground/80 truncate">
           {title}
         </span>
       </div>

@@ -290,14 +290,14 @@ export const AgentLabelsContainerDisplay: React.FC<
             size="small"
             onClick={handleAddAgent}
             disabled={!canAddAgent || isLoading}
-            className="add-agent-button"
+            className="add-agent-button bg-background hover:bg-accent hover:text-accent-foreground"
             aria-label={
               !canAddAgent
                 ? "Select a conversation to add agents"
                 : "Add agent to conversation"
             }
           >
-            +
+            + Add agent
           </Button>
         )}
 

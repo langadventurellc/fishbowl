@@ -1,5 +1,6 @@
 import { ConversationLayoutDisplayProps } from "@fishbowl-ai/ui-shared";
-import React from "react";
+import { PanelLeft } from "lucide-react";
+import React, { useState } from "react";
 import { cn } from "../../lib/utils";
 import { SidebarContainerDisplay } from "../sidebar";
 import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
@@ -14,10 +15,23 @@ import { MainContentPanelDisplay } from "./MainContentPanelDisplay";
 export const ConversationLayoutDisplay: React.FC<
   ConversationLayoutDisplayProps
 > = ({ selectedConversationId, onConversationSelect, className, style }) => {
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div className={cn("flex flex-1 overflow-hidden", className)} style={style}>
+    <div
+      className={cn("flex flex-1 overflow-hidden relative", className)}
+      style={style}
+    >
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="absolute top-2 left-20 p-1 bg-background hover:bg-accent hover:text-accent-foreground transition-colors rounded-[4px] z-50"
+        style={{ WebkitAppRegion: "no-drag" } as React.CSSProperties}
+        aria-label="Toggle sidebar"
+      >
+        <PanelLeft size={20} />
+      </button>
       <SidebarContainerDisplay
-        collapsed={false}
+        collapsed={collapsed}
         selectedConversationId={selectedConversationId}
         onConversationSelect={onConversationSelect}
       />

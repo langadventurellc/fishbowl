@@ -1,3 +1,4 @@
+import { StructuredLogger } from "@fishbowl-ai/shared";
 import {
   app,
   BrowserWindow,
@@ -8,26 +9,25 @@ import {
 } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { StructuredLogger } from "@fishbowl-ai/shared";
 import { MainProcessServices } from "../main/services/MainProcessServices.js";
-import { ensurePersonalityDefinitions } from "./startup/ensurePersonalityDefinitions.js";
-import { ensureSystemPromptTemplate } from "./startup/ensureSystemPromptTemplate.js";
 import { setupAgentsHandlers } from "./agentsHandlers.js";
+import { setupChatHandlers } from "./chatHandlers.js";
 import { setupConversationAgentHandlers } from "./conversationAgentHandlers.js";
 import { setupConversationsHandlers } from "./conversationsHandlers.js";
-import { setupMessagesHandlers } from "./messagesHandlers.js";
-import { setupChatHandlers } from "./chatHandlers.js";
 import { llmConfigServiceManager } from "./getLlmConfigService.js";
 import { llmStorageServiceManager } from "./getLlmStorageService.js";
 import { settingsRepositoryManager } from "./getSettingsRepository.js";
 import { setupLlmConfigHandlers } from "./handlers/llmConfigHandlers.js";
 import { setupLlmModelsHandlers } from "./handlers/llmModelsHandlers.js";
 import { setupPersonalityDefinitionsHandlers } from "./handlers/personalityDefinitionsHandlers.js";
+import { setupMessagesHandlers } from "./messagesHandlers.js";
 import { setupPersonalitiesHandlers } from "./personalitiesHandlers.js";
 import { setupRolesHandlers } from "./rolesHandlers.js";
 import { LlmConfigService } from "./services/LlmConfigService.js";
 import { LlmStorageService } from "./services/LlmStorageService.js";
 import { setupSettingsHandlers } from "./settingsHandlers.js";
+import { ensurePersonalityDefinitions } from "./startup/ensurePersonalityDefinitions.js";
+import { ensureSystemPromptTemplate } from "./startup/ensureSystemPromptTemplate.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -65,7 +65,7 @@ function createMainWindow(): void {
     process.platform === "darwin"
       ? {
           titleBarStyle: "hiddenInset" as const,
-          trafficLightPosition: { x: 10, y: 10 },
+          trafficLightPosition: { x: 14, y: 14 },
         }
       : {
           titleBarStyle: "hidden" as const,
