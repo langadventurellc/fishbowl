@@ -50,12 +50,14 @@
   --input: rgb(214, 211, 209); /* Input field backgrounds */
   --ring: rgb(99, 102, 241); /* Focus ring color */
 
-  /* Chart colors for shadcn/ui chart components */
-  --chart-1: rgb(99, 102, 241);
-  --chart-2: rgb(79, 70, 229);
-  --chart-3: rgb(67, 56, 202);
-  --chart-4: rgb(55, 48, 163);
-  --chart-5: rgb(49, 46, 129);
+  --agent-1: #448aff;
+  --agent-2: #1565c0;
+  --agent-3: #009688;
+  --agent-4: #8bc34a;
+  --agent-5: #ffc107;
+  --agent-6: #ff9800;
+  --agent-7: #f44336;
+  --agent-8: #ad1457;
 
   /* Sidebar-specific variables for shadcn/ui sidebar components */
   --sidebar: rgb(214, 211, 209);
@@ -131,12 +133,14 @@
   --input: rgb(58, 54, 51); /* Dark input backgrounds */
   --ring: rgb(129, 140, 248); /* Focus ring for dark mode */
 
-  /* Chart colors adapted for dark mode */
-  --chart-1: rgb(129, 140, 248);
-  --chart-2: rgb(99, 102, 241);
-  --chart-3: rgb(79, 70, 229);
-  --chart-4: rgb(67, 56, 202);
-  --chart-5: rgb(55, 48, 163);
+  --agent-1: #448aff;
+  --agent-2: #1565c0;
+  --agent-3: #009688;
+  --agent-4: #8bc34a;
+  --agent-5: #ffc107;
+  --agent-6: #ff9800;
+  --agent-7: #f44336;
+  --agent-8: #ad1457;
 
   /* Sidebar colors for dark mode */
   --sidebar: rgb(58, 54, 51);
