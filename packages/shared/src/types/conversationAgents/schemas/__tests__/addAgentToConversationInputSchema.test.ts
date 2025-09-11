@@ -4,6 +4,7 @@ describe("addAgentToConversationInputSchema", () => {
   const validInput = {
     conversation_id: "550e8400-e29b-41d4-a716-446655440001",
     agent_id: "agent-config-123",
+    color: "--agent-1",
   };
 
   describe("valid inputs", () => {
@@ -40,6 +41,28 @@ describe("addAgentToConversationInputSchema", () => {
       const result =
         addAgentToConversationInputSchema.safeParse(inputWithLongId);
       expect(result.success).toBe(true);
+    });
+
+    it("should accept all valid color CSS variables", () => {
+      const validColors = [
+        "--agent-1",
+        "--agent-2",
+        "--agent-3",
+        "--agent-4",
+        "--agent-5",
+        "--agent-6",
+        "--agent-7",
+        "--agent-8",
+      ];
+      validColors.forEach((color) => {
+        const inputWithColor = {
+          ...validInput,
+          color,
+        };
+        const result =
+          addAgentToConversationInputSchema.safeParse(inputWithColor);
+        expect(result.success).toBe(true);
+      });
     });
   });
 
@@ -118,6 +141,48 @@ describe("addAgentToConversationInputSchema", () => {
     });
   });
 
+  describe("invalid color field", () => {
+    it("should reject non-string color", () => {
+      const input = {
+        ...validInput,
+        color: 123,
+      };
+      const result = addAgentToConversationInputSchema.safeParse(input);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toBe("Color must be a string");
+      }
+    });
+
+    it("should reject invalid color patterns", () => {
+      const invalidColors = [
+        "",
+        "agent-1",
+        "--agent-9",
+        "--agent-0",
+        "--agent-1x",
+        "---agent-1",
+        "--AGENT-1",
+        "--agent-",
+        "--agent-10",
+        "not-a-color",
+      ];
+      invalidColors.forEach((color) => {
+        const input = {
+          ...validInput,
+          color,
+        };
+        const result = addAgentToConversationInputSchema.safeParse(input);
+        expect(result.success).toBe(false);
+        if (!result.success) {
+          expect(result.error.issues[0]?.message).toBe(
+            "Color must be a valid agent CSS variable (--agent-1 through --agent-8)",
+          );
+        }
+      });
+    });
+  });
+
   describe("invalid display_order field", () => {
     it("should reject non-number display_order", () => {
       const input = {
@@ -175,6 +240,13 @@ describe("addAgentToConversationInputSchema", () => {
       const { agent_id, ...inputWithoutAgentId } = validInput;
       const result =
         addAgentToConversationInputSchema.safeParse(inputWithoutAgentId);
+      expect(result.success).toBe(false);
+    });
+
+    it("should reject missing color", () => {
+      const { color, ...inputWithoutColor } = validInput;
+      const result =
+        addAgentToConversationInputSchema.safeParse(inputWithoutColor);
       expect(result.success).toBe(false);
     });
   });

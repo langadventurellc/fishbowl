@@ -135,15 +135,17 @@ export interface ConversationService {
 
   /**
    * Add an agent to a conversation
-   * Maps to: window.electronAPI.conversationAgent.add({conversation_id, agent_id})
+   * Maps to: window.electronAPI.conversationAgent.add({conversation_id, agent_id, color?})
    * @param conversationId - Conversation UUID to add agent to
    * @param agentId - Agent UUID to add to the conversation
+   * @param color - Optional CSS variable reference (--agent-1 through --agent-8) for visual identification. If not provided, color assignment will be handled by underlying service layer.
    * @returns Promise resolving to created conversation agent relationship
    * @throws Error on creation failure, duplicate assignment, or invalid IDs
    */
   addAgent(
     conversationId: string,
     agentId: string,
+    color?: string,
   ): Promise<_ConversationAgent>;
 
   /**

@@ -50,6 +50,12 @@ export function setupConversationAgentHandlers(
     },
   );
 
+  /**
+   * Add an agent to a conversation with color assignment
+   * Handles the ADD IPC channel for conversation agents
+   * @param request - Contains conversation_id, agent_id, color, and optional display_order
+   * @returns Promise resolving to ConversationAgentAddResponse with the created agent
+   */
   ipcMain.handle(
     CONVERSATION_AGENT_CHANNELS.ADD,
     async (
@@ -59,6 +65,8 @@ export function setupConversationAgentHandlers(
       logger.debug("Adding agent to conversation", {
         conversationId: request.conversation_id,
         agentId: request.agent_id,
+        color: request.color,
+        displayOrder: request.display_order,
       });
       try {
         const agent =
@@ -67,6 +75,8 @@ export function setupConversationAgentHandlers(
           id: agent.id,
           conversationId: agent.conversation_id,
           agentId: agent.agent_id,
+          color: agent.color,
+          displayOrder: agent.display_order,
         });
         return { success: true, data: agent };
       } catch (error) {

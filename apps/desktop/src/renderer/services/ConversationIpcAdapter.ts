@@ -195,14 +195,23 @@ export class ConversationIpcAdapter implements ConversationService {
    * Add an agent to a conversation
    * Maps to: window.electronAPI.conversationAgent.add({conversation_id, agent_id})
    */
+  /**
+   * Add an agent to a conversation
+   * @param conversationId - The conversation to add the agent to
+   * @param agentId - The agent to add
+   * @param color - Agent color as CSS variable reference (--agent-1 through --agent-8)
+   * @returns Promise resolving to the added conversation agent
+   */
   async addAgent(
     conversationId: string,
     agentId: string,
+    color: string,
   ): Promise<_ConversationAgent> {
     try {
       const result = await window.electronAPI.conversationAgent.add({
         conversation_id: conversationId,
         agent_id: agentId,
+        color,
       });
       return result;
     } catch (error) {

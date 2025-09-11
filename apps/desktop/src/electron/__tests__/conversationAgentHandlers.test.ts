@@ -1,26 +1,26 @@
+import type {
+  ConversationAgent,
+  ConversationAgentsRepository,
+  DatabaseBridge,
+  MessageRepository,
+} from "@fishbowl-ai/shared";
 import { ipcMain } from "electron";
-import { setupConversationAgentHandlers } from "../conversationAgentHandlers";
+import type { MainProcessServices } from "../../main/services/MainProcessServices";
 import {
   CONVERSATION_AGENT_CHANNELS,
-  type ConversationAgentGetByConversationRequest,
   type ConversationAgentAddRequest,
-  type ConversationAgentRemoveRequest,
-  type ConversationAgentUpdateRequest,
-  type ConversationAgentListRequest,
-  type ConversationAgentGetByConversationResponse,
   type ConversationAgentAddResponse,
-  type ConversationAgentRemoveResponse,
-  type ConversationAgentUpdateResponse,
+  type ConversationAgentGetByConversationRequest,
+  type ConversationAgentGetByConversationResponse,
+  type ConversationAgentListRequest,
   type ConversationAgentListResponse,
+  type ConversationAgentRemoveRequest,
+  type ConversationAgentRemoveResponse,
+  type ConversationAgentUpdateRequest,
+  type ConversationAgentUpdateResponse,
 } from "../../shared/ipc/index";
+import { setupConversationAgentHandlers } from "../conversationAgentHandlers";
 import { serializeError } from "../utils/errorSerialization";
-import type {
-  ConversationAgentsRepository,
-  MessageRepository,
-  ConversationAgent,
-  DatabaseBridge,
-} from "@fishbowl-ai/shared";
-import type { MainProcessServices } from "../../main/services/MainProcessServices";
 
 // Mock electron
 jest.mock("electron", () => ({
@@ -62,6 +62,7 @@ describe("conversationAgentHandlers", () => {
     is_active: true,
     enabled: true,
     display_order: 0,
+    color: "",
   };
 
   beforeEach(() => {
@@ -190,6 +191,7 @@ describe("conversationAgentHandlers", () => {
         conversation_id: "test-conversation-id",
         agent_id: "test-agent-id",
         display_order: 0,
+        color: "",
       };
 
       mockConversationAgentsRepository.create.mockResolvedValue(
@@ -217,6 +219,7 @@ describe("conversationAgentHandlers", () => {
         conversation_id: "test-conversation-id",
         agent_id: "test-agent-id",
         display_order: 0,
+        color: "",
       };
 
       const error = new Error("Creation failed");

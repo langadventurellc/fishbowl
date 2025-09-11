@@ -657,9 +657,12 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
 
   /**
    * Add agent to conversation.
+   * @param conversationId - ID of the conversation to add the agent to
+   * @param agentId - ID of the agent to add
+   * @param color - Optional CSS variable color reference (e.g., "--agent-1")
    */
   // eslint-disable-next-line statement-count/function-statement-count-warn
-  addAgent: async (conversationId: string, agentId: string) => {
+  addAgent: async (conversationId: string, agentId: string, color?: string) => {
     if (!conversationService || !get().activeConversationId) {
       return;
     }
@@ -679,6 +682,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       const conversationAgent = await conversationService.addAgent(
         conversationId,
         agentId,
+        color,
       );
 
       // Check if request is still current before updating

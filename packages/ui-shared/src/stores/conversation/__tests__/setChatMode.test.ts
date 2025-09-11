@@ -43,6 +43,7 @@ const createMockAgent = (
   is_active: true,
   display_order: displayOrder,
   added_at: addedAt.toISOString(),
+  color: "",
 });
 
 describe("setChatMode", () => {

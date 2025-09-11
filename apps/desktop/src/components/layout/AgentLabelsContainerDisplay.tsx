@@ -237,7 +237,9 @@ export const AgentLabelsContainerDisplay: React.FC<
                   const agentViewModel: AgentPillViewModel = {
                     name: agentConfig?.name || "Unknown Agent",
                     role: agentConfig?.role || "unknown",
-                    color: "#3b82f6", // Default color since AgentSettingsViewModel doesn't have color
+                    color: conversationAgent.color
+                      ? `var(${conversationAgent.color})`
+                      : "var(--agent-1)", // Use persisted color with fallback
                     isThinking: false,
                     status: "idle",
                     enabled: conversationAgent.enabled, // Use actual enabled state from conversation agent
@@ -267,7 +269,7 @@ export const AgentLabelsContainerDisplay: React.FC<
                   ? {
                       name: agent.name,
                       role: agent.role,
-                      color: "#3b82f6",
+                      color: "var(--agent-1)", // Default color for settings view (no conversation context)
                       isThinking: false,
                       status: "idle",
                       enabled: true, // Default to enabled for settings view agents

@@ -367,6 +367,7 @@ function createMockAgent(
     added_at: new Date().toISOString(),
     is_active: true,
     enabled,
+    color: "--agent-1",
     display_order: displayOrder,
   };
 }
@@ -385,6 +386,7 @@ function createMockAgentWithDate(
     added_at: addedAt,
     is_active: true,
     enabled,
+    color: "--agent-1",
     display_order: displayOrder,
   };
 }

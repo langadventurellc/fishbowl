@@ -59,14 +59,9 @@ export const MainContentPanelDisplay: React.FC<
       agentLookup.set(conversationAgent.id, {
         agentName: agentConfig?.name || "Unknown Agent",
         roleName: roleConfig?.name || agentConfig?.role || "Unknown Role",
-        agentColor:
-          agentConfig?.personality === "helpful"
-            ? "#22c55e"
-            : agentConfig?.personality === "creative"
-              ? "#a855f7"
-              : agentConfig?.personality === "analytical"
-                ? "#3b82f6"
-                : "#22c55e",
+        agentColor: conversationAgent.color
+          ? `var(${conversationAgent.color})`
+          : "var(--agent-1)",
       });
     });
 

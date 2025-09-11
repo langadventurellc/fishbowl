@@ -89,8 +89,15 @@ export interface ConversationStoreActions {
   /**
    * Add an agent to a specific conversation.
    * Updates the conversation's agent list and refreshes active agents if needed.
+   * @param conversationId - ID of the conversation to add the agent to
+   * @param agentId - ID of the agent to add
+   * @param color - Optional CSS variable color reference (e.g., "--agent-1")
    */
-  addAgent(conversationId: string, agentId: string): Promise<void>;
+  addAgent(
+    conversationId: string,
+    agentId: string,
+    color?: string,
+  ): Promise<void>;
 
   /**
    * Remove an agent from a specific conversation.

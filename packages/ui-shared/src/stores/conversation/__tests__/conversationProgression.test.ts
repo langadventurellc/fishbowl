@@ -12,9 +12,9 @@ import type {
   ConversationAgent,
   ConversationService,
 } from "@fishbowl-ai/shared";
-import type { ConversationStoreState } from "../ConversationStoreState";
-import type { ChatModeIntent } from "../../../types/chat-modes/ChatModeIntent";
 import type { ChatModeHandler } from "../../../types/chat-modes/ChatModeHandler";
+import type { ChatModeIntent } from "../../../types/chat-modes/ChatModeIntent";
+import type { ConversationStoreState } from "../ConversationStoreState";
 import { useConversationStore } from "../useConversationStore";
 
 // Mock the chat mode factory
@@ -54,6 +54,7 @@ const createMockAgent = (
   display_order: displayOrder,
   added_at: "2025-01-01T00:00:00.000Z",
   is_active: true,
+  color: "",
 });
 
 const createMockState = (

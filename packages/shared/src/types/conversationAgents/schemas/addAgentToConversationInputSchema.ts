@@ -14,6 +14,13 @@ export const addAgentToConversationInputSchema = z.object({
     .min(1, "Agent ID cannot be empty")
     .max(255, "Agent ID cannot exceed 255 characters"),
 
+  color: z
+    .string({ message: "Color must be a string" })
+    .regex(
+      /^--agent-[1-8]$/,
+      "Color must be a valid agent CSS variable (--agent-1 through --agent-8)",
+    ),
+
   display_order: z
     .number({ message: "Display order must be a number" })
     .int("Display order must be an integer")
