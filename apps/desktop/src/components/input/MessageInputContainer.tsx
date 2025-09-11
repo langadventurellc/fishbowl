@@ -6,29 +6,8 @@ import {
   useChatStore,
   useConversationStore,
 } from "@fishbowl-ai/ui-shared";
-import { cva } from "class-variance-authority";
-import { KeyboardEvent, useCallback, useRef, useState } from "react";
+import { KeyboardEvent, useCallback, useEffect, useRef, useState } from "react";
 import { SendButtonDisplay } from "./SendButtonDisplay";
-
-/**
- * MessageInputContainer component variants using class-variance-authority.
- * Defines layout-specific spacing that matches the original CSS-in-JS implementation.
- */
-const messageInputContainerVariants = cva(
-  // Base styles
-  "min-h-[72px] flex items-end bg-card border-t border-border box-border",
-  {
-    variants: {
-      layoutVariant: {
-        default: "p-4 gap-3", // 16px padding, 12px gap
-        compact: "p-3 gap-2", // 12px padding, 8px gap
-      },
-    },
-    defaultVariants: {
-      layoutVariant: "default",
-    },
-  },
-);
 
 /**
  * MessageInputContainer component integrates the MessageInputDisplay and SendButtonDisplay
@@ -55,6 +34,28 @@ export function MessageInputContainer({
 
   // Ref for textarea to handle focus and selection
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Configurable height constants - easily adjustable
+  const MIN_HEIGHT = layoutVariant === "compact" ? 32 : 40; // min-h-8 or min-h-10 in pixels
+  const MAX_HEIGHT = layoutVariant === "compact" ? 120 : 180; // max-h-[120px] or max-h-[180px]
+
+  // Auto-resize textarea based on content
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
+
+    // Reset height to minimum to get accurate scrollHeight
+    textarea.style.height = `${MIN_HEIGHT}px`;
+
+    // Calculate new height based on content
+    const newHeight = Math.min(
+      Math.max(textarea.scrollHeight, MIN_HEIGHT),
+      MAX_HEIGHT,
+    );
+
+    // Apply the new height
+    textarea.style.height = `${newHeight}px`;
+  }, [content, MIN_HEIGHT, MAX_HEIGHT]);
 
   // Conversation store for unified state management
   const {
@@ -179,7 +180,7 @@ export function MessageInputContainer({
     <div className="flex flex-col">
       <div
         className={cn(
-          messageInputContainerVariants({ layoutVariant }),
+          "min-h-[72px] flex items-end bg-card border-t border-border box-border p-4 gap-3",
           className,
         )}
       >
@@ -194,10 +195,8 @@ export function MessageInputContainer({
             className={cn(
               // Base textarea styling matching MessageInputDisplay
               "w-full resize-none border-0 bg-transparent p-0 focus:outline-none focus:ring-0",
-              // Size-specific styling
-              layoutVariant === "compact"
-                ? "min-h-8 max-h-[120px] text-description"
-                : "min-h-10 max-h-[180px] text-sm",
+              // Size-specific styling (height controlled by JavaScript)
+              layoutVariant === "compact" ? "text-description" : "text-sm",
               defaultMessageInputProps.className,
             )}
             style={{
