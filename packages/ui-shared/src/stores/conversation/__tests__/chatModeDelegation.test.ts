@@ -1,13 +1,3 @@
-/**
- * Unit tests for chat mode delegation functionality in conversation store.
- *
- * Tests the processAgentIntent helper method and the enhanced toggleAgentEnabled
- * method that delegates to chat mode handlers, including manual and round-robin
- * modes, error handling, and integration scenarios.
- *
- * @module stores/conversation/__tests__/chatModeDelegation.test
- */
-
 import type {
   ConversationAgent,
   ConversationService,
@@ -237,32 +227,24 @@ describe("Chat Mode Delegation", () => {
   });
 
   describe("toggleAgentEnabled with delegation", () => {
-    it("should delegate to manual chat mode handler", async () => {
-      const mockIntent: ChatModeIntent = {
-        toEnable: ["agent-2"],
-        toDisable: [],
-      };
-
-      mockHandler.handleAgentToggle.mockReturnValue(mockIntent);
+    it("should handle manual mode with direct toggle (bypass handler)", async () => {
+      const initialAgents =
+        useConversationStore.getState().activeConversationAgents;
+      const targetAgent = initialAgents.find((a) => a.id === "agent-2");
+      const initialEnabledState = targetAgent?.enabled ?? false;
 
       await useConversationStore.getState().toggleAgentEnabled("agent-2");
 
-      // Verify handler was created with manual mode
-      expect(mockCreateChatModeHandler).toHaveBeenCalledWith("manual");
+      // Verify handler was NOT created for manual mode (we bypass it)
+      expect(mockCreateChatModeHandler).not.toHaveBeenCalled();
 
-      // Verify handler was called correctly
-      expect(mockHandler.handleAgentToggle).toHaveBeenCalledWith(
-        expect.arrayContaining([
-          expect.objectContaining({ id: "agent-1", enabled: true }),
-          expect.objectContaining({ id: "agent-2", enabled: false }),
-        ]),
-        "agent-2",
-      );
+      // Verify handler was NOT called since we bypass it for manual mode
+      expect(mockHandler.handleAgentToggle).not.toHaveBeenCalled();
 
-      // Verify intent was processed
+      // Verify direct service call was made
       expect(
         mockConversationService.updateConversationAgent,
-      ).toHaveBeenCalledWith("agent-2", { enabled: true });
+      ).toHaveBeenCalledWith("agent-2", { enabled: !initialEnabledState });
     });
 
     it("should delegate to round-robin chat mode handler", async () => {
@@ -337,6 +319,21 @@ describe("Chat Mode Delegation", () => {
     });
 
     it("should handle errors from handler and set error state", async () => {
+      // Set up round-robin mode to test handler error (since manual mode bypasses handler)
+      useConversationStore.setState(
+        createMockState({
+          conversations: [
+            {
+              id: "conv-1",
+              title: "Round Robin Test",
+              chat_mode: "round-robin",
+              created_at: "2025-01-01T00:00:00.000Z",
+              updated_at: "2025-01-01T00:00:00.000Z",
+            },
+          ],
+        }),
+      );
+
       const testError = new Error("Handler error");
       mockHandler.handleAgentToggle.mockImplementation(() => {
         throw testError;
@@ -447,33 +444,46 @@ describe("Chat Mode Delegation", () => {
       ).toBe(false);
     });
 
-    it("should handle manual mode with no automatic changes", async () => {
-      // Mock manual mode behavior: no additional changes
-      const mockIntent: ChatModeIntent = {
-        toEnable: [],
-        toDisable: [],
-      };
-
-      mockHandler.handleAgentToggle.mockReturnValue(mockIntent);
-
-      const initialAgents = [
-        ...useConversationStore.getState().activeConversationAgents,
-      ];
+    it("should handle manual mode with direct user toggle", async () => {
+      // Manual mode is already set in the test setup (createMockState sets chat_mode: "manual")
+      const initialAgents =
+        useConversationStore.getState().activeConversationAgents;
+      const targetAgent = initialAgents.find((a) => a.id === "agent-2");
+      const initialEnabledState = targetAgent?.enabled ?? false;
 
       await useConversationStore.getState().toggleAgentEnabled("agent-2");
 
-      // Verify no automatic changes occurred
+      // Verify direct toggle occurred (no chat mode handler involved)
       expect(
         mockConversationService.updateConversationAgent,
-      ).not.toHaveBeenCalled();
+      ).toHaveBeenCalledWith("agent-2", { enabled: !initialEnabledState });
 
-      // State should remain unchanged
-      expect(useConversationStore.getState().activeConversationAgents).toEqual(
-        initialAgents,
-      );
+      // Verify handler was not called since we bypass it for manual mode
+      expect(mockHandler.handleAgentToggle).not.toHaveBeenCalled();
+
+      // State should reflect the toggle
+      const finalAgents =
+        useConversationStore.getState().activeConversationAgents;
+      const finalAgent = finalAgents.find((a) => a.id === "agent-2");
+      expect(finalAgent?.enabled).toBe(!initialEnabledState);
     });
 
     it("should maintain error state consistency across operations", async () => {
+      // Set up round-robin mode to test handler behavior (since manual mode bypasses handler)
+      useConversationStore.setState(
+        createMockState({
+          conversations: [
+            {
+              id: "conv-1",
+              title: "Round Robin Test",
+              chat_mode: "round-robin",
+              created_at: "2025-01-01T00:00:00.000Z",
+              updated_at: "2025-01-01T00:00:00.000Z",
+            },
+          ],
+        }),
+      );
+
       const intent: ChatModeIntent = {
         toEnable: ["agent-2"],
         toDisable: ["agent-1"],

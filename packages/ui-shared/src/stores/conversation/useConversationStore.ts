@@ -1055,19 +1055,49 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         error: { ...state.error, agents: undefined },
       }));
 
-      // Get active chat mode and create handler
+      // Get active chat mode
       const activeChatMode = get().getActiveChatMode();
       const { activeConversationAgents } = get();
-      const chatModeHandler = createChatModeHandler(activeChatMode || "manual");
 
-      // Get intent from handler
-      const intent = chatModeHandler.handleAgentToggle(
-        activeConversationAgents,
-        conversationAgentId,
-      );
+      // For manual mode, handle direct user toggle without chat mode handler
+      if (activeChatMode === "manual") {
+        // Find the agent being toggled
+        const targetAgent = activeConversationAgents.find(
+          (agent) => agent.id === conversationAgentId,
+        );
 
-      // Process intent into actual updates
-      await get().processAgentIntent(intent);
+        if (targetAgent) {
+          // Direct toggle - flip the current enabled state
+          const updatedAgent =
+            await conversationService.updateConversationAgent(
+              conversationAgentId,
+              { enabled: !targetAgent.enabled },
+            );
+
+          // Update store state with the new agent state
+          set((state) => ({
+            ...state,
+            activeConversationAgents: state.activeConversationAgents.map(
+              (agent) =>
+                agent.id === conversationAgentId ? updatedAgent : agent,
+            ),
+          }));
+        }
+      } else {
+        // For other modes (round-robin), use the chat mode handler
+        const chatModeHandler = createChatModeHandler(
+          activeChatMode || "manual",
+        );
+
+        // Get intent from handler
+        const intent = chatModeHandler.handleAgentToggle(
+          activeConversationAgents,
+          conversationAgentId,
+        );
+
+        // Process intent into actual updates
+        await get().processAgentIntent(intent);
+      }
 
       set((state) => ({
         ...state,
