@@ -20,6 +20,7 @@ const logger = createLoggerSync({
 });
 
 export function SidebarContainerDisplay({
+  width,
   collapsed = false,
   selectedConversationId,
   onConversationSelect,
@@ -45,6 +46,18 @@ export function SidebarContainerDisplay({
     createConversationAndSelect,
     loadConversations,
   } = useConversationStore();
+
+  // Derive width from props with priority handling
+  const getEffectiveWidth = (width?: number, collapsed?: boolean): number => {
+    if (width !== undefined) {
+      return width; // width prop takes priority
+    }
+    return collapsed ? 0 : 200; // fallback to collapsed behavior
+  };
+
+  // Derive collapsed state from effective width
+  const effectiveWidth = getEffectiveWidth(width, collapsed);
+  const isCollapsed = effectiveWidth <= 50;
 
   // Backward compatibility mapping
   const isCreating = loading.sending; // Store uses 'sending' for creation operations
@@ -167,9 +180,9 @@ export function SidebarContainerDisplay({
 
   // Dynamic styles that need to remain as CSS properties
   const dynamicStyles: React.CSSProperties = {
-    width: collapsed ? "0px" : "200px",
-    padding: collapsed ? "0" : "16px",
-    paddingTop: !collapsed ? "48px" : "0",
+    width: `${effectiveWidth}px`,
+    padding: isCollapsed ? "0" : "16px",
+    paddingTop: !isCollapsed ? "48px" : "0",
     ...style, // Custom styles take precedence
   };
 
@@ -239,7 +252,7 @@ export function SidebarContainerDisplay({
       )}
       style={dynamicStyles}
     >
-      {!collapsed && conversations && renderSelfContainedContent()}
+      {!isCollapsed && conversations && renderSelfContainedContent()}
     </div>
   );
 }
