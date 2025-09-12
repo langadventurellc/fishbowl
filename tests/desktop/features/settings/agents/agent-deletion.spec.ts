@@ -382,11 +382,11 @@ test.describe("Feature: Agent Management - Deletion", () => {
       // Verify empty state appears
       await waitForAgentsEmptyState(window);
 
-      // Verify "Create New Agent" button is present
+      // Verify "Create Agent" button is present
       await expect(
         window
           .locator("button")
-          .filter({ hasText: /Create New Agent/i })
+          .filter({ hasText: /Create Agent/i })
           .first(),
       ).toBeVisible();
     });

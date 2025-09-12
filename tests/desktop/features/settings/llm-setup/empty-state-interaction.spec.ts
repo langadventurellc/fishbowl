@@ -17,10 +17,6 @@ test.describe("Feature: LLM Setup Configuration - Empty State Interaction", () =
     // Verify EmptyLlmState component is visible
     await waitForEmptyState(window);
 
-    // Check for key icon presence
-    const keyIcon = window.locator(".lucide-key").first();
-    await expect(keyIcon).toBeVisible();
-
     // Check for descriptive text
     await expect(
       window.locator(

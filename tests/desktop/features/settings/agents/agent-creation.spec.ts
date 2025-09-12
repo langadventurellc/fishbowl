@@ -34,17 +34,17 @@ test.describe("Feature: Agent Management - Creation", () => {
       // Wait for agents section to be ready (should show empty state initially)
       await waitForAgentsEmptyState(window);
 
-      // Click create new agent button
+      // Click create agent button
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
 
       // Wait for create modal to open (using title-based pattern like roles tests)
       const modal = window.locator('[role="dialog"]').filter({
         has: window.locator('h2:has-text("Create New Agent")'),
       });
-      await expect(modal).toBeVisible({ timeout: 5000 });
+      await expect(modal).toBeVisible({ timeout: 2000 });
 
       // Fill form with valid agent data
       const mockAgent = createMockAgentData();
@@ -52,7 +52,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       // Submit form
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await expect(saveButton).toBeEnabled();
       await saveButton.click();
@@ -82,7 +82,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -90,7 +90,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       await fillAgentForm(window, mockAgent);
 
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await saveButton.click();
 
@@ -111,7 +111,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -119,7 +119,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       const actualAgent = await fillAgentForm(window, mockAgent);
 
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await saveButton.click();
 
@@ -136,7 +136,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -144,7 +144,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       const actualAgent = await fillAgentForm(window, mockAgent);
 
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await saveButton.click();
 
@@ -163,13 +163,13 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
       // Initially save button should be disabled (required fields empty)
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await expect(saveButton).toBeDisabled();
 
@@ -209,7 +209,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -217,7 +217,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       const actualAgent = await fillAgentForm(window, mockAgent);
 
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await saveButton.click();
       await waitForAgentModal(window, false);
@@ -270,7 +270,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       // Create first agent
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -278,7 +278,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       await fillAgentForm(window, mockAgent);
 
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await saveButton.click();
       await waitForAgentModal(window, false);
@@ -312,7 +312,7 @@ test.describe("Feature: Agent Management - Creation", () => {
 
       const createButton = window
         .locator("button")
-        .filter({ hasText: /Create New Agent/i });
+        .filter({ hasText: /Create Agent/i });
       await createButton.click();
       await waitForAgentModal(window, true);
 
@@ -324,7 +324,7 @@ test.describe("Feature: Agent Management - Creation", () => {
       const actualAgent = await fillAgentForm(window, minimalAgent);
 
       const saveButton = window
-        .locator("button")
+        .locator("button[type='submit']")
         .filter({ hasText: /Create Agent/i });
       await saveButton.click();
       await waitForAgentModal(window, false);

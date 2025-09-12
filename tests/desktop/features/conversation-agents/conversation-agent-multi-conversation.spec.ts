@@ -244,10 +244,10 @@ test.describe("Feature: Multi-Conversation Agent Management", () => {
         window.locator('[data-testid="settings-modal"]'),
       ).toBeVisible({ timeout: 5000 });
 
-      // Create second agent using "Create New Agent" button
+      // Create second agent using "Create Agent" button
       const createNewAgentButton = window
         .locator("button")
-        .filter({ hasText: "Create New Agent" });
+        .filter({ hasText: "Create Agent" });
       await expect(createNewAgentButton).toBeVisible({ timeout: 5000 });
       await createNewAgentButton.click();
 
