@@ -4,15 +4,15 @@
 
 import {
   CONVERSATION_AGENT_CHANNELS,
+  type ConversationAgentAddRequest,
+  type ConversationAgentAddResponse,
   type ConversationAgentChannelType,
   type ConversationAgentGetByConversationRequest,
-  type ConversationAgentAddRequest,
-  type ConversationAgentRemoveRequest,
-  type ConversationAgentListRequest,
   type ConversationAgentGetByConversationResponse,
-  type ConversationAgentAddResponse,
-  type ConversationAgentRemoveResponse,
+  type ConversationAgentListRequest,
   type ConversationAgentListResponse,
+  type ConversationAgentRemoveRequest,
+  type ConversationAgentRemoveResponse,
 } from "../index";
 
 describe("Conversation Agents IPC Constants", () => {
@@ -83,11 +83,13 @@ describe("Conversation Agents IPC Types", () => {
       conversation_id: "conv-123",
       agent_id: "agent-456",
       display_order: 1,
+      color: "",
     };
 
     const addRequestMinimal: ConversationAgentAddRequest = {
       conversation_id: "conv-123",
       agent_id: "agent-456",
+      color: "",
     };
 
     const removeRequest: ConversationAgentRemoveRequest = {
@@ -125,6 +127,7 @@ describe("Conversation Agents IPC Types", () => {
       is_active: true,
       enabled: true,
       display_order: 0,
+      color: "--agent-1",
     };
 
     // Test that response types can be instantiated
@@ -253,6 +256,7 @@ describe("Conversation Agents IPC Exports", () => {
     const _addRequest: ConversationAgentAddRequest = {
       conversation_id: "test",
       agent_id: "test",
+      color: "",
     };
     const _removeRequest: ConversationAgentRemoveRequest = {
       conversation_id: "test",
@@ -289,6 +293,7 @@ describe("Type-only Imports", () => {
         is_active: true,
         enabled: true,
         display_order: _request.display_order || 0,
+        color: "",
       },
     });
 
@@ -299,6 +304,7 @@ describe("Type-only Imports", () => {
     const result = testFunction({
       conversation_id: "conv-123",
       agent_id: "agent-456",
+      color: "",
     });
     expect(result.success).toBe(true);
     expect(result.data?.conversation_id).toBe("conv-123");

@@ -1,11 +1,11 @@
-import { ConversationIpcAdapter } from "../ConversationIpcAdapter";
 import type {
   Conversation,
   ConversationAgent,
-  Message,
   CreateMessageInput,
+  Message,
   UpdateConversationInput,
 } from "@fishbowl-ai/shared";
+import { ConversationIpcAdapter } from "../ConversationIpcAdapter";
 
 // Mock window.electronAPI
 const mockElectronAPI = {
@@ -62,6 +62,7 @@ describe("ConversationIpcAdapter", () => {
     is_active: true,
     display_order: 1,
     added_at: "2025-01-01T00:00:00.000Z",
+    color: "--agent-1",
     ...overrides,
   });
 
@@ -428,11 +429,16 @@ describe("ConversationIpcAdapter", () => {
       const mockAgent = createMockConversationAgent();
       mockElectronAPI.conversationAgent.add.mockResolvedValue(mockAgent);
 
-      const result = await adapter.addAgent("conv-123", "agent-456");
+      const result = await adapter.addAgent(
+        "conv-123",
+        "agent-456",
+        "--agent-1",
+      );
 
       expect(mockElectronAPI.conversationAgent.add).toHaveBeenCalledWith({
         conversation_id: "conv-123",
         agent_id: "agent-456",
+        color: "--agent-1",
       });
       expect(result).toEqual(mockAgent);
     });
@@ -441,9 +447,9 @@ describe("ConversationIpcAdapter", () => {
       const error = new Error("Add agent failed");
       mockElectronAPI.conversationAgent.add.mockRejectedValue(error);
 
-      await expect(adapter.addAgent("conv-123", "agent-456")).rejects.toThrow(
-        "addAgent: Add agent failed",
-      );
+      await expect(
+        adapter.addAgent("conv-123", "agent-456", "--agent-1"),
+      ).rejects.toThrow("addAgent: Add agent failed");
     });
   });
 

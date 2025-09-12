@@ -50,6 +50,12 @@ export function setupConversationAgentHandlers(
     },
   );
 
+  /**
+   * Add an agent to a conversation with color assignment
+   * Handles the ADD IPC channel for conversation agents
+   * @param request - Contains conversation_id, agent_id, color, and optional display_order
+   * @returns Promise resolving to ConversationAgentAddResponse with the created agent
+   */
   ipcMain.handle(
     CONVERSATION_AGENT_CHANNELS.ADD,
     async (
@@ -59,6 +65,8 @@ export function setupConversationAgentHandlers(
       logger.debug("Adding agent to conversation", {
         conversationId: request.conversation_id,
         agentId: request.agent_id,
+        color: request.color,
+        displayOrder: request.display_order,
       });
       try {
         const agent =
@@ -67,6 +75,8 @@ export function setupConversationAgentHandlers(
           id: agent.id,
           conversationId: agent.conversation_id,
           agentId: agent.agent_id,
+          color: agent.color,
+          displayOrder: agent.display_order,
         });
         return { success: true, data: agent };
       } catch (error) {
@@ -110,7 +120,7 @@ export function setupConversationAgentHandlers(
       _event,
       request: ConversationAgentRemoveRequest,
     ): Promise<ConversationAgentRemoveResponse> => {
-      logger.debug("Removing agent from conversation", {
+      logger.debug("Removing agent from conversation with message cleanup", {
         conversationId: request.conversation_id,
         agentId: request.agent_id,
       });
@@ -132,13 +142,39 @@ export function setupConversationAgentHandlers(
           return { success: true, data: false };
         }
 
-        // Delete the conversation agent
-        await mainServices.conversationAgentsRepository.delete(targetAgent.id);
-        logger.debug("Agent removed from conversation successfully", {
-          conversationAgentId: targetAgent.id,
-          conversationId: request.conversation_id,
-          agentId: request.agent_id,
-        });
+        // Perform atomic deletion of messages and conversation agent
+        await mainServices.databaseBridge.transaction(
+          async (_transactionDb) => {
+            // First, delete all messages associated with this conversation agent
+            const deletedMessageCount =
+              await mainServices.messagesRepository.deleteByConversationAgentId(
+                targetAgent.id,
+              );
+
+            logger.debug("Messages deleted for conversation agent", {
+              conversationAgentId: targetAgent.id,
+              deletedMessageCount,
+            });
+
+            // Then, delete the conversation agent
+            await mainServices.conversationAgentsRepository.delete(
+              targetAgent.id,
+            );
+
+            logger.debug("Conversation agent deleted", {
+              conversationAgentId: targetAgent.id,
+            });
+          },
+        );
+
+        logger.debug(
+          "Agent and messages removed from conversation successfully",
+          {
+            conversationAgentId: targetAgent.id,
+            conversationId: request.conversation_id,
+            agentId: request.agent_id,
+          },
+        );
         return { success: true, data: true };
       } catch (error) {
         logger.error(

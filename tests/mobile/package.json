@@ -1,5 +1,5 @@
 {
-  "name": "@fishbowl-ai/mobile-e2e-tests",
+  "name": "roomful-ai-mobile-e2e-tests",
   "version": "0.0.0",
   "private": true,
   "type": "commonjs",

@@ -136,17 +136,7 @@ export function SettingsContent({
   return (
     <main
       className={cn(
-        // Base content styling
-        "flex-1 overflow-y-scroll",
-        // Responsive padding: 30px desktop, 20px reduced screens
-        "lg:p-[var(--dt-content-padding-desktop)]",
-        "max-lg:p-[var(--dt-content-padding-mobile)]",
-        // Full width when navigation is hidden/collapsed
-        "max-md:w-full",
-        // Takes remaining width when navigation is visible
-        "md:flex-1",
-        // Background for content area
-        "bg-background",
+        "flex-1 overflow-y-scroll max-md:w-full md:flex-1 bg-background py-[16px]",
         className,
       )}
       role="main"

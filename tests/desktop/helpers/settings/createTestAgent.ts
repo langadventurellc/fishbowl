@@ -11,15 +11,15 @@ export const createTestAgent = async (
   await openAgentsSection(window);
   const createButton = window
     .locator("button")
-    .filter({ hasText: /create.*agent/i });
+    .filter({ hasText: /Create Agent/i });
   await createButton.click();
   await waitForAgentModal(window, true);
 
   const actualAgent = await fillAgentForm(window, agentData);
 
   const saveButton = window
-    .locator("button")
-    .filter({ hasText: /create agent/i });
+    .locator("button[type='submit']")
+    .filter({ hasText: /Create Agent/i });
   await saveButton.click();
   await waitForAgentModal(window, false);
   // Small delay for file operations to complete

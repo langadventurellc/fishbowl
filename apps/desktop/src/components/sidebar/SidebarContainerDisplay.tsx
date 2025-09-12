@@ -10,7 +10,6 @@ import { NewConversationButton } from "../chat/NewConversationButton";
 import { RenameConversationModal } from "../modals/RenameConversationModal";
 import { ConversationItemDisplay } from "./ConversationItemDisplay";
 import { DeleteConversationModal } from "./DeleteConversationModal";
-import { SidebarHeaderDisplay } from "./SidebarHeaderDisplay";
 
 /**
  * SidebarContainerDisplay component renders the main sidebar layout wrapper
@@ -21,8 +20,8 @@ const logger = createLoggerSync({
 });
 
 export function SidebarContainerDisplay({
+  width,
   collapsed = false,
-  showBorder = true,
   selectedConversationId,
   onConversationSelect,
   className = "",
@@ -47,6 +46,18 @@ export function SidebarContainerDisplay({
     createConversationAndSelect,
     loadConversations,
   } = useConversationStore();
+
+  // Derive width from props with priority handling
+  const getEffectiveWidth = (width?: number, collapsed?: boolean): number => {
+    if (width !== undefined) {
+      return width; // width prop takes priority
+    }
+    return collapsed ? 0 : 200; // fallback to collapsed behavior
+  };
+
+  // Derive collapsed state from effective width
+  const effectiveWidth = getEffectiveWidth(width, collapsed);
+  const isCollapsed = effectiveWidth <= 50;
 
   // Backward compatibility mapping
   const isCreating = loading.sending; // Store uses 'sending' for creation operations
@@ -121,7 +132,10 @@ export function SidebarContainerDisplay({
   const handleDeleteConversation = useCallback(
     async (conversationId: string) => {
       try {
-        logger.debug("Deleting conversation", { conversationId });
+        logger.debug("Deleting conversation", {
+          conversationId,
+          isActive: conversationId === selectedConversationId,
+        });
 
         // Check if running in Electron environment
         if (!window.electronAPI?.conversations?.delete) {
@@ -132,6 +146,15 @@ export function SidebarContainerDisplay({
 
         await window.electronAPI.conversations.delete(conversationId);
 
+        // Clear active conversation selection if deleting the currently selected conversation
+        if (conversationId === selectedConversationId) {
+          logger.debug(
+            "Clearing active conversation selection after deletion",
+            { conversationId },
+          );
+          selectConversation(null);
+        }
+
         // Use store action instead of manual refetch
         await loadConversations();
 
@@ -141,7 +164,7 @@ export function SidebarContainerDisplay({
         throw error;
       }
     },
-    [loadConversations], // Replace refetch dependency
+    [loadConversations, selectedConversationId, selectConversation], // Add selectConversation to dependencies
   );
 
   // Handle new conversation creation
@@ -157,22 +180,15 @@ export function SidebarContainerDisplay({
 
   // Dynamic styles that need to remain as CSS properties
   const dynamicStyles: React.CSSProperties = {
-    width: collapsed ? "0px" : "200px",
-    backgroundColor: "var(--sidebar)",
-    borderRight: showBorder ? `1px solid var(--border)` : "none",
-    padding: collapsed ? "0" : "16px",
+    width: `${effectiveWidth}px`,
+    padding: isCollapsed ? "0" : "16px",
+    paddingTop: !isCollapsed ? "48px" : "0",
     ...style, // Custom styles take precedence
   };
 
   // Render self-contained sidebar when conversations are provided
   const renderSelfContainedContent = () => (
     <>
-      <SidebarHeaderDisplay
-        title="Conversations"
-        showControls={true}
-        collapsed={collapsed}
-      />
-
       {/* Conversation items with interactive behavior */}
       <div className="flex flex-1 flex-col gap-1 min-h-[120px]">
         {conversationsToDisplay.length === 0 ? (
@@ -231,12 +247,12 @@ export function SidebarContainerDisplay({
   return (
     <div
       className={cn(
-        "flex flex-col overflow-hidden transition-all duration-300 ease-in-out",
+        "flex flex-col overflow-hidden transition-all duration-300 ease-in-out bg-sidebar h-full",
         className,
       )}
       style={dynamicStyles}
     >
-      {!collapsed && conversations && renderSelfContainedContent()}
+      {!isCollapsed && conversations && renderSelfContainedContent()}
     </div>
   );
 }

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from "react";
 import { useConversationStore } from "@fishbowl-ai/ui-shared";
+import { useEffect, useRef } from "react";
 import {
   ConversationLayoutDisplay,
   ConversationScreenDisplay,
@@ -49,7 +49,6 @@ export default function LayoutShowcase() {
   return (
     <ConversationScreenDisplay>
       <ConversationLayoutDisplay
-        defaultSidebarCollapsed={false}
         selectedConversationId={activeConversationId}
         onConversationSelect={handleConversationSelect}
       />

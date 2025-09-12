@@ -26,6 +26,13 @@ export const conversationAgentSchema = z.object({
 
   enabled: z.boolean({ message: "Enabled status must be a boolean" }),
 
+  color: z
+    .string({ message: "Color must be a string" })
+    .regex(
+      /^--agent-[1-8]$/,
+      "Color must be a valid agent CSS variable (--agent-1 through --agent-8)",
+    ),
+
   display_order: z
     .number({ message: "Display order must be a number" })
     .int("Display order must be an integer")

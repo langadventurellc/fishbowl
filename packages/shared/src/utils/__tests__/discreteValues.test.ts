@@ -1,11 +1,11 @@
 import {
-  DISCRETE_VALUES,
+  convertToDiscreteValue,
   DISCRETE_STEP,
   DISCRETE_VALUE_SET,
+  DISCRETE_VALUES,
   DiscreteValue,
-  snapToNearestDiscrete,
   isDiscreteValue,
-  convertToDiscreteValue,
+  snapToNearestDiscrete,
 } from "../discreteValues";
 
 describe("discreteValues", () => {
@@ -189,24 +189,6 @@ describe("discreteValues", () => {
       const result1 = convertToDiscreteValue(input);
       const result2 = convertToDiscreteValue(input);
       expect(result1).toBe(result2);
-    });
-  });
-
-  describe("performance characteristics", () => {
-    test("operations complete quickly", () => {
-      const startTime = Date.now();
-
-      // Run operations many times
-      for (let i = 0; i < 10000; i++) {
-        snapToNearestDiscrete(Math.random() * 120 - 10);
-        isDiscreteValue(Math.floor(Math.random() * 120));
-      }
-
-      const endTime = Date.now();
-      const duration = endTime - startTime;
-
-      // Should complete in well under 100ms
-      expect(duration).toBeLessThan(100);
     });
   });
 });

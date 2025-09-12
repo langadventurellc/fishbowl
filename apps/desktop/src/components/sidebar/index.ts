@@ -12,5 +12,5 @@ export * from "./ConversationContextMenu";
 export * from "./ConversationItemDisplay";
 export * from "./ConversationListDisplay";
 export * from "./SidebarContainerDisplay";
-export * from "./SidebarHeaderDisplay";
-export * from "./SidebarToggleDisplay";
+export { default as ResizeHandle } from "./ResizeHandle";
+export type { ResizeHandleProps } from "./ResizeHandle/ResizeHandleProps";

@@ -15,6 +15,8 @@ export interface ConversationAgent {
   is_active: boolean;
   /** Whether this agent participates in new messages */
   enabled: boolean;
+  /** Agent color as CSS variable reference (--agent-1 through --agent-8) for visual identification */
+  color: string;
   /** Display ordering for UI presentation (future enhancement) */
   display_order: number;
 }

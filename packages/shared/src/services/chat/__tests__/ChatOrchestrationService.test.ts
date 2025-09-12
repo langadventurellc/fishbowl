@@ -1,16 +1,15 @@
+import type { SystemPromptFactory } from "../../../prompts/system/SystemPromptFactory";
+import type { ConversationAgentsRepository } from "../../../repositories/conversationAgents/ConversationAgentsRepository";
+import type { MessageRepository } from "../../../repositories/messages/MessageRepository";
+import type { PersistedAgentData } from "../../../types/agents/PersistedAgentData";
+import type { ConversationAgent } from "../../../types/conversationAgents";
+import type { Message } from "../../../types/messages";
+import { LlmProviderError } from "../../llm/errors/LlmProviderError";
+import type { FormattedMessage } from "../../llm/interfaces/FormattedMessage";
+import type { MessageFormatterService } from "../../llm/services/MessageFormatterService";
 import { ChatOrchestrationService } from "../ChatOrchestrationService";
 import type { LlmBridgeInterface } from "../interfaces/LlmBridgeInterface";
-import type { MessageRepository } from "../../../repositories/messages/MessageRepository";
-import type { ConversationAgentsRepository } from "../../../repositories/conversationAgents/ConversationAgentsRepository";
-import type { SystemPromptFactory } from "../../../prompts/system/SystemPromptFactory";
-import type { MessageFormatterService } from "../../llm/services/MessageFormatterService";
-import type { PersistedAgentData } from "../../../types/agents/PersistedAgentData";
-import type { Message } from "../../../types/messages";
-import type { ConversationAgent } from "../../../types/conversationAgents";
-import type { FormattedMessage } from "../../llm/interfaces/FormattedMessage";
 import type { AgentProcessingResult } from "../types/AgentProcessingResult";
-import { LlmProviderError } from "../../llm/errors/LlmProviderError";
-import { ChatErrorType } from "../errors/ChatErrorType";
 
 // Mock logger
 jest.mock("../../../logging/createLoggerSync", () => ({
@@ -98,6 +97,7 @@ describe("ChatOrchestrationService", () => {
           is_active: true,
           enabled: true,
           display_order: 0,
+          color: "",
         },
         {
           id: "ca-2",
@@ -107,6 +107,7 @@ describe("ChatOrchestrationService", () => {
           is_active: true,
           enabled: true,
           display_order: 1,
+          color: "",
         },
       ];
 
@@ -222,6 +223,7 @@ describe("ChatOrchestrationService", () => {
         is_active: true,
         enabled: true,
         display_order: 0,
+        color: "",
       },
     ];
 
@@ -424,6 +426,7 @@ describe("ChatOrchestrationService", () => {
         is_active: true,
         enabled: true,
         display_order: 0,
+        color: "",
       },
     ];
 
@@ -687,6 +690,7 @@ describe("ChatOrchestrationService", () => {
             is_active: true,
             enabled: true,
             display_order: 1,
+            color: "",
           },
         ];
 
@@ -750,6 +754,7 @@ describe("ChatOrchestrationService", () => {
           is_active: true,
           enabled: true,
           display_order: 0,
+          color: "",
         },
       ];
 
@@ -925,6 +930,7 @@ describe("ChatOrchestrationService", () => {
             is_active: true,
             enabled: true,
             display_order: 1,
+            color: "",
           },
         ];
 

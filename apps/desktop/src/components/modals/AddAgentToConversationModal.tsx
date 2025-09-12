@@ -17,6 +17,7 @@ import React, { useState, useCallback, useEffect, useMemo } from "react";
 import { AlertCircle, Loader2 } from "lucide-react";
 import type { AddAgentToConversationModalProps } from "@fishbowl-ai/ui-shared";
 import { useAgentsStore, useConversationStore } from "@fishbowl-ai/ui-shared";
+import { selectAgentColor } from "../../utils";
 import {
   Dialog,
   DialogContent,
@@ -106,7 +107,10 @@ export function AddAgentToConversationModal({
     setLocalError(null);
 
     try {
-      await addAgent(conversationId, selectedAgentId);
+      // Select appropriate color for the new agent
+      const selectedColor = selectAgentColor(conversationAgents);
+
+      await addAgent(conversationId, selectedAgentId, selectedColor);
 
       // Success: close modal and call optional callback
       onOpenChange(false);
@@ -123,6 +127,7 @@ export function AddAgentToConversationModal({
     onOpenChange,
     onAgentAdded,
     isSubmitting,
+    conversationAgents,
   ]);
 
   const handleKeyDown = useCallback(

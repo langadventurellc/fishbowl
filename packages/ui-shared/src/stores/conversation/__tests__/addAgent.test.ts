@@ -6,12 +6,12 @@
  */
 
 import type {
-  ConversationService,
   ConversationAgent,
+  ConversationService,
 } from "@fishbowl-ai/shared";
-import { useConversationStore } from "../useConversationStore";
 import { createChatModeHandler } from "../../../chat-modes";
 import type { ChatModeIntent } from "../../../types/chat-modes/ChatModeIntent";
+import { useConversationStore } from "../useConversationStore";
 
 // Mock the chat-modes module
 jest.mock("../../../chat-modes", () => ({
@@ -43,6 +43,7 @@ describe("addAgent with chat mode integration", () => {
     agent_id: "agent-1",
     enabled: true,
     is_active: true,
+    color: "--agent-1",
     display_order: 2,
     added_at: "2025-09-03T10:00:00Z",
   };
@@ -55,6 +56,7 @@ describe("addAgent with chat mode integration", () => {
     is_active: true,
     display_order: 1,
     added_at: "2025-09-03T09:00:00Z",
+    color: "",
   };
 
   beforeEach(() => {
@@ -120,6 +122,7 @@ describe("addAgent with chat mode integration", () => {
       expect(mockConversationService.addAgent).toHaveBeenCalledWith(
         "conv-1",
         "agent-1",
+        undefined,
       );
 
       // Verify agent was added to store

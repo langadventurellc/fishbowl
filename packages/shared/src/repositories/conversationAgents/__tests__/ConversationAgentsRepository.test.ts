@@ -1,15 +1,12 @@
-import { ConversationAgentsRepository } from "../ConversationAgentsRepository";
 import type { DatabaseBridge } from "../../../services/database";
-import type { CryptoUtilsInterface } from "../../../utils/CryptoUtilsInterface";
 import {
-  ConversationAgentValidationError,
   ConversationAgentNotFoundError,
+  ConversationAgentValidationError,
   DuplicateAgentError,
-  type ConversationAgent,
   type AddAgentToConversationInput,
-  type UpdateConversationAgentInput,
 } from "../../../types/conversationAgents";
-import { ConnectionError } from "../../../services/database";
+import type { CryptoUtilsInterface } from "../../../utils/CryptoUtilsInterface";
+import { ConversationAgentsRepository } from "../ConversationAgentsRepository";
 
 // Mock dependencies
 const mockDatabaseBridge = {
@@ -49,6 +46,10 @@ describe("ConversationAgentsRepository", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
+    mockDatabaseBridge.query.mockClear();
+    mockDatabaseBridge.execute.mockClear();
+    mockCryptoUtils.generateId.mockClear();
     repository = new ConversationAgentsRepository(
       mockDatabaseBridge,
       mockCryptoUtils,
@@ -92,6 +93,7 @@ describe("ConversationAgentsRepository", () => {
         conversation_id: validConversationId,
         agent_id: validAgentId,
         display_order: 1,
+        color: "--agent-1",
       };
 
       // Mock existsAssociation to return false (no duplicate)
@@ -112,6 +114,7 @@ describe("ConversationAgentsRepository", () => {
         added_at: mockTimestamp,
         is_active: true,
         enabled: true,
+        color: "--agent-1",
         display_order: 1,
       });
 
@@ -124,6 +127,7 @@ describe("ConversationAgentsRepository", () => {
           mockTimestamp,
           1,
           1,
+          "--agent-1",
           1,
         ],
       );
@@ -133,6 +137,7 @@ describe("ConversationAgentsRepository", () => {
       const input: AddAgentToConversationInput = {
         conversation_id: validConversationId,
         agent_id: validAgentId,
+        color: "--agent-1",
       };
 
       // Mock existsAssociation to return true (duplicate found)
@@ -164,6 +169,7 @@ describe("ConversationAgentsRepository", () => {
         added_at: "2023-01-01T00:00:00.000Z",
         is_active: 1,
         enabled: 0,
+        color: "--agent-1",
         display_order: 0,
       };
 
@@ -220,6 +226,7 @@ describe("ConversationAgentsRepository", () => {
           added_at: "2023-01-01T00:00:00.000Z",
           is_active: 1,
           enabled: 1,
+          color: "--agent-1",
           display_order: 0,
         },
         {
@@ -229,6 +236,7 @@ describe("ConversationAgentsRepository", () => {
           added_at: "2023-01-02T00:00:00.000Z",
           is_active: 1,
           enabled: 1,
+          color: "--agent-2",
           display_order: 1,
         },
       ];

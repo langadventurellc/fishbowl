@@ -9,38 +9,38 @@
 
 import type {
   Conversation,
-  Message,
   ConversationAgent,
+  Message,
 } from "@fishbowl-ai/shared";
 import type { ErrorState } from "../../ErrorState";
 import type { ConversationStoreState } from "../ConversationStoreState";
 import {
-  // Basic State Selectors
-  selectActiveConversationId,
-  selectConversations,
-  selectActiveMessages,
-  selectActiveConversationAgents,
-  selectLoadingStates,
-  selectErrorStates,
   // Computed Selectors
   selectActiveConversation,
-  selectHasActiveConversation,
-  selectMessageCount,
+  selectActiveConversationAgents,
+  // Basic State Selectors
+  selectActiveConversationId,
+  selectActiveMessages,
+  selectActiveRequestToken,
+  selectAgentsError,
+  selectConversations,
+  // Specific Error State Selectors
+  selectConversationsError,
   selectEnabledAgents,
+  selectErrorStates,
+  selectHasActiveConversation,
   selectIsLoading,
+  selectIsLoadingAgents,
   // Specific Loading State Selectors
   selectIsLoadingConversations,
   selectIsLoadingMessages,
-  selectIsLoadingAgents,
   selectIsSending,
-  // Specific Error State Selectors
-  selectConversationsError,
-  selectMessagesError,
-  selectAgentsError,
-  selectSendingError,
+  selectLoadingStates,
   // Configuration Selectors
   selectMaximumMessages,
-  selectActiveRequestToken,
+  selectMessageCount,
+  selectMessagesError,
+  selectSendingError,
 } from "../selectors";
 
 // Mock data factory functions
@@ -74,6 +74,7 @@ const createMockConversationAgent = (
   is_active: true,
   enabled,
   display_order: 0,
+  color: "",
 });
 
 const createMockErrorState = (message: string): ErrorState => ({

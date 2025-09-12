@@ -3,6 +3,7 @@ import React from "react";
 import { HashRouter, Route, Routes } from "react-router-dom";
 import { useDesktopSettingsPersistence } from "./adapters/useDesktopSettingsPersistence";
 import { RolesErrorBoundary } from "./components/errors/RolesErrorBoundary";
+import { CustomTitleBar } from "./components/layout/CustomTitleBar";
 import { SettingsModal } from "./components/settings/SettingsModal";
 import {
   AgentsProvider,
@@ -72,6 +73,9 @@ export default function App() {
         <RolesProvider>
           <PersonalitiesProvider>
             <AgentsProvider>
+              {/* Custom title bar for native window controls */}
+              <CustomTitleBar />
+
               <HashRouter>
                 <Routes>
                   <Route path="/" element={<Home />} />

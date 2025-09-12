@@ -251,7 +251,6 @@ export function LlmSetupSection({ className }: { className?: string }) {
             <ProviderSelector
               onSetupProvider={handleSetupProvider}
               buttonText="Add Another Provider"
-              showIcon={false}
             />
           </div>
         </>

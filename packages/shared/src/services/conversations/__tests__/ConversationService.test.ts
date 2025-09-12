@@ -173,8 +173,11 @@ describe("ConversationService Interface", () => {
           userMessageId: string,
         ) => {},
         listConversationAgents: async (conversationId: string) => [],
-        addAgent: async (conversationId: string, agentId: string) =>
-          ({}) as ConversationAgent,
+        addAgent: async (
+          conversationId: string,
+          agentId: string,
+          color?: string,
+        ) => ({}) as ConversationAgent,
         removeAgent: async (conversationId: string, agentId: string) => {},
         updateConversationAgent: async (
           id: string,
@@ -202,8 +205,11 @@ describe("ConversationService Interface", () => {
       // Type checking - these must compile if interface is correct
       const mockService: Partial<ConversationService> = {
         listConversationAgents: async (conversationId: string) => [],
-        addAgent: async (conversationId: string, agentId: string) =>
-          ({}) as ConversationAgent,
+        addAgent: async (
+          conversationId: string,
+          agentId: string,
+          color?: string,
+        ) => ({}) as ConversationAgent,
         removeAgent: async (conversationId: string, agentId: string) => {},
         updateConversationAgent: async (
           id: string,
@@ -230,6 +236,11 @@ describe("ConversationService Interface", () => {
           "conv-id",
           "agent-id",
         );
+        const addedWithColor: ConversationAgent = await service.addAgent(
+          "conv-id",
+          "agent-id",
+          "--agent-1",
+        );
         const removed: void = await service.removeAgent("conv-id", "agent-id");
         const updated: ConversationAgent =
           await service.updateConversationAgent("ca-id", updates);
@@ -252,6 +263,37 @@ describe("ConversationService Interface", () => {
       };
 
       expect(typeof testUpdate).toBe("function");
+    });
+
+    it("should support optional color parameter in addAgent method", () => {
+      // Verify both signatures work (with and without color)
+      const testOptionalColor = async () => {
+        const service: ConversationService = {} as ConversationService;
+
+        // Both calls should compile correctly
+        await service.addAgent("conv-id", "agent-id");
+        await service.addAgent("conv-id", "agent-id", "--agent-1");
+        await service.addAgent("conv-id", "agent-id", "--agent-8");
+      };
+
+      expect(typeof testOptionalColor).toBe("function");
+    });
+
+    it("should accept CSS variable color format in addAgent", () => {
+      // Type validation for color parameter
+      const testColorParameter = async () => {
+        const service: ConversationService = {} as ConversationService;
+
+        // Valid CSS variable formats should compile
+        await service.addAgent("conv-id", "agent-id", "--agent-1");
+        await service.addAgent("conv-id", "agent-id", "--agent-2");
+        await service.addAgent("conv-id", "agent-id", "--agent-8");
+
+        // Optional parameter should work
+        await service.addAgent("conv-id", "agent-id");
+      };
+
+      expect(typeof testColorParameter).toBe("function");
     });
   });
 

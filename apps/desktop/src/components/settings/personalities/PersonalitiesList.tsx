@@ -45,6 +45,18 @@ export const PersonalitiesList = memo<PersonalitiesListProps>(
         {/* Accessible heading for screen readers */}
         <h2 className="sr-only">All Personalities List</h2>
 
+        <div className="my-[16px]">
+          <Button
+            onClick={onCreateClick}
+            className="w-full gap-2"
+            size="lg"
+            aria-label="Create a new personality"
+          >
+            <Plus className="h-4 w-4" />
+            Create Personality
+          </Button>
+        </div>
+
         {/* Personality list area */}
         <div className="flex-1">
           <div
@@ -80,19 +92,6 @@ export const PersonalitiesList = memo<PersonalitiesListProps>(
               );
             })}
           </div>
-        </div>
-
-        {/* Create button container - always visible at bottom */}
-        <div className="pt-6 border-t border-border mt-6">
-          <Button
-            onClick={onCreateClick}
-            className="w-full gap-2"
-            size="lg"
-            aria-label="Create a new personality"
-          >
-            <Plus className="h-4 w-4" />
-            Create Personality
-          </Button>
         </div>
       </div>
     );

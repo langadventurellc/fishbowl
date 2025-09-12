@@ -6,6 +6,8 @@ export interface AddAgentToConversationInput {
   conversation_id: string;
   /** ID of the agent from settings to add */
   agent_id: string;
+  /** Agent color as CSS variable reference (--agent-1 through --agent-8) for visual identification */
+  color: string;
   /** Optional display order (defaults to 0) */
   display_order?: number;
 }

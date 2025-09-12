@@ -397,11 +397,72 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
    */
   refreshActiveConversation: async () => {
     const { activeConversationId } = get();
-    if (!activeConversationId) {
-      return; // No-op when no active conversation
+    if (!activeConversationId || !conversationService) {
+      return; // No-op when no active conversation or service not initialized
     }
 
-    await get().selectConversation(activeConversationId);
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
+
+    try {
+      set((state) => ({
+        ...state,
+        activeRequestToken: requestToken,
+        loading: { ...state.loading, messages: true, agents: true },
+        error: { ...state.error, messages: undefined, agents: undefined },
+      }));
+
+      // Load fresh conversation data without clearing current messages
+      const [messages, agents] = await Promise.all([
+        conversationService.listMessages(activeConversationId),
+        conversationService.listConversationAgents(activeConversationId),
+      ]);
+
+      // Check if this request is still current
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        return; // Ignore stale result
+      }
+
+      // Apply message limit if configured
+      const trimmedMessages =
+        currentState.maximumMessages > 0 &&
+        messages.length > currentState.maximumMessages
+          ? messages.slice(-currentState.maximumMessages)
+          : messages;
+
+      // Atomic update: replace messages and agents in single operation
+      set((state) => ({
+        ...state,
+        activeMessages: trimmedMessages,
+        activeConversationAgents: agents,
+        loading: { ...state.loading, messages: false, agents: false },
+      }));
+    } catch (error) {
+      // Check if this request is still current before setting error
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        return; // Ignore stale error
+      }
+
+      set((state) => ({
+        ...state,
+        loading: { ...state.loading, messages: false, agents: false },
+        error: {
+          ...state.error,
+          messages: {
+            message:
+              error instanceof Error
+                ? error.message
+                : "Failed to refresh conversation data",
+            operation: "load",
+            isRetryable: true,
+            retryCount: 0,
+            timestamp: new Date().toISOString(),
+          },
+        },
+      }));
+    }
   },
 
   /**
@@ -480,73 +541,6 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
             message:
               error instanceof Error ? error.message : "Failed to send message",
             operation: "save",
-            isRetryable: true,
-            retryCount: 0,
-            timestamp: new Date().toISOString(),
-          },
-        },
-      }));
-    }
-  },
-
-  /**
-   * Load messages for active conversation with memory management.
-   */
-  loadMessages: async (conversationId: string) => {
-    if (!conversationService) {
-      throw new Error("ConversationService not initialized");
-    }
-
-    // Generate request token for race condition protection
-    const requestToken = generateRequestToken();
-
-    try {
-      set((state) => ({
-        ...state,
-        activeRequestToken: requestToken,
-        activeMessages: [], // Clear existing messages
-        loading: { ...state.loading, messages: true },
-        error: { ...state.error, messages: undefined },
-      }));
-
-      // Load messages from service
-      const messages = await conversationService.listMessages(conversationId);
-
-      // Check if this request is still current
-      const currentState = get();
-      if (currentState.activeRequestToken !== requestToken) {
-        return; // Ignore stale result
-      }
-
-      // Apply message limit with client-side trimming
-      const trimmedMessages = applyMessageLimit(
-        messages,
-        currentState.maximumMessages,
-      );
-
-      set((state) => ({
-        ...state,
-        activeMessages: trimmedMessages,
-        loading: { ...state.loading, messages: false },
-      }));
-    } catch (error) {
-      // Check if this request is still current before setting error
-      const currentState = get();
-      if (currentState.activeRequestToken !== requestToken) {
-        return; // Ignore stale error
-      }
-
-      set((state) => ({
-        ...state,
-        loading: { ...state.loading, messages: false },
-        error: {
-          ...state.error,
-          messages: {
-            message:
-              error instanceof Error
-                ? error.message
-                : "Failed to load messages",
-            operation: "load",
             isRetryable: true,
             retryCount: 0,
             timestamp: new Date().toISOString(),
@@ -663,9 +657,12 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
 
   /**
    * Add agent to conversation.
+   * @param conversationId - ID of the conversation to add the agent to
+   * @param agentId - ID of the agent to add
+   * @param color - Optional CSS variable color reference (e.g., "--agent-1")
    */
   // eslint-disable-next-line statement-count/function-statement-count-warn
-  addAgent: async (conversationId: string, agentId: string) => {
+  addAgent: async (conversationId: string, agentId: string, color?: string) => {
     if (!conversationService || !get().activeConversationId) {
       return;
     }
@@ -685,6 +682,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
       const conversationAgent = await conversationService.addAgent(
         conversationId,
         agentId,
+        color,
       );
 
       // Check if request is still current before updating
@@ -792,6 +790,7 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   /**
    * Remove agent from conversation.
    */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
   removeAgent: async (conversationId: string, agentId: string) => {
     if (!conversationService || !get().activeConversationId) {
       return;
@@ -827,6 +826,28 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         ),
         loading: { ...state.loading, agents: false },
       }));
+
+      // Explicitly refresh messages to reflect deleted agent messages
+      try {
+        // Only refresh if we still have the same active conversation
+        const currentActiveConversationId = get().activeConversationId;
+        if (currentActiveConversationId === conversationId) {
+          logger.debug("Refreshing conversation after agent deletion", {
+            conversationId,
+            agentId,
+          });
+          await get().refreshActiveConversation();
+        }
+      } catch (messageRefreshError) {
+        // Log error but don't fail the operation - agent deletion was successful
+        logger.error(
+          "Failed to refresh conversation after agent deletion",
+          messageRefreshError instanceof Error
+            ? messageRefreshError
+            : undefined,
+          { conversationId, agentId },
+        );
+      }
 
       // Round Robin integration: handle agent removal during rotation
       const activeChatMode = get().getActiveChatMode();
@@ -888,6 +909,138 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
   },
 
   /**
+   * Reorder conversation agents by updating their display_order values.
+   * Uses optimistic UI updates with rollback on failure and handles race conditions.
+   */
+  // eslint-disable-next-line statement-count/function-statement-count-warn
+  reorderAgents: async (conversationId: string, agentIds: string[]) => {
+    if (!conversationService || !get().activeConversationId) {
+      return;
+    }
+
+    // Early return if conversationId doesn't match active conversation
+    if (get().activeConversationId !== conversationId) {
+      return;
+    }
+
+    const { activeConversationAgents } = get();
+
+    // Validate that all agentIds exist in current activeConversationAgents
+    const existingAgentIds = new Set(
+      activeConversationAgents.map((agent) => agent.id),
+    );
+    const missingAgentIds = agentIds.filter((id) => !existingAgentIds.has(id));
+
+    if (missingAgentIds.length > 0) {
+      throw new Error(
+        `Cannot reorder: agents not found: ${missingAgentIds.join(", ")}`,
+      );
+    }
+
+    // Store original order for rollback (needs to be accessible in catch block)
+    const originalAgents = [...activeConversationAgents];
+
+    // Generate request token for race condition protection
+    const requestToken = generateRequestToken();
+
+    try {
+      // Set loading state and clear any previous errors
+      set((state) => ({
+        ...state,
+        activeRequestToken: requestToken,
+        loading: { ...state.loading, agents: true },
+        error: { ...state.error, agents: undefined },
+      }));
+
+      // Optimistic UI update: reorder agents immediately
+      const reorderedAgents = agentIds
+        .map((agentId) =>
+          activeConversationAgents.find((agent) => agent.id === agentId),
+        )
+        .filter(Boolean) as ConversationAgent[];
+
+      set((state) => ({
+        ...state,
+        activeConversationAgents: reorderedAgents,
+      }));
+
+      // Update display_order for each agent via service calls
+      const updatedAgents: ConversationAgent[] = [];
+
+      for (let i = 0; i < agentIds.length; i++) {
+        const agentId = agentIds[i];
+        if (!agentId) {
+          throw new Error(`Invalid agent ID at index ${i}`);
+        }
+        const updatedAgent = await conversationService.updateConversationAgent(
+          agentId,
+          { display_order: i },
+        );
+        updatedAgents.push(updatedAgent);
+      }
+
+      // Check for race conditions before final state update
+      const currentState = get();
+      if (currentState.activeRequestToken !== requestToken) {
+        logger.debug("Reorder operation superseded by newer request", {
+          currentToken: currentState.activeRequestToken,
+          requestToken,
+        });
+        return;
+      }
+
+      // Apply final state update using service data
+      set((state) => ({
+        ...state,
+        activeConversationAgents: state.activeConversationAgents.map(
+          (agent) => {
+            const updated = updatedAgents.find((ua) => ua.id === agent.id);
+            return updated || agent;
+          },
+        ),
+        loading: { ...state.loading, agents: false },
+        activeRequestToken: null,
+      }));
+
+      logger.debug("Successfully reordered agents", {
+        conversationId,
+        agentCount: agentIds.length,
+      });
+    } catch (error) {
+      logger.error(
+        "Failed to reorder agents",
+        error instanceof Error ? error : undefined,
+        { conversationId, agentCount: agentIds.length },
+      );
+
+      // Check for race conditions before rollback
+      const currentState = get();
+      if (currentState.activeRequestToken === requestToken) {
+        // Rollback to original order on failure
+        set((state) => ({
+          ...state,
+          activeConversationAgents: originalAgents,
+          loading: { ...state.loading, agents: false },
+          activeRequestToken: null,
+          error: {
+            ...state.error,
+            agents: {
+              message:
+                error instanceof Error
+                  ? error.message
+                  : "Failed to reorder agents",
+              operation: "save",
+              isRetryable: true,
+              retryCount: 0,
+              timestamp: new Date().toISOString(),
+            },
+          },
+        }));
+      }
+    }
+  },
+
+  /**
    * Toggle agent enabled state.
    */
   toggleAgentEnabled: async (conversationAgentId: string) => {
@@ -902,19 +1055,49 @@ export const useConversationStore = create<ConversationStore>()((set, get) => ({
         error: { ...state.error, agents: undefined },
       }));
 
-      // Get active chat mode and create handler
+      // Get active chat mode
       const activeChatMode = get().getActiveChatMode();
       const { activeConversationAgents } = get();
-      const chatModeHandler = createChatModeHandler(activeChatMode || "manual");
 
-      // Get intent from handler
-      const intent = chatModeHandler.handleAgentToggle(
-        activeConversationAgents,
-        conversationAgentId,
-      );
+      // For manual mode, handle direct user toggle without chat mode handler
+      if (activeChatMode === "manual") {
+        // Find the agent being toggled
+        const targetAgent = activeConversationAgents.find(
+          (agent) => agent.id === conversationAgentId,
+        );
 
-      // Process intent into actual updates
-      await get().processAgentIntent(intent);
+        if (targetAgent) {
+          // Direct toggle - flip the current enabled state
+          const updatedAgent =
+            await conversationService.updateConversationAgent(
+              conversationAgentId,
+              { enabled: !targetAgent.enabled },
+            );
+
+          // Update store state with the new agent state
+          set((state) => ({
+            ...state,
+            activeConversationAgents: state.activeConversationAgents.map(
+              (agent) =>
+                agent.id === conversationAgentId ? updatedAgent : agent,
+            ),
+          }));
+        }
+      } else {
+        // For other modes (round-robin), use the chat mode handler
+        const chatModeHandler = createChatModeHandler(
+          activeChatMode || "manual",
+        );
+
+        // Get intent from handler
+        const intent = chatModeHandler.handleAgentToggle(
+          activeConversationAgents,
+          conversationAgentId,
+        );
+
+        // Process intent into actual updates
+        await get().processAgentIntent(intent);
+      }
 
       set((state) => ({
         ...state,

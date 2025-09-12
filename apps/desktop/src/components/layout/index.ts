@@ -15,6 +15,7 @@ export { AgentLabelsContainerDisplay } from "./AgentLabelsContainerDisplay";
 export { ChatContainerDisplay } from "./ChatContainerDisplay";
 export { ConversationLayoutDisplay } from "./ConversationLayoutDisplay";
 export { ConversationScreenDisplay } from "./ConversationScreenDisplay";
+export { CustomTitleBar } from "./CustomTitleBar";
 export { MainContentPanelDisplay } from "./MainContentPanelDisplay";
 
 // Type re-exports for convenience

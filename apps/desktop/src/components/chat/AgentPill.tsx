@@ -1,4 +1,5 @@
 import React from "react";
+import { X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AgentPillProps, useChatStore } from "@fishbowl-ai/ui-shared";
 
@@ -14,6 +15,7 @@ import { AgentPillProps, useChatStore } from "@fishbowl-ai/ui-shared";
 export function AgentPill({
   agent,
   onClick,
+  onDelete,
   onToggleEnabled,
   conversationAgentId,
   showStatus = false,
@@ -83,6 +85,13 @@ export function AgentPill({
       onToggleEnabled(conversationAgentId);
     } else if (onClick) {
       onClick(agent.name);
+    }
+  };
+
+  const handleDeleteClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (onDelete && conversationAgentId) {
+      onDelete(conversationAgentId);
     }
   };
 
@@ -187,6 +196,21 @@ export function AgentPill({
       {/* Fallback for legacy isThinking when showStatus is false */}
       {!showStatus && agent.isThinking && (
         <div className="w-1.5 h-1.5 rounded-full bg-current opacity-70 animate-pulse" />
+      )}
+
+      {/* Delete button - only when onDelete prop provided */}
+      {onDelete && (
+        <button
+          onClick={handleDeleteClick}
+          className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150
+                     hover:opacity-80 w-6 h-6 flex items-center justify-center
+                     rounded-full hover:bg-black/10"
+          aria-label={`Delete ${agent.name} from conversation`}
+          title={`Delete ${agent.name}`}
+          tabIndex={-1}
+        >
+          <X size={16} className="text-current" />
+        </button>
       )}
     </div>
   );

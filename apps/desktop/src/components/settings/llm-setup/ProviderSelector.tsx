@@ -11,7 +11,6 @@
  */
 
 import type { Provider } from "@fishbowl-ai/shared";
-import { Key } from "lucide-react";
 import React, { useState } from "react";
 import { cn } from "../../../lib/utils";
 import { Button } from "../../ui/button";
@@ -27,14 +26,12 @@ export interface ProviderSelectorProps {
   onSetupProvider: (provider: Provider) => void;
   className?: string;
   buttonText?: string;
-  showIcon?: boolean;
 }
 
 export const ProviderSelector: React.FC<ProviderSelectorProps> = ({
   onSetupProvider,
   className,
   buttonText,
-  showIcon = true,
 }) => {
   const [selectedProvider, setSelectedProvider] = useState<Provider>("openai");
 
@@ -67,12 +64,7 @@ export const ProviderSelector: React.FC<ProviderSelectorProps> = ({
           <SelectItem value="anthropic">Anthropic</SelectItem>
         </SelectContent>
       </Select>
-      <Button
-        onClick={handleSetupClick}
-        className={cn("gap-2", !showIcon && "gap-0")}
-        aria-label={getButtonText()}
-      >
-        {showIcon && <Key className="h-4 w-4" />}
+      <Button onClick={handleSetupClick} aria-label={getButtonText()}>
         {getButtonText()}
       </Button>
     </div>

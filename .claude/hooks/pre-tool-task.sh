@@ -20,6 +20,7 @@ fi
 # Format: "regex_pattern|error_message"
 declare -a PATTERN_MAP=(
     "pnpm --filter=@fishbowl-ai|You must place the command before the arguments, for example \`pnpm test --filter=@fishbowl-ai/ui-shared <other args>\`."
+    "pnpm --filter @fishbowl-ai|You must place the command before the arguments, for example \`pnpm test --filter @fishbowl-ai/ui-shared <other args>\`."
     # Add more patterns here as needed:
     # "npm run.*--.*|Use pnpm instead of npm for this monorepo."
     # "cd.*&&.*|Avoid chaining commands with cd. Use absolute paths instead."

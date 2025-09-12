@@ -7,5 +7,4 @@
 
 export { Button } from "./Button";
 export { MessageInputContainer } from "./MessageInputContainer";
-export { MessageInputDisplay } from "./MessageInputDisplay";
 export { SendButtonDisplay } from "./SendButtonDisplay";

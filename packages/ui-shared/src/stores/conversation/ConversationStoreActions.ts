@@ -89,14 +89,30 @@ export interface ConversationStoreActions {
   /**
    * Add an agent to a specific conversation.
    * Updates the conversation's agent list and refreshes active agents if needed.
+   * @param conversationId - ID of the conversation to add the agent to
+   * @param agentId - ID of the agent to add
+   * @param color - Optional CSS variable color reference (e.g., "--agent-1")
    */
-  addAgent(conversationId: string, agentId: string): Promise<void>;
+  addAgent(
+    conversationId: string,
+    agentId: string,
+    color?: string,
+  ): Promise<void>;
 
   /**
    * Remove an agent from a specific conversation.
    * Updates the conversation's agent list and refreshes active agents if needed.
    */
   removeAgent(conversationId: string, agentId: string): Promise<void>;
+
+  /**
+   * Reorder conversation agents by updating their display_order values.
+   * Uses optimistic UI updates with rollback on failure and handles race conditions.
+   *
+   * @param conversationId - ID of the conversation containing the agents
+   * @param agentIds - Array of ConversationAgent IDs in desired display order
+   */
+  reorderAgents(conversationId: string, agentIds: string[]): Promise<void>;
 
   /**
    * Toggle the enabled state of a conversation agent.
